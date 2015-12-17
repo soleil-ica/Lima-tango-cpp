@@ -63,6 +63,48 @@ public:
 	{return (static_cast<LimaDetector *>(dev))->is_fileNbFrames_allowed(ty);}
 };
 
+class fileTargetPathAttrib: public Tango::Attr
+{
+public:
+	fileTargetPathAttrib():Attr("fileTargetPath", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~fileTargetPathAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<LimaDetector *>(dev))->read_fileTargetPath(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<LimaDetector *>(dev))->write_fileTargetPath(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<LimaDetector *>(dev))->is_fileTargetPath_allowed(ty);}
+};
+
+class filePrefixAttrib: public Tango::Attr
+{
+public:
+	filePrefixAttrib():Attr("filePrefix", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~filePrefixAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<LimaDetector *>(dev))->read_filePrefix(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<LimaDetector *>(dev))->write_filePrefix(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<LimaDetector *>(dev))->is_filePrefix_allowed(ty);}
+};
+
+class fileFormatAttrib: public Tango::Attr
+{
+public:
+	fileFormatAttrib():Attr("fileFormat", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~fileFormatAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<LimaDetector *>(dev))->read_fileFormat(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<LimaDetector *>(dev))->write_fileFormat(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<LimaDetector *>(dev))->is_fileFormat_allowed(ty);}
+};
+
 class fileGenerationAttrib: public Tango::Attr
 {
 public:

@@ -25,7 +25,7 @@ void ControlFactory::initialize()
     m_camera	 = 0;
     m_interface = 0;
 
-    m_server_name = "none";
+    m_device_name_generic = "none";
     m_device_name_specific = "none";
 	
 #ifdef LAYOUT_ENABLED    
@@ -43,13 +43,13 @@ void ControlFactory::initialize()
 //-----------------------------------------------------------------------------------------
 yat::Mutex& ControlFactory::get_global_mutex()
 {
-    return object_control_lock;
+    return m_lock;
 }
 
 //-----------------------------------------------------------------------------------------
 CtControl* ControlFactory::create_control(const std::string& detector_type)
 {
-    yat::AutoMutex<> _lock(object_control_lock);
+    yat::AutoMutex<> _lock(m_lock);
     try
     {
         //get the tango device/instance
@@ -60,8 +60,8 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             {
                 std::string specific = detector_type;
                 Tango::DbDatum db_datum;
-                m_server_name = Tango::Util::instance()->get_ds_name();
-                db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_server_name, specific);
+                m_device_name_generic = Tango::Util::instance()->get_ds_name();
+                db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, specific);
                 db_datum >> m_device_name_specific;
             }
 
@@ -69,8 +69,8 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             {
                 std::string layout = "Layout";
                 Tango::DbDatum db_datum;
-                m_server_name = Tango::Util::instance()->get_ds_name();
-                db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_server_name, layout);
+                m_device_name_generic = Tango::Util::instance()->get_ds_name();
+                db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, layout);
                 db_datum >> m_device_name_layout;
             }     
 #endif         
@@ -79,8 +79,8 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             {
                 std::string roicounters = "RoiCounters";
                 Tango::DbDatum db_datum;
-                m_server_name = Tango::Util::instance()->get_ds_name();
-                db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_server_name, roicounters);
+                m_device_name_generic = Tango::Util::instance()->get_ds_name();
+                db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, roicounters);
                 db_datum >> m_device_name_roicounters;
             }     
 #endif  			
@@ -497,13 +497,13 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             {
                 Tango::DbData db_data;
                 db_data.push_back(Tango::DbDatum("DetectorIP"));
-				db_data.push_back(Tango::DbDatum("TargetPath"));
+                db_data.push_back(Tango::DbDatum("Pattern"));
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
                 std::string camera_ip;
                 db_data[0] >> camera_ip;
-                std::string target_path;
-                db_data[1] >> target_path;
-                m_camera = static_cast<void*> (new Eiger::Camera(camera_ip, target_path));
+                std::string pattern;
+                db_data[1] >> pattern;
+                m_camera = static_cast<void*> (new Eiger::Camera(camera_ip));
                 m_interface = static_cast<void*> (new Eiger::Interface(*(static_cast<Eiger::Camera*> (m_camera))));
                 m_control = new CtControl(static_cast<Eiger::Interface*> (m_interface));
                 ControlFactory::m_is_created = true;
@@ -555,7 +555,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 //-----------------------------------------------------------------------------------------
 CtControl* ControlFactory::get_control(const std::string& detector_type)
 {
-    yat::AutoMutex<> _lock(object_control_lock);
+    yat::AutoMutex<> _lock(m_lock);
 	if (!ControlFactory::m_is_created)
 	{
 		std::stringstream ssMsg("");
@@ -568,7 +568,7 @@ CtControl* ControlFactory::get_control(const std::string& detector_type)
 //-----------------------------------------------------------------------------------------
 void ControlFactory::reset(const std::string& detector_type)
 {
-    yat::AutoMutex<> _lock(object_control_lock);
+    yat::AutoMutex<> _lock(m_lock);
     try
     {
         if (ControlFactory::m_is_created)
@@ -738,7 +738,7 @@ void ControlFactory::reset(const std::string& detector_type)
 //-----------------------------------------------------------------------------------------
 void ControlFactory::init_specific_device(const std::string& detector_type)
 {
-    yat::AutoMutex<> _lock(object_control_lock);
+    yat::AutoMutex<> _lock(m_lock);
     try
     {
         //get the tango device/instance
@@ -746,8 +746,8 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
         {
             std::string detector = detector_type;
             Tango::DbDatum db_datum;
-            m_server_name = Tango::Util::instance()->get_ds_name();
-            db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_server_name, detector);
+            m_device_name_generic = Tango::Util::instance()->get_ds_name();
+            db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, detector);
             db_datum >> m_device_name_specific;
         }
         (Tango::Util::instance()->get_device_by_name(m_device_name_specific))->delete_device();
@@ -767,8 +767,8 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
         {
             std::string detector = "Layout";		
             Tango::DbDatum db_datum;
-            m_server_name = Tango::Util::instance()->get_ds_name();
-            db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_server_name, detector);
+            m_device_name_generic = Tango::Util::instance()->get_ds_name();
+            db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, detector);
             db_datum >> m_device_name_layout;	
         }
         (Tango::Util::instance()->get_device_by_name(m_device_name_layout))->delete_device();
@@ -789,8 +789,8 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
         {
             std::string detector = "RoiCounters";			
             Tango::DbDatum db_datum;
-            m_server_name = Tango::Util::instance()->get_ds_name();
-            db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_server_name, detector);
+            m_device_name_generic = Tango::Util::instance()->get_ds_name();
+            db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, detector);
             db_datum >> m_device_name_roicounters;					
         }
         (Tango::Util::instance()->get_device_by_name(m_device_name_roicounters))->delete_device();
@@ -809,7 +809,41 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
 //-----------------------------------------------------------------------------------------
 Tango::DevState ControlFactory::get_state(void)
 {
-    yat::AutoMutex<> _lock(object_state_lock);
+    CtControl::Status ctStatus;
+
+    yat::AutoMutex<> _lock(m_lock);
+    m_control->getStatus(ctStatus);
+
+    switch(ctStatus.AcquisitionStatus)
+    {
+        case lima::AcqReady:
+        {
+            set_state(Tango::STANDBY);
+            set_status("Waiting for Request ...\n");
+        }
+            break;
+
+        case lima::AcqRunning:
+        {
+            set_state(Tango::RUNNING);
+            set_status("Acquisition is in Running ...\n");            
+        }
+            break;
+
+        case lima::AcqConfig:
+        {
+            set_state(Tango::DISABLE);
+            set_status("Detector is in Configuration ...\n");                        
+        }
+            break;
+
+        default:
+        {
+            set_state(Tango::FAULT);
+            set_status("Detector is in Fault ...\n");                    
+        }
+            break;
+    }
     return m_state;
 }
 //-----------------------------------------------------------------------------------------
@@ -817,21 +851,21 @@ Tango::DevState ControlFactory::get_state(void)
 //-----------------------------------------------------------------------------------------
 std::string ControlFactory::get_status(void)
 {
-    yat::AutoMutex<> _lock(object_state_lock);
+     yat::AutoMutex<> _lock(m_lock);
     return (m_status.str());
-
 }
+
 //-----------------------------------------------------------------------------------------
 void ControlFactory::set_state(Tango::DevState state)
 {
-    yat::AutoMutex<> _lock(object_state_lock);
+    yat::AutoMutex<> _lock(m_lock);
     m_state = state;
 }
 
 //-----------------------------------------------------------------------------------------
 void ControlFactory::set_status(const std::string& status)
 {
-    yat::AutoMutex<> _lock(object_state_lock);
+    yat::AutoMutex<> _lock(m_lock);
     m_status.str("");
     m_status << status.c_str() << endl;
 

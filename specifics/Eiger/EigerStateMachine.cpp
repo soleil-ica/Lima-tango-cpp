@@ -54,7 +54,6 @@ namespace Eiger_ns
 //		Attributes Allowed Methods
 //=================================================
 
-
 //+----------------------------------------------------------------------------
 //
 // method : 		Eiger::is_countrateCorrection_allowed
@@ -66,8 +65,14 @@ bool Eiger::is_countrateCorrection_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
 		get_state() == Tango::RUNNING)
 	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
 
 		//	Re-Start of Generated Code
 		return false;
@@ -85,8 +90,14 @@ bool Eiger::is_flatfieldCorrection_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
 		get_state() == Tango::RUNNING)
 	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
 
 		//	Re-Start of Generated Code
 		return false;
@@ -104,8 +115,39 @@ bool Eiger::is_pixelMask_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
 		get_state() == Tango::RUNNING)
 	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::is_virtualPixelCorrection_allowed
+// 
+// description : 	Read/Write allowed for virtualPixelCorrection attribute.
+//
+//-----------------------------------------------------------------------------
+bool Eiger::is_virtualPixelCorrection_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
 
 		//	Re-Start of Generated Code
 		return false;
@@ -123,33 +165,14 @@ bool Eiger::is_thresholdEnergy_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
 		get_state() == Tango::RUNNING)
 	{
-
-        //	End of Generated Code
+		//	End of Generated Code
 		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
 		{
            return true;
 		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Eiger::is_virtualPixelCorrection_allowed
-// 
-// description : 	Read/Write allowed for virtualPixelCorrection attribute.
-//
-//-----------------------------------------------------------------------------
-bool Eiger::is_virtualPixelCorrection_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
-	{
-
 		//	Re-Start of Generated Code
 		return false;
 	}
@@ -166,6 +189,7 @@ bool Eiger::is_photonEnergy_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
 		get_state() == Tango::RUNNING)
 	{
 		//	End of Generated Code
@@ -187,8 +211,9 @@ bool Eiger::is_photonEnergy_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool Eiger::is_temperature_allowed(Tango::AttReqType type)
 {
-	if (get_state() == Tango::INIT	 ||
-		get_state() == Tango::FAULT  ||
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
 		get_state() == Tango::RUNNING)
 	{
 		//	End of Generated Code
@@ -211,8 +236,9 @@ bool Eiger::is_temperature_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool Eiger::is_humidity_allowed(Tango::AttReqType type)
 {
-	if (get_state() == Tango::INIT	 ||
-		get_state() == Tango::FAULT  ||
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
 		get_state() == Tango::RUNNING)
 	{
 		//	End of Generated Code
@@ -228,25 +254,6 @@ bool Eiger::is_humidity_allowed(Tango::AttReqType type)
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		Eiger::is_efficiencyCorrection_allowed
-// 
-// description : 	Read/Write allowed for efficiencyCorrection attribute.
-//
-//-----------------------------------------------------------------------------
-bool Eiger::is_efficiencyCorrection_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
-	{
-
-		//	Re-Start of Generated Code
-		return false;
-	}
-}
-
-//+----------------------------------------------------------------------------
-//
 // method : 		Eiger::is_compression_allowed
 // 
 // description : 	Read/Write allowed for compression attribute.
@@ -254,9 +261,220 @@ bool Eiger::is_efficiencyCorrection_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool Eiger::is_compression_allowed(Tango::AttReqType type)
 {
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
+		get_state() == Tango::RUNNING)
+	{
 		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
 
 		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::is_fileNamePattern_allowed
+// 
+// description : 	Read/Write allowed for fileNamePattern attribute.
+//
+//-----------------------------------------------------------------------------
+bool Eiger::is_fileNamePattern_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::is_softwareVersion_allowed
+// 
+// description : 	Read/Write allowed for softwareVersion attribute.
+//
+//-----------------------------------------------------------------------------
+bool Eiger::is_softwareVersion_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::is_dataCollectionDate_allowed
+// 
+// description : 	Read/Write allowed for dataCollectionDate attribute.
+//
+//-----------------------------------------------------------------------------
+bool Eiger::is_dataCollectionDate_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::is_wavelength_allowed
+// 
+// description : 	Read/Write allowed for wavelength attribute.
+//
+//-----------------------------------------------------------------------------
+bool Eiger::is_wavelength_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::is_beamCenterX_allowed
+// 
+// description : 	Read/Write allowed for beamCenterX attribute.
+//
+//-----------------------------------------------------------------------------
+bool Eiger::is_beamCenterX_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::is_beamCenterY_allowed
+// 
+// description : 	Read/Write allowed for beamCenterY attribute.
+//
+//-----------------------------------------------------------------------------
+bool Eiger::is_beamCenterY_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::is_detectorDistance_allowed
+// 
+// description : 	Read/Write allowed for detectorDistance attribute.
+//
+//-----------------------------------------------------------------------------
+bool Eiger::is_detectorDistance_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::is_autoSummation_allowed
+// 
+// description : 	Read/Write allowed for autoSummation attribute.
+//
+//-----------------------------------------------------------------------------
+bool Eiger::is_autoSummation_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::DISABLE	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+
+		//	Re-Start of Generated Code
+		return false;
+	}
 	return true;
 }
 
@@ -264,5 +482,41 @@ bool Eiger::is_compression_allowed(Tango::AttReqType type)
 //		Commands Allowed Methods
 //=================================================
 
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::is_Abort_allowed
+// 
+// description : 	Execution allowed for Abort command.
+//
+//-----------------------------------------------------------------------------
+bool Eiger::is_Abort_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::INIT)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::is_Initialize_allowed
+// 
+// description : 	Execution allowed for Initialize command.
+//
+//-----------------------------------------------------------------------------
+bool Eiger::is_Initialize_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
 
 }	// namespace Eiger_ns

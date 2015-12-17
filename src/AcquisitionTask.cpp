@@ -101,7 +101,6 @@ void AcquisitionTask::process_message(yat::Message& msg) throw(Tango::DevFailed)
                 INFO_STREAM << "-> yat::DEVICE_PREPARE_MSG" << endl;
                 try
                 {
-                    set_state(Tango::RUNNING);
                     set_status(string("Acquisition is Running in prepare mode..."));
                     m_acq_conf = msg.get_data<AcqConfig>();
                     m_acq_conf.ct->prepareAcq();
@@ -125,7 +124,6 @@ void AcquisitionTask::process_message(yat::Message& msg) throw(Tango::DevFailed)
                 INFO_STREAM << "-> yat::DEVICE_SNAP_MSG" << endl;
                 try
                 {
-                    set_state(Tango::RUNNING);
                     set_status(string("Acquisition is Running in snap mode..."));
                     m_acq_conf = msg.get_data<AcqConfig>();
                     if(!m_acq_conf.use_prepare_cmd)
@@ -151,7 +149,6 @@ void AcquisitionTask::process_message(yat::Message& msg) throw(Tango::DevFailed)
                 INFO_STREAM << "-> yat::DEVICE_START_MSG" << endl;
                 try
                 {
-                    set_state(Tango::RUNNING);
                     set_status(string("Acquisition is Running in video mode ..."));
                     m_acq_conf.ct->video()->startLive();
                 }

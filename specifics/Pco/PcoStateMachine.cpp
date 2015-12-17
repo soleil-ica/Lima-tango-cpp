@@ -63,9 +63,18 @@ namespace Pco_ns
 //-----------------------------------------------------------------------------
 bool Pco::is_shutterMode_allowed(Tango::AttReqType type)
 {
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
 		//	End of Generated Code
-
+		if ( (get_state() == Tango::RUNNING) && (Tango::READ_REQ == type))
+		{
+			return true;
+		}
 		//	Re-Start of Generated Code
+		return false;
+	}
 	return true;
 }
 //+----------------------------------------------------------------------------
@@ -77,9 +86,18 @@ bool Pco::is_shutterMode_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool Pco::is_pixelScanRate_allowed(Tango::AttReqType type)
 {
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
 		//	End of Generated Code
-
+		if ( (get_state() == Tango::RUNNING) && (Tango::READ_REQ == type))
+		{
+			return true;
+		}
 		//	Re-Start of Generated Code
+		return false;
+	}
 	return true;
 }
 //+----------------------------------------------------------------------------
@@ -91,9 +109,18 @@ bool Pco::is_pixelScanRate_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool Pco::is_frameRate_allowed(Tango::AttReqType type)
 {
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
 		//	End of Generated Code
-
+		if ( (get_state() == Tango::RUNNING) && (Tango::READ_REQ == type))
+		{
+			return true;
+		}
 		//	Re-Start of Generated Code
+		return false;
+	}
 	return true;
 }
 //+----------------------------------------------------------------------------
@@ -105,9 +132,18 @@ bool Pco::is_frameRate_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool Pco::is_maxNbImage_allowed(Tango::AttReqType type)
 {
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
 		//	End of Generated Code
-
+		if ( (get_state() == Tango::RUNNING) && (Tango::READ_REQ == type))
+		{
+			return true;
+		}
 		//	Re-Start of Generated Code
+		return false;
+	}
 	return true;
 }
 
@@ -124,9 +160,15 @@ bool Pco::is_maxNbImage_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool Pco::is_Talk_allowed(const CORBA::Any &any)
 {
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
 		//	End of Generated Code
 
 		//	Re-Start of Generated Code
+		return false;
+	}
 	return true;
 }
 //+----------------------------------------------------------------------------
@@ -138,9 +180,15 @@ bool Pco::is_Talk_allowed(const CORBA::Any &any)
 //-----------------------------------------------------------------------------
 bool Pco::is_GetCamInfo_allowed(const CORBA::Any &any)
 {
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
 		//	End of Generated Code
 
 		//	Re-Start of Generated Code
+		return false;
+	}
 	return true;
 }
 //+----------------------------------------------------------------------------
@@ -152,9 +200,15 @@ bool Pco::is_GetCamInfo_allowed(const CORBA::Any &any)
 //-----------------------------------------------------------------------------
 bool Pco::is_GetCamType_allowed(const CORBA::Any &any)
 {
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
 		//	End of Generated Code
 
 		//	Re-Start of Generated Code
+		return false;
+	}
 	return true;
 }
 //+----------------------------------------------------------------------------
@@ -166,9 +220,15 @@ bool Pco::is_GetCamType_allowed(const CORBA::Any &any)
 //-----------------------------------------------------------------------------
 bool Pco::is_GetInfo_allowed(const CORBA::Any &any)
 {
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
 		//	End of Generated Code
 
 		//	Re-Start of Generated Code
+		return false;
+	}
 	return true;
 }
 

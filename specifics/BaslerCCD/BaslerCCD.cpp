@@ -438,9 +438,9 @@ void BaslerCCD::read_packetSize(Tango::Attribute &attr)
     {
         try
         {
-            if (m_hw != 0)
+            if (m_camera != 0)
             {
-                (m_hw->getCamera()).getPacketSize((int&)*attr_packetSize_read);                 
+                m_camera->getPacketSize((int&)*attr_packetSize_read);                 
                 attr.set_value(attr_packetSize_read);
             }
         }
@@ -476,9 +476,9 @@ void BaslerCCD::read_bandwidthAssigned(Tango::Attribute &attr)
     {
         try
         {
-            if (m_hw != 0)
+            if (m_camera!=0)
             {
-                (m_hw->getCamera()).getBandwidthAssigned((int&)*attr_bandwidthAssigned_read);                 
+                m_camera->getBandwidthAssigned((int&)*attr_bandwidthAssigned_read);                 
                 attr.set_value(attr_bandwidthAssigned_read);
             }
         }
@@ -513,9 +513,9 @@ void BaslerCCD::read_maxThroughput(Tango::Attribute &attr)
     {
         try
         {
-            if (m_hw != 0)
+            if (m_camera!=0)
             {
-                (m_hw->getCamera()).getMaxThroughput((int&)*attr_maxThroughput_read);                 
+                m_camera->getMaxThroughput((int&)*attr_maxThroughput_read);                 
                 attr.set_value(attr_maxThroughput_read);
             }
         }
@@ -550,9 +550,9 @@ void BaslerCCD::read_currentThroughput(Tango::Attribute &attr)
     {
         try
         {
-            if (m_hw != 0)
+            if (m_camera!=0)
             {
-                (m_hw->getCamera()).getCurrentThroughput((int&)*attr_currentThroughput_read);                 
+                m_camera->getCurrentThroughput((int&)*attr_currentThroughput_read);                 
                 attr.set_value(attr_currentThroughput_read);
             }
         }
@@ -587,9 +587,9 @@ void BaslerCCD::read_interPacketDelay(Tango::Attribute &attr)
     {
         try
         {
-            if (m_hw != 0)
+            if (m_camera!=0)
             {
-                (m_hw->getCamera()).getInterPacketDelay((int&)*attr_interPacketDelay_read);                 
+                m_camera->getInterPacketDelay((int&)*attr_interPacketDelay_read);                 
                 attr.set_value(attr_interPacketDelay_read);
             }
         }
@@ -624,10 +624,10 @@ void BaslerCCD::write_interPacketDelay(Tango::WAttribute &attr)
     {
         try
         {
-            if (m_hw != 0)
+            if (m_camera!=0)
             {
                 attr.get_write_value(attr_interPacketDelay_write);
-                (m_hw->getCamera()).setInterPacketDelay(attr_interPacketDelay_write);
+                m_camera->setInterPacketDelay(attr_interPacketDelay_write);
                 PropertyHelper::set_property(this, "MemorizedInterPacketDelay", attr_interPacketDelay_write);
             }
         }
@@ -663,7 +663,7 @@ void BaslerCCD::read_dataRate(Tango::Attribute &attr)
     {
         try
         {
-            if (m_hw != 0)
+            if (m_camera!=0)
             {
                 double dataRate =0.0;//in MB/s
                 
@@ -723,9 +723,9 @@ void BaslerCCD::read_statisticsFailedBufferCount(Tango::Attribute &attr)
         try
         {
             long count;
-            if (m_hw != 0)
+            if (m_camera!=0)
             {
-                (m_hw->getCamera()).getStatisticsFailedBufferCount(count);
+                m_camera->getStatisticsFailedBufferCount(count);
                 if(count!=-1)
                     *attr_statisticsFailedBufferCount_read = (Tango::DevLong)(count);
                 attr.set_value(attr_statisticsFailedBufferCount_read);
@@ -763,9 +763,9 @@ void BaslerCCD::read_frameRate(Tango::Attribute &attr)
     {
         try
         {
-            if (m_hw != 0)
+            if (m_camera!=0)
             {
-                (m_hw->getCamera()).getFrameRate((double&) *attr_frameRate_read);
+                m_camera->getFrameRate((double&) *attr_frameRate_read);
                 attr.set_value(attr_frameRate_read);
             }
         }
@@ -800,9 +800,9 @@ void BaslerCCD::read_temperature(Tango::Attribute &attr)
     {
         try
         {
-            if (m_hw != 0)
+            if (m_camera!=0)
             {
-                (m_hw->getCamera()).getTemperature((double&) *attr_temperature_read);
+                m_camera->getTemperature((double&) *attr_temperature_read);
                 attr.set_value(attr_temperature_read);
             }
         }
@@ -837,10 +837,10 @@ void BaslerCCD::read_gain(Tango::Attribute &attr)
     {
         try
         {
-            if (m_hw != 0)
+            if (m_camera!=0)
             {
                 double gain;
-                (m_hw->getCamera()).getGain(gain);
+                m_camera->getGain(gain);
                 *m_gain_read = (Tango::DevDouble)(gain);
                 attr.set_value(m_gain_read);
             }
@@ -875,10 +875,10 @@ void BaslerCCD::write_gain(Tango::WAttribute &attr)
     {
         try
         {
-            if (m_hw != 0)
+            if (m_camera!=0)
             {
                 attr.get_write_value(m_gain_write);
-                (m_hw->getCamera()).setGain(m_gain_write);
+                m_camera->setGain(m_gain_write);
                 PropertyHelper::set_property(this, "MemorizedGain", m_gain_write);
             }
         }
@@ -912,10 +912,10 @@ void BaslerCCD::read_autogain_enabled(Tango::Attribute &attr)
     {
         try
         {
-            if (m_hw != 0)
+            if (m_camera!=0)
             {
                 bool bAutoGain;
-                (m_hw->getCamera()).getAutoGain(bAutoGain);
+                m_camera->getAutoGain(bAutoGain);
                 *m_is_autogain_enabled_read = (Tango::DevBoolean)(bAutoGain);
                 attr.set_value(m_is_autogain_enabled_read);
             }
@@ -951,10 +951,10 @@ void BaslerCCD::write_autogain_enabled(Tango::WAttribute &attr)
     {
         try
         {
-            if (m_hw != 0)
+            if (m_camera!=0)
             {
                 attr.get_write_value(m_is_autogain_enabled_write);
-                (m_hw->getCamera()).setAutoGain(m_is_autogain_enabled_write);
+                m_camera->setAutoGain(m_is_autogain_enabled_write);
                 PropertyHelper::set_property(this, "MemorizedAutoGain", m_is_autogain_enabled_write);
             }
         }

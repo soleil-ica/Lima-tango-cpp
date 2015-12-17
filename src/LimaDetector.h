@@ -172,6 +172,12 @@ public:
 		Tango::DevULong	*attr_currentFrame_read;
 		Tango::DevBoolean	*attr_fileGeneration_read;
 		Tango::DevBoolean	attr_fileGeneration_write;
+		Tango::DevString	*attr_fileFormat_read;
+		Tango::DevString	attr_fileFormat_write;
+		Tango::DevString	*attr_filePrefix_read;
+		Tango::DevString	attr_filePrefix_write;
+		Tango::DevString	*attr_fileTargetPath_read;
+		Tango::DevString	attr_fileTargetPath_write;
 		Tango::DevLong	*attr_fileNbFrames_read;
 		Tango::DevLong	attr_fileNbFrames_write;
 //@}
@@ -281,6 +287,10 @@ public:
  *	
  */
 	Tango::DevLong	fileNbFrames;
+/**
+ *	
+ */
+	string	fileManagedMode;
 /**
  *	Available only for Nexus format : Fix the SetWriteMode(). <br>
  *	Available values :<br>
@@ -612,6 +622,30 @@ public:
  */
 	virtual void write_fileGeneration(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for fileFormat acquisition result.
+ */
+	virtual void read_fileFormat(Tango::Attribute &attr);
+/**
+ *	Write fileFormat attribute values to hardware.
+ */
+	virtual void write_fileFormat(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for filePrefix acquisition result.
+ */
+	virtual void read_filePrefix(Tango::Attribute &attr);
+/**
+ *	Write filePrefix attribute values to hardware.
+ */
+	virtual void write_filePrefix(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for fileTargetPath acquisition result.
+ */
+	virtual void read_fileTargetPath(Tango::Attribute &attr);
+/**
+ *	Write fileTargetPath attribute values to hardware.
+ */
+	virtual void write_fileTargetPath(Tango::WAttribute &attr);
+/**
  *	Extract real attribute values for fileNbFrames acquisition result.
  */
 	virtual void read_fileNbFrames(Tango::Attribute &attr);
@@ -703,6 +737,18 @@ public:
  *	Read/Write allowed for fileGeneration attribute.
  */
 	virtual bool is_fileGeneration_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for fileFormat attribute.
+ */
+	virtual bool is_fileFormat_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for filePrefix attribute.
+ */
+	virtual bool is_filePrefix_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for fileTargetPath attribute.
+ */
+	virtual bool is_fileTargetPath_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for fileNbFrames attribute.
  */
@@ -829,9 +875,12 @@ public:
     //    Here is the end of the automatic code generation part
     //-------------------------------------------------------------    
 
-    //method in charge of displaying image in the "image" dynamic attribute
+    //image dynamic attribute management
+    void    add_image_dynamic_attribute(void);
     void    read_image_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
 
+    //sutter dynamic attributes management
+    void    add_shutter_dynamic_attributes(void);
     void    execute_open_shutter_callback (yat4tango::DynamicCommandExecuteCallbackData& cbd);
     void    execute_close_shutter_callback (yat4tango::DynamicCommandExecuteCallbackData& cbd);
 
@@ -851,6 +900,11 @@ public:
     
     void    read_currentAccFrame_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);    
 
+    void    configure_available_trigger_mode(void);
+    void    configure_image_type(void);
+    void    configure_video_mode(void);    
+    void    configure_saving_parameters(void);    
+    
     // return true if the device is correctly initialized in init_device
     bool    is_device_initialized()
     {

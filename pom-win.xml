@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.5.3</version>
+    <version>1.6.0</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -63,44 +63,44 @@
         <dependency>
             <groupId>fr.soleil.lib</groupId>
             <artifactId>LimaCore-${aol}-shared-${mode}</artifactId>
-            <version>1.3.5</version>
+            <version>1.5.5</version>
         </dependency>
         <!-- Lima Camera Plugins -->
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaSimulator-${aol}-shared-${mode}</artifactId>
-            <version>1.3.6</version>
+            <version>1.3.7</version>
         </dependency>
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaAndor-${aol}-shared-${mode}</artifactId>
-            <version>1.3.6</version>
+            <version>1.3.7</version>
         </dependency>
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaPco-${aol}-shared-${mode}</artifactId>
-            <version>1.4.2</version>
+            <version>1.5.0</version>
         </dependency>
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaPerkinElmer-${aol}-shared-${mode}</artifactId>
-            <version>1.3.5</version>
+            <version>1.3.6</version>
         </dependency>
 			
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaRoperScientific-${aol}-shared-${mode}</artifactId>
-            <version>1.3.6</version>
+            <version>1.3.7</version>
         </dependency>
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaHamamatsu-${aol}-shared-${mode}</artifactId>
-            <version>1.0.4</version>
+            <version>1.0.5</version>
         </dependency>
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaUview-${aol}-shared-${mode}</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
         </dependency>
     </dependencies>
         

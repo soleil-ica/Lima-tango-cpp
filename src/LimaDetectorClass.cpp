@@ -765,6 +765,27 @@ void LimaDetectorClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	file_generation->set_memorized_init(false);
 	att_list.push_back(file_generation);
 
+	//	Attribute : fileFormat
+	fileFormatAttrib	*file_format = new fileFormatAttrib();
+	file_format->set_disp_level(Tango::EXPERT);
+	file_format->set_memorized();
+	file_format->set_memorized_init(false);
+	att_list.push_back(file_format);
+
+	//	Attribute : filePrefix
+	filePrefixAttrib	*file_prefix = new filePrefixAttrib();
+	file_prefix->set_disp_level(Tango::EXPERT);
+	file_prefix->set_memorized();
+	file_prefix->set_memorized_init(false);
+	att_list.push_back(file_prefix);
+
+	//	Attribute : fileTargetPath
+	fileTargetPathAttrib	*file_target_path = new fileTargetPathAttrib();
+	file_target_path->set_disp_level(Tango::EXPERT);
+	file_target_path->set_memorized();
+	file_target_path->set_memorized_init(false);
+	att_list.push_back(file_target_path);
+
 	//	Attribute : fileNbFrames
 	fileNbFramesAttrib	*file_nb_frames = new fileNbFramesAttrib();
 	Tango::UserDefaultAttrProp	file_nb_frames_prop;
@@ -981,6 +1002,21 @@ void LimaDetectorClass::set_default_property()
 	prop_def  = "1";
 	vect_data.clear();
 	vect_data.push_back("1");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "FileManagedMode";
+	prop_desc = "";
+	prop_def  = "SOFTWARE";
+	vect_data.clear();
+	vect_data.push_back("SOFTWARE");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

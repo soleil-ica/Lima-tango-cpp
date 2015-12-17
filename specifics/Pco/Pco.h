@@ -50,6 +50,11 @@
 #include "lima/CtImage.h"
 #include <PcoInterface.h>
 #include <yat/utils/String.h>
+#include <yat/utils/StringTokenizer.h>
+#include <yat/utils/Logging.h>
+#include <yat4tango/PropertyHelper.h>
+#include <yat4tango/InnerAppender.h>
+#include <yat4tango/YatLogAdapter.h>
 
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
 
@@ -68,6 +73,7 @@ namespace Pco_ns
 *  Tango::STANDBY :
 *  Tango::FAULT :
 *  Tango::RUNNING :
+*  Tango::ON :
  */
 
 
@@ -98,6 +104,10 @@ namespace Pco_ns
          * Device properties member data.
          */
         //@{
+/**
+ *	
+ */
+	vector<string>	scanRateFrequencies;
 //@}
 
         /**
@@ -231,16 +241,22 @@ namespace Pco_ns
  */
 	virtual bool is_GetInfo_allowed(const CORBA::Any &any);
 /**
- * Availables values are:
- *	lasterror
- *	camInfo
- *	camType
- *	clTransferParam
- *	cocRunTime
- *	frameRate
- *	maxNbImages
- *	timestamp
- *	" "
+ * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
+ *	@return	State Code
+ *	@exception DevFailed
+ */
+	virtual Tango::DevState	dev_state();
+/**
+ * Availables values are:<br>
+ *	lasterror<br>
+ *	camInfo<br>
+ *	camType<br>
+ *	clTransferParam<br>
+ *	cocRunTime<br>
+ *	frameRate<br>
+ *	maxNbImages<br>
+ *	timestamp<br>
+ *	" "<br>
  *	@param	argin	str argin
  *	@return	str argout
  *	@exception DevFailed
@@ -307,7 +323,8 @@ namespace Pco_ns
 
         std::string             m_pixel_scan_rate; //pixel scan rate 	(SLOW, FAST)
         std::string             m_shutter_mode; //shutter mode name 	(GLOBAL, ROLLING)
-        Tango::DevString        dev_string_val;
+        Tango::DevString        m_dev_string_val;
+        map<string, long>       m_map_scan_rate_frequencies;
     };
 
 } // namespace_ns

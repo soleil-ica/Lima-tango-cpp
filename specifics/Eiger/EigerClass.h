@@ -45,6 +45,18 @@ namespace Eiger_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class softwareVersionAttrib: public Tango::Attr
+{
+public:
+	softwareVersionAttrib():Attr("softwareVersion", Tango::DEV_STRING, Tango::READ) {};
+	~softwareVersionAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_softwareVersion(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_softwareVersion_allowed(ty);}
+};
+
 class compressionAttrib: public Tango::Attr
 {
 public:
@@ -57,6 +69,20 @@ public:
 	{(static_cast<Eiger *>(dev))->write_compression(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 	{return (static_cast<Eiger *>(dev))->is_compression_allowed(ty);}
+};
+
+class autoSummationAttrib: public Tango::Attr
+{
+public:
+	autoSummationAttrib():Attr("autoSummation", Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~autoSummationAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_autoSummation(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_autoSummation(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_autoSummation_allowed(ty);}
 };
 
 class humidityAttrib: public Tango::Attr
@@ -81,6 +107,62 @@ public:
 	{(static_cast<Eiger *>(dev))->read_temperature(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 	{return (static_cast<Eiger *>(dev))->is_temperature_allowed(ty);}
+};
+
+class detectorDistanceAttrib: public Tango::Attr
+{
+public:
+	detectorDistanceAttrib():Attr("detectorDistance", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~detectorDistanceAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_detectorDistance(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_detectorDistance(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_detectorDistance_allowed(ty);}
+};
+
+class beamCenterYAttrib: public Tango::Attr
+{
+public:
+	beamCenterYAttrib():Attr("beamCenterY", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~beamCenterYAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_beamCenterY(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_beamCenterY(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_beamCenterY_allowed(ty);}
+};
+
+class beamCenterXAttrib: public Tango::Attr
+{
+public:
+	beamCenterXAttrib():Attr("beamCenterX", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~beamCenterXAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_beamCenterX(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_beamCenterX(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_beamCenterX_allowed(ty);}
+};
+
+class wavelengthAttrib: public Tango::Attr
+{
+public:
+	wavelengthAttrib():Attr("wavelength", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~wavelengthAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_wavelength(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_wavelength(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_wavelength_allowed(ty);}
 };
 
 class photonEnergyAttrib: public Tango::Attr
@@ -111,18 +193,16 @@ public:
 	{return (static_cast<Eiger *>(dev))->is_thresholdEnergy_allowed(ty);}
 };
 
-class efficiencyCorrectionAttrib: public Tango::Attr
+class dataCollectionDateAttrib: public Tango::Attr
 {
 public:
-	efficiencyCorrectionAttrib():Attr("efficiencyCorrection", Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
-	~efficiencyCorrectionAttrib() {};
+	dataCollectionDateAttrib():Attr("dataCollectionDate", Tango::DEV_STRING, Tango::READ) {};
+	~dataCollectionDateAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Eiger *>(dev))->read_efficiencyCorrection(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Eiger *>(dev))->write_efficiencyCorrection(att);}
+	{(static_cast<Eiger *>(dev))->read_dataCollectionDate(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Eiger *>(dev))->is_efficiencyCorrection_allowed(ty);}
+	{return (static_cast<Eiger *>(dev))->is_dataCollectionDate_allowed(ty);}
 };
 
 class virtualPixelCorrectionAttrib: public Tango::Attr
@@ -181,9 +261,71 @@ public:
 	{return (static_cast<Eiger *>(dev))->is_countrateCorrection_allowed(ty);}
 };
 
+class fileNamePatternAttrib: public Tango::Attr
+{
+public:
+	fileNamePatternAttrib():Attr("fileNamePattern", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~fileNamePatternAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_fileNamePattern(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_fileNamePattern(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_fileNamePattern_allowed(ty);}
+};
+
 //=========================================
 //	Define classes for commands
 //=========================================
+class InitializeClass : public Tango::Command
+{
+public:
+	InitializeClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	InitializeClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~InitializeClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<Eiger *>(dev))->is_Initialize_allowed(any);}
+};
+
+
+
+class AbortClass : public Tango::Command
+{
+public:
+	AbortClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	AbortClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~AbortClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<Eiger *>(dev))->is_Abort_allowed(any);}
+};
+
+
+
 //
 // The EigerClass singleton definition
 //

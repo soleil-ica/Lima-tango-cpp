@@ -53,6 +53,8 @@
 #include "EigerInterface.h"
 #include "EigerCamera.h"
 
+#define MAX_ATTRIBUTE_STRING_LENGTH     256
+
 //using namespace lima::Eiger;
 using namespace lima;
 using namespace yat4tango;
@@ -81,6 +83,20 @@ public :
 	//-----------------------------------------
 	Tango::DevDouble attr_thresholdEnergy_read_cache;
 	Tango::DevDouble attr_photonEnergy_read_cache;
+    Tango::DevBoolean attr_compression_read_cache;
+    Tango::DevBoolean attr_autoSummation_read_cache;
+    Tango::DevBoolean attr_countrateCorrection_read_cache;
+    Tango::DevBoolean attr_virtualPixelCorrection_read_cache;
+    Tango::DevBoolean attr_flatfieldCorrection_read_cache;
+    Tango::DevBoolean attr_pixelMask_read_cache;
+    Tango::DevDouble  attr_temperature_read_cache;
+    Tango::DevDouble  attr_humidity_read_cache;    
+    Tango::DevDouble  attr_wavelength_read_cache;
+    Tango::DevDouble  attr_beamCenterX_read_cache;
+    Tango::DevDouble  attr_beamCenterY_read_cache;
+    Tango::DevDouble  attr_detectorDistance_read_cache;
+    std::string  attr_softwareVersion_read_cache;
+    std::string  attr_dataCollectionDate_read_cache;
 
 	//	Here is the Start of the automatic code generation part
 	//-------------------------------------------------------------	
@@ -89,6 +105,8 @@ public :
  *	Attribute member data.
  */
 //@{
+		Tango::DevString	*attr_fileNamePattern_read;
+		Tango::DevString	attr_fileNamePattern_write;
 		Tango::DevBoolean	*attr_countrateCorrection_read;
 		Tango::DevBoolean	attr_countrateCorrection_write;
 		Tango::DevBoolean	*attr_flatfieldCorrection_read;
@@ -97,16 +115,26 @@ public :
 		Tango::DevBoolean	attr_pixelMask_write;
 		Tango::DevBoolean	*attr_virtualPixelCorrection_read;
 		Tango::DevBoolean	attr_virtualPixelCorrection_write;
-		Tango::DevBoolean	*attr_efficiencyCorrection_read;
-		Tango::DevBoolean	attr_efficiencyCorrection_write;
+		Tango::DevString	*attr_dataCollectionDate_read;
 		Tango::DevDouble	*attr_thresholdEnergy_read;
 		Tango::DevDouble	attr_thresholdEnergy_write;
 		Tango::DevDouble	*attr_photonEnergy_read;
 		Tango::DevDouble	attr_photonEnergy_write;
+		Tango::DevDouble	*attr_wavelength_read;
+		Tango::DevDouble	attr_wavelength_write;
+		Tango::DevDouble	*attr_beamCenterX_read;
+		Tango::DevDouble	attr_beamCenterX_write;
+		Tango::DevDouble	*attr_beamCenterY_read;
+		Tango::DevDouble	attr_beamCenterY_write;
+		Tango::DevDouble	*attr_detectorDistance_read;
+		Tango::DevDouble	attr_detectorDistance_write;
 		Tango::DevDouble	*attr_temperature_read;
 		Tango::DevDouble	*attr_humidity_read;
+		Tango::DevBoolean	*attr_autoSummation_read;
+		Tango::DevBoolean	attr_autoSummation_write;
 		Tango::DevBoolean	*attr_compression_read;
 		Tango::DevBoolean	attr_compression_write;
+		Tango::DevString	*attr_softwareVersion_read;
 //@}
 
 /**
@@ -119,10 +147,9 @@ public :
  */
 	string	detectorIP;
 /**
- *	Path where the Eiger lima plugin will download the file acquired during the last
- *	acquisition. (ex: /tmp )
+ *	
  */
-	string	targetPath;
+	string	memorizedFileNamePattern;
 /**
  *	Stores the value of countrateCorrection
  */
@@ -140,10 +167,6 @@ public :
  */
 	Tango::DevBoolean	memorizedVirtualPixelCorrection;
 /**
- *	Stores the value of efficiencyCorrection
- */
-	Tango::DevBoolean	memorizedEfficiencyCorrection;
-/**
  *	Stores the value of thresholdEnergy
  */
 	Tango::DevDouble	memorizedThresholdEnergy;
@@ -152,9 +175,29 @@ public :
  */
 	Tango::DevDouble	memorizedPhotonEnergy;
 /**
+ *	Stores the value of autoSummation
+ */
+	Tango::DevBoolean	memorizedAutoSummation;
+/**
  *	Stores the value of compression
  */
 	Tango::DevBoolean	memorizedCompression;
+/**
+ *	
+ */
+	Tango::DevDouble	memorizedWavelength;
+/**
+ *	
+ */
+	Tango::DevDouble	memorizedBeamCenterX;
+/**
+ *	
+ */
+	Tango::DevDouble	memorizedBeamCenterY;
+/**
+ *	
+ */
+	Tango::DevDouble	memorizedDetectorDistance;
 //@}
 
 /**
@@ -228,6 +271,14 @@ public :
  */
 	virtual void read_attr_hardware(vector<long> &attr_list);
 /**
+ *	Extract real attribute values for fileNamePattern acquisition result.
+ */
+	virtual void read_fileNamePattern(Tango::Attribute &attr);
+/**
+ *	Write fileNamePattern attribute values to hardware.
+ */
+	virtual void write_fileNamePattern(Tango::WAttribute &attr);
+/**
  *	Extract real attribute values for countrateCorrection acquisition result.
  */
 	virtual void read_countrateCorrection(Tango::Attribute &attr);
@@ -260,13 +311,9 @@ public :
  */
 	virtual void write_virtualPixelCorrection(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for efficiencyCorrection acquisition result.
+ *	Extract real attribute values for dataCollectionDate acquisition result.
  */
-	virtual void read_efficiencyCorrection(Tango::Attribute &attr);
-/**
- *	Write efficiencyCorrection attribute values to hardware.
- */
-	virtual void write_efficiencyCorrection(Tango::WAttribute &attr);
+	virtual void read_dataCollectionDate(Tango::Attribute &attr);
 /**
  *	Extract real attribute values for thresholdEnergy acquisition result.
  */
@@ -284,6 +331,38 @@ public :
  */
 	virtual void write_photonEnergy(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for wavelength acquisition result.
+ */
+	virtual void read_wavelength(Tango::Attribute &attr);
+/**
+ *	Write wavelength attribute values to hardware.
+ */
+	virtual void write_wavelength(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for beamCenterX acquisition result.
+ */
+	virtual void read_beamCenterX(Tango::Attribute &attr);
+/**
+ *	Write beamCenterX attribute values to hardware.
+ */
+	virtual void write_beamCenterX(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for beamCenterY acquisition result.
+ */
+	virtual void read_beamCenterY(Tango::Attribute &attr);
+/**
+ *	Write beamCenterY attribute values to hardware.
+ */
+	virtual void write_beamCenterY(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for detectorDistance acquisition result.
+ */
+	virtual void read_detectorDistance(Tango::Attribute &attr);
+/**
+ *	Write detectorDistance attribute values to hardware.
+ */
+	virtual void write_detectorDistance(Tango::WAttribute &attr);
+/**
  *	Extract real attribute values for temperature acquisition result.
  */
 	virtual void read_temperature(Tango::Attribute &attr);
@@ -292,6 +371,14 @@ public :
  */
 	virtual void read_humidity(Tango::Attribute &attr);
 /**
+ *	Extract real attribute values for autoSummation acquisition result.
+ */
+	virtual void read_autoSummation(Tango::Attribute &attr);
+/**
+ *	Write autoSummation attribute values to hardware.
+ */
+	virtual void write_autoSummation(Tango::WAttribute &attr);
+/**
  *	Extract real attribute values for compression acquisition result.
  */
 	virtual void read_compression(Tango::Attribute &attr);
@@ -299,6 +386,14 @@ public :
  *	Write compression attribute values to hardware.
  */
 	virtual void write_compression(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for softwareVersion acquisition result.
+ */
+	virtual void read_softwareVersion(Tango::Attribute &attr);
+/**
+ *	Read/Write allowed for fileNamePattern attribute.
+ */
+	virtual bool is_fileNamePattern_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for countrateCorrection attribute.
  */
@@ -316,9 +411,9 @@ public :
  */
 	virtual bool is_virtualPixelCorrection_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for efficiencyCorrection attribute.
+ *	Read/Write allowed for dataCollectionDate attribute.
  */
-	virtual bool is_efficiencyCorrection_allowed(Tango::AttReqType type);
+	virtual bool is_dataCollectionDate_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for thresholdEnergy attribute.
  */
@@ -328,6 +423,22 @@ public :
  */
 	virtual bool is_photonEnergy_allowed(Tango::AttReqType type);
 /**
+ *	Read/Write allowed for wavelength attribute.
+ */
+	virtual bool is_wavelength_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for beamCenterX attribute.
+ */
+	virtual bool is_beamCenterX_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for beamCenterY attribute.
+ */
+	virtual bool is_beamCenterY_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for detectorDistance attribute.
+ */
+	virtual bool is_detectorDistance_allowed(Tango::AttReqType type);
+/**
  *	Read/Write allowed for temperature attribute.
  */
 	virtual bool is_temperature_allowed(Tango::AttReqType type);
@@ -336,15 +447,41 @@ public :
  */
 	virtual bool is_humidity_allowed(Tango::AttReqType type);
 /**
+ *	Read/Write allowed for autoSummation attribute.
+ */
+	virtual bool is_autoSummation_allowed(Tango::AttReqType type);
+/**
  *	Read/Write allowed for compression attribute.
  */
 	virtual bool is_compression_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for softwareVersion attribute.
+ */
+	virtual bool is_softwareVersion_allowed(Tango::AttReqType type);
+/**
+ *	Execution allowed for Abort command.
+ */
+	virtual bool is_Abort_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for Initialize command.
+ */
+	virtual bool is_Initialize_allowed(const CORBA::Any &any);
 /**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
  *	@exception DevFailed
  */
 	virtual Tango::DevState	dev_state();
+/**
+ * 
+ *	@exception DevFailed
+ */
+	void	abort();
+/**
+ * 
+ *	@exception DevFailed
+ */
+	void	initialize();
 
 /**
  *	Read the device properties from database
@@ -367,6 +504,7 @@ protected :
    lima::Eiger::Interface* m_hw;
    CtControl*              m_ct;
    lima::Eiger::Camera*    m_camera;		
+   std::string             m_file_name_pattern;
 };
 
 }	// namespace_ns

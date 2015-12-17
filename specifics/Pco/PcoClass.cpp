@@ -367,7 +367,7 @@ void PcoClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	pixel_scan_rate_prop.set_label("Pixel Scan Rate");
 	pixel_scan_rate_prop.set_unit(" ");
 	pixel_scan_rate_prop.set_format("%1d");
-	pixel_scan_rate_prop.set_description("Available Pixel Scan Rates are :<br>\n1 -> LOW (95.3 MHz)<br>\n2 -> HIGH (286 MHz)<br>");
+	pixel_scan_rate_prop.set_description("Available Pixel Scan Rates are :<br>\nLOW  : 95.3 MHz<br>\nHIGH : 286 MHz<br>");
 	pixel_scan_rate->set_default_properties(pixel_scan_rate_prop);
 	att_list.push_back(pixel_scan_rate);
 
@@ -441,6 +441,22 @@ void PcoClass::set_default_property()
 	vector<string>	vect_data;
 	//	Set Default Class Properties
 	//	Set Default Device Properties
+	prop_name = "ScanRateFrequencies";
+	prop_desc = "";
+	prop_def  = "LOW:95333333\nHIGH:286000000";
+	vect_data.clear();
+	vect_data.push_back("LOW:95333333");
+	vect_data.push_back("HIGH:286000000");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 }
 //+----------------------------------------------------------------------------
 //

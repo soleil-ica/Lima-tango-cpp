@@ -24,6 +24,7 @@
 #endif
 
 //- LIMA
+#include "Factory.h"
 #include "lima/CtControl.h"
 #include "lima/CtVideo.h"
 
