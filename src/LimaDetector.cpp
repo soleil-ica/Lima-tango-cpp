@@ -335,7 +335,7 @@ void LimaDetector::init_device()
         //- Get the triggerModeList
         INFO_STREAM << "Configure available trigger mode following the model of the detector." << endl;
         configure_available_trigger_mode();
-        
+
         //fix nb thread
         PoolThreadMgr::get().setNumberOfThread(4);
     }
@@ -1185,10 +1185,33 @@ void LimaDetector::write_fileFormat(Tango::WAttribute &attr)
         }
 
 
-        if(current == "HDF5")
-            m_saving_par.suffix = std::string(".h5");
+        //fix file format
+        if(current == "NXS")
+        {
+            m_saving_par.fileFormat = CtSaving::NXS;
+            m_saving_par.suffix = ".nxs";
+        }
+        else if(current == "EDF")
+        {
+            m_saving_par.fileFormat = CtSaving::EDF;
+            m_saving_par.suffix = ".edf";
+        }
+        else if(current == "CBF")
+        {
+            m_saving_par.fileFormat = CtSaving::CBFFormat;
+            m_saving_par.suffix = ".cbf";
+        }
+        else if(current == "HDF5")
+        {
+            m_saving_par.fileFormat = CtSaving::HDF5;
+            m_saving_par.suffix = ".h5";
+        }
         else
-            m_saving_par.suffix = std::string(".")+attr_fileFormat_write;
+        {
+            m_saving_par.fileFormat = CtSaving::RAW;
+            m_saving_par.suffix = ".raw";
+        }
+
         m_ct->saving()->setParameters(m_saving_par);
 
         yat4tango::PropertyHelper::set_property(this, "FileFormat", current);
@@ -3194,9 +3217,11 @@ void LimaDetector::write_fileGeneration(Tango::WAttribute &attr)
     {
         attr.get_write_value(attr_fileGeneration_write);
         if(attr_fileGeneration_write == true)
-            m_ct->saving()->setSavingMode(CtSaving::AutoFrame);
+            m_saving_par.savingMode = CtSaving::AutoFrame;
         else
-            m_ct->saving()->setSavingMode(CtSaving::Manual);
+            m_saving_par.savingMode = CtSaving::Manual;
+        *attr_fileGeneration_read = attr_fileGeneration_write;
+        m_ct->saving()->setParameters(m_saving_par);
         yat4tango::PropertyHelper::set_property(this, "MemorizedFileGeneration", attr_fileGeneration_write);
     }
     catch(Tango::DevFailed& df)
@@ -3240,7 +3265,7 @@ void LimaDetector::prepare()
                 m_saving_par.savingMode = CtSaving::AutoFrame;
             else
                 m_saving_par.savingMode = CtSaving::Manual;
-
+            *attr_fileGeneration_read = attr_fileGeneration_write;
             m_ct->saving()->setParameters(m_saving_par);
 
             //- in SNAP mode, we request attr_nbFrames_write frames
@@ -3321,7 +3346,7 @@ void LimaDetector::snap()
                 m_saving_par.savingMode = CtSaving::AutoFrame;
             else
                 m_saving_par.savingMode = CtSaving::Manual;
-
+            *attr_fileGeneration_read = attr_fileGeneration_write;
             m_ct->saving()->setParameters(m_saving_par);
 
             //- in SNAP mode, we request attr_nbFrames_write frames
@@ -3397,6 +3422,7 @@ void LimaDetector::start()
 
         //- force NO saving files in continuous mode !
         m_saving_par.savingMode = CtSaving::Manual;
+        *attr_fileGeneration_read = attr_fileGeneration_write = false;
         m_ct->saving()->setParameters(m_saving_par);
 
         //- in START "LIVE" mode, we request (0) as frames number
