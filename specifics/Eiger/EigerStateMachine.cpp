@@ -279,31 +279,6 @@ bool Eiger::is_compression_allowed(Tango::AttReqType type)
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		Eiger::is_fileNamePattern_allowed
-// 
-// description : 	Read/Write allowed for fileNamePattern attribute.
-//
-//-----------------------------------------------------------------------------
-bool Eiger::is_fileNamePattern_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
-		get_state() == Tango::DISABLE	||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
-		{
-           return true;
-		}
-
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
 // method : 		Eiger::is_softwareVersion_allowed
 // 
 // description : 	Read/Write allowed for softwareVersion attribute.

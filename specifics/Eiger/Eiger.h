@@ -105,8 +105,6 @@ public :
  *	Attribute member data.
  */
 //@{
-		Tango::DevString	*attr_fileNamePattern_read;
-		Tango::DevString	attr_fileNamePattern_write;
 		Tango::DevBoolean	*attr_countrateCorrection_read;
 		Tango::DevBoolean	attr_countrateCorrection_write;
 		Tango::DevBoolean	*attr_flatfieldCorrection_read;
@@ -146,10 +144,6 @@ public :
  *	Eiger server IP address (ex: 192.168.0.1)
  */
 	string	detectorIP;
-/**
- *	
- */
-	string	memorizedFileNamePattern;
 /**
  *	Stores the value of countrateCorrection
  */
@@ -271,14 +265,6 @@ public :
  */
 	virtual void read_attr_hardware(vector<long> &attr_list);
 /**
- *	Extract real attribute values for fileNamePattern acquisition result.
- */
-	virtual void read_fileNamePattern(Tango::Attribute &attr);
-/**
- *	Write fileNamePattern attribute values to hardware.
- */
-	virtual void write_fileNamePattern(Tango::WAttribute &attr);
-/**
  *	Extract real attribute values for countrateCorrection acquisition result.
  */
 	virtual void read_countrateCorrection(Tango::Attribute &attr);
@@ -390,10 +376,6 @@ public :
  *	Extract real attribute values for softwareVersion acquisition result.
  */
 	virtual void read_softwareVersion(Tango::Attribute &attr);
-/**
- *	Read/Write allowed for fileNamePattern attribute.
- */
-	virtual bool is_fileNamePattern_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for countrateCorrection attribute.
  */

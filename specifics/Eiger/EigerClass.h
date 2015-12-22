@@ -261,20 +261,6 @@ public:
 	{return (static_cast<Eiger *>(dev))->is_countrateCorrection_allowed(ty);}
 };
 
-class fileNamePatternAttrib: public Tango::Attr
-{
-public:
-	fileNamePatternAttrib():Attr("fileNamePattern", Tango::DEV_STRING, Tango::READ_WRITE) {};
-	~fileNamePatternAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Eiger *>(dev))->read_fileNamePattern(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Eiger *>(dev))->write_fileNamePattern(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Eiger *>(dev))->is_fileNamePattern_allowed(ty);}
-};
-
 //=========================================
 //	Define classes for commands
 //=========================================

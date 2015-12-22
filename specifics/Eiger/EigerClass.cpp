@@ -296,18 +296,6 @@ void EigerClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 //-----------------------------------------------------------------------------
 void EigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 {
-	//	Attribute : fileNamePattern
-	fileNamePatternAttrib	*file_name_pattern = new fileNamePatternAttrib();
-	Tango::UserDefaultAttrProp	file_name_pattern_prop;
-	file_name_pattern_prop.set_unit(" ");
-	file_name_pattern_prop.set_standard_unit(" ");
-	file_name_pattern_prop.set_display_unit(" ");
-	file_name_pattern_prop.set_description("Image file pattern name.");
-	file_name_pattern->set_default_properties(file_name_pattern_prop);
-	file_name_pattern->set_memorized();
-	file_name_pattern->set_memorized_init(false);
-	att_list.push_back(file_name_pattern);
-
 	//	Attribute : countrateCorrection
 	countrateCorrectionAttrib	*countrate_correction = new countrateCorrectionAttrib();
 	Tango::UserDefaultAttrProp	countrate_correction_prop;
@@ -456,21 +444,6 @@ void EigerClass::set_default_property()
 	prop_def  = "127.0.0.1";
 	vect_data.clear();
 	vect_data.push_back("127.0.0.1");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "MemorizedFileNamePattern";
-	prop_desc = "";
-	prop_def  = "lima";
-	vect_data.clear();
-	vect_data.push_back("lima");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

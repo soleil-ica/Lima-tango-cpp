@@ -114,7 +114,6 @@ void Eiger::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_humidity_read);
     DELETE_SCALAR_ATTRIBUTE(attr_compression_read);
     DELETE_SCALAR_ATTRIBUTE(attr_autoSummation_read);        
-    DELETE_SCALAR_ATTRIBUTE(attr_fileNamePattern_read);
     DELETE_SCALAR_ATTRIBUTE(attr_softwareVersion_read);
     DELETE_SCALAR_ATTRIBUTE(attr_dataCollectionDate_read);
 }
@@ -148,7 +147,6 @@ void Eiger::init_device()
     CREATE_SCALAR_ATTRIBUTE(attr_humidity_read);
     CREATE_SCALAR_ATTRIBUTE(attr_compression_read);
     CREATE_SCALAR_ATTRIBUTE(attr_autoSummation_read);    
-    CREATE_DEVSTRING_ATTRIBUTE(attr_fileNamePattern_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_softwareVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dataCollectionDate_read, MAX_ATTRIBUTE_STRING_LENGTH);
 
@@ -193,34 +191,7 @@ void Eiger::init_device()
         return;
     }
 
-    // Write at init
-    try
-    {
-        // Init attributes with memorized properties	
-        //------------------------------------------
-        INFO_STREAM << "Write tango hardware at Init - fileNamePattern." << endl;
-        Tango::WAttribute &fileNamePattern = dev_attr->get_w_attr_by_name("fileNamePattern");
-        m_file_name_pattern = memorizedFileNamePattern;
-        strcpy(*attr_fileNamePattern_read, m_file_name_pattern.c_str());
-        fileNamePattern.set_write_value(*attr_fileNamePattern_read);
-        write_fileNamePattern(fileNamePattern);
-    }
-    catch(Exception& e)
-    {
-        INFO_STREAM << "-- Initialization Failed : " << e.getErrMsg() << endl;
-        m_status_message << "Initialization Failed : " << e.getErrMsg( ) << endl;
-        m_is_device_initialized = false;
-        set_state(Tango::FAULT);
-        return;
-    }
-    catch(...)
-    {
-        INFO_STREAM << "-- Initialization Failed : UNKNOWN" << endl;
-        m_status_message << "Initialization Failed : UNKNOWN" << endl;
-        set_state(Tango::FAULT);
-        m_is_device_initialized = false;
-        return;
-    }
+    
 
     m_is_device_initialized = true;
     set_state(Tango::STANDBY);
@@ -244,7 +215,6 @@ void Eiger::get_device_property()
     //------------------------------------------------------------------
     Tango::DbData	dev_prop;
     dev_prop.push_back(Tango::DbDatum("DetectorIP"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedFileNamePattern"));
     dev_prop.push_back(Tango::DbDatum("MemorizedCountrateCorrection"));
     dev_prop.push_back(Tango::DbDatum("MemorizedFlatfieldCorrection"));
     dev_prop.push_back(Tango::DbDatum("MemorizedPixelMask"));
@@ -270,8 +240,7 @@ void Eiger::get_device_property()
     //	Try to initialize DetectorIP from class property
     cl_prop = ds_class->get_class_property(dev_prop[++i].name);
     if (cl_prop.is_empty()==false)	cl_prop  >>  detectorIP;
-    else
-    {
+	else {
         //	Try to initialize DetectorIP from default device value
         def_prop = ds_class->get_default_device_property(dev_prop[i].name);
         if (def_prop.is_empty()==false)	def_prop  >>  detectorIP;
@@ -279,23 +248,10 @@ void Eiger::get_device_property()
     //	And try to extract DetectorIP value from database
     if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  detectorIP;
 
-    //	Try to initialize MemorizedFileNamePattern from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedFileNamePattern;
-    else
-    {
-        //	Try to initialize MemorizedFileNamePattern from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty()==false)	def_prop  >>  memorizedFileNamePattern;
-    }
-    //	And try to extract MemorizedFileNamePattern value from database
-    if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedFileNamePattern;
-
     //	Try to initialize MemorizedCountrateCorrection from class property
     cl_prop = ds_class->get_class_property(dev_prop[++i].name);
     if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedCountrateCorrection;
-    else
-    {
+	else {
         //	Try to initialize MemorizedCountrateCorrection from default device value
         def_prop = ds_class->get_default_device_property(dev_prop[i].name);
         if (def_prop.is_empty()==false)	def_prop  >>  memorizedCountrateCorrection;
@@ -306,8 +262,7 @@ void Eiger::get_device_property()
     //	Try to initialize MemorizedFlatfieldCorrection from class property
     cl_prop = ds_class->get_class_property(dev_prop[++i].name);
     if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedFlatfieldCorrection;
-    else
-    {
+	else {
         //	Try to initialize MemorizedFlatfieldCorrection from default device value
         def_prop = ds_class->get_default_device_property(dev_prop[i].name);
         if (def_prop.is_empty()==false)	def_prop  >>  memorizedFlatfieldCorrection;
@@ -318,8 +273,7 @@ void Eiger::get_device_property()
     //	Try to initialize MemorizedPixelMask from class property
     cl_prop = ds_class->get_class_property(dev_prop[++i].name);
     if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedPixelMask;
-    else
-    {
+	else {
         //	Try to initialize MemorizedPixelMask from default device value
         def_prop = ds_class->get_default_device_property(dev_prop[i].name);
         if (def_prop.is_empty()==false)	def_prop  >>  memorizedPixelMask;
@@ -330,8 +284,7 @@ void Eiger::get_device_property()
     //	Try to initialize MemorizedVirtualPixelCorrection from class property
     cl_prop = ds_class->get_class_property(dev_prop[++i].name);
     if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedVirtualPixelCorrection;
-    else
-    {
+	else {
         //	Try to initialize MemorizedVirtualPixelCorrection from default device value
         def_prop = ds_class->get_default_device_property(dev_prop[i].name);
         if (def_prop.is_empty()==false)	def_prop  >>  memorizedVirtualPixelCorrection;
@@ -342,8 +295,7 @@ void Eiger::get_device_property()
     //	Try to initialize MemorizedThresholdEnergy from class property
     cl_prop = ds_class->get_class_property(dev_prop[++i].name);
     if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedThresholdEnergy;
-    else
-    {
+	else {
         //	Try to initialize MemorizedThresholdEnergy from default device value
         def_prop = ds_class->get_default_device_property(dev_prop[i].name);
         if (def_prop.is_empty()==false)	def_prop  >>  memorizedThresholdEnergy;
@@ -354,8 +306,7 @@ void Eiger::get_device_property()
     //	Try to initialize MemorizedPhotonEnergy from class property
     cl_prop = ds_class->get_class_property(dev_prop[++i].name);
     if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedPhotonEnergy;
-    else
-    {
+	else {
         //	Try to initialize MemorizedPhotonEnergy from default device value
         def_prop = ds_class->get_default_device_property(dev_prop[i].name);
         if (def_prop.is_empty()==false)	def_prop  >>  memorizedPhotonEnergy;
@@ -366,8 +317,7 @@ void Eiger::get_device_property()
     //	Try to initialize MemorizedAutoSummation from class property
     cl_prop = ds_class->get_class_property(dev_prop[++i].name);
     if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedAutoSummation;
-    else
-    {
+	else {
         //	Try to initialize MemorizedAutoSummation from default device value
         def_prop = ds_class->get_default_device_property(dev_prop[i].name);
         if (def_prop.is_empty()==false)	def_prop  >>  memorizedAutoSummation;
@@ -378,8 +328,7 @@ void Eiger::get_device_property()
     //	Try to initialize MemorizedCompression from class property
     cl_prop = ds_class->get_class_property(dev_prop[++i].name);
     if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedCompression;
-    else
-    {
+	else {
         //	Try to initialize MemorizedCompression from default device value
         def_prop = ds_class->get_default_device_property(dev_prop[i].name);
         if (def_prop.is_empty()==false)	def_prop  >>  memorizedCompression;
@@ -390,8 +339,7 @@ void Eiger::get_device_property()
     //	Try to initialize MemorizedWavelength from class property
     cl_prop = ds_class->get_class_property(dev_prop[++i].name);
     if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedWavelength;
-    else
-    {
+	else {
         //	Try to initialize MemorizedWavelength from default device value
         def_prop = ds_class->get_default_device_property(dev_prop[i].name);
         if (def_prop.is_empty()==false)	def_prop  >>  memorizedWavelength;
@@ -402,8 +350,7 @@ void Eiger::get_device_property()
     //	Try to initialize MemorizedBeamCenterX from class property
     cl_prop = ds_class->get_class_property(dev_prop[++i].name);
     if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedBeamCenterX;
-    else
-    {
+	else {
         //	Try to initialize MemorizedBeamCenterX from default device value
         def_prop = ds_class->get_default_device_property(dev_prop[i].name);
         if (def_prop.is_empty()==false)	def_prop  >>  memorizedBeamCenterX;
@@ -414,8 +361,7 @@ void Eiger::get_device_property()
     //	Try to initialize MemorizedBeamCenterY from class property
     cl_prop = ds_class->get_class_property(dev_prop[++i].name);
     if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedBeamCenterY;
-    else
-    {
+	else {
         //	Try to initialize MemorizedBeamCenterY from default device value
         def_prop = ds_class->get_default_device_property(dev_prop[i].name);
         if (def_prop.is_empty()==false)	def_prop  >>  memorizedBeamCenterY;
@@ -426,8 +372,7 @@ void Eiger::get_device_property()
     //	Try to initialize MemorizedDetectorDistance from class property
     cl_prop = ds_class->get_class_property(dev_prop[++i].name);
     if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedDetectorDistance;
-    else
-    {
+	else {
         //	Try to initialize MemorizedDetectorDistance from default device value
         def_prop = ds_class->get_default_device_property(dev_prop[i].name);
         if (def_prop.is_empty()==false)	def_prop  >>  memorizedDetectorDistance;
@@ -440,8 +385,6 @@ void Eiger::get_device_property()
     //	End of Automatic code generation
     //------------------------------------------------------------------
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "DetectorIP");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "/tmp", 	 "TargetPath");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "lima", 	 "FileNamePattern");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", 	 "MemorizedCountrateCorrection");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	 "MemorizedFlatfieldCorrection");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false",	 "MemorizedPixelMask");
@@ -453,9 +396,6 @@ void Eiger::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedBeamCenterY");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedWavelength");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedDetectorDistance");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	 "UseDownloader");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	 "UseReader");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", 	 "UseVerboseRestful");
 }
 //+----------------------------------------------------------------------------
 //
@@ -529,7 +469,7 @@ void Eiger::read_autoSummation(Tango::Attribute &attr)
     {
         if ( Tango::STANDBY == get_state() )
         {
-            m_camera->getAutoSummation(*attr_compression_read);
+            m_camera->getAutoSummation(*attr_autoSummation_read);
             attr_autoSummation_read_cache = *attr_autoSummation_read;
         }
         else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
@@ -986,73 +926,6 @@ void Eiger::read_dataCollectionDate(Tango::Attribute &attr)
     }
 }
 
-//+----------------------------------------------------------------------------
-//
-// method : 		Eiger::read_fileNamePattern
-// 
-// description : 	Extract real attribute values for fileNamePattern acquisition result.
-//
-//-----------------------------------------------------------------------------
-void Eiger::read_fileNamePattern(Tango::Attribute &attr)
-{
-    DEBUG_STREAM << "Eiger::read_fileNamePattern(Tango::Attribute &attr) entering... "<< endl;
-    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-    try
-    {
-        //        strcpy(*attr_fileNamePattern_read, m_file_name_pattern.c_str());
-        //        attr.set_value(attr_fileNamePattern_read);
-    }
-    catch(Tango::DevFailed& df)
-    {
-        ERROR_STREAM << df << endl;
-        //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*>("Eiger::read_fileNamePattern"));
-    }
-    catch(Exception& e)
-    {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_fileNamePattern" );
-    }
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		Eiger::write_fileNamePattern
-// 
-// description : 	Write fileNamePattern attribute values to hardware.
-//
-//-----------------------------------------------------------------------------
-void Eiger::write_fileNamePattern(Tango::WAttribute &attr)
-{
-    DEBUG_STREAM << "Eiger::write_fileNamePattern(Tango::WAttribute &attr) entering... "<< endl;
-    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-    try
-    {
-        //        attr.get_write_value(attr_fileNamePattern_write);
-        //        m_file_name_pattern = attr_fileNamePattern_write;
-        //        m_camera->setFileNamePattern(m_file_name_pattern);
-        //        PropertyHelper::set_property(this, "MemorizedFileNamePattern", m_file_name_pattern);
-    }
-    catch(Tango::DevFailed& df)
-    {
-        ERROR_STREAM << df << endl;
-        //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*>("Eiger::write_fileNamePattern"));
-    }
-    catch(Exception& e)
-    {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::write_fileNamePattern" );
-    }
-}
 
 //+----------------------------------------------------------------------------
 //

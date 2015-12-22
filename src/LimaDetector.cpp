@@ -290,6 +290,9 @@ void LimaDetector::init_device()
         //- reset image, allow to redefine type image according to  CurrentImageType of the HwDetInfoCtrlObj
         m_ct->image()->reset();
 
+//DO NOT ENABLE ROI/VIDEO IN HWSAVING MODE
+if(fileManagedMode != "HARDWARE")
+{
         //- reload Roi from property
         INFO_STREAM << "Reload ROI of detector from Roi property." << endl;
         Roi roi_values(0, 0, 0, 0);
@@ -312,6 +315,11 @@ void LimaDetector::init_device()
         Bin bin_values(memorizedBinningH, memorizedBinningV);
         m_ct->image()->setBin(bin_values);
 
+        //- Activate video mode in order to get notification associated to image acquisition
+        INFO_STREAM << "Activate video mode in order to get notification for each acquired image." << endl;
+        m_ct->video()->setActive(true);
+}
+
         //add dynamic attribue for Shutter if necessary
         INFO_STREAM << "Add shutter dynamic attributes following the model of the detector." << endl;
         add_shutter_dynamic_attributes();
@@ -328,15 +336,12 @@ void LimaDetector::init_device()
         INFO_STREAM << "Configure the video mode according to VideoMode property." << endl;
         configure_video_mode();
 
-        //- Activate video mode in order to get notification associated to image acquisition
-        INFO_STREAM << "Activate video mode in order to get notification for each acquired image." << endl;
-        m_ct->video()->setActive(true);
-
         //- Get the triggerModeList
         INFO_STREAM << "Configure available trigger mode following the model of the detector." << endl;
         configure_available_trigger_mode();
 
         //fix nb thread
+        INFO_STREAM << "Fix Nb. Pool Thread Manager to 4." << endl;
         PoolThreadMgr::get().setNumberOfThread(4);
     }
     catch(Exception& e)
