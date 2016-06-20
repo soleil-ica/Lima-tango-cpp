@@ -57,6 +57,20 @@ public:
 	{return (static_cast<Eiger *>(dev))->is_softwareVersion_allowed(ty);}
 };
 
+class compressionTypeAttrib: public Tango::Attr
+{
+public:
+	compressionTypeAttrib():Attr("compressionType", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~compressionTypeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_compressionType(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_compressionType(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_compressionType_allowed(ty);}
+};
+
 class compressionAttrib: public Tango::Attr
 {
 public:
@@ -83,6 +97,118 @@ public:
 	{(static_cast<Eiger *>(dev))->write_autoSummation(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 	{return (static_cast<Eiger *>(dev))->is_autoSummation_allowed(ty);}
+};
+
+class phiStartAttrib: public Tango::Attr
+{
+public:
+	phiStartAttrib():Attr("phiStart", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~phiStartAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_phiStart(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_phiStart(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_phiStart_allowed(ty);}
+};
+
+class phiIncrementAttrib: public Tango::Attr
+{
+public:
+	phiIncrementAttrib():Attr("phiIncrement", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~phiIncrementAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_phiIncrement(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_phiIncrement(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_phiIncrement_allowed(ty);}
+};
+
+class omegaStartAttrib: public Tango::Attr
+{
+public:
+	omegaStartAttrib():Attr("omegaStart", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~omegaStartAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_omegaStart(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_omegaStart(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_omegaStart_allowed(ty);}
+};
+
+class omegaIncrementAttrib: public Tango::Attr
+{
+public:
+	omegaIncrementAttrib():Attr("omegaIncrement", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~omegaIncrementAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_omegaIncrement(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_omegaIncrement(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_omegaIncrement_allowed(ty);}
+};
+
+class kappaStartAttrib: public Tango::Attr
+{
+public:
+	kappaStartAttrib():Attr("kappaStart", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~kappaStartAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_kappaStart(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_kappaStart(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_kappaStart_allowed(ty);}
+};
+
+class kappaIncrementAttrib: public Tango::Attr
+{
+public:
+	kappaIncrementAttrib():Attr("kappaIncrement", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~kappaIncrementAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_kappaIncrement(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_kappaIncrement(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_kappaIncrement_allowed(ty);}
+};
+
+class chiStartAttrib: public Tango::Attr
+{
+public:
+	chiStartAttrib():Attr("chiStart", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~chiStartAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_chiStart(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_chiStart(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_chiStart_allowed(ty);}
+};
+
+class chiIncrementAttrib: public Tango::Attr
+{
+public:
+	chiIncrementAttrib():Attr("chiIncrement", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~chiIncrementAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_chiIncrement(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_chiIncrement(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_chiIncrement_allowed(ty);}
 };
 
 class humidityAttrib: public Tango::Attr

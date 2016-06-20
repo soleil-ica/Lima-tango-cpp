@@ -280,7 +280,7 @@ void AviexCCD::init_device()
 
     m_is_device_initialized = true;
     set_state(Tango::STANDBY);
-    this->dev_state();
+    dev_state();
 }
 
 
@@ -315,7 +315,7 @@ void AviexCCD::get_device_property()
         get_db_device()->get_property(dev_prop);
     Tango::DbDatum def_prop, cl_prop;
     AviexCCDClass *ds_class =
-    (static_cast<AviexCCDClass *> (get_device_class()));
+     (static_cast<AviexCCDClass *> (get_device_class()));
     int i = -1;
 
     //	Try to initialize DetectorID from class property
@@ -455,13 +455,13 @@ void AviexCCD::always_executed_hook()
     try
     {
         yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-        m_status_message.str("");		
+        m_status_message.str("");
         //- get the singleton control objet used to pilot the lima framework
         m_ct = ControlFactory::instance().get_control("AviexCCD");
-        
-		//- get interface to specific camera
+
+        //- get interface to specific camera
         m_hw = dynamic_cast<Aviex::Interface*> (m_ct->hwInterface());
-		
+
         //- get camera to specific detector
         m_camera = &(m_hw->getCamera());
 
@@ -513,12 +513,12 @@ void AviexCCD::read_mxLibraryVersion(Tango::Attribute &attr)
 {
     DEBUG_STREAM << "AviexCCD::read_mxLibraryVersion(Tango::Attribute &attr) entering... " << endl;
     try
-    {        
+    {
         std::string mx_version;
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-        m_camera->getMxLibraryVersion(mx_version);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->getMxLibraryVersion(mx_version);
+        }
         strcpy(*attr_mxLibraryVersion_read, mx_version.c_str());
 
         attr.set_value(attr_mxLibraryVersion_read);
@@ -528,18 +528,18 @@ void AviexCCD::read_mxLibraryVersion(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::read_mxLibraryVersion"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::read_mxLibraryVersion");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
         Tango::Except::throw_exception(
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (e.getErrMsg().c_str()),
-        static_cast<const char*> ("AviexCCD::read_mxLibraryVersion"));
+                                       "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "AviexCCD::read_mxLibraryVersion");
     }
 }
 
@@ -558,10 +558,10 @@ void AviexCCD::read_initialDelayTime(Tango::Attribute &attr)
     try
     {
         double initial_delay_time;
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());		
-        m_camera->getInitialDelayTime(initial_delay_time);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->getInitialDelayTime(initial_delay_time);
+        }
         *attr_initialDelayTime_read = initial_delay_time * 1000;
         attr.set_value(attr_initialDelayTime_read);
     }
@@ -570,9 +570,9 @@ void AviexCCD::read_initialDelayTime(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::read_initialDelayTime"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::read_initialDelayTime");
     }
 }
 
@@ -590,10 +590,10 @@ void AviexCCD::write_initialDelayTime(Tango::WAttribute &attr)
     try
     {
         attr.get_write_value(attr_initialDelayTime_write);
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());		
-        m_camera->setInitialDelayTime(attr_initialDelayTime_write / 1000);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->setInitialDelayTime(attr_initialDelayTime_write / 1000);
+        }
         PropertyHelper::set_property(this, "MemorizedInitialDelayTime", attr_initialDelayTime_write);
     }
     catch (Tango::DevFailed& df)
@@ -601,9 +601,9 @@ void AviexCCD::write_initialDelayTime(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::write_initialDelayTime"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::write_initialDelayTime");
     }
 }
 
@@ -620,10 +620,10 @@ void AviexCCD::read_readoutDelayTime(Tango::Attribute &attr)
     try
     {
         double readout_delay_time;
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());		
-        m_camera->getReadoutDelayTime(readout_delay_time);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->getReadoutDelayTime(readout_delay_time);
+        }
         *attr_readoutDelayTime_read = readout_delay_time * 1000;
         attr.set_value(attr_readoutDelayTime_read);
     }
@@ -632,9 +632,9 @@ void AviexCCD::read_readoutDelayTime(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::read_readoutDelayTime"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::read_readoutDelayTime");
     }
 }
 
@@ -651,10 +651,10 @@ void AviexCCD::write_readoutDelayTime(Tango::WAttribute &attr)
     try
     {
         attr.get_write_value(attr_readoutDelayTime_write);
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-        m_camera->setReadoutDelayTime(attr_readoutDelayTime_write / 1000);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->setReadoutDelayTime(attr_readoutDelayTime_write / 1000);
+        }
         PropertyHelper::set_property(this, "MemorizedReadoutDelayTime", attr_readoutDelayTime_write);
     }
     catch (Tango::DevFailed& df)
@@ -662,9 +662,9 @@ void AviexCCD::write_readoutDelayTime(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::write_readoutDelayTime"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::write_readoutDelayTime");
     }
 }
 
@@ -680,10 +680,10 @@ void AviexCCD::read_exposureMultiplier(Tango::Attribute &attr)
     DEBUG_STREAM << "AviexCCD::read_exposureMultiplier(Tango::Attribute &attr) entering... " << endl;
     try
     {
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());		
-        m_camera->getExpMultiplier(*attr_exposureMultiplier_read);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->getExpMultiplier(*attr_exposureMultiplier_read);
+        }
         attr.set_value(attr_exposureMultiplier_read);
     }
     catch (Tango::DevFailed& df)
@@ -691,9 +691,9 @@ void AviexCCD::read_exposureMultiplier(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::read_exposureMultiplier"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::read_exposureMultiplier");
     }
 }
 
@@ -710,10 +710,10 @@ void AviexCCD::write_exposureMultiplier(Tango::WAttribute &attr)
     try
     {
         attr.get_write_value(attr_exposureMultiplier_write);
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-        m_camera->setExpMultiplier(attr_exposureMultiplier_write);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->setExpMultiplier(attr_exposureMultiplier_write);
+        }
         PropertyHelper::set_property(this, "MemorizedExposureMultiplier", attr_exposureMultiplier_write);
     }
     catch (Tango::DevFailed& df)
@@ -721,9 +721,9 @@ void AviexCCD::write_exposureMultiplier(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::write_exposureMultiplier"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::write_exposureMultiplier");
     }
 }
 
@@ -739,10 +739,10 @@ void AviexCCD::read_gapMultiplier(Tango::Attribute &attr)
     DEBUG_STREAM << "AviexCCD::read_gapMultiplier(Tango::Attribute &attr) entering... " << endl;
     try
     {
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());		
-        m_camera->getGapMultiplier(*attr_gapMultiplier_read);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->getGapMultiplier(*attr_gapMultiplier_read);
+        }
         attr.set_value(attr_gapMultiplier_read);
     }
     catch (Tango::DevFailed& df)
@@ -750,9 +750,9 @@ void AviexCCD::read_gapMultiplier(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::read_gapMultiplier"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::read_gapMultiplier");
     }
 }
 
@@ -769,10 +769,10 @@ void AviexCCD::write_gapMultiplier(Tango::WAttribute &attr)
     try
     {
         attr.get_write_value(attr_gapMultiplier_write);
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());		
-        m_camera->setGapMultiplier(attr_gapMultiplier_write);
-		}		
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->setGapMultiplier(attr_gapMultiplier_write);
+        }
         PropertyHelper::set_property(this, "MemorizedGapMultiplier", attr_gapMultiplier_write);
     }
     catch (Tango::DevFailed& df)
@@ -780,9 +780,9 @@ void AviexCCD::write_gapMultiplier(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::write_gapMultiplier"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::write_gapMultiplier");
     }
 }
 
@@ -806,9 +806,9 @@ void AviexCCD::read_maskCorrection(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::read_maskCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::read_maskCorrection");
     }
 }
 
@@ -826,10 +826,10 @@ void AviexCCD::write_maskCorrection(Tango::WAttribute &attr)
     {
         attr.get_write_value(attr_maskCorrection_write);
         (attr_maskCorrection_write == true) ? SET(m_correction_flags, MASK_CORRECTION_BIT_POSITION) : CLR(m_correction_flags, MASK_CORRECTION_BIT_POSITION);
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());		
-        m_camera->setCorrectionFlags(m_correction_flags);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->setCorrectionFlags(m_correction_flags);
+        }
         PropertyHelper::set_property(this, "MemorizedCorrectionFlags", m_correction_flags);
     }
     catch (Tango::DevFailed& df)
@@ -837,9 +837,9 @@ void AviexCCD::write_maskCorrection(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::write_maskCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::write_maskCorrection");
     }
 }
 
@@ -863,9 +863,9 @@ void AviexCCD::read_biasCorrection(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::read_biasCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::read_biasCorrection");
     }
 }
 
@@ -883,10 +883,10 @@ void AviexCCD::write_biasCorrection(Tango::WAttribute &attr)
     {
         attr.get_write_value(attr_biasCorrection_write);
         (attr_biasCorrection_write == true) ? SET(m_correction_flags, BIAS_CORRECTION_BIT_POSITION) : CLR(m_correction_flags, BIAS_CORRECTION_BIT_POSITION);
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());		
-        m_camera->setCorrectionFlags(m_correction_flags);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->setCorrectionFlags(m_correction_flags);
+        }
         PropertyHelper::set_property(this, "MemorizedCorrectionFlags", m_correction_flags);
     }
     catch (Tango::DevFailed& df)
@@ -894,9 +894,9 @@ void AviexCCD::write_biasCorrection(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::write_biasCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::write_biasCorrection");
     }
 }
 
@@ -920,9 +920,9 @@ void AviexCCD::read_darkCorrection(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::read_darkCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::read_darkCorrection");
     }
 }
 
@@ -940,10 +940,10 @@ void AviexCCD::write_darkCorrection(Tango::WAttribute &attr)
     {
         attr.get_write_value(attr_darkCorrection_write);
         (attr_darkCorrection_write == true) ? SET(m_correction_flags, DARK_CORRECTION_BIT_POSITION) : CLR(m_correction_flags, DARK_CORRECTION_BIT_POSITION);
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());		
-        m_camera->setCorrectionFlags(m_correction_flags);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->setCorrectionFlags(m_correction_flags);
+        }
         PropertyHelper::set_property(this, "MemorizedCorrectionFlags", m_correction_flags);
     }
     catch (Tango::DevFailed& df)
@@ -951,9 +951,9 @@ void AviexCCD::write_darkCorrection(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::write_darkCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::write_darkCorrection");
     }
 }
 
@@ -977,9 +977,9 @@ void AviexCCD::read_floodCorrection(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::read_floodCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::read_floodCorrection");
     }
 }
 
@@ -997,10 +997,10 @@ void AviexCCD::write_floodCorrection(Tango::WAttribute &attr)
     {
         attr.get_write_value(attr_floodCorrection_write);
         (attr_floodCorrection_write == true) ? SET(m_correction_flags, FLOOD_CORRECTION_BIT_POSITION) : CLR(m_correction_flags, FLOOD_CORRECTION_BIT_POSITION);
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());		
-        m_camera->setCorrectionFlags(m_correction_flags);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->setCorrectionFlags(m_correction_flags);
+        }
         PropertyHelper::set_property(this, "MemorizedCorrectionFlags", m_correction_flags);
     }
     catch (Tango::DevFailed& df)
@@ -1008,9 +1008,9 @@ void AviexCCD::write_floodCorrection(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::write_floodCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::write_floodCorrection");
     }
 }
 
@@ -1034,9 +1034,9 @@ void AviexCCD::read_geomCorrection(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::read_geomCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::read_geomCorrection");
     }
 }
 
@@ -1054,10 +1054,10 @@ void AviexCCD::write_geomCorrection(Tango::WAttribute &attr)
     {
         attr.get_write_value(attr_geomCorrection_write);
         (attr_geomCorrection_write == true) ? SET(m_correction_flags, GEOM_CORRECTION_BIT_POSITION) : CLR(m_correction_flags, GEOM_CORRECTION_BIT_POSITION);
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());		
-        m_camera->setCorrectionFlags(m_correction_flags);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->setCorrectionFlags(m_correction_flags);
+        }
         PropertyHelper::set_property(this, "MemorizedCorrectionFlags", m_correction_flags);
     }
     catch (Tango::DevFailed& df)
@@ -1065,9 +1065,9 @@ void AviexCCD::write_geomCorrection(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::write_geomCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::write_geomCorrection");
     }
 }
 
@@ -1091,9 +1091,9 @@ void AviexCCD::read_highSpeed(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::read_highSpeed"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::read_highSpeed");
     }
 }
 
@@ -1110,10 +1110,10 @@ void AviexCCD::write_highSpeed(Tango::WAttribute &attr)
     try
     {
         attr.get_write_value(attr_highSpeed_write);
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());		
-        m_camera->setReadoutSpeed(attr_highSpeed_write);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->setReadoutSpeed(attr_highSpeed_write);
+        }
         PropertyHelper::set_property(this, "MemorizedHighSpeed", attr_highSpeed_write);
     }
     catch (Tango::DevFailed& df)
@@ -1121,9 +1121,9 @@ void AviexCCD::write_highSpeed(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::write_highSpeed"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::write_highSpeed");
     }
 }
 
@@ -1140,10 +1140,10 @@ void AviexCCD::read_internalAcquisitionMode(Tango::Attribute &attr)
     try
     {
         std::string acq_mode;
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());		
-        m_camera->getInternalAcqMode(acq_mode);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->getInternalAcqMode(acq_mode);
+        }
         strcpy(*attr_internalAcquisitionMode_read, acq_mode.c_str());
 
         attr.set_value(attr_internalAcquisitionMode_read);
@@ -1153,18 +1153,18 @@ void AviexCCD::read_internalAcquisitionMode(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::read_internalAcquisitionMode"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::read_internalAcquisitionMode");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
         Tango::Except::throw_exception(
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (e.getErrMsg().c_str()),
-        static_cast<const char*> ("AviexCCD::read_internalAcquisitionMode"));
+                                       "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "AviexCCD::read_internalAcquisitionMode");
     }
 }
 
@@ -1184,34 +1184,34 @@ void AviexCCD::write_internalAcquisitionMode(Tango::WAttribute &attr)
         string previous = m_acquisition_mode;
         attr.get_write_value(attr_internalAcquisitionMode_write);
         string current = attr_internalAcquisitionMode_write;
-		transform(current.begin(), current.end(), current.begin(), ::toupper);
+        transform(current.begin(), current.end(), current.begin(), ::toupper);
         if (current != "ONESHOT" &&
-			current != "CONTINUOUS" &&
-			current != "MULTIFRAME" &&
-			current != "GEOMETRICAL" &&
-			current != "MEASURE_DARK" &&
-			current != "MEASURE_FLOOD_FIELD")
+            current != "CONTINUOUS" &&
+            current != "MULTIFRAME" &&
+            current != "GEOMETRICAL" &&
+            current != "MEASURE_DARK" &&
+            current != "MEASURE_FLOOD_FIELD")
         {
-            m_acquisition_mode = previous;            
+            m_acquisition_mode = previous;
             strcpy(attr_internalAcquisitionMode_write, m_acquisition_mode.c_str());
 
-            Tango::Except::throw_exception((const char*) ("CONFIGURATION_ERROR"),
-            (const char*) ("Available Internal Acquisition Modes are:"
-            "\n- ONESHOT"
-            "\n- CONTINUOUS"
-            "\n- MULTIFRAME"
-            "\n- GEOMETRICAL"
-            "\n- MEASURE_DARK"
-            "\n- MEASURE_FLOOD_FIELD\n"),
-            (const char*) ("AviexCCD::write_internalAcquisitionMode"));
+            Tango::Except::throw_exception("CONFIGURATION_ERROR",
+                                           "Available Internal Acquisition Modes are:"
+                                           "\n- ONESHOT"
+                                           "\n- CONTINUOUS"
+                                           "\n- MULTIFRAME"
+                                           "\n- GEOMETRICAL"
+                                           "\n- MEASURE_DARK"
+                                           "\n- MEASURE_FLOOD_FIELD\n",
+                                           "AviexCCD::write_internalAcquisitionMode");
         }
 
         //- THIS IS AN AVAILABLE ACQUISTION MODE
         m_acquisition_mode = attr_internalAcquisitionMode_write;
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-        m_camera->setInternalAcqMode(m_acquisition_mode);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->setInternalAcqMode(m_acquisition_mode);
+        }
         PropertyHelper::set_property(this, "MemorizedInternalAcquisitionMode", m_acquisition_mode);
 
     }
@@ -1220,18 +1220,18 @@ void AviexCCD::write_internalAcquisitionMode(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::write_internalAcquisitionMode"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::write_internalAcquisitionMode");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
         Tango::Except::throw_exception(
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (e.getErrMsg().c_str()),
-        static_cast<const char*> ("AviexCCD::write_internalAcquisitionMode"));
+                                       "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "AviexCCD::write_internalAcquisitionMode");
     }
 }
 
@@ -1255,37 +1255,37 @@ void AviexCCD::set_param(const Tango::DevVarStringArray *argin)
     {
         DEBUG_STREAM << "Invalid argument number : there should be 2 arguments\n" << endl;
         Tango::Except::throw_exception(
-        (const char*) ("CONFIGURATION_ERROR"),
-        (const char*) ("Invalid argument number : there should be 2 arguments\n"),
-        (const char*) ("AviexCCD::set_param"));
+                                       "CONFIGURATION_ERROR",
+                                       "Invalid argument number : there should be 2 arguments\n",
+                                       "AviexCCD::set_param");
     }
 
     try
     {
         string name = string((*argin)[0]);
         string val = string((*argin)[1]);
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-        m_camera->setExtraParam(name, val);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->setExtraParam(name, val);
+        }
     }
     catch (Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::set_param"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::set_param");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
         Tango::Except::throw_exception(
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (e.getErrMsg().c_str()),
-        static_cast<const char*> ("AviexCCD::set_param"));
+                                       "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "AviexCCD::set_param");
     }
 
 }
@@ -1306,15 +1306,15 @@ Tango::DevString AviexCCD::get_param(Tango::DevString argin)
     DEBUG_STREAM << "AviexCCD::get_param(): entering... !" << endl;
 
     //	Add your own code to control device here
-    Tango::DevString argout;    
+    Tango::DevString argout;
     try
     {
-		string res("");
+        string res("");
         string param_name = argin;
-		{
-		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-        res = m_camera->getExtraParam(argin);
-		}
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            res = m_camera->getExtraParam(argin);
+        }
 
         argout = new char[res.size() + 1];
         if (res.size() > 0)
@@ -1328,18 +1328,18 @@ Tango::DevString AviexCCD::get_param(Tango::DevString argin)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-        static_cast<const char*> ("AviexCCD::get_param"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "AviexCCD::get_param");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
         Tango::Except::throw_exception(
-        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-        static_cast<const char*> (e.getErrMsg().c_str()),
-        static_cast<const char*> ("AviexCCD::get_param"));
+                                       "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "AviexCCD::get_param");
     }
     return argout;
 }

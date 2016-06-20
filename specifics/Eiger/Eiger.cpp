@@ -113,9 +113,18 @@ void Eiger::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_temperature_read);
     DELETE_SCALAR_ATTRIBUTE(attr_humidity_read);
     DELETE_SCALAR_ATTRIBUTE(attr_compression_read);
-    DELETE_SCALAR_ATTRIBUTE(attr_autoSummation_read);        
+    DELETE_SCALAR_ATTRIBUTE(attr_autoSummation_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_compressionType_read);
     DELETE_SCALAR_ATTRIBUTE(attr_softwareVersion_read);
     DELETE_SCALAR_ATTRIBUTE(attr_dataCollectionDate_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_chiIncrement_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_chiStart_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_kappaIncrement_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_kappaStart_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_omegaIncrement_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_omegaStart_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_phiIncrement_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_phiStart_read);
 }
 
 //+----------------------------------------------------------------------------
@@ -146,9 +155,18 @@ void Eiger::init_device()
     CREATE_SCALAR_ATTRIBUTE(attr_temperature_read);
     CREATE_SCALAR_ATTRIBUTE(attr_humidity_read);
     CREATE_SCALAR_ATTRIBUTE(attr_compression_read);
-    CREATE_SCALAR_ATTRIBUTE(attr_autoSummation_read);    
+    CREATE_SCALAR_ATTRIBUTE(attr_autoSummation_read);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_compressionType_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_softwareVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dataCollectionDate_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_SCALAR_ATTRIBUTE(attr_chiIncrement_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_chiStart_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_kappaIncrement_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_kappaStart_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_omegaIncrement_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_omegaStart_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_phiIncrement_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_phiStart_read);
 
     m_is_device_initialized = false;
     set_state(Tango::INIT);
@@ -191,7 +209,7 @@ void Eiger::init_device()
         return;
     }
 
-    
+
 
     m_is_device_initialized = true;
     set_state(Tango::STANDBY);
@@ -213,172 +231,280 @@ void Eiger::get_device_property()
 
     //	Read device properties from database.(Automatic code generation)
     //------------------------------------------------------------------
-    Tango::DbData	dev_prop;
-    dev_prop.push_back(Tango::DbDatum("DetectorIP"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedCountrateCorrection"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedFlatfieldCorrection"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedPixelMask"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedVirtualPixelCorrection"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedThresholdEnergy"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedPhotonEnergy"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedAutoSummation"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedCompression"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedWavelength"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedBeamCenterX"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedBeamCenterY"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedDetectorDistance"));
+	Tango::DbData	dev_prop;
+	dev_prop.push_back(Tango::DbDatum("DetectorIP"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedCountrateCorrection"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedFlatfieldCorrection"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedPixelMask"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedVirtualPixelCorrection"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedThresholdEnergy"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedPhotonEnergy"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedAutoSummation"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedCompression"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedCompressionType"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedWavelength"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedBeamCenterX"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedBeamCenterY"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedDetectorDistance"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedChiIncrement"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedChiStart"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedKappaIncrement"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedKappaStart"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedOmegaIncrement"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedOmegaStart"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedPhiIncrement"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedPhiStart"));
 
-    //	Call database and extract values
-    //--------------------------------------------
-    if (Tango::Util::instance()->_UseDb==true)
-        get_db_device()->get_property(dev_prop);
-    Tango::DbDatum	def_prop, cl_prop;
-    EigerClass	*ds_class =
-    (static_cast<EigerClass *>(get_device_class()));
-    int	i = -1;
+	//	Call database and extract values
+	//--------------------------------------------
+	if (Tango::Util::instance()->_UseDb==true)
+		get_db_device()->get_property(dev_prop);
+	Tango::DbDatum	def_prop, cl_prop;
+	EigerClass	*ds_class =
+		(static_cast<EigerClass *>(get_device_class()));
+	int	i = -1;
 
-    //	Try to initialize DetectorIP from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty()==false)	cl_prop  >>  detectorIP;
+	//	Try to initialize DetectorIP from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  detectorIP;
 	else {
-        //	Try to initialize DetectorIP from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty()==false)	def_prop  >>  detectorIP;
-    }
-    //	And try to extract DetectorIP value from database
-    if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  detectorIP;
+		//	Try to initialize DetectorIP from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  detectorIP;
+	}
+	//	And try to extract DetectorIP value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  detectorIP;
 
-    //	Try to initialize MemorizedCountrateCorrection from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedCountrateCorrection;
+	//	Try to initialize MemorizedCountrateCorrection from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedCountrateCorrection;
 	else {
-        //	Try to initialize MemorizedCountrateCorrection from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty()==false)	def_prop  >>  memorizedCountrateCorrection;
-    }
-    //	And try to extract MemorizedCountrateCorrection value from database
-    if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedCountrateCorrection;
+		//	Try to initialize MemorizedCountrateCorrection from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedCountrateCorrection;
+	}
+	//	And try to extract MemorizedCountrateCorrection value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedCountrateCorrection;
 
-    //	Try to initialize MemorizedFlatfieldCorrection from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedFlatfieldCorrection;
+	//	Try to initialize MemorizedFlatfieldCorrection from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedFlatfieldCorrection;
 	else {
-        //	Try to initialize MemorizedFlatfieldCorrection from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty()==false)	def_prop  >>  memorizedFlatfieldCorrection;
-    }
-    //	And try to extract MemorizedFlatfieldCorrection value from database
-    if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedFlatfieldCorrection;
+		//	Try to initialize MemorizedFlatfieldCorrection from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedFlatfieldCorrection;
+	}
+	//	And try to extract MemorizedFlatfieldCorrection value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedFlatfieldCorrection;
 
-    //	Try to initialize MemorizedPixelMask from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedPixelMask;
+	//	Try to initialize MemorizedPixelMask from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedPixelMask;
 	else {
-        //	Try to initialize MemorizedPixelMask from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty()==false)	def_prop  >>  memorizedPixelMask;
-    }
-    //	And try to extract MemorizedPixelMask value from database
-    if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedPixelMask;
+		//	Try to initialize MemorizedPixelMask from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedPixelMask;
+	}
+	//	And try to extract MemorizedPixelMask value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedPixelMask;
 
-    //	Try to initialize MemorizedVirtualPixelCorrection from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedVirtualPixelCorrection;
+	//	Try to initialize MemorizedVirtualPixelCorrection from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedVirtualPixelCorrection;
 	else {
-        //	Try to initialize MemorizedVirtualPixelCorrection from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty()==false)	def_prop  >>  memorizedVirtualPixelCorrection;
-    }
-    //	And try to extract MemorizedVirtualPixelCorrection value from database
-    if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedVirtualPixelCorrection;
+		//	Try to initialize MemorizedVirtualPixelCorrection from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedVirtualPixelCorrection;
+	}
+	//	And try to extract MemorizedVirtualPixelCorrection value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedVirtualPixelCorrection;
 
-    //	Try to initialize MemorizedThresholdEnergy from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedThresholdEnergy;
+	//	Try to initialize MemorizedThresholdEnergy from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedThresholdEnergy;
 	else {
-        //	Try to initialize MemorizedThresholdEnergy from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty()==false)	def_prop  >>  memorizedThresholdEnergy;
-    }
-    //	And try to extract MemorizedThresholdEnergy value from database
-    if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedThresholdEnergy;
+		//	Try to initialize MemorizedThresholdEnergy from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedThresholdEnergy;
+	}
+	//	And try to extract MemorizedThresholdEnergy value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedThresholdEnergy;
 
-    //	Try to initialize MemorizedPhotonEnergy from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedPhotonEnergy;
+	//	Try to initialize MemorizedPhotonEnergy from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedPhotonEnergy;
 	else {
-        //	Try to initialize MemorizedPhotonEnergy from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty()==false)	def_prop  >>  memorizedPhotonEnergy;
-    }
-    //	And try to extract MemorizedPhotonEnergy value from database
-    if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedPhotonEnergy;
+		//	Try to initialize MemorizedPhotonEnergy from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedPhotonEnergy;
+	}
+	//	And try to extract MemorizedPhotonEnergy value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedPhotonEnergy;
 
-    //	Try to initialize MemorizedAutoSummation from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedAutoSummation;
+	//	Try to initialize MemorizedAutoSummation from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedAutoSummation;
 	else {
-        //	Try to initialize MemorizedAutoSummation from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty()==false)	def_prop  >>  memorizedAutoSummation;
-    }
-    //	And try to extract MemorizedAutoSummation value from database
-    if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedAutoSummation;
+		//	Try to initialize MemorizedAutoSummation from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedAutoSummation;
+	}
+	//	And try to extract MemorizedAutoSummation value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedAutoSummation;
 
-    //	Try to initialize MemorizedCompression from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedCompression;
+	//	Try to initialize MemorizedCompression from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedCompression;
 	else {
-        //	Try to initialize MemorizedCompression from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty()==false)	def_prop  >>  memorizedCompression;
-    }
-    //	And try to extract MemorizedCompression value from database
-    if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedCompression;
+		//	Try to initialize MemorizedCompression from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedCompression;
+	}
+	//	And try to extract MemorizedCompression value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedCompression;
 
-    //	Try to initialize MemorizedWavelength from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedWavelength;
+	//	Try to initialize MemorizedCompressionType from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedCompressionType;
 	else {
-        //	Try to initialize MemorizedWavelength from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty()==false)	def_prop  >>  memorizedWavelength;
-    }
-    //	And try to extract MemorizedWavelength value from database
-    if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedWavelength;
+		//	Try to initialize MemorizedCompressionType from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedCompressionType;
+	}
+	//	And try to extract MemorizedCompressionType value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedCompressionType;
 
-    //	Try to initialize MemorizedBeamCenterX from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedBeamCenterX;
+	//	Try to initialize MemorizedWavelength from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedWavelength;
 	else {
-        //	Try to initialize MemorizedBeamCenterX from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty()==false)	def_prop  >>  memorizedBeamCenterX;
-    }
-    //	And try to extract MemorizedBeamCenterX value from database
-    if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedBeamCenterX;
+		//	Try to initialize MemorizedWavelength from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedWavelength;
+	}
+	//	And try to extract MemorizedWavelength value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedWavelength;
 
-    //	Try to initialize MemorizedBeamCenterY from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedBeamCenterY;
+	//	Try to initialize MemorizedBeamCenterX from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedBeamCenterX;
 	else {
-        //	Try to initialize MemorizedBeamCenterY from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty()==false)	def_prop  >>  memorizedBeamCenterY;
-    }
-    //	And try to extract MemorizedBeamCenterY value from database
-    if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedBeamCenterY;
+		//	Try to initialize MemorizedBeamCenterX from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedBeamCenterX;
+	}
+	//	And try to extract MemorizedBeamCenterX value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedBeamCenterX;
 
-    //	Try to initialize MemorizedDetectorDistance from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedDetectorDistance;
+	//	Try to initialize MemorizedBeamCenterY from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedBeamCenterY;
 	else {
-        //	Try to initialize MemorizedDetectorDistance from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty()==false)	def_prop  >>  memorizedDetectorDistance;
-    }
-    //	And try to extract MemorizedDetectorDistance value from database
-    if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedDetectorDistance;
+		//	Try to initialize MemorizedBeamCenterY from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedBeamCenterY;
+	}
+	//	And try to extract MemorizedBeamCenterY value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedBeamCenterY;
+
+	//	Try to initialize MemorizedDetectorDistance from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedDetectorDistance;
+	else {
+		//	Try to initialize MemorizedDetectorDistance from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedDetectorDistance;
+	}
+	//	And try to extract MemorizedDetectorDistance value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedDetectorDistance;
+
+	//	Try to initialize MemorizedChiIncrement from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedChiIncrement;
+	else {
+		//	Try to initialize MemorizedChiIncrement from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedChiIncrement;
+	}
+	//	And try to extract MemorizedChiIncrement value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedChiIncrement;
+
+	//	Try to initialize MemorizedChiStart from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedChiStart;
+	else {
+		//	Try to initialize MemorizedChiStart from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedChiStart;
+	}
+	//	And try to extract MemorizedChiStart value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedChiStart;
+
+	//	Try to initialize MemorizedKappaIncrement from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedKappaIncrement;
+	else {
+		//	Try to initialize MemorizedKappaIncrement from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedKappaIncrement;
+	}
+	//	And try to extract MemorizedKappaIncrement value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedKappaIncrement;
+
+	//	Try to initialize MemorizedKappaStart from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedKappaStart;
+	else {
+		//	Try to initialize MemorizedKappaStart from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedKappaStart;
+	}
+	//	And try to extract MemorizedKappaStart value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedKappaStart;
+
+	//	Try to initialize MemorizedOmegaIncrement from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedOmegaIncrement;
+	else {
+		//	Try to initialize MemorizedOmegaIncrement from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedOmegaIncrement;
+	}
+	//	And try to extract MemorizedOmegaIncrement value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedOmegaIncrement;
+
+	//	Try to initialize MemorizedOmegaStart from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedOmegaStart;
+	else {
+		//	Try to initialize MemorizedOmegaStart from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedOmegaStart;
+	}
+	//	And try to extract MemorizedOmegaStart value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedOmegaStart;
+
+	//	Try to initialize MemorizedPhiIncrement from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedPhiIncrement;
+	else {
+		//	Try to initialize MemorizedPhiIncrement from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedPhiIncrement;
+	}
+	//	And try to extract MemorizedPhiIncrement value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedPhiIncrement;
+
+	//	Try to initialize MemorizedPhiStart from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedPhiStart;
+	else {
+		//	Try to initialize MemorizedPhiStart from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedPhiStart;
+	}
+	//	And try to extract MemorizedPhiStart value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedPhiStart;
 
 
 
@@ -392,10 +518,19 @@ void Eiger::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "4000.0",    "MemorizedThresholdEnergy");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "8000.0", 	 "MemorizedPhotonEnergy");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	 "MemorizedCompression");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "LZ4",       "MemorizedCompressionType");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedBeamCenterX");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedBeamCenterY");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedWavelength");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedDetectorDistance");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedChiIncrement");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedChiStart");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedKappaIncrement");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedKappaStart");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedOmegaIncrement");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedOmegaStart");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedPhiIncrement");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedPhiStart");
 }
 //+----------------------------------------------------------------------------
 //
@@ -456,6 +591,743 @@ void Eiger::read_attr_hardware(vector<long> &attr_list)
 }
 //+----------------------------------------------------------------------------
 //
+// method : 		Eiger::read_compressionType
+// 
+// description : 	Extract real attribute values for compressionType acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Eiger::read_compressionType(Tango::Attribute &attr)
+{
+    DEBUG_STREAM << "Eiger::read_compressionType(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());    
+    try
+    {
+        if ( Tango::STANDBY == get_state() )
+        {
+            attr_compressionType_read_cache = "UNKNOWN";
+            lima::Eiger::Camera::CompressionType type;
+            m_camera->getCompressionType(type);
+            if(type == lima::Eiger::Camera::CompressionType::LZ4)
+                attr_compressionType_read_cache = "LZ4";                
+            if(type == lima::Eiger::Camera::CompressionType::BSLZ4)
+                attr_compressionType_read_cache = "BSLZ4";                
+            strcpy(*attr_compressionType_read, attr_compressionType_read_cache.c_str());            
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            strcpy(*attr_compressionType_read, attr_compressionType_read_cache.c_str());
+        }
+
+        attr.set_value(attr_compressionType_read);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_compressionType");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_compressionType");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::write_compressionType
+// 
+// description : 	Write compressionType attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Eiger::write_compressionType(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Eiger::write_compressionType(Tango::WAttribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());    
+    try
+    {        
+        attr.get_write_value(attr_compressionType_write);
+        string current = attr_compressionType_write;
+        transform(current.begin(), current.end(), current.begin(), ::toupper);
+        if ((current != "LZ4") &&
+            (current != "BSLZ4")
+            )
+        {
+            strcpy(attr_compressionType_write, attr_compressionType_read_cache.c_str());
+            Tango::Except::throw_exception("CONFIGURATION_ERROR",
+                                           "Possible compressionType values are:"
+                                           "\n- LZ4"
+                                           "\n- BSLZ4",
+                                           "Eiger::write_compressionType");
+        }
+
+        //- THIS IS AN AVAILABLE FILLTYPE
+        
+        if ("LZ4" == current)
+            m_camera->setCompressionType(lima::Eiger::Camera::CompressionType::LZ4);
+        else if ("BSLZ4" == current)
+            m_camera->setCompressionType(lima::Eiger::Camera::CompressionType::BSLZ4);
+
+        yat4tango::PropertyHelper::set_property(this, "MemorizedCompressionType", current);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_compressionType");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_compressionType");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::read_chiIncrement
+// 
+// description : 	Extract real attribute values for chiIncrement acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Eiger::read_chiIncrement(Tango::Attribute &attr)
+{
+    DEBUG_STREAM << "Eiger::read_chiIncrement(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        if ( Tango::STANDBY == get_state() )
+        {
+            m_camera->getChiIncrement(*attr_chiIncrement_read);
+            attr_chiIncrement_read_cache = *attr_chiIncrement_read;
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            *attr_chiIncrement_read = attr_chiIncrement_read_cache;
+        }
+
+        attr.set_value(attr_chiIncrement_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_chiIncrement");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_chiIncrement" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::write_chiIncrement
+// 
+// description : 	Write chiIncrement attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Eiger::write_chiIncrement(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Eiger::write_chiIncrement(Tango::WAttribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        attr.get_write_value(attr_chiIncrement_write);
+        m_camera->setChiIncrement(attr_chiIncrement_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedChiIncrement", attr_chiIncrement_write);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_chiIncrement");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::write_chiIncrement" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::read_chiStart
+// 
+// description : 	Extract real attribute values for chiStart acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Eiger::read_chiStart(Tango::Attribute &attr)
+{
+    DEBUG_STREAM << "Eiger::read_chiStart(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        if ( Tango::STANDBY == get_state() )
+        {
+            m_camera->getChiStart(*attr_chiStart_read);
+            attr_chiStart_read_cache = *attr_chiStart_read;
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            *attr_chiStart_read = attr_chiStart_read_cache;
+        }
+
+        attr.set_value(attr_chiStart_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_chiStart");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_chiStart" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::write_chiStart
+// 
+// description : 	Write chiStart attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Eiger::write_chiStart(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Eiger::write_chiStart(Tango::WAttribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        attr.get_write_value(attr_chiStart_write);
+        m_camera->setChiStart(attr_chiStart_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedChiStart", attr_chiStart_write);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_chiStart");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::write_chiStart" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::read_kappaIncrement
+// 
+// description : 	Extract real attribute values for kappaIncrement acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Eiger::read_kappaIncrement(Tango::Attribute &attr)
+{
+    DEBUG_STREAM << "Eiger::read_kappaIncrement(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        if ( Tango::STANDBY == get_state() )
+        {
+            m_camera->getKappaIncrement(*attr_kappaIncrement_read);
+            attr_kappaIncrement_read_cache = *attr_kappaIncrement_read;
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            *attr_kappaIncrement_read = attr_kappaIncrement_read_cache;
+        }
+
+        attr.set_value(attr_kappaIncrement_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_kappaIncrement");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_kappaIncrement" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::write_kappaIncrement
+// 
+// description : 	Write kappaIncrement attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Eiger::write_kappaIncrement(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Eiger::write_kappaIncrement(Tango::WAttribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        attr.get_write_value(attr_kappaIncrement_write);
+        m_camera->setKappaIncrement(attr_kappaIncrement_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedKappaIncrement", attr_kappaIncrement_write);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_kappaIncrement");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_kappaIncrement" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::read_kappaStart
+// 
+// description : 	Extract real attribute values for kappaStart acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Eiger::read_kappaStart(Tango::Attribute &attr)
+{
+    DEBUG_STREAM << "Eiger::read_kappaStart(Tango::Attribute &attr) entering... "<< endl;
+    try
+    {
+        if ( Tango::STANDBY == get_state() )
+        {
+            m_camera->getKappaStart(*attr_kappaStart_read);
+            attr_kappaStart_read_cache = *attr_kappaStart_read;
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            *attr_kappaStart_read = attr_kappaStart_read_cache;
+        }
+
+        attr.set_value(attr_kappaStart_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_kappaStart");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_kappaStart" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::write_kappaStart
+// 
+// description : 	Write kappaStart attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Eiger::write_kappaStart(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Eiger::write_kappaStart(Tango::WAttribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        attr.get_write_value(attr_kappaStart_write);
+        m_camera->setKappaStart(attr_kappaStart_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedKappaStart", attr_kappaStart_write);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_kappaStart");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_kappaStart" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::read_omegaIncrement
+// 
+// description : 	Extract real attribute values for omegaIncrement acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Eiger::read_omegaIncrement(Tango::Attribute &attr)
+{
+    DEBUG_STREAM << "Eiger::read_omegaIncrement(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        if ( Tango::STANDBY == get_state() )
+        {
+            m_camera->getOmegaIncrement(*attr_omegaIncrement_read);
+            attr_omegaIncrement_read_cache = *attr_omegaIncrement_read;
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            *attr_omegaIncrement_read = attr_omegaIncrement_read_cache;
+        }
+
+        attr.set_value(attr_omegaIncrement_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_omegaIncrement");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_omegaIncrement" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::write_omegaIncrement
+// 
+// description : 	Write omegaIncrement attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Eiger::write_omegaIncrement(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Eiger::write_omegaIncrement(Tango::WAttribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        attr.get_write_value(attr_omegaIncrement_write);
+        m_camera->setOmegaIncrement(attr_omegaIncrement_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedOmegaIncrement", attr_omegaIncrement_write);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_omegaIncrement");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_omegaIncrement" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::read_omegaStart
+// 
+// description : 	Extract real attribute values for omegaStart acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Eiger::read_omegaStart(Tango::Attribute &attr)
+{
+    DEBUG_STREAM << "Eiger::read_omegaStart(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        if ( Tango::STANDBY == get_state() )
+        {
+            m_camera->getOmegaStart(*attr_omegaStart_read);
+            attr_omegaStart_read_cache = *attr_omegaStart_read;
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            *attr_omegaStart_read = attr_omegaStart_read_cache;
+        }
+
+        attr.set_value(attr_omegaStart_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_omegaStart");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_omegaStart" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::write_omegaStart
+// 
+// description : 	Write omegaStart attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Eiger::write_omegaStart(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Eiger::write_omegaStart(Tango::WAttribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        attr.get_write_value(attr_omegaStart_write);
+        m_camera->setOmegaStart(attr_omegaStart_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedOmegaStart", attr_omegaStart_write);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_omegaStart");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_omegaStart" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::read_phiIncrement
+// 
+// description : 	Extract real attribute values for phiIncrement acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Eiger::read_phiIncrement(Tango::Attribute &attr)
+{
+    DEBUG_STREAM << "Eiger::read_phiIncrement(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        if ( Tango::STANDBY == get_state() )
+        {
+            m_camera->getPhiIncrement(*attr_phiIncrement_read);
+            attr_phiIncrement_read_cache = *attr_phiIncrement_read;
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            *attr_phiIncrement_read = attr_phiIncrement_read_cache;
+        }
+
+        attr.set_value(attr_phiIncrement_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_phiIncrement");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_phiIncrement" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::write_phiIncrement
+// 
+// description : 	Write phiIncrement attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Eiger::write_phiIncrement(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Eiger::write_phiIncrement(Tango::WAttribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        attr.get_write_value(attr_phiIncrement_write);
+        m_camera->setPhiIncrement(attr_phiIncrement_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedPhiIncrement", attr_phiIncrement_write);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_phiIncrement");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_phiIncrement" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::read_phiStart
+// 
+// description : 	Extract real attribute values for phiStart acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Eiger::read_phiStart(Tango::Attribute &attr)
+{
+    DEBUG_STREAM << "Eiger::read_phiStart(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        if ( Tango::STANDBY == get_state() )
+        {
+            m_camera->getPhiStart(*attr_phiStart_read);
+            attr_phiStart_read_cache = *attr_phiStart_read;
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            *attr_phiStart_read = attr_phiStart_read_cache;
+        }
+
+        attr.set_value(attr_phiStart_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_phiStart");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_phiStart" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::write_phiStart
+// 
+// description : 	Write phiStart attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Eiger::write_phiStart(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Eiger::write_phiStart(Tango::WAttribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        attr.get_write_value(attr_phiStart_write);
+        m_camera->setPhiStart(attr_phiStart_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedPhiStart", attr_phiStart_write);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_phiStart");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_phiStart" );
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
 // method : 		Eiger::read_autoSummation
 // 
 // description : 	Extract real attribute values for autoSummation acquisition result.
@@ -492,8 +1364,8 @@ void Eiger::read_autoSummation(Tango::Attribute &attr)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", 
-                                       e.getErrMsg().c_str(), 
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
                                        "Eiger::read_autoSummation" );
     }
 }
@@ -528,10 +1400,10 @@ void Eiger::write_autoSummation(Tango::WAttribute &attr)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR", 
-                                       e.getErrMsg().c_str(), 
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
                                        "Eiger::write_autoSummation");
-    }    
+    }
 }
 
 //+----------------------------------------------------------------------------
@@ -547,32 +1419,34 @@ void Eiger::read_detectorDistance(Tango::Attribute &attr)
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
-                if ( Tango::STANDBY == get_state() )
-                {
-                    m_camera->getDetectorDistance(*attr_detectorDistance_read);
-                    attr_detectorDistance_read_cache = *attr_detectorDistance_read;
-                }
-                else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
-                {
-                    *attr_detectorDistance_read = attr_detectorDistance_read_cache;
-                }
-        
-                attr.set_value(attr_detectorDistance_read);
+        if ( Tango::STANDBY == get_state() )
+        {
+            m_camera->getDetectorDistance(*attr_detectorDistance_read);
+            attr_detectorDistance_read_cache = *attr_detectorDistance_read;
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            *attr_detectorDistance_read = attr_detectorDistance_read_cache;
+        }
+
+        attr.set_value(attr_detectorDistance_read);
     }
     catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::read_detectorDistance"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_detectorDistance");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_detectorDistance" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_detectorDistance" );
     }
 }
 
@@ -589,24 +1463,26 @@ void Eiger::write_detectorDistance(Tango::WAttribute &attr)
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
-                attr.get_write_value(attr_detectorDistance_write);
-                m_camera->setDetectorDistance(attr_detectorDistance_write);
-                yat4tango::PropertyHelper::set_property(this, "MemorizedDetectorDistance", attr_detectorDistance_write);
+        attr.get_write_value(attr_detectorDistance_write);
+        m_camera->setDetectorDistance(attr_detectorDistance_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedDetectorDistance", attr_detectorDistance_write);
     }
     catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::write_detectorDistance"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_detectorDistance");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::write_detectorDistance" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_detectorDistance" );
     }
 }
 
@@ -623,32 +1499,34 @@ void Eiger::read_wavelength(Tango::Attribute &attr)
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
-                if ( Tango::STANDBY == get_state() )
-                {
-                    m_camera->getWavelength(*attr_wavelength_read);
-                    attr_wavelength_read_cache = *attr_wavelength_read;
-                }
-                else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
-                {
-                    *attr_wavelength_read = attr_wavelength_read_cache;
-                }
-        
-                attr.set_value(attr_wavelength_read);
+        if ( Tango::STANDBY == get_state() )
+        {
+            m_camera->getWavelength(*attr_wavelength_read);
+            attr_wavelength_read_cache = *attr_wavelength_read;
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            *attr_wavelength_read = attr_wavelength_read_cache;
+        }
+
+        attr.set_value(attr_wavelength_read);
     }
     catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::read_wavelength"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_wavelength");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_wavelength" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_wavelength" );
     }
 }
 
@@ -665,24 +1543,26 @@ void Eiger::write_wavelength(Tango::WAttribute &attr)
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
-                attr.get_write_value(attr_wavelength_write);
-                m_camera->setWavelength(attr_wavelength_write);
-                yat4tango::PropertyHelper::set_property(this, "MemorizedWavelength", attr_wavelength_write);
+        attr.get_write_value(attr_wavelength_write);
+        m_camera->setWavelength(attr_wavelength_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedWavelength", attr_wavelength_write);
     }
     catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::write_wavelength"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_wavelength");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::write_wavelength" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_wavelength" );
     }
 }
 
@@ -701,32 +1581,34 @@ void Eiger::read_beamCenterX(Tango::Attribute &attr)
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
-                if ( Tango::STANDBY == get_state() )
-                {
-                    m_camera->getBeamCenterX(*attr_beamCenterX_read);
-                    attr_beamCenterX_read_cache = *attr_beamCenterX_read;
-                }
-                else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
-                {
-                    *attr_beamCenterX_read = attr_beamCenterX_read_cache;
-                }
-        
-                attr.set_value(attr_beamCenterX_read);
+        if ( Tango::STANDBY == get_state() )
+        {
+            m_camera->getBeamCenterX(*attr_beamCenterX_read);
+            attr_beamCenterX_read_cache = *attr_beamCenterX_read;
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            *attr_beamCenterX_read = attr_beamCenterX_read_cache;
+        }
+
+        attr.set_value(attr_beamCenterX_read);
     }
     catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::read_beamCenterX"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_beamCenterX");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_beamCenterX" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_beamCenterX" );
     }
 }
 
@@ -743,24 +1625,26 @@ void Eiger::write_beamCenterX(Tango::WAttribute &attr)
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
-                attr.get_write_value(attr_beamCenterX_write);
-                m_camera->setBeamCenterX(attr_beamCenterX_write);
-                yat4tango::PropertyHelper::set_property(this, "MemorizedBeamCenterX", attr_beamCenterX_write);
+        attr.get_write_value(attr_beamCenterX_write);
+        m_camera->setBeamCenterX(attr_beamCenterX_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedBeamCenterX", attr_beamCenterX_write);
     }
     catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::write_beamCenterX"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_beamCenterX");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::write_beamCenterX" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_beamCenterX" );
     }
 }
 
@@ -778,32 +1662,34 @@ void Eiger::read_beamCenterY(Tango::Attribute &attr)
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
-                if ( Tango::STANDBY == get_state() )
-                {
-                    m_camera->getBeamCenterY(*attr_beamCenterY_read);
-                    attr_beamCenterY_read_cache = *attr_beamCenterY_read;
-                }
-                else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
-                {
-                    *attr_beamCenterY_read = attr_beamCenterY_read_cache;
-                }
-        
-                attr.set_value(attr_beamCenterY_read);
+        if ( Tango::STANDBY == get_state() )
+        {
+            m_camera->getBeamCenterY(*attr_beamCenterY_read);
+            attr_beamCenterY_read_cache = *attr_beamCenterY_read;
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            *attr_beamCenterY_read = attr_beamCenterY_read_cache;
+        }
+
+        attr.set_value(attr_beamCenterY_read);
     }
     catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::read_beamCenterY"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_beamCenterY");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_beamCenterY" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_beamCenterY" );
     }
 }
 
@@ -821,24 +1707,26 @@ void Eiger::write_beamCenterY(Tango::WAttribute &attr)
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
-                attr.get_write_value(attr_beamCenterY_write);
-                m_camera->setBeamCenterY(attr_beamCenterY_write);
-                yat4tango::PropertyHelper::set_property(this, "MemorizedBeamCenterY", attr_beamCenterY_write);
+        attr.get_write_value(attr_beamCenterY_write);
+        m_camera->setBeamCenterY(attr_beamCenterY_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedBeamCenterY", attr_beamCenterY_write);
     }
     catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::write_beamCenterY"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_beamCenterY");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::write_beamCenterY" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_beamCenterY" );
     }
 }
 
@@ -855,32 +1743,34 @@ void Eiger::read_softwareVersion(Tango::Attribute &attr)
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
-                if ( Tango::STANDBY == get_state() )
-                {
-                    m_camera->getSoftwareVersion(attr_softwareVersion_read_cache);
-                    strcpy(*attr_softwareVersion_read, attr_softwareVersion_read_cache.c_str());
-                }
-                else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
-                {
-                    strcpy(*attr_softwareVersion_read, attr_softwareVersion_read_cache.c_str());
-                }
-        
-                attr.set_value(attr_softwareVersion_read);
+        if ( Tango::STANDBY == get_state() )
+        {
+            m_camera->getSoftwareVersion(attr_softwareVersion_read_cache);
+            strcpy(*attr_softwareVersion_read, attr_softwareVersion_read_cache.c_str());
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            strcpy(*attr_softwareVersion_read, attr_softwareVersion_read_cache.c_str());
+        }
+
+        attr.set_value(attr_softwareVersion_read);
     }
     catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::read_softwareVersion"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_softwareVersion");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_softwareVersion" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_softwareVersion" );
     }
 }
 
@@ -897,32 +1787,34 @@ void Eiger::read_dataCollectionDate(Tango::Attribute &attr)
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
-                if ( Tango::STANDBY == get_state() )
-                {
-                    m_camera->getDataCollectionDate(attr_dataCollectionDate_read_cache);
-                    strcpy(*attr_dataCollectionDate_read, attr_dataCollectionDate_read_cache.c_str());
-                }
-                else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
-                {
-                    strcpy(*attr_dataCollectionDate_read, attr_dataCollectionDate_read_cache.c_str());
-                }
-        
-                attr.set_value(attr_dataCollectionDate_read);
+        if ( Tango::STANDBY == get_state() )
+        {
+            m_camera->getDataCollectionDate(attr_dataCollectionDate_read_cache);
+            strcpy(*attr_dataCollectionDate_read, attr_dataCollectionDate_read_cache.c_str());
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            strcpy(*attr_dataCollectionDate_read, attr_dataCollectionDate_read_cache.c_str());
+        }
+
+        attr.set_value(attr_dataCollectionDate_read);
     }
     catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::read_dataCollectionDate"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_dataCollectionDate");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_dataCollectionDate" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_dataCollectionDate" );
     }
 }
 
@@ -957,15 +1849,17 @@ void Eiger::read_compression(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::read_compression"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_compression");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_compression" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_compression" );
     }
 }
 
@@ -991,15 +1885,17 @@ void Eiger::write_compression(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::write_compression"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_compression");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::write_compression" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_compression" );
     }
 }
 
@@ -1033,15 +1929,17 @@ void Eiger::read_countrateCorrection(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::read_countrateCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_countrateCorrection");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_countrateCorrection" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_countrateCorrection" );
     }
 }
 
@@ -1067,15 +1965,17 @@ void Eiger::write_countrateCorrection(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::write_countrateCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_countrateCorrection");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::write_countrateCorrection" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_countrateCorrection" );
     }
 }
 
@@ -1108,15 +2008,17 @@ void Eiger::read_flatfieldCorrection(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::read_flatfieldCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_flatfieldCorrection");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_flatfieldCorrection" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_flatfieldCorrection" );
     }
 }
 
@@ -1143,15 +2045,17 @@ void Eiger::write_flatfieldCorrection(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::write_flatfieldCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_flatfieldCorrection");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_countrateCorrection" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_countrateCorrection" );
     }
 }
 
@@ -1185,15 +2089,17 @@ void Eiger::read_pixelMask(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::read_pixelMask"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_pixelMask");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_pixelMask" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_pixelMask" );
     }
 }
 
@@ -1219,15 +2125,17 @@ void Eiger::write_pixelMask(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::write_pixelMask"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_pixelMask");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::write_pixelMask" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_pixelMask" );
     }
 }
 
@@ -1261,15 +2169,17 @@ void Eiger::read_thresholdEnergy(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::read_thresholdEnergy"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_thresholdEnergy");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_thresholdEnergy" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_thresholdEnergy" );
     }
 }
 
@@ -1296,15 +2206,17 @@ void Eiger::write_thresholdEnergy(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::write_thresholdEnergy"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_thresholdEnergy");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::write_thresholdEnergy" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_thresholdEnergy" );
     }
 }
 
@@ -1338,15 +2250,17 @@ void Eiger::read_virtualPixelCorrection(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::read_virtualPixelCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_virtualPixelCorrection");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_virtualPixelCorrection" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_virtualPixelCorrection" );
     }
 }
 
@@ -1373,15 +2287,17 @@ void Eiger::write_virtualPixelCorrection(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::write_virtualPixelCorrection"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_virtualPixelCorrection");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::write_virtualPixelCorrection" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_virtualPixelCorrection" );
     }
 }
 
@@ -1415,15 +2331,17 @@ void Eiger::read_photonEnergy(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::read_photonEnergy"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_photonEnergy");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_photonEnergy" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_photonEnergy" );
     }
 }
 
@@ -1449,15 +2367,17 @@ void Eiger::write_photonEnergy(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::write_photonEnergy"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_photonEnergy");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::write_photonEnergy" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_photonEnergy" );
     }
 }
 
@@ -1490,24 +2410,26 @@ void Eiger::read_temperature(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::read_temperature"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_temperature");
     }
     catch(Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
         Tango::Except::throw_exception(
-                                       static_cast<const char*> ("TANGO_DEVICE_ERROR"),
+                                       "TANGO_DEVICE_ERROR",
                                        static_cast<const char*> (e.getErrMsg().c_str()),
-                                       static_cast<const char*> ("Eiger::read_temperature"));
+                                       "Eiger::read_temperature");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_temperature" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_temperature" );
     }
 }
 
@@ -1540,24 +2462,26 @@ void Eiger::read_humidity(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Eiger::read_humidity"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_humidity");
     }
     catch(Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
         Tango::Except::throw_exception(
-                                       static_cast<const char*> ("TANGO_DEVICE_ERROR"),
+                                       "TANGO_DEVICE_ERROR",
                                        static_cast<const char*> (e.getErrMsg().c_str()),
-                                       static_cast<const char*> ("Eiger::read_humidity"));
+                                       "Eiger::read_humidity");
     }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::read_humidity" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_humidity" );
     }
 }
 
@@ -1626,7 +2550,9 @@ void Eiger::abort()
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::abort" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::abort" );
     }
 }
 
@@ -1652,17 +2578,11 @@ void Eiger::initialize()
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR", e.getErrMsg().c_str(), "Eiger::initialize" );
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::initialize" );
     }
 }
-
-
-
-
-
-
-
-
 
 
 

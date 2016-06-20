@@ -44,9 +44,9 @@
 <Tr><Td><Br>&nbsp;<Br>
 <center>
 <h1>
-Device specific for Princeton CCD detector <Br>
+ <Br>
 User's Guide<Br>&nbsp;<Br> <Br><Br>
-PrincetonCCD Class<Br>&nbsp;<Br></Td></Tr>
+Eiger Class<Br>&nbsp;<Br></Td></Tr>
 </h1>
 <Tr><Td>
 <b><Center>Revision:  - Author:  <Br>
@@ -71,14 +71,15 @@ PrincetonCCD Class<Br>&nbsp;<Br></Td></Tr>
 <ul>
 	<li><b>Contact      :</b>	 at synchrotron-soleil.fr - arafat.noureddine
 	<li><b>Class Family :</b>	Acquisition
-	<li><b>Platform     :</b>	Windows
+	<li><b>Platform     :</b>	Unix Like
 	<li><b>Bus          :</b>	Not Applicable
+	<li><b>Manufacturer :</b>	SOLEIL
 </ul><Br>&nbsp;<Br><Br>
 <h2>Class Inheritance:</h2>
 	<ul>
 		<li> <a href="http://www.esrf.fr/computing/cs/tango/tango_doc/kernel_doc/cpp_doc/"> Tango::Device_4Impl</a></li>
 		<ul>
-			<li> PrincetonCCD</li>
+			<li> Eiger</li>
 			</ul>
 		</ul>
 	</ul>
@@ -97,36 +98,93 @@ PrincetonCCD Class<Br>&nbsp;<Br></Td></Tr>
 <Td><Center><b>Property name</b></td></Center>
 <Td><Center><b>Property type</b></td></Center>
 <Td><Center><b>Description</b></td></Center>
-<Tr><Td><b><a href=#Dev_DefaultValues>DetectorNum </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
-<Td><Font Size=-1>Detector Number.</Font></Td></Tr>
+<Tr><Td><b><a href=#Dev_DefaultValues>DetectorIP </a></b></Td>
+<Td><Font Size=-1>string</Font></Td>
+<Td><Font Size=-1>Eiger server IP address (ex: 192.168.0.1)</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedInternalAcquisitionMode </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
-<Td><Font Size=-1>Memorize/Define the internalAcquisitionMode attribute at Init device<br>
-Availables values :<br>
-- STANDARD<br>
-- FOCUS<br></Font></Td></Tr>
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedCountrateCorrection </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of countrateCorrection attribute.</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedShutterMode </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
-<Td><Font Size=-1>Memorize/Define the SHUTTERMode attribute at Init device<br>
-Availables values :<br>
-- OPEN_NEVER<br>
-- OPEN_PRE_EXPOSURE<br>
-- OPEN_NO_CHANGE<br></Font></Td></Tr>
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedFlatfieldCorrection </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of flatfieldCorrection attribute.</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedTemperatureTarget </a></b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedPixelMask </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of pixelMask attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedVirtualPixelCorrection </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of virtualPixelCorrection attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedThresholdEnergy </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
-<Td><Font Size=-1>Memorize/Define the Temperature Target of the Cooler at Init device. (in ?C)<br></Font></Td></Tr>
+<Td><Font Size=-1>Memorize the value of thresholdEnergy attribute.</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedGain </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_USHORT</Font></Td>
-<Td><Font Size=-1></Font></Td></Tr>
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedPhotonEnergy </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of photonEnergy attribute.</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedADCMode </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_USHORT</Font></Td>
-<Td><Font Size=-1></Font></Td></Tr>
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedAutoSummation </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of autoSummation attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedCompression </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of compression attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedCompressionType </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>Memorize the value of compressionType attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedWavelength </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of wavelength attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedBeamCenterX </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of beamCenterX attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedBeamCenterY </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of beamCenterY attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedDetectorDistance </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of detectorDistance attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedChiIncrement </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of chiIncrement attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedChiStart </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of chiStart attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedKappaIncrement </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of kappaIncrement attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedKappaStart </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of kappaStart attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedOmegaIncrement </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of omegaIncrement attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedOmegaStart </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of omegaStart attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedPhiIncrement </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of phiIncrement attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedPhiStart </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of phiStart attribute.</Font></Td></Tr>
 
 </Table>
 
@@ -142,28 +200,92 @@ Availables values :<br>
         <td><b>Default Values</b></td>
     </Tr>
     <Tr>
-        <Td>DetectorNum</Td>
-        <td>No default value</td>
+        <Td>DetectorIP</Td>
+        <td>127.0.0.1</td>
     </Tr>
     <Tr>
-        <Td>MemorizedInternalAcquisitionMode</Td>
-        <td>STANDARD</td>
+        <Td>MemorizedCountrateCorrection</Td>
+        <td>false</td>
     </Tr>
     <Tr>
-        <Td>MemorizedShutterMode</Td>
-        <td>OPEN_NO_CHANGE</td>
+        <Td>MemorizedFlatfieldCorrection</Td>
+        <td>true</td>
     </Tr>
     <Tr>
-        <Td>MemorizedTemperatureTarget</Td>
-        <td>-110</td>
+        <Td>MemorizedPixelMask</Td>
+        <td>false</td>
     </Tr>
     <Tr>
-        <Td>MemorizedGain</Td>
-        <td>1</td>
+        <Td>MemorizedVirtualPixelCorrection</Td>
+        <td>false</td>
     </Tr>
     <Tr>
-        <Td>MemorizedADCMode</Td>
-        <td>1</td>
+        <Td>MemorizedThresholdEnergy</Td>
+        <td>4000.0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedPhotonEnergy</Td>
+        <td>8000.0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedAutoSummation</Td>
+        <td>true</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedCompression</Td>
+        <td>true</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedCompressionType</Td>
+        <td>LZ4</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedWavelength</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedBeamCenterX</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedBeamCenterY</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedDetectorDistance</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedChiIncrement</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedChiStart</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedKappaIncrement</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedKappaStart</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedOmegaIncrement</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedOmegaStart</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedPhiIncrement</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedPhiStart</Td>
+        <td>0</td>
     </Tr>
 </Table>
 
@@ -218,23 +340,80 @@ There is no Class properties.<Br><Br>
 <Td><Center><b>Data Type</b></td></Center>
 <Td><Center><b>R/W Type</b></td></Center>
 <Td><Center><b>Expert</b></td></Center>
-<Tr><Td><b>internalAcquisitionMode</b>: <Font Size=-1>Available Internal Acquisition Modes are :<br> STANDARD<br> FOCUS<br></Font></Td>
-<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+<Tr><Td><b>countrateCorrection</b></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
-<Tr><Td><b>shutterMode</b>: <Font Size=-1>Available Shutter Modes are :<br> OPEN_NEVER<br> OPEN_PRE_EXPOSURE<br> OPEN_NO_CHANGE<br></Font></Td>
-<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+<Tr><Td><b>flatfieldCorrection</b></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>pixelMask</b></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>virtualPixelCorrection</b></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>dataCollectionDate</b></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>thresholdEnergy</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>photonEnergy</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>wavelength</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>beamCenterX</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>beamCenterY</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>detectorDistance</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 <Tr><Td><b>temperature</b></Td>
 <Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>temperatureTarget</b></Td>
+<Tr><Td><b>humidity</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>chiIncrement</b></Td>
 <Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>gain</b>: <Font Size=-1>Define the currect gain. </Font></Td>
-<Td><Center><Font Size=-1>DEV_USHORT</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+<Tr><Td><b>chiStart</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>currentRate</b>: <Font Size=-1>Display the current ADC frequency in Mhz</Font></Td>
-<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+<Tr><Td><b>kappaIncrement</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>kappaStart</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>omegaIncrement</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>omegaStart</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>phiIncrement</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>phiStart</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>autoSummation</b></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>compression</b>: <Font Size=-1>Controls the compression of images.[Default= ON]</Font></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>compressionType</b></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>softwareVersion</b></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
 </Table>
 </Center>
@@ -265,8 +444,11 @@ There is no Class properties.<Br><Br>
 <Tr><Td><b>Status</b></Td>
 <Td><Font Size=-1>DEV_VOID</Font></Td>
 <Td><Font Size=-1>CONST_DEV_STRING</Font></Td>
-<Tr><Td><b>SetADCMode</b></Td>
-<Td><Font Size=-1>DEV_USHORT</Font></Td>
+<Tr><Td><b>Abort</b></Td>
+<Td><Font Size=-1>DEV_VOID</Font></Td>
+<Td><Font Size=-1>DEV_VOID</Font></Td>
+<Tr><Td><b>Initialize</b></Td>
+<Td><Font Size=-1>DEV_VOID</Font></Td>
 <Td><Font Size=-1>DEV_VOID</Font></Td>
 
 
@@ -325,20 +507,31 @@ The language device desctructor automatically calls the <i> delete_device() </i>
 <Br>&nbsp
 </ul><Br>
 <Br>
-<A NAME="SetADCMode"><!-- --></A>
-<A NAME="SetADCMode"><!-- --></A>
-<h2>4 - SetADCMode</h2>
+<A NAME="Abort"><!-- --></A>
+<A NAME="Abort"><!-- --></A>
+<h2>4 - Abort</h2>
 <ul>
-<Li><Strong>Description: </Strong> Define the ADC frequency .<br>
-Available values are :
-0-> 1MHz<br>
-1-> 100Khz<Br>&nbsp
-<Li><Strong>Argin:<Br>DEV_USHORT</Strong>
+<Li><Strong>Description: </Strong> <Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY</Ul>
+<Li>Tango::STANDBY<Li>Tango::FAULT<Li>Tango::RUNNING</Ul>
+<Br>&nbsp
+</ul><Br>
+<Br>
+<A NAME="Initialize"><!-- --></A>
+<A NAME="Initialize"><!-- --></A>
+<h2>5 - Initialize</h2>
+<ul>
+<Li><Strong>Description: </Strong> <Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Argout:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Command allowed for: </Strong><Ul>
+<Li>Tango::INIT<Li>Tango::STANDBY<Li>Tango::FAULT</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>

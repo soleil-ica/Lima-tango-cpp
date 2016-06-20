@@ -298,5 +298,51 @@ bool PilatusPixelDetector::is_SetEnergy_allowed(const CORBA::Any &any)
 	}
 	return true;
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		PilatusPixelDetector::is_GetTemperature_allowed
+// 
+// description : 	Execution allowed for GetTemperature command.
+//
+//-----------------------------------------------------------------------------
+bool PilatusPixelDetector::is_GetTemperature_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		PilatusPixelDetector::is_GetHumidity_allowed
+// 
+// description : 	Execution allowed for GetHumidity command.
+//
+//-----------------------------------------------------------------------------
+bool PilatusPixelDetector::is_GetHumidity_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
 
 }	// namespace PilatusPixelDetector_ns

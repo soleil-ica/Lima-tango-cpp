@@ -71,8 +71,12 @@ Revision:  - Author:
 <Td><Font Size=-1>Define the type of the connected Detector .<BR>
 Availables types :<BR>
 - AdscCCD<BR>
+- AviexCCD<br>
 - BaslerCCD<BR>
+- Eiger<br>
+- Hamamatsu<br>
 - MarCCD<BR>
+- Merlin <BR>
 - Pco<BR>
 - PerkinElmer<BR>
 - PilatusPixelDetector<BR>
@@ -84,12 +88,17 @@ Availables types :<BR>
 </Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>DetectorPixelDepth </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_USHORT</Font></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
 <Td><Font Size=-1>Define the pixel depth of the detector : <br>
 Availables values : <br>
 - 8 <br>
 - 16<br>
-- 32<br></Font></Td></Tr>
+- 32<br>
+- 32S<br></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>SpecialDisplayType </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>Special type of the image attribute for display and saving (NOT_USED, FLOAT, ...)</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>DetectorVideoMode </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
@@ -120,7 +129,7 @@ Otherwise, use only NONE.</Font></Td></Tr>
 <Tr><Td><b><a href=#Dev_DefaultValues>ImageSource </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
 <Td><Font Size=-1>Choose the source of Data given to the image attribute :<br>
-- VIDEO : use ctVideo->LastImage()
+- VIDEO : use ctVideo->LastImage()<br>
 - ACQUISITION : use ctControl->ReadImage()</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>FileFormat </a></b></Td>
@@ -152,10 +161,16 @@ Nota :<br>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>FileNbFrames </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
-<Td><Font Size=-1></Font></Td></Tr>
+<Td><Font Size=-1>Define the nombre of frames to push in each saving file.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>FileManagedMode </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>Define the File manged Mode :<br>
+- HARDWARE : <br>
+- SOFTWARE :</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>FileWriteMode </a></b></Td>
-<Td><Font Size=-1>string</Font></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
 <Td><Font Size=-1>Available only for Nexus format : Fix the SetWriteMode(). <br>
 Available values :<br>
 - IMMEDIATE<br>
@@ -163,19 +178,25 @@ Available values :<br>
 - DELAYED</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>FileMemoryMode </a></b></Td>
-<Td><Font Size=-1>string</Font></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
 <Td><Font Size=-1>Available only for Nexus format : Fix the SetDataItemMemoryMode().<br>
 Available values :<br>
 - COPY<br>
 - NO_COPY</Font></Td></Tr>
 
+<Tr><Td><b><a href=#Dev_DefaultValues>FileTimestampEnabled </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Define wether the timestamp is requested in the Nexus file or not<br></Font></Td></Tr>
+
 <Tr><Td><b><a href=#Dev_DefaultValues>BufferMaxMemoryPercent </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_USHORT</Font></Td>
-<Td><Font Size=-1>Define the Percent of Memory reserved by buffer control (from 0 to 100 %).</Font></Td></Tr>
+<Td><Font Size=-1>Define the Percent of Memory reserved to Lima buffer control.<br>
+BufferMaxMemoryPercent = 70, allow a Memory of 1.4 Go. (Default)<br>
+BufferMaxMemoryPercent = 100, allow a Memory of 2 Go. (Maximum)</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>UsePrepareCmd </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
-<Td><Font Size=-1></Font></Td></Tr>
+<Td><Font Size=-1>If enabled, a call of 'Prepare' command is necessary before each 'Start' command.</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>DebugModules </a></b></Td>
 <Td><Font Size=-1>Array of string</Font></Td>
@@ -291,6 +312,12 @@ Availables values :<br>
 <Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
 <Td><Font Size=-1></Font></Td></Tr>
 
+<Tr><Td><b><a href=#Dev_DefaultValues>AutoStartVideo </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Allows calling automatically the "Start" command when:<br>
+- The device starts.<br>
+- After calling the "Init" command.</Font></Td></Tr>
+
 </Table>
 
 </Center>
@@ -315,6 +342,10 @@ Availables values :<br>
     <Tr>
         <Td>DetectorPixelDepth</Td>
         <td>16</td>
+    </Tr>
+    <Tr>
+        <Td>SpecialDisplayType</Td>
+        <td>NOT_USED</td>
     </Tr>
     <Tr>
         <Td>DetectorVideoMode</Td>
@@ -345,12 +376,20 @@ Availables values :<br>
         <td>1</td>
     </Tr>
     <Tr>
+        <Td>FileManagedMode</Td>
+        <td>SOFTWARE</td>
+    </Tr>
+    <Tr>
         <Td>FileWriteMode</Td>
         <td>IMMEDIATE</td>
     </Tr>
     <Tr>
         <Td>FileMemoryMode</Td>
         <td>COPY</td>
+    </Tr>
+    <Tr>
+        <Td>FileTimestampEnabled</Td>
+        <td>true</td>
     </Tr>
     <Tr>
         <Td>BufferMaxMemoryPercent</Td>
@@ -435,6 +474,10 @@ Availables values :<br>
     <Tr>
         <Td>MemorizedFileNbFrames</Td>
         <td>No default value</td>
+    </Tr>
+    <Tr>
+        <Td>AutoStartVideo</Td>
+        <td>false</td>
     </Tr>
 </Table>
 

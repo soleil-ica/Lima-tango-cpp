@@ -368,6 +368,38 @@ void EigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	humidityAttrib	*humidity = new humidityAttrib();
 	att_list.push_back(humidity);
 
+	//	Attribute : chiIncrement
+	chiIncrementAttrib	*chi_increment = new chiIncrementAttrib();
+	att_list.push_back(chi_increment);
+
+	//	Attribute : chiStart
+	chiStartAttrib	*chi_start = new chiStartAttrib();
+	att_list.push_back(chi_start);
+
+	//	Attribute : kappaIncrement
+	kappaIncrementAttrib	*kappa_increment = new kappaIncrementAttrib();
+	att_list.push_back(kappa_increment);
+
+	//	Attribute : kappaStart
+	kappaStartAttrib	*kappa_start = new kappaStartAttrib();
+	att_list.push_back(kappa_start);
+
+	//	Attribute : omegaIncrement
+	omegaIncrementAttrib	*omega_increment = new omegaIncrementAttrib();
+	att_list.push_back(omega_increment);
+
+	//	Attribute : omegaStart
+	omegaStartAttrib	*omega_start = new omegaStartAttrib();
+	att_list.push_back(omega_start);
+
+	//	Attribute : phiIncrement
+	phiIncrementAttrib	*phi_increment = new phiIncrementAttrib();
+	att_list.push_back(phi_increment);
+
+	//	Attribute : phiStart
+	phiStartAttrib	*phi_start = new phiStartAttrib();
+	att_list.push_back(phi_start);
+
 	//	Attribute : autoSummation
 	autoSummationAttrib	*auto_summation = new autoSummationAttrib();
 	auto_summation->set_disp_level(Tango::EXPERT);
@@ -381,6 +413,11 @@ void EigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	compression->set_default_properties(compression_prop);
 	compression->set_disp_level(Tango::EXPERT);
 	att_list.push_back(compression);
+
+	//	Attribute : compressionType
+	compressionTypeAttrib	*compression_type = new compressionTypeAttrib();
+	compression_type->set_disp_level(Tango::EXPERT);
+	att_list.push_back(compression_type);
 
 	//	Attribute : softwareVersion
 	softwareVersionAttrib	*software_version = new softwareVersionAttrib();
@@ -455,7 +492,7 @@ void EigerClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedCountrateCorrection";
-	prop_desc = "Stores the value of countrateCorrection";
+	prop_desc = "Memorize the value of countrateCorrection attribute.";
 	prop_def  = "false";
 	vect_data.clear();
 	vect_data.push_back("false");
@@ -470,7 +507,7 @@ void EigerClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedFlatfieldCorrection";
-	prop_desc = "Stores the value of flatfieldCorrection";
+	prop_desc = "Memorize the value of flatfieldCorrection attribute.";
 	prop_def  = "true";
 	vect_data.clear();
 	vect_data.push_back("true");
@@ -485,7 +522,7 @@ void EigerClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedPixelMask";
-	prop_desc = "Stores the value of pixelMask";
+	prop_desc = "Memorize the value of pixelMask attribute.";
 	prop_def  = "false";
 	vect_data.clear();
 	vect_data.push_back("false");
@@ -500,7 +537,7 @@ void EigerClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedVirtualPixelCorrection";
-	prop_desc = "Stores the value of virtualPixelCorrection";
+	prop_desc = "Memorize the value of virtualPixelCorrection attribute.";
 	prop_def  = "false";
 	vect_data.clear();
 	vect_data.push_back("false");
@@ -515,7 +552,7 @@ void EigerClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedThresholdEnergy";
-	prop_desc = "Stores the value of thresholdEnergy";
+	prop_desc = "Memorize the value of thresholdEnergy attribute.";
 	prop_def  = "4000.0";
 	vect_data.clear();
 	vect_data.push_back("4000.0");
@@ -530,7 +567,7 @@ void EigerClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedPhotonEnergy";
-	prop_desc = "Stores the value of photonEnergy";
+	prop_desc = "Memorize the value of photonEnergy attribute.";
 	prop_def  = "8000.0";
 	vect_data.clear();
 	vect_data.push_back("8000.0");
@@ -545,7 +582,7 @@ void EigerClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedAutoSummation";
-	prop_desc = "Stores the value of autoSummation";
+	prop_desc = "Memorize the value of autoSummation attribute.";
 	prop_def  = "true";
 	vect_data.clear();
 	vect_data.push_back("true");
@@ -560,7 +597,7 @@ void EigerClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedCompression";
-	prop_desc = "Stores the value of compression";
+	prop_desc = "Memorize the value of compression attribute.";
 	prop_def  = "true";
 	vect_data.clear();
 	vect_data.push_back("true");
@@ -574,8 +611,23 @@ void EigerClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
+	prop_name = "MemorizedCompressionType";
+	prop_desc = "Memorize the value of compressionType attribute.";
+	prop_def  = "LZ4";
+	vect_data.clear();
+	vect_data.push_back("LZ4");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 	prop_name = "MemorizedWavelength";
-	prop_desc = "";
+	prop_desc = "Memorize the value of wavelength attribute.";
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
@@ -590,7 +642,7 @@ void EigerClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedBeamCenterX";
-	prop_desc = "";
+	prop_desc = "Memorize the value of beamCenterX attribute.";
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
@@ -605,7 +657,7 @@ void EigerClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedBeamCenterY";
-	prop_desc = "";
+	prop_desc = "Memorize the value of beamCenterY attribute.";
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
@@ -620,7 +672,127 @@ void EigerClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedDetectorDistance";
-	prop_desc = "";
+	prop_desc = "Memorize the value of detectorDistance attribute.";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedChiIncrement";
+	prop_desc = "Memorize the value of chiIncrement attribute.";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedChiStart";
+	prop_desc = "Memorize the value of chiStart attribute.";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedKappaIncrement";
+	prop_desc = "Memorize the value of kappaIncrement attribute.";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedKappaStart";
+	prop_desc = "Memorize the value of kappaStart attribute.";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedOmegaIncrement";
+	prop_desc = "Memorize the value of omegaIncrement attribute.";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedOmegaStart";
+	prop_desc = "Memorize the value of omegaStart attribute.";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedPhiIncrement";
+	prop_desc = "Memorize the value of phiIncrement attribute.";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedPhiStart";
+	prop_desc = "Memorize the value of phiStart attribute.";
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");

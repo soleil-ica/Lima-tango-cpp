@@ -863,7 +863,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "DetectorType";
-	prop_desc = "Define the type of the connected Detector .<BR>\nAvailables types :<BR>\n- AdscCCD<BR>\n- AviexCCD<br>\n- BaslerCCD<BR>\n- Eiger<br>\n- Hamamatsu<br>\n- MarCCD<BR>\n- Pco<BR>\n- PerkinElmer<BR>\n- PilatusPixelDetector<BR>\n- ProsilicaCCD<BR>\n- PrincetonCCD<BR>\n- SimulatorCCD<BR>\n- XpadPixelDetector<BR>\n\n";
+	prop_desc = "Define the type of the connected Detector .<BR>\nAvailables types :<BR>\n- AdscCCD<BR>\n- AviexCCD<br>\n- BaslerCCD<BR>\n- Eiger<br>\n- Hamamatsu<br>\n- MarCCD<BR>\n- Merlin <BR>\n- Pco<BR>\n- PerkinElmer<BR>\n- PilatusPixelDetector<BR>\n- ProsilicaCCD<BR>\n- PrincetonCCD<BR>\n- SimulatorCCD<BR>\n- XpadPixelDetector<BR>\n\n";
 	prop_def  = "SimulatorCCD";
 	vect_data.clear();
 	vect_data.push_back("SimulatorCCD");
@@ -923,7 +923,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "ImageSource";
-	prop_desc = "Choose the source of Data given to the image attribute :<br>\n- VIDEO : use ctVideo->LastImage()\n- ACQUISITION : use ctControl->ReadImage()";
+	prop_desc = "Choose the source of Data given to the image attribute :<br>\n- VIDEO : use ctVideo->LastImage()<br>\n- ACQUISITION : use ctControl->ReadImage()";
 	prop_def  = "VIDEO";
 	vect_data.clear();
 	vect_data.push_back("VIDEO");
@@ -998,7 +998,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "FileNbFrames";
-	prop_desc = "";
+	prop_desc = "Define the nombre of frames to push in each saving file.";
 	prop_def  = "1";
 	vect_data.clear();
 	vect_data.push_back("1");
@@ -1013,7 +1013,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "FileManagedMode";
-	prop_desc = "";
+	prop_desc = "Define the File manged Mode :<br>\n- HARDWARE : <br>\n- SOFTWARE :";
 	prop_def  = "SOFTWARE";
 	vect_data.clear();
 	vect_data.push_back("SOFTWARE");
@@ -1073,7 +1073,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "BufferMaxMemoryPercent";
-	prop_desc = "Define the Percent of Memory reserved by buffer control (from 0 to 100 %).";
+	prop_desc = "Define the Percent of Memory reserved to Lima buffer control.<br>\nBufferMaxMemoryPercent = 70, allow a Memory of 1.4 Go. (Default)<br>\nBufferMaxMemoryPercent = 100, allow a Memory of 2 Go. (Maximum)";
 	prop_def  = "70";
 	vect_data.clear();
 	vect_data.push_back("70");
@@ -1088,7 +1088,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "UsePrepareCmd";
-	prop_desc = "";
+	prop_desc = "If enabled, a call of 'Prepare' command is necessary before each 'Start' command.";
 	prop_def  = "false";
 	vect_data.clear();
 	vect_data.push_back("false");
@@ -1368,7 +1368,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "AutoStartVideo";
-	prop_desc = "Allows calling automatically the \"Start\" command when:<br>\n- The device starts.\n- After calling the \"Init\" command.";
+	prop_desc = "Allows calling automatically the \"Start\" command when:<br>\n- The device starts.<br>\n- After calling the \"Init\" command.";
 	prop_def  = "false";
 	vect_data.clear();
 	vect_data.push_back("false");

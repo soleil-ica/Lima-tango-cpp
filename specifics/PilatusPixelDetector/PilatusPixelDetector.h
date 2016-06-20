@@ -133,6 +133,14 @@ public :
  */
 	Tango::DevULong	readerTimeout;
 /**
+ *	Max Temperature Authorized on detector. (unit in ?C)
+ */
+	vector<double>	temperatureMax;
+/**
+ *	Max Humidity Authorized on detector. (Unit in %)
+ */
+	vector<double>	humidityMax;
+/**
  *	Memorize/Define the energy value<br>
  */
 	Tango::DevDouble	memorizedEnergy;
@@ -301,6 +309,14 @@ public :
  */
 	virtual bool is_SendAnyCommand_allowed(const CORBA::Any &any);
 /**
+ *	Execution allowed for GetTemperature command.
+ */
+	virtual bool is_GetTemperature_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for GetHumidity command.
+ */
+	virtual bool is_GetHumidity_allowed(const CORBA::Any &any);
+/**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
  *	@exception DevFailed
@@ -340,6 +356,20 @@ public :
  *	@exception DevFailed
  */
 	void	send_any_command(Tango::DevString);
+/**
+ * Return Temperature of the selected channel .
+ *	@param	argin	
+ *	@return	
+ *	@exception DevFailed
+ */
+	Tango::DevDouble	get_temperature(Tango::DevUShort);
+/**
+ * Return the Humidity of the selected channel
+ *	@param	argin	
+ *	@return	
+ *	@exception DevFailed
+ */
+	Tango::DevDouble	get_humidity(Tango::DevUShort);
 
 /**
  *	Read the device properties from database

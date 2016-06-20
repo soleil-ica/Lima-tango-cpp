@@ -27,15 +27,15 @@ void ControlFactory::initialize()
 
     m_device_name_generic = "none";
     m_device_name_specific = "none";
-	
+
 #ifdef LAYOUT_ENABLED    
     m_device_name_layout = "none";
 #endif
-	
-#ifdef ROICOUNTERS_ENABLED    	
-	m_device_name_roicounters = "none";	
-#endif	 
-	
+
+#ifdef ROICOUNTERS_ENABLED     
+    m_device_name_roicounters = "none";
+#endif  
+
     m_status.str("");
     m_state = Tango::INIT;
 }
@@ -56,7 +56,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         if (!ControlFactory::m_is_created)
         {
             initialize();
-            
+
             {
                 std::string specific = detector_type;
                 Tango::DbDatum db_datum;
@@ -72,9 +72,9 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 m_device_name_generic = Tango::Util::instance()->get_ds_name();
                 db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, layout);
                 db_datum >> m_device_name_layout;
-            }     
+            }
 #endif         
-			
+
 #ifdef ROICOUNTERS_ENABLED
             {
                 std::string roicounters = "RoiCounters";
@@ -82,8 +82,8 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 m_device_name_generic = Tango::Util::instance()->get_ds_name();
                 db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, roicounters);
                 db_datum >> m_device_name_roicounters;
-            }     
-#endif  			
+            }
+#endif     
         }
 
 #ifdef SIMULATOR_ENABLED
@@ -150,6 +150,29 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 
+#ifdef IMXPAD_ENABLED
+        if (detector_type == "ImXpad")
+        {
+            if (!ControlFactory::m_is_created)
+            {
+                Tango::DbData db_data;
+                db_data.push_back(Tango::DbDatum("HostName"));
+                db_data.push_back(Tango::DbDatum("Port"));
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                std::string host_name;
+                long port;
+                db_data[0] >> host_name;
+                db_data[1] >> port;
+                m_camera = static_cast<void*> (new imXpad::Camera(host_name, port));
+
+                m_interface = static_cast<void*> (new imXpad::Interface(*static_cast<imXpad::Camera*> (m_camera)));
+                m_control = new CtControl(static_cast<imXpad::Interface*> (m_interface));
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
+#endif
+        
 #ifdef XPAD_ENABLED
         if (detector_type == "XpadPixelDetector")
         {
@@ -159,15 +182,20 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 Tango::DbData db_data;
                 db_data.push_back(Tango::DbDatum("XpadModel"));
                 db_data.push_back(Tango::DbDatum("CalibrationAdjustingNumber"));
+                db_data.push_back(Tango::DbDatum("MinLatencyTimeMs"));
+
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
                 std::string xpad_model;
                 Tango::DevULong calibration_adjusting_number;
+                Tango::DevDouble min_latency_time_ms;
 
                 db_data[0] >> xpad_model;
                 db_data[1] >> calibration_adjusting_number;
+                db_data[2] >> min_latency_time_ms;
 
                 m_camera = static_cast<void*> (new Xpad::Camera(xpad_model));
                 static_cast<Xpad::Camera*> (m_camera)->setCalibrationAdjustingNumber(calibration_adjusting_number);
+                static_cast<Xpad::Camera*> (m_camera)->setMinLatencyTimeMs(min_latency_time_ms);
 
                 m_interface = static_cast<void*> (new Xpad::Interface(*static_cast<Xpad::Camera*> (m_camera)));
                 m_control = new CtControl(static_cast<Xpad::Interface*> (m_interface));
@@ -185,28 +213,39 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 Tango::DbData db_data;
                 db_data.push_back(Tango::DbDatum("DetectorIP"));
                 db_data.push_back(Tango::DbDatum("DetectorPort"));
-                db_data.push_back(Tango::DbDatum("DetectorCameraDefFileName"));                
+                db_data.push_back(Tango::DbDatum("DetectorCameraDefFileName"));
                 db_data.push_back(Tango::DbDatum("UseReader"));
                 db_data.push_back(Tango::DbDatum("ReaderTimeout"));
-                
+                db_data.push_back(Tango::DbDatum("TemperatureMax"));
+                db_data.push_back(Tango::DbDatum("HumidityMax"));
+
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
                 std::string camera_ip = "127.0.0.1";
                 std::string camera_def = "camera.def";
                 long camera_port = 6666;
                 bool use_reader = false;
                 unsigned long reader_timeout = 10000;  //in ms
-                
+                std::vector<double>	temperature_max;
+                std::vector<double>	humidity_max;
+
                 db_data[0] >> camera_ip;
                 db_data[1] >> camera_port;
                 db_data[2] >> camera_def;
                 db_data[3] >> use_reader;
                 db_data[4] >> reader_timeout;
+                db_data[5] >> temperature_max;
+                db_data[6] >> humidity_max;
 
-                m_camera = static_cast<void*> (new Pilatus::Camera(camera_ip.c_str(), camera_port,const_cast<std::string&>(camera_def)));
-                if (m_camera && use_reader)
-                    static_cast<Pilatus::Camera*> (m_camera)->enableReaderWatcher();
-                if (m_camera && !use_reader)
-                    static_cast<Pilatus::Camera*> (m_camera)->disableReaderWatcher();
+                m_camera = static_cast<void*> (new Pilatus::Camera(camera_ip.c_str(), camera_port, const_cast<std::string&> (camera_def)));
+                if(m_camera)
+                {
+                    static_cast<Pilatus::Camera*> (m_camera)->setTemperatureMax(temperature_max);
+                    static_cast<Pilatus::Camera*> (m_camera)->setHumidityMax(humidity_max);
+                    if(use_reader)
+                        static_cast<Pilatus::Camera*> (m_camera)->enableReaderWatcher();
+                    else
+                        static_cast<Pilatus::Camera*> (m_camera)->disableReaderWatcher();
+                }
 
                 m_interface = static_cast<void*> (new Pilatus::Interface(*static_cast<Pilatus::Camera*> (m_camera)));
                 if(m_interface)
@@ -246,6 +285,37 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                     static_cast<Marccd::Interface*> (m_interface)->setTimeout(reader_timeout / 1000);
 
                 m_control = new CtControl(static_cast<Marccd::Interface*> (m_interface));
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
+#endif
+
+#ifdef MAXIPIX_ENABLED
+        if (detector_type == "Maxipix")
+        {
+            if (!ControlFactory::m_is_created)
+            {
+                Tango::DbData db_data;
+                db_data.push_back(Tango::DbDatum("EspiaDeviceNumber"));
+                db_data.push_back(Tango::DbDatum("ConfigurationPath"));
+                db_data.push_back(Tango::DbDatum("ConfigurationName"));
+                db_data.push_back(Tango::DbDatum("UseReconstruction"));
+
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                long espia_device_number = -1;
+                std::string config_path;
+                std::string config_name;
+                bool use_reconstruction = false;
+
+                db_data[0] >> espia_device_number;
+                db_data[1] >> config_path;
+                db_data[2] >> config_name;
+                db_data[3] >> use_reconstruction;
+
+                m_camera = static_cast<void*> (new Maxipix::Camera(espia_device_number, config_path, config_name, use_reconstruction));
+                m_interface = static_cast<void*> (new Maxipix::Interface(*static_cast<Maxipix::Camera*> (m_camera)));
+                m_control = new CtControl(static_cast<Maxipix::Interface*> (m_interface));
                 ControlFactory::m_is_created = true;
                 return m_control;
             }
@@ -382,13 +452,13 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 m_camera = 0;
                 Tango::DbData db_data;
                 db_data.push_back(Tango::DbDatum("HostName"));
-				db_data.push_back(Tango::DbDatum("CmdPort"));
+                db_data.push_back(Tango::DbDatum("CmdPort"));
                 db_data.push_back(Tango::DbDatum("DataPort"));
                 db_data.push_back(Tango::DbDatum("ImageWidth"));
                 db_data.push_back(Tango::DbDatum("ImageHeight"));
                 db_data.push_back(Tango::DbDatum("Chips"));
-                db_data.push_back(Tango::DbDatum("Simulate"));          
-                
+                db_data.push_back(Tango::DbDatum("Simulate"));
+
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
                 std::string hostName;
                 long cmdPort;
@@ -404,7 +474,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data[4] >> imageHeight;
                 db_data[5] >> chips;
                 db_data[6] >> simulate;
-			
+
                 m_camera = static_cast<void*> (new Merlin::Camera(hostName, cmdPort, dataPort, imageWidth, imageHeight, chips, simulate));
                 m_interface = static_cast<void*> (new Merlin::Interface(*static_cast<Merlin::Camera*> (m_camera)));
                 m_control = new CtControl(static_cast<Merlin::Interface*> (m_interface));
@@ -497,7 +567,6 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             {
                 Tango::DbData db_data;
                 db_data.push_back(Tango::DbDatum("DetectorIP"));
-                db_data.push_back(Tango::DbDatum("Pattern"));
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
                 std::string camera_ip;
                 db_data[0] >> camera_ip;
@@ -509,7 +578,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             }
         }
 #endif           
-        
+
 #ifdef UVIEW_ENABLED
         if (detector_type == "UviewCCD")
         {
@@ -546,7 +615,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
     {
         throw LIMA_HW_EXC(Error, "Unable to create the lima control object : Unknown Exception");
     }
-    
+
     return m_control;
 }
 
@@ -554,13 +623,13 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 CtControl* ControlFactory::get_control(const std::string& detector_type)
 {
     yat::AutoMutex<> _lock(m_lock);
-	if (!ControlFactory::m_is_created)
-	{
-		std::stringstream ssMsg("");
-		ssMsg<<"Unable to get the lima control of " << "(" << detector_type << ") !" << endl;
-		throw LIMA_HW_EXC(Error, ssMsg.str());
-	}	
-    return m_control;       
+    if (!ControlFactory::m_is_created)
+    {
+        std::stringstream ssMsg("");
+        ssMsg << "Unable to get the lima control of " << "(" << detector_type << ") !" << endl;
+        throw LIMA_HW_EXC(Error, ssMsg.str());
+    }
+    return m_control;
 }
 
 //-----------------------------------------------------------------------------------------
@@ -601,6 +670,13 @@ void ControlFactory::reset(const std::string& detector_type)
                 }
 #endif
 
+#ifdef IMXPAD_ENABLED        
+                if (detector_type == "ImXpad")
+                {
+                    delete (static_cast<imXpad::Camera*> (m_camera));
+                }
+#endif                
+
 #ifdef XPAD_ENABLED        
                 if (detector_type == "XpadPixelDetector")
                 {
@@ -621,6 +697,13 @@ void ControlFactory::reset(const std::string& detector_type)
                     delete (static_cast<Marccd::Camera*> (m_camera));
                 }
 #endif  
+
+#ifdef MAXIPIX_ENABLED        
+                if (detector_type == "Maxipix")
+                {
+                    delete (static_cast<Maxipix::Camera*> (m_camera));
+                }
+#endif 
 
 #ifdef ADSC_ENABLED        
                 if (detector_type == "AdscCCD")
@@ -693,16 +776,16 @@ void ControlFactory::reset(const std::string& detector_type)
 #endif    
 
 #ifdef EIGER_ENABLED
-				if (detector_type == "Eiger")
-				{
-					delete (static_cast<Eiger::Camera*> (m_camera));
-				}		
+                if (detector_type == "Eiger")
+                {
+                    delete (static_cast<Eiger::Camera*> (m_camera));
+                }
 #endif
 
 #ifdef UVIEW_ENABLED        
                 if (detector_type == "UviewCCD")
                 {
-					delete (static_cast<Uview::Camera*> (m_camera));
+                    delete (static_cast<Uview::Camera*> (m_camera));
                 }
 #endif     
 
@@ -713,7 +796,7 @@ void ControlFactory::reset(const std::string& detector_type)
             {
                 delete m_interface;
                 m_interface = 0;
-            }        
+            }
         }
     }
     catch (Tango::DevFailed& df)
@@ -756,18 +839,18 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
         //- rethrow exception
         throw LIMA_HW_EXC(Error, std::string(df.errors[0].desc).c_str());
     }
-	
+
 #ifdef LAYOUT_ENABLED        
-	try
-	{
+    try
+    {
         //@@@TODO and if not exist ?? get the tango device/instance for layout
         if (!ControlFactory::m_is_created)
         {
-            std::string detector = "Layout";		
+            std::string detector = "Layout";
             Tango::DbDatum db_datum;
             m_device_name_generic = Tango::Util::instance()->get_ds_name();
             db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, detector);
-            db_datum >> m_device_name_layout;	
+            db_datum >> m_device_name_layout;
         }
         (Tango::Util::instance()->get_device_by_name(m_device_name_layout))->delete_device();
         (Tango::Util::instance()->get_device_by_name(m_device_name_layout))->init_device();
@@ -776,20 +859,20 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
     {
         //- rethrow exception
         ////throw LIMA_HW_EXC(Error, std::string(df.errors[0].desc).c_str());
-    }		
+    }
 #endif
-	
+
 #ifdef ROICOUNTERS_ENABLED        
-	try
-	{
+    try
+    {
         //@@@TODO and if not exist ?? get the tango device/instance for layout
         if (!ControlFactory::m_is_created)
         {
-            std::string detector = "RoiCounters";			
+            std::string detector = "RoiCounters";
             Tango::DbDatum db_datum;
             m_device_name_generic = Tango::Util::instance()->get_ds_name();
             db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, detector);
-            db_datum >> m_device_name_roicounters;					
+            db_datum >> m_device_name_roicounters;
         }
         (Tango::Util::instance()->get_device_by_name(m_device_name_roicounters))->delete_device();
         (Tango::Util::instance()->get_device_by_name(m_device_name_roicounters))->init_device();
@@ -798,8 +881,8 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
     {
         //- rethrow exception
         ////throw LIMA_HW_EXC(Error, std::string(df.errors[0].desc).c_str());
-    }		
-#endif	
+    }
+#endif 
 }
 
 //-----------------------------------------------------------------------------------------
@@ -824,21 +907,21 @@ Tango::DevState ControlFactory::get_state(void)
         case lima::AcqRunning:
         {
             set_state(Tango::RUNNING);
-            set_status("Acquisition is in Running ...\n");            
+            set_status("Acquisition is in Running ...\n");
         }
             break;
 
         case lima::AcqConfig:
         {
             set_state(Tango::DISABLE);
-            set_status("Detector is in Configuration ...\n");                        
+            set_status("Detector is in Configuration ...\n");
         }
             break;
 
         default:
         {
             set_state(Tango::FAULT);
-            set_status("Detector is in Fault ...\n");                    
+            set_status("Detector is in Fault ...\n");
         }
             break;
     }
@@ -849,7 +932,7 @@ Tango::DevState ControlFactory::get_state(void)
 //-----------------------------------------------------------------------------------------
 std::string ControlFactory::get_status(void)
 {
-     yat::AutoMutex<> _lock(m_lock);
+    yat::AutoMutex<> _lock(m_lock);
     return (m_status.str());
 }
 

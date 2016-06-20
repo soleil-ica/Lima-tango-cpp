@@ -41,6 +41,11 @@
 #include <BaslerCamera.h>
 #endif
 
+#ifdef IMXPAD_ENABLED
+#include <imXpadInterface.h>
+#include <imXpadCamera.h>
+#endif
+
 #ifdef XPAD_ENABLED
 #include <XpadInterface.h>
 #endif
@@ -51,6 +56,10 @@
 
 #ifdef MARCCD_ENABLED
 #include <MarccdInterface.h>
+#endif
+
+#ifdef MAXIPIX_ENABLED
+#include <MaxipixInterface.h>
 #endif
 
 #ifdef ADSC_ENABLED

@@ -63,12 +63,20 @@ static const char *RcsId = "$Id:  $";
 #include <PilatusPixelDetectorClass.h>
 #endif
 
+#ifdef IMXPAD_ENABLED
+#include <ImXpadClass.h>
+#endif
+
 #ifdef XPAD_ENABLED
 #include <XpadPixelDetectorClass.h>
 #endif
 
 #ifdef MARCCD_ENABLED
 #include <MarCCDClass.h>
+#endif
+
+#ifdef MAXIPIX_ENABLED
+#include <MaxipixClass.h>
 #endif
 
 #ifdef ADSC_ENABLED
@@ -143,6 +151,10 @@ void Tango::DServer::class_factory()
     add_class(PilatusPixelDetector_ns::PilatusPixelDetectorClass::init("PilatusPixelDetector"));
 #endif
 
+#ifdef IMXPAD_ENABLED	
+    add_class(ImXpad_ns::ImXpadClass::init("ImXpad"));
+#endif
+    
 #ifdef XPAD_ENABLED	
     add_class(XpadPixelDetector_ns::XpadPixelDetectorClass::init("XpadPixelDetector"));
 #endif
@@ -151,6 +163,10 @@ void Tango::DServer::class_factory()
     add_class(MarCCD_ns::MarCCDClass::init("MarCCD"));
 #endif
 
+#ifdef MAXIPIX_ENABLED	
+    add_class(Maxipix_ns::MaxipixClass::init("Maxipix"));
+#endif
+    
 #ifdef ADSC_ENABLED	
     add_class(AdscCCD_ns::AdscCCDClass::init("AdscCCD"));
 #endif

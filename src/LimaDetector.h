@@ -200,6 +200,7 @@ public:
  *	- Eiger<br>
  *	- Hamamatsu<br>
  *	- MarCCD<BR>
+ *	- Merlin <BR>
  *	- Pco<BR>
  *	- PerkinElmer<BR>
  *	- PilatusPixelDetector<BR>
@@ -252,7 +253,7 @@ public:
 	string	detectorVideoMode;
 /**
  *	Choose the source of Data given to the image attribute :<br>
- *	- VIDEO : use ctVideo->LastImage()
+ *	- VIDEO : use ctVideo->LastImage()<br>
  *	- ACQUISITION : use ctControl->ReadImage()
  */
 	string	imageSource;
@@ -284,11 +285,13 @@ public:
  */
 	string	fileTargetPath;
 /**
- *	
+ *	Define the nombre of frames to push in each saving file.
  */
 	Tango::DevLong	fileNbFrames;
 /**
- *	
+ *	Define the File manged Mode :<br>
+ *	- HARDWARE : <br>
+ *	- SOFTWARE :
  */
 	string	fileManagedMode;
 /**
@@ -311,11 +314,13 @@ public:
  */
 	Tango::DevBoolean	fileTimestampEnabled;
 /**
- *	Define the Percent of Memory reserved by buffer control (from 0 to 100 %).
+ *	Define the Percent of Memory reserved to Lima buffer control.<br>
+ *	BufferMaxMemoryPercent = 70, allow a Memory of 1.4 Go. (Default)<br>
+ *	BufferMaxMemoryPercent = 100, allow a Memory of 2 Go. (Maximum)
  */
 	Tango::DevUShort	bufferMaxMemoryPercent;
 /**
- *	
+ *	If enabled, a call of 'Prepare' command is necessary before each 'Start' command.
  */
 	Tango::DevBoolean	usePrepareCmd;
 /**
@@ -434,7 +439,7 @@ public:
 	Tango::DevLong	memorizedFileNbFrames;
 /**
  *	Allows calling automatically the "Start" command when:<br>
- *	- The device starts.
+ *	- The device starts.<br>
  *	- After calling the "Init" command.
  */
 	Tango::DevBoolean	autoStartVideo;
@@ -903,7 +908,10 @@ public:
     void    configure_available_trigger_mode(void);
     void    configure_image_type(void);
     void    configure_video_mode(void);    
-    void    configure_saving_parameters(void);    
+    void    configure_saving_parameters(void); 
+    void    configure_roi(void); 
+    void    configure_binning(void); 
+    void    configure_attributes_hardware_at_init(void);
     
     // return true if the device is correctly initialized in init_device
     bool    is_device_initialized()
