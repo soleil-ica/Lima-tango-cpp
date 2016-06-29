@@ -86,7 +86,15 @@ bool Maxipix::is_energyThreshold_allowed(Tango::AttReqType type)
 		get_state() == Tango::RUNNING)
 	{
 		//	End of Generated Code
-
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+		
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
 		//	Re-Start of Generated Code
 		return false;
 	}
@@ -100,6 +108,174 @@ bool Maxipix::is_energyThreshold_allowed(Tango::AttReqType type)
 //
 //-----------------------------------------------------------------------------
 bool Maxipix::is_fillMode_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+		
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::is_gateLevel_allowed
+// 
+// description : 	Read/Write allowed for gateLevel attribute.
+//
+//-----------------------------------------------------------------------------
+bool Maxipix::is_gateLevel_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+		
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::is_readyMode_allowed
+// 
+// description : 	Read/Write allowed for readyMode attribute.
+//
+//-----------------------------------------------------------------------------
+bool Maxipix::is_readyMode_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+		
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::is_readyLevel_allowed
+// 
+// description : 	Read/Write allowed for readyLevel attribute.
+//
+//-----------------------------------------------------------------------------
+bool Maxipix::is_readyLevel_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+		
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::is_shutterLevel_allowed
+// 
+// description : 	Read/Write allowed for shutterLevel attribute.
+//
+//-----------------------------------------------------------------------------
+bool Maxipix::is_shutterLevel_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+		
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::is_triggerLevel_allowed
+// 
+// description : 	Read/Write allowed for triggerLevel attribute.
+//
+//-----------------------------------------------------------------------------
+bool Maxipix::is_triggerLevel_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+		
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::is_gate_allowed
+// 
+// description : 	Read/Write allowed for gate attribute.
+//
+//-----------------------------------------------------------------------------
+bool Maxipix::is_gate_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::FAULT	||
 		get_state() == Tango::INIT	||

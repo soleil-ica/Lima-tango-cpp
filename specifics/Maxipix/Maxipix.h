@@ -54,12 +54,11 @@
 #include <yat4tango/PropertyHelper.h>
 #include <MaxipixInterface.h>
 #include <MaxipixCamera.h>
+#include <MaxipixReconstruction.h>
 
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
 #define DEVICE_VERSION  "1.0.0"
 
-
-using namespace lima;
 using namespace std;
 using namespace yat4tango;
 
@@ -99,6 +98,18 @@ public :
 		Tango::DevDouble	attr_energyThreshold_write;
 		Tango::DevString	*attr_fillMode_read;
 		Tango::DevString	attr_fillMode_write;
+		Tango::DevBoolean	*attr_gate_read;
+		Tango::DevBoolean	attr_gate_write;
+		Tango::DevString	*attr_gateLevel_read;
+		Tango::DevString	attr_gateLevel_write;
+		Tango::DevString	*attr_readyMode_read;
+		Tango::DevString	attr_readyMode_write;
+		Tango::DevString	*attr_readyLevel_read;
+		Tango::DevString	attr_readyLevel_write;
+		Tango::DevString	*attr_shutterLevel_read;
+		Tango::DevString	attr_shutterLevel_write;
+		Tango::DevString	*attr_triggerLevel_read;
+		Tango::DevString	attr_triggerLevel_write;
 //@}
 
 /**
@@ -216,6 +227,54 @@ public :
  */
 	virtual void write_fillMode(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for gate acquisition result.
+ */
+	virtual void read_gate(Tango::Attribute &attr);
+/**
+ *	Write gate attribute values to hardware.
+ */
+	virtual void write_gate(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for gateLevel acquisition result.
+ */
+	virtual void read_gateLevel(Tango::Attribute &attr);
+/**
+ *	Write gateLevel attribute values to hardware.
+ */
+	virtual void write_gateLevel(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for readyMode acquisition result.
+ */
+	virtual void read_readyMode(Tango::Attribute &attr);
+/**
+ *	Write readyMode attribute values to hardware.
+ */
+	virtual void write_readyMode(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for readyLevel acquisition result.
+ */
+	virtual void read_readyLevel(Tango::Attribute &attr);
+/**
+ *	Write readyLevel attribute values to hardware.
+ */
+	virtual void write_readyLevel(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for shutterLevel acquisition result.
+ */
+	virtual void read_shutterLevel(Tango::Attribute &attr);
+/**
+ *	Write shutterLevel attribute values to hardware.
+ */
+	virtual void write_shutterLevel(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for triggerLevel acquisition result.
+ */
+	virtual void read_triggerLevel(Tango::Attribute &attr);
+/**
+ *	Write triggerLevel attribute values to hardware.
+ */
+	virtual void write_triggerLevel(Tango::WAttribute &attr);
+/**
  *	Read/Write allowed for deviceVersion attribute.
  */
 	virtual bool is_deviceVersion_allowed(Tango::AttReqType type);
@@ -227,6 +286,30 @@ public :
  *	Read/Write allowed for fillMode attribute.
  */
 	virtual bool is_fillMode_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for gate attribute.
+ */
+	virtual bool is_gate_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for gateLevel attribute.
+ */
+	virtual bool is_gateLevel_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for readyMode attribute.
+ */
+	virtual bool is_readyMode_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for readyLevel attribute.
+ */
+	virtual bool is_readyLevel_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for shutterLevel attribute.
+ */
+	virtual bool is_shutterLevel_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for triggerLevel attribute.
+ */
+	virtual bool is_triggerLevel_allowed(Tango::AttReqType type);
 /**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
@@ -253,9 +336,9 @@ protected :
     bool                        m_is_device_initialized ;
     stringstream                m_status_message;
     //lima OBJECTS
-    Maxipix::Interface* m_hw;
+    lima::Maxipix::Interface* m_hw;
     CtControl*          m_ct;
-    Maxipix::Camera*    m_camera;	
+    lima::Maxipix::Camera*    m_camera;	
 	
 };
 

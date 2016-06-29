@@ -322,10 +322,10 @@ void SimulatorCCD::read_fillType(Tango::Attribute &attr)
 
         switch (eFillType)
         {
-            case Simulator::FrameBuilder::FillType::Gauss:
+            case Simulator::FrameBuilder::Gauss:
                 strFillType = STR_GAUSS;
                 break;
-            case Simulator::FrameBuilder::FillType::Diffraction:
+            case Simulator::FrameBuilder::Diffraction:
                 strFillType = STR_DIFFRACTION;
                 break;
             default:
@@ -392,10 +392,9 @@ void SimulatorCCD::write_fillType(Tango::WAttribute &attr)
         m_fillType = current;
 
         if (STR_GAUSS == m_fillType)
-            m_camera->getFrameBuilder()->setFillType(Simulator::FrameBuilder::FillType::Gauss);
+            m_camera->getFrameBuilder()->setFillType(Simulator::FrameBuilder::Gauss);
         else if (STR_DIFFRACTION == m_fillType)
-            m_camera->getFrameBuilder()->setFillType(Simulator::FrameBuilder::FillType::Diffraction);
-		
+            m_camera->getFrameBuilder()->setFillType(Simulator::FrameBuilder::Diffraction);		
         yat4tango::PropertyHelper::set_property(this, "MemorizedFillType", m_fillType);
     }
     catch (Tango::DevFailed& df)

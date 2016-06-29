@@ -261,6 +261,8 @@ void MaxipixClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	energy_threshold_prop.set_format("%5.2f");
 	energy_threshold_prop.set_description("Energy threshold (KeV)");
 	energy_threshold->set_default_properties(energy_threshold_prop);
+	energy_threshold->set_memorized();
+	energy_threshold->set_memorized_init(false);
 	att_list.push_back(energy_threshold);
 
 	//	Attribute : fillMode
@@ -269,9 +271,83 @@ void MaxipixClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	fill_mode_prop.set_unit(" ");
 	fill_mode_prop.set_standard_unit(" ");
 	fill_mode_prop.set_display_unit(" ");
-	fill_mode_prop.set_description("Between chip filling mode");
+	fill_mode_prop.set_description("Set Active or Inactive the reconstruction :\nRAW\nDISPATCH\nZERO\nMEAN");
 	fill_mode->set_default_properties(fill_mode_prop);
+	fill_mode->set_memorized();
+	fill_mode->set_memorized_init(false);
 	att_list.push_back(fill_mode);
+
+	//	Attribute : gate
+	gateAttrib	*gate = new gateAttrib();
+	Tango::UserDefaultAttrProp	gate_prop;
+	gate_prop.set_unit(" ");
+	gate_prop.set_standard_unit(" ");
+	gate_prop.set_display_unit(" ");
+	gate_prop.set_description("Set Active or Inactive the gate");
+	gate->set_default_properties(gate_prop);
+	gate->set_memorized();
+	gate->set_memorized_init(false);
+	att_list.push_back(gate);
+
+	//	Attribute : gateLevel
+	gateLevelAttrib	*gate_level = new gateLevelAttrib();
+	Tango::UserDefaultAttrProp	gate_level_prop;
+	gate_level_prop.set_unit(" ");
+	gate_level_prop.set_standard_unit(" ");
+	gate_level_prop.set_display_unit(" ");
+	gate_level_prop.set_description("The ready output signal level :\nLOW\nHIGH");
+	gate_level->set_default_properties(gate_level_prop);
+	gate_level->set_memorized();
+	gate_level->set_memorized_init(false);
+	att_list.push_back(gate_level);
+
+	//	Attribute : readyMode
+	readyModeAttrib	*ready_mode = new readyModeAttrib();
+	Tango::UserDefaultAttrProp	ready_mode_prop;
+	ready_mode_prop.set_unit(" ");
+	ready_mode_prop.set_standard_unit(" ");
+	ready_mode_prop.set_display_unit(" ");
+	ready_mode_prop.set_description("The ready mode :\nEXPOSURE\nREADOUT");
+	ready_mode->set_default_properties(ready_mode_prop);
+	ready_mode->set_memorized();
+	ready_mode->set_memorized_init(false);
+	att_list.push_back(ready_mode);
+
+	//	Attribute : readyLevel
+	readyLevelAttrib	*ready_level = new readyLevelAttrib();
+	Tango::UserDefaultAttrProp	ready_level_prop;
+	ready_level_prop.set_unit(" ");
+	ready_level_prop.set_standard_unit(" ");
+	ready_level_prop.set_display_unit(" ");
+	ready_level_prop.set_description("The ready output signal level :\nLOW\nHIGH");
+	ready_level->set_default_properties(ready_level_prop);
+	ready_level->set_memorized();
+	ready_level->set_memorized_init(false);
+	att_list.push_back(ready_level);
+
+	//	Attribute : shutterLevel
+	shutterLevelAttrib	*shutter_level = new shutterLevelAttrib();
+	Tango::UserDefaultAttrProp	shutter_level_prop;
+	shutter_level_prop.set_unit(" ");
+	shutter_level_prop.set_standard_unit(" ");
+	shutter_level_prop.set_display_unit(" ");
+	shutter_level_prop.set_description("The shutter output signal level :\nLOW\nHIGH");
+	shutter_level->set_default_properties(shutter_level_prop);
+	shutter_level->set_memorized();
+	shutter_level->set_memorized_init(false);
+	att_list.push_back(shutter_level);
+
+	//	Attribute : triggerLevel
+	triggerLevelAttrib	*trigger_level = new triggerLevelAttrib();
+	Tango::UserDefaultAttrProp	trigger_level_prop;
+	trigger_level_prop.set_unit(" ");
+	trigger_level_prop.set_standard_unit(" ");
+	trigger_level_prop.set_display_unit(" ");
+	trigger_level_prop.set_description("The trigger output signal level :\nLOW\nHIGH");
+	trigger_level->set_default_properties(trigger_level_prop);
+	trigger_level->set_memorized();
+	trigger_level->set_memorized_init(false);
+	att_list.push_back(trigger_level);
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------

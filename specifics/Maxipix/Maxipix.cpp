@@ -95,11 +95,17 @@ Maxipix::Maxipix(Tango::DeviceClass *cl, const char *s, const char *d)
 //-----------------------------------------------------------------------------
 void Maxipix::delete_device()
 {
-    DELETE_SCALAR_ATTRIBUTE(attr_energyThreshold_read);    
+    DELETE_SCALAR_ATTRIBUTE(attr_energyThreshold_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_deviceVersion_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_fillMode_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_gate_read);
+    DELETE_DEVSTRING_ATTRIBUTE(attr_gateLevel_read);
+    DELETE_DEVSTRING_ATTRIBUTE(attr_readyMode_read);
+    DELETE_DEVSTRING_ATTRIBUTE(attr_readyLevel_read);
+    DELETE_DEVSTRING_ATTRIBUTE(attr_shutterLevel_read);
+    DELETE_DEVSTRING_ATTRIBUTE(attr_triggerLevel_read);
     //	Delete device allocated objects
-    
+
     //!!!! ONLY LimaDetector device can do this !!!!
     //if(m_ct!=0)
     //{
@@ -122,11 +128,17 @@ void Maxipix::init_device()
     // Initialise variables to default values
     //--------------------------------------------
     get_device_property();
-    
-    CREATE_SCALAR_ATTRIBUTE(attr_energyThreshold_read, 0.0);    
-    CREATE_DEVSTRING_ATTRIBUTE(attr_deviceVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);    
-    CREATE_DEVSTRING_ATTRIBUTE(attr_fillMode_read, MAX_ATTRIBUTE_STRING_LENGTH);    
-    
+
+    CREATE_SCALAR_ATTRIBUTE(attr_energyThreshold_read, 0.0);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_deviceVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_fillMode_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_SCALAR_ATTRIBUTE(attr_gate_read, false);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_gateLevel_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_readyMode_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_readyLevel_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_shutterLevel_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_triggerLevel_read, MAX_ATTRIBUTE_STRING_LENGTH);
+
     m_is_device_initialized = false;
 
     set_state(Tango::INIT);
@@ -140,10 +152,66 @@ void Maxipix::init_device()
         m_ct = ControlFactory::instance().get_control("Maxipix");
 
         //- get interface to specific camera
-        m_hw = dynamic_cast<Maxipix::Interface*> (m_ct->hwInterface());
+        m_hw = dynamic_cast<lima::Maxipix::Interface*> (m_ct->hwInterface());
 
         //- get camera to specific detector
         m_camera = &(m_hw->getCamera());
+
+	
+	//write at init
+    	{
+        //write fillMode
+        attr_fillMode_write = const_cast<Tango::DevString>(yat4tango::PropertyHelper::get_memorized_attribute(this, "fillMode", static_cast<const char*>("RAW")));
+        Tango::WAttribute &fillMode = dev_attr->get_w_attr_by_name("fillMode");
+        fillMode.set_write_value(attr_fillMode_write);
+        write_fillMode(fillMode);
+
+        //write gate
+        attr_gate_write = static_cast<Tango::DevBoolean>(yat4tango::PropertyHelper::get_memorized_attribute(this, "gate", false));
+        Tango::WAttribute &gate = dev_attr->get_w_attr_by_name("gate");
+        gate.set_write_value(attr_gate_write);
+        write_gate(gate);
+
+        //write gateLevel
+        attr_gateLevel_write = const_cast<Tango::DevString>(yat4tango::PropertyHelper::get_memorized_attribute(this, "gateLevel", static_cast<const char*>("LOW")));
+        Tango::WAttribute &gateLevel = dev_attr->get_w_attr_by_name("gateLevel");
+        gateLevel.set_write_value(attr_gateLevel_write);
+        write_gateLevel(gateLevel);
+
+        //write readyMode
+        attr_readyMode_write = const_cast<Tango::DevString>(yat4tango::PropertyHelper::get_memorized_attribute(this, "readyMode", static_cast<const char*>("EXPOSURE")));
+        Tango::WAttribute &readyMode = dev_attr->get_w_attr_by_name("readyMode");
+        readyMode.set_write_value(attr_readyMode_write);
+        write_readyMode(readyMode);
+
+        //write readyLevel
+        attr_readyLevel_write = const_cast<Tango::DevString>(yat4tango::PropertyHelper::get_memorized_attribute(this, "readyLevel", static_cast<const char*>("LOW")));
+        Tango::WAttribute &readyLevel = dev_attr->get_w_attr_by_name("readyLevel");
+        readyLevel.set_write_value(attr_readyLevel_write);
+        write_readyLevel(readyLevel);
+
+        //write shutterLevel
+        attr_shutterLevel_write = const_cast<Tango::DevString>(yat4tango::PropertyHelper::get_memorized_attribute(this, "shutterLevel", static_cast<const char*>("LOW")));
+        Tango::WAttribute &shutterLevel = dev_attr->get_w_attr_by_name("shutterLevel");
+        shutterLevel.set_write_value(attr_shutterLevel_write);
+        write_shutterLevel(shutterLevel);
+
+        //write triggerLevel
+        attr_triggerLevel_write = const_cast<Tango::DevString>(yat4tango::PropertyHelper::get_memorized_attribute(this, "triggerLevel", static_cast<const char*>("LOW")));
+        Tango::WAttribute &triggerLevel = dev_attr->get_w_attr_by_name("triggerLevel");
+        triggerLevel.set_write_value(attr_triggerLevel_write);
+        write_triggerLevel(triggerLevel);
+
+        //write energyThreshold
+        attr_energyThreshold_write = static_cast<Tango::DevDouble>(yat4tango::PropertyHelper::get_memorized_attribute(this, "energyThreshold", 1.0));
+        Tango::WAttribute &energyThreshold = dev_attr->get_w_attr_by_name("energyThreshold");
+        energyThreshold.set_write_value(attr_energyThreshold_write);
+        write_energyThreshold(energyThreshold);
+
+    	}
+
+
+
     }
     catch (Exception& e)
     {
@@ -268,7 +336,7 @@ void Maxipix::always_executed_hook()
         m_ct = ControlFactory::instance().get_control("Maxipix");
 
         //- get interface to specific camera
-        m_hw = dynamic_cast<Aviex::Interface*> (m_ct->hwInterface());
+        m_hw = dynamic_cast<lima::Maxipix::Interface*> (m_ct->hwInterface());
 
         //- get camera to specific detector
         m_camera = &(m_hw->getCamera());
@@ -309,6 +377,702 @@ void Maxipix::read_attr_hardware(vector<long> &attr_list)
 }
 //+----------------------------------------------------------------------------
 //
+// method : 		Maxipix::read_gate
+// 
+// description : 	Extract real attribute values for gate acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Maxipix::read_gate(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Maxipix::read_gate(Tango::Attribute &attr) entering... "<< endl;
+    try
+    {
+        bool value;
+        lima::Maxipix::PriamAcq::GateMode mode;
+        
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->priamAcq()->getGateMode(mode);
+        }
+
+        switch (mode)
+        {
+            case lima::Maxipix::PriamAcq::INACTIVE:
+                value = false;
+                break;
+            case lima::Maxipix::PriamAcq::ACTIVE:
+                value = true;
+                break;
+            default:
+            {
+                Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                               "Unexpected gate value.",
+                                               "Maxipix::read_gate");
+            }
+        }
+
+
+        *attr_gate_read = value;
+        attr.set_value(attr_gate_read);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Maxipix::read_gate");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Maxipix::read_gate");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::write_gate
+// 
+// description : 	Write gate attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Maxipix::write_gate(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Maxipix::write_gate(Tango::WAttribute &attr) entering... "<< endl;
+    try
+    {
+
+        attr.get_write_value(attr_gate_write);
+
+        lima::Maxipix::PriamAcq::GateMode mode;
+        if(attr_gate_write == false)
+            mode = lima::Maxipix::PriamAcq::INACTIVE;
+        else if (attr_gate_write == true)
+            mode = lima::Maxipix::PriamAcq::ACTIVE;
+
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->priamAcq()->setGateMode(mode);
+        }
+
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception(
+                                       "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Maxipix::write_gate");
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Maxipix::write_gate");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::read_gateLevel
+// 
+// description : 	Extract real attribute values for gateLevel acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Maxipix::read_gateLevel(Tango::Attribute &attr)
+{
+    DEBUG_STREAM << "Maxipix::read_gateLevel(Tango::Attribute &attr) entering... " << endl;
+    try
+    {
+        std::string str_level;
+        lima::Maxipix::PriamAcq::SignalLevel level;
+        
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->priamAcq()->getGateLevel(level);
+        }
+        
+        switch (level)
+        {
+            case lima::Maxipix::PriamAcq::LOW_FALL:
+                str_level = "LOW";
+                break;
+            case lima::Maxipix::PriamAcq::HIGH_RISE:
+                str_level = "HIGH";
+                break;
+            default:
+            {
+                Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                               "Unexpected gateLevel value.",
+                                               "Maxipix::read_gateLevel");
+            }
+        }
+
+
+        strcpy(*attr_gateLevel_read, str_level.c_str());
+        attr.set_value(attr_gateLevel_read);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Maxipix::read_gateLevel");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Maxipix::read_gateLevel");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::write_gateLevel
+// 
+// description : 	Write gateLevel attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Maxipix::write_gateLevel(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Maxipix::write_gateLevel(Tango::WAttribute &attr) entering... " << endl;
+    try
+    {
+
+        attr.get_write_value(attr_gateLevel_write);
+        std::string str_level = attr_gateLevel_write;
+        std::transform(str_level.begin(), str_level.end(), str_level.begin(), ::toupper);
+
+        if ((str_level != "HIGH") && (str_level != "LOW"))
+        {
+            Tango::Except::throw_exception("DEVICE_ERROR",
+                                           "Wrong shutter Level:\n"
+                                           "Possibles values are:\n"
+                                           "LOW\n"
+                                           "HIGH",
+                                           "Maxipix::write_gateLevel");
+        }
+
+        lima::Maxipix::PriamAcq::SignalLevel level;
+        if(str_level == "LOW")
+            level = lima::Maxipix::PriamAcq::LOW_FALL;
+        else if (str_level == "HIGH")
+            level = lima::Maxipix::PriamAcq::HIGH_RISE;
+
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->priamAcq()->setGateLevel(level);
+        }
+
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception(
+                                       "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Maxipix::write_gateLevel");
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Maxipix::write_gateLevel");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::read_readyMode
+// 
+// description : 	Extract real attribute values for readyMode acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Maxipix::read_readyMode(Tango::Attribute &attr)
+{
+    DEBUG_STREAM << "Maxipix::read_readyMode(Tango::Attribute &attr) entering... " << endl;
+    try
+    {
+        std::string str_mode;
+        lima::Maxipix::PriamAcq::ReadyMode mode;
+        
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->priamAcq()->getReadyMode(mode);
+        }
+        
+        switch (mode)
+        {
+            case lima::Maxipix::PriamAcq::EXPOSURE:
+                str_mode = "EXPOSURE";
+                break;
+            case lima::Maxipix::PriamAcq::EXPOSURE_READOUT:
+                str_mode = "READOUT";
+                break;
+            default:
+            {
+                Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                               "Unexpected readyMode value.",
+                                               "Maxipix::read_readyMode");
+            }
+        }
+
+
+        strcpy(*attr_readyMode_read, str_mode.c_str());
+        attr.set_value(attr_readyMode_read);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Maxipix::read_readyMode");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Maxipix::read_readyMode");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::write_readyMode
+// 
+// description : 	Write readyMode attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Maxipix::write_readyMode(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Maxipix::write_readyMode(Tango::WAttribute &attr) entering... " << endl;
+    try
+    {
+
+        attr.get_write_value(attr_readyMode_write);
+        std::string str_mode = attr_readyMode_write;
+        std::transform(str_mode.begin(), str_mode.end(), str_mode.begin(), ::toupper);
+
+        if ((str_mode != "EXPOSURE") && (str_mode != "READOUT"))
+        {
+            Tango::Except::throw_exception("DEVICE_ERROR",
+                                           "Wrong ready mode:\n"
+                                           "Possibles values are:\n"
+                                           "EXPOSURE\n"
+                                           "READOUT",
+                                           "Maxipix::write_readyMode");
+        }
+
+        lima::Maxipix::PriamAcq::ReadyMode mode;
+        if(str_mode == "EXPOSURE")
+            mode = lima::Maxipix::PriamAcq::EXPOSURE;
+        else if (str_mode == "READOUT")
+            mode = lima::Maxipix::PriamAcq::EXPOSURE_READOUT;
+
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->priamAcq()->setReadyMode(mode);
+        }
+
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception(
+                                       "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Maxipix::write_readyMode");
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Maxipix::write_readyMode");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::read_readyLevel
+// 
+// description : 	Extract real attribute values for readyLevel acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Maxipix::read_readyLevel(Tango::Attribute &attr)
+{
+    DEBUG_STREAM << "Maxipix::read_readyLevel(Tango::Attribute &attr) entering... " << endl;
+    try
+    {
+        std::string str_level;
+        lima::Maxipix::PriamAcq::SignalLevel level;
+        
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->priamAcq()->getReadyLevel(level);
+        }
+        
+        switch (level)
+        {
+            case lima::Maxipix::PriamAcq::LOW_FALL:
+                str_level = "LOW";
+                break;
+            case lima::Maxipix::PriamAcq::HIGH_RISE:
+                str_level = "HIGH";
+                break;
+            default:
+            {
+                Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                               "Unexpected readyLevel value.",
+                                               "Maxipix::read_readyLevel");
+            }
+        }
+
+
+        strcpy(*attr_readyLevel_read, str_level.c_str());
+        attr.set_value(attr_readyLevel_read);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Maxipix::read_readyLevel");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Maxipix::read_readyLevel");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::write_readyLevel
+// 
+// description : 	Write readyLevel attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Maxipix::write_readyLevel(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Maxipix::write_readyLevel(Tango::WAttribute &attr) entering... " << endl;
+    try
+    {
+
+        attr.get_write_value(attr_readyLevel_write);
+        std::string str_level = attr_readyLevel_write;
+        std::transform(str_level.begin(), str_level.end(), str_level.begin(), ::toupper);
+
+        if ((str_level != "HIGH") && (str_level != "LOW"))
+        {
+            Tango::Except::throw_exception("DEVICE_ERROR",
+                                           "Wrong shutter Level:\n"
+                                           "Possibles values are:\n"
+                                           "LOW\n"
+                                           "HIGH",
+                                           "Maxipix::write_readyLevel");
+        }
+
+        lima::Maxipix::PriamAcq::SignalLevel level;
+        if(str_level == "LOW")
+            level = lima::Maxipix::PriamAcq::LOW_FALL;
+        else if (str_level == "HIGH")
+            level = lima::Maxipix::PriamAcq::HIGH_RISE;
+
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->priamAcq()->setReadyLevel(level);
+        }
+
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception(
+                                       "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Maxipix::write_readyLevel");
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Maxipix::write_readyLevel");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::read_shutterLevel
+// 
+// description : 	Extract real attribute values for shutterLevel acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Maxipix::read_shutterLevel(Tango::Attribute &attr)
+{
+    DEBUG_STREAM << "Maxipix::read_shutterLevel(Tango::Attribute &attr) entering... " << endl;
+    try
+    {
+        std::string str_level;
+        lima::Maxipix::PriamAcq::SignalLevel level;
+        
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->priamAcq()->getShutterLevel(level);
+        }
+
+        switch (level)
+        {
+            case lima::Maxipix::PriamAcq::LOW_FALL:
+                str_level = "LOW";
+                break;
+            case lima::Maxipix::PriamAcq::HIGH_RISE:
+                str_level = "HIGH";
+                break;
+            default:
+            {
+                Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                               "Unexpected shutterLevel value.",
+                                               "Maxipix::read_shutterLevel");
+            }
+        }
+
+
+        strcpy(*attr_shutterLevel_read, str_level.c_str());
+        attr.set_value(attr_shutterLevel_read);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Maxipix::read_shutterLevel");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Maxipix::read_shutterLevel");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::write_shutterLevel
+// 
+// description : 	Write shutterLevel attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Maxipix::write_shutterLevel(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Maxipix::write_shutterLevel(Tango::WAttribute &attr) entering... " << endl;
+    try
+    {
+
+        attr.get_write_value(attr_shutterLevel_write);
+        std::string str_level = attr_shutterLevel_write;
+        std::transform(str_level.begin(), str_level.end(), str_level.begin(), ::toupper);
+
+        if ((str_level != "HIGH") && (str_level != "LOW"))
+        {
+            Tango::Except::throw_exception("DEVICE_ERROR",
+                                           "Wrong shutter Level:\n"
+                                           "Possibles values are:\n"
+                                           "LOW\n"
+                                           "HIGH",
+                                           "Maxipix::write_shutterLevel");
+        }
+
+        lima::Maxipix::PriamAcq::SignalLevel level;
+        if(str_level == "LOW")
+            level = lima::Maxipix::PriamAcq::LOW_FALL;
+        else if (str_level == "HIGH")
+            level = lima::Maxipix::PriamAcq::HIGH_RISE;
+
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->priamAcq()->setShutterLevel(level);
+        }
+
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception(
+                                       "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Maxipix::write_shutterLevel");
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Maxipix::write_shutterLevel");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::read_triggerLevel
+// 
+// description : 	Extract real attribute values for triggerLevel acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Maxipix::read_triggerLevel(Tango::Attribute &attr)
+{
+    DEBUG_STREAM << "Maxipix::read_triggerLevel(Tango::Attribute &attr) entering... " << endl;
+    try
+    {
+        std::string str_level;
+        lima::Maxipix::PriamAcq::SignalLevel level;
+        
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->priamAcq()->getTriggerLevel(level);
+        }
+
+        switch (level)
+        {
+            case lima::Maxipix::PriamAcq::LOW_FALL:
+                str_level = "LOW";
+                break;
+            case lima::Maxipix::PriamAcq::HIGH_RISE:
+                str_level = "HIGH";
+                break;
+            default:
+            {
+                Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                               "Unexpected triggerLevel value.",
+                                               "Maxipix::read_triggerLevel");
+            }
+        }
+
+
+        strcpy(*attr_triggerLevel_read, str_level.c_str());
+        attr.set_value(attr_triggerLevel_read);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Maxipix::read_triggerLevel");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Maxipix::read_triggerLevel");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Maxipix::write_triggerLevel
+// 
+// description : 	Write triggerLevel attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Maxipix::write_triggerLevel(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Maxipix::write_triggerLevel(Tango::WAttribute &attr) entering... " << endl;
+    try
+    {
+
+        attr.get_write_value(attr_triggerLevel_write);
+        std::string str_level = attr_triggerLevel_write;
+        std::transform(str_level.begin(), str_level.end(), str_level.begin(), ::toupper);
+
+        if ((str_level != "HIGH") && (str_level != "LOW"))
+        {
+            Tango::Except::throw_exception("DEVICE_ERROR",
+                                           "Wrong trigger Mode:\n"
+                                           "Possibles values are:\n"
+                                           "LOW\n"
+                                           "HIGH",
+                                           "Maxipix::write_triggerLevel");
+        }
+
+        lima::Maxipix::PriamAcq::SignalLevel level;
+        if(str_level == "LOW")
+            level = lima::Maxipix::PriamAcq::LOW_FALL;
+        else if (str_level == "HIGH")
+            level = lima::Maxipix::PriamAcq::HIGH_RISE;
+
+        {
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->priamAcq()->setTriggerLevel(level);
+        }
+
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception(
+                                       "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Maxipix::write_triggerLevel");
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Maxipix::write_triggerLevel");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
 // method : 		Maxipix::read_fillMode
 // 
 // description : 	Extract real attribute values for fillMode acquisition result.
@@ -316,37 +1080,41 @@ void Maxipix::read_attr_hardware(vector<long> &attr_list)
 //-----------------------------------------------------------------------------
 void Maxipix::read_fillMode(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Maxipix::read_fillMode(Tango::Attribute &attr) entering... "<< endl;
- try
+    DEBUG_STREAM << "Maxipix::read_fillMode(Tango::Attribute &attr) entering... " << endl;
+    try
     {
-        std::string str_fill_mode;
-        MaxipixReconstruction::Type fill_mode;
-        m_camera->getFillMode(fill_mode);
-
-        switch (fill_mode)
+        std::string str_mode;
+        lima::Maxipix::MaxipixReconstruction::Type mode;
+        
         {
-            case MaxipixReconstruction::Type::RAW:
-                str_fill_mode = "RAW";
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->getFillMode(mode);
+        }
+
+        switch (mode)
+        {
+            case lima::Maxipix::MaxipixReconstruction::RAW:
+                str_mode = "RAW";
                 break;
-            case MaxipixReconstruction::Type::DISPATCH:
-                str_fill_mode = "DISPATCH";
+            case lima::Maxipix::MaxipixReconstruction::DISPATCH:
+                str_mode = "DISPATCH";
                 break;
-            case MaxipixReconstruction::Type::ZERO:
-                str_fill_mode = "ZERO";
-                break;               
-            case MaxipixReconstruction::Type::MEAN:
-                str_fill_mode = "MEAN";
-                break;                
+            case lima::Maxipix::MaxipixReconstruction::ZERO:
+                str_mode = "ZERO";
+                break;
+            case lima::Maxipix::MaxipixReconstruction::MEAN:
+                str_mode = "MEAN";
+                break;
             default:
-                {
-                    Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                                                   "Unexpected fillMode value.",
-                                                   "Maxipix::read_fillMode");
-                }
+            {
+                Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                               "Unexpected fillMode value.",
+                                               "Maxipix::read_fillMode");
+            }
         }
 
 
-        strcpy(*attr_fillMode_read, str_fill_mode.c_str());
+        strcpy(*attr_fillMode_read, str_mode.c_str());
         attr.set_value(attr_fillMode_read);
     }
     catch (Tango::DevFailed& df)
@@ -365,7 +1133,7 @@ void Maxipix::read_fillMode(Tango::Attribute &attr)
         Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                                        e.getErrMsg().c_str(),
                                        "Maxipix::read_fillMode");
-    }    
+    }
 }
 
 //+----------------------------------------------------------------------------
@@ -377,14 +1145,14 @@ void Maxipix::read_fillMode(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Maxipix::write_fillMode(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Maxipix::write_fillMode(Tango::WAttribute &attr) entering... "<< endl;
+    DEBUG_STREAM << "Maxipix::write_fillMode(Tango::WAttribute &attr) entering... " << endl;
     try
     {
         attr.get_write_value(attr_fillMode_write);
-        std::string fill_mode = attr_fillMode_write;
-        std::transform(fill_mode.begin(), fill_mode.end(), fill_mode.begin(), ::toupper);
+        std::string str_mode = attr_fillMode_write;
+        std::transform(str_mode.begin(), str_mode.end(), str_mode.begin(), ::toupper);
 
-        if ((fill_mode != "RAW") && (fill_mode != "DISPATCH") && (fill_mode != "ZERO") && (fill_mode != "MEAN") )
+        if ((str_mode != "RAW") && (str_mode != "DISPATCH") && (str_mode != "ZERO") && (str_mode != "MEAN") )
         {
             Tango::Except::throw_exception("DEVICE_ERROR",
                                            "Wrong fill Mode:\n"
@@ -393,22 +1161,22 @@ void Maxipix::write_fillMode(Tango::WAttribute &attr)
                                            "DISPATCH\n"
                                            "ZERO\n"
                                            "MEAN",
-                                           "Maxipix::write_fillMode()");
+                                           "Maxipix::write_fillMode");
         }
 
-        MaxipixReconstruction::Type reconstruction_type;
-        if(fill_mode == "RAW")
-            reconstruction_type = MaxipixReconstruction::Type::RAW;
-        else if (fill_mode == "DISPATCH")
-            reconstruction_type = MaxipixReconstruction::Type::DISPATCH;
-        else if (fill_mode == "ZERO")
-            reconstruction_type = MaxipixReconstruction::Type::ZERO;
+        lima::Maxipix::MaxipixReconstruction::Type mode;
+        if(str_mode == "RAW")
+            mode = lima::Maxipix::MaxipixReconstruction::RAW;
+        else if (str_mode == "DISPATCH")
+            mode = lima::Maxipix::MaxipixReconstruction::DISPATCH;
+        else if (str_mode == "ZERO")
+            mode = lima::Maxipix::MaxipixReconstruction::ZERO;
         else
-            reconstruction_type = MaxipixReconstruction::Type::MEAN;
-                
+            mode = lima::Maxipix::MaxipixReconstruction::MEAN;
+
         {
-        yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-        m_camera->setFillMode(reconstruction_type);        
+            yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+            m_camera->setFillMode(mode);
         }
 
     }
@@ -420,7 +1188,7 @@ void Maxipix::write_fillMode(Tango::WAttribute &attr)
                                        "TANGO_DEVICE_ERROR",
                                        e.getErrMsg().c_str(),
                                        "Maxipix::write_fillMode");
-    }    
+    }
     catch (Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
@@ -428,8 +1196,8 @@ void Maxipix::write_fillMode(Tango::WAttribute &attr)
         Tango::Except::re_throw_exception(df,
                                           "TANGO_DEVICE_ERROR",
                                           string(df.errors[0].desc).c_str(),
-                                          "Maxipix::write_fillMode()");
-    }       
+                                          "Maxipix::write_fillMode");
+    }
 }
 
 //+----------------------------------------------------------------------------
@@ -441,13 +1209,14 @@ void Maxipix::write_fillMode(Tango::WAttribute &attr)
 //-----------------------------------------------------------------------------
 void Maxipix::read_energyThreshold(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Maxipix::read_energyThreshold(Tango::Attribute &attr) entering... "<< endl;
+    DEBUG_STREAM << "Maxipix::read_energyThreshold(Tango::Attribute &attr) entering... " << endl;
     try
     {
         {
             yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
             m_camera->getEnergy(*attr_energyThreshold_read);
         }
+        
         attr.set_value(attr_energyThreshold_read);
     }
     catch (Tango::DevFailed& df)
@@ -458,7 +1227,7 @@ void Maxipix::read_energyThreshold(Tango::Attribute &attr)
                                           "TANGO_DEVICE_ERROR",
                                           string(df.errors[0].desc).c_str(),
                                           "Maxipix::read_energyThreshold");
-    }    
+    }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
@@ -467,7 +1236,7 @@ void Maxipix::read_energyThreshold(Tango::Attribute &attr)
                                        "TANGO_DEVICE_ERROR",
                                        e.getErrMsg().c_str(),
                                        "Maxipix::read_energyThreshold");
-    }        
+    }
 }
 
 //+----------------------------------------------------------------------------
@@ -479,7 +1248,7 @@ void Maxipix::read_energyThreshold(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Maxipix::write_energyThreshold(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Maxipix::write_energyThreshold(Tango::WAttribute &attr) entering... "<< endl;
+    DEBUG_STREAM << "Maxipix::write_energyThreshold(Tango::WAttribute &attr) entering... " << endl;
     try
     {
         attr.get_write_value(attr_energyThreshold_write);
@@ -496,7 +1265,7 @@ void Maxipix::write_energyThreshold(Tango::WAttribute &attr)
                                           "TANGO_DEVICE_ERROR",
                                           string(df.errors[0].desc).c_str(),
                                           "Maxipix::write_energyThreshold");
-    }    
+    }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
@@ -505,7 +1274,7 @@ void Maxipix::write_energyThreshold(Tango::WAttribute &attr)
                                        "TANGO_DEVICE_ERROR",
                                        e.getErrMsg().c_str(),
                                        "Maxipix::write_energyThreshold");
-    }          
+    }
 }
 
 
@@ -583,6 +1352,8 @@ Tango::DevState Maxipix::dev_state()
     argout = DeviceState;
     return argout;
 }
+
+
 
 
 

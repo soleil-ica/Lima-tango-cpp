@@ -45,6 +45,90 @@ namespace Maxipix_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class triggerLevelAttrib: public Tango::Attr
+{
+public:
+	triggerLevelAttrib():Attr("triggerLevel", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~triggerLevelAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Maxipix *>(dev))->read_triggerLevel(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Maxipix *>(dev))->write_triggerLevel(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Maxipix *>(dev))->is_triggerLevel_allowed(ty);}
+};
+
+class shutterLevelAttrib: public Tango::Attr
+{
+public:
+	shutterLevelAttrib():Attr("shutterLevel", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~shutterLevelAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Maxipix *>(dev))->read_shutterLevel(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Maxipix *>(dev))->write_shutterLevel(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Maxipix *>(dev))->is_shutterLevel_allowed(ty);}
+};
+
+class readyLevelAttrib: public Tango::Attr
+{
+public:
+	readyLevelAttrib():Attr("readyLevel", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~readyLevelAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Maxipix *>(dev))->read_readyLevel(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Maxipix *>(dev))->write_readyLevel(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Maxipix *>(dev))->is_readyLevel_allowed(ty);}
+};
+
+class readyModeAttrib: public Tango::Attr
+{
+public:
+	readyModeAttrib():Attr("readyMode", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~readyModeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Maxipix *>(dev))->read_readyMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Maxipix *>(dev))->write_readyMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Maxipix *>(dev))->is_readyMode_allowed(ty);}
+};
+
+class gateLevelAttrib: public Tango::Attr
+{
+public:
+	gateLevelAttrib():Attr("gateLevel", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~gateLevelAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Maxipix *>(dev))->read_gateLevel(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Maxipix *>(dev))->write_gateLevel(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Maxipix *>(dev))->is_gateLevel_allowed(ty);}
+};
+
+class gateAttrib: public Tango::Attr
+{
+public:
+	gateAttrib():Attr("gate", Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~gateAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Maxipix *>(dev))->read_gate(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Maxipix *>(dev))->write_gate(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Maxipix *>(dev))->is_gate_allowed(ty);}
+};
+
 class fillModeAttrib: public Tango::Attr
 {
 public:
