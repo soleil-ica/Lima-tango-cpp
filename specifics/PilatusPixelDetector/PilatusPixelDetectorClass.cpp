@@ -65,7 +65,7 @@ namespace PilatusPixelDetector_ns
 {
 //+----------------------------------------------------------------------------
 //
-// method : 		GetHumidityCmd::execute()
+// method : 		GetTHCmd::execute()
 // 
 // description : 	method to trigger the execution of the command.
 //                PLEASE DO NOT MODIFY this method core without pogo   
@@ -76,40 +76,15 @@ namespace PilatusPixelDetector_ns
 // returns : The command output data (packed in the Any object)
 //
 //-----------------------------------------------------------------------------
-CORBA::Any *GetHumidityCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+CORBA::Any *GetTHCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
 {
 
-	cout2 << "GetHumidityCmd::execute(): arrived" << endl;
+	cout2 << "GetTHCmd::execute(): arrived" << endl;
 
-	Tango::DevUShort	argin;
-	extract(in_any, argin);
-
-	return insert((static_cast<PilatusPixelDetector *>(device))->get_humidity(argin));
+	return insert((static_cast<PilatusPixelDetector *>(device))->get_th());
 }
 
-//+----------------------------------------------------------------------------
-//
-// method : 		GetTemperatureCmd::execute()
-// 
-// description : 	method to trigger the execution of the command.
-//                PLEASE DO NOT MODIFY this method core without pogo   
-//
-// in : - device : The device on which the command must be executed
-//		- in_any : The command input data
-//
-// returns : The command output data (packed in the Any object)
-//
-//-----------------------------------------------------------------------------
-CORBA::Any *GetTemperatureCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
-{
 
-	cout2 << "GetTemperatureCmd::execute(): arrived" << endl;
-
-	Tango::DevUShort	argin;
-	extract(in_any, argin);
-
-	return insert((static_cast<PilatusPixelDetector *>(device))->get_temperature(argin));
-}
 
 //+----------------------------------------------------------------------------
 //
@@ -330,13 +305,8 @@ void PilatusPixelDetectorClass::command_factory()
 		"",
 		"",
 		Tango::OPERATOR));
-	command_list.push_back(new GetTemperatureCmd("GetTemperature",
-		Tango::DEV_USHORT, Tango::DEV_DOUBLE,
-		"",
-		"",
-		Tango::OPERATOR));
-	command_list.push_back(new GetHumidityCmd("GetHumidity",
-		Tango::DEV_USHORT, Tango::DEV_DOUBLE,
+	command_list.push_back(new GetTHCmd("GetTH",
+		Tango::DEV_VOID, Tango::DEVVAR_DOUBLEARRAY,
 		"",
 		"",
 		Tango::OPERATOR));
@@ -603,36 +573,6 @@ void PilatusPixelDetectorClass::set_default_property()
 	prop_def  = "10000";
 	vect_data.clear();
 	vect_data.push_back("10000");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "TemperatureMax";
-	prop_desc = "Max Temperature Authorized on detector. (unit in ?C)";
-	prop_def  = "-273";
-	vect_data.clear();
-	vect_data.push_back("-273");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "HumidityMax";
-	prop_desc = "Max Humidity Authorized on detector. (Unit in %)";
-	prop_def  = "0";
-	vect_data.clear();
-	vect_data.push_back("0");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

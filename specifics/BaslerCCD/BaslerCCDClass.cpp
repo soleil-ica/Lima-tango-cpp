@@ -277,6 +277,24 @@ void BaslerCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	temperature->set_default_properties(temperature_prop);
 	att_list.push_back(temperature);
 
+	//	Attribute : autoGain
+	autoGainAttrib	*auto_gain = new autoGainAttrib();
+	Tango::UserDefaultAttrProp	auto_gain_prop;
+	auto_gain_prop.set_unit(" ");
+	auto_gain_prop.set_standard_unit(" ");
+	auto_gain_prop.set_display_unit(" ");
+	auto_gain->set_default_properties(auto_gain_prop);
+	att_list.push_back(auto_gain);
+
+	//	Attribute : gain
+	gainAttrib	*gain = new gainAttrib();
+	Tango::UserDefaultAttrProp	gain_prop;
+	gain_prop.set_unit(" ");
+	gain_prop.set_standard_unit(" ");
+	gain_prop.set_display_unit(" ");
+	gain->set_default_properties(gain_prop);
+	att_list.push_back(gain);
+
 	//	Attribute : packetSize
 	packetSizeAttrib	*packet_size = new packetSizeAttrib();
 	Tango::UserDefaultAttrProp	packet_size_prop;
@@ -291,6 +309,9 @@ void BaslerCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : interPacketDelay
 	interPacketDelayAttrib	*inter_packet_delay = new interPacketDelayAttrib();
 	Tango::UserDefaultAttrProp	inter_packet_delay_prop;
+	inter_packet_delay_prop.set_unit("Ticks");
+	inter_packet_delay_prop.set_standard_unit("Ticks");
+	inter_packet_delay_prop.set_display_unit("Ticks");
 	inter_packet_delay_prop.set_description("Define the delay between transmission of each packet for the selected stream channel. (in ticks)<br> ");
 	inter_packet_delay->set_default_properties(inter_packet_delay_prop);
 	inter_packet_delay->set_disp_level(Tango::EXPERT);
@@ -301,6 +322,9 @@ void BaslerCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : bandwidthAssigned
 	bandwidthAssignedAttrib	*bandwidth_assigned = new bandwidthAssignedAttrib();
 	Tango::UserDefaultAttrProp	bandwidth_assigned_prop;
+	bandwidth_assigned_prop.set_unit("Bytes");
+	bandwidth_assigned_prop.set_standard_unit("Bytes");
+	bandwidth_assigned_prop.set_display_unit("Bytes");
 	bandwidth_assigned_prop.set_description("This value indicates the base bandwidth that will be used by the camera to transmit (image+chunk) data and to handle resends and control transmissions. (in Bytes/s)");
 	bandwidth_assigned->set_default_properties(bandwidth_assigned_prop);
 	bandwidth_assigned->set_disp_level(Tango::EXPERT);
@@ -309,6 +333,9 @@ void BaslerCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : maxThroughput
 	maxThroughputAttrib	*max_throughput = new maxThroughputAttrib();
 	Tango::UserDefaultAttrProp	max_throughput_prop;
+	max_throughput_prop.set_unit("Bytes/s");
+	max_throughput_prop.set_standard_unit("Bytes/s");
+	max_throughput_prop.set_display_unit("Bytes/s");
 	max_throughput_prop.set_description("This value indicates the maximum amount of data that the camera could generate given its current settings and ideal conditions. (in Bytes/s)");
 	max_throughput->set_default_properties(max_throughput_prop);
 	max_throughput->set_disp_level(Tango::EXPERT);
@@ -317,6 +344,9 @@ void BaslerCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : currentThroughput
 	currentThroughputAttrib	*current_throughput = new currentThroughputAttrib();
 	Tango::UserDefaultAttrProp	current_throughput_prop;
+	current_throughput_prop.set_unit("Bytes/s");
+	current_throughput_prop.set_standard_unit("Bytes/s");
+	current_throughput_prop.set_display_unit("Bytes/s");
 	current_throughput_prop.set_description("This value indicates the actual bandwidth that the camera will use to transmit (image+chunk) data given the curent AOIsettings, ... (in Bytes/s)");
 	current_throughput->set_default_properties(current_throughput_prop);
 	current_throughput->set_disp_level(Tango::EXPERT);
@@ -328,7 +358,6 @@ void BaslerCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	statistics_failed_buffer_count_prop.set_unit(" ");
 	statistics_failed_buffer_count_prop.set_standard_unit(" ");
 	statistics_failed_buffer_count_prop.set_display_unit(" ");
-	statistics_failed_buffer_count_prop.set_format("%d");
 	statistics_failed_buffer_count->set_default_properties(statistics_failed_buffer_count_prop);
 	statistics_failed_buffer_count->set_disp_level(Tango::EXPERT);
 	att_list.push_back(statistics_failed_buffer_count);

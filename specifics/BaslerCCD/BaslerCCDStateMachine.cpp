@@ -314,6 +314,62 @@ bool BaslerCCD::is_packetSize_allowed(Tango::AttReqType type)
 	}
 	return true;
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		BaslerCCD::is_autoGain_allowed
+// 
+// description : 	Read/Write allowed for autoGain attribute.
+//
+//-----------------------------------------------------------------------------
+bool BaslerCCD::is_autoGain_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+        //	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		BaslerCCD::is_gain_allowed
+// 
+// description : 	Read/Write allowed for gain attribute.
+//
+//-----------------------------------------------------------------------------
+bool BaslerCCD::is_gain_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+        //	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
 
 //=================================================
 //		Commands Allowed Methods

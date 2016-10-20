@@ -53,8 +53,7 @@ static const char *RcsId = "$Id:  $";
 //  SetThresholdAndGain  |  set_threshold_and_gain()
 //  SetMxSettings        |  set_mx_settings()
 //  SendAnyCommand       |  send_any_command()
-//  GetTemperature       |  get_temperature()
-//  GetHumidity          |  get_humidity()
+//  GetTH                |  get_th()
 //
 //===================================================================
 #include "tango.h"
@@ -244,8 +243,6 @@ void PilatusPixelDetector::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("DetectorCameraDefFileName"));
 	dev_prop.push_back(Tango::DbDatum("UseReader"));
 	dev_prop.push_back(Tango::DbDatum("ReaderTimeout"));
-	dev_prop.push_back(Tango::DbDatum("TemperatureMax"));
-	dev_prop.push_back(Tango::DbDatum("HumidityMax"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedEnergy"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedThreshold"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedGain"));
@@ -316,28 +313,6 @@ void PilatusPixelDetector::get_device_property()
 	//	And try to extract ReaderTimeout value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  readerTimeout;
 
-	//	Try to initialize TemperatureMax from class property
-	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  temperatureMax;
-	else {
-		//	Try to initialize TemperatureMax from default device value
-		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if (def_prop.is_empty()==false)	def_prop  >>  temperatureMax;
-	}
-	//	And try to extract TemperatureMax value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  temperatureMax;
-
-	//	Try to initialize HumidityMax from class property
-	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  humidityMax;
-	else {
-		//	Try to initialize HumidityMax from default device value
-		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if (def_prop.is_empty()==false)	def_prop  >>  humidityMax;
-	}
-	//	And try to extract HumidityMax value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  humidityMax;
-
 	//	Try to initialize MemorizedEnergy from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedEnergy;
@@ -403,12 +378,6 @@ void PilatusPixelDetector::get_device_property()
     PropertyHelper::create_property_if_empty(this, dev_prop, "NONE", "DetectorCameraDefFileName");
     PropertyHelper::create_property_if_empty(this, dev_prop, "false", "UseReader");
     PropertyHelper::create_property_if_empty(this, dev_prop, "10000", "ReaderTimeout");
-    vec_init.clear();
-    vec_init.push_back("-237.0");
-    PropertyHelper::create_property_if_empty(this, dev_prop, vec_init, "TemperatureMax");
-    vec_init.clear();
-    vec_init.push_back("0.0");    
-    PropertyHelper::create_property_if_empty(this, dev_prop, vec_init, "HumidityMax");
 
     PropertyHelper::create_property_if_empty(this, dev_prop, "3000", "MemorizedThreshold");
     PropertyHelper::create_property_if_empty(this, dev_prop, "HIGH", "MemorizedGain");
@@ -1126,107 +1095,56 @@ void PilatusPixelDetector::set_energy(Tango::DevDouble argin)
     }
 }
 
+
 //+------------------------------------------------------------------
 /**
- *	method:	PilatusPixelDetector::get_temperature
+ *	method:	PilatusPixelDetector::get_th
  *
- *	description:	method to execute "GetTemperature"
- *	Return Temperature of the selected channel .
+ *	description:	method to execute "GetTH"
  *
- * @param	argin	
  * @return	
  *
  */
 //+------------------------------------------------------------------
-Tango::DevDouble PilatusPixelDetector::get_temperature(Tango::DevUShort argin)
+Tango::DevVarDoubleArray *PilatusPixelDetector::get_th()
 {
-	Tango::DevDouble	argout ;
-	DEBUG_STREAM << "PilatusPixelDetector::get_temperature(): entering... !" << endl;
+	//	POGO has generated a method core with argout allocation.
+	//	If you would like to use a static reference without copying,
+	//	See "TANGO Device Server Programmer's Manual"
+	//		(chapter : Writing a TANGO DS / Exchanging data)
+	//------------------------------------------------------------
+	DEBUG_STREAM << "PilatusPixelDetector::get_th(): entering... !" << endl;
 
 	//	Add your own code to control device here
+    Tango::DevVarDoubleArray *argout = new Tango::DevVarDoubleArray();
     try
     {
-        if(argin >= temperatureMax.size())
-        {
-            Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                                           "User input is out of limits : argin must be lower than the nb. of temperature sensors",
-                                           "PilatusPixelDetector::get_temperature");
-        }
-
         m_camera->sendTh();
-        argout = m_camera->temperature(argin);
+        int nb_sensors = m_camera->nbTHSensors();
+        argout->length(nb_sensors*2);
+        for(int i = 0;i<nb_sensors;i++)
+        {
+            (*argout)[i] = m_camera->temperature(i);
+            (*argout)[i+nb_sensors] = m_camera->humidity(i);
+        }
     }
     catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("PilatusPixelDetector::get_temperature"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "PilatusPixelDetector::get_th");
     }
     catch(Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception(
-                                       static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> (e.getErrMsg().c_str()),
-                                       static_cast<const char*> ("PilatusPixelDetector::get_temperature"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "PilatusPixelDetector::get_th");
     }
-    return argout;
-	return argout;
-}
-
-//+------------------------------------------------------------------
-/**
- *	method:	PilatusPixelDetector::get_humidity
- *
- *	description:	method to execute "GetHumidity"
- *	Return the Humidity of the selected channel
- *
- * @param	argin	
- * @return	
- *
- */
-//+------------------------------------------------------------------
-Tango::DevDouble PilatusPixelDetector::get_humidity(Tango::DevUShort argin)
-{
-	Tango::DevDouble	argout ;
-	DEBUG_STREAM << "PilatusPixelDetector::get_humidity(): entering... !" << endl;
-
-	//	Add your own code to control device here
-    try
-    {
-        if(argin >= humidityMax.size())
-        {
-            Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                                           "User input is out of limits : argin must be lower than the nb. of humidity sensors",
-                                           "PilatusPixelDetector::get_humidity");
-        }
-
-        m_camera->sendTh();
-        argout = m_camera->humidity(argin);
-    }
-    catch(Tango::DevFailed& df)
-    {
-        ERROR_STREAM << df << endl;
-        //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("PilatusPixelDetector::get_humidity"));
-    }
-    catch(Exception& e)
-    {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        //- throw exception
-        Tango::Except::throw_exception(
-                                       static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> (e.getErrMsg().c_str()),
-                                       static_cast<const char*> ("PilatusPixelDetector::get_humidity"));
-    }
-    return argout;
 	return argout;
 }
 

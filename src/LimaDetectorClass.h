@@ -217,6 +217,20 @@ public:
 	{return (static_cast<LimaDetector *>(dev))->is_roiX_allowed(ty);}
 };
 
+class frameRateAttrib: public Tango::Attr
+{
+public:
+	frameRateAttrib():Attr("frameRate", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~frameRateAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<LimaDetector *>(dev))->read_frameRate(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<LimaDetector *>(dev))->write_frameRate(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<LimaDetector *>(dev))->is_frameRate_allowed(ty);}
+};
+
 class latencyTimeAttrib: public Tango::Attr
 {
 public:
@@ -372,6 +386,30 @@ public:
 //=========================================
 //	Define classes for commands
 //=========================================
+class GetDataStreamsCmd : public Tango::Command
+{
+public:
+	GetDataStreamsCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	GetDataStreamsCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~GetDataStreamsCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<LimaDetector *>(dev))->is_GetDataStreams_allowed(any);}
+};
+
+
+
 class ReloadROICmd : public Tango::Command
 {
 public:

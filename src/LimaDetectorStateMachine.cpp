@@ -132,7 +132,6 @@ bool LimaDetector::is_exposureTime_allowed(Tango::AttReqType type)
 		get_state() == Tango::FAULT)
 	{
 		//	End of Generated Code
-		
 		if ( get_state()==Tango::FAULT && is_device_initialized() )
 		{
            return true;
@@ -755,6 +754,29 @@ bool LimaDetector::is_fileFormat_allowed(Tango::AttReqType type)
 	}
 	return true;
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		LimaDetector::is_frameRate_allowed
+// 
+// description : 	Read/Write allowed for frameRate attribute.
+//
+//-----------------------------------------------------------------------------
+bool LimaDetector::is_frameRate_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT)
+	{
+		//	End of Generated Code
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+        //	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
 
 //=================================================
 //		Commands Allowed Methods
@@ -1002,6 +1024,29 @@ bool LimaDetector::is_ReloadROI_allowed(const CORBA::Any &any)
 		{
            return true;
 		}	
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		LimaDetector::is_GetDataStreams_allowed
+// 
+// description : 	Execution allowed for GetDataStreams command.
+//
+//-----------------------------------------------------------------------------
+bool LimaDetector::is_GetDataStreams_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
 		//	Re-Start of Generated Code
 		return false;
 	}

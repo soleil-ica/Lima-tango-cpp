@@ -216,8 +216,6 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data.push_back(Tango::DbDatum("DetectorCameraDefFileName"));
                 db_data.push_back(Tango::DbDatum("UseReader"));
                 db_data.push_back(Tango::DbDatum("ReaderTimeout"));
-                db_data.push_back(Tango::DbDatum("TemperatureMax"));
-                db_data.push_back(Tango::DbDatum("HumidityMax"));
 
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
                 std::string camera_ip = "127.0.0.1";
@@ -225,22 +223,16 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 long camera_port = 6666;
                 bool use_reader = false;
                 unsigned long reader_timeout = 10000;  //in ms
-                std::vector<double>	temperature_max;
-                std::vector<double>	humidity_max;
 
                 db_data[0] >> camera_ip;
                 db_data[1] >> camera_port;
                 db_data[2] >> camera_def;
                 db_data[3] >> use_reader;
                 db_data[4] >> reader_timeout;
-                db_data[5] >> temperature_max;
-                db_data[6] >> humidity_max;
 
                 m_camera = static_cast<void*> (new Pilatus::Camera(camera_ip.c_str(), camera_port, const_cast<std::string&> (camera_def)));
                 if(m_camera)
                 {
-                    static_cast<Pilatus::Camera*> (m_camera)->setTemperatureMax(temperature_max);
-                    static_cast<Pilatus::Camera*> (m_camera)->setHumidityMax(humidity_max);
                     if(use_reader)
                         static_cast<Pilatus::Camera*> (m_camera)->enableReaderWatcher();
                     else
@@ -889,10 +881,9 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
 //- call dev_state() command of the generic device.
 //-----------------------------------------------------------------------------------------
 Tango::DevState ControlFactory::get_state(void)
-{
-    CtControl::Status ctStatus;
-
+{    
     yat::AutoMutex<> _lock(m_lock);
+    CtControl::Status ctStatus;
     m_control->getStatus(ctStatus);
 
     switch(ctStatus.AcquisitionStatus)

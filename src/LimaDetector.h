@@ -161,6 +161,8 @@ public:
 		Tango::DevDouble	attr_exposureTime_write;
 		Tango::DevDouble	*attr_latencyTime_read;
 		Tango::DevDouble	attr_latencyTime_write;
+		Tango::DevDouble	*attr_frameRate_read;
+		Tango::DevDouble	attr_frameRate_write;
 		Tango::DevUShort	*attr_roiX_read;
 		Tango::DevUShort	*attr_roiY_read;
 		Tango::DevUShort	*attr_roiWidth_read;
@@ -443,6 +445,10 @@ public:
  *	- After calling the "Init" command.
  */
 	Tango::DevBoolean	autoStartVideo;
+/**
+ *	
+ */
+	string	spoolID;
 //@}
 
     /**
@@ -583,6 +589,14 @@ public:
  */
 	virtual void write_latencyTime(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for frameRate acquisition result.
+ */
+	virtual void read_frameRate(Tango::Attribute &attr);
+/**
+ *	Write frameRate attribute values to hardware.
+ */
+	virtual void write_frameRate(Tango::WAttribute &attr);
+/**
  *	Extract real attribute values for roiX acquisition result.
  */
 	virtual void read_roiX(Tango::Attribute &attr);
@@ -707,6 +721,10 @@ public:
  */
 	virtual bool is_latencyTime_allowed(Tango::AttReqType type);
 /**
+ *	Read/Write allowed for frameRate attribute.
+ */
+	virtual bool is_frameRate_allowed(Tango::AttReqType type);
+/**
  *	Read/Write allowed for roiX attribute.
  */
 	virtual bool is_roiX_allowed(Tango::AttReqType type);
@@ -803,6 +821,10 @@ public:
  */
 	virtual bool is_ReloadROI_allowed(const CORBA::Any &any);
 /**
+ *	Execution allowed for GetDataStreams command.
+ */
+	virtual bool is_GetDataStreams_allowed(const CORBA::Any &any);
+/**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
  *	@exception DevFailed
@@ -870,6 +892,12 @@ public:
  *	@exception DevFailed
  */
 	void	reload_roi();
+/**
+ * Returns the flyscan data streams associated with this device.
+ *	@return	
+ *	@exception DevFailed
+ */
+	Tango::DevVarStringArray	*get_data_streams();
 
 /**
  *	Read the device properties from database
@@ -879,6 +907,38 @@ public:
 
     //    Here is the end of the automatic code generation part
     //-------------------------------------------------------------    
+    ///generics methods to create a tango dynamic attribute
+    template <class F1, class F2>
+    void create_attribute(std::string name,
+         int data_type,
+         Tango::AttrDataFormat data_format,
+         Tango::AttrWriteType access_type,
+         Tango::DispLevel disp_level,
+         const std::string& unit,
+         const std::string& format,
+         const std::string& desc,
+         F1 read_callback,
+         F2 write_callback);
+
+    ///generic method to create a tango dynamic command
+    template <class F1>
+    void create_command(std::string name,
+         long in_type,
+         long out_type,
+         Tango::DispLevel disp_level,
+         F1 execute_callback);
+
+    // method for tango dyn attributes WHEN no read part is available - NULL
+    void read_callback_null(yat4tango::DynamicAttributeReadCallbackData& cbd)
+    {
+     /*nop*/
+    }
+
+    // method for tango dyn attributes WHEN no write part is available - NULL
+    void write_callback_null(yat4tango::DynamicAttributeWriteCallbackData& cbd)
+    {
+     /*nop*/
+    }
 
     //image dynamic attribute management
     void    add_image_dynamic_attribute(void);
@@ -961,5 +1021,11 @@ protected:
 } ;
 
 }    // namespace_ns
+
+
+///////////////////////////////////////////////////////////////////////////////
+//// INCLUDE TEMPLATE IMPLEMENTAION
+///////////////////////////////////////////////////////////////////////////////
+#include "LimaDetector.hpp"
 
 #endif    // _LimaDetector_H

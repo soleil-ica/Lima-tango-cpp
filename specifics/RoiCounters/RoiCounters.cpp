@@ -178,7 +178,7 @@ void RoiCounters::init_device()
     try
     {
         //create new operation			
-        std::stringstream opId("MyRoiCounters");
+        std::stringstream opId("ARoiCounters");
         INFO_STREAM << "addOp(" << opId.str() << ")" << endl;
         m_ct->externalOperation()->addOp(ROICOUNTERS, opId.str(), 0/*level*/, m_soft_operation);
 
@@ -736,14 +736,14 @@ bool RoiCounters::create_all_dynamic_attributes(void)
         std::string err("failed to instanciate dynamic attributes  - Tango exception caught - see log attribute for details");
         ERROR_STREAM << err << std::endl;
         ERROR_STREAM << df << std::endl;
-        this->set_state(Tango::FAULT);
-        this->set_status(err);
+        set_state(Tango::FAULT);
+        set_status(err);
         return false;
     }
     catch(...)
     {
-        this->set_state(Tango::FAULT);
-        this->set_status("failed to instanciate dynamic attributes - unknown exception caught");
+        set_state(Tango::FAULT);
+        set_status("failed to instanciate dynamic attributes - unknown exception caught");
         return false;
     }
     DEBUG_STREAM << "RoiCounters::create_all_dynamic_attributes() - [END]" << endl;
@@ -767,21 +767,21 @@ void RoiCounters::read_stats_callback(yat4tango::DynamicAttributeReadCallbackDat
     try
     {
         void* val;
-        std::string myAttributeName = cbd.dya->get_name();
+        std::string attributeName = cbd.dya->get_name();
 
         if(
-           (myAttributeName.find("sum") != std::string::npos) ||
-           (myAttributeName.find("average") != std::string::npos) ||
-           (myAttributeName.find("std") != std::string::npos) ||
-           (myAttributeName.find("minValue") != std::string::npos) ||
-           (myAttributeName.find("maxValue") != std::string::npos))
+           (attributeName.find("sum") != std::string::npos) ||
+           (attributeName.find("average") != std::string::npos) ||
+           (attributeName.find("std") != std::string::npos) ||
+           (attributeName.find("minValue") != std::string::npos) ||
+           (attributeName.find("maxValue") != std::string::npos))
         {
             val = (Tango::DevDouble*)cbd.dya->get_user_data<Tango::DevDouble>();
 
             //- set the attribute value
             cbd.tga->set_value((Tango::DevDouble*)val);
         }
-        else if(myAttributeName.find("frameNumber") != std::string::npos)
+        else if(attributeName.find("frameNumber") != std::string::npos)
         {
             val = (Tango::DevULong*)cbd.dya->get_user_data<Tango::DevULong>();
 

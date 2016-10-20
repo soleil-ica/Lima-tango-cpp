@@ -64,7 +64,7 @@
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
 #define MAX_NB_ROICOUNTERS              32
 
-#define CURRENT_VERSION                 "1.0.0"
+#define CURRENT_VERSION                 "1.0.1"
 
 
 namespace RoiCounters_ns

@@ -59,10 +59,10 @@ static const char *RcsId = "$Id:  $";
 #include <HamamatsuClass.h>
 
 #define MAX_ATTRIBUTE_STRING_LENGTH 256
-#define C_READOUTSPEED_NORMAL		2
-#define C_READOUTSPEED_SLOW			1
-#define C_STR_READOUTSPEED_NORMAL	"NORMAL"
-#define C_STR_READOUTSPEED_SLOW		"SLOW"
+#define READOUTSPEED_NORMAL_VALUE		2
+#define READOUTSPEED_SLOW_VALUE			1
+#define READOUTSPEED_NORMAL_NAME	"NORMAL"
+#define READOUTSPEED_SLOW_NAME		"SLOW"
 
 namespace Hamamatsu_ns
 {
@@ -250,7 +250,7 @@ void Hamamatsu::get_device_property()
 	//	End of Automatic code generation
 	//------------------------------------------------------------------
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", "DetectorNum");
-	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "2", "MemorizedReadoutSpeed");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "NORMAL", "MemorizedReadoutSpeed");
 
 }
 //+----------------------------------------------------------------------------
@@ -331,18 +331,17 @@ void Hamamatsu::read_fps(Tango::Attribute &attr)
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
 		Tango::Except::re_throw_exception(df,
-										  static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-										  static_cast<const char*> (string(df.errors[0].desc).c_str()),
-										  static_cast<const char*> ("Hamamatsu::read_fps"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Hamamatsu::read_fps");
 	}
 	catch(Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		//- throw exception
-		Tango::Except::throw_exception(
-									   static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-									   static_cast<const char*> (e.getErrMsg().c_str()),
-									   static_cast<const char*> ("Hamamatsu::read_fps"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Hamamatsu::read_fps");
 	}
 }
 
@@ -369,18 +368,17 @@ void Hamamatsu::read_lostFrames(Tango::Attribute &attr)
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
 		Tango::Except::re_throw_exception(df,
-										  static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-										  static_cast<const char*> (string(df.errors[0].desc).c_str()),
-										  static_cast<const char*> ("Hamamatsu::read_lostFrames"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Hamamatsu::read_lostFrames");
 	}
 	catch(Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		//- throw exception
-		Tango::Except::throw_exception(
-									   static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-									   static_cast<const char*> (e.getErrMsg().c_str()),
-									   static_cast<const char*> ("Hamamatsu::read_lostFrames"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Hamamatsu::read_lostFrames");
 	}	
 }
 
@@ -404,9 +402,9 @@ void Hamamatsu::read_readoutSpeed(Tango::Attribute &attr)
 		std::string readoutSpeedName = "";
 		switch (readoutSpeed)
 		{
-			case C_READOUTSPEED_SLOW:	readoutSpeedName = C_STR_READOUTSPEED_SLOW;
+            case READOUTSPEED_SLOW_VALUE:	readoutSpeedName = READOUTSPEED_SLOW_NAME;
 				break;
-			case C_READOUTSPEED_NORMAL:	readoutSpeedName = C_STR_READOUTSPEED_NORMAL;
+            case READOUTSPEED_NORMAL_VALUE:	readoutSpeedName = READOUTSPEED_NORMAL_NAME;
 				break;
 			default:	readoutSpeedName = "ERROR";
 				break;
@@ -420,18 +418,17 @@ void Hamamatsu::read_readoutSpeed(Tango::Attribute &attr)
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
 		Tango::Except::re_throw_exception(df,
-										  static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-										  static_cast<const char*> (string(df.errors[0].desc).c_str()),
-										  static_cast<const char*> ("Hamamatsu::read_readoutSpeed"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Hamamatsu::read_readoutSpeed");
 	}
 	catch(Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		//- throw exception
-		Tango::Except::throw_exception(
-									   static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-									   static_cast<const char*> (e.getErrMsg().c_str()),
-									   static_cast<const char*> ("Hamamatsu::read_readoutSpeed"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Hamamatsu::read_readoutSpeed");
 	}	
 }
 
@@ -452,24 +449,24 @@ void Hamamatsu::write_readoutSpeed(Tango::WAttribute &attr)
 		attr.get_write_value(attr_readoutSpeed_write);
 		string current = attr_readoutSpeed_write;
 		transform(current.begin(), current.end(), current.begin(), ::toupper);
-		if (current != C_STR_READOUTSPEED_NORMAL &&
-			current != C_STR_READOUTSPEED_SLOW)
+        if (current != READOUTSPEED_NORMAL_NAME &&
+            current != READOUTSPEED_SLOW_NAME)
 		{			
 			strcpy(attr_readoutSpeed_write, m_readoutSpeed.c_str());
 			
 			string userMsg;
-			userMsg = string("Available Readout speeds are:\n- ") + string(C_STR_READOUTSPEED_NORMAL) + string("\n- ") + string(C_STR_READOUTSPEED_SLOW);
+            userMsg = string("Available Readout speeds are:\n- ") + string(READOUTSPEED_NORMAL_NAME) + string("\n- ") + string(READOUTSPEED_SLOW_NAME);
 
-			Tango::Except::throw_exception(	(const char*) ("CONFIGURATION_ERROR"),
-											(const char*) (userMsg.c_str()),
-											(const char*) ("LimaDetector::write_readoutSpeed"));
+            Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
+                                            userMsg.c_str(),
+                                            "Hamamatsu::write_readoutSpeed");
 		}
 
-		short int readoutSpeed = C_READOUTSPEED_NORMAL;
-		if (current == C_STR_READOUTSPEED_SLOW)
-			readoutSpeed = C_READOUTSPEED_SLOW;
-		else if (current == C_STR_READOUTSPEED_NORMAL)
-			readoutSpeed = C_READOUTSPEED_NORMAL;
+        short int readoutSpeed = READOUTSPEED_NORMAL_VALUE;
+        if (current == READOUTSPEED_SLOW_NAME)
+            readoutSpeed = READOUTSPEED_SLOW_VALUE;
+        else if (current == READOUTSPEED_NORMAL_NAME)
+            readoutSpeed = READOUTSPEED_NORMAL_VALUE;
 		
 		//- THIS IS AN AVAILABLE READOUT SPEED
 		m_readoutSpeed = current;
@@ -481,18 +478,17 @@ void Hamamatsu::write_readoutSpeed(Tango::WAttribute &attr)
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
 		Tango::Except::re_throw_exception(df,
-										  static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-										  static_cast<const char*> (string(df.errors[0].desc).c_str()),
-										  static_cast<const char*> ("Hamamatsu::write_readoutSpeed"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Hamamatsu::write_readoutSpeed");
 	}
 	catch(Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		//- throw exception
-		Tango::Except::throw_exception(
-									   static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-									   static_cast<const char*> (e.getErrMsg().c_str()),
-									   static_cast<const char*> ("Hamamatsu::write_readoutSpeed"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Hamamatsu::write_readoutSpeed");
 	}	
 }
 

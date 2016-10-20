@@ -125,10 +125,10 @@ public:
 //=========================================
 //	Define classes for commands
 //=========================================
-class GetHumidityCmd : public Tango::Command
+class GetTHCmd : public Tango::Command
 {
 public:
-	GetHumidityCmd(const char   *name,
+	GetTHCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -136,39 +136,15 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	GetHumidityCmd(const char   *name,
+	GetTHCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~GetHumidityCmd() {};
+	~GetTHCmd() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<PilatusPixelDetector *>(dev))->is_GetHumidity_allowed(any);}
-};
-
-
-
-class GetTemperatureCmd : public Tango::Command
-{
-public:
-	GetTemperatureCmd(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetTemperatureCmd(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetTemperatureCmd() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<PilatusPixelDetector *>(dev))->is_GetTemperature_allowed(any);}
+	{return (static_cast<PilatusPixelDetector *>(dev))->is_GetTH_allowed(any);}
 };
 
 
