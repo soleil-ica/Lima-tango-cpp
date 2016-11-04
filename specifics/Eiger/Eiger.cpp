@@ -599,7 +599,8 @@ void Eiger::read_attr_hardware(vector<long> &attr_list)
 void Eiger::read_compressionType(Tango::Attribute &attr)
 {
     DEBUG_STREAM << "Eiger::read_compressionType(Tango::Attribute &attr) entering... "<< endl;
-    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());    
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    /*
     try
     {
         if ( Tango::STANDBY == get_state() )
@@ -637,6 +638,7 @@ void Eiger::read_compressionType(Tango::Attribute &attr)
                                        e.getErrMsg().c_str(),
                                        "Eiger::read_compressionType");
     }
+    */
 }
 
 //+----------------------------------------------------------------------------
@@ -650,6 +652,7 @@ void Eiger::write_compressionType(Tango::WAttribute &attr)
 {
     DEBUG_STREAM << "Eiger::write_compressionType(Tango::WAttribute &attr) entering... "<< endl;
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());    
+/*
     try
     {        
         attr.get_write_value(attr_compressionType_write);
@@ -693,6 +696,7 @@ void Eiger::write_compressionType(Tango::WAttribute &attr)
                                        e.getErrMsg().c_str(),
                                        "Eiger::write_compressionType");
     }
+*/
 }
 
 //+----------------------------------------------------------------------------
