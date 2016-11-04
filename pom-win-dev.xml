@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.6.2</version>
+    <version>1.6.5</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -22,89 +22,101 @@
     </scm>
 	
     <dependencies>
-        <dependency>
-            <groupId>org.tango</groupId>
-            <artifactId>tango-cpp-api-${aol}-shared-${mode}</artifactId>
-            <!--<version>7.2.6-vc9</version>-->
-            <version>8.1.2b-vc9</version>
-        </dependency>
-		
-        <dependency>
-            <groupId>org.omnigroup</groupId>
-            <artifactId>omniORB-${aol}-shared-${mode}</artifactId>
-            <!--<version>4.1.4-vc9</version>-->
-            <version>4.1.6-vc9</version>
-        </dependency>
 
-        <dependency>
-             <groupId>fr.soleil.lib</groupId>
-             <artifactId>NexusCPP-${aol}-static-${mode}</artifactId>
-             <version>3.0.7-vc9</version>
-         </dependency>
-         
-        <dependency>
-            <groupId>ncsa.uiuc.edu</groupId>
-            <artifactId>HDF5-${aol}-shared-release</artifactId>
-            <version>1.8.13-vc9</version>
-        </dependency>        
-                
-        <dependency>
-            <groupId>fr.soleil.lib</groupId>
-            <artifactId>YAT4Tango-${aol}-static-${mode}</artifactId>
-             <version>1.9.2-vc9</version> 
-        </dependency>
-        
-        <dependency>
-            <groupId>fr.soleil.lib</groupId>
-            <artifactId>YAT-${aol}-static-${mode}</artifactId>            
-            <version>1.10.1-vc9</version>            
-        </dependency>
-		
-        <dependency>
-            <groupId>fr.soleil.lib</groupId>
-            <artifactId>LimaCore-${aol}-shared-${mode}</artifactId>
-            <version>1.5.7</version>
-        </dependency>
-        <!-- Lima Camera Plugins -->
-        <dependency>
-            <groupId>fr.soleil.lib.Lima.Camera</groupId>
-            <artifactId>LimaSimulator-${aol}-shared-${mode}</artifactId>
-            <version>1.3.7</version>
-        </dependency>
-        <dependency>
-            <groupId>fr.soleil.lib.Lima.Camera</groupId>
-            <artifactId>LimaPco-${aol}-shared-${mode}</artifactId>
-            <version>1.5.0</version>
-        </dependency>
-<!--		
-        <dependency>
-            <groupId>fr.soleil.lib.Lima.Camera</groupId>
-            <artifactId>LimaAndor-${aol}-shared-${mode}</artifactId>
-            <version>1.3.7</version>
-        </dependency>
+    <dependency>
+        <groupId>org.tango</groupId>
+        <artifactId>tango-cpp-api-${aol}-shared-${mode}</artifactId>
+        <!--<version>7.2.6-vc9</version>-->
+        <version>8.1.2b-vc9</version>
+    </dependency>
 
-        <dependency>
-            <groupId>fr.soleil.lib.Lima.Camera</groupId>
-            <artifactId>LimaPerkinElmer-${aol}-shared-${mode}</artifactId>
-            <version>1.3.6</version>
-        </dependency>
-			
-        <dependency>
-            <groupId>fr.soleil.lib.Lima.Camera</groupId>
-            <artifactId>LimaRoperScientific-${aol}-shared-${mode}</artifactId>
-            <version>1.3.7</version>
-        </dependency>
-        <dependency>
-            <groupId>fr.soleil.lib.Lima.Camera</groupId>
-            <artifactId>LimaHamamatsu-${aol}-shared-${mode}</artifactId>
-            <version>1.0.5</version>
-        </dependency>
-        <dependency>
-            <groupId>fr.soleil.lib.Lima.Camera</groupId>
-            <artifactId>LimaUview-${aol}-shared-${mode}</artifactId>
-            <version>1.0.4</version>
-        </dependency>
--->		
+    <dependency>
+        <groupId>org.omnigroup</groupId>
+        <artifactId>omniORB-${aol}-shared-${mode}</artifactId>
+        <!--<version>4.1.4-vc9</version>-->
+        <version>4.1.6-vc9</version>
+    </dependency>
+
+    <dependency>
+         <groupId>fr.soleil.lib</groupId>
+         <artifactId>NexusCPPV2-${aol}-static-${mode}</artifactId>
+         <version>2.3.3-vc9</version>
+     </dependency>
+
+    <dependency>
+        <groupId>ncsa.uiuc.edu</groupId>
+        <artifactId>HDF5-${aol}-shared-release</artifactId>
+        <version>1.8.13-vc9</version>
+    </dependency>
+
+    <dependency>
+        <groupId>fr.soleil.lib</groupId>
+        <artifactId>YAT4Tango-${aol}-static-${mode}</artifactId>
+         <version>1.10.0-vc9</version>
+    </dependency>
+
+    <dependency>
+        <groupId>fr.soleil.lib</groupId>
+        <artifactId>YAT-${aol}-static-${mode}</artifactId>
+        <version>1.10.3-vc9</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.zeromq</groupId>
+      <artifactId>zeromq-${aol}-shared-release</artifactId>
+      <version>3.2.4</version>
+    </dependency>
+
+    <dependency>
+        <groupId>fr.soleil.lib</groupId>
+        <artifactId>LimaCore-${aol}-shared-${mode}</artifactId>
+        <version>1.6.2-SNAPSHOT</version>
+    </dependency>
+
+    <!-- Lima Camera Plugins -->
+    <dependency>
+        <groupId>fr.soleil.lib.Lima.Camera</groupId>
+        <artifactId>LimaSimulator-${aol}-shared-${mode}</artifactId>
+        <version>1.3.11</version>
+    </dependency>
+
+<!--
+    <dependency>
+        <groupId>fr.soleil.lib.Lima.Camera</groupId>
+        <artifactId>LimaAndor-${aol}-shared-${mode}</artifactId>
+        <version>1.3.8</version>
+    </dependency>
+
+    <dependency>
+        <groupId>fr.soleil.lib.Lima.Camera</groupId>
+        <artifactId>LimaPco-${aol}-shared-${mode}</artifactId>
+        <version>1.5.1</version>
+    </dependency>
+
+    <dependency>
+        <groupId>fr.soleil.lib.Lima.Camera</groupId>
+        <artifactId>LimaPerkinElmer-${aol}-shared-${mode}</artifactId>
+        <version>1.3.7</version>
+    </dependency>
+
+    <dependency>
+        <groupId>fr.soleil.lib.Lima.Camera</groupId>
+        <artifactId>LimaRoperScientific-${aol}-shared-${mode}</artifactId>
+        <version>1.3.8</version>
+    </dependency>
+
+    <dependency>
+        <groupId>fr.soleil.lib.Lima.Camera</groupId>
+        <artifactId>LimaHamamatsu-${aol}-shared-${mode}</artifactId>
+        <version>1.0.6</version>
+    </dependency>
+
+    <dependency>
+        <groupId>fr.soleil.lib.Lima.Camera</groupId>
+        <artifactId>LimaUview-${aol}-shared-${mode}</artifactId>
+        <version>1.0.5</version>
+    </dependency>
+-->
     </dependencies>
         
     <build>
@@ -126,8 +138,8 @@
                             <include>specifics/RoiCounters/*.cpp</include>
                             <include>specifics/Layout/*.cpp</include>
                             <include>specifics/UviewCCD/*.cpp</include>					
+                            <include>specifics/Pco/*.cpp</include>                      
 							-->							
-                            <include>specifics/Pco/*.cpp</include>                            
                             <include>specifics/SimulatorCCD/*.cpp</include>
                             
                         </includes>
@@ -141,8 +153,8 @@
                             <include>specifics/RoiCounters</include>
                             <include>specifics/Layout</include>
 							<include>specifics/UviewCCD</include>
-							-->
-                            <include>specifics/Pco</include>                            
+                            <include>specifics/Pco</include>     
+							-->							
                             <include>specifics/SimulatorCCD</include>         
                         </includePaths>
                                 
@@ -156,8 +168,8 @@
                             <define>ROICOUNTERS_ENABLED</define>	
                             <define>LAYOUT_ENABLED</define>   
 							<define>UVIEW_ENABLED</define>
-							-->
-                            <define>PCO_ENABLED</define>                            
+                            <define>PCO_ENABLED</define>							
+							-->                            
                             <define>SIMULATOR_ENABLED</define>
                         </defines>                        
                     </cpp>        
