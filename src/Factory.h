@@ -62,10 +62,6 @@
 #include <MaxipixInterface.h>
 #endif
 
-#ifdef ADSC_ENABLED
-#include <AdscInterface.h>
-#endif
-
 #ifdef PROSILICA_ENABLED
 #include <ProsilicaInterface.h>
 #include <ProsilicaCamera.h>

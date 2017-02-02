@@ -314,36 +314,6 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 
-#ifdef ADSC_ENABLED
-        if (detector_type == "AdscCCD")
-        {
-
-            if (!ControlFactory::m_is_created)
-            {
-                Tango::DbData db_data;
-                db_data.push_back(Tango::DbDatum("ReaderTimeout"));
-                db_data.push_back(Tango::DbDatum("UseReader"));
-                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
-                short reader_timeout = 1000;
-                bool use_reader;
-                db_data[0] >> reader_timeout;
-                db_data[1] >> use_reader;
-                m_camera = static_cast<void*> (new Adsc::Camera());
-                m_interface = static_cast<void*> (new Adsc::Interface(*static_cast<Adsc::Camera*> (m_camera)));
-                if (m_interface && use_reader)
-                    static_cast<Adsc::Interface*> (m_interface)->enableReader();
-                if (m_interface && !use_reader)
-                    static_cast<Adsc::Interface*> (m_interface)->disableReader();
-                if (m_interface)
-                    static_cast<Adsc::Interface*> (m_interface)->setTimeout(reader_timeout);
-
-                m_control = new CtControl(static_cast<Adsc::Interface*> (m_interface));
-                ControlFactory::m_is_created = true;
-                return m_control;
-            }
-        }
-#endif        
-
 #ifdef PROSILICA_ENABLED
         if (detector_type == "ProsilicaCCD")
         {
@@ -694,13 +664,6 @@ void ControlFactory::reset(const std::string& detector_type)
                 if (detector_type == "Maxipix")
                 {
                     delete (static_cast<Maxipix::Camera*> (m_camera));
-                }
-#endif 
-
-#ifdef ADSC_ENABLED        
-                if (detector_type == "AdscCCD")
-                {
-                    delete (static_cast<Adsc::Camera*> (m_camera));
                 }
 #endif 
 
