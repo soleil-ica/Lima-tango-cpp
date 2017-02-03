@@ -59,6 +59,150 @@ __declspec(dllexport)
 
 namespace ImXpad_ns
 {
+//+----------------------------------------------------------------------------
+//
+// method : 		DeleteWhiteImageCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *DeleteWhiteImageCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "DeleteWhiteImageCmd::execute(): arrived" << endl;
+
+	Tango::DevString	argin;
+	extract(in_any, argin);
+
+	((static_cast<ImXpad *>(device))->delete_white_image(argin));
+	return new CORBA::Any();
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		GetWhiteImagesListCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *GetWhiteImagesListCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "GetWhiteImagesListCmd::execute(): arrived" << endl;
+
+	return insert((static_cast<ImXpad *>(device))->get_white_images_list());
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ChooseWhiteImageCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *ChooseWhiteImageCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "ChooseWhiteImageCmd::execute(): arrived" << endl;
+
+	Tango::DevString	argin;
+	extract(in_any, argin);
+
+	((static_cast<ImXpad *>(device))->choose_white_image(argin));
+	return new CORBA::Any();
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		CreateWhiteImageCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *CreateWhiteImageCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "CreateWhiteImageCmd::execute(): arrived" << endl;
+
+	Tango::DevString	argin;
+	extract(in_any, argin);
+
+	((static_cast<ImXpad *>(device))->create_white_image(argin));
+	return new CORBA::Any();
+}
+
+
+//+----------------------------------------------------------------------------
+//
+// method : 		LoadCalibrationConfigFileClass::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *LoadCalibrationConfigFileClass::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "LoadCalibrationConfigFileClass::execute(): arrived" << endl;
+
+	Tango::DevString	argin;
+	extract(in_any, argin);
+
+	((static_cast<ImXpad *>(device))->load_calibration_config_file(argin));
+	return new CORBA::Any();
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		StartCalibrationClass::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *StartCalibrationClass::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "StartCalibrationClass::execute(): arrived" << endl;
+
+	((static_cast<ImXpad *>(device))->start_calibration());
+	return new CORBA::Any();
+}
+
 
 
 //
@@ -147,6 +291,36 @@ ImXpadClass *ImXpadClass::instance()
 //-----------------------------------------------------------------------------
 void ImXpadClass::command_factory()
 {
+	command_list.push_back(new StartCalibrationClass("StartCalibration",
+		Tango::DEV_VOID, Tango::DEV_VOID,
+		"",
+		"",
+		Tango::OPERATOR));
+	command_list.push_back(new LoadCalibrationConfigFileClass("LoadCalibrationConfigFile",
+		Tango::DEV_STRING, Tango::DEV_VOID,
+		"The calibration File Name ",
+		"",
+		Tango::OPERATOR));
+	command_list.push_back(new CreateWhiteImageCmd("CreateWhiteImage",
+		Tango::DEV_STRING, Tango::DEV_VOID,
+		"White image name",
+		"",
+		Tango::OPERATOR));
+	command_list.push_back(new ChooseWhiteImageCmd("ChooseWhiteImage",
+		Tango::DEV_STRING, Tango::DEV_VOID,
+		"White image name",
+		"",
+		Tango::OPERATOR));
+	command_list.push_back(new GetWhiteImagesListCmd("GetWhiteImagesList",
+		Tango::DEV_VOID, Tango::DEVVAR_STRINGARRAY,
+		"",
+		"",
+		Tango::OPERATOR));
+	command_list.push_back(new DeleteWhiteImageCmd("DeleteWhiteImage",
+		Tango::DEV_STRING, Tango::DEV_VOID,
+		"White image name",
+		"",
+		Tango::OPERATOR));
 
 	//	add polling if any
 	for (unsigned int i=0 ; i<command_list.size(); i++)
@@ -242,16 +416,115 @@ void ImXpadClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 //-----------------------------------------------------------------------------
 void ImXpadClass::attribute_factory(vector<Tango::Attr *> &att_list)
 {
-	//	Attribute : deviceVersion
-	deviceVersionAttrib	*device_version = new deviceVersionAttrib();
-	Tango::UserDefaultAttrProp	device_version_prop;
-	device_version_prop.set_unit(" ");
-	device_version_prop.set_standard_unit(" ");
-	device_version_prop.set_display_unit(" ");
-	device_version_prop.set_description("Tango Specific device version.");
-	device_version->set_default_properties(device_version_prop);
-	device_version->set_disp_level(Tango::EXPERT);
-	att_list.push_back(device_version);
+	//	Attribute : serverVersion
+	serverVersionAttrib	*server_version = new serverVersionAttrib();
+	Tango::UserDefaultAttrProp	server_version_prop;
+	server_version_prop.set_unit(" ");
+	server_version_prop.set_standard_unit(" ");
+	server_version_prop.set_display_unit(" ");
+	server_version_prop.set_description("ImXpad Socket Server Version.");
+	server_version->set_default_properties(server_version_prop);
+	server_version->set_disp_level(Tango::EXPERT);
+	att_list.push_back(server_version);
+
+	//	Attribute : geometricalCorrectionFlag
+	geometricalCorrectionFlagAttrib	*geometrical_correction_flag = new geometricalCorrectionFlagAttrib();
+	Tango::UserDefaultAttrProp	geometrical_correction_flag_prop;
+	geometrical_correction_flag_prop.set_unit(" ");
+	geometrical_correction_flag_prop.set_standard_unit(" ");
+	geometrical_correction_flag_prop.set_display_unit(" ");
+	geometrical_correction_flag->set_default_properties(geometrical_correction_flag_prop);
+	geometrical_correction_flag->set_memorized();
+	geometrical_correction_flag->set_memorized_init(false);
+	att_list.push_back(geometrical_correction_flag);
+
+	//	Attribute : flatFieldCorrectionFlag
+	flatFieldCorrectionFlagAttrib	*flat_field_correction_flag = new flatFieldCorrectionFlagAttrib();
+	Tango::UserDefaultAttrProp	flat_field_correction_flag_prop;
+	flat_field_correction_flag_prop.set_unit(" ");
+	flat_field_correction_flag_prop.set_standard_unit(" ");
+	flat_field_correction_flag_prop.set_display_unit(" ");
+	flat_field_correction_flag->set_default_properties(flat_field_correction_flag_prop);
+	flat_field_correction_flag->set_memorized();
+	flat_field_correction_flag->set_memorized_init(false);
+	att_list.push_back(flat_field_correction_flag);
+
+	//	Attribute : calibrationConfigFileName
+	calibrationConfigFileNameAttrib	*calibration_config_file_name = new calibrationConfigFileNameAttrib();
+	Tango::UserDefaultAttrProp	calibration_config_file_name_prop;
+	calibration_config_file_name_prop.set_unit(" ");
+	calibration_config_file_name->set_default_properties(calibration_config_file_name_prop);
+	att_list.push_back(calibration_config_file_name);
+
+	//	Attribute : acquisitionMode
+	acquisitionModeAttrib	*acquisition_mode = new acquisitionModeAttrib();
+	Tango::UserDefaultAttrProp	acquisition_mode_prop;
+	acquisition_mode_prop.set_unit(" ");
+	acquisition_mode_prop.set_standard_unit(" ");
+	acquisition_mode_prop.set_display_unit(" ");
+	acquisition_mode_prop.set_description("Acquisition mode type are :<BR>\nSTANDARD<BR>\nCOMPUTER_BURST<BR>\nDETECTOR_BURST<BR>\nSINGLE_BUNCH_16<BR>\nSINGLE_BUNCH_32<BR>\nSTACKING_16<BR>\nSTACKING_32<BR>");
+	acquisition_mode->set_default_properties(acquisition_mode_prop);
+	acquisition_mode->set_memorized();
+	acquisition_mode->set_memorized_init(false);
+	att_list.push_back(acquisition_mode);
+
+	//	Attribute : outputSignal
+	outputSignalAttrib	*output_signal = new outputSignalAttrib();
+	Tango::UserDefaultAttrProp	output_signal_prop;
+	output_signal_prop.set_unit(" ");
+	output_signal_prop.set_standard_unit(" ");
+	output_signal_prop.set_display_unit(" ");
+	output_signal_prop.set_description("Avalaible output signals are :<br>\nEXPOSURE_BUSY<br>\nEXPOSURE_READ_DONE<br>\nSHUTTER_BUSY<br>\nUPDATE_OVERFLOW_BUSY<br>\nPIXEL_COUNTER_ENABLED<br>\nEXTERNAL_GATE<br>\nDATA_TRANSFER<br>\nRAM_READY_IMAGE_BUSY<br>\nXPAD_TO_LOCAL_DDR<br>\nLOCAL_DDR_TO_PC<br>");
+	output_signal->set_default_properties(output_signal_prop);
+	output_signal->set_memorized();
+	output_signal->set_memorized_init(false);
+	att_list.push_back(output_signal);
+
+	//	Attribute : calibrationMode
+	calibrationModeAttrib	*calibration_mode = new calibrationModeAttrib();
+	Tango::UserDefaultAttrProp	calibration_mode_prop;
+	calibration_mode_prop.set_unit(" ");
+	calibration_mode_prop.set_standard_unit(" ");
+	calibration_mode_prop.set_display_unit(" ");
+	calibration_mode_prop.set_description("Calibration modes are :<BR>\nOTN<BR>\nOTN_PULSE<BR>\nBEAM<BR>\n\n");
+	calibration_mode->set_default_properties(calibration_mode_prop);
+	calibration_mode->set_memorized();
+	calibration_mode->set_memorized_init(false);
+	att_list.push_back(calibration_mode);
+
+	//	Attribute : time
+	timeAttrib	*time = new timeAttrib();
+	Tango::UserDefaultAttrProp	time_prop;
+	time_prop.set_unit("ms");
+	time_prop.set_standard_unit("ms");
+	time_prop.set_display_unit("%6.2f");
+	time->set_default_properties(time_prop);
+	time->set_memorized();
+	time->set_memorized_init(false);
+	att_list.push_back(time);
+
+	//	Attribute : iTHL
+	iTHLAttrib	*i_thl = new iTHLAttrib();
+	Tango::UserDefaultAttrProp	i_thl_prop;
+	i_thl_prop.set_unit(" ");
+	i_thl_prop.set_standard_unit(" ");
+	i_thl_prop.set_display_unit(" ");
+	i_thl->set_default_properties(i_thl_prop);
+	i_thl->set_memorized();
+	i_thl->set_memorized_init(false);
+	att_list.push_back(i_thl);
+
+	//	Attribute : mode
+	modeAttrib	*mode = new modeAttrib();
+	Tango::UserDefaultAttrProp	mode_prop;
+	mode_prop.set_unit(" ");
+	mode_prop.set_standard_unit(" ");
+	mode_prop.set_display_unit(" ");
+	mode_prop.set_description("Available config modes for a calibration are :<BR>\nSLOW<BR>\nMEDIUM<BR>\nFAST<BR>");
+	mode->set_default_properties(mode_prop);
+	mode->set_memorized();
+	mode->set_memorized_init(false);
+	att_list.push_back(mode);
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
@@ -324,6 +597,140 @@ void ImXpadClass::set_default_property()
 	prop_desc = "";
 	prop_def  = "";
 	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "CalibrationConfigPath";
+	prop_desc = "";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedGeometricalCorrectionFlag";
+	prop_desc = "";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedFlatFieldCorrectionFlag";
+	prop_desc = "";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedAcquisitionMode";
+	prop_desc = "";
+	prop_def  = "STANDARD";
+	vect_data.clear();
+	vect_data.push_back("STANDARD");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedOutputSignal";
+	prop_desc = "";
+	prop_def  = "EXPOSURE_BUSY";
+	vect_data.clear();
+	vect_data.push_back("EXPOSURE_BUSY");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedCalibrationMode";
+	prop_desc = "";
+	prop_def  = "OTN_PULSE";
+	vect_data.clear();
+	vect_data.push_back("OTN_PULSE");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedMode";
+	prop_desc = "";
+	prop_def  = "SLOW";
+	vect_data.clear();
+	vect_data.push_back("SLOW");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedTime";
+	prop_desc = "";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedITHL";
+	prop_desc = "";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

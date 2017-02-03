@@ -45,10 +45,16 @@ static const char *RcsId = "$Id:  $";
 //	The following table gives the correspondence
 //	between commands and method name.
 //
-//  Command name|  Method name
+//  Command name               |  Method name
 //	----------------------------------------
-//  State   |  dev_state()
-//  Status  |  dev_status()
+//  State                      |  dev_state()
+//  Status                     |  dev_status()
+//  StartCalibration           |  start_calibration()
+//  LoadCalibrationConfigFile  |  load_calibration_config_file()
+//  CreateWhiteImage           |  create_white_image()
+//  ChooseWhiteImage           |  choose_white_image()
+//  GetWhiteImagesList         |  get_white_images_list()
+//  DeleteWhiteImage           |  delete_white_image()
 //
 //===================================================================
 
@@ -57,6 +63,25 @@ static const char *RcsId = "$Id:  $";
 #include <PogoHelper.h>
 #include <ImXpad.h>
 #include <ImXpadClass.h>
+
+//-----------------------------------------------------
+//
+//-----------------------------------------------------
+inline void _split(const std::string inString, const std::string &separator, std::vector<std::string> &returnVector)
+{
+    std::string::size_type start = 0;
+    std::string::size_type end = 0;
+
+    while ((end = inString.find (separator, start)) != std::string::npos)
+    {
+        returnVector.push_back (inString.substr (start, end - start));
+        start = end + separator.size();
+    }
+
+    returnVector.push_back (inString.substr (start));
+}
+//-----------------------------------------------------
+
 
 namespace ImXpad_ns
 {
@@ -95,7 +120,13 @@ ImXpad::ImXpad(Tango::DeviceClass *cl, const char *s, const char *d)
 //-----------------------------------------------------------------------------
 void ImXpad::delete_device()
 {
-    DELETE_DEVSTRING_ATTRIBUTE(attr_deviceVersion_read);
+    DELETE_DEVSTRING_ATTRIBUTE(attr_serverVersion_read);
+    DELETE_DEVSTRING_ATTRIBUTE(attr_calibrationConfigFileName_read);
+    DELETE_DEVSTRING_ATTRIBUTE(attr_acquisitionMode_read);
+    DELETE_DEVSTRING_ATTRIBUTE(attr_outputSignal_read);
+
+	DELETE_SCALAR_ATTRIBUTE(attr_flatFieldCorrectionFlag_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_geometricalCorrectionFlag_read);
     //	Delete device allocated objects
     
     //!!!! ONLY LimaDetector device can do this !!!!
@@ -121,13 +152,17 @@ void ImXpad::init_device()
     //--------------------------------------------
     get_device_property();
     
-    CREATE_DEVSTRING_ATTRIBUTE(attr_deviceVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);    
+    CREATE_DEVSTRING_ATTRIBUTE(attr_serverVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_calibrationConfigFileName_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_acquisitionMode_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_outputSignal_read, MAX_ATTRIBUTE_STRING_LENGTH);
+	CREATE_SCALAR_ATTRIBUTE(attr_flatFieldCorrectionFlag_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_geometricalCorrectionFlag_read);
     
     m_is_device_initialized = false;
-
+	attr_calibrationMode_write ="OTN_PULSE";	
     set_state(Tango::INIT);
     m_status_message.str("");
-
     try
     {
         //- get the main object used to pilot the lima framework
@@ -159,6 +194,73 @@ void ImXpad::init_device()
     }
 
     m_is_device_initialized = true;
+	try
+	{
+    	Tango::WAttribute &calibrationMode = dev_attr->get_w_attr_by_name("calibrationMode");
+    	m_calibration_mode = memorizedCalibrationMode;
+    	attr_calibrationMode_write = const_cast<Tango::DevString>(memorizedCalibrationMode.c_str());
+    	calibrationMode.set_write_value(attr_calibrationMode_write);
+    	write_calibrationMode(calibrationMode);
+
+    	Tango::WAttribute &mode = dev_attr->get_w_attr_by_name("mode");
+    	m_mode = memorizedMode;
+    	attr_mode_write = const_cast<Tango::DevString>(memorizedMode.c_str());
+    	mode.set_write_value(attr_mode_write);
+    	write_mode(mode);
+
+    	Tango::WAttribute &time = dev_attr->get_w_attr_by_name("time");
+    	attr_time_write = memorizedTime;
+    	time.set_write_value(attr_time_write);
+    	write_time(time);
+
+    	Tango::WAttribute &iTHL = dev_attr->get_w_attr_by_name("iTHL");
+    	attr_iTHL_write = memorizedITHL;
+    	iTHL.set_write_value(attr_iTHL_write);
+    	write_iTHL(iTHL);
+
+    	Tango::WAttribute &geometrical = dev_attr->get_w_attr_by_name("geometricalCorrectionFlag");
+    	*attr_geometricalCorrectionFlag_read = attr_geometricalCorrectionFlag_write = memorizedGeometricalCorrectionFlag;
+    	geometrical.set_write_value(attr_geometricalCorrectionFlag_write);
+    	write_geometricalCorrectionFlag(geometrical);
+
+    	Tango::WAttribute &flatField = dev_attr->get_w_attr_by_name("flatFieldCorrectionFlag");
+    	*attr_flatFieldCorrectionFlag_read = attr_flatFieldCorrectionFlag_write = memorizedFlatFieldCorrectionFlag;
+    	flatField.set_write_value(attr_flatFieldCorrectionFlag_write);
+    	write_flatFieldCorrectionFlag(flatField);
+
+        Tango::WAttribute &acquisitionMode = dev_attr->get_w_attr_by_name("acquisitionMode");
+        m_acquisition_mode = memorizedAcquisitionMode;
+        attr_acquisitionMode_write = const_cast<Tango::DevString>(memorizedAcquisitionMode.c_str());
+        acquisitionMode.set_write_value(attr_acquisitionMode_write);
+        write_acquisitionMode(acquisitionMode);
+
+        Tango::WAttribute &outputSignal = dev_attr->get_w_attr_by_name("outputSignal");
+        m_output_signal = memorizedOutputSignal;
+        attr_outputSignal_write = const_cast<Tango::DevString>(memorizedOutputSignal.c_str());
+        outputSignal.set_write_value(attr_outputSignal_write);
+        write_outputSignal(outputSignal);
+	}
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        m_status_message << "Initialization Failed : ";
+        for(unsigned i = 0; i < df.errors.length(); i++)
+        {
+            m_status_message << df.errors[i].desc << endl;
+        }
+        m_is_device_initialized = false;
+        set_state(Tango::FAULT);
+        return;
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
+        m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
+        m_is_device_initialized = false;
+        set_state(Tango::FAULT);
+        return;
+    }
+
     set_state(Tango::STANDBY);
     dev_state();
 }
@@ -181,6 +283,15 @@ void ImXpad::get_device_property()
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("HostName"));
 	dev_prop.push_back(Tango::DbDatum("Port"));
+	dev_prop.push_back(Tango::DbDatum("CalibrationConfigPath"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedGeometricalCorrectionFlag"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedFlatFieldCorrectionFlag"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedAcquisitionMode"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedOutputSignal"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedCalibrationMode"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedMode"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedTime"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedITHL"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -213,13 +324,118 @@ void ImXpad::get_device_property()
 	//	And try to extract Port value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  port;
 
+	//	Try to initialize CalibrationConfigPath from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  calibrationConfigPath;
+	else {
+		//	Try to initialize CalibrationConfigPath from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  calibrationConfigPath;
+	}
+	//	And try to extract CalibrationConfigPath value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  calibrationConfigPath;
+
+	//	Try to initialize MemorizedGeometricalCorrectionFlag from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedGeometricalCorrectionFlag;
+	else {
+		//	Try to initialize MemorizedGeometricalCorrectionFlag from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedGeometricalCorrectionFlag;
+	}
+	//	And try to extract MemorizedGeometricalCorrectionFlag value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedGeometricalCorrectionFlag;
+
+	//	Try to initialize MemorizedFlatFieldCorrectionFlag from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedFlatFieldCorrectionFlag;
+	else {
+		//	Try to initialize MemorizedFlatFieldCorrectionFlag from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedFlatFieldCorrectionFlag;
+	}
+	//	And try to extract MemorizedFlatFieldCorrectionFlag value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedFlatFieldCorrectionFlag;
+
+	//	Try to initialize MemorizedAcquisitionMode from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedAcquisitionMode;
+	else {
+		//	Try to initialize MemorizedAcquisitionMode from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedAcquisitionMode;
+	}
+	//	And try to extract MemorizedAcquisitionMode value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedAcquisitionMode;
+
+	//	Try to initialize MemorizedOutputSignal from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedOutputSignal;
+	else {
+		//	Try to initialize MemorizedOutputSignal from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedOutputSignal;
+	}
+	//	And try to extract MemorizedOutputSignal value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedOutputSignal;
+
+	//	Try to initialize MemorizedCalibrationMode from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedCalibrationMode;
+	else {
+		//	Try to initialize MemorizedCalibrationMode from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedCalibrationMode;
+	}
+	//	And try to extract MemorizedCalibrationMode value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedCalibrationMode;
+
+	//	Try to initialize MemorizedMode from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedMode;
+	else {
+		//	Try to initialize MemorizedMode from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedMode;
+	}
+	//	And try to extract MemorizedMode value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedMode;
+
+	//	Try to initialize MemorizedTime from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedTime;
+	else {
+		//	Try to initialize MemorizedTime from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedTime;
+	}
+	//	And try to extract MemorizedTime value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedTime;
+
+	//	Try to initialize MemorizedITHL from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedITHL;
+	else {
+		//	Try to initialize MemorizedITHL from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedITHL;
+	}
+	//	And try to extract MemorizedITHL value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedITHL;
+
 
 
     //	End of Automatic code generation
     //------------------------------------------------------------------
     PropertyHelper::create_property_if_empty(this, dev_prop, "TO_BE_DEFINED", "HostName");
     PropertyHelper::create_property_if_empty(this, dev_prop, "TO_BE_DEFINED", "Port");
-    
+    PropertyHelper::create_property_if_empty(this, dev_prop, "TO_BE_DEFINED", "CalibrationConfigPath");
+    PropertyHelper::create_property_if_empty(this, dev_prop, "STANDARD", "MemorizedAcquisitionModMode");
+    PropertyHelper::create_property_if_empty(this, dev_prop, "EXPOSURE_BUSY", "MemorizedOutputSignal");
+    PropertyHelper::create_property_if_empty(this, dev_prop, "OTN_PULSE", "MemorizedCalibrationMode");
+    PropertyHelper::create_property_if_empty(this, dev_prop, "SLOW", "MemorizedMode");
+    PropertyHelper::create_property_if_empty(this, dev_prop, "False", "MemorizedGeometricalCorrectionFlag");
+    PropertyHelper::create_property_if_empty(this, dev_prop, "False", "MemorizedFlatFieldCorrectionFlag");
 }
 //+----------------------------------------------------------------------------
 //
@@ -280,19 +496,167 @@ void ImXpad::read_attr_hardware(vector<long> &attr_list)
 
 //+----------------------------------------------------------------------------
 //
-// method : 		ImXpad::read_deviceVersion
+// method : 		ImXpad::read_geometricalCorrectionFlag
 // 
-// description : 	Extract real attribute values for deviceVersion acquisition result.
+// description : 	Extract real attribute values for geometricalCorrectionFlag acquisition result.
 //
 //-----------------------------------------------------------------------------
-void ImXpad::read_deviceVersion(Tango::Attribute &attr)
+void ImXpad::read_geometricalCorrectionFlag(Tango::Attribute &attr)
 {
-    DEBUG_STREAM << "ImXpad::read_deviceVersion(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "ImXpad::read_geometricalCorrectionFlag(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
-        strcpy(*attr_deviceVersion_read, DEVICE_VERSION);
+        *attr_geometricalCorrectionFlag_read = static_cast<Tango::DevBoolean>(m_camera->getGeometricalCorrectionFlag());
+        attr.set_value(attr_geometricalCorrectionFlag_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          std::string(df.errors[0].desc).c_str(),
+                                          "ImXpad::read_geometricalCorrectionFlag");
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        m_status_message.str("");
+        m_status_message << e.getErrMsg().c_str() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "ImXpad::read_geometricalCorrectionFlag");
+    }
+}
 
-        attr.set_value(attr_deviceVersion_read);
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::write_geometricalCorrectionFlag
+// 
+// description : 	Write geometricalCorrectionFlag attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::write_geometricalCorrectionFlag(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::write_geometricalCorrectionFlag(Tango::WAttribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        attr.get_write_value(attr_geometricalCorrectionFlag_write);
+        m_camera->setGeometricalCorrectionFlag(static_cast<unsigned short>(attr_geometricalCorrectionFlag_write));
+        yat4tango::PropertyHelper::set_property(this, "MemorizedGeometricalCorrectionFlag", attr_geometricalCorrectionFlag_write);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          std::string(df.errors[0].desc).c_str(),
+                                          "ImXpad::write_geometricalCorrectionFlag");
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        m_status_message.str("");
+        m_status_message << e.getErrMsg().c_str() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "ImXpad::write_geometricalCorrectionFlag");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::read_flatFieldCorrectionFlag
+// 
+// description : 	Extract real attribute values for flatFieldCorrectionFlag acquisition result.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::read_flatFieldCorrectionFlag(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::read_flatFieldCorrectionFlag(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        *attr_flatFieldCorrectionFlag_read = static_cast<Tango::DevBoolean>(m_camera->getFlatFieldCorrectionFlag());
+        attr.set_value(attr_flatFieldCorrectionFlag_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          std::string(df.errors[0].desc).c_str(),
+                                          "ImXpad::read_flatFieldCorrectionFlag");
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        m_status_message.str("");
+        m_status_message << e.getErrMsg().c_str() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "ImXpad::read_flatFieldCorrectionFlag");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::write_flatFieldCorrectionFlag
+// 
+// description : 	Write flatFieldCorrectionFlag attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::write_flatFieldCorrectionFlag(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::write_flatFieldCorrectionFlag(Tango::WAttribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        attr.get_write_value(attr_flatFieldCorrectionFlag_write);
+        m_camera->setFlatFieldCorrectionFlag(static_cast<unsigned short>(attr_flatFieldCorrectionFlag_write));
+        yat4tango::PropertyHelper::set_property(this, "MemorizedFlatFieldCorrectionFlag", attr_flatFieldCorrectionFlag_write);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          std::string(df.errors[0].desc).c_str(),
+                                          "ImXpad::write_flatFieldCorrectionFlag");
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        m_status_message.str("");
+        m_status_message << e.getErrMsg().c_str() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "ImXpad::write_flatFieldCorrectionFlag");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::read_calibrationConfigFileName
+// 
+// description : 	Extract real attribute values for calibrationConfigFileName acquisition result.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::read_calibrationConfigFileName(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::read_calibrationConfigFileName(Tango::Attribute &attr) entering... "<< endl;
+    try
+    {
+        attr.set_value(attr_calibrationConfigFileName_read);
     }
     catch (Tango::DevFailed& df)
     {
@@ -301,7 +665,7 @@ void ImXpad::read_deviceVersion(Tango::Attribute &attr)
         Tango::Except::re_throw_exception(df,
                                           "TANGO_DEVICE_ERROR",
                                           string(df.errors[0].desc).c_str(),
-                                          "ImXpad::read_deviceVersion");
+                                          "ImXpad::read_calibrationConfigFileName");
     }
     catch (Exception& e)
     {
@@ -309,8 +673,492 @@ void ImXpad::read_deviceVersion(Tango::Attribute &attr)
         //- throw exception
         Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                                        e.getErrMsg().c_str(),
-                                       "ImXpad::read_deviceVersion");
+                                       "ImXpad::read_calibrationConfigFileName");
     }
+}
+
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::read_serverVersion
+// 
+// description : 	Extract real attribute values for serverVersion acquisition result.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::read_serverVersion(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::read_serverVersion(Tango::Attribute &attr) entering... "<< endl;
+    try
+    {
+        strcpy(*attr_serverVersion_read, SOCKET_SERVER_VERSION);
+
+        attr.set_value(attr_serverVersion_read);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "ImXpad::read_serverVersion");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "ImXpad::read_serverVersion");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::read_acquisitionMode
+// 
+// description : 	Extract real attribute values for acquisitionMode acquisition result.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::read_acquisitionMode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::read_acquisitionMode(Tango::Attribute &attr) entering... "<< endl;
+    try
+    {
+
+        unsigned int mode_enum = m_camera->getAcquisitionMode();
+        std::string acquisition_mode = "";
+        switch(mode_enum)
+        {
+            case imXpad::Camera::XpadAcquisitionMode::Standard:
+                acquisition_mode = "STANDARD";
+                break;
+            case imXpad::Camera::XpadAcquisitionMode::ComputerBurst:
+                acquisition_mode = "COMPUTER_BURST";
+                break;
+            case imXpad::Camera::XpadAcquisitionMode::DetectorBurst:
+                acquisition_mode = "DETECTOR_BURST";
+                break;
+            default:
+                acquisition_mode = "UNKNOWN ACQUISITION MODE !";
+                break;
+        }
+
+        strcpy(*attr_acquisitionMode_read, acquisition_mode.c_str());
+        attr.set_value(attr_acquisitionMode_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          std::string(df.errors[0].desc).c_str(),
+                                          "ImXpad::read_acquisitionMode");
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "ImXpad::read_acquisitionMode");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::write_acquisitionMode
+// 
+// description : 	Write acquisitionMode attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::write_acquisitionMode(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::write_acquisitionMode(Tango::WAttribute &attr) entering... "<< endl;
+    try
+    {
+        m_acquisition_mode = attr_acquisitionMode_write;
+        attr.get_write_value(attr_acquisitionMode_write);
+        string current = attr_acquisitionMode_write;
+        transform(current.begin(), current.end(), current.begin(), ::toupper);
+        if (current != "STANDARD" &&
+            current != "COMPUTER_BURST" &&
+            current != "DETECTOR_BURST")
+        {
+            //strcpy(attr_acquisitionMode_write, m_acquisition_mode.c_str());
+            attr_acquisitionMode_write = const_cast<Tango::DevString>(m_acquisition_mode.c_str());
+            string userMsg;
+            userMsg = 	string("Available acquisitionMode are:\n- ") +
+            string("STANDARD") + string("\n- ") +
+            string("COMPUTER_BURST")+ string("\n- ") +
+            string("DETECTOR_BURST") + string("\n");
+
+            Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
+                                            userMsg.c_str(),
+                                            "ImXpad::write_acquisitionMode");
+        }
+
+
+        //- THIS IS AN AVAILABLE ACQUISITION MODE
+        m_acquisition_mode = current;
+        attr_acquisitionMode_write = const_cast<Tango::DevString>(current.c_str());
+        //memorize it ...
+        PropertyHelper::set_property(this, "MemorizedAcquisitionMode", m_acquisition_mode);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "ImXpad::write_acquisitionMode");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::read_outputSignal
+// 
+// description : 	Extract real attribute values for outputSignal acquisition result.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::read_outputSignal(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::read_outputSignal(Tango::Attribute &attr) entering... "<< endl;
+    try
+    {
+
+
+        unsigned short signal_enum = -1;
+        m_camera->getOutputSignalMode(signal_enum);
+        std::string output_signal = "";
+        switch(signal_enum)
+        {
+            case imXpad::Camera::XpadOutputSignal::ExposureBusy:
+                output_signal = "EXPOSURE_BUSY";
+                break;
+            case imXpad::Camera::XpadOutputSignal::ShutterBusy:
+                output_signal = "SHUTTER_BUSY";
+                break;
+            case imXpad::Camera::XpadOutputSignal::BusyUpdateOverflow:
+                output_signal = "BUSY_UPDATE_OVER_FLOW";
+                break;
+            case imXpad::Camera::XpadOutputSignal::PixelCounterEnabled:
+                output_signal = "PIXEL_COUNTER_ENABLED";
+                break;
+            case imXpad::Camera::XpadOutputSignal::ExternalGate:
+                output_signal = "EXTERNAL_GATE";
+                break;
+            case imXpad::Camera::XpadOutputSignal::ExposureReadDone:
+                output_signal = "EXPOSURE_READ_DONE";
+                break;
+            case imXpad::Camera::XpadOutputSignal::DataTransfer:
+                output_signal = "DATA_TRANSFER";
+                break;
+            case imXpad::Camera::XpadOutputSignal::RAMReadyImageBusy:
+                output_signal = "RAM_READ_IMAGE_BUSY";
+                break;
+            case imXpad::Camera::XpadOutputSignal::XPADToLocalDDR:
+                output_signal = "XPAD_TO_LOCAL_DDR";
+                break;
+            case imXpad::Camera::XpadOutputSignal::LocalDDRToPC:
+                output_signal = "LOCAL_DDR_TO_PC";
+                break;
+
+            default:
+                output_signal = "UNKNOWN OUTPUT SIGNAL !";
+                break;
+        }
+
+        strcpy(*attr_outputSignal_read, output_signal.c_str());
+        attr.set_value(attr_outputSignal_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          std::string(df.errors[0].desc).c_str(),
+                                          "ImXpad::read_outputSignal");
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "ImXpad::read_outputSignal");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::write_outputSignal
+// 
+// description : 	Write outputSignal attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::write_outputSignal(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::write_outputSignal(Tango::WAttribute &attr) entering... "<< endl;
+    try
+    {
+        m_output_signal = attr_outputSignal_write;
+        attr.get_write_value(attr_outputSignal_write);
+        string current = attr_outputSignal_write;
+        transform(current.begin(), current.end(), current.begin(), ::toupper);
+        if (current != "EXPOSURE_BUSY"          &&
+            current != "SHUTTER_BUSY"           &&
+            current != "BUSY_UPDATE_OVER_FLOW"  &&
+            current != "PIXEL_COUNTER_ENABLED"  &&
+            current != "EXTERNAL_GATE"          &&
+            current != "EXPOSURE_READ_DONE"     &&
+            current != "DATA_TRANSFER"          &&
+            current != "RAM_READ_IMAGE_BUSY"    &&
+            current != "XPAD_TO_LOCAL_DDR"      &&
+            current != "LOCAL_DDR_TO_PC"
+            )
+        {
+            //strcpy(attr_outputSignal_write, m_output_signal_mode.c_str());
+            attr_outputSignal_write = const_cast<Tango::DevString>(m_output_signal.c_str());
+            string userMsg;
+            userMsg = 	string("Available outputSignal are:\n- ") +
+            string("EXPOSURE_BUSY")         + string("\n- ") +
+            string("SHUTTER_BUSY")          + string("\n- ") +
+            string("BUSY_UPDATE_OVER_FLOW") + string("\n- ") +
+            string("PIXEL_COUNTER_ENABLED") + string("\n- ") +
+            string("EXTERNAL_GATE")         + string("\n- ") +
+            string("EXPOSURE_READ_DONE")    + string("\n- ") +
+            string("DATA_TRANSFER")         + string("\n- ") +
+            string("RAM_READ_IMAGE_BUSY")   + string("\n- ") +
+            string("XPAD_TO_LOCAL_DDR")     + string("\n- ") +
+            string("LOCAL_DDR_TO_PC")       + string("\n");
+
+            Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
+                                            userMsg.c_str(),
+                                            "ImXpad::write_outputSignal");
+        }
+
+        //- THIS IS AN AVAILABLE ACQUISITION MODE
+        m_output_signal = current;
+        attr_outputSignal_write = const_cast<Tango::DevString>(current.c_str());
+        //memorize it ...
+        PropertyHelper::set_property(this, "MemorizedOutputSignal", m_output_signal);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "ImXpad::write_outputSignal");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::read_calibrationMode
+// 
+// description : 	Extract real attribute values for calibrationMode acquisition result.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::read_calibrationMode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::read_calibrationMode(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::write_calibrationMode
+// 
+// description : 	Write calibrationMode attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::write_calibrationMode(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::write_calibrationMode(Tango::WAttribute &attr) entering... "<< endl;
+	try
+	{
+		m_calibration_mode = attr_calibrationMode_write;
+		attr.get_write_value(attr_calibrationMode_write);
+		string current = attr_calibrationMode_write;
+		transform(current.begin(), current.end(), current.begin(), ::toupper);
+        if (current != "OTN_PULSE" &&
+            current != "OTN" &&
+            current != "BEAM")
+		{			
+			//strcpy(attr_calibrationMode_write, m_calibration_mode.c_str());
+			attr_calibrationMode_write = const_cast<Tango::DevString>(m_calibration_mode.c_str());
+			string userMsg;
+            userMsg = 	string("Available calibrationMode are:\n- ") +   
+			string("OTN_PULSE") + string("\n- ") + 
+			string("OTN")+ string("\n- ") + 
+			string("BEAM") + string("\n"); 
+
+            Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
+                                            userMsg.c_str(),
+                                            "ImXpad::write_calibrationMode");
+		}
+
+		
+		//- THIS IS AN AVAILABLE CALIBRATION MODE
+		m_calibration_mode = current;
+		attr_calibrationMode_write = const_cast<Tango::DevString>(current.c_str());
+		PropertyHelper::set_property(this, "MemorizedCalibrationMode", m_calibration_mode);
+	}
+	catch(Tango::DevFailed& df)
+	{
+		ERROR_STREAM << df << endl;
+		//- rethrow exception
+		Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "ImXpad::write_calibrationMode");
+	}
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::read_time
+// 
+// description : 	Extract real attribute values for time acquisition result.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::read_time(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::read_time(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::write_time
+// 
+// description : 	Write time attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::write_time(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::write_time(Tango::WAttribute &attr) entering... "<< endl;
+    try
+    {
+        attr.get_write_value(attr_time_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedTime", attr_time_write);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          std::string(df.errors[0].desc).c_str(),
+                                          "ImXpad::write_time");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::read_iTHL
+// 
+// description : 	Extract real attribute values for iTHL acquisition result.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::read_iTHL(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::read_iTHL(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::write_iTHL
+// 
+// description : 	Write iTHL attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::write_iTHL(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::write_iTHL(Tango::WAttribute &attr) entering... "<< endl;
+    try
+    {
+        attr.get_write_value(attr_iTHL_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedITHL", attr_iTHL_write);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          std::string(df.errors[0].desc).c_str(),
+                                          "ImXpad::write_iTHL");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::read_mode
+// 
+// description : 	Extract real attribute values for mode acquisition result.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::read_mode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::read_mode(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::write_mode
+// 
+// description : 	Write mode attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::write_mode(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::write_mode(Tango::WAttribute &attr) entering... "<< endl;
+	try
+	{
+		m_mode = attr_mode_write;
+		attr.get_write_value(attr_mode_write);
+		string current = attr_mode_write;
+		transform(current.begin(), current.end(), current.begin(), ::toupper);
+        if (current != "SLOW" &&
+            current != "MEDIUM" &&
+            current != "FAST")
+		{			
+			//strcpy(attr_mode_write, m_mode.c_str());
+			attr_mode_write = const_cast<Tango::DevString>(m_mode.c_str());
+			string userMsg;
+            userMsg = 	string("Available Mode are:\n- ") +   
+			string("SLOW") + string("\n- ") + 
+			string("MEDIUM")+ string("\n- ") + 
+			string("FAST") + string("\n"); 
+
+            Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
+                                            userMsg.c_str(),
+                                            "ImXpad::write_mode");
+		}
+
+		
+		//- THIS IS AN AVAILABLE CONFIGURATION MODE
+		m_mode = current;
+		attr_mode_write = const_cast<Tango::DevString>(current.c_str());
+		//memorize it ...
+		PropertyHelper::set_property(this, "MemorizedMode", m_mode);
+	}
+	catch(Tango::DevFailed& df)
+	{
+		ERROR_STREAM << df << endl;
+		//- rethrow exception
+		Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "ImXpad::write_mode");
+	}
+
 }
 
 
@@ -352,6 +1200,271 @@ Tango::DevState ImXpad::dev_state()
     argout = DeviceState;
     return argout;
 }
+
+
+
+//+------------------------------------------------------------------
+/**
+ *	method:	ImXpad::start_calibration
+ *
+ *	description:	method to execute "StartCalibration"
+ *	Start the calibration of detector:<br>
+ *
+ *
+ */
+//+------------------------------------------------------------------
+void ImXpad::start_calibration()
+{
+	DEBUG_STREAM << "ImXpad::start_calibration(): entering... !" << endl;
+
+	//	Add your own code to control device here
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        //define the mode enum, usefull in start_calibration....
+        imXpad::Camera::Calibration::Configuration mode_enum;
+        if(m_mode == "SLOW")
+            mode_enum = imXpad::Camera::Calibration::Slow;
+        if(m_mode == "MEDIUM")
+            mode_enum = imXpad::Camera::Calibration::Medium;
+        if(m_mode == "FAST")
+            mode_enum = imXpad::Camera::Calibration::Fast;
+
+        std::string calibration_mode = attr_calibrationMode_write;
+        if(m_calibration_mode =="OTN_PULSE")
+        {
+            m_camera->calibrationOTNPulse(static_cast<unsigned short>(mode_enum));
+        }
+        else if(m_calibration_mode == "OTN")
+        {
+            m_camera->calibrationOTN(static_cast<unsigned short>(mode_enum));
+        }
+        else if(m_calibration_mode =="BEAM")
+        {
+            m_camera->calibrationBEAM(attr_time_write,attr_iTHL_write,static_cast<unsigned short>(mode_enum));
+        }
+        else
+        {
+            string userMsg;
+            userMsg = 	string("Available calibrationMode are:\n- ") +
+            string("OTN_PULSE") + string("\n- ") +
+            string("OTN")+ string("\n- ") +
+            string("BEAM")+ string("\n");
+
+            Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
+                                            userMsg.c_str(),
+                                            "ImXpad::start_calibration");
+        }
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "ImXpad::start_calibration" );
+    }
+}
+
+//+------------------------------------------------------------------
+/**
+ *	method:	ImXpad::load_calibration_config_file
+ *
+ *	description:	method to execute "LoadCalibrationConfigFile"
+ *	Load a calibration file<br>
+ *
+ * @param	argin	The calibration File Name 
+ *
+ */
+//+------------------------------------------------------------------
+void ImXpad::load_calibration_config_file(Tango::DevString argin)
+{
+	DEBUG_STREAM << "ImXpad::load_calibration_config_file(): entering... !" << endl;
+
+	//	Add your own code to control device here
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        m_camera->loadCalibrationFromFile(argin);
+        strcpy(*attr_calibrationConfigFileName_read, argin);
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "ImXpad::load_calibration_config_file" );
+    }
+}
+
+
+//+------------------------------------------------------------------
+/**
+ *	method:	ImXpad::create_white_image
+ *
+ *	description:	method to execute "CreateWhiteImage"
+ *	Create the White image
+ *
+ * @param	argin	White image name
+ *
+ */
+//+------------------------------------------------------------------
+void ImXpad::create_white_image(Tango::DevString argin)
+{
+	DEBUG_STREAM << "ImXpad::create_white_image(): entering... !" << endl;
+	//	Add your own code to control device here
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        m_camera->createWhiteImage(argin);
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "ImXpad::create_white_image" );
+    }
+}
+
+//+------------------------------------------------------------------
+/**
+ *	method:	ImXpad::choose_white_image
+ *
+ *	description:	method to execute "ChooseWhiteImage"
+ *	Select the white image
+ *
+ * @param	argin	White image name
+ *
+ */
+//+------------------------------------------------------------------
+void ImXpad::choose_white_image(Tango::DevString argin)
+{
+	DEBUG_STREAM << "ImXpad::choose_white_image(): entering... !" << endl;
+
+	//	Add your own code to control device here
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        std::string  white_images = m_camera->getWhiteImagesInDir();
+        std::vector<std::string> white_images_list;
+        _split(white_images,", ",white_images_list);
+        std::string  item = argin;
+        if(std::find(white_images_list.begin(), white_images_list.end(), item) != white_images_list.end())
+        {
+            m_camera->setWhiteImage(argin);
+            return;
+        }
+        else
+        {
+            std::stringstream ss;
+            ss << "Unable to find the white image [" << argin << "]" << endl;
+            Tango::Except::throw_exception(	"TANGO_DEVICE_ERROR",
+                                           (ss.str()).c_str(),
+                                           "ImXpad::choose_white_image");
+        }
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "ImXpad::choose_white_image" );
+    }
+}
+
+//+------------------------------------------------------------------
+/**
+ *	method:	ImXpad::get_white_images_list
+ *
+ *	description:	method to execute "GetWhiteImagesList"
+ *	Display the list of available White images
+ *
+ * @return	
+ *
+ */
+//+------------------------------------------------------------------
+Tango::DevVarStringArray *ImXpad::get_white_images_list()
+{
+	//	POGO has generated a method core with argout allocation.
+	//	If you would like to use a static reference without copying,
+	//	See "TANGO Device Server Programmer's Manual"
+	//		(chapter : Writing a TANGO DS / Exchanging data)
+	//------------------------------------------------------------
+	Tango::DevVarStringArray	*argout  = new Tango::DevVarStringArray();
+	DEBUG_STREAM << "ImXpad::get_white_images_list(): entering... !" << endl;
+
+	//	Add your own code to control device here
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        std::string  white_images = m_camera->getWhiteImagesInDir();
+        std::vector<std::string> white_images_list;
+        _split(white_images,", ",white_images_list);
+        argout->length(white_images_list.size());
+        for(int i =0;i<white_images_list.size();i++)
+        {
+            INFO_STREAM<<"white image ["<<i<<"] = "<<white_images_list.at(i)<<std::endl;
+            (*argout)[i] = CORBA::string_dup(white_images_list.at(i).c_str());
+        }
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df, "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "ImXpad::get_white_images_list" );
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "ImXpad::get_white_images_list" );
+    }
+	return argout;
+}
+
+
+
+//+------------------------------------------------------------------
+/**
+ *	method:	ImXpad::delete_white_image
+ *
+ *	description:	method to execute "DeleteWhiteImage"
+ *	Delete the white image
+ *
+ * @param	argin	White image name
+ *
+ */
+//+------------------------------------------------------------------
+void ImXpad::delete_white_image(Tango::DevString argin)
+{
+	DEBUG_STREAM << "ImXpad::delete_white_image(): entering... !" << endl;
+
+	//	Add your own code to control device here
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        m_camera->deleteWhiteImage(argin);
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "ImXpad::delete_white_image" );
+    }
+
+}
+
+
 
 
 }	//	namespace

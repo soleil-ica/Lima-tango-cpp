@@ -45,21 +45,289 @@ namespace ImXpad_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
-class deviceVersionAttrib: public Tango::Attr
+class modeAttrib: public Tango::Attr
 {
 public:
-	deviceVersionAttrib():Attr("deviceVersion", Tango::DEV_STRING, Tango::READ) {};
-	~deviceVersionAttrib() {};
+	modeAttrib():Attr("mode", Tango::DEV_STRING, Tango::WRITE) {};
+	~modeAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<ImXpad *>(dev))->read_deviceVersion(att);}
+	{(static_cast<ImXpad *>(dev))->read_mode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<ImXpad *>(dev))->write_mode(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<ImXpad *>(dev))->is_deviceVersion_allowed(ty);}
+	{return (static_cast<ImXpad *>(dev))->is_mode_allowed(ty);}
+};
+
+class iTHLAttrib: public Tango::Attr
+{
+public:
+	iTHLAttrib():Attr("iTHL", Tango::DEV_ULONG, Tango::WRITE) {};
+	~iTHLAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<ImXpad *>(dev))->read_iTHL(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<ImXpad *>(dev))->write_iTHL(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<ImXpad *>(dev))->is_iTHL_allowed(ty);}
+};
+
+class timeAttrib: public Tango::Attr
+{
+public:
+	timeAttrib():Attr("time", Tango::DEV_ULONG, Tango::WRITE) {};
+	~timeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<ImXpad *>(dev))->read_time(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<ImXpad *>(dev))->write_time(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<ImXpad *>(dev))->is_time_allowed(ty);}
+};
+
+class calibrationModeAttrib: public Tango::Attr
+{
+public:
+	calibrationModeAttrib():Attr("calibrationMode", Tango::DEV_STRING, Tango::WRITE) {};
+	~calibrationModeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<ImXpad *>(dev))->read_calibrationMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<ImXpad *>(dev))->write_calibrationMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<ImXpad *>(dev))->is_calibrationMode_allowed(ty);}
+};
+
+class outputSignalAttrib: public Tango::Attr
+{
+public:
+	outputSignalAttrib():Attr("outputSignal", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~outputSignalAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<ImXpad *>(dev))->read_outputSignal(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<ImXpad *>(dev))->write_outputSignal(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<ImXpad *>(dev))->is_outputSignal_allowed(ty);}
+};
+
+class acquisitionModeAttrib: public Tango::Attr
+{
+public:
+	acquisitionModeAttrib():Attr("acquisitionMode", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~acquisitionModeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<ImXpad *>(dev))->read_acquisitionMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<ImXpad *>(dev))->write_acquisitionMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<ImXpad *>(dev))->is_acquisitionMode_allowed(ty);}
+};
+
+class calibrationConfigFileNameAttrib: public Tango::Attr
+{
+public:
+	calibrationConfigFileNameAttrib():Attr("calibrationConfigFileName", Tango::DEV_STRING, Tango::READ) {};
+	~calibrationConfigFileNameAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<ImXpad *>(dev))->read_calibrationConfigFileName(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<ImXpad *>(dev))->is_calibrationConfigFileName_allowed(ty);}
+};
+
+class flatFieldCorrectionFlagAttrib: public Tango::Attr
+{
+public:
+	flatFieldCorrectionFlagAttrib():Attr("flatFieldCorrectionFlag", Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~flatFieldCorrectionFlagAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<ImXpad *>(dev))->read_flatFieldCorrectionFlag(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<ImXpad *>(dev))->write_flatFieldCorrectionFlag(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<ImXpad *>(dev))->is_flatFieldCorrectionFlag_allowed(ty);}
+};
+
+class geometricalCorrectionFlagAttrib: public Tango::Attr
+{
+public:
+	geometricalCorrectionFlagAttrib():Attr("geometricalCorrectionFlag", Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~geometricalCorrectionFlagAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<ImXpad *>(dev))->read_geometricalCorrectionFlag(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<ImXpad *>(dev))->write_geometricalCorrectionFlag(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<ImXpad *>(dev))->is_geometricalCorrectionFlag_allowed(ty);}
+};
+
+class serverVersionAttrib: public Tango::Attr
+{
+public:
+	serverVersionAttrib():Attr("serverVersion", Tango::DEV_STRING, Tango::READ) {};
+	~serverVersionAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<ImXpad *>(dev))->read_serverVersion(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<ImXpad *>(dev))->is_serverVersion_allowed(ty);}
 };
 
 //=========================================
 //	Define classes for commands
 //=========================================
+class DeleteWhiteImageCmd : public Tango::Command
+{
+public:
+	DeleteWhiteImageCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	DeleteWhiteImageCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~DeleteWhiteImageCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<ImXpad *>(dev))->is_DeleteWhiteImage_allowed(any);}
+};
+
+
+
+class GetWhiteImagesListCmd : public Tango::Command
+{
+public:
+	GetWhiteImagesListCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	GetWhiteImagesListCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~GetWhiteImagesListCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<ImXpad *>(dev))->is_GetWhiteImagesList_allowed(any);}
+};
+
+
+
+class ChooseWhiteImageCmd : public Tango::Command
+{
+public:
+	ChooseWhiteImageCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	ChooseWhiteImageCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~ChooseWhiteImageCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<ImXpad *>(dev))->is_ChooseWhiteImage_allowed(any);}
+};
+
+
+
+class CreateWhiteImageCmd : public Tango::Command
+{
+public:
+	CreateWhiteImageCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	CreateWhiteImageCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~CreateWhiteImageCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<ImXpad *>(dev))->is_CreateWhiteImage_allowed(any);}
+};
+
+
+
+class LoadCalibrationConfigFileClass : public Tango::Command
+{
+public:
+	LoadCalibrationConfigFileClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	LoadCalibrationConfigFileClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~LoadCalibrationConfigFileClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<ImXpad *>(dev))->is_LoadCalibrationConfigFile_allowed(any);}
+};
+
+
+
+class StartCalibrationClass : public Tango::Command
+{
+public:
+	StartCalibrationClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	StartCalibrationClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~StartCalibrationClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<ImXpad *>(dev))->is_StartCalibration_allowed(any);}
+};
+
+
+
 //
 // The ImXpadClass singleton definition
 //

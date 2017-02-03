@@ -56,7 +56,7 @@
 #include <imXpadCamera.h>
 
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
-#define DEVICE_VERSION  "1.0.0"
+#define SOCKET_SERVER_VERSION  "3.1.5"
 
 
 using namespace lima;
@@ -94,7 +94,20 @@ public :
  *	Attribute member data.
  */
 //@{
-		Tango::DevString	*attr_deviceVersion_read;
+		Tango::DevString	*attr_serverVersion_read;
+		Tango::DevBoolean	*attr_geometricalCorrectionFlag_read;
+		Tango::DevBoolean	attr_geometricalCorrectionFlag_write;
+		Tango::DevBoolean	*attr_flatFieldCorrectionFlag_read;
+		Tango::DevBoolean	attr_flatFieldCorrectionFlag_write;
+		Tango::DevString	*attr_calibrationConfigFileName_read;
+		Tango::DevString	*attr_acquisitionMode_read;
+		Tango::DevString	attr_acquisitionMode_write;
+		Tango::DevString	*attr_outputSignal_read;
+		Tango::DevString	attr_outputSignal_write;
+		Tango::DevString	attr_calibrationMode_write;
+		Tango::DevULong	attr_time_write;
+		Tango::DevULong	attr_iTHL_write;
+		Tango::DevString	attr_mode_write;
 //@}
 
 /**
@@ -110,6 +123,42 @@ public :
  *	
  */
 	Tango::DevLong	port;
+/**
+ *	
+ */
+	string	calibrationConfigPath;
+/**
+ *	
+ */
+	Tango::DevBoolean	memorizedGeometricalCorrectionFlag;
+/**
+ *	
+ */
+	Tango::DevBoolean	memorizedFlatFieldCorrectionFlag;
+/**
+ *	
+ */
+	string	memorizedAcquisitionMode;
+/**
+ *	
+ */
+	string	memorizedOutputSignal;
+/**
+ *	
+ */
+	string	memorizedCalibrationMode;
+/**
+ *	
+ */
+	string	memorizedMode;
+/**
+ *	
+ */
+	Tango::DevULong	memorizedTime;
+/**
+ *	
+ */
+	Tango::DevULong	memorizedITHL;
 //@}
 
 /**
@@ -183,19 +232,182 @@ public :
  */
 	virtual void read_attr_hardware(vector<long> &attr_list);
 /**
- *	Extract real attribute values for deviceVersion acquisition result.
+ *	Extract real attribute values for serverVersion acquisition result.
  */
-	virtual void read_deviceVersion(Tango::Attribute &attr);
+	virtual void read_serverVersion(Tango::Attribute &attr);
 /**
- *	Read/Write allowed for deviceVersion attribute.
+ *	Extract real attribute values for geometricalCorrectionFlag acquisition result.
  */
-	virtual bool is_deviceVersion_allowed(Tango::AttReqType type);
+	virtual void read_geometricalCorrectionFlag(Tango::Attribute &attr);
+/**
+ *	Write geometricalCorrectionFlag attribute values to hardware.
+ */
+	virtual void write_geometricalCorrectionFlag(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for flatFieldCorrectionFlag acquisition result.
+ */
+	virtual void read_flatFieldCorrectionFlag(Tango::Attribute &attr);
+/**
+ *	Write flatFieldCorrectionFlag attribute values to hardware.
+ */
+	virtual void write_flatFieldCorrectionFlag(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for calibrationConfigFileName acquisition result.
+ */
+	virtual void read_calibrationConfigFileName(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for acquisitionMode acquisition result.
+ */
+	virtual void read_acquisitionMode(Tango::Attribute &attr);
+/**
+ *	Write acquisitionMode attribute values to hardware.
+ */
+	virtual void write_acquisitionMode(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for outputSignal acquisition result.
+ */
+	virtual void read_outputSignal(Tango::Attribute &attr);
+/**
+ *	Write outputSignal attribute values to hardware.
+ */
+	virtual void write_outputSignal(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for calibrationMode acquisition result.
+ */
+	virtual void read_calibrationMode(Tango::Attribute &attr);
+/**
+ *	Write calibrationMode attribute values to hardware.
+ */
+	virtual void write_calibrationMode(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for time acquisition result.
+ */
+	virtual void read_time(Tango::Attribute &attr);
+/**
+ *	Write time attribute values to hardware.
+ */
+	virtual void write_time(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for iTHL acquisition result.
+ */
+	virtual void read_iTHL(Tango::Attribute &attr);
+/**
+ *	Write iTHL attribute values to hardware.
+ */
+	virtual void write_iTHL(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for mode acquisition result.
+ */
+	virtual void read_mode(Tango::Attribute &attr);
+/**
+ *	Write mode attribute values to hardware.
+ */
+	virtual void write_mode(Tango::WAttribute &attr);
+/**
+ *	Read/Write allowed for serverVersion attribute.
+ */
+	virtual bool is_serverVersion_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for geometricalCorrectionFlag attribute.
+ */
+	virtual bool is_geometricalCorrectionFlag_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for flatFieldCorrectionFlag attribute.
+ */
+	virtual bool is_flatFieldCorrectionFlag_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for calibrationConfigFileName attribute.
+ */
+	virtual bool is_calibrationConfigFileName_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for acquisitionMode attribute.
+ */
+	virtual bool is_acquisitionMode_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for outputSignal attribute.
+ */
+	virtual bool is_outputSignal_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for calibrationMode attribute.
+ */
+	virtual bool is_calibrationMode_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for time attribute.
+ */
+	virtual bool is_time_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for iTHL attribute.
+ */
+	virtual bool is_iTHL_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for mode attribute.
+ */
+	virtual bool is_mode_allowed(Tango::AttReqType type);
+/**
+ *	Execution allowed for StartCalibration command.
+ */
+	virtual bool is_StartCalibration_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for LoadCalibrationConfigFile command.
+ */
+	virtual bool is_LoadCalibrationConfigFile_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for CreateWhiteImage command.
+ */
+	virtual bool is_CreateWhiteImage_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for ChooseWhiteImage command.
+ */
+	virtual bool is_ChooseWhiteImage_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for GetWhiteImagesList command.
+ */
+	virtual bool is_GetWhiteImagesList_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for DeleteWhiteImage command.
+ */
+	virtual bool is_DeleteWhiteImage_allowed(const CORBA::Any &any);
 /**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
  *	@exception DevFailed
  */
 	virtual Tango::DevState	dev_state();
+/**
+ * Start the calibration of detector:<br>
+ *	@exception DevFailed
+ */
+	void	start_calibration();
+/**
+ * Load a calibration file<br>
+ *	@param	argin	The calibration File Name 
+ *	@exception DevFailed
+ */
+	void	load_calibration_config_file(Tango::DevString);
+/**
+ * Create the White image
+ *	@param	argin	White image name
+ *	@exception DevFailed
+ */
+	void	create_white_image(Tango::DevString);
+/**
+ * Select the white image
+ *	@param	argin	White image name
+ *	@exception DevFailed
+ */
+	void	choose_white_image(Tango::DevString);
+/**
+ * Display the list of available White images
+ *	@return	
+ *	@exception DevFailed
+ */
+	Tango::DevVarStringArray	*get_white_images_list();
+/**
+ * Delete the white image
+ *	@param	argin	White image name
+ *	@exception DevFailed
+ */
+	void	delete_white_image(Tango::DevString);
 
 /**
  *	Read the device properties from database
@@ -219,6 +431,12 @@ protected :
     imXpad::Interface* m_hw;
     CtControl*          m_ct;
     imXpad::Camera*    m_camera;	
+	std::string 		m_calibration_mode;
+    std::string 		m_acquisition_mode;
+    imXpad::Camera::XpadAcquisitionMode::AcquisitionMode m_acquisition_mode_enum;
+	std::string 		m_mode;	
+    std::string 		m_output_signal;
+    imXpad::Camera::XpadOutputSignal::OutputSignal m_output_signal_enum;
 	
 };
 

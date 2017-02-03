@@ -56,18 +56,281 @@ namespace ImXpad_ns
 
 //+----------------------------------------------------------------------------
 //
-// method : 		ImXpad::is_deviceVersion_allowed
+// method : 		ImXpad::is_acquisitionMode_allowed
 // 
-// description : 	Read/Write allowed for deviceVersion attribute.
+// description : 	Read/Write allowed for acquisitionMode attribute.
 //
 //-----------------------------------------------------------------------------
-bool ImXpad::is_deviceVersion_allowed(Tango::AttReqType type)
+bool ImXpad::is_acquisitionMode_allowed(Tango::AttReqType type)
 {
-	if (get_state() == Tango::INIT)
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
 	{
 		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
 
-		//	Re-Start of Generated Code
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+        //	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_outputSignal_allowed
+// 
+// description : 	Read/Write allowed for outputSignal attribute.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_outputSignal_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+        //	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_calibrationMode_allowed
+// 
+// description : 	Read/Write allowed for calibrationMode attribute.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_calibrationMode_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+        //	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_time_allowed
+// 
+// description : 	Read/Write allowed for time attribute.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_time_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+        //	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_mode_allowed
+// 
+// description : 	Read/Write allowed for mode attribute.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_mode_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+        //	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_serverVersion_allowed
+// 
+// description : 	Read/Write allowed for serverVersion attribute.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_serverVersion_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+        //	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_geometricalCorrectionFlag_allowed
+// 
+// description : 	Read/Write allowed for geometricalCorrectionFlag attribute.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_geometricalCorrectionFlag_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+        //	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_flatFieldCorrectionFlag_allowed
+// 
+// description : 	Read/Write allowed for flatFieldCorrectionFlag attribute.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_flatFieldCorrectionFlag_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+        //	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_calibrationConfigFileName_allowed
+// 
+// description : 	Read/Write allowed for calibrationConfigFileName attribute.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_calibrationConfigFileName_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+        //	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_iTHL_allowed
+// 
+// description : 	Read/Write allowed for iTHL attribute.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_iTHL_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+        //	Re-Start of Generated Code
 		return false;
 	}
 	return true;
@@ -77,5 +340,125 @@ bool ImXpad::is_deviceVersion_allowed(Tango::AttReqType type)
 //		Commands Allowed Methods
 //=================================================
 
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_StartCalibration_allowed
+// 
+// description : 	Execution allowed for StartCalibration command.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_StartCalibration_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_LoadCalibrationConfigFile_allowed
+// 
+// description : 	Execution allowed for LoadCalibrationConfigFile command.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_LoadCalibrationConfigFile_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_CreateWhiteImage_allowed
+// 
+// description : 	Execution allowed for CreateWhiteImage command.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_CreateWhiteImage_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_ChooseWhiteImage_allowed
+// 
+// description : 	Execution allowed for ChooseWhiteImage command.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_ChooseWhiteImage_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_GetWhiteImagesList_allowed
+// 
+// description : 	Execution allowed for GetWhiteImagesList command.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_GetWhiteImagesList_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_DeleteWhiteImage_allowed
+// 
+// description : 	Execution allowed for DeleteWhiteImage command.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_DeleteWhiteImage_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
 
 }	// namespace ImXpad_ns
