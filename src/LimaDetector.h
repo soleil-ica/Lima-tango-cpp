@@ -1007,6 +1007,8 @@ protected:
     string                              m_shutter_mode; 	//shutter mode name 	(MANUAL, AUTO_FRAME, AUTO_SEQUENCE)
     string                              m_acquisition_mode;	//aquisition mode name 	(SINGLE, ACCUMULATION) nota: imageType is forced to 32 bits in ACCUMULATION MODE
     string                              m_saving_options;
+    string                              m_file_format;      //file format name 	(NXS,EDF,HDF5,RAW)
+
     //- yat4tango::DeviceTask object : manage device Start/Snap/Stop commands
     yat::SharedPtr<AcquisitionTask>     m_acquisition_task;
     AcquisitionTask::AcqConfig          m_acq_conf;

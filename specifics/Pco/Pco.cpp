@@ -448,9 +448,7 @@ void Pco::write_shutterMode(Tango::WAttribute &attr)
            (current != "ROLLING"))
         {
             m_shutter_mode = previous;
-            attr_shutterMode_write = new char [m_shutter_mode.size()+1];
-            strcpy (attr_shutterMode_write, m_shutter_mode.c_str());
-
+            attr_shutterMode_write = const_cast<Tango::DevString>(m_shutter_mode.c_str());
             Tango::Except::throw_exception("CONFIGURATION_ERROR",
                                            "Available Shutter Modes are: \n- NOT_AVAILABLE \n- GLOBAL \n- ROLLING",
                                            "Pco::write_shutterMode");
@@ -569,8 +567,7 @@ void Pco::write_pixelScanRate(Tango::WAttribute &attr)
         if(it == m_map_scan_rate_frequencies.end())
         {
             m_pixel_scan_rate = previous;
-            attr_pixelScanRate_write = new char [m_pixel_scan_rate.size()+1];
-            strcpy (attr_pixelScanRate_write, m_pixel_scan_rate.c_str());
+            attr_pixelScanRate_write = const_cast<Tango::DevString>(m_pixel_scan_rate.c_str());
             stringstream ss;
             ss<<"Unable to find the scan rate ["<<current<<"]"<<endl;
             Tango::Except::throw_exception("CONFIGURATION_ERROR",

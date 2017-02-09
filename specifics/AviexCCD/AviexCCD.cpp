@@ -1193,8 +1193,7 @@ void AviexCCD::write_internalAcquisitionMode(Tango::WAttribute &attr)
             current != "MEASURE_FLOOD_FIELD")
         {
             m_acquisition_mode = previous;
-            strcpy(attr_internalAcquisitionMode_write, m_acquisition_mode.c_str());
-
+            attr_internalAcquisitionMode_write = const_cast<Tango::DevString>(m_acquisition_mode.c_str());
             Tango::Except::throw_exception("CONFIGURATION_ERROR",
                                            "Available Internal Acquisition Modes are:"
                                            "\n- ONESHOT"

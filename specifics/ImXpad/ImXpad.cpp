@@ -785,8 +785,7 @@ void ImXpad::write_acquisitionMode(Tango::WAttribute &attr)
         if (current != "STANDARD" &&
             current != "COMPUTER_BURST" &&
             current != "DETECTOR_BURST")
-        {
-            //strcpy(attr_acquisitionMode_write, m_acquisition_mode.c_str());
+        {            
             attr_acquisitionMode_write = const_cast<Tango::DevString>(m_acquisition_mode.c_str());
             string userMsg;
             userMsg = 	string("Available acquisitionMode are:\n- ") +
@@ -922,7 +921,6 @@ void ImXpad::write_outputSignal(Tango::WAttribute &attr)
             current != "LOCAL_DDR_TO_PC"
             )
         {
-            //strcpy(attr_outputSignal_write, m_output_signal_mode.c_str());
             attr_outputSignal_write = const_cast<Tango::DevString>(m_output_signal.c_str());
             string userMsg;
             userMsg = 	string("Available outputSignal are:\n- ") +
@@ -991,7 +989,6 @@ void ImXpad::write_calibrationMode(Tango::WAttribute &attr)
             current != "OTN" &&
             current != "BEAM")
 		{			
-			//strcpy(attr_calibrationMode_write, m_calibration_mode.c_str());
 			attr_calibrationMode_write = const_cast<Tango::DevString>(m_calibration_mode.c_str());
 			string userMsg;
             userMsg = 	string("Available calibrationMode are:\n- ") +   
@@ -1128,8 +1125,7 @@ void ImXpad::write_mode(Tango::WAttribute &attr)
         if (current != "SLOW" &&
             current != "MEDIUM" &&
             current != "FAST")
-		{			
-			//strcpy(attr_mode_write, m_mode.c_str());
+        {
 			attr_mode_write = const_cast<Tango::DevString>(m_mode.c_str());
 			string userMsg;
             userMsg = 	string("Available Mode are:\n- ") +   

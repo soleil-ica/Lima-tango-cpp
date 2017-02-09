@@ -1060,14 +1060,13 @@ void LimaDetector::write_fileFormat(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_fileFormat(Tango::WAttribute &attr) entering... " << endl;
     try
     {
-        string previous = attr_fileFormat_write;
+        m_file_format = attr_fileFormat_write;
         attr.get_write_value(attr_fileFormat_write);
         string current = attr_fileFormat_write;
         std::transform(current.begin(), current.end(), current.begin(), ::toupper);
         if(current != "NXS" && current != "EDF" && current != "RAW" && current != "HDF5")
         {
-            strcpy(attr_fileFormat_write, previous.c_str());
-
+            attr_fileFormat_write = const_cast<Tango::DevString>(m_file_format.c_str());
             Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
                                            std::string("Available File Format are:\n- NXS\n- EDF\n- RAW\n- HDF5\n").c_str(),
                                            "LimaDetector::write_fileFormat");
@@ -1085,11 +1084,6 @@ void LimaDetector::write_fileFormat(Tango::WAttribute &attr)
             m_saving_par.fileFormat = CtSaving::EDF;
             m_saving_par.suffix = ".edf";
         }
-        else if(current == "CBF")
-        {
-            m_saving_par.fileFormat = CtSaving::CBFFormat;
-            m_saving_par.suffix = ".cbf";
-        }
         else if(current == "HDF5")
         {
             m_saving_par.fileFormat = CtSaving::HDF5;
@@ -1101,6 +1095,8 @@ void LimaDetector::write_fileFormat(Tango::WAttribute &attr)
             m_saving_par.suffix = ".raw";
         }
 
+        //- THIS IS AN AVAILABLE FILE FORMAT
+        m_file_format = current;
         m_ct->saving()->setParameters(m_saving_par);
 
         yat4tango::PropertyHelper::set_property(this, "FileFormat", current);
@@ -1801,8 +1797,7 @@ void LimaDetector::write_triggerMode(Tango::WAttribute &attr)
         it = std::find(m_trig_mode_list.begin(), m_trig_mode_list.end(), current);
         if (it == m_trig_mode_list.end())
         {
-            strcpy(attr_triggerMode_write, m_trigger_mode.c_str());
-
+            attr_triggerMode_write = const_cast<Tango::DevString>(m_trigger_mode.c_str());
             Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
                                            std::string("Available Trigger Modes are:" + m_trig_mode_list_str).c_str(),
                                            "LimaDetector::write_triggerMode");
@@ -1899,9 +1894,7 @@ void LimaDetector::write_acquisitionMode(Tango::WAttribute &attr)
         if((current != "SINGLE") && (current != "ACCUMULATION"))
         {
             m_acquisition_mode = previous;
-            attr_acquisitionMode_write = new char [m_acquisition_mode.size() + 1];
-            strcpy(attr_acquisitionMode_write, m_acquisition_mode.c_str());
-
+            attr_acquisitionMode_write = const_cast<Tango::DevString>(m_acquisition_mode.c_str());
             Tango::Except::throw_exception("CONFIGURATION_ERROR",
                                            "Available Acquisition Modes are: "
                                            "\n- SINGLE"
@@ -2845,7 +2838,7 @@ void LimaDetector::write_shutterMode_callback(yat4tango::DynamicAttributeWriteCa
            current != "AUTO_FRAME" &&
            current != "AUTO_SEQUENCE")
         {
-            strcpy(attr_shutterMode_write, m_shutter_mode.c_str());
+            attr_shutterMode_write = const_cast<Tango::DevString>(m_shutter_mode.c_str());
             //- Error: Not supported
             Tango::Except::throw_exception("CONFIGURATION_ERROR",
                                            "Available Shutter Modes are:"
@@ -4313,6 +4306,7 @@ void LimaDetector::configure_attributes_hardware_at_init(void)
 
     INFO_STREAM << "Write tango hardware at Init - fileFormat" << endl;
     Tango::WAttribute &attrfileFormat = dev_attr->get_w_attr_by_name("fileFormat");
+    m_file_format = fileFormat;
     attr_fileFormat_write = const_cast<Tango::DevString> (fileFormat.c_str());
     strcpy(*attr_fileFormat_read, fileFormat.c_str());
     attrfileFormat.set_write_value(attr_fileFormat_write);

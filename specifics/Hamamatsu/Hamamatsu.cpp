@@ -452,8 +452,7 @@ void Hamamatsu::write_readoutSpeed(Tango::WAttribute &attr)
         if (current != READOUTSPEED_NORMAL_NAME &&
             current != READOUTSPEED_SLOW_NAME)
 		{			
-			strcpy(attr_readoutSpeed_write, m_readoutSpeed.c_str());
-			
+            attr_readoutSpeed_write = const_cast<Tango::DevString>(m_readoutSpeed.c_str());
 			string userMsg;
             userMsg = string("Available Readout speeds are:\n- ") + string(READOUTSPEED_NORMAL_NAME) + string("\n- ") + string(READOUTSPEED_SLOW_NAME);
 

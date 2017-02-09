@@ -452,7 +452,7 @@ void Layout::write_operationType(Tango::WAttribute &attr)
             (current != "NONE")
             )
         {
-            strcpy(attr_operationType_write, m_operationType.c_str());
+            attr_operationType_write = const_cast<Tango::DevString>(m_operationType.c_str());
             Tango::Except::throw_exception((const char*) ("CONFIGURATION_ERROR"),
                                            (const char*) ("Possible operationType values are:"
                                            "\n+"

@@ -379,8 +379,8 @@ void SimulatorCCD::write_fillType(Tango::WAttribute &attr)
         if ((current != STR_GAUSS) &&
             (current != STR_DIFFRACTION)
             )
-        {            
-            strcpy(attr_fillType_write, m_fillType.c_str());
+        {
+            attr_fillType_write = const_cast<Tango::DevString>(m_fillType.c_str());
             Tango::Except::throw_exception("CONFIGURATION_ERROR",
                                            "Possible fillType values are:"
                                            "\n- GAUSS"
@@ -394,7 +394,7 @@ void SimulatorCCD::write_fillType(Tango::WAttribute &attr)
         if (STR_GAUSS == m_fillType)
             m_camera->getFrameBuilder()->setFillType(Simulator::FrameBuilder::Gauss);
         else if (STR_DIFFRACTION == m_fillType)
-            m_camera->getFrameBuilder()->setFillType(Simulator::FrameBuilder::Diffraction);		
+            m_camera->getFrameBuilder()->setFillType(Simulator::FrameBuilder::Diffraction);		
         yat4tango::PropertyHelper::set_property(this, "MemorizedFillType", m_fillType);
     }
     catch (Tango::DevFailed& df)
