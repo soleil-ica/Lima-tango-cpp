@@ -172,6 +172,9 @@ void LimaDetector::delete_device()
     //- remove the inner-appender
     INFO_STREAM << "Remove the inner-appender." << endl;
     yat4tango::InnerAppender::release(this);
+
+    INFO_STREAM << "Remove the DeviceInfo." << endl;
+    yat4tango::DeviceInfo::release(this);
 }
 
 //+----------------------------------------------------------------------------
@@ -205,12 +208,55 @@ void LimaDetector::init_device()
         //- specify both the associated device and the log buffer depth
         INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;
         yat4tango::InnerAppender::initialize(this, 512);
+
+        INFO_STREAM << "- Create the DeviceInfo in order to display dependencies versions." << endl;
+        yat4tango::DeviceInfo::initialize(this, YAT_XSTR(PROJECT_NAME), YAT_XSTR(PROJECT_VERSION) );
+
+#ifdef _WIN32
+        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(TANGO_NAME), YAT_XSTR(TANGO_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(OMNIORB_NAME), YAT_XSTR(OMNIORB_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ZEROMQ_NAME), YAT_XSTR(ZEROMQ_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ANDOR_NAME), YAT_XSTR(ANDOR_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PCO_NAME), YAT_XSTR(PCO_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PRINCETON_NAME), YAT_XSTR(PRINCETON_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UVIEW_NAME), YAT_XSTR(UVIEW_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
+#endif
+
+#ifdef Linux
+#ifdef  UNIX_64_EL5
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MAXIPIX_NAME), YAT_XSTR(MAXIPIX_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
+#else
+        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(AVIEX_NAME), YAT_XSTR(AVIEX_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(BASLER_NAME), YAT_XSTR(BASLER_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(IMXPAD_NAME), YAT_XSTR(IMXPAD_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MARCCD_NAME), YAT_XSTR(MARCCD_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MERLIN_NAME), YAT_XSTR(MERLIN_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
+#endif
+#endif
+
     }
     catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
         set_state(Tango::FAULT);
-        m_status_message << "Initialization Failed :  could not instanciate the InnerAppender ! " << endl;
+        m_status_message << "Initialization Failed :  could not instanciate the InnerAppender/DeviceInfo attribute! " << endl;
         return;
     }
 
@@ -3727,7 +3773,7 @@ void LimaDetector::reload_roi()
     try
     {
         // Update property value
-        memorizedRoi = yat4tango::PropertyHelper::get_property<vector<short>>(this, "MemorizedRoi");
+        memorizedRoi = yat4tango::PropertyHelper::get_property<vector<short> >(this, "MemorizedRoi");
 
         // Check if Roi is initialized
         if ((memorizedRoi.at(0) < 0) || (memorizedRoi.at(1) < 0) || (memorizedRoi.at(2) <= 0) || (memorizedRoi.at(3) <= 0))

@@ -37,6 +37,7 @@ static const char *RcsId = "$Id $";
 
 #include <tango.h>
 
+#ifndef UNIX_64_EL5 //maxipix 64 bits
 
 #if defined(ENABLE_CRASH_REPORT)
 # include <crashreporting/crash_report.h>
@@ -47,9 +48,14 @@ static const char *RcsId = "$Id $";
 
 DECLARE_CRASH_HANDLER;
 
+#endif
+
 int main(int argc,char *argv[])
 {
+
+#ifndef UNIX_64_EL5 //maxipix 64 bits
 	INSTALL_CRASH_HANDLER;
+#endif
     
     Tango::Util *tg;
 
