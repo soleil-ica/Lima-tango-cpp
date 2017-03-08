@@ -45,54 +45,6 @@ namespace UviewCCD_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
-class ivsTRoi4InfAttrib: public Tango::SpectrumAttr
-{
-public:
-	ivsTRoi4InfAttrib():SpectrumAttr("ivsTRoi4Inf", Tango::DEV_SHORT, Tango::READ, 10) {};
-	~ivsTRoi4InfAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<UviewCCD *>(dev))->read_ivsTRoi4Inf(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<UviewCCD *>(dev))->is_ivsTRoi4Inf_allowed(ty);}
-};
-
-class ivsTRoi3InfAttrib: public Tango::SpectrumAttr
-{
-public:
-	ivsTRoi3InfAttrib():SpectrumAttr("ivsTRoi3Inf", Tango::DEV_SHORT, Tango::READ, 10) {};
-	~ivsTRoi3InfAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<UviewCCD *>(dev))->read_ivsTRoi3Inf(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<UviewCCD *>(dev))->is_ivsTRoi3Inf_allowed(ty);}
-};
-
-class ivsTRoi2InfAttrib: public Tango::SpectrumAttr
-{
-public:
-	ivsTRoi2InfAttrib():SpectrumAttr("ivsTRoi2Inf", Tango::DEV_SHORT, Tango::READ, 10) {};
-	~ivsTRoi2InfAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<UviewCCD *>(dev))->read_ivsTRoi2Inf(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<UviewCCD *>(dev))->is_ivsTRoi2Inf_allowed(ty);}
-};
-
-class ivsTRoi1InfAttrib: public Tango::SpectrumAttr
-{
-public:
-	ivsTRoi1InfAttrib():SpectrumAttr("ivsTRoi1Inf", Tango::DEV_SHORT, Tango::READ, 10) {};
-	~ivsTRoi1InfAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<UviewCCD *>(dev))->read_ivsTRoi1Inf(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<UviewCCD *>(dev))->is_ivsTRoi1Inf_allowed(ty);}
-};
-
 class ivsTRoi4Attrib: public Tango::Attr
 {
 public:
@@ -164,30 +116,6 @@ public:
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
 	{return (static_cast<UviewCCD *>(dev))->is_SetAverageImages_allowed(any);}
-};
-
-
-
-class SetIvsTROICmd : public Tango::Command
-{
-public:
-	SetIvsTROICmd(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	SetIvsTROICmd(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~SetIvsTROICmd() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<UviewCCD *>(dev))->is_SetIvsTROI_allowed(any);}
 };
 
 

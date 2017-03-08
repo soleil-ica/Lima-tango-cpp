@@ -84,30 +84,6 @@ CORBA::Any *SetAverageImagesCmd::execute(Tango::DeviceImpl *device,const CORBA::
 	return new CORBA::Any();
 }
 
-//+----------------------------------------------------------------------------
-//
-// method : 		SetIvsTROICmd::execute()
-// 
-// description : 	method to trigger the execution of the command.
-//                PLEASE DO NOT MODIFY this method core without pogo   
-//
-// in : - device : The device on which the command must be executed
-//		- in_any : The command input data
-//
-// returns : The command output data (packed in the Any object)
-//
-//-----------------------------------------------------------------------------
-CORBA::Any *SetIvsTROICmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
-{
-
-	cout2 << "SetIvsTROICmd::execute(): arrived" << endl;
-
-	const Tango::DevVarShortArray	*argin;
-	extract(in_any, argin);
-
-	((static_cast<UviewCCD *>(device))->set_ivs_troi(argin));
-	return new CORBA::Any();
-}
 
 //
 //----------------------------------------------------------------
@@ -195,11 +171,6 @@ UviewCCDClass *UviewCCDClass::instance()
 //-----------------------------------------------------------------------------
 void UviewCCDClass::command_factory()
 {
-	command_list.push_back(new SetIvsTROICmd("SetIvsTROI",
-		Tango::DEVVAR_SHORTARRAY, Tango::DEV_VOID,
-		"[idRoi, origin_x, origin_y, width, height]",
-		"",
-		Tango::OPERATOR));
 	command_list.push_back(new SetAverageImagesCmd("SetAverageImages",
 		Tango::DEV_LONG, Tango::DEV_VOID,
 		"",
@@ -315,34 +286,6 @@ void UviewCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : ivsTRoi4
 	ivsTRoi4Attrib	*ivs_troi4 = new ivsTRoi4Attrib();
 	att_list.push_back(ivs_troi4);
-
-	//	Attribute : ivsTRoi1Inf
-	ivsTRoi1InfAttrib	*ivs_troi1_inf = new ivsTRoi1InfAttrib();
-	Tango::UserDefaultAttrProp	ivs_troi1_inf_prop;
-	ivs_troi1_inf_prop.set_description("ivsTROI1Inf[0] = X\nivsTROI1Inf[1] = Y\nivsTROI1Inf[2] = Lenght\nivsTROI1Inf[3] = Height");
-	ivs_troi1_inf->set_default_properties(ivs_troi1_inf_prop);
-	att_list.push_back(ivs_troi1_inf);
-
-	//	Attribute : ivsTRoi2Inf
-	ivsTRoi2InfAttrib	*ivs_troi2_inf = new ivsTRoi2InfAttrib();
-	Tango::UserDefaultAttrProp	ivs_troi2_inf_prop;
-	ivs_troi2_inf_prop.set_description("ivsTROI1Inf[0] = X\nivsTROI1Inf[1] = Y\nivsTROI1Inf[2] = Lenght\nivsTROI1Inf[3] = Height");
-	ivs_troi2_inf->set_default_properties(ivs_troi2_inf_prop);
-	att_list.push_back(ivs_troi2_inf);
-
-	//	Attribute : ivsTRoi3Inf
-	ivsTRoi3InfAttrib	*ivs_troi3_inf = new ivsTRoi3InfAttrib();
-	Tango::UserDefaultAttrProp	ivs_troi3_inf_prop;
-	ivs_troi3_inf_prop.set_description("ivsTROI1Inf[0] = X\nivsTROI1Inf[1] = Y\nivsTROI1Inf[2] = Lenght\nivsTROI1Inf[3] = Height");
-	ivs_troi3_inf->set_default_properties(ivs_troi3_inf_prop);
-	att_list.push_back(ivs_troi3_inf);
-
-	//	Attribute : ivsTRoi4Inf
-	ivsTRoi4InfAttrib	*ivs_troi4_inf = new ivsTRoi4InfAttrib();
-	Tango::UserDefaultAttrProp	ivs_troi4_inf_prop;
-	ivs_troi4_inf_prop.set_description("ivsTROI1Inf[0] = X\nivsTROI1Inf[1] = Y\nivsTROI1Inf[2] = Lenght\nivsTROI1Inf[3] = Height");
-	ivs_troi4_inf->set_default_properties(ivs_troi4_inf_prop);
-	att_list.push_back(ivs_troi4_inf);
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
