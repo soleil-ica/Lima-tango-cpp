@@ -87,10 +87,6 @@ public :
 		Tango::DevFloat	*attr_ivsTRoi2_read;
 		Tango::DevFloat	*attr_ivsTRoi3_read;
 		Tango::DevFloat	*attr_ivsTRoi4_read;
-		Tango::DevShort	*attr_ivsTRoi1Inf_read;
-		Tango::DevShort	*attr_ivsTRoi2Inf_read;
-		Tango::DevShort	*attr_ivsTRoi3Inf_read;
-		Tango::DevShort	*attr_ivsTRoi4Inf_read;
 //@}
 
 /**
@@ -187,22 +183,6 @@ public :
  */
 	virtual void read_ivsTRoi4(Tango::Attribute &attr);
 /**
- *	Extract real attribute values for ivsTRoi1Inf acquisition result.
- */
-	virtual void read_ivsTRoi1Inf(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for ivsTRoi2Inf acquisition result.
- */
-	virtual void read_ivsTRoi2Inf(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for ivsTRoi3Inf acquisition result.
- */
-	virtual void read_ivsTRoi3Inf(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for ivsTRoi4Inf acquisition result.
- */
-	virtual void read_ivsTRoi4Inf(Tango::Attribute &attr);
-/**
  *	Read/Write allowed for ivsTRoi1 attribute.
  */
 	virtual bool is_ivsTRoi1_allowed(Tango::AttReqType type);
@@ -219,35 +199,9 @@ public :
  */
 	virtual bool is_ivsTRoi4_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for ivsTRoi1Inf attribute.
- */
-	virtual bool is_ivsTRoi1Inf_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for ivsTRoi2Inf attribute.
- */
-	virtual bool is_ivsTRoi2Inf_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for ivsTRoi3Inf attribute.
- */
-	virtual bool is_ivsTRoi3Inf_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for ivsTRoi4Inf attribute.
- */
-	virtual bool is_ivsTRoi4Inf_allowed(Tango::AttReqType type);
-/**
- *	Execution allowed for SetIvsTROI command.
- */
-	virtual bool is_SetIvsTROI_allowed(const CORBA::Any &any);
-/**
  *	Execution allowed for SetAverageImages command.
  */
 	virtual bool is_SetAverageImages_allowed(const CORBA::Any &any);
-/**
- * [idRoi, origin_x, origin_y, width, height
- *	@param	argin	[idRoi, origin_x, origin_y, width, height]
- *	@exception DevFailed
- */
-	void	set_ivs_troi(const Tango::DevVarShortArray *);
 /**
  * Argin :
  *	0 no average,
@@ -272,21 +226,19 @@ public :
 protected :	
 	//	Add your own data members here
 	//-----------------------------------------
-    float getROIValue(short ROIid);
-    void setIvsTROI(short ROIid, unsigned long color, short x1, short 
-                        y1, short x2, short y2);
-    Uview::Interface*           m_hw;
-    CtControl*                  m_ct;
-    Uview::Camera*              m_camera;	
+  Uview::Interface*           m_hw;
+  CtControl*                  m_ct;
+  Uview::Camera*              m_camera;	
 
-    bool                        m_is_device_initialized;
-    stringstream                m_status_message;
-    std::string m_roiId;
-    bool m_is_acquiring;
-    bool m_roi1Enable;
-    bool m_roi2Enable;
-    bool m_roi3Enable;
-    bool m_roi4Enable;
+  bool                        m_is_device_initialized;
+  stringstream                m_status_message;
+  
+
+	float m_ivs_roi_data_1;
+	float m_ivs_roi_data_2;
+	float m_ivs_roi_data_3;
+	float m_ivs_roi_data_4;
+
 };
 
 }	// namespace_ns
