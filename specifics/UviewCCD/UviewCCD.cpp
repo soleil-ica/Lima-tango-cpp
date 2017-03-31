@@ -49,7 +49,6 @@ static const char *RcsId = "$Id:  $";
 //	----------------------------------------
 //  State             |  dev_state()
 //  Status            |  dev_status()
-//  SetIvsTROI        |  set_ivs_troi()
 //  SetAverageImages  |  set_average_images()
 //
 //===================================================================
@@ -64,10 +63,10 @@ const short ROIid1 = 1;
 const short ROIid2 = 2;
 const short ROIid3 = 3;
 const short ROIid4 = 4;
-const short ROIid5 = 5;
 
 const long slidingAverageMode = 1;
 const long maxNbImagesAverage = 99;
+const float IntensityWindowClosed = -1;
 
 namespace UviewCCD_ns
 {
@@ -113,10 +112,6 @@ void UviewCCD::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_ivsTRoi2_read);
     DELETE_SCALAR_ATTRIBUTE(attr_ivsTRoi3_read);
     DELETE_SCALAR_ATTRIBUTE(attr_ivsTRoi4_read);
-    DELETE_SPECTRUM_ATTRIBUTE(attr_ivsTRoi1Inf_read);
-    DELETE_SPECTRUM_ATTRIBUTE(attr_ivsTRoi2Inf_read);
-    DELETE_SPECTRUM_ATTRIBUTE(attr_ivsTRoi3Inf_read);
-    DELETE_SPECTRUM_ATTRIBUTE(attr_ivsTRoi4Inf_read);
 }
 
 //+----------------------------------------------------------------------------
@@ -129,91 +124,78 @@ void UviewCCD::delete_device()
 void UviewCCD::init_device()
 {
 	INFO_STREAM << "UviewCCD::UviewCCD() create device " << device_name << endl;
-
 	
-    // Initialise variables to default values
-    //--------------------------------------------
-  short zero = 0;
-	CREATE_SCALAR_ATTRIBUTE(attr_ivsTRoi1_read);
-    CREATE_SCALAR_ATTRIBUTE(attr_ivsTRoi2_read);
-    CREATE_SCALAR_ATTRIBUTE(attr_ivsTRoi3_read);
-    CREATE_SCALAR_ATTRIBUTE(attr_ivsTRoi4_read);
-    CREATE_SPECTRUM_ATTRIBUTE(attr_ivsTRoi1Inf_read		,MAX_LENGTH, zero);
-    CREATE_SPECTRUM_ATTRIBUTE(attr_ivsTRoi2Inf_read		,MAX_LENGTH, zero);
-    CREATE_SPECTRUM_ATTRIBUTE(attr_ivsTRoi3Inf_read		,MAX_LENGTH, zero);
-    CREATE_SPECTRUM_ATTRIBUTE(attr_ivsTRoi4Inf_read		,MAX_LENGTH, zero);
+  // Initialise variables to default values
+  //--------------------------------------------
+  CREATE_SCALAR_ATTRIBUTE(attr_ivsTRoi1_read);
+  CREATE_SCALAR_ATTRIBUTE(attr_ivsTRoi2_read);
+  CREATE_SCALAR_ATTRIBUTE(attr_ivsTRoi3_read);
+  CREATE_SCALAR_ATTRIBUTE(attr_ivsTRoi4_read);
 
-    //-- INITIALIZE VARIABLES--//
-    set_state(Tango::INIT);
-    m_status_message.str("");
-    m_roiId = "";
-    m_is_device_initialized = false;
-    m_is_acquiring = false;
-    m_roi1Enable = false;
-    m_roi2Enable = false;
-    m_roi3Enable = false;
-    m_roi4Enable = false;
+  //-- INITIALIZE VARIABLES--//
+  set_state(Tango::INIT);
+  m_status_message.str("");
+  m_is_device_initialized = false;
+  this->m_ivs_roi_data_1 = yat::IEEE_NAN;
+  this->m_ivs_roi_data_2 = yat::IEEE_NAN;
+  this->m_ivs_roi_data_3 = yat::IEEE_NAN;
+  this->m_ivs_roi_data_4 = yat::IEEE_NAN;
+
+  try
+  {
+      //- get the main object used to pilot the lima framework
+      //in fact LimaDetector is create the singleton control objet
+      //so this call, will only return existing object, no need to give it the ip !!
+      m_ct = ControlFactory::instance().get_control("Uview");
+
+      //- get interface to specific camera
+      m_hw = dynamic_cast<Uview::Interface*>(m_ct->hwInterface());
+      if(m_hw==0)
+      {
+          INFO_STREAM<<"Initialization Failed : Unable to get the interface of camera plugin "<<"("<<"UviewCCD"<<") !"<< endl;
+          m_status_message <<"Initialization Failed : Unable to get the interface of camera plugin "<<"("<<"UviewCCD"<<") !"<< endl;
+          m_is_device_initialized = false;
+          set_state(Tango::FAULT);
+          set_status(m_status_message.str());
+          return;
+      }
   
-    try
-    {
-        //- get the main object used to pilot the lima framework
-        //in fact LimaDetector is create the singleton control objet
-        //so this call, will only return existing object, no need to give it the ip !!
-        m_ct = ControlFactory::instance().get_control("Uview");
+  //- get camera to specific detector
+  m_camera = &(m_hw->getCamera());
+     
+  if(m_camera == 0)
+  {
+    INFO_STREAM<<"Initialization Failed : Unable to get the camera of plugin !"<<endl;
+    m_status_message <<"Initialization Failed : Unable to get the camera object !"<< endl;
+    m_is_device_initialized = false;
+    set_state(Tango::FAULT);
+          set_status(m_status_message.str());
+    return;			
+  }		
 
-        //- get interface to specific camera
-        m_hw = dynamic_cast<Uview::Interface*>(m_ct->hwInterface());
-        if(m_hw==0)
-        {
-            INFO_STREAM<<"Initialization Failed : Unable to get the interface of camera plugin "<<"("<<"Uview"<<") !"<< endl;
-            m_status_message <<"Initialization Failed : Unable to get the interface of camera plugin "<<"("<<"Uview"<<") !"<< endl;
-            m_is_device_initialized = false;
-            set_state(Tango::FAULT);
-            set_status(m_status_message.str());
-            return;
-        }
-		
-		//- get camera to specific detector
-		m_camera = &(m_hw->getCamera());
-       
-		if(m_camera == 0)
-		{
-			INFO_STREAM<<"Initialization Failed : Unable to get the camera of plugin !"<<endl;
-			m_status_message <<"Initialization Failed : Unable to get the camera object !"<< endl;
-			m_is_device_initialized = false;
-			set_state(Tango::FAULT);
-            set_status(m_status_message.str());
-			return;			
-		}		
-	
-    }
-    catch(Exception& e)
-    {
-        INFO_STREAM<<"Initialization Failed : "<<e.getErrMsg()<<endl;
-        m_status_message <<"Initialization Failed : "<<e.getErrMsg( )<< endl;
-        m_is_device_initialized = false;
-        set_state(Tango::FAULT);
-        set_status(m_status_message.str());
-        return;
-    }
-    catch(...)
-    {
-        INFO_STREAM<<"Initialization Failed : UNKNOWN"<<endl;
-        m_status_message <<"Initialization Failed : UNKNOWN"<< endl;
-        set_state(Tango::FAULT);
-        set_status(m_status_message.str());
-        m_is_device_initialized = false;
-        return;
-    }
+  }
+  catch(Exception& e)
+  {
+      INFO_STREAM<<"Initialization Failed : "<<e.getErrMsg()<<endl;
+      m_status_message <<"Initialization Failed : "<<e.getErrMsg( )<< endl;
+      m_is_device_initialized = false;
+      set_state(Tango::FAULT);
+      set_status(m_status_message.str());
+      return;
+  }
+  catch(...)
+  {
+      INFO_STREAM<<"Initialization Failed : UNKNOWN"<<endl;
+      m_status_message <<"Initialization Failed : UNKNOWN"<< endl;
+      set_state(Tango::FAULT);
+      set_status(m_status_message.str());
+      m_is_device_initialized = false;
+      return;
+  }
 
-	  //-- from UviewCCD plugin--//
-    m_camera->m_ivs_roi_data_1_enable = false;
-    m_camera->m_ivs_roi_data_2_enable = false;
-    m_camera->m_ivs_roi_data_3_enable = false;
-    m_camera->m_ivs_roi_data_4_enable = false;
-	m_is_device_initialized = true;		
-    set_state(Tango::STANDBY);
+  set_state(Tango::STANDBY);
 	set_status("Device initialized");
+	m_is_device_initialized = true;
 }
 
 //+----------------------------------------------------------------------------
@@ -225,21 +207,35 @@ void UviewCCD::init_device()
 //-----------------------------------------------------------------------------
 void UviewCCD::always_executed_hook()
 {
-
-    if (m_is_device_initialized && m_camera->m_Acq_running)
+    if (m_is_device_initialized)
     {      
-		set_state(Tango::RUNNING);
-        if (m_camera->m_ivs_roi_data_1_enable)
-        *attr_ivsTRoi1_read = m_camera->checkIvsROIValues(ROIid1);
-        if (m_camera->m_ivs_roi_data_2_enable)
-        *attr_ivsTRoi2_read = m_camera->checkIvsROIValues(ROIid2);
-        if (m_camera->m_ivs_roi_data_3_enable)
-        *attr_ivsTRoi3_read = m_camera->checkIvsROIValues(ROIid3);
-        if (m_camera->m_ivs_roi_data_4_enable)
-        *attr_ivsTRoi4_read = m_camera->checkIvsROIValues(ROIid4);
-    }
-	else
-		set_state(Tango::STANDBY);
+		//to set the running state 
+		if (m_camera->m_Acq_running)
+			set_state(Tango::RUNNING);
+		else
+		{
+			set_state(Tango::STANDBY);
+			set_status("Device is in idle state");
+		}
+		//To refresh ivs RoI values
+		if (m_camera->IsIvSRoiDataReady())
+		{
+			this->m_ivs_roi_data_1 = m_camera->checkIvsROIValues(ROIid1);
+			this->m_ivs_roi_data_2 = m_camera->checkIvsROIValues(ROIid2);
+			this->m_ivs_roi_data_3 = m_camera->checkIvsROIValues(ROIid3);
+			this->m_ivs_roi_data_4 = m_camera->checkIvsROIValues(ROIid4);
+			//Check if signal intensity versus time window is open
+			//Don't need to check on each values
+			if(this->m_ivs_roi_data_1 == IntensityWindowClosed)
+				set_status("Intensity window not open");
+			else 
+			{
+				set_status("Acquiring intensity data for actived ROI");
+				m_camera->IvSRoiDataImported();
+			}
+		}
+	}
+	
 }
 //+----------------------------------------------------------------------------
 //
@@ -255,58 +251,6 @@ void UviewCCD::read_attr_hardware(vector<long> &attr_list)
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		UviewCCD::read_ivsTRoi1Inf
-// 
-// description : 	Extract real attribute values for ivsTRoi1Inf acquisition result.
-//
-//-----------------------------------------------------------------------------
-void UviewCCD::read_ivsTRoi1Inf(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "UviewCCD::read_ivsTRoi1Inf(Tango::Attribute &attr) entering... "<< endl;
-    attr.set_value(attr_ivsTRoi1Inf_read, nbInf);
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		UviewCCD::read_ivsTRoi2Inf
-// 
-// description : 	Extract real attribute values for ivsTRoi2Inf acquisition result.
-//
-//-----------------------------------------------------------------------------
-void UviewCCD::read_ivsTRoi2Inf(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "UviewCCD::read_ivsTRoi2Inf(Tango::Attribute &attr) entering... "<< endl;
-    attr.set_value(attr_ivsTRoi2Inf_read, nbInf);
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		UviewCCD::read_ivsTRoi3Inf
-// 
-// description : 	Extract real attribute values for ivsTRoi3Inf acquisition result.
-//
-//-----------------------------------------------------------------------------
-void UviewCCD::read_ivsTRoi3Inf(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "UviewCCD::read_ivsTRoi3Inf(Tango::Attribute &attr) entering... "<< endl;
-    attr.set_value(attr_ivsTRoi3Inf_read, nbInf);
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		UviewCCD::read_ivsTRoi4Inf
-// 
-// description : 	Extract real attribute values for ivsTRoi4Inf acquisition result.
-//
-//-----------------------------------------------------------------------------
-void UviewCCD::read_ivsTRoi4Inf(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "UviewCCD::read_ivsTRoi4Inf(Tango::Attribute &attr) entering... "<< endl;
-    attr.set_value(attr_ivsTRoi4Inf_read, nbInf);
-}
-
-//+----------------------------------------------------------------------------
-//
 // method : 		UviewCCD::read_ivsTRoi1
 // 
 // description : 	Extract real attribute values for ivsTRoi1 acquisition result.
@@ -315,11 +259,13 @@ void UviewCCD::read_ivsTRoi4Inf(Tango::Attribute &attr)
 void UviewCCD::read_ivsTRoi1(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "UviewCCD::read_ivsTRoi1(Tango::Attribute &attr) entering... "<< endl;
-    
-    if (!m_roi1Enable)
-       *attr_ivsTRoi1_read = yat::IEEE_NAN;
-
-    attr.set_value(attr_ivsTRoi1_read);
+	//To check if ROI is valid (if window is open and if ROI is specified)
+	if (this->m_ivs_roi_data_1 >= 0)
+		*attr_ivsTRoi1_read = this->m_ivs_roi_data_1;
+	else //ROI is not valid
+		*attr_ivsTRoi1_read = yat::IEEE_NAN;
+    //To set value on attribut
+	attr.set_value(attr_ivsTRoi1_read);
 }
 
 //+----------------------------------------------------------------------------
@@ -332,11 +278,13 @@ void UviewCCD::read_ivsTRoi1(Tango::Attribute &attr)
 void UviewCCD::read_ivsTRoi2(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "UviewCCD::read_ivsTRoi2(Tango::Attribute &attr) entering... "<< endl;
-
-    if (!m_roi2Enable)
-    *attr_ivsTRoi2_read = yat::IEEE_NAN;
-
-    attr.set_value(attr_ivsTRoi2_read);
+	//To check if ROI is valid (if window is open and if ROI is specified)
+	if (this->m_ivs_roi_data_2 >= 0)
+		*attr_ivsTRoi2_read = this->m_ivs_roi_data_2;
+	else //ROI is not valid
+		*attr_ivsTRoi2_read = yat::IEEE_NAN;
+    //To set value on attribut
+	attr.set_value(attr_ivsTRoi2_read);
 }
 
 //+----------------------------------------------------------------------------
@@ -349,11 +297,13 @@ void UviewCCD::read_ivsTRoi2(Tango::Attribute &attr)
 void UviewCCD::read_ivsTRoi3(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "UviewCCD::read_ivsTRoi3(Tango::Attribute &attr) entering... "<< endl;
-
-    if (!m_roi3Enable)
-       *attr_ivsTRoi3_read = yat::IEEE_NAN;
-
-    attr.set_value(attr_ivsTRoi3_read);
+	//To check if ROI is valid (if window is open and if ROI is specified)
+	if (this->m_ivs_roi_data_3 >= 0)
+		*attr_ivsTRoi3_read = this->m_ivs_roi_data_3;
+	else //ROI is not valid
+		*attr_ivsTRoi3_read = yat::IEEE_NAN;
+    //To set value on attribut
+	attr.set_value(attr_ivsTRoi3_read);
 }
 
 //+----------------------------------------------------------------------------
@@ -366,169 +316,13 @@ void UviewCCD::read_ivsTRoi3(Tango::Attribute &attr)
 void UviewCCD::read_ivsTRoi4(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "UviewCCD::read_ivsTRoi4(Tango::Attribute &attr) entering... "<< endl;
-    
-    if (!m_roi4Enable)
-       *attr_ivsTRoi4_read = yat::IEEE_NAN;
-
-    attr.set_value(attr_ivsTRoi4_read);
-}
-//+------------------------------------------------------------------
-/**
- *	method:	UviewCCD::set_ivs_troi
- *
- *	description:	method to execute "SetIvsTROI"
- *	[idRoi, origin_x, origin_y, width, height
- *
- * @param	argin	[idRoi, origin_x, origin_y, width, height]
- *
- */
-//+------------------------------------------------------------------
-void UviewCCD::set_ivs_troi(const Tango::DevVarShortArray *argin)
-{
-	DEBUG_STREAM << "UviewCCD::set_ivs_troi(): entering... !" << endl;
-
-	//	Add your own code to control device here
-	//	Add your own code to control device here
-    unsigned long colorNotUsed = 0; 
-    //--If invalid number of parameters--//
-    try
-	{
-		if (argin->length() != 5)
-		{
-			//- throw exception
-			Tango::Except::throw_exception((const char*) ("TANGO_DEVICE_ERROR"),
-										   (const char*) ("Invalid number of parameters. Check input parameters (roiID, x, y, width, height)\n"),
-										   (const char*) ("UviewCCD::define_ivs_troi"));
-		}
-        else
-        {
-            short ROIid = (*argin)[0];
-            short x = (*argin)[1];
-            short y = (*argin)[2];
-            short width = (*argin)[3];
-            short height = (*argin)[4];     
-           
-            switch(ROIid)
-            {
-                case 1 : m_roi1Enable = true;
-                     this->setIvsTROI( ROIid, colorNotUsed,  x, y,  width,  height);
-                     //--To set info of IvsT ROI (x, y, width, height)--//
-                     attr_ivsTRoi1Inf_read[0] = x;
-                     attr_ivsTRoi1Inf_read[1] = y;
-                     attr_ivsTRoi1Inf_read[2] = width;
-                     attr_ivsTRoi1Inf_read[3] = height;
-	            break;
-                case 2 : m_roi2Enable = true;
-                     this->setIvsTROI( ROIid, colorNotUsed,  x, y,  width,  height);
-                     //--To set info of IvsT ROI (x, y, width, height)--//
-                     attr_ivsTRoi2Inf_read[0] = x;
-                     attr_ivsTRoi2Inf_read[1] = y;
-                     attr_ivsTRoi2Inf_read[2] = width;
-                     attr_ivsTRoi2Inf_read[3] = height;
-	            break;
-                case 3 : m_roi3Enable = true; 
-                     this->setIvsTROI( ROIid, colorNotUsed,  x, y,  width,  height);
-                     //--To set info of IvsT ROI (x, y, width, height)--//
-                     attr_ivsTRoi3Inf_read[0] = x;
-                     attr_ivsTRoi3Inf_read[1] = y;
-                     attr_ivsTRoi3Inf_read[2] = width;
-                     attr_ivsTRoi3Inf_read[3] = height;
-	            break;
-                case 4 : m_roi4Enable = true;
-                     this->setIvsTROI( ROIid, colorNotUsed,  x, y,  width,  height);
-                     //--To set info of IvsT ROI (x, y, width, height)--//
-                     attr_ivsTRoi4Inf_read[0] = x;
-                     attr_ivsTRoi4Inf_read[1] = y;
-                     attr_ivsTRoi4Inf_read[2] = width;
-                     attr_ivsTRoi4Inf_read[3] = height;
-	            break;
-                default : Tango::Except::throw_exception(
-		                static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-		                static_cast<const char*> ("Wrong ROI ID"),
-		                static_cast<const char*> ("UviewCCD::define_ivs_troi"));	
-			}	
-        }
-    } 	
-    catch (Tango::DevFailed& df)
-    {
-	    ERROR_STREAM << df << endl;
-	    //- rethrow exception
-	    Tango::Except::re_throw_exception(df,
-									    static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-									    static_cast<const char*> (string(df.errors[0].desc).c_str()),
-									    static_cast<const char*> ("UviewCCD::define_ivs_troi"));
-    }
-    catch (Exception& e)
-    {
-	    ERROR_STREAM << e.getErrMsg() << endl;
-	    //- throw exception
-	    Tango::Except::throw_exception(
-								    static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-								    static_cast<const char*> (e.getErrMsg().c_str()),
-								    static_cast<const char*> ("UviewCCD::define_ivs_troi"));
-    }
-}
-//+------------------------------------------------------------------
-/**
- *	method:	UviewCCD::setIvsTROI
- *
- *	description:	method to execute "setIvsTROI"
- *
- *
- */
-//+------------------------------------------------------------------
-void UviewCCD::setIvsTROI(short ROIid, unsigned long color, short x1, short 
-                        y1, short x2, short y2)
-{
-    try
-    {
-        //--Calling function to set each IvsT ROI on camera object--//
-        short response = m_camera-> setIvsTROI(ROIid, color, x1, y1, x2, y2);
-        //--If response is -1, setIvsTROI didn't work--//
-        if (response == -1)
-        {
-           Tango::Except::throw_exception(
-		                static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-		                static_cast<const char*> ("Problem to set ROI"),
-		                static_cast<const char*> ("UviewCCD::setIvsTROI"));
-        }
-        //--Else set status--//
-        else
-        {
-            //--Stringstream used to convert ROIid into a string--//
-            std::stringstream roiStringStream;
-            roiStringStream << ROIid;
-
-            if (m_roiId == "")
-                m_roiId = roiStringStream.str();
-            else
-				if(m_roiId.find(roiStringStream.str())==std::string::npos)
-				{
-                m_roiId = m_roiId+" ,"+roiStringStream.str();               
-				}
-				 //--Set state/status--//
-				set_status("ROI : " + m_roiId + " set..");
-                set_state(Tango::STANDBY);
-        }
-     } 	
-    catch (Tango::DevFailed& df)
-    {
-	    ERROR_STREAM << df << endl;
-	    //- rethrow exception
-	    Tango::Except::re_throw_exception(df,
-									    static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-									    static_cast<const char*> (string(df.errors[0].desc).c_str()),
-									    static_cast<const char*> ("UviewCCD::setIvsTROI"));
-    }
-    catch (Exception& e)
-    {
-	    ERROR_STREAM << e.getErrMsg() << endl;
-	    //- throw exception
-	    Tango::Except::throw_exception(
-								    static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-								    static_cast<const char*> (e.getErrMsg().c_str()),
-								    static_cast<const char*> ("UviewCCD::setIvsTROI"));
-    }
+	//To check if ROI is valid (if window is open and if ROI is specified)
+	if (this->m_ivs_roi_data_4 >= 0)
+		*attr_ivsTRoi4_read = this->m_ivs_roi_data_4;
+	else //ROI is not valid
+		*attr_ivsTRoi4_read = yat::IEEE_NAN;
+    //To set value on attribut
+	attr.set_value(attr_ivsTRoi4_read);	
 }
 //+------------------------------------------------------------------
 /**
@@ -562,8 +356,6 @@ void UviewCCD::set_average_images(Tango::DevLong argin)
 								    static_cast<const char*> ("incorrect entry, must be between 0 and 99"),
 								    static_cast<const char*> ("UviewCCD::set_average_images"));
 	}
-
-
 }
 
 
