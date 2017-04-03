@@ -64,10 +64,50 @@ Revision:  - Author:
 <Td><Center><b>Description</b></td></Center>
 <Tr><Td><b><a href=#Dev_DefaultValues>HostName </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
-<Td><Font Size=-1></Font></Td></Tr>
+<Td><Font Size=-1>Host name /Adress IP of the XPAD SERVER</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>Port </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
+<Td><Font Size=-1>Host port of the XPAD SERVER</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>CalibrationConfigPath </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>DebugMode </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Enable (True) /Disable (False) the debug mode on the ImXpad Server</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedGeometricalCorrectionFlag </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedFlatFieldCorrectionFlag </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedAcquisitionMode </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedOutputSignal </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedCalibrationMode </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedMode </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedTime </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_ULONG</Font></Td>
+<Td><Font Size=-1></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedITHL </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_ULONG</Font></Td>
 <Td><Font Size=-1></Font></Td></Tr>
 
 </Table>
@@ -85,11 +125,51 @@ Revision:  - Author:
     </Tr>
     <Tr>
         <Td>HostName</Td>
-        <td>No default value</td>
+        <td>127.0.0.1</td>
     </Tr>
     <Tr>
         <Td>Port</Td>
-        <td>No default value</td>
+        <td>3456</td>
+    </Tr>
+    <Tr>
+        <Td>CalibrationConfigPath</Td>
+        <td>MUST_BE_DEFINED</td>
+    </Tr>
+    <Tr>
+        <Td>DebugMode</Td>
+        <td>False</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedGeometricalCorrectionFlag</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedFlatFieldCorrectionFlag</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedAcquisitionMode</Td>
+        <td>STANDARD</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedOutputSignal</Td>
+        <td>EXPOSURE_BUSY</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedCalibrationMode</Td>
+        <td>OTN_PULSE</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedMode</Td>
+        <td>SLOW</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedTime</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedITHL</Td>
+        <td>0</td>
     </Tr>
 </Table>
 

@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.7.0</version>
+    <version>1.7.1</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -45,7 +45,7 @@
         <PRINCETON.name>Princeton</PRINCETON.name>
         <PRINCETON.version>1.3.9</PRINCETON.version>
         <UVIEW.name>Uview</UVIEW.name>
-        <UVIEW.version>1.0.6</UVIEW.version>
+        <UVIEW.version>1.0.7</UVIEW.version>
         <SIMULATOR.name>Simulator</SIMULATOR.name>
         <SIMULATOR.version>1.3.11</SIMULATOR.version>
     </properties>

@@ -62,8 +62,35 @@ Revision:  - Author:
 <Td><Center><b>Data Type</b></td></Center>
 <Td><Center><b>R/W Type</b></td></Center>
 <Td><Center><b>Expert</b></td></Center>
-<Tr><Td><b>deviceVersion</b>: <Font Size=-1>Tango Specific device version.</Font></Td>
+<Tr><Td><b>serverVersion</b>: <Font Size=-1>ImXpad Socket Server Version.</Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>geometricalCorrectionFlag</b></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>flatFieldCorrectionFlag</b></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>calibrationConfigFileName</b></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>acquisitionMode</b>: <Font Size=-1>Acquisition mode type are :<BR> STANDARD<BR> COMPUTER_BURST<BR> DETECTOR_BURST<BR> SINGLE_BUNCH_16<BR> SINGLE_BUNCH_32<BR> STACKING_16<BR> STACKING_32<BR></Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>outputSignal</b>: <Font Size=-1>Avalaible output signals are :<br> EXPOSURE_BUSY<br> EXPOSURE_READ_DONE<br> SHUTTER_BUSY<br> UPDATE_OVERFLOW_BUSY<br> PIXEL_COUNTER_ENABLED<br> EXTERNAL_GATE<br> DATA_TRANSFER<br> RAM_READY_IMAGE_BUSY<br> XPAD_TO_LOCAL_DDR<br> LOCAL_DDR_TO_PC<br></Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>calibrationMode</b>: <Font Size=-1>Calibration modes are :<BR> OTN<BR> OTN_PULSE<BR> BEAM<BR>  </Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>time</b></Td>
+<Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>iTHL</b></Td>
+<Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>mode</b>: <Font Size=-1>Available config modes for a calibration are :<BR> SLOW<BR> MEDIUM<BR> FAST<BR></Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 </Table>
 </Center>
