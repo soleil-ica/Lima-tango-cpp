@@ -99,7 +99,7 @@ public :
 		Tango::DevBoolean	attr_geometricalCorrectionFlag_write;
 		Tango::DevBoolean	*attr_flatFieldCorrectionFlag_read;
 		Tango::DevBoolean	attr_flatFieldCorrectionFlag_write;
-		Tango::DevString	*attr_calibrationConfigFileName_read;
+		Tango::DevString	*attr_calibrationFileName_read;
 		Tango::DevString	*attr_acquisitionMode_read;
 		Tango::DevString	attr_acquisitionMode_write;
 		Tango::DevString	*attr_outputSignal_read;
@@ -116,17 +116,17 @@ public :
  */
 //@{
 /**
- *	
+ *	Host name /Adress IP of the XPAD SERVER
  */
 	string	hostName;
 /**
- *	
+ *	Host port of the XPAD SERVER
  */
 	Tango::DevLong	port;
 /**
  *	
  */
-	string	calibrationConfigPath;
+	string	calibrationPath;
 /**
  *	
  */
@@ -252,9 +252,9 @@ public :
  */
 	virtual void write_flatFieldCorrectionFlag(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for calibrationConfigFileName acquisition result.
+ *	Extract real attribute values for calibrationFileName acquisition result.
  */
-	virtual void read_calibrationConfigFileName(Tango::Attribute &attr);
+	virtual void read_calibrationFileName(Tango::Attribute &attr);
 /**
  *	Extract real attribute values for acquisitionMode acquisition result.
  */
@@ -316,9 +316,9 @@ public :
  */
 	virtual bool is_flatFieldCorrectionFlag_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for calibrationConfigFileName attribute.
+ *	Read/Write allowed for calibrationFileName attribute.
  */
-	virtual bool is_calibrationConfigFileName_allowed(Tango::AttReqType type);
+	virtual bool is_calibrationFileName_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for acquisitionMode attribute.
  */
@@ -348,9 +348,13 @@ public :
  */
 	virtual bool is_StartCalibration_allowed(const CORBA::Any &any);
 /**
- *	Execution allowed for LoadCalibrationConfigFile command.
+ *	Execution allowed for SaveCalibrationFile command.
  */
-	virtual bool is_LoadCalibrationConfigFile_allowed(const CORBA::Any &any);
+	virtual bool is_SaveCalibrationFile_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for LoadCalibrationFile command.
+ */
+	virtual bool is_LoadCalibrationFile_allowed(const CORBA::Any &any);
 /**
  *	Execution allowed for CreateWhiteImage command.
  */
@@ -368,22 +372,32 @@ public :
  */
 	virtual bool is_DeleteWhiteImage_allowed(const CORBA::Any &any);
 /**
+ *	Execution allowed for Abort command.
+ */
+	virtual bool is_Abort_allowed(const CORBA::Any &any);
+/**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
  *	@exception DevFailed
  */
 	virtual Tango::DevState	dev_state();
 /**
- * Start the calibration of detector:<br>
+ * Start the calibration of detector <br>
  *	@exception DevFailed
  */
 	void	start_calibration();
+/**
+ * Save the calibration already done through the StartCalibartion in a file
+ *	@param	argin	Target calibration file name
+ *	@exception DevFailed
+ */
+	void	save_calibration_file(Tango::DevString);
 /**
  * Load a calibration file<br>
  *	@param	argin	The calibration File Name 
  *	@exception DevFailed
  */
-	void	load_calibration_config_file(Tango::DevString);
+	void	load_calibration_file(Tango::DevString);
 /**
  * Create the White image
  *	@param	argin	White image name
@@ -408,6 +422,11 @@ public :
  *	@exception DevFailed
  */
 	void	delete_white_image(Tango::DevString);
+/**
+ * Abort current process ...
+ *	@exception DevFailed
+ */
+	void	abort();
 
 /**
  *	Read the device properties from database

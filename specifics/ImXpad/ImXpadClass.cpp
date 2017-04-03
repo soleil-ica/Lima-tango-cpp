@@ -61,6 +61,102 @@ namespace ImXpad_ns
 {
 //+----------------------------------------------------------------------------
 //
+// method : 		LoadCalibrationFileCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *LoadCalibrationFileCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "LoadCalibrationFileCmd::execute(): arrived" << endl;
+
+	Tango::DevString	argin;
+	extract(in_any, argin);
+
+	((static_cast<ImXpad *>(device))->load_calibration_file(argin));
+	return new CORBA::Any();
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		SaveCalibrationFileCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *SaveCalibrationFileCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "SaveCalibrationFileCmd::execute(): arrived" << endl;
+
+	Tango::DevString	argin;
+	extract(in_any, argin);
+
+	((static_cast<ImXpad *>(device))->save_calibration_file(argin));
+	return new CORBA::Any();
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		StartCalibrationCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *StartCalibrationCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "StartCalibrationCmd::execute(): arrived" << endl;
+
+	((static_cast<ImXpad *>(device))->start_calibration());
+	return new CORBA::Any();
+}
+
+
+//+----------------------------------------------------------------------------
+//
+// method : 		AbortClass::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *AbortClass::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "AbortClass::execute(): arrived" << endl;
+
+	((static_cast<ImXpad *>(device))->abort());
+	return new CORBA::Any();
+}
+
+
+//+----------------------------------------------------------------------------
+//
 // method : 		DeleteWhiteImageCmd::execute()
 // 
 // description : 	method to trigger the execution of the command.
@@ -156,52 +252,7 @@ CORBA::Any *CreateWhiteImageCmd::execute(Tango::DeviceImpl *device,const CORBA::
 }
 
 
-//+----------------------------------------------------------------------------
-//
-// method : 		LoadCalibrationConfigFileClass::execute()
-// 
-// description : 	method to trigger the execution of the command.
-//                PLEASE DO NOT MODIFY this method core without pogo   
-//
-// in : - device : The device on which the command must be executed
-//		- in_any : The command input data
-//
-// returns : The command output data (packed in the Any object)
-//
-//-----------------------------------------------------------------------------
-CORBA::Any *LoadCalibrationConfigFileClass::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
-{
 
-	cout2 << "LoadCalibrationConfigFileClass::execute(): arrived" << endl;
-
-	Tango::DevString	argin;
-	extract(in_any, argin);
-
-	((static_cast<ImXpad *>(device))->load_calibration_config_file(argin));
-	return new CORBA::Any();
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		StartCalibrationClass::execute()
-// 
-// description : 	method to trigger the execution of the command.
-//                PLEASE DO NOT MODIFY this method core without pogo   
-//
-// in : - device : The device on which the command must be executed
-//		- in_any : The command input data
-//
-// returns : The command output data (packed in the Any object)
-//
-//-----------------------------------------------------------------------------
-CORBA::Any *StartCalibrationClass::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
-{
-
-	cout2 << "StartCalibrationClass::execute(): arrived" << endl;
-
-	((static_cast<ImXpad *>(device))->start_calibration());
-	return new CORBA::Any();
-}
 
 
 
@@ -291,12 +342,17 @@ ImXpadClass *ImXpadClass::instance()
 //-----------------------------------------------------------------------------
 void ImXpadClass::command_factory()
 {
-	command_list.push_back(new StartCalibrationClass("StartCalibration",
+	command_list.push_back(new StartCalibrationCmd("StartCalibration",
 		Tango::DEV_VOID, Tango::DEV_VOID,
 		"",
 		"",
 		Tango::OPERATOR));
-	command_list.push_back(new LoadCalibrationConfigFileClass("LoadCalibrationConfigFile",
+	command_list.push_back(new SaveCalibrationFileCmd("SaveCalibrationFile",
+		Tango::DEV_STRING, Tango::DEV_VOID,
+		"Target calibration file name",
+		"",
+		Tango::OPERATOR));
+	command_list.push_back(new LoadCalibrationFileCmd("LoadCalibrationFile",
 		Tango::DEV_STRING, Tango::DEV_VOID,
 		"The calibration File Name ",
 		"",
@@ -319,6 +375,11 @@ void ImXpadClass::command_factory()
 	command_list.push_back(new DeleteWhiteImageCmd("DeleteWhiteImage",
 		Tango::DEV_STRING, Tango::DEV_VOID,
 		"White image name",
+		"",
+		Tango::OPERATOR));
+	command_list.push_back(new AbortClass("Abort",
+		Tango::DEV_VOID, Tango::DEV_VOID,
+		"",
 		"",
 		Tango::OPERATOR));
 
@@ -449,12 +510,12 @@ void ImXpadClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	flat_field_correction_flag->set_memorized_init(false);
 	att_list.push_back(flat_field_correction_flag);
 
-	//	Attribute : calibrationConfigFileName
-	calibrationConfigFileNameAttrib	*calibration_config_file_name = new calibrationConfigFileNameAttrib();
-	Tango::UserDefaultAttrProp	calibration_config_file_name_prop;
-	calibration_config_file_name_prop.set_unit(" ");
-	calibration_config_file_name->set_default_properties(calibration_config_file_name_prop);
-	att_list.push_back(calibration_config_file_name);
+	//	Attribute : calibrationFileName
+	calibrationFileNameAttrib	*calibration_file_name = new calibrationFileNameAttrib();
+	Tango::UserDefaultAttrProp	calibration_file_name_prop;
+	calibration_file_name_prop.set_unit(" ");
+	calibration_file_name->set_default_properties(calibration_file_name_prop);
+	att_list.push_back(calibration_file_name);
 
 	//	Attribute : acquisitionMode
 	acquisitionModeAttrib	*acquisition_mode = new acquisitionModeAttrib();
@@ -580,9 +641,10 @@ void ImXpadClass::set_default_property()
 	//	Set Default Class Properties
 	//	Set Default Device Properties
 	prop_name = "HostName";
-	prop_desc = "";
-	prop_def  = "";
+	prop_desc = "Host name /Adress IP of the XPAD SERVER";
+	prop_def  = "127.0.0.1";
 	vect_data.clear();
+	vect_data.push_back("127.0.0.1");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -594,9 +656,10 @@ void ImXpadClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "Port";
-	prop_desc = "";
-	prop_def  = "";
+	prop_desc = "Host port of the XPAD SERVER";
+	prop_def  = "3456";
 	vect_data.clear();
+	vect_data.push_back("3456");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -607,10 +670,11 @@ void ImXpadClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
-	prop_name = "CalibrationConfigPath";
+	prop_name = "CalibrationPath";
 	prop_desc = "";
-	prop_def  = "";
+	prop_def  = "MUST_BE_DEFINED";
 	vect_data.clear();
+	vect_data.push_back("MUST_BE_DEFINED");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

@@ -281,12 +281,12 @@ bool ImXpad::is_flatFieldCorrectionFlag_allowed(Tango::AttReqType type)
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		ImXpad::is_calibrationConfigFileName_allowed
+// method : 		ImXpad::is_iTHL_allowed
 // 
-// description : 	Read/Write allowed for calibrationConfigFileName attribute.
+// description : 	Read/Write allowed for iTHL attribute.
 //
 //-----------------------------------------------------------------------------
-bool ImXpad::is_calibrationConfigFileName_allowed(Tango::AttReqType type)
+bool ImXpad::is_iTHL_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::FAULT	||
 		get_state() == Tango::INIT	||
@@ -309,12 +309,12 @@ bool ImXpad::is_calibrationConfigFileName_allowed(Tango::AttReqType type)
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		ImXpad::is_iTHL_allowed
+// method : 		ImXpad::is_calibrationFileName_allowed
 // 
-// description : 	Read/Write allowed for iTHL attribute.
+// description : 	Read/Write allowed for calibrationFileName attribute.
 //
 //-----------------------------------------------------------------------------
-bool ImXpad::is_iTHL_allowed(Tango::AttReqType type)
+bool ImXpad::is_calibrationFileName_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::FAULT	||
 		get_state() == Tango::INIT	||
@@ -348,26 +348,6 @@ bool ImXpad::is_iTHL_allowed(Tango::AttReqType type)
 //
 //-----------------------------------------------------------------------------
 bool ImXpad::is_StartCalibration_allowed(const CORBA::Any &any)
-{
-	if (get_state() == Tango::FAULT	||
-		get_state() == Tango::INIT	||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		ImXpad::is_LoadCalibrationConfigFile_allowed
-// 
-// description : 	Execution allowed for LoadCalibrationConfigFile command.
-//
-//-----------------------------------------------------------------------------
-bool ImXpad::is_LoadCalibrationConfigFile_allowed(const CORBA::Any &any)
 {
 	if (get_state() == Tango::FAULT	||
 		get_state() == Tango::INIT	||
@@ -448,6 +428,64 @@ bool ImXpad::is_GetWhiteImagesList_allowed(const CORBA::Any &any)
 //
 //-----------------------------------------------------------------------------
 bool ImXpad::is_DeleteWhiteImage_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_Abort_allowed
+// 
+// description : 	Execution allowed for Abort command.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_Abort_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::INIT)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_SaveCalibrationFile_allowed
+// 
+// description : 	Execution allowed for SaveCalibrationFile command.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_SaveCalibrationFile_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_LoadCalibrationFile_allowed
+// 
+// description : 	Execution allowed for LoadCalibrationFile command.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_LoadCalibrationFile_allowed(const CORBA::Any &any)
 {
 	if (get_state() == Tango::FAULT	||
 		get_state() == Tango::INIT	||

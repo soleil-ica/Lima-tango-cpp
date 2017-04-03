@@ -129,16 +129,16 @@ public:
 	{return (static_cast<ImXpad *>(dev))->is_acquisitionMode_allowed(ty);}
 };
 
-class calibrationConfigFileNameAttrib: public Tango::Attr
+class calibrationFileNameAttrib: public Tango::Attr
 {
 public:
-	calibrationConfigFileNameAttrib():Attr("calibrationConfigFileName", Tango::DEV_STRING, Tango::READ) {};
-	~calibrationConfigFileNameAttrib() {};
+	calibrationFileNameAttrib():Attr("calibrationFileName", Tango::DEV_STRING, Tango::READ) {};
+	~calibrationFileNameAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<ImXpad *>(dev))->read_calibrationConfigFileName(att);}
+	{(static_cast<ImXpad *>(dev))->read_calibrationFileName(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<ImXpad *>(dev))->is_calibrationConfigFileName_allowed(ty);}
+	{return (static_cast<ImXpad *>(dev))->is_calibrationFileName_allowed(ty);}
 };
 
 class flatFieldCorrectionFlagAttrib: public Tango::Attr
@@ -184,6 +184,30 @@ public:
 //=========================================
 //	Define classes for commands
 //=========================================
+class AbortClass : public Tango::Command
+{
+public:
+	AbortClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	AbortClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~AbortClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<ImXpad *>(dev))->is_Abort_allowed(any);}
+};
+
+
+
 class DeleteWhiteImageCmd : public Tango::Command
 {
 public:
@@ -280,10 +304,10 @@ public:
 
 
 
-class LoadCalibrationConfigFileClass : public Tango::Command
+class LoadCalibrationFileCmd : public Tango::Command
 {
 public:
-	LoadCalibrationConfigFileClass(const char   *name,
+	LoadCalibrationFileCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -291,23 +315,23 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	LoadCalibrationConfigFileClass(const char   *name,
+	LoadCalibrationFileCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~LoadCalibrationConfigFileClass() {};
+	~LoadCalibrationFileCmd() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<ImXpad *>(dev))->is_LoadCalibrationConfigFile_allowed(any);}
+	{return (static_cast<ImXpad *>(dev))->is_LoadCalibrationFile_allowed(any);}
 };
 
 
 
-class StartCalibrationClass : public Tango::Command
+class SaveCalibrationFileCmd : public Tango::Command
 {
 public:
-	StartCalibrationClass(const char   *name,
+	SaveCalibrationFileCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -315,11 +339,35 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	StartCalibrationClass(const char   *name,
+	SaveCalibrationFileCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~StartCalibrationClass() {};
+	~SaveCalibrationFileCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<ImXpad *>(dev))->is_SaveCalibrationFile_allowed(any);}
+};
+
+
+
+class StartCalibrationCmd : public Tango::Command
+{
+public:
+	StartCalibrationCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	StartCalibrationCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~StartCalibrationCmd() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
