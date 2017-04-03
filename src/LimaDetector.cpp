@@ -4323,7 +4323,8 @@ void LimaDetector::configure_attributes_hardware_at_init(void)
 
     INFO_STREAM << "Write tango hardware at Init - exposureTime." << endl;
     Tango::WAttribute &exposureTime = dev_attr->get_w_attr_by_name("exposureTime");
-    *attr_exposureTime_read = memorizedExposureTime;
+    *attr_latencyTime_read = attr_latencyTime_write = memorizedLatencyTime;//latency is checked in write_exposureTime(), so need to initialize it !
+    *attr_exposureTime_read = attr_exposureTime_write = memorizedExposureTime;
     exposureTime.set_write_value(*attr_exposureTime_read);
     write_exposureTime(exposureTime);
 
@@ -4331,7 +4332,7 @@ void LimaDetector::configure_attributes_hardware_at_init(void)
     {
         INFO_STREAM << "Write tango hardware at Init - exposureAccTime." << endl;
         Tango::WAttribute &exposureAccTime = dev_attr->get_w_attr_by_name("exposureAccTime");
-        *attr_exposureAccTime_read = memorizedExposureAccTime;
+        *attr_exposureAccTime_read = attr_exposureAccTime_write= memorizedExposureAccTime;
         exposureAccTime.set_write_value(*attr_exposureAccTime_read);
         yat4tango::DynamicAttributeWriteCallbackData cbd_exposureAccTime;
         cbd_exposureAccTime.tga = &exposureAccTime;
@@ -4340,7 +4341,7 @@ void LimaDetector::configure_attributes_hardware_at_init(void)
 
     INFO_STREAM << "Write tango hardware at Init - latencyTime." << endl;
     Tango::WAttribute &latencyTime = dev_attr->get_w_attr_by_name("latencyTime");
-    *attr_latencyTime_read = memorizedLatencyTime;
+    *attr_latencyTime_read = attr_latencyTime_write = memorizedLatencyTime;
     latencyTime.set_write_value(*attr_latencyTime_read);
     write_latencyTime(latencyTime);
 
