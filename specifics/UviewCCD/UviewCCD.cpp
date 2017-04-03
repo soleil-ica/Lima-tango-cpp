@@ -136,10 +136,10 @@ void UviewCCD::init_device()
   set_state(Tango::INIT);
   m_status_message.str("");
   m_is_device_initialized = false;
-  this->m_ivs_roi_data_1 = yat::IEEE_NAN;
-  this->m_ivs_roi_data_2 = yat::IEEE_NAN;
-  this->m_ivs_roi_data_3 = yat::IEEE_NAN;
-  this->m_ivs_roi_data_4 = yat::IEEE_NAN;
+  m_ivs_roi_data_1 = yat::IEEE_NAN;
+  m_ivs_roi_data_2 = yat::IEEE_NAN;
+  m_ivs_roi_data_3 = yat::IEEE_NAN;
+  m_ivs_roi_data_4 = yat::IEEE_NAN;
 
   try
   {
@@ -220,13 +220,13 @@ void UviewCCD::always_executed_hook()
 		//To refresh ivs RoI values
 		if (m_camera->IsIvSRoiDataReady())
 		{
-			this->m_ivs_roi_data_1 = m_camera->checkIvsROIValues(ROIid1);
-			this->m_ivs_roi_data_2 = m_camera->checkIvsROIValues(ROIid2);
-			this->m_ivs_roi_data_3 = m_camera->checkIvsROIValues(ROIid3);
-			this->m_ivs_roi_data_4 = m_camera->checkIvsROIValues(ROIid4);
+            m_ivs_roi_data_1 = m_camera->checkIvsROIValues(ROIid1);
+            m_ivs_roi_data_2 = m_camera->checkIvsROIValues(ROIid2);
+            m_ivs_roi_data_3 = m_camera->checkIvsROIValues(ROIid3);
+            m_ivs_roi_data_4 = m_camera->checkIvsROIValues(ROIid4);
 			//Check if signal intensity versus time window is open
 			//Don't need to check on each values
-			if(this->m_ivs_roi_data_1 == IntensityWindowClosed)
+            if(m_ivs_roi_data_1 == IntensityWindowClosed)
 				set_status("Intensity window not open");
 			else 
 			{
@@ -260,8 +260,8 @@ void UviewCCD::read_ivsTRoi1(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "UviewCCD::read_ivsTRoi1(Tango::Attribute &attr) entering... "<< endl;
 	//To check if ROI is valid (if window is open and if ROI is specified)
-	if (this->m_ivs_roi_data_1 >= 0)
-		*attr_ivsTRoi1_read = this->m_ivs_roi_data_1;
+    if (m_ivs_roi_data_1 >= 0)
+        *attr_ivsTRoi1_read = m_ivs_roi_data_1;
 	else //ROI is not valid
 		*attr_ivsTRoi1_read = yat::IEEE_NAN;
     //To set value on attribut
@@ -279,8 +279,8 @@ void UviewCCD::read_ivsTRoi2(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "UviewCCD::read_ivsTRoi2(Tango::Attribute &attr) entering... "<< endl;
 	//To check if ROI is valid (if window is open and if ROI is specified)
-	if (this->m_ivs_roi_data_2 >= 0)
-		*attr_ivsTRoi2_read = this->m_ivs_roi_data_2;
+    if (m_ivs_roi_data_2 >= 0)
+        *attr_ivsTRoi2_read = m_ivs_roi_data_2;
 	else //ROI is not valid
 		*attr_ivsTRoi2_read = yat::IEEE_NAN;
     //To set value on attribut
@@ -298,8 +298,8 @@ void UviewCCD::read_ivsTRoi3(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "UviewCCD::read_ivsTRoi3(Tango::Attribute &attr) entering... "<< endl;
 	//To check if ROI is valid (if window is open and if ROI is specified)
-	if (this->m_ivs_roi_data_3 >= 0)
-		*attr_ivsTRoi3_read = this->m_ivs_roi_data_3;
+    if (m_ivs_roi_data_3 >= 0)
+        *attr_ivsTRoi3_read = m_ivs_roi_data_3;
 	else //ROI is not valid
 		*attr_ivsTRoi3_read = yat::IEEE_NAN;
     //To set value on attribut
@@ -317,8 +317,8 @@ void UviewCCD::read_ivsTRoi4(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "UviewCCD::read_ivsTRoi4(Tango::Attribute &attr) entering... "<< endl;
 	//To check if ROI is valid (if window is open and if ROI is specified)
-	if (this->m_ivs_roi_data_4 >= 0)
-		*attr_ivsTRoi4_read = this->m_ivs_roi_data_4;
+    if (m_ivs_roi_data_4 >= 0)
+        *attr_ivsTRoi4_read = m_ivs_roi_data_4;
 	else //ROI is not valid
 		*attr_ivsTRoi4_read = yat::IEEE_NAN;
     //To set value on attribut
@@ -351,10 +351,9 @@ void UviewCCD::set_average_images(Tango::DevLong argin)
 	else
 	{
 	    //- throw exception
-	    Tango::Except::throw_exception(
-								    static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-								    static_cast<const char*> ("incorrect entry, must be between 0 and 99"),
-								    static_cast<const char*> ("UviewCCD::set_average_images"));
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                        "incorrect entry, must be between 0 and 99",
+                                        "UviewCCD::set_average_images");
 	}
 }
 
