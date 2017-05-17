@@ -64,6 +64,7 @@
 #include "processlib/Data.h"
 #include "lima/CtVideo.h"
 #include "lima/CtShutter.h"
+#include "lima/CtEvent.h"
 
 
 
