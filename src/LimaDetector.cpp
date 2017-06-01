@@ -175,6 +175,9 @@ void LimaDetector::delete_device()
 
     INFO_STREAM << "Remove the DeviceInfo." << endl;
     yat4tango::DeviceInfo::release(this);
+	
+	INFO_STREAM << "Remove the log-adapter." << endl;
+	yat4tango::YatLogAdapter::release();	
 }
 
 //+----------------------------------------------------------------------------
@@ -197,8 +200,6 @@ void LimaDetector::init_device()
     m_is_device_initialized = false;
     m_status_message.str("");
     m_saving_options = "IMMEDIATE|COPY|TRUE";
-    transform(imageSource.begin(), imageSource.end(), imageSource.begin(), ::toupper);
-    transform(detectorPixelDepth.begin(), detectorPixelDepth.end(), detectorPixelDepth.begin(), ::toupper);
     //By default INIT, need to ensure that all objets are OK before set the device to STANDBY
     set_state(Tango::INIT);
 
@@ -251,6 +252,7 @@ void LimaDetector::init_device()
 #endif
 #endif
 
+		yat4tango::YatLogAdapter::initialize(this);		
     }
     catch(Tango::DevFailed& df)
     {
@@ -262,6 +264,10 @@ void LimaDetector::init_device()
 
     get_device_property();
 
+	//ensure these "string" properties are upcase 
+    transform(imageSource.begin(), imageSource.end(), imageSource.begin(), ::toupper);
+    transform(detectorPixelDepth.begin(), detectorPixelDepth.end(), detectorPixelDepth.begin(), ::toupper);
+	
     CREATE_SCALAR_ATTRIBUTE(attr_exposureTime_read, 1.0);
     CREATE_SCALAR_ATTRIBUTE(attr_exposureAccTime_read, 1.0);
     CREATE_SCALAR_ATTRIBUTE(attr_latencyTime_read, 1.0);
