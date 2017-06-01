@@ -175,6 +175,9 @@ void LimaDetector::delete_device()
 
     INFO_STREAM << "Remove the DeviceInfo." << endl;
     yat4tango::DeviceInfo::release(this);
+	
+	INFO_STREAM << "Remove the log-adapter." << endl;
+	yat4tango::YatLogAdapter::release();	
 }
 
 //+----------------------------------------------------------------------------
@@ -197,8 +200,6 @@ void LimaDetector::init_device()
     m_is_device_initialized = false;
     m_status_message.str("");
     m_saving_options = "IMMEDIATE|COPY|TRUE";
-    transform(imageSource.begin(), imageSource.end(), imageSource.begin(), ::toupper);
-    transform(detectorPixelDepth.begin(), detectorPixelDepth.end(), detectorPixelDepth.begin(), ::toupper);
     //By default INIT, need to ensure that all objets are OK before set the device to STANDBY
     set_state(Tango::INIT);
 
@@ -251,6 +252,7 @@ void LimaDetector::init_device()
 #endif
 #endif
 
+		yat4tango::YatLogAdapter::initialize(this);		
     }
     catch(Tango::DevFailed& df)
     {
@@ -262,6 +264,10 @@ void LimaDetector::init_device()
 
     get_device_property();
 
+	//ensure these "string" properties are upcase 
+    transform(imageSource.begin(), imageSource.end(), imageSource.begin(), ::toupper);
+    transform(detectorPixelDepth.begin(), detectorPixelDepth.end(), detectorPixelDepth.begin(), ::toupper);
+	
     CREATE_SCALAR_ATTRIBUTE(attr_exposureTime_read, 1.0);
     CREATE_SCALAR_ATTRIBUTE(attr_exposureAccTime_read, 1.0);
     CREATE_SCALAR_ATTRIBUTE(attr_latencyTime_read, 1.0);
@@ -328,6 +334,16 @@ void LimaDetector::init_device()
             return;
         }
 
+		//check if event capability is available 
+		if(m_ct->event()->hasCapability())
+		{
+			INFO_STREAM<<"Events capability is available."<<endl;
+		}
+		else
+		{
+			INFO_STREAM<<"Events capability is Not available."<<endl;
+		}
+		
         //- define currentImageType of detector (16 bits, 32 bits, ...) according to "DetectorPixelDepth" device property
         INFO_STREAM << "Define ImageType of detector (16 bits, 32 bits, ...) following the DetectorPixelDepth (" << detectorPixelDepth << ") property." << endl;
         configure_image_type();
@@ -3287,6 +3303,10 @@ void LimaDetector::snap()
 
             //- in SNAP mode, we request attr_nbFrames_write frames
             m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
+			
+			//reset event list
+			m_ct->event()->resetEventList();
+			ControlFactory::instance().set_event_status("");
 
             ////////////////////////////////////////////////////////
 
@@ -3364,6 +3384,10 @@ void LimaDetector::start()
         //- in START "LIVE" mode, we request (0) as frames number
         m_ct->acquisition()->setAcqNbFrames(0);
 
+		//reset event list
+		m_ct->event()->resetEventList();
+		ControlFactory::instance().set_event_status("");
+			
         //- print some infos
         print_acq_conf();
         yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
@@ -3890,7 +3914,20 @@ Tango::DevState LimaDetector::dev_state()
     }
     else
     {
-        // if error in acquisition task
+		// check if an error was reported in the event list
+		if(m_ct->event()->hasCapability())
+		{
+			CtEvent::EventList event_list;
+			m_ct->event()->getEventList(event_list);
+			for (int i = 0; i < event_list.size(); i++)
+			{
+				std::string event_str = event_list[i]->getMsgStr();
+				DEBUG_STREAM<<"Eventlist["<<i<<"] = "<<event_str<<std::endl;
+				ControlFactory::instance().set_event_status(event_str);
+			}
+		}	
+		
+        // check if an error ocured in the acquisition task
         if(m_acquisition_task->get_state() == Tango::FAULT)
         {
             DeviceState = Tango::FAULT;
