@@ -400,7 +400,7 @@ void MarCCD::write_waitFileOnDiskTime(Tango::WAttribute &attr)
     }
     catch (...)
     {
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR)",
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                                        "Unknown exception caught.",
                                        "MarCCD::write_waitFileOnDiskTime");
     }    

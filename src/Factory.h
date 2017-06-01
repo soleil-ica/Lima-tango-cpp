@@ -184,6 +184,9 @@ public:
     ///fix the status in a AutoMutex lock
     void set_status(const std::string& status);
 
+    ///fix the event status in a AutoMutex lock
+    void set_event_status(const std::string& status);
+	
     ///return to the client the global mutex, in order to use ctControl in a scoped lock
     yat::Mutex& get_global_mutex();
 
@@ -215,6 +218,7 @@ private:
 #endif        
     Tango::DevState                 m_state;
     stringstream                    m_status;
+    stringstream                    m_event_status;	
 
     //lock the singleton acess
     yat::Mutex                      m_lock;

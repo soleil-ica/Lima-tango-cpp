@@ -854,28 +854,28 @@ Tango::DevState ControlFactory::get_state(void)
         case lima::AcqReady:
         {
             set_state(Tango::STANDBY);
-            set_status("Waiting for Request ...\n");
+            set_status("Waiting for a user request ...\n");
         }
             break;
 
         case lima::AcqRunning:
         {
             set_state(Tango::RUNNING);
-            set_status("Acquisition is in Running ...\n");
+            set_status("Acquisition in Progress ...\n");
         }
             break;
 
         case lima::AcqConfig:
         {
             set_state(Tango::DISABLE);
-            set_status("Detector is in Configuration ...\n");
+            set_status("Configuration/Calibration in Progress ...\n");
         }
             break;
 
         default:
         {
             set_state(Tango::FAULT);
-            set_status("Detector is in Fault ...\n");
+            set_status("Error has occured !\n");
         }
             break;
     }
@@ -887,7 +887,7 @@ Tango::DevState ControlFactory::get_state(void)
 std::string ControlFactory::get_status(void)
 {
     yat::AutoMutex<> _lock(m_lock);
-    return (m_status.str());
+    return (m_status.str() + m_event_status.str());
 }
 
 //-----------------------------------------------------------------------------------------
@@ -904,6 +904,14 @@ void ControlFactory::set_status(const std::string& status)
     m_status.str("");
     m_status << status.c_str() << endl;
 
+}
+//-----------------------------------------------------------------------------------------
+void ControlFactory::set_event_status(const std::string& status)
+{
+    yat::AutoMutex<> _lock(m_lock);
+    m_event_status.str("");
+	m_event_status <<"------------------------"<< endl;	
+    m_event_status << status << endl;
 }
 //-----------------------------------------------------------------------------------------
 
