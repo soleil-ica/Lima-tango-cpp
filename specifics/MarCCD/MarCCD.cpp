@@ -182,7 +182,7 @@ void MarCCD::init_device()
     }    
     
     set_state(Tango::STANDBY);
-    this->dev_state();
+    dev_state();
 }
 
 
@@ -360,16 +360,16 @@ void MarCCD::read_waitFileOnDiskTime(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("MarCCD::read_waitFileOnDiskTime"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "MarCCD::read_waitFileOnDiskTime");
     }
     catch (...)
     {
         Tango::Except::throw_exception(
-                                       static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("MarCCD::read_waitFileOnDiskTime"));
+                                       "TANGO_DEVICE_ERROR",
+                                       "Unknown exception caught.",
+                                       "MarCCD::read_waitFileOnDiskTime");
     }    
 }
 
@@ -387,22 +387,22 @@ void MarCCD::write_waitFileOnDiskTime(Tango::WAttribute &attr)
     {
         attr.get_write_value(attr_waitFileOnDiskTime_write);
         m_hw->setWaitFileOnDiskTime(attr_waitFileOnDiskTime_write);
+		yat4tango::PropertyHelper::set_property(this, "MemorizedWaitFileOnDiskTime", attr_waitFileOnDiskTime_write);
     }
     catch (Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("MarCCD::write_waitFileOnDiskTime"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "MarCCD::write_waitFileOnDiskTime");
     }
     catch (...)
     {
-        Tango::Except::throw_exception(
-                                       static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("MarCCD::write_waitFileOnDiskTime"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR)",
+                                       "Unknown exception caught.",
+                                       "MarCCD::write_waitFileOnDiskTime");
     }    
 }
 
@@ -431,16 +431,16 @@ void MarCCD::read_imageName(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("MarCCD::read_imageName"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "MarCCD::read_imageName");
     }
     catch (...)
     {
         Tango::Except::throw_exception(
-                                       static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("MarCCD::read_imageName"));
+                                       "TANGO_DEVICE_ERROR",
+                                       "Unknown exception caught.",
+                                       "MarCCD::read_imageName");
     }
 }
 
@@ -467,16 +467,16 @@ void MarCCD::write_imageName(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("MarCCD::write_imageName"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "MarCCD::write_imageName");
     }
     catch (...)
     {
         Tango::Except::throw_exception(
-                                       static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("MarCCD::write_imageName"));
+                                       "TANGO_DEVICE_ERROR",
+                                       "Unknown exception caught.",
+                                       "MarCCD::write_imageName");
     }
 }
 
@@ -501,16 +501,16 @@ void MarCCD::read_imageIndex(Tango::Attribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("MarCCD::read_imageIndex"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "MarCCD::read_imageIndex");
     }
     catch (...)
     {
         Tango::Except::throw_exception(
-                                       static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("MarCCD::read_imageIndex"));
+                                       "TANGO_DEVICE_ERROR",
+                                       "Unknown exception caught.",
+                                       "MarCCD::read_imageIndex");
     }
 }
 
@@ -535,16 +535,16 @@ void MarCCD::write_imageIndex(Tango::WAttribute &attr)
         ERROR_STREAM << df << endl;
         //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("MarCCD::write_imageIndex"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "MarCCD::write_imageIndex");
     }
     catch (...)
     {
         Tango::Except::throw_exception(
-                                       static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("MarCCD::write_imageIndex"));
+                                       "TANGO_DEVICE_ERROR",
+                                       "Unknown exception caught.",
+                                       "MarCCD::write_imageIndex");
     }
 }
 
@@ -575,25 +575,25 @@ void MarCCD::take_background()
             ERROR_STREAM << df << endl;
             //- rethrow exception
             Tango::Except::re_throw_exception(df,
-                                              static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                              static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                              static_cast<const char*> ("MarCCD::take_background"));
+                                              "TANGO_DEVICE_ERROR",
+                                              string(df.errors[0].desc).c_str(),
+                                              "MarCCD::take_background");
         }
         catch (Exception& e)
         {
             ERROR_STREAM << e.getErrMsg() << endl;
             //- throw exception
             Tango::Except::throw_exception(
-                                           static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                           static_cast<const char*> (e.getErrMsg().c_str()),
-                                           static_cast<const char*> ("MarCCD::take_background"));
+                                           "TANGO_DEVICE_ERROR",
+                                           e.getErrMsg().c_str(),
+                                           "MarCCD::take_background");
         }
         catch (...)
         {
             Tango::Except::throw_exception(
-                                           static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                           static_cast<const char*> ("Unknown exception caught."),
-                                           static_cast<const char*> ("MarCCD::take_background"));
+                                           "TANGO_DEVICE_ERROR",
+                                           "Unknown exception caught.",
+                                           "MarCCD::take_background");
         }
     }
 
