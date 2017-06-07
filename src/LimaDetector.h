@@ -464,6 +464,11 @@ public:
  */
 	Tango::DevBoolean	autoStartVideo;
 /**
+ *	Memorize the "full frame" automatically at the call of "ResetRoi" :<br>
+ *	[default = false]
+ */
+	Tango::DevBoolean	autoSaveResetRoi;
+/**
  *	
  */
 	string	spoolID;
@@ -831,6 +836,10 @@ public:
  */
 	virtual bool is_GetAttributeAvailableValues_allowed(const CORBA::Any &any);
 /**
+ *	Execution allowed for GetAvailableCapabilities command.
+ */
+	virtual bool is_GetAvailableCapabilities_allowed(const CORBA::Any &any);
+/**
  *	Execution allowed for ResetFileIndex command.
  */
 	virtual bool is_ResetFileIndex_allowed(const CORBA::Any &any);
@@ -900,6 +909,18 @@ public:
  *	@exception DevFailed
  */
 	Tango::DevVarStringArray	*get_attribute_available_values(Tango::DevString);
+/**
+ * Return a list of string containing all available capabilitiesof the detector :<br>
+ *	- Roi<br>
+ *	- Binning<br>
+ *	- Trigger<br>
+ *	- Shutter<br>
+ *	- Event Errors<br>
+ *	- ...<br>
+ *	@return	The list of available capabilities
+ *	@exception DevFailed
+ */
+	Tango::DevVarStringArray	*get_available_capabilities();
 /**
  * Reset the file index
  *	@exception DevFailed
