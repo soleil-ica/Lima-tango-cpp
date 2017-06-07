@@ -58,6 +58,7 @@ static const char *RcsId = "$Id:  $";
 //  ResetBinning                 |  reset_binning()
 //  ResetROI                     |  reset_roi()
 //  GetAttributeAvailableValues  |  get_attribute_available_values()
+//  GetAvailableCapabilities     |  get_available_capabilities()
 //  ResetFileIndex               |  reset_file_index()
 //  ReloadROI                    |  reload_roi()
 //  GetDataStreams               |  get_data_streams()
@@ -577,6 +578,7 @@ void LimaDetector::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedFileGeneration"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedFileNbFrames"));
 	dev_prop.push_back(Tango::DbDatum("AutoStartVideo"));
+	dev_prop.push_back(Tango::DbDatum("AutoSaveResetRoi"));
 	dev_prop.push_back(Tango::DbDatum("SpoolID"));
 
 	//	Call database and extract values
@@ -973,6 +975,17 @@ void LimaDetector::get_device_property()
 	//	And try to extract AutoStartVideo value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  autoStartVideo;
 
+	//	Try to initialize AutoSaveResetRoi from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  autoSaveResetRoi;
+	else {
+		//	Try to initialize AutoSaveResetRoi from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  autoSaveResetRoi;
+	}
+	//	And try to extract AutoSaveResetRoi value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  autoSaveResetRoi;
+
 	//	Try to initialize SpoolID from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  spoolID;
@@ -1048,6 +1061,7 @@ void LimaDetector::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "MemorizedNbFrames");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "MemorizedFileGeneration");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "AutoStartVideo");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "AutoSaveResetRoi");	
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "TO_BE_DEFINED", "SpoolID");
 }
 //+----------------------------------------------------------------------------
@@ -3616,6 +3630,21 @@ void LimaDetector::reset_roi()
     try
     {
         m_ct->image()->resetRoi();
+		//memorize the full frame if necessary .
+		if(autoSaveResetRoi)
+		{
+		    //get ROI
+			Roi roi;
+			m_ct->image()->getRoi(roi);
+			//- update Roi property
+			vector<short> vec_roi;
+			vec_roi.clear();
+			vec_roi.push_back(roi.getTopLeft().x);
+			vec_roi.push_back(roi.getTopLeft().y);
+			vec_roi.push_back(roi.getSize().getWidth());
+			vec_roi.push_back(roi.getSize().getHeight());
+			yat4tango::PropertyHelper::set_property(this, "MemorizedRoi", vec_roi);			
+		}
     }
     catch(Exception& e)
     {
@@ -3760,6 +3789,14 @@ Tango::DevVarStringArray *LimaDetector::get_attribute_available_values(Tango::De
             (*argout)[0] = CORBA::string_dup("SINGLE");
             (*argout)[1] = CORBA::string_dup("ACCUMULATION");
         }
+        else if(attribute_name == "FILEFORMAT")
+        {
+            argout->length(4);
+            (*argout)[0] = CORBA::string_dup("NXS");
+            (*argout)[1] = CORBA::string_dup("EDF");
+			(*argout)[2] = CORBA::string_dup("RAW");
+			(*argout)[3] = CORBA::string_dup("HDF5");
+        }		
     }
     catch(Tango::DevFailed& df)
     {
@@ -3778,6 +3815,104 @@ Tango::DevVarStringArray *LimaDetector::get_attribute_available_values(Tango::De
                                        e.getErrMsg().c_str(),
                                        "LimaDetector::get_attribute_available_values");
     }
+    return argout;
+}
+
+//+------------------------------------------------------------------
+/**
+ *	method:	LimaDetector::get_available_capabilities
+ *
+ *	description:	method to execute "GetAvailableCapabilities"
+ *	Return a list of string containing all available capabilitiesof the detector :<br>
+ *	- Roi<br>
+ *	- Binning<br>
+ *	- Trigger<br>
+ *	- Shutter<br>
+ *	- Event Errors<br>
+ *	- ...<br>
+ *
+ * @return	The list of available capabilities
+ *
+ */
+//+------------------------------------------------------------------
+Tango::DevVarStringArray *LimaDetector::get_available_capabilities()
+{
+	//	POGO has generated a method core with argout allocation.
+	//	If you would like to use a static reference without copying,
+	//	See "TANGO Device Server Programmer's Manual"
+	//		(chapter : Writing a TANGO DS / Exchanging data)
+	//------------------------------------------------------------
+
+	DEBUG_STREAM << "LimaDetector::get_available_capabilities(): entering... !" << endl;
+
+	//	Add your own code to control device here
+    Tango::DevVarStringArray *argout = new Tango::DevVarStringArray();
+	try
+    {		
+		HwInterface::CapList cap_list;
+		m_hw->getCapList(cap_list);
+		argout->length(cap_list.size());
+		for (int i = 0; i < cap_list.size(); i++)
+		{			
+							
+			switch(cap_list[i].getType())
+			{
+				case HwCap::DetInfo			:	(*argout)[i] = CORBA::string_dup("DetInfo");
+					break;
+				case HwCap::Buffer			:	(*argout)[i] = CORBA::string_dup("Buffer");
+					break;
+				case HwCap::Sync			:	(*argout)[i] = CORBA::string_dup("Sync");
+					break;				
+				case HwCap::Roi				:	(*argout)[i] = CORBA::string_dup("Roi");
+					break;				
+				case HwCap::Bin				:	(*argout)[i] = CORBA::string_dup("Bin");
+					break;				
+				case HwCap::Flip			:	(*argout)[i] = CORBA::string_dup("Flip");
+					break;
+				case HwCap::Kinetics		:	(*argout)[i] = CORBA::string_dup("Kinetics");
+					break;
+				case HwCap::FrameTransfer	:	(*argout)[i] = CORBA::string_dup("FrameTransfer");
+					break;				
+				case HwCap::Timing			:	(*argout)[i] = CORBA::string_dup("Timing");
+					break;				
+				case HwCap::Shutter			:	(*argout)[i] = CORBA::string_dup("Shutter");
+					break;			
+				case HwCap::SerialLine		:	(*argout)[i] = CORBA::string_dup("SerialLine");
+					break;
+				case HwCap::Video			:	(*argout)[i] = CORBA::string_dup("Video");
+					break;				
+				case HwCap::Event			:	(*argout)[i] = CORBA::string_dup("Event");
+					break;				
+				case HwCap::Saving			:	(*argout)[i] = CORBA::string_dup("Saving");
+					break;							
+				case HwCap::Config			:	(*argout)[i] = CORBA::string_dup("Config");
+					break;		
+				case HwCap::Reconstruction	:	(*argout)[i] = CORBA::string_dup("Reconstruction");
+					break;							
+				default						:	(*argout)[i] = CORBA::string_dup("UNKNOWN Capability");
+					break;
+			}		
+			INFO_STREAM<<"cap_list["<<i<<"] = "<<(*argout)[i]<<std::endl;
+		}
+	}
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          std::string(df.errors[0].desc).c_str(),
+                                          "LimaDetector::get_available_capabilities");
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "LimaDetector::get_available_capabilities");
+    }	
+
     return argout;
 }
 
@@ -4638,7 +4773,5 @@ void LimaDetector::execute_close_shutter_callback(yat4tango::DynamicCommandExecu
                                        "LimaDetector::execute_close_shutter_callback");
     }
 }
-
-
 
 }	//	namespace
