@@ -45,6 +45,48 @@ namespace Hamamatsu_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class bottomViewExposureTimeAttrib: public Tango::Attr
+{
+public:
+	bottomViewExposureTimeAttrib():Attr("bottomViewExposureTime", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~bottomViewExposureTimeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_bottomViewExposureTime(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_bottomViewExposureTime(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_bottomViewExposureTime_allowed(ty);}
+};
+
+class topViewExposureTimeAttrib: public Tango::Attr
+{
+public:
+	topViewExposureTimeAttrib():Attr("topViewExposureTime", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~topViewExposureTimeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_topViewExposureTime(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_topViewExposureTime(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_topViewExposureTime_allowed(ty);}
+};
+
+class wViewEnabledAttrib: public Tango::Attr
+{
+public:
+	wViewEnabledAttrib():Attr("wViewEnabled", Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~wViewEnabledAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_wViewEnabled(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_wViewEnabled(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_wViewEnabled_allowed(ty);}
+};
+
 class fpsAttrib: public Tango::Attr
 {
 public:
@@ -91,7 +133,7 @@ public:
 //
 
 class
-#ifdef WIN32
+#ifdef _TG_WINDOWS_
 	__declspec(dllexport)
 #endif
 	HamamatsuClass : public Tango::DeviceClass

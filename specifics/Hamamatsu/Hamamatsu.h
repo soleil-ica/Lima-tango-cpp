@@ -92,6 +92,12 @@ public :
 		Tango::DevString	attr_readoutSpeed_write;
 		Tango::DevLong	*attr_lostFrames_read;
 		Tango::DevDouble	*attr_fps_read;
+		Tango::DevBoolean	*attr_wViewEnabled_read;
+		Tango::DevBoolean	attr_wViewEnabled_write;
+		Tango::DevDouble	*attr_topViewExposureTime_read;
+		Tango::DevDouble	attr_topViewExposureTime_write;
+		Tango::DevDouble	*attr_bottomViewExposureTime_read;
+		Tango::DevDouble	attr_bottomViewExposureTime_write;
 //@}
 
 /**
@@ -110,6 +116,26 @@ public :
  *	SLOW<br>
  */
 	string	memorizedReadoutSpeed;
+/**
+ *	Allows you to select the blank of synreadout:<BR>
+ *	Availables values :<br>
+ *	- STANDARD<BR>
+ *	- MINIMUM<BR>
+ *	
+ */
+	string	blankOfSyncreadoutTrigger;
+/**
+ *	Memorize/Define the Top View exposure time attribute at Init device<br>
+ */
+	Tango::DevDouble	memorizedTopViewExposureTime;
+/**
+ *	Memorize/Define the Bottom View exposure time attribute at Init device<br>
+ */
+	Tango::DevDouble	memorizedBottomViewExposureTime;
+/**
+ *	Memorize/Define the W-VIEW mode attribute at Init device<br>
+ */
+	Tango::DevBoolean	memorizedWViewEnabled;
 //@}
 
 /**
@@ -199,6 +225,30 @@ public :
  */
 	virtual void read_fps(Tango::Attribute &attr);
 /**
+ *	Extract real attribute values for wViewEnabled acquisition result.
+ */
+	virtual void read_wViewEnabled(Tango::Attribute &attr);
+/**
+ *	Write wViewEnabled attribute values to hardware.
+ */
+	virtual void write_wViewEnabled(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for topViewExposureTime acquisition result.
+ */
+	virtual void read_topViewExposureTime(Tango::Attribute &attr);
+/**
+ *	Write topViewExposureTime attribute values to hardware.
+ */
+	virtual void write_topViewExposureTime(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for bottomViewExposureTime acquisition result.
+ */
+	virtual void read_bottomViewExposureTime(Tango::Attribute &attr);
+/**
+ *	Write bottomViewExposureTime attribute values to hardware.
+ */
+	virtual void write_bottomViewExposureTime(Tango::WAttribute &attr);
+/**
  *	Read/Write allowed for readoutSpeed attribute.
  */
 	virtual bool is_readoutSpeed_allowed(Tango::AttReqType type);
@@ -210,6 +260,18 @@ public :
  *	Read/Write allowed for fps attribute.
  */
 	virtual bool is_fps_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for wViewEnabled attribute.
+ */
+	virtual bool is_wViewEnabled_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for topViewExposureTime attribute.
+ */
+	virtual bool is_topViewExposureTime_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for bottomViewExposureTime attribute.
+ */
+	virtual bool is_bottomViewExposureTime_allowed(Tango::AttReqType type);
 /**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
@@ -231,14 +293,18 @@ public :
 protected :	
 	//	Add your own data members here
 	//-----------------------------------------
-	bool                  m_is_device_initialized;
-    stringstream          m_status_message;
-	string				  m_readoutSpeed;
+	bool                                                m_is_device_initialized ;
+    stringstream                                        m_status_message        ;
+	string				                                m_readoutSpeed          ;
+    enum lima::Hamamatsu::Camera::SyncReadOut_BlankMode m_SyncreadoutBlankMode  ;
+	double                                              m_TopViewExposureTime   ;
+	double                                              m_BottomViewExposureTime;
+	bool                                                m_wViewEnabled          ;
 
     //lima OBJECTS
-    lima::Hamamatsu::Interface* m_hw;
-    CtControl*            m_ct;
-    lima::Hamamatsu::Camera*    m_camera;		
+    lima::Hamamatsu::Interface * m_hw    ;
+    CtControl                  * m_ct    ;
+    lima::Hamamatsu::Camera    * m_camera;
 };
 
 }	// namespace_ns
