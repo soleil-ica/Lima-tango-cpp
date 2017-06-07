@@ -270,6 +270,38 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	fps->set_default_properties(fps_prop);
 	att_list.push_back(fps);
 
+	//	Attribute : wViewEnabled
+	wViewEnabledAttrib	*w_view_enabled = new wViewEnabledAttrib();
+	att_list.push_back(w_view_enabled);
+
+	//	Attribute : topViewExposureTime
+	topViewExposureTimeAttrib	*top_view_exposure_time = new topViewExposureTimeAttrib();
+	Tango::UserDefaultAttrProp	top_view_exposure_time_prop;
+	top_view_exposure_time_prop.set_label("Top view exposure time");
+	top_view_exposure_time_prop.set_unit("ms");
+	top_view_exposure_time_prop.set_standard_unit("ms");
+	top_view_exposure_time_prop.set_display_unit("ms");
+	top_view_exposure_time_prop.set_format("%7.2f");
+	top_view_exposure_time_prop.set_description("Exposure time for W-VIEW n°1.");
+	top_view_exposure_time->set_default_properties(top_view_exposure_time_prop);
+	top_view_exposure_time->set_memorized();
+	top_view_exposure_time->set_memorized_init(false);
+	att_list.push_back(top_view_exposure_time);
+
+	//	Attribute : bottomViewExposureTime
+	bottomViewExposureTimeAttrib	*bottom_view_exposure_time = new bottomViewExposureTimeAttrib();
+	Tango::UserDefaultAttrProp	bottom_view_exposure_time_prop;
+	bottom_view_exposure_time_prop.set_label("Bottom view exposure time");
+	bottom_view_exposure_time_prop.set_unit("ms");
+	bottom_view_exposure_time_prop.set_standard_unit("ms");
+	bottom_view_exposure_time_prop.set_display_unit("ms");
+	bottom_view_exposure_time_prop.set_format("%7.2f");
+	bottom_view_exposure_time_prop.set_description("Exposure time for W-VIEW n°2.");
+	bottom_view_exposure_time->set_default_properties(bottom_view_exposure_time_prop);
+	bottom_view_exposure_time->set_memorized();
+	bottom_view_exposure_time->set_memorized_init(false);
+	att_list.push_back(bottom_view_exposure_time);
+
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
 }
@@ -342,6 +374,66 @@ void HamamatsuClass::set_default_property()
 	prop_def  = "NORMAL";
 	vect_data.clear();
 	vect_data.push_back("NORMAL");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "BlankOfSyncreadoutTrigger";
+	prop_desc = "Allows you to select the blank of synreadout:<BR>\nAvailables values :<br>\n- STANDARD<BR>\n- MINIMUM<BR>\n";
+	prop_def  = "STANDARD";
+	vect_data.clear();
+	vect_data.push_back("STANDARD");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedTopViewExposureTime";
+	prop_desc = "Memorize/Define the Top View exposure time attribute at Init device<br>";
+	prop_def  = "1000";
+	vect_data.clear();
+	vect_data.push_back("1000");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedBottomViewExposureTime";
+	prop_desc = "Memorize/Define the Bottom View exposure time attribute at Init device<br>";
+	prop_def  = "1000";
+	vect_data.clear();
+	vect_data.push_back("1000");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedWViewEnabled";
+	prop_desc = "Memorize/Define the W-VIEW mode attribute at Init device<br>";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

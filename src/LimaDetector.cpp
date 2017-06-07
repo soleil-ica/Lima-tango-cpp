@@ -3520,6 +3520,7 @@ void LimaDetector::set_roi(const Tango::DevVarULongArray *argin)
 
         //- set the new ROI
         Roi roi(Point(x, y), Size(width, height));
+
         m_ct->image()->setRoi(roi);
 
         //- update Roi property
@@ -3949,7 +3950,6 @@ void LimaDetector::reload_roi()
         {
             (*roi)[i] = memorizedRoi.at(i);
         }
-
         set_roi(roi);
     }
     catch(Tango::DevFailed& df)
@@ -4415,6 +4415,7 @@ void LimaDetector::configure_saving_parameters(void)
 void LimaDetector::configure_roi(void)
 {
     Roi roi_values(0, 0, 0, 0);
+
     if((memorizedRoi.at(0) < 0) || (memorizedRoi.at(1) < 0) || (memorizedRoi.at(2) <= 0) || (memorizedRoi.at(3) <= 0))
     {
         //Roi not initialized, then we consider full frame as Roi

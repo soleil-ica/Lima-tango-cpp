@@ -48,7 +48,7 @@ Device Attributes Description 		<Br> <Br>
 Hamamatsu Class	<Br>
 </h1>
 <b>
-Revision:  - Author: 
+Revision:  - Author: cedric.castel
 </b>
 </center>
 
@@ -62,7 +62,7 @@ Revision:  - Author:
 <Td><Center><b>Data Type</b></td></Center>
 <Td><Center><b>R/W Type</b></td></Center>
 <Td><Center><b>Expert</b></td></Center>
-<Tr><Td><b>readoutSpeed</b>: <Font Size=-1>Possible values are:<br> SLOW<br> NORMAL<br></Font></Td>
+<Tr><Td><b>readoutSpeed</b>: <Font Size=-1>Possible values are:<br> NORMAL<br> SLOW<br></Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 <Tr><Td><b>lostFrames</b>: <Font Size=-1>Number of frames lost during the current or last acquisition.</Font></Td>
@@ -70,6 +70,9 @@ Revision:  - Author:
 
 <Tr><Td><b>fps</b>: <Font Size=-1>The last computed frame per second (the value is computed every 100 frames only)</Font></Td>
 <Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>WViewEnabled</b>: <Font Size=-1>Mode with several views to manage several exposure times at the same times.</Font></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 </Table>
 </Center>

@@ -115,6 +115,62 @@ bool Hamamatsu::is_fps_allowed(Tango::AttReqType type)
 	}
 	return true;
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_wViewEnabled_allowed
+// 
+// description : 	Read/Write allowed for wViewEnabled attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_wViewEnabled_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_topViewExposureTime_allowed
+// 
+// description : 	Read/Write allowed for topViewExposureTime attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_topViewExposureTime_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_bottomViewExposureTime_allowed
+// 
+// description : 	Read/Write allowed for bottomViewExposureTime attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_bottomViewExposureTime_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
 
 //=================================================
 //		Commands Allowed Methods
