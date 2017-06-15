@@ -56,22 +56,19 @@ namespace Pco_ns
 
 //+----------------------------------------------------------------------------
 //
-// method : 		Pco::is_shutterMode_allowed
+// method : 		Pco::is_cameraModel_allowed
 // 
-// description : 	Read/Write allowed for shutterMode attribute.
+// description : 	Read/Write allowed for cameraModel attribute.
 //
 //-----------------------------------------------------------------------------
-bool Pco::is_shutterMode_allowed(Tango::AttReqType type)
+bool Pco::is_cameraModel_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
+		get_state() == Tango::ON)
 	{
 		//	End of Generated Code
-		if ( (get_state() == Tango::RUNNING) && (Tango::READ_REQ == type))
-		{
-			return true;
-		}
+
 		//	Re-Start of Generated Code
 		return false;
 	}
@@ -79,22 +76,19 @@ bool Pco::is_shutterMode_allowed(Tango::AttReqType type)
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		Pco::is_pixelScanRate_allowed
+// method : 		Pco::is_dllVersion_allowed
 // 
-// description : 	Read/Write allowed for pixelScanRate attribute.
+// description : 	Read/Write allowed for dllVersion attribute.
 //
 //-----------------------------------------------------------------------------
-bool Pco::is_pixelScanRate_allowed(Tango::AttReqType type)
+bool Pco::is_dllVersion_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
+		get_state() == Tango::ON)
 	{
 		//	End of Generated Code
-		if ( (get_state() == Tango::RUNNING) && (Tango::READ_REQ == type))
-		{
-			return true;
-		}
+
 		//	Re-Start of Generated Code
 		return false;
 	}
@@ -102,22 +96,18 @@ bool Pco::is_pixelScanRate_allowed(Tango::AttReqType type)
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		Pco::is_frameRate_allowed
+// method : 		Pco::is_pixelRate_allowed
 // 
-// description : 	Read/Write allowed for frameRate attribute.
+// description : 	Read/Write allowed for pixelRate attribute.
 //
 //-----------------------------------------------------------------------------
-bool Pco::is_frameRate_allowed(Tango::AttReqType type)
+bool Pco::is_pixelRate_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
+		get_state() == Tango::FAULT)
 	{
 		//	End of Generated Code
-		if ( (get_state() == Tango::RUNNING) && (Tango::READ_REQ == type))
-		{
-			return true;
-		}
+
 		//	Re-Start of Generated Code
 		return false;
 	}
@@ -125,22 +115,56 @@ bool Pco::is_frameRate_allowed(Tango::AttReqType type)
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		Pco::is_maxNbImage_allowed
+// method : 		Pco::is_doubleImage_allowed
 // 
-// description : 	Read/Write allowed for maxNbImage attribute.
+// description : 	Read/Write allowed for doubleImage attribute.
 //
 //-----------------------------------------------------------------------------
-bool Pco::is_maxNbImage_allowed(Tango::AttReqType type)
+bool Pco::is_doubleImage_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
+		get_state() == Tango::FAULT)
 	{
 		//	End of Generated Code
-		if ( (get_state() == Tango::RUNNING) && (Tango::READ_REQ == type))
-		{
-			return true;
-		}
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Pco::is_sensorTemperature_allowed
+// 
+// description : 	Read/Write allowed for sensorTemperature attribute.
+//
+//-----------------------------------------------------------------------------
+bool Pco::is_sensorTemperature_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Pco::is_currentRecordedFrame_allowed
+// 
+// description : 	Read/Write allowed for currentRecordedFrame attribute.
+//
+//-----------------------------------------------------------------------------
+bool Pco::is_currentRecordedFrame_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT)
+	{
+		//	End of Generated Code
+
 		//	Re-Start of Generated Code
 		return false;
 	}
@@ -179,46 +203,6 @@ bool Pco::is_Talk_allowed(const CORBA::Any &any)
 //
 //-----------------------------------------------------------------------------
 bool Pco::is_GetCamInfo_allowed(const CORBA::Any &any)
-{
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Pco::is_GetCamType_allowed
-// 
-// description : 	Execution allowed for GetCamType command.
-//
-//-----------------------------------------------------------------------------
-bool Pco::is_GetCamType_allowed(const CORBA::Any &any)
-{
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Pco::is_GetInfo_allowed
-// 
-// description : 	Execution allowed for GetInfo command.
-//
-//-----------------------------------------------------------------------------
-bool Pco::is_GetInfo_allowed(const CORBA::Any &any)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||

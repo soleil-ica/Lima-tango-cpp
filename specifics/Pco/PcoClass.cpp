@@ -59,47 +59,7 @@ __declspec(dllexport)
 
 namespace Pco_ns
 {
-//+----------------------------------------------------------------------------
-//
-// method : 		GetInfoCmd::execute()
-// 
-// description : 	method to trigger the execution of the command.
-//                PLEASE DO NOT MODIFY this method core without pogo   
-//
-// in : - device : The device on which the command must be executed
-//		- in_any : The command input data
-//
-// returns : The command output data (packed in the Any object)
-//
-//-----------------------------------------------------------------------------
-CORBA::Any *GetInfoCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
-{
 
-	cout2 << "GetInfoCmd::execute(): arrived" << endl;
-
-	return insert((static_cast<Pco *>(device))->get_info());
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		GetCamTypeCmd::execute()
-// 
-// description : 	method to trigger the execution of the command.
-//                PLEASE DO NOT MODIFY this method core without pogo   
-//
-// in : - device : The device on which the command must be executed
-//		- in_any : The command input data
-//
-// returns : The command output data (packed in the Any object)
-//
-//-----------------------------------------------------------------------------
-CORBA::Any *GetCamTypeCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
-{
-
-	cout2 << "GetCamTypeCmd::execute(): arrived" << endl;
-
-	return insert((static_cast<Pco *>(device))->get_cam_type());
-}
 
 //+----------------------------------------------------------------------------
 //
@@ -246,16 +206,6 @@ void PcoClass::command_factory()
 		"",
 		"cam infos",
 		Tango::OPERATOR));
-	command_list.push_back(new GetCamTypeCmd("GetCamType",
-		Tango::DEV_VOID, Tango::DEV_STRING,
-		"",
-		"cam type",
-		Tango::OPERATOR));
-	command_list.push_back(new GetInfoCmd("GetInfo",
-		Tango::DEV_VOID, Tango::DEV_STRING,
-		"",
-		"infos",
-		Tango::OPERATOR));
 
 	//	add polling if any
 	for (unsigned int i=0 ; i<command_list.size(); i++)
@@ -351,44 +301,63 @@ void PcoClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 //-----------------------------------------------------------------------------
 void PcoClass::attribute_factory(vector<Tango::Attr *> &att_list)
 {
-	//	Attribute : shutterMode
-	shutterModeAttrib	*shutter_mode = new shutterModeAttrib();
-	Tango::UserDefaultAttrProp	shutter_mode_prop;
-	shutter_mode_prop.set_label("Shutter Mode");
-	shutter_mode_prop.set_unit(" ");
-	shutter_mode_prop.set_format("%1d");
-	shutter_mode_prop.set_description("Available Shutter Modes are :<br>\n-1-> Not available\n0 -> GLOBAL<br>\n1 -> ROLLING<br>");
-	shutter_mode->set_default_properties(shutter_mode_prop);
-	att_list.push_back(shutter_mode);
+	//	Attribute : pixelRate
+	pixelRateAttrib	*pixel_rate = new pixelRateAttrib();
+	Tango::UserDefaultAttrProp	pixel_rate_prop;
+	pixel_rate_prop.set_label("Pixel Rate");
+	pixel_rate_prop.set_unit("Hz");
+	pixel_rate_prop.set_description("Set / Get the Pixel Rate in Hz");
+	pixel_rate->set_default_properties(pixel_rate_prop);
+	pixel_rate->set_memorized();
+	pixel_rate->set_memorized_init(true);
+	att_list.push_back(pixel_rate);
 
-	//	Attribute : pixelScanRate
-	pixelScanRateAttrib	*pixel_scan_rate = new pixelScanRateAttrib();
-	Tango::UserDefaultAttrProp	pixel_scan_rate_prop;
-	pixel_scan_rate_prop.set_label("Pixel Scan Rate");
-	pixel_scan_rate_prop.set_unit(" ");
-	pixel_scan_rate_prop.set_format("%1d");
-	pixel_scan_rate_prop.set_description("Available Pixel Scan Rates are :<br>\nLOW  : 95.3 MHz<br>\nHIGH : 286 MHz<br>");
-	pixel_scan_rate->set_default_properties(pixel_scan_rate_prop);
-	att_list.push_back(pixel_scan_rate);
+	//	Attribute : doubleImage
+	doubleImageAttrib	*double_image = new doubleImageAttrib();
+	Tango::UserDefaultAttrProp	double_image_prop;
+	double_image_prop.set_label("Double Image");
+	double_image_prop.set_description("Set / Get the double image mode");
+	double_image->set_default_properties(double_image_prop);
+	double_image->set_memorized();
+	double_image->set_memorized_init(true);
+	att_list.push_back(double_image);
 
-	//	Attribute : frameRate
-	frameRateAttrib	*frame_rate = new frameRateAttrib();
-	Tango::UserDefaultAttrProp	frame_rate_prop;
-	frame_rate_prop.set_label("Frame Rate");
-	frame_rate_prop.set_unit("fps");
-	frame_rate_prop.set_description("Give the current Frame Rate");
-	frame_rate->set_default_properties(frame_rate_prop);
-	att_list.push_back(frame_rate);
+	//	Attribute : currentRecordedFrame
+	currentRecordedFrameAttrib	*current_recorded_frame = new currentRecordedFrameAttrib();
+	Tango::UserDefaultAttrProp	current_recorded_frame_prop;
+	current_recorded_frame_prop.set_unit(" ");
+	current_recorded_frame_prop.set_format("%d");
+	current_recorded_frame_prop.set_description("current recorded frame : frames recorded in the Camera RAM");
+	current_recorded_frame->set_default_properties(current_recorded_frame_prop);
+	att_list.push_back(current_recorded_frame);
 
-	//	Attribute : maxNbImage
-	maxNbImageAttrib	*max_nb_image = new maxNbImageAttrib();
-	Tango::UserDefaultAttrProp	max_nb_image_prop;
-	max_nb_image_prop.set_label("Max Nb Image");
-	max_nb_image_prop.set_unit(" ");
-	max_nb_image_prop.set_format("%d");
-	max_nb_image_prop.set_description("Max Nb Image");
-	max_nb_image->set_default_properties(max_nb_image_prop);
-	att_list.push_back(max_nb_image);
+	//	Attribute : cameraModel
+	cameraModelAttrib	*camera_model = new cameraModelAttrib();
+	Tango::UserDefaultAttrProp	camera_model_prop;
+	camera_model_prop.set_label("camera Model");
+	camera_model_prop.set_description("Model of the camera");
+	camera_model->set_default_properties(camera_model_prop);
+	camera_model->set_disp_level(Tango::EXPERT);
+	att_list.push_back(camera_model);
+
+	//	Attribute : dllVersion
+	dllVersionAttrib	*dll_version = new dllVersionAttrib();
+	Tango::UserDefaultAttrProp	dll_version_prop;
+	dll_version_prop.set_label("dll Version");
+	dll_version_prop.set_description("Version of the SC2_cam.dll ");
+	dll_version->set_default_properties(dll_version_prop);
+	dll_version->set_disp_level(Tango::EXPERT);
+	att_list.push_back(dll_version);
+
+	//	Attribute : sensorTemperature
+	sensorTemperatureAttrib	*sensor_temperature = new sensorTemperatureAttrib();
+	Tango::UserDefaultAttrProp	sensor_temperature_prop;
+	sensor_temperature_prop.set_label("sensor Temperature");
+	sensor_temperature_prop.set_unit("?C");
+	sensor_temperature_prop.set_description("image sensor temperature in degree");
+	sensor_temperature->set_default_properties(sensor_temperature_prop);
+	sensor_temperature->set_disp_level(Tango::EXPERT);
+	att_list.push_back(sensor_temperature);
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
@@ -441,22 +410,6 @@ void PcoClass::set_default_property()
 	vector<string>	vect_data;
 	//	Set Default Class Properties
 	//	Set Default Device Properties
-	prop_name = "ScanRateFrequencies";
-	prop_desc = "";
-	prop_def  = "LOW:95333333\nHIGH:286000000";
-	vect_data.clear();
-	vect_data.push_back("LOW:95333333");
-	vect_data.push_back("HIGH:286000000");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
 }
 //+----------------------------------------------------------------------------
 //

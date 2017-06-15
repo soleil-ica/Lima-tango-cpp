@@ -46,109 +46,85 @@ namespace Pco_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
-class maxNbImageAttrib: public Tango::Attr
+class sensorTemperatureAttrib: public Tango::Attr
 {
 public:
-	maxNbImageAttrib():Attr("maxNbImage", Tango::DEV_SHORT, Tango::READ) {};
-	~maxNbImageAttrib() {};
+	sensorTemperatureAttrib():Attr("sensorTemperature", Tango::DEV_FLOAT, Tango::READ) {};
+	~sensorTemperatureAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Pco *>(dev))->read_maxNbImage(att);}
+	{(static_cast<Pco *>(dev))->read_sensorTemperature(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Pco *>(dev))->is_maxNbImage_allowed(ty);}
+	{return (static_cast<Pco *>(dev))->is_sensorTemperature_allowed(ty);}
 };
 
-class frameRateAttrib: public Tango::Attr
+class dllVersionAttrib: public Tango::Attr
 {
 public:
-	frameRateAttrib():Attr("frameRate", Tango::DEV_DOUBLE, Tango::READ) {};
-	~frameRateAttrib() {};
+	dllVersionAttrib():Attr("dllVersion", Tango::DEV_STRING, Tango::READ) {};
+	~dllVersionAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Pco *>(dev))->read_frameRate(att);}
+	{(static_cast<Pco *>(dev))->read_dllVersion(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Pco *>(dev))->is_frameRate_allowed(ty);}
+	{return (static_cast<Pco *>(dev))->is_dllVersion_allowed(ty);}
 };
 
-class pixelScanRateAttrib: public Tango::Attr
+class cameraModelAttrib: public Tango::Attr
 {
 public:
-	pixelScanRateAttrib():Attr("pixelScanRate", Tango::DEV_STRING, Tango::READ_WRITE) {};
-	~pixelScanRateAttrib() {};
+	cameraModelAttrib():Attr("cameraModel", Tango::DEV_STRING, Tango::READ) {};
+	~cameraModelAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Pco *>(dev))->read_pixelScanRate(att);}
+	{(static_cast<Pco *>(dev))->read_cameraModel(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Pco *>(dev))->is_cameraModel_allowed(ty);}
+};
+
+class currentRecordedFrameAttrib: public Tango::Attr
+{
+public:
+	currentRecordedFrameAttrib():Attr("currentRecordedFrame", Tango::DEV_ULONG, Tango::READ) {};
+	~currentRecordedFrameAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Pco *>(dev))->read_currentRecordedFrame(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Pco *>(dev))->is_currentRecordedFrame_allowed(ty);}
+};
+
+class doubleImageAttrib: public Tango::Attr
+{
+public:
+	doubleImageAttrib():Attr("doubleImage", Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~doubleImageAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Pco *>(dev))->read_doubleImage(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Pco *>(dev))->write_pixelScanRate(att);}
+	{(static_cast<Pco *>(dev))->write_doubleImage(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Pco *>(dev))->is_pixelScanRate_allowed(ty);}
+	{return (static_cast<Pco *>(dev))->is_doubleImage_allowed(ty);}
 };
 
-class shutterModeAttrib: public Tango::Attr
+class pixelRateAttrib: public Tango::Attr
 {
 public:
-	shutterModeAttrib():Attr("shutterMode", Tango::DEV_STRING, Tango::READ_WRITE) {};
-	~shutterModeAttrib() {};
+	pixelRateAttrib():Attr("pixelRate", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~pixelRateAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Pco *>(dev))->read_shutterMode(att);}
+	{(static_cast<Pco *>(dev))->read_pixelRate(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Pco *>(dev))->write_shutterMode(att);}
+	{(static_cast<Pco *>(dev))->write_pixelRate(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Pco *>(dev))->is_shutterMode_allowed(ty);}
+	{return (static_cast<Pco *>(dev))->is_pixelRate_allowed(ty);}
 };
 
 //=========================================
 //	Define classes for commands
 //=========================================
-class GetInfoCmd : public Tango::Command
-{
-public:
-	GetInfoCmd(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetInfoCmd(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetInfoCmd() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Pco *>(dev))->is_GetInfo_allowed(any);}
-};
-
-
-
-class GetCamTypeCmd : public Tango::Command
-{
-public:
-	GetCamTypeCmd(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	GetCamTypeCmd(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~GetCamTypeCmd() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Pco *>(dev))->is_GetCamType_allowed(any);}
-};
-
-
-
 class GetCamInfoCmd : public Tango::Command
 {
 public:
