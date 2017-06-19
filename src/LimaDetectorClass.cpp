@@ -921,6 +921,36 @@ void LimaDetectorClass::set_default_property()
 	vector<string>	vect_data;
 	//	Set Default Class Properties
 	//	Set Default Device Properties
+	prop_name = "AutoStartVideo";
+	prop_desc = "Allows calling automatically the \"Start\" command when:<br>\n- The device starts.<br>\n- After calling the \"Init\" command.";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "AutoSaveResetRoi";
+	prop_desc = "Memorize the \"full frame\" automatically at the call of \"ResetRoi\" :<br>\n[default = false]";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 	prop_name = "DetectorDescription";
 	prop_desc = "Detector user-defined text to identify the engine.";
 	prop_def  = "This is my Simulator";
@@ -1001,6 +1031,21 @@ void LimaDetectorClass::set_default_property()
 	prop_def  = "VIDEO";
 	vect_data.clear();
 	vect_data.push_back("VIDEO");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "ImageOpMode";
+	prop_desc = "Define ImageOpMode for Roi/Binning/etc...  :<br>\nAvailables values :<br>\n- HardOnly<br>\n- SoftOnly<br>\n- HardAndSoft<br>";
+	prop_def  = "HardAndSoft";
+	vect_data.clear();
+	vect_data.push_back("HardAndSoft");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -1431,36 +1476,6 @@ void LimaDetectorClass::set_default_property()
 	prop_desc = "";
 	prop_def  = "";
 	vect_data.clear();
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "AutoStartVideo";
-	prop_desc = "Allows calling automatically the \"Start\" command when:<br>\n- The device starts.<br>\n- After calling the \"Init\" command.";
-	prop_def  = "false";
-	vect_data.clear();
-	vect_data.push_back("false");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "AutoSaveResetRoi";
-	prop_desc = "Memorize the \"full frame\" automatically at the call of \"ResetRoi\" :<br>\n[default = false]";
-	prop_def  = "false";
-	vect_data.clear();
-	vect_data.push_back("false");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

@@ -208,6 +208,17 @@ public:
      */
     //@{
 /**
+ *	Allows calling automatically the "Start" command when:<br>
+ *	- The device starts.<br>
+ *	- After calling the "Init" command.
+ */
+	Tango::DevBoolean	autoStartVideo;
+/**
+ *	Memorize the "full frame" automatically at the call of "ResetRoi" :<br>
+ *	[default = false]
+ */
+	Tango::DevBoolean	autoSaveResetRoi;
+/**
  *	Detector user-defined text to identify the engine.
  */
 	string	detectorDescription;
@@ -277,6 +288,14 @@ public:
  *	- ACQUISITION : use ctControl->ReadImage()
  */
 	string	imageSource;
+/**
+ *	Define ImageOpMode for Roi/Binning/etc...  :<br>
+ *	Availables values :<br>
+ *	- HardOnly<br>
+ *	- SoftOnly<br>
+ *	- HardAndSoft<br>
+ */
+	string	imageOpMode;
 /**
  *	Define the format of image files :<BR>
  *	Availables values :<br>
@@ -457,17 +476,6 @@ public:
  *	
  */
 	Tango::DevLong	memorizedFileNbFrames;
-/**
- *	Allows calling automatically the "Start" command when:<br>
- *	- The device starts.<br>
- *	- After calling the "Init" command.
- */
-	Tango::DevBoolean	autoStartVideo;
-/**
- *	Memorize the "full frame" automatically at the call of "ResetRoi" :<br>
- *	[default = false]
- */
-	Tango::DevBoolean	autoSaveResetRoi;
 /**
  *	
  */
@@ -1010,6 +1018,7 @@ public:
     void    configure_saving_parameters(void); 
     void    configure_roi(void); 
     void    configure_binning(void); 
+    void    configure_image_op_mode(void);
     void    configure_attributes_hardware_at_init(void);
     
     // return true if the device is correctly initialized in init_device
