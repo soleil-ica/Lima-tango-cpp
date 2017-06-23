@@ -304,7 +304,7 @@ void PcoClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : pixelRate
 	pixelRateAttrib	*pixel_rate = new pixelRateAttrib();
 	Tango::UserDefaultAttrProp	pixel_rate_prop;
-	pixel_rate_prop.set_label("Pixel Rate");
+	pixel_rate_prop.set_label("Pixel Rate (Hz)");
 	pixel_rate_prop.set_unit("Hz");
 	pixel_rate_prop.set_description("Set / Get the Pixel Rate in Hz");
 	pixel_rate->set_default_properties(pixel_rate_prop);
@@ -325,6 +325,7 @@ void PcoClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : currentRecordedFrame
 	currentRecordedFrameAttrib	*current_recorded_frame = new currentRecordedFrameAttrib();
 	Tango::UserDefaultAttrProp	current_recorded_frame_prop;
+	current_recorded_frame_prop.set_label("Current Recorded Frame");
 	current_recorded_frame_prop.set_unit(" ");
 	current_recorded_frame_prop.set_format("%d");
 	current_recorded_frame_prop.set_description("current recorded frame : frames recorded in the Camera RAM");
@@ -337,8 +338,17 @@ void PcoClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	camera_model_prop.set_label("camera Model");
 	camera_model_prop.set_description("Model of the camera");
 	camera_model->set_default_properties(camera_model_prop);
-	camera_model->set_disp_level(Tango::EXPERT);
 	att_list.push_back(camera_model);
+
+	//	Attribute : sensorTemperature
+	sensorTemperatureAttrib	*sensor_temperature = new sensorTemperatureAttrib();
+	Tango::UserDefaultAttrProp	sensor_temperature_prop;
+	sensor_temperature_prop.set_label("sensor Temperature");
+	sensor_temperature_prop.set_unit("°C");
+	sensor_temperature_prop.set_format("%6.2f");
+	sensor_temperature_prop.set_description("image sensor temperature in degree");
+	sensor_temperature->set_default_properties(sensor_temperature_prop);
+	att_list.push_back(sensor_temperature);
 
 	//	Attribute : dllVersion
 	dllVersionAttrib	*dll_version = new dllVersionAttrib();
@@ -348,16 +358,6 @@ void PcoClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	dll_version->set_default_properties(dll_version_prop);
 	dll_version->set_disp_level(Tango::EXPERT);
 	att_list.push_back(dll_version);
-
-	//	Attribute : sensorTemperature
-	sensorTemperatureAttrib	*sensor_temperature = new sensorTemperatureAttrib();
-	Tango::UserDefaultAttrProp	sensor_temperature_prop;
-	sensor_temperature_prop.set_label("sensor Temperature");
-	sensor_temperature_prop.set_unit("?C");
-	sensor_temperature_prop.set_description("image sensor temperature in degree");
-	sensor_temperature->set_default_properties(sensor_temperature_prop);
-	sensor_temperature->set_disp_level(Tango::EXPERT);
-	att_list.push_back(sensor_temperature);
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------

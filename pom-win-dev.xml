@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.7.1</version>
+    <version>1.7.0</version>
 
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -205,8 +205,8 @@
                             <define>HAMAMATSU_NAME=${HAMAMATSU.name}</define>
                            <define>HAMAMATSU_VERSION=${HAMAMATSU.version}</define>
    -->                          <define>PCO_NAME=${PCO.name}</define>
- <!--                           <define>PCO_VERSION=${PCO.version}</define>
-                            <define>PERKINELMER_NAME=${PERKINELMER.name}</define>
+                           <define>PCO_VERSION=${PCO.version}</define>
+ <!--                            <define>PERKINELMER_NAME=${PERKINELMER.name}</define>
                             <define>PERKINELMER_VERSION=${PERKINELMER.version}</define>
                             <define>PRINCETON_NAME=${PRINCETON.name}</define>
                             <define>PRINCETON_VERSION=${PRINCETON.version}</define>

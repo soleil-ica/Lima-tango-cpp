@@ -46,18 +46,6 @@ namespace Pco_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
-class sensorTemperatureAttrib: public Tango::Attr
-{
-public:
-	sensorTemperatureAttrib():Attr("sensorTemperature", Tango::DEV_FLOAT, Tango::READ) {};
-	~sensorTemperatureAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Pco *>(dev))->read_sensorTemperature(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Pco *>(dev))->is_sensorTemperature_allowed(ty);}
-};
-
 class dllVersionAttrib: public Tango::Attr
 {
 public:
@@ -68,6 +56,18 @@ public:
 	{(static_cast<Pco *>(dev))->read_dllVersion(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 	{return (static_cast<Pco *>(dev))->is_dllVersion_allowed(ty);}
+};
+
+class sensorTemperatureAttrib: public Tango::Attr
+{
+public:
+	sensorTemperatureAttrib():Attr("sensorTemperature", Tango::DEV_FLOAT, Tango::READ) {};
+	~sensorTemperatureAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Pco *>(dev))->read_sensorTemperature(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Pco *>(dev))->is_sensorTemperature_allowed(ty);}
 };
 
 class cameraModelAttrib: public Tango::Attr

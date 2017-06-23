@@ -257,6 +257,7 @@ void Pco::create_dynamic_interface()
                 " ",
                 "%d",
                 "get the max number of images available in the Camera RAM",
+                "Max Nb Image",
                 NOT_MEMORIZED,
                 NOT_WRITE_MEMORIZED_AT_INIT,
                 &Pco::read_maxNbImage_callback,
@@ -271,6 +272,7 @@ void Pco::create_dynamic_interface()
                 " ",
                 "%1d",
                 "enable / disable the cdi mode",
+                "CDI mode",
                 MEMORIZED,
                 WRITE_MEMORIZED_AT_INIT,
                 &Pco::read_cdiMode_callback,
@@ -283,8 +285,9 @@ void Pco::create_dynamic_interface()
                 Tango::READ,
                 Tango::OPERATOR,
                 "fps",
-                "%f",
+                "%d",
                 "get the frame rate",
+                "Frame Rate",
                 NOT_MEMORIZED,
                 NOT_WRITE_MEMORIZED_AT_INIT,
                 &Pco::read_frameRate_callback,
@@ -303,6 +306,7 @@ void Pco::create_dynamic_interface()
                 " ",
                 "%d",
                 "get the max number of images available in the Camera RAM",
+                "Max Nb Image",
                 NOT_MEMORIZED,
                 NOT_WRITE_MEMORIZED_AT_INIT,
                 &Pco::read_maxNbImage_callback,
@@ -316,7 +320,8 @@ void Pco::create_dynamic_interface()
                 Tango::OPERATOR,
                 " ",
                 "%1d",
-                "set / get the adc operation",
+                "set / get the adc operation: \nSINGLE\nDUAL",
+                "ADC Operation",
                 MEMORIZED,
                 WRITE_MEMORIZED_AT_INIT,
                 &Pco::read_adcOperation_callback,
@@ -329,8 +334,9 @@ void Pco::create_dynamic_interface()
                 Tango::READ_WRITE,
                 Tango::OPERATOR,
                 "°C",
-                "%f",
+                "%6.2f",
                 "set / get the cooling set point",
+                "Cooling Set Point",
                 MEMORIZED,
                 NOT_WRITE_MEMORIZED_AT_INIT,
                 &Pco::read_coolingSetPoint_callback,
@@ -347,7 +353,8 @@ void Pco::create_dynamic_interface()
                 Tango::OPERATOR,
                 " ",
                 " ",
-                "set / get the shutterMode operation",
+                "set / get the shutterMode operation: \nROLLING_SHUTTER\nGLOBAL_SHUTTER\nGLOBAL_RESET",
+                "Shutter Mode",
                 MEMORIZED,
                 WRITE_MEMORIZED_AT_INIT,
                 &Pco::read_shutterMode_callback,
@@ -360,8 +367,9 @@ void Pco::create_dynamic_interface()
                 Tango::READ,
                 Tango::OPERATOR,
                 "fps",
-                "%f",
+                "%d",
                 "The frame rate",
+                "Frame Rate",
                 NOT_MEMORIZED,
                 NOT_WRITE_MEMORIZED_AT_INIT,
                 &Pco::read_frameRate_callback,
@@ -374,8 +382,9 @@ void Pco::create_dynamic_interface()
                 Tango::READ_WRITE,
                 Tango::OPERATOR,
                 "°C",
-                "%f",
+                "%6.2f",
                 "set / get the cooling set point",
+                "Cooling Set Point",
                 MEMORIZED,
                 NOT_WRITE_MEMORIZED_AT_INIT,
                 &Pco::read_coolingSetPoint_callback,
@@ -1177,6 +1186,9 @@ Tango::DevState Pco::dev_state()
     argout = DeviceState;
     return argout;
 }
+
+
+
 
 
 

@@ -113,8 +113,8 @@ namespace Pco_ns
 		Tango::DevBoolean	attr_doubleImage_write;
 		Tango::DevULong	*attr_currentRecordedFrame_read;
 		Tango::DevString	*attr_cameraModel_read;
-		Tango::DevString	*attr_dllVersion_read;
 		Tango::DevFloat	*attr_sensorTemperature_read;
+		Tango::DevString	*attr_dllVersion_read;
 //@}
 
         /**
@@ -223,13 +223,13 @@ namespace Pco_ns
  */
 	virtual void read_cameraModel(Tango::Attribute &attr);
 /**
- *	Extract real attribute values for dllVersion acquisition result.
- */
-	virtual void read_dllVersion(Tango::Attribute &attr);
-/**
  *	Extract real attribute values for sensorTemperature acquisition result.
  */
 	virtual void read_sensorTemperature(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for dllVersion acquisition result.
+ */
+	virtual void read_dllVersion(Tango::Attribute &attr);
 /**
  *	Read/Write allowed for pixelRate attribute.
  */
@@ -247,13 +247,13 @@ namespace Pco_ns
  */
 	virtual bool is_cameraModel_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for dllVersion attribute.
- */
-	virtual bool is_dllVersion_allowed(Tango::AttReqType type);
-/**
  *	Read/Write allowed for sensorTemperature attribute.
  */
 	virtual bool is_sensorTemperature_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for dllVersion attribute.
+ */
+	virtual bool is_dllVersion_allowed(Tango::AttReqType type);
 /**
  *	Execution allowed for Talk command.
  */
@@ -318,6 +318,7 @@ namespace Pco_ns
             const std::string& unit,
             const std::string& format,
             const std::string& desc,
+            const std::string& label,
             bool memorized,
             bool write_memorized_value_at_init,
             F1 read_callback,

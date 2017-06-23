@@ -26,6 +26,7 @@ void Pco::create_attribute( std::string name,
                             const std::string& unit,
                             const std::string& format,
                             const std::string& desc,
+                            const std::string& label,
                             bool memorized,
                             bool write_memorized_value_at_init,
                             F1 read_callback,
@@ -47,6 +48,7 @@ void Pco::create_attribute( std::string name,
     dai.tai.unit = unit;
     dai.tai.format = format;
     dai.tai.description = desc;
+    dai.tai.label = label;
     dai.memorized = memorized;
     dai.write_memorized_value_at_init = write_memorized_value_at_init;
     //- cleanup tango db option: cleanup tango db when removing this dyn. attr. (i.e. erase its properties fom db)
