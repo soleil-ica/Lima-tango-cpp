@@ -170,15 +170,8 @@ void LimaDetector::delete_device()
     INFO_STREAM << "Exit acquisition yat::DeviceTask." << endl;
     m_acquisition_task.reset();
 
-    //- remove the inner-appender
-    INFO_STREAM << "Remove the inner-appender." << endl;
-    yat4tango::InnerAppender::release(this);
-
-    INFO_STREAM << "Remove the DeviceInfo." << endl;
-    yat4tango::DeviceInfo::release(this);
-	
-	INFO_STREAM << "Remove the log-adapter." << endl;
-	yat4tango::YatLogAdapter::release();	
+    //- remove the log/info attributes
+	delete_log_info_attributes();
 }
 
 //+----------------------------------------------------------------------------
@@ -204,64 +197,8 @@ void LimaDetector::init_device()
     //By default INIT, need to ensure that all objets are OK before set the device to STANDBY
     set_state(Tango::INIT);
 
-    //- instanciate the appender in order to manage logs
-    try
-    {
-        //- specify both the associated device and the log buffer depth
-        INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;
-        yat4tango::InnerAppender::initialize(this, 512);
-
-        INFO_STREAM << "- Create the DeviceInfo in order to display dependencies versions." << endl;
-        yat4tango::DeviceInfo::initialize(this, YAT_XSTR(PROJECT_NAME), YAT_XSTR(PROJECT_VERSION) );
-
-#ifdef _WIN32
-        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(TANGO_NAME), YAT_XSTR(TANGO_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(OMNIORB_NAME), YAT_XSTR(OMNIORB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ZEROMQ_NAME), YAT_XSTR(ZEROMQ_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ANDOR_NAME), YAT_XSTR(ANDOR_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PCO_NAME), YAT_XSTR(PCO_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PRINCETON_NAME), YAT_XSTR(PRINCETON_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UVIEW_NAME), YAT_XSTR(UVIEW_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
-#endif
-
-#ifdef Linux
-#ifdef  UNIX_64_EL5
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MAXIPIX_NAME), YAT_XSTR(MAXIPIX_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
-#else
-        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(AVIEX_NAME), YAT_XSTR(AVIEX_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(BASLER_NAME), YAT_XSTR(BASLER_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(IMXPAD_NAME), YAT_XSTR(IMXPAD_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MARCCD_NAME), YAT_XSTR(MARCCD_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MERLIN_NAME), YAT_XSTR(MERLIN_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
-#endif
-#endif
-
-		yat4tango::YatLogAdapter::initialize(this);		
-    }
-    catch(Tango::DevFailed& df)
-    {
-        ERROR_STREAM << df << endl;
-        set_state(Tango::FAULT);
-        m_status_message << "Initialization Failed :  could not instanciate the InnerAppender/DeviceInfo attribute! " << endl;
-        return;
-    }
+	//create log/info attributes
+	create_log_info_attributes();
 
     get_device_property();
 
@@ -337,6 +274,10 @@ void LimaDetector::init_device()
             return;
         }
 
+		//reset event list
+		m_ct->event()->resetEventList();
+		ControlFactory::instance().set_event_status("");
+			
 		//check if event capability is available 
 		if(m_ct->event()->hasCapability())
 		{
@@ -354,10 +295,6 @@ void LimaDetector::init_device()
         //fix percent of memory to allocate for the lima buffer
         INFO_STREAM << "Fix amount percent of memory for the lima ring buffer following the bufferMaxMemoryPercent property (" << bufferMaxMemoryPercent << ")." << endl;
         m_ct->buffer()->setMaxMemory((short) bufferMaxMemoryPercent);
-
-		//- Define ImageOpMode for Roi/Binning/etc...  (HardOnly, SoftOnly or HardAndSoft)
-		INFO_STREAM<<"Define ImageOpMode for Roi/Binning  following the ImageOpMode property (" << imageOpMode << ")." << endl;
-		configure_image_op_mode();
 		
         //- reset image, allow to redefine type image according to  CurrentImageType of the HwDetInfoCtrlObj
         m_ct->image()->reset();		
@@ -373,6 +310,10 @@ void LimaDetector::init_device()
             INFO_STREAM << "Reload BIN of detector from Binning property." << endl;
             configure_binning();
 
+			//- Define ImageOpMode for Roi/Binning/etc...  (HardOnly, SoftOnly or HardAndSoft)
+			INFO_STREAM<<"Define ImageOpMode for Roi/Binning  following the ImageOpMode property (" << imageOpMode << ")." << endl;
+			configure_image_op_mode();
+		
             //- Activate video mode in order to get notification associated to image acquisition
             INFO_STREAM << "Activate video mode in order to get notification for each acquired image." << endl;
             m_ct->video()->setActive(true);
@@ -401,49 +342,17 @@ void LimaDetector::init_device()
         //fix nb thread
         INFO_STREAM << "Fix Nb. Pool Thread Manager to (4)." << endl;
         PoolThreadMgr::get().setNumberOfThread(4);
-    }
-    catch(Tango::DevFailed& df)
-    {
-        ERROR_STREAM << df << endl;
-        m_status_message << "Initialization Failed : ";
-        for(unsigned i = 0; i < df.errors.length(); i++)
-        {
-            m_status_message << df.errors[i].desc << endl;
-        }
-        m_is_device_initialized = false;
-        set_state(Tango::FAULT);
-        return;
-    }
-    catch(Exception& e)
-    {
-        ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
-        m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
-        m_is_device_initialized = false;
-        set_state(Tango::FAULT);
-        return;
-    }
-    catch(...)
-    {
-        ERROR_STREAM << "Initialization Failed : UNKNOWN" << endl;
-        m_status_message << "Initialization Failed : UNKNOWN" << endl;
-        m_is_device_initialized = false;
-        set_state(Tango::FAULT);
-        return;
-    }
-
-    //----------------------------------------------------------------------------------
-    //- Create acquisition Task, State = INIT if Task could not be created !
-    INFO_STREAM << "Create acquisition yat::DeviceTask." << endl;
-    if(create_acquisition_task() == false)
-    {
-        set_state(Tango::FAULT);
-        m_is_device_initialized = false;
-        return;
-    }
-
-    //----------------------------------------------------------------------------------
-    try
-    {
+		
+		//----------------------------------------------------------------------------------
+		//- Create acquisition Task, State = INIT if Task could not be created !
+		INFO_STREAM << "Create acquisition yat::DeviceTask." << endl;
+		if(create_acquisition_task() == false)
+		{
+			set_state(Tango::FAULT);
+			m_is_device_initialized = false;
+			return;
+		}
+	
         //- Ensure to call this, only when LimaDetector & specifcs devices are created by ClassFactory
         //- That means, we need to call tis only at the command Init() and not at the start of the device
         if(LimaDetector::m_init_count > 1)
@@ -451,42 +360,11 @@ void LimaDetector::init_device()
             //- force Init() on the specific sub device.
             INFO_STREAM << "Force Initialization on the specific sub device." << endl;
             ControlFactory::instance().init_specific_device(detectorType);
-        }
-    }
-    catch(Tango::DevFailed& df)
-    {
-        ERROR_STREAM << df << endl;
-        m_status_message << "Initialization Failed : ";
-        for(unsigned i = 0; i < df.errors.length(); i++)
-        {
-            m_status_message << df.errors[i].desc << endl;
-        }
-        m_is_device_initialized = false;
-        set_state(Tango::FAULT);
-        return;
-    }
-    catch(Exception& e)
-    {
-        ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
-        m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
-        m_is_device_initialized = false;
-        set_state(Tango::FAULT);
-        return;
-    }
-    catch(...)
-    {
-        ERROR_STREAM << "Initialization Failed : UNKNOWN" << endl;
-        m_status_message << "Initialization Failed : UNKNOWN" << endl;
-        m_is_device_initialized = false;
-        set_state(Tango::FAULT);
-        return;
-    }
-
-    // everything seems ok
-    m_is_device_initialized = true;
-
-    try
-    {
+        }	
+	
+		// everything seems ok
+		m_is_device_initialized = true;
+		
         //write at init, only if device is correctly initialized
         if(m_is_device_initialized)
         {
@@ -518,11 +396,13 @@ void LimaDetector::init_device()
     {
         ERROR_STREAM << "Initialization Failed : UNKNOWN" << endl;
         m_status_message << "Initialization Failed : UNKNOWN" << endl;
-        set_state(Tango::FAULT);
         m_is_device_initialized = false;
+        set_state(Tango::FAULT);
         return;
     }
 
+
+	//everythng seems ok, let the device waiting for user request (STANDBY)
     set_state(Tango::STANDBY);
     dev_state();
 
@@ -1128,10 +1008,10 @@ void LimaDetector::read_fileFormat(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_fileFormat");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_fileFormat");
     }
     catch(Exception& e)
     {
@@ -1200,10 +1080,10 @@ void LimaDetector::write_fileFormat(Tango::WAttribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::write_fileFormat");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::write_fileFormat");
     }
     catch(Exception& e)
     {
@@ -1234,10 +1114,10 @@ void LimaDetector::read_filePrefix(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_filePrefix");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_filePrefix");
     }
     catch(Exception& e)
     {
@@ -1270,10 +1150,10 @@ void LimaDetector::write_filePrefix(Tango::WAttribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::write_filePrefix()");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"LimaDetector::write_filePrefix()");
     }
     catch(Exception& e)
     {
@@ -1304,10 +1184,10 @@ void LimaDetector::read_fileTargetPath(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_fileTargetPath");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_fileTargetPath");
     }
     catch(Exception& e)
     {
@@ -1340,10 +1220,10 @@ void LimaDetector::write_fileTargetPath(Tango::WAttribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::write_fileTargetPath()");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"LimaDetector::write_fileTargetPath()");
     }
     catch(Exception& e)
     {
@@ -1376,10 +1256,10 @@ void LimaDetector::read_exposureAccTime_callback(yat4tango::DynamicAttributeRead
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_exposureAccTime_callback");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_exposureAccTime_callback");
     }
     catch(Exception& e)
     {
@@ -1411,10 +1291,10 @@ void LimaDetector::write_exposureAccTime_callback(yat4tango::DynamicAttributeWri
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::write_exposureAccTime_callback");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::write_exposureAccTime_callback");
     }
     catch(Exception& e)
     {
@@ -1445,10 +1325,10 @@ void LimaDetector::read_fileNbFrames(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_fileNbFrames");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_fileNbFrames");
     }
     catch(Exception& e)
     {
@@ -1481,10 +1361,10 @@ void LimaDetector::write_fileNbFrames(Tango::WAttribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::write_fileNbFrames");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::write_fileNbFrames");
     }
     catch(Exception& e)
     {
@@ -1517,10 +1397,10 @@ void LimaDetector::read_detectorDescription(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_detectorDescription");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_detectorDescription");
     }
 }
 
@@ -1549,10 +1429,10 @@ void LimaDetector::read_detectorType(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_detectorType");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_detectorType");
     }
     catch(Exception& e)
     {
@@ -1590,10 +1470,10 @@ void LimaDetector::read_detectorModel(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_detectorModel");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_detectorModel");
     }
     catch(Exception& e)
     {
@@ -1630,10 +1510,10 @@ void LimaDetector::read_detectorWidthMax(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_detectorWidthMax");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_detectorWidthMax");
     }
     catch(Exception& e)
     {
@@ -1670,10 +1550,10 @@ void LimaDetector::read_detectorHeightMax(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_detectorHeightMax");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_detectorHeightMax");
     }
     catch(Exception& e)
     {
@@ -1714,10 +1594,10 @@ void LimaDetector::read_binnedWidthMax(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_binnedWidthMax");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_binnedWidthMax");
     }
     catch(Exception& e)
     {
@@ -1757,10 +1637,10 @@ void LimaDetector::read_binnedHeightMax(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_binnedHeightMax");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_binnedHeightMax");
     }
     catch(Exception& e)
     {
@@ -1797,10 +1677,10 @@ void LimaDetector::read_detectorPixelDepth(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_detectorPixelDepth");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_detectorPixelDepth");
     }
     catch(Exception& e)
     {
@@ -1855,10 +1735,10 @@ void LimaDetector::read_triggerMode(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_triggerMode");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_triggerMode");
     }
     catch(Exception& e)
     {
@@ -1962,10 +1842,10 @@ void LimaDetector::read_acquisitionMode(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_acquisitionMode");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_acquisitionMode");
     }
 }
 
@@ -2013,10 +1893,10 @@ void LimaDetector::write_acquisitionMode(Tango::WAttribute &attr)
                 {
                     ERROR_STREAM << df << endl;
                     //- rethrow exception
-                    Tango::Except::re_throw_exception(df,
-                                                      "TANGO_DEVICE_ERROR",
-                                                      std::string(df.errors[0].desc).c_str(),
-                                                      "LimaDetector::write_acquisitionMode");
+                    RETHROW_DEVFAILED(	df,
+										"TANGO_DEVICE_ERROR",
+										std::string(df.errors[0].desc).c_str(),
+										"LimaDetector::write_acquisitionMode");
                 }
             }
         }
@@ -2104,10 +1984,10 @@ void LimaDetector::read_exposureTime(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_exposureTime");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_exposureTime");
     }
     catch(Exception& e)
     {
@@ -2140,10 +2020,10 @@ void LimaDetector::write_exposureTime(Tango::WAttribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::write_exposureTime");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::write_exposureTime");
     }
     catch(Exception& e)
     {
@@ -2177,10 +2057,10 @@ void LimaDetector::read_latencyTime(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_latencyTime");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_latencyTime");
     }
     catch(Exception& e)
     {
@@ -2213,10 +2093,10 @@ void LimaDetector::write_latencyTime(Tango::WAttribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::write_latencyTime");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::write_latencyTime");
     }
     catch(Exception& e)
     {
@@ -2247,10 +2127,10 @@ void LimaDetector::read_frameRate(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_frameRate");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_frameRate");
     }
     catch(Exception& e)
     {
@@ -2287,10 +2167,10 @@ void LimaDetector::write_frameRate(Tango::WAttribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::write_frameRate");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::write_frameRate");
     }
     catch(Exception& e)
     {
@@ -2323,10 +2203,10 @@ void LimaDetector::read_roiX(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_roiX");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_roiX");
     }
     catch(Exception& e)
     {
@@ -2359,10 +2239,10 @@ void LimaDetector::read_roiY(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_roiY");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_roiY");
     }
     catch(Exception& e)
     {
@@ -2395,10 +2275,10 @@ void LimaDetector::read_roiWidth(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_roiWidth");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_roiWidth");
     }
     catch(Exception& e)
     {
@@ -2431,10 +2311,10 @@ void LimaDetector::read_roiHeight(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_roiHeight");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_roiHeight");
     }
     catch(Exception& e)
     {
@@ -2468,10 +2348,10 @@ void LimaDetector::read_binningH(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_binningH");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_binningH");
     }
     catch(Exception& e)
     {
@@ -2504,10 +2384,10 @@ void LimaDetector::read_binningV(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_binningV");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_binningV");
     }
     catch(Exception& e)
     {
@@ -2540,10 +2420,10 @@ void LimaDetector::read_nbFrames(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_nbFrames");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_nbFrames");
     }
     catch(Exception& e)
     {
@@ -2575,10 +2455,10 @@ void LimaDetector::write_nbFrames(Tango::WAttribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::write_nbFrames");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::write_nbFrames");
     }
     catch(Exception& e)
     {
@@ -2609,10 +2489,10 @@ void LimaDetector::read_currentFrame(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_currentFrame");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_currentFrame");
     }
     catch(Exception& e)
     {
@@ -2646,10 +2526,10 @@ void LimaDetector::read_currentAccFrame_callback(yat4tango::DynamicAttributeRead
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_currentAccFrame_callback");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_currentAccFrame_callback");
     }
     catch(Exception& e)
     {
@@ -2718,10 +2598,10 @@ void LimaDetector::read_shutterState_callback(yat4tango::DynamicAttributeReadCal
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_shutterState");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_shutterState");
     }
     catch(Exception& e)
     {
@@ -2754,10 +2634,10 @@ void LimaDetector::read_shutterOpenTime_callback(yat4tango::DynamicAttributeRead
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_shutterOpenTime");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_shutterOpenTime");
     }
     catch(Exception& e)
     {
@@ -2819,10 +2699,10 @@ void LimaDetector::read_shutterCloseTime_callback(yat4tango::DynamicAttributeRea
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_shutterCloseTime");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_shutterCloseTime");
     }
     catch(Exception& e)
     {
@@ -2895,10 +2775,10 @@ void LimaDetector::read_shutterMode_callback(yat4tango::DynamicAttributeReadCall
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_shutterMode");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_shutterMode");
     }
     catch(Exception& e)
     {
@@ -3140,10 +3020,10 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_image_callback");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_image_callback");
     }
     catch(Exception& e)
     {
@@ -3180,10 +3060,10 @@ void LimaDetector::read_fileGeneration(Tango::Attribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::read_fileGeneration");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_fileGeneration");
     }
 }
 
@@ -3212,10 +3092,10 @@ void LimaDetector::write_fileGeneration(Tango::WAttribute &attr)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::write_fileGeneration");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::write_fileGeneration");
     }
 }
 
@@ -3273,10 +3153,10 @@ void LimaDetector::prepare()
         m_status_message.str("");
         m_status_message << std::string(df.errors[0].desc).c_str() << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::prepare");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::prepare");
     }
     catch(Exception& e)
     {
@@ -3359,10 +3239,10 @@ void LimaDetector::snap()
         m_status_message.str("");
         m_status_message << std::string(df.errors[0].desc).c_str() << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::snap");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::snap");
     }
     catch(Exception& e)
     {
@@ -3435,10 +3315,10 @@ void LimaDetector::start()
         m_status_message.str("");
         m_status_message << std::string(df.errors[0].desc).c_str() << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::start");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::start");
     }
     catch(Exception& e)
     {
@@ -3484,10 +3364,10 @@ void LimaDetector::stop()
         m_status_message.str("");
         m_status_message << std::string(df.errors[0].desc).c_str() << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::stop");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::stop");
     }
     catch(Exception& e)
     {
@@ -3553,10 +3433,10 @@ void LimaDetector::set_roi(const Tango::DevVarULongArray *argin)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::set_roi");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::set_roi");
     }
     catch(Exception& e)
     {
@@ -3615,10 +3495,10 @@ void LimaDetector::set_binning(const Tango::DevVarULongArray *argin)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::set_binning");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::set_binning");
     }
     catch(Exception& e)
     {
@@ -3657,10 +3537,10 @@ void LimaDetector::reset_roi()
 			//- update Roi property
 			vector<short> vec_roi;
 			vec_roi.clear();
-			vec_roi.push_back(roi.getTopLeft().x);
-			vec_roi.push_back(roi.getTopLeft().y);
-			vec_roi.push_back(roi.getSize().getWidth());
-			vec_roi.push_back(roi.getSize().getHeight());
+			vec_roi.push_back(-1);
+			vec_roi.push_back(-1);
+			vec_roi.push_back(-1);
+			vec_roi.push_back(-1);
 			yat4tango::PropertyHelper::set_property(this, "MemorizedRoi", vec_roi);			
 		}
     }
@@ -3702,10 +3582,10 @@ void LimaDetector::reset_binning()
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::reset_binning");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::reset_binning");
     }
     catch(Exception& e)
     {
@@ -3820,10 +3700,10 @@ Tango::DevVarStringArray *LimaDetector::get_attribute_available_values(Tango::De
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::get_attribute_available_values");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::get_attribute_available_values");
     }
     catch(Exception& e)
     {
@@ -3917,10 +3797,10 @@ Tango::DevVarStringArray *LimaDetector::get_available_capabilities()
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::get_available_capabilities");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::get_available_capabilities");
     }
     catch(Exception& e)
     {
@@ -3974,10 +3854,10 @@ void LimaDetector::reload_roi()
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::reload_roi");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::reload_roi");
     }
     catch(Exception& e)
     {
@@ -4029,10 +3909,10 @@ Tango::DevVarStringArray *LimaDetector::get_data_streams()
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          string(df.errors[0].desc).c_str(),
-                                          "LimaDetector::get_data_streams()");
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"LimaDetector::get_data_streams()");
     }
     return argout;
 }
@@ -4491,6 +4371,83 @@ void LimaDetector::configure_image_op_mode(void)
 	}
 	
 }
+
+//+----------------------------------------------------------------------------
+//
+// method :         LimaDetector::create_log_info_attributes
+// 
+//-----------------------------------------------------------------------------
+void LimaDetector::create_log_info_attributes(void)
+{
+	//- instanciate the appender in order to manage logs
+	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;
+	yat4tango::InnerAppender::initialize(this, 512);
+
+	//- instanciate the device info attribute
+	INFO_STREAM << "Create the DeviceInfo in order to display dependencies versions." << endl;
+	yat4tango::DeviceInfo::initialize(this, YAT_XSTR(PROJECT_NAME), YAT_XSTR(PROJECT_VERSION) );
+	
+	//- fill the device info attribute in order to display dependencies versions
+#ifdef _WIN32
+        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(TANGO_NAME), YAT_XSTR(TANGO_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(OMNIORB_NAME), YAT_XSTR(OMNIORB_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ZEROMQ_NAME), YAT_XSTR(ZEROMQ_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ANDOR_NAME), YAT_XSTR(ANDOR_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PCO_NAME), YAT_XSTR(PCO_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PRINCETON_NAME), YAT_XSTR(PRINCETON_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UVIEW_NAME), YAT_XSTR(UVIEW_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
+#endif
+
+#ifdef Linux
+#ifdef  UNIX_64_EL5
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MAXIPIX_NAME), YAT_XSTR(MAXIPIX_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
+#else
+        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(AVIEX_NAME), YAT_XSTR(AVIEX_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(BASLER_NAME), YAT_XSTR(BASLER_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(IMXPAD_NAME), YAT_XSTR(IMXPAD_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MARCCD_NAME), YAT_XSTR(MARCCD_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MERLIN_NAME), YAT_XSTR(MERLIN_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
+#endif
+#endif
+
+		//- instanciate the log Adapter
+		yat4tango::YatLogAdapter::initialize(this);		
+}
+
+//+----------------------------------------------------------------------------
+//
+// method :         LimaDetector::delete_log_info_attributes
+// 
+//-----------------------------------------------------------------------------
+void LimaDetector::delete_log_info_attributes()
+{
+	INFO_STREAM << "Remove the inner-appender." << endl;
+	yat4tango::InnerAppender::release(this);
+
+	INFO_STREAM << "Remove the DeviceInfo." << endl;
+	yat4tango::DeviceInfo::release(this);
+
+	INFO_STREAM << "Remove the log-adapter." << endl;
+	yat4tango::YatLogAdapter::release();	
+}
+
 //+----------------------------------------------------------------------------
 //
 // method :         LimaDetector::configure_attributes_hardware_at_init

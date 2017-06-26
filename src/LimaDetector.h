@@ -1012,13 +1012,15 @@ public:
     
     void    read_currentAccFrame_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);    
 
+    void    create_log_info_attributes(void);    
+    void    delete_log_info_attributes(void);        
     void    configure_available_trigger_mode(void);
     void    configure_image_type(void);
     void    configure_video_mode(void);    
     void    configure_saving_parameters(void); 
     void    configure_roi(void); 
     void    configure_binning(void); 
-    void    configure_image_op_mode(void);
+    void    configure_image_op_mode(void);    
     void    configure_attributes_hardware_at_init(void);
     
     // return true if the device is correctly initialized in init_device
