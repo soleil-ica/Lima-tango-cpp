@@ -27,8 +27,8 @@ void Pco::create_attribute( std::string name,
                             const std::string& format,
                             const std::string& desc,
                             const std::string& label,
-                            bool memorized,
-                            bool write_memorized_value_at_init,
+                            /*bool memorized,
+                            bool write_memorized_value_at_init,*/
                             F1 read_callback,
                             F2 write_callback)
 {
@@ -49,10 +49,12 @@ void Pco::create_attribute( std::string name,
     dai.tai.format = format;
     dai.tai.description = desc;
     dai.tai.label = label;
+    //- Not Working:
+    /*
     dai.memorized = memorized;
     dai.write_memorized_value_at_init = write_memorized_value_at_init;
     //- cleanup tango db option: cleanup tango db when removing this dyn. attr. (i.e. erase its properties fom db)
-    dai.cdb = false;
+    dai.cdb = false;*/
 
     //- instanciate the read callback (called when the dyn. attr. is read)    
     if (access_type == Tango::READ || access_type == Tango::READ_WRITE)

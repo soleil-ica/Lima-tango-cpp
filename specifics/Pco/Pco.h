@@ -59,10 +59,10 @@
 //-----------------------------------------------
 
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
-const bool NOT_MEMORIZED = false;
+const bool  NOT_MEMORIZED               = false;
 const bool  NOT_WRITE_MEMORIZED_AT_INIT = false;
-const bool  MEMORIZED = true;
-const bool  WRITE_MEMORIZED_AT_INIT = true;
+const bool  MEMORIZED                   = true;
+const bool  WRITE_MEMORIZED_AT_INIT     = true;
 
 
 
@@ -93,8 +93,8 @@ namespace Pco_ns
         Tango::DevBoolean   *attr_cdiMode_read;
         Tango::DevBoolean   attr_cdiMode_write;
         Tango::DevDouble    *attr_frameRate_read;
-        Tango::DevDouble    *attr_coolingSetPoint_read;
-        Tango::DevDouble    attr_coolingSetPoint_write;
+        Tango::DevShort    *attr_coolingSetPoint_read;
+        Tango::DevShort    attr_coolingSetPoint_write;
         Tango::DevString    *attr_adcOperation_read;
         Tango::DevString    attr_adcOperation_write;
         Tango::DevString    *attr_shutterMode_read;
@@ -319,8 +319,8 @@ namespace Pco_ns
             const std::string& format,
             const std::string& desc,
             const std::string& label,
-            bool memorized,
-            bool write_memorized_value_at_init,
+            /*bool memorized,
+            bool write_memorized_value_at_init,*/
             F1 read_callback,
             F2 write_callback);
 
@@ -338,7 +338,7 @@ namespace Pco_ns
         //- adcOperation
         void read_adcOperation_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
         void write_adcOperation_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
-        //- coolingSetPoint
+        //- shutterMode
         void read_shutterMode_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
         void write_shutterMode_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);        
         // method for tango dyn attributes WHEN no write part is available - NULL
