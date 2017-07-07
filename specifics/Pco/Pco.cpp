@@ -259,6 +259,9 @@ void Pco::get_device_property()
 
     //	End of Automatic code generation
     //------------------------------------------------------------------
+
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", "SerialNumber");
+
 }
 
 /*-------------------------------------------------------------------------
@@ -387,7 +390,7 @@ void Pco::create_dynamic_interface()
                 Tango::SCALAR,
                 Tango::READ_WRITE,
                 Tango::OPERATOR,
-                "Â°C",
+                "°C",
                 "%d",
                 "set / get the cooling set point",
                 "Cooling Set Point",
@@ -463,7 +466,7 @@ void Pco::create_dynamic_interface()
                 Tango::SCALAR,
                 Tango::READ_WRITE,
                 Tango::OPERATOR,
-                "Â°C",
+                "°C",
                 "%d",
                 "set / get the cooling set point",
                 "Cooling Set Point",
@@ -488,7 +491,6 @@ void Pco::create_dynamic_interface()
         }
         else //- Not any camera model (maybe SerialNumber is wrong)
         {
-        	//- TODO
         }
     }
     catch (yat::Exception& ex)
