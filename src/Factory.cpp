@@ -382,7 +382,14 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         {
             if (!ControlFactory::m_is_created)
             {
-                m_camera = static_cast<void*> (new Pco::Camera(""));
+                Tango::DbData db_data;
+                db_data.push_back(Tango::DbDatum("SerialNumber"));
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                string params,serial_number;
+                db_data[0] >> serial_number;
+                params = "sn = " + serial_number;
+
+                m_camera = static_cast<void*> (new Pco::Camera(params.c_str()));
                 m_interface = static_cast<void*> (new Pco::Interface(static_cast<Pco::Camera*> (m_camera)));
                 m_control = new CtControl(static_cast<Pco::Interface*> (m_interface));
                 ControlFactory::m_is_created = true;

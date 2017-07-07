@@ -232,10 +232,29 @@ void Pco::get_device_property()
 
     //	Read device properties from database.(Automatic code generation)
     //------------------------------------------------------------------
-	
+	Tango::DbData	dev_prop;
+	dev_prop.push_back(Tango::DbDatum("SerialNumber"));
 
 	//	Call database and extract values
 	//--------------------------------------------
+	if (Tango::Util::instance()->_UseDb==true)
+		get_db_device()->get_property(dev_prop);
+	Tango::DbDatum	def_prop, cl_prop;
+	PcoClass	*ds_class =
+		(static_cast<PcoClass *>(get_device_class()));
+	int	i = -1;
+
+	//	Try to initialize SerialNumber from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  serialNumber;
+	else {
+		//	Try to initialize SerialNumber from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  serialNumber;
+	}
+	//	And try to extract SerialNumber value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  serialNumber;
+
 
 
     //	End of Automatic code generation
@@ -467,6 +486,10 @@ void Pco::create_dynamic_interface()
             }
             dev_prop.clear();
         }
+        else //- Not any camera model (maybe SerialNumber is wrong)
+        {
+        	//- TODO
+        }
     }
     catch (yat::Exception& ex)
     {
@@ -584,6 +607,24 @@ void Pco::read_doubleImage(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "Pco::read_doubleImage(Tango::Attribute &attr) entering... "<< endl;
 
+    /*try
+    {
+        WORD wDoubleImage = 0;
+        int dummy_err = -10;
+        m_camera->_pco_GetDoubleImageMode(wDoubleImage, dummy_err);
+        *attr_doubleImage_read = (Tango::DevBoolean)wDoubleImage;
+        attr.set_value(attr_doubleImage_read);
+    }
+    catch (lima::Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception(
+            "LIMA_ERROR",
+            e.getErrMsg().c_str(),
+            "Pco::read_doubleImage");
+    }*/
+
     //- throw exception
     Tango::Except::throw_exception(
         "LIMA_ERROR",
@@ -601,6 +642,22 @@ void Pco::read_doubleImage(Tango::Attribute &attr)
 void Pco::write_doubleImage(Tango::WAttribute &attr)
 {
 	INFO_STREAM << "Pco::write_doubleImage(Tango::WAttribute &attr) entering... "<< endl;
+
+    /*try
+    {
+        int dummy_err = -10;
+        attr.get_write_value(attr_doubleImage_write);
+        m_camera->_pco_SetDoubleImageMode((WORD)attr_doubleImage_write, dummy_err);
+    }
+    catch (lima::Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception(
+            "LIMA_ERROR",
+            e.getErrMsg().c_str(),
+            "Pco::write_doubleImage");
+    }*/
 
     //- throw exception
     Tango::Except::throw_exception(
@@ -1270,6 +1327,7 @@ Tango::DevState Pco::dev_state()
     argout = DeviceState;
     return argout;
 }
+
 
 
 

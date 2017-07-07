@@ -153,7 +153,7 @@ void LimaDetector::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_shutterOpenTime_read);
     DELETE_SCALAR_ATTRIBUTE(attr_shutterCloseTime_read);
 
-    //remove attributes from dam
+    //remove attributes from dim
     INFO_STREAM << "Remove dynamic attributes." << endl;
     m_dim.remove();
 
@@ -201,6 +201,20 @@ void LimaDetector::init_device()
 	create_log_info_attributes();
 
     get_device_property();
+
+    //- Set Serialisation mode
+    //- Only for Pco for testing purpose
+    if (detectorType == "Pco")
+    {
+        //- this allow dynamic attr in specific devices
+        INFO_STREAM << "Serialisation Model : BY_PROCESS" << endl;
+        Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_PROCESS);
+    }
+    else
+    {
+        INFO_STREAM << "Serialisation Model : BY_DEVICE" << endl;
+        Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_DEVICE);
+    }
 
 	//ensure these "string" properties are upcase 
     transform(imageSource.begin(), imageSource.end(), imageSource.begin(), ::toupper);

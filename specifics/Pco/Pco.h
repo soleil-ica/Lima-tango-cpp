@@ -122,6 +122,10 @@ namespace Pco_ns
          * Device properties member data.
          */
         //@{
+/**
+ *	Serial Number of the camera: used to select camera if several connected to the same host
+ */
+	string	serialNumber;
 //@}
 
         /**
