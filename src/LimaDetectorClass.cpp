@@ -737,6 +737,7 @@ void LimaDetectorClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	frame_rate_prop.set_display_unit("frame/s");
 	frame_rate_prop.set_format("%7.2f");
 	frame_rate->set_default_properties(frame_rate_prop);
+	frame_rate->set_disp_level(Tango::EXPERT);
 	frame_rate->set_memorized();
 	frame_rate->set_memorized_init(false);
 	att_list.push_back(frame_rate);
