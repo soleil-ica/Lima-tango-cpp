@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.7.0</version>
+    <version>1.7.1</version>
 
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -34,14 +34,18 @@
         <PROCESSLIB.version>1.3.5</PROCESSLIB.version>
         <CORE.name>Core</CORE.name>
         <CORE.version>1.7.2-SNAPSHOT</CORE.version>
+
+        <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
+        <HAMAMATSU.version>1.0.7</HAMAMATSU.version>
+		
 <!--
         <ANDOR.name>Andor</ANDOR.name>
         <ANDOR.version>1.3.9</ANDOR.version>
         <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
-        <HAMAMATSU.version>1.0.7</HAMAMATSU.version>-->
+        <HAMAMATSU.version>1.0.7</HAMAMATSU.version>
         <PCO.name>Pco</PCO.name>
         <PCO.version>1.5.2</PCO.version>
-<!--        <PERKINELMER.name>PerkinElmer</PERKINELMER.name>
+        <PERKINELMER.name>PerkinElmer</PERKINELMER.name>
         <PERKINELMER.version>1.3.8</PERKINELMER.version>
         <PRINCETON.name>Princeton</PRINCETON.name>
         <PRINCETON.version>1.3.9</PRINCETON.version>
@@ -107,6 +111,12 @@
             <version>${CORE.version}</version>
         </dependency>
         <!-- Lima Camera Plugins -->
+        <dependency>
+            <groupId>fr.soleil.lib.Lima.Camera</groupId>
+            <artifactId>LimaHamamatsu-${aol}-shared-${mode}</artifactId>
+            <version>${HAMAMATSU.version}</version>
+        </dependency>
+		
 <!--
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
@@ -117,13 +127,13 @@
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaHamamatsu-${aol}-shared-${mode}</artifactId>
             <version>${HAMAMATSU.version}</version>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaPco-${aol}-shared-${mode}</artifactId>
             <version>${PCO.version}</version>
         </dependency>
- <!--       <dependency>
+        <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaPerkinElmer-${aol}-shared-${mode}</artifactId>
             <version>${PERKINELMER.version}</version>
@@ -156,13 +166,19 @@
 
                     <cpp>
                         <sourceDirectory>${project.basedir}</sourceDirectory>
+
+                        <systemIncludePaths>
+                            <systemIncludePath>E:/DeviceSources/Lima/camera/hamamatsu/temp-new-sdk/include</systemIncludePath>
+                        </systemIncludePaths>
+
                         <includes>
                             <include>*.cpp</include>
+                            <include>specifics/Hamamatsu/*.cpp</include>
 <!--
                             <include>specifics/AndorCCD/*.cpp</include>
-                            <include>specifics/Hamamatsu/*.cpp</include>-->
+                            <include>specifics/Hamamatsu/*.cpp</include>
                             <include>specifics/Pco/*.cpp</include>
-<!--                            <include>specifics/PerkinElmer/*.cpp</include>
+                            <include>specifics/PerkinElmer/*.cpp</include>
                             <include>specifics/PrincetonCCD/*.cpp</include>
                             <include>specifics/RoiCounters/*.cpp</include>
                             <include>specifics/Layout/*.cpp</include>
@@ -173,11 +189,12 @@
                         </includes>
                         <includePaths>
                             <includePath>src</includePath>
+                            <include>specifics/Hamamatsu</include>
 <!--
                             <include>specifics/AndorCCD</include>
                             <include>specifics/Hamamatsu</include>
--->                           <include>specifics/Pco</include>
-<!--                            <include>specifics/PerkinElmer</include>
+                            <include>specifics/Pco</include>
+                            <include>specifics/PerkinElmer</include>
                             <include>specifics/PrincetonCCD</include>
                             <include>specifics/RoiCounters</include>
                             <include>specifics/Layout</include>
@@ -199,14 +216,17 @@
                             <define>PROCESSLIB_VERSION=${PROCESSLIB.version}</define>
                             <define>CORE_NAME=${CORE.name}</define>
                             <define>CORE_VERSION=${CORE.version}</define>
+
+                            <define>HAMAMATSU_NAME=${HAMAMATSU.name}</define>
+                            <define>HAMAMATSU_VERSION=${HAMAMATSU.version}</define>
 <!--
                             <define>ANDOR_NAME=${ANDOR.name}</define>
                             <define>ANDOR_VERSION=${ANDOR.version}</define>
                             <define>HAMAMATSU_NAME=${HAMAMATSU.name}</define>
-                           <define>HAMAMATSU_VERSION=${HAMAMATSU.version}</define>
-   -->                          <define>PCO_NAME=${PCO.name}</define>
-                           <define>PCO_VERSION=${PCO.version}</define>
- <!--                            <define>PERKINELMER_NAME=${PERKINELMER.name}</define>
+                            <define>HAMAMATSU_VERSION=${HAMAMATSU.version}</define>
+                            <define>PCO_NAME=${PCO.name}</define>
+                            <define>PCO_VERSION=${PCO.version}</define>
+                            <define>PERKINELMER_NAME=${PERKINELMER.name}</define>
                             <define>PERKINELMER_VERSION=${PERKINELMER.version}</define>
                             <define>PRINCETON_NAME=${PRINCETON.name}</define>
                             <define>PRINCETON_VERSION=${PRINCETON.version}</define>
@@ -217,14 +237,17 @@
                             <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
 
                             <!-- define which detector you need to ENABLE -->
-                            <!-- <define>ANDOR_ENABLED</define>
-                            <define>HAMAMATSU_ENABLED</define> -->
+                            <define>HAMAMATSU_ENABLED</define>
+<!--
+                            <define>ANDOR_ENABLED</define>
+                            <define>HAMAMATSU_ENABLED</define>
                             <define>PCO_ENABLED</define>
-                            <!-- <define>PERKINELMER_ENABLED</define>
+                            <define>PERKINELMER_ENABLED</define>
                             <define>PRINCETON_ENABLED</define>
                             <define>ROICOUNTERS_ENABLED</define>
                             <define>LAYOUT_ENABLED</define>
-                            <define>UVIEW_ENABLED</define> -->
+                            <define>UVIEW_ENABLED</define>
+-->
                             <define>SIMULATOR_ENABLED</define>
                         </defines>
                     </cpp>
