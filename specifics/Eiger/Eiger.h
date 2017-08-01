@@ -96,7 +96,6 @@ public:
     Tango::DevDouble attr_beamCenterY_read_cache;
     Tango::DevDouble attr_detectorDistance_read_cache;
     std::string attr_compressionType_read_cache;
-    std::string attr_softwareVersion_read_cache;
     std::string attr_dataCollectionDate_read_cache;
     Tango::DevDouble attr_chiIncrement_read_cache;
     Tango::DevDouble attr_chiStart_read_cache;

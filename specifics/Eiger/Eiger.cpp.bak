@@ -606,13 +606,7 @@ void Eiger::read_compressionType(Tango::Attribute &attr)
         {
             attr_compressionType_read_cache = "UNKNOWN";
             lima::Eiger::Camera::CompressionType type;
-
-INFO_STREAM << "Eiger::read_compressionType (1)"<< endl;
-
             m_camera->getCompressionType(type);
-
-            INFO_STREAM << "Eiger::read_compressionType : type ="<< type << endl;
-
             if(type == lima::Eiger::Camera::CompressionType::LZ4)
                 attr_compressionType_read_cache = "LZ4";                
             if(type == lima::Eiger::Camera::CompressionType::BSLZ4)

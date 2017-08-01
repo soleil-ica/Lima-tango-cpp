@@ -351,9 +351,9 @@ void EigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : wavelength
 	wavelengthAttrib	*wavelength = new wavelengthAttrib();
 	Tango::UserDefaultAttrProp	wavelength_prop;
-	wavelength_prop.set_unit("angstrom");
-	wavelength_prop.set_standard_unit("angstrom");
-	wavelength_prop.set_display_unit("angstrom");
+	wavelength_prop.set_unit("Å");
+	wavelength_prop.set_standard_unit("Å");
+	wavelength_prop.set_display_unit("Å");
 	wavelength->set_default_properties(wavelength_prop);
 	att_list.push_back(wavelength);
 
@@ -387,9 +387,9 @@ void EigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : temperature
 	temperatureAttrib	*temperature = new temperatureAttrib();
 	Tango::UserDefaultAttrProp	temperature_prop;
-	temperature_prop.set_unit("Celsius");
-	temperature_prop.set_standard_unit("Celsius");
-	temperature_prop.set_display_unit("Celsius");
+	temperature_prop.set_unit("°C");
+	temperature_prop.set_standard_unit("°C");
+	temperature_prop.set_display_unit("°C");
 	temperature->set_default_properties(temperature_prop);
 	att_list.push_back(temperature);
 

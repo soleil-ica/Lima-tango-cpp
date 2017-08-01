@@ -443,7 +443,7 @@ public:
 //
 
 class
-#ifdef WIN32
+#ifdef _TG_WINDOWS_
 	__declspec(dllexport)
 #endif
 	EigerClass : public Tango::DeviceClass
