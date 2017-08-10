@@ -208,7 +208,23 @@ void Eiger::init_device()
         return;
     }
 
-
+    //write at init, only if device is correctly initialized
+    try
+    {
+        INFO_STREAM << "- Write tango hardware at Init - compressionType" << endl;
+        Tango::WAttribute &compression_type = dev_attr->get_w_attr_by_name("compressionType");
+        attr_compressionType_write = const_cast<Tango::DevString> (memorizedCompressionType.c_str());
+        compression_type.set_write_value(attr_compressionType_write);
+        write_compressionType(compression_type);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        m_status_message << "Initialization Failed.\n" << endl;
+        m_status_message << "Origin\t: " << df.errors[0].origin << endl;
+        m_status_message << "Desc\t: " << df.errors[0].desc << endl;
+        return;
+    }
 
     m_is_device_initialized = true;
     set_state(Tango::STANDBY);
@@ -607,11 +623,7 @@ void Eiger::read_compressionType(Tango::Attribute &attr)
             attr_compressionType_read_cache = "UNKNOWN";
             lima::Eiger::Camera::CompressionType type;
 
-INFO_STREAM << "Eiger::read_compressionType (1)"<< endl;
-
             m_camera->getCompressionType(type);
-
-            INFO_STREAM << "Eiger::read_compressionType : type ="<< type << endl;
 
             if(type == lima::Eiger::Camera::CompressionType::LZ4)
                 attr_compressionType_read_cache = "LZ4";                

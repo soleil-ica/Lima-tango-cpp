@@ -989,7 +989,8 @@ Tango::DevState Hamamatsu::dev_state()
 	stringstream    DeviceStatus;
 	DeviceStatus     << "";
 	Tango::DevState DeviceState    = Tango::STANDBY;
-	if(!m_is_device_initialized )
+
+    if(!m_is_device_initialized )
 	{
 		DeviceState            = Tango::FAULT;
 		DeviceStatus        << m_status_message.str();
