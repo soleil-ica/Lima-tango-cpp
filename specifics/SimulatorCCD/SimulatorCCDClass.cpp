@@ -264,6 +264,28 @@ void SimulatorCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	fill_type->set_default_properties(fill_type_prop);
 	att_list.push_back(fill_type);
 
+	//	Attribute : xOffset
+	xOffsetAttrib	*x_offset = new xOffsetAttrib();
+	Tango::UserDefaultAttrProp	x_offset_prop;
+	x_offset_prop.set_label("X Offset");
+	x_offset_prop.set_unit(" ");
+	x_offset_prop.set_description("Set an offset on image when using GAUSS mode");
+	x_offset->set_default_properties(x_offset_prop);
+	x_offset->set_memorized();
+	x_offset->set_memorized_init(true);
+	att_list.push_back(x_offset);
+
+	//	Attribute : yOffset
+	yOffsetAttrib	*y_offset = new yOffsetAttrib();
+	Tango::UserDefaultAttrProp	y_offset_prop;
+	y_offset_prop.set_label(" Y Offset");
+	y_offset_prop.set_unit(" ");
+	y_offset_prop.set_description("Set an offset on image when using GAUSS mode");
+	y_offset->set_default_properties(y_offset_prop);
+	y_offset->set_memorized();
+	y_offset->set_memorized_init(true);
+	att_list.push_back(y_offset);
+
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
 }
