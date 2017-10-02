@@ -192,25 +192,25 @@ void Pco::init_device()
     catch(lima::Exception& e)
     {
         m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
-        ERROR_STREAM << m_status_message << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
         return;
     }
     catch (yat::Exception& ex)
     {
         m_status_message << "Initialization Failed : " << ex.errors[0].desc << endl;
-        ERROR_STREAM << m_status_message << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
         return;
     }
     catch (Tango::DevFailed& df)
     {
         m_status_message << "Initialization Failed : " << df.errors[0].desc << endl;
-        ERROR_STREAM << m_status_message << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
         return;
     }
     catch(...)
     {
         m_status_message << "Initialization Failed : Unknown error" << endl;
-        ERROR_STREAM << m_status_message << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
         return;
     }
 
@@ -609,7 +609,7 @@ void Pco::read_doubleImage(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "Pco::read_doubleImage(Tango::Attribute &attr) entering... "<< endl;
 
-    /*try
+    try
     {
         WORD wDoubleImage = 0;
         int dummy_err = -10;
@@ -625,13 +625,13 @@ void Pco::read_doubleImage(Tango::Attribute &attr)
             "LIMA_ERROR",
             e.getErrMsg().c_str(),
             "Pco::read_doubleImage");
-    }*/
+    }
 
     //- throw exception
-    Tango::Except::throw_exception(
+    /*Tango::Except::throw_exception(
         "LIMA_ERROR",
         "doubleImage is not yet supported",
-        "Pco::read_doubleImage");
+        "Pco::read_doubleImage");*/
 }
 
 //+----------------------------------------------------------------------------
@@ -645,7 +645,7 @@ void Pco::write_doubleImage(Tango::WAttribute &attr)
 {
 	INFO_STREAM << "Pco::write_doubleImage(Tango::WAttribute &attr) entering... "<< endl;
 
-    /*try
+    try
     {
         int dummy_err = -10;
         attr.get_write_value(attr_doubleImage_write);
@@ -659,13 +659,13 @@ void Pco::write_doubleImage(Tango::WAttribute &attr)
             "LIMA_ERROR",
             e.getErrMsg().c_str(),
             "Pco::write_doubleImage");
-    }*/
+    }
 
     //- throw exception
-    Tango::Except::throw_exception(
+    /*Tango::Except::throw_exception(
         "LIMA_ERROR",
         "doubleImage is not yet supported",
-        "Pco::write_doubleImage");
+        "Pco::write_doubleImage");*/
 }
 
 //+----------------------------------------------------------------------------
