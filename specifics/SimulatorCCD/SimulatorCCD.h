@@ -96,6 +96,10 @@ public :
 		Tango::DevDouble	attr_growFactor_write;
 		Tango::DevString	*attr_fillType_read;
 		Tango::DevString	attr_fillType_write;
+		Tango::DevDouble	*attr_xOffset_read;
+		Tango::DevDouble	attr_xOffset_write;
+		Tango::DevDouble	*attr_yOffset_read;
+		Tango::DevDouble	attr_yOffset_write;
 //@}
 
 /**
@@ -200,6 +204,22 @@ public :
  */
 	virtual void write_fillType(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for xOffset acquisition result.
+ */
+	virtual void read_xOffset(Tango::Attribute &attr);
+/**
+ *	Write xOffset attribute values to hardware.
+ */
+	virtual void write_xOffset(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for yOffset acquisition result.
+ */
+	virtual void read_yOffset(Tango::Attribute &attr);
+/**
+ *	Write yOffset attribute values to hardware.
+ */
+	virtual void write_yOffset(Tango::WAttribute &attr);
+/**
  *	Read/Write allowed for growFactor attribute.
  */
 	virtual bool is_growFactor_allowed(Tango::AttReqType type);
@@ -207,6 +227,14 @@ public :
  *	Read/Write allowed for fillType attribute.
  */
 	virtual bool is_fillType_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for xOffset attribute.
+ */
+	virtual bool is_xOffset_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for yOffset attribute.
+ */
+	virtual bool is_yOffset_allowed(Tango::AttReqType type);
 
 /**
  *	Read the device properties from database

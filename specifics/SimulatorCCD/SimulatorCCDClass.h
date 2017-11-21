@@ -51,6 +51,34 @@ namespace SimulatorCCD_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class yOffsetAttrib: public Tango::Attr
+{
+public:
+	yOffsetAttrib():Attr("yOffset", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~yOffsetAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<SimulatorCCD *>(dev))->read_yOffset(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<SimulatorCCD *>(dev))->write_yOffset(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<SimulatorCCD *>(dev))->is_yOffset_allowed(ty);}
+};
+
+class xOffsetAttrib: public Tango::Attr
+{
+public:
+	xOffsetAttrib():Attr("xOffset", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~xOffsetAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<SimulatorCCD *>(dev))->read_xOffset(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<SimulatorCCD *>(dev))->write_xOffset(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<SimulatorCCD *>(dev))->is_xOffset_allowed(ty);}
+};
+
 class fillTypeAttrib: public Tango::Attr
 {
 public:

@@ -216,8 +216,7 @@ void SimulatorCCD::get_device_property()
 	//	Try to initialize MemorizedFillType from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedFillType;
-    else
-    {
+	else {
 		//	Try to initialize MemorizedFillType from default device value
 		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
 		if (def_prop.is_empty()==false)	def_prop  >>  memorizedFillType;
@@ -228,8 +227,7 @@ void SimulatorCCD::get_device_property()
 	//	Try to initialize MemorizedGrowFactor from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedGrowFactor;
-    else
-    {
+	else {
 		//	Try to initialize MemorizedGrowFactor from default device value
 		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
 		if (def_prop.is_empty()==false)	def_prop  >>  memorizedGrowFactor;
@@ -303,6 +301,144 @@ void SimulatorCCD::read_attr_hardware(vector<long> &attr_list)
     DEBUG_STREAM << "SimulatorCCD::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
     //    Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		SimulatorCCD::read_xOffset
+// 
+// description :  	Reads the offsets on X axis position.
+//
+//-----------------------------------------------------------------------------
+void SimulatorCCD::read_xOffset(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SimulatorCCD::read_xOffset(Tango::Attribute &attr) entering... "<< endl;
+  
+   try
+    {
+        attr.set_value(&attr_xOffset_write);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "SimulatorCCD::read_xOffset");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "SimulatorCCD::read_xOffset");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		SimulatorCCD::write_xOffset
+// 
+// description : Sets an offset on X axis position
+//
+//-----------------------------------------------------------------------------
+void SimulatorCCD::write_xOffset(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "SimulatorCCD::write_xOffset(Tango::WAttribute &attr) entering... "<< endl;
+  try
+  {
+      attr.get_write_value(attr_xOffset_write);
+      m_camera->computeNewXOffset(attr_xOffset_write);
+  }
+  catch (Tango::DevFailed& df)
+  {
+      ERROR_STREAM << df << endl;
+      //- rethrow exception
+      Tango::Except::re_throw_exception(df,
+                                        "TANGO_DEVICE_ERROR",
+                                        string(df.errors[0].desc).c_str(),
+                                        "SimulatorCCD::write_xOffset");
+  }
+  catch (Exception& e)
+  {
+      ERROR_STREAM << e.getErrMsg() << endl;
+      //- throw exception
+      Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                     e.getErrMsg().c_str(),
+                                     "SimulatorCCD::write_xOffset");
+  }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		SimulatorCCD::read_yOffset
+// 
+// description : 	Reads the offsets on Y axis position.
+//
+//-----------------------------------------------------------------------------
+void SimulatorCCD::read_yOffset(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SimulatorCCD::read_yOffset(Tango::Attribute &attr) entering... "<< endl;
+  
+    try
+    {
+        attr.set_value(&attr_yOffset_write);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "SimulatorCCD::read_yOffset");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "SimulatorCCD::read_yOffset");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		SimulatorCCD::write_yOffset
+// 
+// description : 	Sets an offset on y axis position.
+//
+//-----------------------------------------------------------------------------
+void SimulatorCCD::write_yOffset(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "SimulatorCCD::write_yOffset(Tango::WAttribute &attr) entering... "<< endl;
+  
+    try
+    {
+        attr.get_write_value(attr_yOffset_write);
+        m_camera->computeNewYOffset(attr_yOffset_write);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "SimulatorCCD::write_yOffset");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "SimulatorCCD::write_yOffset");
+    }
+
+}
+
 //+----------------------------------------------------------------------------
 //
 // method : 		SimulatorCCD::read_fillType
@@ -539,5 +675,7 @@ Tango::DevState SimulatorCCD::dev_state()
     DEBUG_STREAM << "SimulatorCCD::dev_state() ending... " << endl;
     return argout;
 }
+
+
 
 }	//	namespace

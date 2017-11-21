@@ -116,6 +116,34 @@ bool SimulatorCCD::is_fillType_allowed(Tango::AttReqType type)
 	}
 	return true;
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		SimulatorCCD::is_xOffset_allowed
+// 
+// description : 	Read/Write allowed for xOffset attribute.
+//
+//-----------------------------------------------------------------------------
+bool SimulatorCCD::is_xOffset_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		SimulatorCCD::is_yOffset_allowed
+// 
+// description : 	Read/Write allowed for yOffset attribute.
+//
+//-----------------------------------------------------------------------------
+bool SimulatorCCD::is_yOffset_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
 
 //=================================================
 //		Commands Allowed Methods
