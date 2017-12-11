@@ -193,7 +193,7 @@ void LimaDetector::init_device()
     m_hw = 0;
     m_is_device_initialized = false;
     m_status_message.str("");
-    m_saving_options = "IMMEDIATE|COPY|TRUE";
+    m_saving_options = "SYNCHRONOUS|NO_COPY|TRUE";
     //By default INIT, need to ensure that all objets are OK before set the device to STANDBY
     set_state(Tango::INIT);
 
@@ -201,20 +201,6 @@ void LimaDetector::init_device()
 	create_log_info_attributes();
 
     get_device_property();
-
-    //- Set Serialisation mode
-    //- Only for Pco for testing purpose
-    if (detectorType == "Pco")
-    {
-        //- this allow dynamic attr in specific devices
-        INFO_STREAM << "Serialisation Model : BY_PROCESS" << endl;
-        Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_PROCESS);
-    }
-    else
-    {
-        INFO_STREAM << "Serialisation Model : BY_DEVICE" << endl;
-        Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_DEVICE);
-    }
 
 	//ensure these "string" properties are upcase 
     transform(imageSource.begin(), imageSource.end(), imageSource.begin(), ::toupper);
@@ -307,8 +293,8 @@ void LimaDetector::init_device()
         configure_image_type();
 
         //fix percent of memory to allocate for the lima buffer
-        INFO_STREAM << "Fix amount percent of memory for the lima ring buffer following the bufferMaxMemoryPercent property (" << bufferMaxMemoryPercent << ")." << endl;
-        m_ct->buffer()->setMaxMemory((short) bufferMaxMemoryPercent);
+        INFO_STREAM << "Fix amount percent of memory for the lima ring buffer following the ExpertBufferMaxMemoryPercent property (" << expertBufferMaxMemoryPercent << ")." << endl;
+        m_ct->buffer()->setMaxMemory((short) expertBufferMaxMemoryPercent);
 		
         //- reset image, allow to redefine type image according to  CurrentImageType of the HwDetInfoCtrlObj
         m_ct->image()->reset();		
@@ -354,8 +340,8 @@ void LimaDetector::init_device()
         configure_available_trigger_mode();
 
         //fix nb thread
-        INFO_STREAM << "Fix Nb. Pool Thread Manager to (4)." << endl;
-        PoolThreadMgr::get().setNumberOfThread(4);
+        INFO_STREAM << "Fix Nb. Pool Thread Manager to ("<<expertNbPoolThread<<")." << endl;
+        PoolThreadMgr::get().setNumberOfThread(expertNbPoolThread);
 		
 		//----------------------------------------------------------------------------------
 		//- Create acquisition Task, State = INIT if Task could not be created !
@@ -461,11 +447,12 @@ void LimaDetector::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("FileWriteMode"));
 	dev_prop.push_back(Tango::DbDatum("FileMemoryMode"));
 	dev_prop.push_back(Tango::DbDatum("FileTimestampEnabled"));
-	dev_prop.push_back(Tango::DbDatum("BufferMaxMemoryPercent"));
-	dev_prop.push_back(Tango::DbDatum("UsePrepareCmd"));
 	dev_prop.push_back(Tango::DbDatum("DebugModules"));
 	dev_prop.push_back(Tango::DbDatum("DebugLevels"));
 	dev_prop.push_back(Tango::DbDatum("DebugFormats"));
+	dev_prop.push_back(Tango::DbDatum("ExpertBufferMaxMemoryPercent"));
+	dev_prop.push_back(Tango::DbDatum("ExpertNbPoolThread"));
+	dev_prop.push_back(Tango::DbDatum("ExpertUsePrepareCmd"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedRoi"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedBinningH"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedBinningV"));
@@ -689,28 +676,6 @@ void LimaDetector::get_device_property()
 	//	And try to extract FileTimestampEnabled value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  fileTimestampEnabled;
 
-	//	Try to initialize BufferMaxMemoryPercent from class property
-	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  bufferMaxMemoryPercent;
-	else {
-		//	Try to initialize BufferMaxMemoryPercent from default device value
-		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if (def_prop.is_empty()==false)	def_prop  >>  bufferMaxMemoryPercent;
-	}
-	//	And try to extract BufferMaxMemoryPercent value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  bufferMaxMemoryPercent;
-
-	//	Try to initialize UsePrepareCmd from class property
-	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  usePrepareCmd;
-	else {
-		//	Try to initialize UsePrepareCmd from default device value
-		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if (def_prop.is_empty()==false)	def_prop  >>  usePrepareCmd;
-	}
-	//	And try to extract UsePrepareCmd value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  usePrepareCmd;
-
 	//	Try to initialize DebugModules from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  debugModules;
@@ -743,6 +708,39 @@ void LimaDetector::get_device_property()
 	}
 	//	And try to extract DebugFormats value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  debugFormats;
+
+	//	Try to initialize ExpertBufferMaxMemoryPercent from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  expertBufferMaxMemoryPercent;
+	else {
+		//	Try to initialize ExpertBufferMaxMemoryPercent from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  expertBufferMaxMemoryPercent;
+	}
+	//	And try to extract ExpertBufferMaxMemoryPercent value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertBufferMaxMemoryPercent;
+
+	//	Try to initialize ExpertNbPoolThread from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  expertNbPoolThread;
+	else {
+		//	Try to initialize ExpertNbPoolThread from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  expertNbPoolThread;
+	}
+	//	And try to extract ExpertNbPoolThread value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertNbPoolThread;
+
+	//	Try to initialize ExpertUsePrepareCmd from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  expertUsePrepareCmd;
+	else {
+		//	Try to initialize ExpertUsePrepareCmd from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  expertUsePrepareCmd;
+	}
+	//	And try to extract ExpertUsePrepareCmd value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertUsePrepareCmd;
 
 	//	Try to initialize MemorizedRoi from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -927,8 +925,8 @@ void LimaDetector::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "FileNbFrames");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "./data", "FileTargetPath");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "SOFTWARE", "FileManagedMode");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "IMMEDIATE", "FileWriteMode");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "COPY", "FileMemoryMode");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "SYNCHRONOUS", "FileWriteMode");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "NO_COPY", "FileMemoryMode");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", "FileTimestampEnabled");
 
     vec_init.clear();
@@ -950,8 +948,9 @@ void LimaDetector::get_device_property()
     vec_init.push_back("Type");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, vec_init, "DebugFormats");
 
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "70", "BufferMaxMemoryPercent");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "UsePrepareCmd");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "70", "ExpertBufferMaxMemoryPercent");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "4", "ExpertNbPoolThread");	
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "ExpertUsePrepareCmd");
 
     vec_init.clear();
     vec_init.push_back("-1");
@@ -3131,7 +3130,7 @@ void LimaDetector::prepare()
     //	Add your own code to control device here
     try
     {
-        if(usePrepareCmd)
+        if(expertUsePrepareCmd)
         {
             if(dev_state() == Tango::RUNNING)//mantis #22238
                 return;
@@ -3214,7 +3213,7 @@ void LimaDetector::snap()
 							"LimaDetector::snap");
         }
 
-        if(!usePrepareCmd)
+        if(!expertUsePrepareCmd)
         {
             ////////////////////////////////////////////////////////
             //because start() force nbFrames = 0 & CtSaving::Manual
@@ -3962,17 +3961,16 @@ Tango::DevState LimaDetector::dev_state()
     else
     {
 		// check if an error was reported in the event list
-		if(m_ct->event()->hasCapability())
+		CtEvent::EventList event_list;
+		m_ct->event()->getEventList(event_list);
+		std::stringstream ss_events;
+		ss_events.str("");
+		for (int i = 0; i < event_list.size(); i++)
 		{
-			CtEvent::EventList event_list;
-			m_ct->event()->getEventList(event_list);
-			for (int i = 0; i < event_list.size(); i++)
-			{
-				std::string event_str = event_list[i]->getMsgStr();
-				DEBUG_STREAM<<"Eventlist["<<i<<"] = "<<event_str<<std::endl;
-				ControlFactory::instance().set_event_status(event_str);
-			}
-		}	
+			ss_events<< event_list[i]->getMsgStr()<<std::endl;
+			INFO_STREAM<<"Eventlist["<<i<<"] = "<<event_list[i]->getMsgStr()<<std::endl;
+			ControlFactory::instance().set_event_status(ss_events.str());
+		}
 		
         // check if an error ocured in the acquisition task
         if(m_acquisition_task->get_state() == Tango::FAULT)
@@ -3983,8 +3981,7 @@ Tango::DevState LimaDetector::dev_state()
         else
         {
             // let's take a look at the status of control & the status of the plugin
-            DeviceState = ControlFactory::instance().get_state();
-            //            INFO_STREAM<<"++++++++++++++++++++++++++++++ DeviceState  = "<<Tango::DevStateName[DeviceState]<<std::endl;
+            DeviceState = ControlFactory::instance().get_state();            
             DeviceStatus << ControlFactory::instance().get_status();
         }
     }
@@ -4013,7 +4010,7 @@ bool LimaDetector::create_acquisition_task(void)
 
         //- prepare the conf to be passed to the task
         m_acq_conf.ct = m_ct;
-        m_acq_conf.use_prepare_cmd = usePrepareCmd;
+        m_acq_conf.use_prepare_cmd = expertUsePrepareCmd;
 
         //- create an INIT msg to pass it some data (Conf)
         yat::Message* msg = yat::Message::allocate(yat::TASK_INIT, INIT_MSG_PRIORITY, true);
@@ -4167,6 +4164,10 @@ void LimaDetector::configure_image_type(void)
     {
         hw_det_info->setCurrImageType(Bpp16);
     }
+    else if(detectorPixelDepth == "16S")
+    {
+        hw_det_info->setCurrImageType(Bpp16S);
+    }	
     else if(detectorPixelDepth == "24")
     {
         hw_det_info->setCurrImageType(Bpp24);
@@ -4271,7 +4272,7 @@ void LimaDetector::configure_saving_parameters(void)
     {
         m_saving_par.fileFormat = CtSaving::NXS;
         m_saving_par.suffix = ".nxs";
-        if(fileWriteMode != "IMMEDIATE" && fileWriteMode != "SYNCHRONOUS" && fileWriteMode != "DELAYED")
+        if(fileWriteMode != "IMMEDIATE" && fileWriteMode != "ASYNCHRONOUS" && fileWriteMode != "SYNCHRONOUS" && fileWriteMode != "DELAYED")
         {
             stringstream ss;
             ss << "FileWriteMode " << "(" << fileWriteMode << ") is not supported!" << endl;
@@ -4607,6 +4608,10 @@ void LimaDetector::add_image_dynamic_attribute(void)
     {
         dai.tai.data_type = Tango::DEV_ULONG;
     }
+    else if(detectorPixelDepth == "16S")
+    {
+        dai.tai.data_type = Tango::DEV_USHORT;
+    }	
     else if(detectorPixelDepth == "32S")
     {
         dai.tai.data_type = Tango::DEV_LONG;
@@ -4799,6 +4804,10 @@ void LimaDetector::execute_close_shutter_callback(yat4tango::DynamicCommandExecu
                         "LimaDetector::execute_close_shutter_callback");
     }
 }
+
+
+
+
 
 
 

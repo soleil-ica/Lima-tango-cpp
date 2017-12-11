@@ -353,16 +353,6 @@ public:
  */
 	Tango::DevBoolean	fileTimestampEnabled;
 /**
- *	Define the Percent of Memory reserved to Lima buffer control.<br>
- *	BufferMaxMemoryPercent = 70, allow a Memory of 1.4 Go. (Default)<br>
- *	BufferMaxMemoryPercent = 100, allow a Memory of 2 Go. (Maximum)
- */
-	Tango::DevUShort	bufferMaxMemoryPercent;
-/**
- *	If enabled, a call of 'Prepare' command is necessary before each 'Start' command.
- */
-	Tango::DevBoolean	usePrepareCmd;
-/**
  *	Define modules that we need to have some debug traces.<BR>
  *	Availables values :<BR>
  *	- None<BR>
@@ -396,6 +386,20 @@ public:
  *	- FileLine<BR>
  */
 	vector<string>	debugFormats;
+/**
+ *	Define the Percent of Memory reserved to Lima buffer control.<br>
+ *	BufferMaxMemoryPercent = 70, allow a Memory of 1.4 Go. (Default)<br>
+ *	BufferMaxMemoryPercent = 100, allow a Memory of 2 Go. (Maximum)
+ */
+	Tango::DevUShort	expertBufferMaxMemoryPercent;
+/**
+ *	Defines the number of threads dedicated to process images in the PricessLib
+ */
+	Tango::DevUShort	expertNbPoolThread;
+/**
+ *	If enabled, a call of 'Prepare' command is necessary before each 'Start' command.
+ */
+	Tango::DevBoolean	expertUsePrepareCmd;
 /**
  *	Memorize/Define the Region of Interest of the Acquisition: <br>
  *	origin X<br>

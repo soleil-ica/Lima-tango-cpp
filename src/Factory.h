@@ -21,6 +21,7 @@
 #include <lima/CtControl.h>
 #include "lima/Debug.h"
 #include <yat/threading/Mutex.h>
+#include <yat/utils/Logging.h>
 
 
 #ifdef SIMULATOR_ENABLED

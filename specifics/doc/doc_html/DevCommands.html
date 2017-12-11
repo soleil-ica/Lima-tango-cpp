@@ -43,9 +43,9 @@
 <Br>
 <center>
 <h1>
-Device specific for ImXpad detector		<Br>
+Device specific for Andor CCD detector		<Br>
 Device Commands Description 		<Br> <Br>
-ImXpad Class	<Br>
+AndorCCD Class	<Br>
 </h1>
 <b>
 Revision:  - Author: 
@@ -70,7 +70,7 @@ The language device desctructor automatically calls the <i> delete_device() </i>
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : none.<Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::FAULT<Li>Tango::INIT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
+<Li>Tango::INIT<Li>Tango::STANDBY<Li>Tango::FAULT<Li>Tango::RUNNING</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
@@ -84,7 +84,7 @@ The language device desctructor automatically calls the <i> delete_device() </i>
 <Li><Strong>Argout:<Br>DEV_STATE</Strong>
  : State Code<Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::FAULT<Li>Tango::INIT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
+<Li>Tango::INIT<Li>Tango::STANDBY<Li>Tango::FAULT<Li>Tango::RUNNING</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
@@ -98,119 +98,7 @@ The language device desctructor automatically calls the <i> delete_device() </i>
 <Li><Strong>Argout:<Br>CONST_DEV_STRING</Strong>
  : Status description<Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::FAULT<Li>Tango::INIT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
-<Br>&nbsp
-</ul><Br>
-<Br>
-<A NAME="StartCalibration"><!-- --></A>
-<A NAME="StartCalibration"><!-- --></A>
-<h2>4 - StartCalibration</h2>
-<ul>
-<Li><Strong>Description: </Strong> Start the calibration of detector <br><Br>&nbsp
-<Li><Strong>Argin:<Br>DEV_VOID</Strong>
- : <Br>&nbsp
-<Li><Strong>Argout:<Br>DEV_VOID</Strong>
- : <Br>&nbsp
-<Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY</Ul>
-<Br>&nbsp
-</ul><Br>
-<Br>
-<A NAME="SaveCalibrationFile"><!-- --></A>
-<A NAME="SaveCalibrationFile"><!-- --></A>
-<h2>5 - SaveCalibrationFile</h2>
-<ul>
-<Li><Strong>Description: </Strong> Save the calibration already done through the StartCalibartion in a file<Br>&nbsp
-<Li><Strong>Argin:<Br>DEV_STRING</Strong>
- : Target calibration file name<Br>&nbsp
-<Li><Strong>Argout:<Br>DEV_VOID</Strong>
- : <Br>&nbsp
-<Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY</Ul>
-<Br>&nbsp
-</ul><Br>
-<Br>
-<A NAME="LoadCalibrationFile"><!-- --></A>
-<A NAME="LoadCalibrationFile"><!-- --></A>
-<h2>6 - LoadCalibrationFile</h2>
-<ul>
-<Li><Strong>Description: </Strong> Load a calibration file<br><Br>&nbsp
-<Li><Strong>Argin:<Br>DEV_STRING</Strong>
- : The calibration File Name <Br>&nbsp
-<Li><Strong>Argout:<Br>DEV_VOID</Strong>
- : <Br>&nbsp
-<Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY</Ul>
-<Br>&nbsp
-</ul><Br>
-<Br>
-<A NAME="CreateWhiteImage"><!-- --></A>
-<A NAME="CreateWhiteImage"><!-- --></A>
-<h2>7 - CreateWhiteImage</h2>
-<ul>
-<Li><Strong>Description: </Strong> Create the White image<Br>&nbsp
-<Li><Strong>Argin:<Br>DEV_STRING</Strong>
- : White image name<Br>&nbsp
-<Li><Strong>Argout:<Br>DEV_VOID</Strong>
- : <Br>&nbsp
-<Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY</Ul>
-<Br>&nbsp
-</ul><Br>
-<Br>
-<A NAME="ChooseWhiteImage"><!-- --></A>
-<A NAME="ChooseWhiteImage"><!-- --></A>
-<h2>8 - ChooseWhiteImage</h2>
-<ul>
-<Li><Strong>Description: </Strong> Select the white image<Br>&nbsp
-<Li><Strong>Argin:<Br>DEV_STRING</Strong>
- : White image name<Br>&nbsp
-<Li><Strong>Argout:<Br>DEV_VOID</Strong>
- : <Br>&nbsp
-<Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY</Ul>
-<Br>&nbsp
-</ul><Br>
-<Br>
-<A NAME="GetWhiteImagesList"><!-- --></A>
-<A NAME="GetWhiteImagesList"><!-- --></A>
-<h2>9 - GetWhiteImagesList</h2>
-<ul>
-<Li><Strong>Description: </Strong> Display the list of available White images<Br>&nbsp
-<Li><Strong>Argin:<Br>DEV_VOID</Strong>
- : <Br>&nbsp
-<Li><Strong>Argout:<Br>DEVVAR_STRINGARRAY</Strong>
- : <Br>&nbsp
-<Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY</Ul>
-<Br>&nbsp
-</ul><Br>
-<Br>
-<A NAME="DeleteWhiteImage"><!-- --></A>
-<A NAME="DeleteWhiteImage"><!-- --></A>
-<h2>10 - DeleteWhiteImage</h2>
-<ul>
-<Li><Strong>Description: </Strong> Delete the white image<Br>&nbsp
-<Li><Strong>Argin:<Br>DEV_STRING</Strong>
- : White image name<Br>&nbsp
-<Li><Strong>Argout:<Br>DEV_VOID</Strong>
- : <Br>&nbsp
-<Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY</Ul>
-<Br>&nbsp
-</ul><Br>
-<Br>
-<A NAME="Abort"><!-- --></A>
-<A NAME="Abort"><!-- --></A>
-<h2>11 - Abort</h2>
-<ul>
-<Li><Strong>Description: </Strong> Abort current process ...<Br>&nbsp
-<Li><Strong>Argin:<Br>DEV_VOID</Strong>
- : <Br>&nbsp
-<Li><Strong>Argout:<Br>DEV_VOID</Strong>
- : <Br>&nbsp
-<Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::FAULT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
+<Li>Tango::INIT<Li>Tango::STANDBY<Li>Tango::FAULT<Li>Tango::RUNNING</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>

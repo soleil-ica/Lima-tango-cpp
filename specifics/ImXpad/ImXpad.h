@@ -447,9 +447,9 @@ protected :
     bool                        m_is_device_initialized ;
     stringstream                m_status_message;
     //lima OBJECTS
-    imXpad::Interface* m_hw;
+    imXpad::Interface*  m_hw;
     CtControl*          m_ct;
-    imXpad::Camera*    m_camera;	
+    imXpad::Camera*     m_camera;	
 	std::string 		m_calibration_mode;
     std::string 		m_acquisition_mode;
     imXpad::Camera::XpadAcquisitionMode::AcquisitionMode m_acquisition_mode_enum;

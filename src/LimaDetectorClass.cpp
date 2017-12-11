@@ -1192,36 +1192,6 @@ void LimaDetectorClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
-	prop_name = "BufferMaxMemoryPercent";
-	prop_desc = "Define the Percent of Memory reserved to Lima buffer control.<br>\nBufferMaxMemoryPercent = 70, allow a Memory of 1.4 Go. (Default)<br>\nBufferMaxMemoryPercent = 100, allow a Memory of 2 Go. (Maximum)";
-	prop_def  = "70";
-	vect_data.clear();
-	vect_data.push_back("70");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "UsePrepareCmd";
-	prop_desc = "If enabled, a call of 'Prepare' command is necessary before each 'Start' command.";
-	prop_def  = "false";
-	vect_data.clear();
-	vect_data.push_back("false");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
 	prop_name = "DebugModules";
 	prop_desc = "Define modules that we need to have some debug traces.<BR>\nAvailables values :<BR>\n- None<BR>\n- Hardware<BR>\n- Control<BR>\n- Common<BR>\n- Camera<BR>";
 	prop_def  = "Hardware\nControl\nCommon\nCamera";
@@ -1265,6 +1235,51 @@ void LimaDetectorClass::set_default_property()
 	vect_data.push_back("Module");
 	vect_data.push_back("Type");
 	vect_data.push_back("Funct");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "ExpertBufferMaxMemoryPercent";
+	prop_desc = "Define the Percent of Memory reserved to Lima buffer control.<br>\nBufferMaxMemoryPercent = 70, allow a Memory of 1.4 Go. (Default)<br>\nBufferMaxMemoryPercent = 100, allow a Memory of 2 Go. (Maximum)";
+	prop_def  = "70";
+	vect_data.clear();
+	vect_data.push_back("70");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "ExpertNbPoolThread";
+	prop_desc = "Defines the number of threads dedicated to process images in the PricessLib";
+	prop_def  = "4";
+	vect_data.clear();
+	vect_data.push_back("4");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "ExpertUsePrepareCmd";
+	prop_desc = "If enabled, a call of 'Prepare' command is necessary before each 'Start' command.";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
