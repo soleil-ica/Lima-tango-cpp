@@ -1,0 +1,124 @@
+@startuml
+
+title
+<font color=red>Lima</font>
+<font color=red>StartAcq & timestamp computation</font>
+<b>Diagram Sequence</b>
+16/11/2017
+<u>Arafat Noureddine</u>
+
+end title
+
+actor User
+
+participant "LimaDetector" as Device
+box "TANGO" #LightGreen
+	participant Device
+end box
+
+participant "Controller" as Ctrl
+participant "BufferMgr" as Buffer
+box "       LIMA CORE      " #Orange
+	participant Ctrl
+    participant Buffer
+end box
+
+participant "Camera" as Cam
+participant "ThreadFunction" as Thread
+box "PLUGIN" #LightBlue
+	participant Cam	
+    participant Thread
+end box
+
+
+User -> Device: Snap()
+activate Device
+
+Device -> Ctrl : prepareAcq()\t\t\t
+activate Ctrl
+note over Device, Ctrl 
+        **See Diagram of prepareAcq for more details : **
+        ...
+        //Diagram_sequence_prepareAcq_allocbuffers_1.png//
+end note
+Ctrl --> Device
+deactivate Ctrl
+
+Device -> Ctrl: startAcq()
+activate Ctrl
+
+Ctrl -> Cam : startAcq()
+activate Cam
+
+Cam -> Buffer : setStartTimestamp()
+activate Buffer
+note over Buffer, Cam  
+[relative timestamp]
+This fix the start timestamp, it can be used in newFrameReady() 
+to compute the relative timestamp (now-start)
+end note
+Buffer --> Cam 
+deactivate Buffer
+
+Cam -> Thread : Activate the thread ...
+activate Thread
+
+Thread --> Cam 
+deactivate Thread
+
+Cam --> Ctrl
+deactivate Cam
+
+Ctrl --> Device
+deactivate Ctrl
+Device --> User
+deactivate Device
+
+hnote over Device 
+            State = RUNNING
+end note
+
+loop while  currentFrame < nbFrames AND no Stop() command AND no Errors occured
+
+    Thread -> Buffer: ptr = getFrameBufferPtr()
+    activate Thread
+    activate Buffer
+    Buffer --> Thread
+    deactivate Buffer
+    deactivate Thread
+
+    Thread -> Detector: Get the image through library/socket/zmq/etc...
+    activate Thread
+    activate Detector
+    Detector --> Thread
+    deactivate Thread
+    deactivate Detector
+
+    Thread -> Thread : Copy the image into the frame buffer ptr ...
+    activate Thread
+    deactivate Thread
+
+    Thread -> Buffer: newFrameReady() 
+    activate Thread
+    activate Buffer
+    note over Thread  
+    [absolute timestamp]
+    if necessary we can fix an absolute timestamp here using 
+    frame_info.frame_timestamp = Timestamp::now();
+    end note
+
+        alt frame_timestamp is not explicitly set (relative timestamp)
+                    Buffer -> Buffer: timestamp = Timestamp::now() - getStartTimestamp()
+        end
+
+        alt frame_timestamp is already explicitly set (absolute timestamp)
+                    Buffer -> Buffer: timestamp is not changed (see note above)
+        end
+    Buffer --> Thread
+    deactivate Buffer
+    deactivate Thread
+end
+
+deactivate Cam
+
+@enduml

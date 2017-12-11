@@ -1,0 +1,154 @@
+@startuml
+
+title
+<font color=red>Lima</font>
+<font color=red>prepareAcq & Buffer Memory Management</font>
+<b>Diagram Sequence</b>
+23/11/2017
+<u>Arafat Noureddine</u>
+end title
+
+actor User
+
+participant "LimaDetector" as Device
+box "TANGO" #LightGreen
+	participant Device
+end box
+
+participant "CtControl" as Ctrl
+participant "CtAcquisition" as Acquisition
+participant "CtImage" as Image
+participant "CtBuffer" as Buffer
+participant "HwBufferMgr" as BufferMgr
+participant "Common" as Common
+participant "CtSaving" as Saving
+box "       LIMA CORE      " #Orange
+	participant Ctrl
+    participant Acquisition
+    participant Image
+    participant Buffer
+    participant BufferMgr
+    participant Common
+    participant Saving
+end box
+
+participant "Camera" as Camera
+box "PLUGIN" #LightBlue
+	participant Camera	
+    participant Thread
+end box
+
+
+User -> Device: Snap()
+activate Device
+
+Device -> Ctrl: prepareAcq()\t
+activate Ctrl
+
+Ctrl -> Image : applyHard()
+activate Image
+note over Image 
+            apply Hardware defined in the plugin of the camera : 
+            if Binning capability exist then setBin()
+            if Roi capability exist then setRoi()
+            if Flip capability exist then setFlip()
+end note
+Image --> Ctrl
+deactivate Image
+
+
+Ctrl -> Buffer : setup()
+activate Buffer
+
+Buffer -> Buffer : getMaxNumber()
+activate Buffer
+
+Buffer -> BufferMgr : getMaxNbBuffers()
+activate BufferMgr
+
+BufferMgr -> Common: GetDefMaxNbBuffers()
+activate Common
+note over Common
+        Get the max available Memory according to the plateform type (32 or 64) 
+        Get the max nb. buffers that could be allocated, according to the frame size
+end note
+Common --> BufferMgr
+deactivate Common
+
+BufferMgr --> Buffer
+deactivate BufferMgr
+
+note over Buffer
+        The max nb. buffers depends on a percent defined by the user
+        max_nbuffers = (max_nbuffers * maxMemoryPercent/100);
+end note
+
+Buffer -> BufferMgr : setNbBuffers()
+activate BufferMgr
+
+BufferMgr -> BufferMgr : alocBuffers()
+activate BufferMgr
+note over BufferMgr 
+        Allocate Buffers according to the value computed by MaxNbBuffers()
+end note
+BufferMgr --> Buffer
+deactivate BufferMgr
+
+deactivate BufferMgr
+deactivate Buffer
+Buffer --> Ctrl
+deactivate Buffer
+
+
+Ctrl -> Acquisition : apply()
+activate Acquisition
+note over Acquisition 
+            apply all parameters SyncCtrlObj as : 
+            exposureTime
+            latencyTime
+            etc ...
+end note
+Acquisition --> Ctrl
+deactivate Acquisition
+
+Ctrl -> Saving : _prepare()
+activate Saving
+Saving --> Ctrl
+deactivate Saving
+
+Ctrl -> Camera : prepareAcq()\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t
+activate Camera
+Camera --> Ctrl
+deactivate Camera
+
+Ctrl -> Image : applySoft()
+activate Image
+note over Image 
+            apply Software  : 
+            setBin()
+            setRoi()
+            setFlip()
+end note
+Image --> Ctrl
+deactivate Image
+
+Ctrl --> Device 
+deactivate Ctrl
+
+hnote right 
+        m_ready = true 
+        it's allowed to call startAcq now ...
+end note
+
+
+Device -> Ctrl : startAcq()
+activate Ctrl
+note over Ctrl
+        **See Diagram of startAcq for more details : **
+        ...
+        //Diagram_sequence_startAcq_timestamp_1.png//
+end note
+Ctrl --> Device
+deactivate Ctrl
+
+@enduml
