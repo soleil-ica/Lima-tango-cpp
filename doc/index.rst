@@ -3,16 +3,25 @@ C++ TANGO device server
 
 This is the C++ **LimaDetector** Tango device server developped at SOLEIL.
 
-This device server provides several Tango classe:
+This device server provides several Tango classes:
 
 - LimaDetector : generic class for the standard camera control
 - *CameraType* : a camera specific class for the camera configuration (BaslerCCD, Eiger, Hamamatsu, MarCCD, Merlin, Pco, PerkinElmer, PilatusPixelDetector, PrincetonCCD, ProsilicaCCD, SimulatorCCD, Uview, XpadPixelDetector)
 - Optionnal classes:
  * RoiCounters : 
- * Layout
- * [FlatField]
- * BackgroundSubstraction
-and a set of "plugin" devices for extra operations or just to provide some specific API for clients.
+ * Layout : 
+ * [FlatField] : 
+ * [BackgroundSubstraction] : 
+ 
+.. toctree::
+  :maxdepth: 1
+  
+  LimaDetector <LimaDetector>
+  Andor <todo/todo>
+  Basler <BaslerCCD/index.rst>
+  PCO <Pco/pco>
+ 
+
 
 Thanks to the Lima framework,  the control can be achieved through a common server and a set of software operations (Mask,Flatfield,Background,RoiCounter,PeakFinder...) on image as well. The configuration of the detector is done by  the specific detector device. 
 At ESRF we decided to develop the Tango devices only in python language which implies that all the detector C++ interfaces have been wrapped in python.
