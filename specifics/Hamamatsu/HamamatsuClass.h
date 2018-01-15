@@ -45,6 +45,18 @@ namespace Hamamatsu_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class TemperatureAttrib: public Tango::Attr
+{
+public:
+	TemperatureAttrib():Attr("Temperature", Tango::DEV_DOUBLE, Tango::READ) {};
+	~TemperatureAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_Temperature(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_Temperature_allowed(ty);}
+};
+
 class bottomViewExposureTimeAttrib: public Tango::Attr
 {
 public:

@@ -302,6 +302,17 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	bottom_view_exposure_time->set_memorized_init(false);
 	att_list.push_back(bottom_view_exposure_time);
 
+	//	Attribute : Temperature
+	TemperatureAttrib	*temperature = new TemperatureAttrib();
+	Tango::UserDefaultAttrProp	temperature_prop;
+	temperature_prop.set_unit("Celcius");
+	temperature_prop.set_standard_unit("Celcius");
+	temperature_prop.set_display_unit("Celcius");
+	temperature_prop.set_format("%.2");
+	temperature_prop.set_description("Temperature of the image sensor in Celcius.");
+	temperature->set_default_properties(temperature_prop);
+	att_list.push_back(temperature);
+
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
 }
