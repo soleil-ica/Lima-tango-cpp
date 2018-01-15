@@ -3890,6 +3890,18 @@ Tango::DevState LimaDetector::dev_state()
     }
     else
     {
+        // check if an error was reported in the event list
+		CtEvent::EventList event_list;
+		m_ct->event()->getEventList(event_list);
+		std::stringstream ss_events;
+		ss_events.str("");
+		for (int i = 0; i < event_list.size(); i++)
+		{
+			ss_events<< event_list[i]->getMsgStr()<<std::endl;
+			INFO_STREAM<<"Eventlist["<<i<<"] = "<<event_list[i]->getMsgStr()<<std::endl;
+			ControlFactory::instance().set_event_status(ss_events.str());
+        }
+        
         // if error in acquisition task
         if(m_acquisition_task->get_state() == Tango::FAULT)
         {

@@ -887,7 +887,7 @@ Tango::DevState ControlFactory::get_state(void)
 std::string ControlFactory::get_status(void)
 {
     yat::AutoMutex<> _lock(m_lock);
-    return (m_status.str());
+    return (m_status.str() + m_event_status.str());
 }
 
 //-----------------------------------------------------------------------------------------
@@ -904,6 +904,14 @@ void ControlFactory::set_status(const std::string& status)
     m_status.str("");
     m_status << status.c_str() << endl;
 
+}
+//-----------------------------------------------------------------------------------------
+void ControlFactory::set_event_status(const std::string& status)
+{
+    yat::AutoMutex<> _lock(m_lock);
+    m_event_status.str("");
+	m_event_status <<"------------------------"<< endl;	
+    m_event_status << status << endl;
 }
 //-----------------------------------------------------------------------------------------
 
