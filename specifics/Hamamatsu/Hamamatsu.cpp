@@ -533,7 +533,7 @@ void Hamamatsu::read_Temperature(Tango::Attribute &attr)
         temperature = m_camera->getSensorTemperature(NotSupported);
 		*attr_Temperature_read = (Tango::DevDouble)temperature;
 		attr.set_value  (attr_Temperature_read);
-        attr.set_quality((NotSupported) ? Tango::ATTR_ALARM : Tango::ATTR_VALID);
+        attr.set_quality((NotSupported) ? Tango::ATTR_INVALID : Tango::ATTR_VALID);
 	}
 	catch(Tango::DevFailed& df)
 	{
