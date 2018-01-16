@@ -1,30 +1,10 @@
-C++ TANGO device server bis
+LimaDetector class
 ====================
 
-This is the C++ **LimaDetector** Tango device server developped at SOLEIL.
+**LimaDetector** is the generic class and it provides a unique interface to control any supported camera. One can find below the 
+properties, commands, and attributes. 
 
-This device server provides several Tango classe:
-
-- LimaDetector : generic class for the standard camera control
-- *CameraType* : a camera specific class for the camera configuration (BaslerCCD, Eiger, Hamamatsu, MarCCD, Merlin, Pco, PerkinElmer, PilatusPixelDetector, PrincetonCCD, ProsilicaCCD, SimulatorCCD, Uview, XpadPixelDetector)
-- Optionnal classes:
- * RoiCounters : 
- * Layout
- * [FlatField]
- * BackgroundSubstraction
-and a set of "plugin" devices for extra operations or just to provide some specific API for clients.
-
-Thanks to the Lima framework,  the control can be achieved through a common server and a set of software operations (Mask,Flatfield,Background,RoiCounter,PeakFinder...) on image as well. The configuration of the detector is done by  the specific detector device. 
-At ESRF we decided to develop the Tango devices only in python language which implies that all the detector C++ interfaces have been wrapped in python.
-
-Main device: LimaCCDs
-----------------------
-
-**LimaCCDs** is the generic device and it provides a unique interface to control any supported cameras. One can find below the 
-commands, the attributes and the properties. 
-
-To run a LimaCCDs server you will need at least to configure the **LimaCameraType** property. This property is used by  the LimaCCDs server to create
-the proper camera device. Pleas refer a specific camera (e.g Basler) device chapter for further information.
+To run a LimaDetector device you will need at least to configure the **DetectorType** property. This property is used by the LimaDetector device to communicate with the proper camera plugin. Please refer a specific camera (e.g Basler) device chapter for further information.
 
 Property
 ''''''''
@@ -37,7 +17,7 @@ BufferMaxMemory		   No		   70			  The maximum among of memory in percent of the 
 ConfigurationFilePath      No              ~/lima_<serv-name>.cfg The default configuration file path
 ConfigurationDefaultName   No              "default"              Your default configuration name
 IntrumentName		   No		   ""			  The instrument name, e.g ESRF-ID02 (**\***)
-LimaCameraType		   Yes             N/A                    The camera type: e.g. Maxipix
+DetectorType 		   Yes             N/A                    The camera type: e.g. Maxipix
 MaxVideoFPS		   No		   30			  Maximum value for frame-per-second
 NbProcessingThread         No              1                      The max number of thread for processing.
                                                                   Can be used to improve the performance 
