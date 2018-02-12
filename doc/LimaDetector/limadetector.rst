@@ -3,30 +3,64 @@ LimaDetector class
 
 **LimaDetector** is the generic class and it provides a unique interface to control any supported camera. One can find below the 
 properties, commands, and attributes. 
+At the 1st start of the device server, all the properties are created with the default values.
 
 To run a LimaDetector device you will need at least to configure the **DetectorType** property. This property is used by the LimaDetector device to communicate with the proper camera plugin. Please refer a specific camera (e.g Basler) device chapter for further information.
 
-Property
-''''''''
-========================== =============== ====================== =====================================================
-Property name		   Mandatory       Default value          Description
-========================== =============== ====================== =====================================================
-AccThresholdCallbackModule No              ""                     Plugin file name which manages threshold, see acc_saturated\_\* attributes and the \*AccSaturated\* commands to activate and use  this feature
-BufferMaxMemory		   No		   70			  The maximum among of memory in percent of the available RAM
-			   		   			  that Lima is using to allocate frame buffer.
-ConfigurationFilePath      No              ~/lima_<serv-name>.cfg The default configuration file path
-ConfigurationDefaultName   No              "default"              Your default configuration name
-IntrumentName		   No		   ""			  The instrument name, e.g ESRF-ID02 (**\***)
-DetectorType 		   Yes             N/A                    The camera type: e.g. Maxipix
-MaxVideoFPS		   No		   30			  Maximum value for frame-per-second
-NbProcessingThread         No              1                      The max number of thread for processing.
-                                                                  Can be used to improve the performance 
-                                                                  when more than 1 task (plugin device) is activated
-TangoEvent		   No              False		  Activate Tango Event for counters and new images
-UserDetectorName	   No		   ""			  A user detector identifier, e.g frelon-saxs, (**\***)
-========================== =============== ====================== =====================================================
-
-(**\***) Properties only used to set meta-data in HDF5 saving format.
+Properties
+''''''''''
++----------------------------+-------------------------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
+|**Property name**           |**Mandatory**                              |**Default value**                    |**Description**                                                                                      |
++============================+===========================================+=====================================+=====================================================================================================+
+|DetectorType                |Yes                                        |SimulatorCCD                         | | Define the type of the Detector. Availables types : (one of these)                                |
+|                            |                                           |                                     | | AndorCCD                                                                                          |
+|                            |                                           |                                     | | AviexCCD                                                                                          |
+|                            |                                           |                                     | | BaslerCCD                                                                                         |
+|                            |                                           |                                     | | Eiger                                                                                             |
+|                            |                                           |                                     | | Hamamatsu                                                                                         |
+|                            |                                           |                                     | | ImXpad                                                                                            |
+|                            |                                           |                                     | | MarCCD                                                                                            |
+|                            |                                           |                                     | | Maxipix                                                                                           |
+|                            |                                           |                                     | | Merlin                                                                                            |
+|                            |                                           |                                     | | Pco                                                                                               |
+|                            |                                           |                                     | | PerkinElmer                                                                                       |
+|                            |                                           |                                     | | PilatusPixelDetector                                                                              |
+|                            |                                           |                                     | | PrincetonCCD                                                                                      |
+|                            |                                           |                                     | | ProilicaCCD                                                                                       |
+|                            |                                           |                                     | | SimulatorCCD                                                                                      |
+|                            |                                           |                                     | | UviewCCD                                                                                          |
+|                            |                                           |                                     | | XpadPixelDetector                                                                                 |
++----------------------------+-------------------------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
+|AutoStartVideo              |No                                         |false                                | | Allows calling automatically the "Start" command when:                                            |
+|                            |                                           |                                     | | The device starts                                                                                 |
+|                            |                                           |                                     | | After calling the "Init" command                                                                  |
++----------------------------+-------------------------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
+|DebugFormats                |No                                         | | DateTime                          | | Define Lima traces formats. Availables values : (a combination of these)                          |
+|                            |                                           | | Module                            | | DateTime                                                                                          |
+|                            |                                           | | Type                              | | Thread                                                                                            |
+|                            |                                           | | Funct                             | | Module                                                                                            |
+|                            |                                           |                                     | | Obj                                                                                               |
+|                            |                                           |                                     | | Funct                                                                                             |
+|                            |                                           |                                     | | FileLine                                                                                          |
++----------------------------+-------------------------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
+|DebugLevels                 |No                                         | | Fatal                             | | Define Lima traces levels. Availables values : (a combination of these)                           |
+|                            |                                           | | Error                             | | Fatal                                                                                             |
+|                            |                                           | | Warning                           | | Error                                                                                             |
+|                            |                                           |                                     | | Warning                                                                                           |
+|                            |                                           |                                     | | Trace                                                                                             |
+|                            |                                           |                                     | | Funct                                                                                             |
+|                            |                                           |                                     | | Param                                                                                             |
+|                            |                                           |                                     | | Return                                                                                            |
+|                            |                                           |                                     | | Always                                                                                            |
++----------------------------+-------------------------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
+|DebugModules                |No                                         | | Hardware                          | | Define Lima traces modules. Availables values : (a combination of these)                          |
+|                            |                                           | | Control                           | | None                                                                                              |
+|                            |                                           | | Common                            | | Hardware                                                                                          |
+|                            |                                           | | Camera                            | | Warning                                                                                           |
+|                            |                                           |                                     | | Control                                                                                           |
+|                            |                                           |                                     | | Common                                                                                            |
+|                            |                                           |                                     | | Camera                                                                                            |
++----------------------------+-------------------------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
 
 
 Commands

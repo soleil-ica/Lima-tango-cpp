@@ -1,5 +1,5 @@
-C++ TANGO device server
-=======================
+Lima C++ TANGO device server
+=================================
 
 This is the C++ **LimaDetector** Tango device server developped at SOLEIL.
 
@@ -24,6 +24,12 @@ This device server provides several Tango classes:
   :maxdepth: 1
   
   LimaDetector <LimaDetector/limadetector>
+  
+--------------------------
+
+.. toctree::
+  :maxdepth: 1
+  
   AndorCCD <AndorCCD/andorccd>
   AviexCCD <AviexCCD/aviexccd>
   BaslerCCD <BaslerCCD/baslerccd>
