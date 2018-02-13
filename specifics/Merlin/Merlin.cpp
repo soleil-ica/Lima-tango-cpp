@@ -63,9 +63,6 @@ using namespace std;
 //  Status        |  Inherited (no method)
 //  DevState      |  dev_state
 //  SoftTrigger   |  soft_trigger
-//  Abort         |  abort
-//  THScan        |  thscan
-//  ResetHW       |  reset_hw
 //================================================================
 
 //================================================================
@@ -93,13 +90,9 @@ using namespace std;
 //  triggerOutLVDS        |  Tango::DevLong	Scalar
 //  triggerOutTTLInvert   |  Tango::DevLong	Scalar
 //  triggerOutLVDSInvert  |  Tango::DevLong	Scalar
-//  triggerOutTTLDelay    |  Tango::DevLong64	Scalar
-//  triggerOutLVDSDelay   |  Tango::DevLong64	Scalar
+//  triggerInTTLDelay    |  Tango::DevLong64	Scalar
+//  triggerInLVDSDelay   |  Tango::DevLong64	Scalar
 //  triggerUseDelay       |  Tango::DevBoolean	Scalar
-//  thScanNum             |  Tango::DevLong	Scalar
-//  thStart               |  Tango::DevFloat	Scalar
-//  thStop                |  Tango::DevFloat	Scalar
-//  thStep                |  Tango::DevFloat	Scalar
 //================================================================
 
 namespace Merlin_ns
@@ -174,19 +167,16 @@ void Merlin::delete_device()
 	delete[] attr_threshold5_read;
 	delete[] attr_threshold6_read;
 	delete[] attr_threshold7_read;
+    delete[] attr_framesPerTrigger_read;
 	delete[] attr_triggerStartType_read;
 	delete[] attr_triggerStopType_read;
 	delete[] attr_triggerOutTTL_read;
 	delete[] attr_triggerOutLVDS_read;
 	delete[] attr_triggerOutTTLInvert_read;
 	delete[] attr_triggerOutLVDSInvert_read;
-	delete[] attr_triggerOutTTLDelay_read;
-	delete[] attr_triggerOutLVDSDelay_read;
+	delete[] attr_triggerInTTLDelay_read;
+	delete[] attr_triggerInLVDSDelay_read;
 	delete[] attr_triggerUseDelay_read;
-	delete[] attr_thScanNum_read;
-	delete[] attr_thStart_read;
-	delete[] attr_thStop_read;
-	delete[] attr_thStep_read;
 }
 
 //--------------------------------------------------------
@@ -225,19 +215,16 @@ void Merlin::init_device()
 	attr_threshold5_read = new Tango::DevFloat[1];
 	attr_threshold6_read = new Tango::DevFloat[1];
 	attr_threshold7_read = new Tango::DevFloat[1];
+    attr_framesPerTrigger_read = new Tango::DevLong[1];
 	attr_triggerStartType_read = new Tango::DevLong[1];
 	attr_triggerStopType_read = new Tango::DevLong[1];
 	attr_triggerOutTTL_read = new Tango::DevLong[1];
 	attr_triggerOutLVDS_read = new Tango::DevLong[1];
 	attr_triggerOutTTLInvert_read = new Tango::DevLong[1];
 	attr_triggerOutLVDSInvert_read = new Tango::DevLong[1];
-	attr_triggerOutTTLDelay_read = new Tango::DevLong64[1];
-	attr_triggerOutLVDSDelay_read = new Tango::DevLong64[1];
+	attr_triggerInTTLDelay_read = new Tango::DevLong64[1];
+	attr_triggerInLVDSDelay_read = new Tango::DevLong64[1];
 	attr_triggerUseDelay_read = new Tango::DevBoolean[1];
-	attr_thScanNum_read = new Tango::DevLong[1];
-	attr_thStart_read = new Tango::DevFloat[1];
-	attr_thStop_read = new Tango::DevFloat[1];
-	attr_thStep_read = new Tango::DevFloat[1];
 
 	/*----- PROTECTED REGION ID(Merlin::init_device) ENABLED START -----*/
 	
@@ -289,7 +276,7 @@ void Merlin::init_device()
     }
     m_is_device_initialized = true;
     set_state(Tango::STANDBY);
-    this->dev_state();
+    dev_state();
 	//	Initialize device
 	
 	/*----- PROTECTED REGION END -----*/	//	Merlin::init_device
@@ -313,7 +300,7 @@ void Merlin::get_device_property()
 	//	Read device properties from database.
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("HostName"));
-	dev_prop.push_back(Tango::DbDatum("Port"));
+	dev_prop.push_back(Tango::DbDatum("CmdPort"));
 	dev_prop.push_back(Tango::DbDatum("DataPort"));
 	dev_prop.push_back(Tango::DbDatum("Chips"));
 	dev_prop.push_back(Tango::DbDatum("ImageWidth"));
@@ -344,16 +331,16 @@ void Merlin::get_device_property()
 		//	And try to extract HostName value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  hostName;
 
-		//	Try to initialize Port from class property
+		//	Try to initialize CmdPort from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  port;
+		if (cl_prop.is_empty()==false)	cl_prop  >>  cmdPort;
 		else {
-			//	Try to initialize Port from default device value
+			//	Try to initialize CmdPort from default device value
 			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  port;
+            if (def_prop.is_empty() == false) def_prop >> cmdPort;
 		}
-		//	And try to extract Port value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  port;
+		//	And try to extract CmdPort value from database
+        if (dev_prop[i].is_empty() == false) dev_prop[i] >> cmdPort;
 
 		//	Try to initialize DataPort from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -416,7 +403,7 @@ void Merlin::get_device_property()
 	
 	//	Check device property data members init
     create_property_if_empty(dev_prop,"no_name","HostName");
-    create_property_if_empty(dev_prop,"6341","Port");
+    create_property_if_empty(dev_prop,"6341","CmdPort");
     create_property_if_empty(dev_prop,"6342","DataPort");
     create_property_if_empty(dev_prop,"4","Chips");
     create_property_if_empty(dev_prop,"512","ImageWidth");
@@ -434,7 +421,7 @@ void Merlin::get_device_property()
 //--------------------------------------------------------
 void Merlin::always_executed_hook()
 {
-	INFO_STREAM << "Merlin::always_executed_hook()  " << device_name << endl;
+    DEBUG_STREAM << "Merlin::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Merlin::always_executed_hook) ENABLED START -----*/
     dev_state();
 
@@ -486,22 +473,27 @@ void Merlin::read_softwareVersion(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_softwareVersion(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_softwareVersion) ENABLED START -----*/
 	//	Set the attribute value
-    try {
-    	float version;
-    	m_camera->getSoftwareVersion(version);
-    	*attr_softwareVersion_read = version;
-    	attr.set_value(attr_softwareVersion_read);
-    } catch (Tango::DevFailed& df) {
+    try 
+    {
+        float version;
+        m_camera->getSoftwareVersion(version);
+        *attr_softwareVersion_read = version;
+        attr.set_value(attr_softwareVersion_read);
+    }
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_softwareVersion"));
-    } catch (Exception& e) {
+                                        "TANGO_DEVICE_ERROR",
+                                        string(df.errors[0].desc).c_str(),
+                                        "Merlin::read_softwareVersion");
+    }
+    catch (Exception& e)
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_softwareVersion"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "Merlin::read_softwareVersion");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_softwareVersion
 }
@@ -519,22 +511,27 @@ void Merlin::read_chargeSumming(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_chargeSumming(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_chargeSumming) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try
+    {
     	lima::Merlin::Camera::Switch mode;
     	m_camera->getChargeSumming(mode);
     	*attr_chargeSumming_read = mode;
     	attr.set_value(attr_chargeSumming_read);
-    } catch (Tango::DevFailed& df) {
+    } 
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_chargeSumming"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_chargeSumming");
+    } 
+    catch (Exception& e)
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_chargeSumming"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_chargeSumming");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_chargeSumming
 }
@@ -554,20 +551,25 @@ void Merlin::write_chargeSumming(Tango::WAttribute &attr)
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_chargeSumming) ENABLED START -----*/
-	try {
+	try 
+    {
     	lima::Merlin::Camera::Switch mode = static_cast<lima::Merlin::Camera::Switch>(w_val);
 		m_camera->setChargeSumming(mode);
-	} catch (Tango::DevFailed& df) {
+	} 
+    catch (Tango::DevFailed& df)
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_chargeSumming"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_chargeSumming");
+	} 
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_chargeSumming"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::write_chargeSumming");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_chargeSumming
 }
@@ -585,22 +587,27 @@ void Merlin::read_colourMode(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_colourMode(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_colourMode) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try
+    {
     	lima::Merlin::Camera::ColourMode mode;
     	m_camera->getColourMode(mode);
     	*attr_colourMode_read = mode;
     	attr.set_value(attr_colourMode_read);
-    } catch (Tango::DevFailed& df) {
+    }
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_colourMode"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_colourMode");
+    }
+    catch (Exception& e) 
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_colourMode"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_colourMode");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_colourMode
 }
@@ -620,20 +627,25 @@ void Merlin::write_colourMode(Tango::WAttribute &attr)
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_colourMode) ENABLED START -----*/
-	try {
+	try 
+    {
     	lima::Merlin::Camera::ColourMode mode = static_cast<lima::Merlin::Camera::ColourMode>(w_val);
 		m_camera->setColourMode(mode);
-	} catch (Tango::DevFailed& df) {
+	} 
+    catch (Tango::DevFailed& df)
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_colourMode"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_colourMode");
+	} 
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_colourMode"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_colourMode");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_colourMode
 }
@@ -651,22 +663,27 @@ void Merlin::read_continuousRW(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_continuousRW(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_continuousRW) ENABLED START -----*/
 	//	Set the attribute value
-	try {
+	try
+    {
     	lima::Merlin::Camera::Switch mode;
     	m_camera->getContinuousRW(mode);
     	*attr_continuousRW_read = mode;
     	attr.set_value(attr_continuousRW_read);
-	} catch (Tango::DevFailed& df) {
+	} 
+    catch (Tango::DevFailed& df) 
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::read_continuousRW"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::read_continuousRW");
+	} 
+    catch (Exception& e) 
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::read_continuousRW"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::read_continuousRW");
 	}
 	attr.set_value(attr_continuousRW_read);
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_continuousRW
@@ -687,20 +704,25 @@ void Merlin::write_continuousRW(Tango::WAttribute &attr)
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_continuousRW) ENABLED START -----*/
-	try {
+	try 
+    {
     	lima::Merlin::Camera::Switch mode = static_cast<lima::Merlin::Camera::Switch>(w_val);
 		m_camera->setContinuousRW(mode);
-	} catch (Tango::DevFailed& df) {
+	} 
+    catch (Tango::DevFailed& df) 
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_continuousRW"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_continuousRW");
+	}
+    catch (Exception& e) 
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_continuousRW"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_continuousRW");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_continuousRW
 }
@@ -718,20 +740,25 @@ void Merlin::read_counter(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_counter(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_counter) ENABLED START -----*/
 	//	Set the attribute value
-	try {
+	try 
+    {
     	m_camera->getEnableCounters((lima::Merlin::Camera::Counter&)*attr_counter_read);
     	attr.set_value(attr_counter_read);
- 	} catch (Tango::DevFailed& df) {
+ 	}
+    catch (Tango::DevFailed& df) 
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::read_continuousRW"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::read_continuousRW");
+	} 
+    catch (Exception& e) 
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::read_continuousRW"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::read_continuousRW");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_counter
 }
@@ -751,20 +778,25 @@ void Merlin::write_counter(Tango::WAttribute &attr)
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_counter) ENABLED START -----*/
-	try {
+	try
+    {
     	lima::Merlin::Camera::Counter mode = static_cast<lima::Merlin::Camera::Counter>(w_val);
 		m_camera->setEnableCounters(mode);
-	} catch (Tango::DevFailed& df) {
+	} 
+    catch (Tango::DevFailed& df)
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_counter"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_counter");
+	}
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_counter"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_counter");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_counter
 }
@@ -782,22 +814,27 @@ void Merlin::read_gain(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_gain(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_gain) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try
+    {
     	lima::Merlin::Camera::GainSetting gain;
     	m_camera->getGain(gain);
     	*attr_gain_read = gain;
     	attr.set_value(attr_gain_read);
-    } catch (Tango::DevFailed& df) {
+    }
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_gain"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_gain");
+    }
+    catch (Exception& e)
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_gain"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_gain");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_gain
 }
@@ -817,20 +854,25 @@ void Merlin::write_gain(Tango::WAttribute &attr)
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_gain) ENABLED START -----*/
-	try {
+	try
+    {
     	lima::Merlin::Camera::GainSetting gain = static_cast<lima::Merlin::Camera::GainSetting>(w_val);
 		m_camera->setGain(gain);
-	} catch (Tango::DevFailed& df) {
+	}
+    catch (Tango::DevFailed& df)
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_gain"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_gain");
+	} 
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_gain"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_gain");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_gain
 }
@@ -848,22 +890,27 @@ void Merlin::read_operatingEnergy(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_operatingEnergy(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_operatingEnergy) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try
+    {
     	float energy;
     	m_camera->getOperatingEnergy(energy);
     	*attr_operatingEnergy_read = energy;
     	attr.set_value(attr_operatingEnergy_read);
-    } catch (Tango::DevFailed& df) {
+    }
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_operatingEnergy"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_operatingEnergy");
+    } 
+    catch (Exception& e)
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_operatingEnergy"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_operatingEnergy");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_operatingEnergy
 }
@@ -883,19 +930,24 @@ void Merlin::write_operatingEnergy(Tango::WAttribute &attr)
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_operatingEnergy) ENABLED START -----*/
-	try {
+	try
+    {
 		m_camera->setOperatingEnergy(w_val);
-	} catch (Tango::DevFailed& df) {
+	}
+    catch (Tango::DevFailed& df)
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_operatingEnergy"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_operatingEnergy");
+	}
+    catch (Exception& e) 
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_operatingEnergy"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_operatingEnergy");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_operatingEnergy
 }
@@ -913,23 +965,32 @@ void Merlin::read_temperature(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_temperature(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_temperature) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    
+    Tango::Except::throw_exception( "NOT_SUPPORTED",
+                                    "Temperature is not working yet: please contact QD",
+                                    "Merlin::read_temperature");
+    /*try 
+    {
     	float temperature;
     	m_camera->getTemperature(temperature);
     	*attr_temperature_read = temperature;
     	attr.set_value(attr_temperature_read);
-    } catch (Tango::DevFailed& df) {
+    } 
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_temperature"));
-    } catch (Exception& e) {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_temperature"));
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_temperature");
     }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_temperature");
+    }*/
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_temperature
 }
 //--------------------------------------------------------
@@ -946,22 +1007,26 @@ void Merlin::read_threshold0(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_threshold0(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_threshold0) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try 
+    {
     	float threshold;
     	m_camera->getThreshold(lima::Merlin::Camera::THRESHOLD0, threshold);
     	*attr_threshold0_read = threshold;
     	attr.set_value(attr_threshold0_read);
-    } catch (Tango::DevFailed& df) {
+    }
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_threshold0"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_threshold0");
+    } catch (Exception& e)
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_threshold0"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_threshold0");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_threshold0
 }
@@ -981,19 +1046,24 @@ void Merlin::write_threshold0(Tango::WAttribute &attr)
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_threshold0) ENABLED START -----*/
-	try {
+	try
+    {
     	m_camera->setThreshold(lima::Merlin::Camera::THRESHOLD0, w_val);
-	} catch (Tango::DevFailed& df) {
+	}
+    catch (Tango::DevFailed& df) 
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_threshold0"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_threshold0");
+	}
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_threshold0"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_threshold0");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_threshold0
 }
@@ -1016,17 +1086,21 @@ void Merlin::read_threshold1(Tango::Attribute &attr)
     	m_camera->getThreshold(lima::Merlin::Camera::THRESHOLD1, threshold);
     	*attr_threshold1_read = threshold;
     	attr.set_value(attr_threshold1_read);
-    } catch (Tango::DevFailed& df) {
+    }
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_threshold1"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_threshold1");
+    }
+    catch (Exception& e)
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_threshold1"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_threshold1");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_threshold1
 }
@@ -1046,19 +1120,24 @@ void Merlin::write_threshold1(Tango::WAttribute &attr)
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_threshold1) ENABLED START -----*/
-	try {
+	try
+    {
     	m_camera->setThreshold(lima::Merlin::Camera::THRESHOLD1, w_val);
-	} catch (Tango::DevFailed& df) {
+	} 
+    catch (Tango::DevFailed& df) 
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_threshold1"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_threshold1");
+	} 
+    catch (Exception& e) 
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_threshold1"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_threshold1");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_threshold1
 }
@@ -1076,22 +1155,27 @@ void Merlin::read_threshold2(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_threshold2(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_threshold2) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try
+    {
     	float threshold;
     	m_camera->getThreshold(lima::Merlin::Camera::THRESHOLD2, threshold);
     	*attr_threshold2_read = threshold;
     	attr.set_value(attr_threshold2_read);
-    } catch (Tango::DevFailed& df) {
+    }
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_threshold2"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_threshold2");
+    }
+    catch (Exception& e)
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_threshold2"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_threshold2");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_threshold2
 }
@@ -1111,19 +1195,24 @@ void Merlin::write_threshold2(Tango::WAttribute &attr)
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_threshold2) ENABLED START -----*/
-	try {
+	try
+    {
     	m_camera->setThreshold(lima::Merlin::Camera::THRESHOLD2, w_val);
-	} catch (Tango::DevFailed& df) {
+	}
+    catch (Tango::DevFailed& df) 
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_threshold2"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_threshold2");
+	} 
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_threshold2"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_threshold2");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_threshold2
 }
@@ -1141,22 +1230,27 @@ void Merlin::read_threshold3(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_threshold3(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_threshold3) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try 
+    {
     	float threshold;
     	m_camera->getThreshold(lima::Merlin::Camera::THRESHOLD3, threshold);
     	*attr_threshold3_read = threshold;
     	attr.set_value(attr_threshold3_read);
-    } catch (Tango::DevFailed& df) {
+    }
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_threshold3"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_threshold3");
+    } 
+    catch (Exception& e) 
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_threshold3"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_threshold3");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_threshold3
 }
@@ -1176,19 +1270,24 @@ void Merlin::write_threshold3(Tango::WAttribute &attr)
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_threshold3) ENABLED START -----*/
-	try {
+	try
+    {
     	m_camera->setThreshold(lima::Merlin::Camera::THRESHOLD3, w_val);
-	} catch (Tango::DevFailed& df) {
+	} 
+    catch (Tango::DevFailed& df) 
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_threshold3"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_threshold3");
+	} 
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_threshold3"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_threshold3");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_threshold3
 }
@@ -1206,22 +1305,27 @@ void Merlin::read_threshold4(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_threshold4(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_threshold4) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try 
+    {
     	float threshold;
     	m_camera->getThreshold(lima::Merlin::Camera::THRESHOLD4, threshold);
     	*attr_threshold4_read = threshold;
     	attr.set_value(attr_threshold4_read);
-    } catch (Tango::DevFailed& df) {
+    }
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_threshold4"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_threshold4");
+    } 
+    catch (Exception& e) 
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_threshold4"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_threshold4");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_threshold4
 }
@@ -1241,19 +1345,24 @@ void Merlin::write_threshold4(Tango::WAttribute &attr)
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_threshold4) ENABLED START -----*/
-	try {
+	try 
+    {
     	m_camera->setThreshold(lima::Merlin::Camera::THRESHOLD4, w_val);
-	} catch (Tango::DevFailed& df) {
+	}
+    catch (Tango::DevFailed& df)
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_threshold4"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_threshold4");
+	} 
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_threshold4"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_threshold4");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_threshold4
 }
@@ -1271,22 +1380,27 @@ void Merlin::read_threshold5(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_threshold5(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_threshold5) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try 
+    {
     	float threshold;
     	m_camera->getThreshold(lima::Merlin::Camera::THRESHOLD5, threshold);
     	*attr_threshold5_read = threshold;
     	attr.set_value(attr_threshold5_read);
-    } catch (Tango::DevFailed& df) {
+    } 
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_threshold5"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_threshold5");
+    }
+    catch (Exception& e)
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_threshold5"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_threshold5");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_threshold5
 }
@@ -1306,19 +1420,24 @@ void Merlin::write_threshold5(Tango::WAttribute &attr)
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_threshold5) ENABLED START -----*/
-	try {
+	try 
+    {
     	m_camera->setThreshold(lima::Merlin::Camera::THRESHOLD5, w_val);
-	} catch (Tango::DevFailed& df) {
+	} 
+    catch (Tango::DevFailed& df) 
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_threshold5"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_threshold5");
+	} 
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_threshold5"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_threshold5");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_threshold5
 }
@@ -1336,22 +1455,27 @@ void Merlin::read_threshold6(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_threshold6(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_threshold6) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try
+    {
     	float threshold;
     	m_camera->getThreshold(lima::Merlin::Camera::THRESHOLD6, threshold);
     	*attr_threshold6_read = threshold;
     	attr.set_value(attr_threshold6_read);
-    } catch (Tango::DevFailed& df) {
+    } 
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_threshold6"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_threshold6");
+    } 
+    catch (Exception& e) 
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_threshold6"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_threshold6");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_threshold6
 }
@@ -1371,19 +1495,24 @@ void Merlin::write_threshold6(Tango::WAttribute &attr)
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_threshold6) ENABLED START -----*/
-	try {
+	try
+    {
     	m_camera->setThreshold(lima::Merlin::Camera::THRESHOLD6, w_val);
-	} catch (Tango::DevFailed& df) {
+	} 
+    catch (Tango::DevFailed& df)
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_threshold6"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_threshold6");
+	} 
+    catch (Exception& e) 
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_threshold6"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_threshold6");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_threshold6
 }
@@ -1401,22 +1530,27 @@ void Merlin::read_threshold7(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_threshold7(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_threshold7) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try 
+    {
     	float threshold;
     	m_camera->getThreshold(lima::Merlin::Camera::THRESHOLD7, threshold);
     	*attr_threshold7_read = threshold;
     	attr.set_value(attr_threshold7_read);
-    } catch (Tango::DevFailed& df) {
+    }
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_threshold7"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_threshold7");
+    } 
+    catch (Exception& e)
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_threshold7"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_threshold7");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_threshold7
 }
@@ -1436,22 +1570,104 @@ void Merlin::write_threshold7(Tango::WAttribute &attr)
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_threshold7) ENABLED START -----*/
-	try {
+	try
+    {
     	m_camera->setThreshold(lima::Merlin::Camera::THRESHOLD7, w_val);
-	} catch (Tango::DevFailed& df) {
+	}
+    catch (Tango::DevFailed& df)
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_threshold7"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_threshold7");
+	}
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_threshold7"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_threshold7");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_threshold7
 }
+
+//--------------------------------------------------------
+/**
+*	Read attribute framesPerTrigger related method
+*	Description:
+*
+*	Data type:	Tango::DevLong
+*	Attr type:	Scalar
+*/
+//--------------------------------------------------------
+void Merlin::read_framesPerTrigger(Tango::Attribute &attr)
+{
+    DEBUG_STREAM << "Merlin::read_framesPerTrigger(Tango::Attribute &attr) entering... " << endl;
+    /*----- PROTECTED REGION ID(Merlin::read_framesPerTrigger) ENABLED START -----*/
+    //	Set the attribute value
+    try 
+    {
+        Tango::DevLong frames_per_trigger;
+        m_camera->getFramesPerTrigger((int&)frames_per_trigger);
+        *attr_framesPerTrigger_read = frames_per_trigger;
+        attr.set_value(attr_framesPerTrigger_read);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        Tango::Except::re_throw_exception(df,
+                                        "TANGO_DEVICE_ERROR",
+                                        string(df.errors[0].desc).c_str(),
+                                        "Merlin::read_framesPerTrigger");
+    }
+    catch (Exception& e) 
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "Merlin::read_framesPerTrigger");
+    }
+    /*----- PROTECTED REGION END -----*/	//	Merlin::read_framesPerTrigger
+}
+//--------------------------------------------------------
+/**
+*	Write attribute framesPerTrigger related method
+*	Description:
+*
+*	Data type:	Tango::DevLong
+*	Attr type:	Scalar
+*/
+//--------------------------------------------------------
+void Merlin::write_framesPerTrigger(Tango::WAttribute &attr)
+{
+    DEBUG_STREAM << "Merlin::write_framesPerTrigger(Tango::WAttribute &attr) entering... " << endl;
+    //	Retrieve write value
+    Tango::DevLong	w_val;
+    attr.get_write_value(w_val);
+    /*----- PROTECTED REGION ID(Merlin::write_framesPerTrigger) ENABLED START -----*/
+    try 
+    {
+        m_camera->setFramesPerTrigger(w_val);
+    }
+    catch (Tango::DevFailed& df) 
+    {
+        ERROR_STREAM << df << endl;
+        Tango::Except::re_throw_exception(df,
+                                            "TANGO_DEVICE_ERROR",
+                                            string(df.errors[0].desc).c_str(),
+                                            "Merlin::write_framesPerTrigger");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "Merlin::write_framesPerTrigger");
+    }
+    /*----- PROTECTED REGION END -----*/	//	Merlin::write_framesPerTrigger
+}
+
 //--------------------------------------------------------
 /**
  *	Read attribute triggerStartType related method
@@ -1466,22 +1682,27 @@ void Merlin::read_triggerStartType(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_triggerStartType(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_triggerStartType) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try
+    {
     	lima::Merlin::Camera::Trigger type;
     	m_camera->getTriggerStartType(type);
     	*attr_triggerStartType_read = type;
     	attr.set_value(attr_triggerStartType_read);
-    } catch (Tango::DevFailed& df) {
+    } 
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_triggerStartType"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_triggerStartType");
+    } 
+    catch (Exception& e) 
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_triggerStartType"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_triggerStartType");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_triggerStartType
 }
@@ -1501,20 +1722,25 @@ void Merlin::write_triggerStartType(Tango::WAttribute &attr)
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_triggerStartType) ENABLED START -----*/
-	try {
+	try
+    {
     	lima::Merlin::Camera::Trigger trigger = static_cast<lima::Merlin::Camera::Trigger>(w_val);
 		m_camera->setTriggerStartType(trigger);
-	} catch (Tango::DevFailed& df) {
+	} 
+    catch (Tango::DevFailed& df)
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_triggerStartType"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_triggerStartType");
+	} 
+    catch (Exception& e) 
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_triggerStartType"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_triggerStartType");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_triggerStartType
 }
@@ -1532,22 +1758,27 @@ void Merlin::read_triggerStopType(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_triggerStopType(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_triggerStopType) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try 
+    {
     	lima::Merlin::Camera::Trigger type;
     	m_camera->getTriggerStopType(type);
     	*attr_triggerStopType_read = type;
     	attr.set_value(attr_triggerStopType_read);
-    } catch (Tango::DevFailed& df) {
+    }
+    catch (Tango::DevFailed& df) 
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_triggerStopType"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_triggerStopType");
+    } 
+    catch (Exception& e) 
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_triggerStopType"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_triggerStopType");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_triggerStopType
 }
@@ -1567,20 +1798,25 @@ void Merlin::write_triggerStopType(Tango::WAttribute &attr)
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_triggerStopType) ENABLED START -----*/
-	try {
+	try 
+    {
     	lima::Merlin::Camera::Trigger trigger = static_cast<lima::Merlin::Camera::Trigger>(w_val);
 		m_camera->setTriggerStopType(trigger);
-	} catch (Tango::DevFailed& df) {
+	} 
+    catch (Tango::DevFailed& df) 
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_triggerStopType"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_triggerStopType");
+	} 
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_triggerStopType"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_triggerStopType");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_triggerStopType
 }
@@ -1598,22 +1834,27 @@ void Merlin::read_triggerOutTTL(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_triggerOutTTL(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_triggerOutTTL) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try 
+    {
     	lima::Merlin::Camera::TriggerOutput trigOut;
     	m_camera->getTriggerOutTTL(trigOut);
     	*attr_triggerOutTTL_read = trigOut;
     	attr.set_value(attr_triggerOutTTL_read);
-    } catch (Tango::DevFailed& df) {
+    }
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_triggerOutTTL"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_triggerOutTTL");
+    } 
+    catch (Exception& e) 
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_triggerOutTTL"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_triggerOutTTL");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_triggerOutTTL
 }
@@ -1633,20 +1874,25 @@ void Merlin::write_triggerOutTTL(Tango::WAttribute &attr)
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_triggerOutTTL) ENABLED START -----*/
-	try {
+	try 
+    {
     	lima::Merlin::Camera::TriggerOutput trigOut = static_cast<lima::Merlin::Camera::TriggerOutput>(w_val);
 		m_camera->setTriggerOutTTL(trigOut);
-	} catch (Tango::DevFailed& df) {
+	} 
+    catch (Tango::DevFailed& df)
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_triggerOutTTL"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_triggerOutTTL");
+	} 
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_triggerOutTTL"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_triggerOutTTL");
 	}
 	
 	
@@ -1666,22 +1912,27 @@ void Merlin::read_triggerOutLVDS(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_triggerOutLVDS(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_triggerOutLVDS) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try 
+    {
     	lima::Merlin::Camera::TriggerOutput trigOut;
-    	m_camera->getTriggerOutTTL(trigOut);
+        m_camera->getTriggerOutLVDS(trigOut);
     	*attr_triggerOutLVDS_read = trigOut;
     	attr.set_value(attr_triggerOutLVDS_read);
-    } catch (Tango::DevFailed& df) {
+    } 
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_triggerOutLVDS"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_triggerOutLVDS");
+    } 
+    catch (Exception& e)
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_triggerOutLVDS"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_triggerOutLVDS");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_triggerOutLVDS
 }
@@ -1701,20 +1952,25 @@ void Merlin::write_triggerOutLVDS(Tango::WAttribute &attr)
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_triggerOutLVDS) ENABLED START -----*/
-	try {
+	try
+    {
     	lima::Merlin::Camera::TriggerOutput trigOut = static_cast<lima::Merlin::Camera::TriggerOutput>(w_val);
-		////m_camera->setTriggerOutLVDS(trigOut);
-	} catch (Tango::DevFailed& df) {
+		m_camera->setTriggerOutLVDS(trigOut);
+	} 
+    catch (Tango::DevFailed& df)
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_triggerOutLVDS"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_triggerOutLVDS");
+	} 
+    catch (Exception& e) 
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_triggerOutLVDS"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_triggerOutLVDS");
 	}
 	
 	
@@ -1734,22 +1990,27 @@ void Merlin::read_triggerOutTTLInvert(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_triggerOutTTLInvert(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_triggerOutTTLInvert) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try
+    {
     	lima::Merlin::Camera::TriggerLevel level;
     	m_camera->getTriggerOutTTLInvert(level);
     	*attr_triggerOutTTLInvert_read = level;
     	attr.set_value(attr_triggerOutTTLInvert_read);
-    } catch (Tango::DevFailed& df) {
+    } 
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_triggerOutTTLInvert"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_triggerOutTTLInvert");
+    }
+    catch (Exception& e) 
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_triggerOutTTLInvert"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_triggerOutTTLInvert");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_triggerOutTTLInvert
 }
@@ -1769,20 +2030,25 @@ void Merlin::write_triggerOutTTLInvert(Tango::WAttribute &attr)
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_triggerOutTTLInvert) ENABLED START -----*/
-	try {
+	try
+    {
     	lima::Merlin::Camera::TriggerLevel level = static_cast<lima::Merlin::Camera::TriggerLevel>(w_val);
 		m_camera->setTriggerOutTTLInvert(level);
-	} catch (Tango::DevFailed& df) {
+	} 
+    catch (Tango::DevFailed& df)
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_triggerOutTTLInvert"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_triggerOutTTLInvert");
+	} 
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_triggerOutTTLInvert"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_triggerOutTTLInvert");
 	}
 	
 	
@@ -1802,22 +2068,27 @@ void Merlin::read_triggerOutLVDSInvert(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_triggerOutLVDSInvert(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_triggerOutLVDSInvert) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try
+    {
     	lima::Merlin::Camera::TriggerLevel level;
     	m_camera->getTriggerOutLVDSInvert(level);
     	*attr_triggerOutLVDSInvert_read = level;
     	attr.set_value(attr_triggerOutLVDSInvert_read);
-    } catch (Tango::DevFailed& df) {
+    }
+    catch (Tango::DevFailed& df) 
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_triggerOutLVDSInvert"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_triggerOutLVDSInvert");
+    } 
+    catch (Exception& e)
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_triggerOutLVDSInvert"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_triggerOutLVDSInvert");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_triggerOutLVDSInvert
 }
@@ -1837,20 +2108,25 @@ void Merlin::write_triggerOutLVDSInvert(Tango::WAttribute &attr)
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_triggerOutLVDSInvert) ENABLED START -----*/
-	try {
+	try
+    {
     	lima::Merlin::Camera::TriggerLevel level = static_cast<lima::Merlin::Camera::TriggerLevel>(w_val);
 		m_camera->setTriggerOutLVDSInvert(level);
-	} catch (Tango::DevFailed& df) {
+	} 
+    catch (Tango::DevFailed& df)
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_triggerOutLVDSInvert"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_triggerOutLVDSInvert");
+	}
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_triggerOutLVDSInvert"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_triggerOutLVDSInvert");
 	}
 	
 	
@@ -1858,137 +2134,157 @@ void Merlin::write_triggerOutLVDSInvert(Tango::WAttribute &attr)
 }
 //--------------------------------------------------------
 /**
- *	Read attribute triggerOutTTLDelay related method
+ *	Read attribute triggerInTTLDelay related method
  *	Description: 
  *
  *	Data type:	Tango::DevLong64
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Merlin::read_triggerOutTTLDelay(Tango::Attribute &attr)
+void Merlin::read_triggerInTTLDelay(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Merlin::read_triggerOutTTLDelay(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Merlin::read_triggerOutTTLDelay) ENABLED START -----*/
+	DEBUG_STREAM << "Merlin::read_triggerInTTLDelay(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Merlin::read_triggerInTTLDelay) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try 
+    {
     	long long delay = 0;
-    	////m_camera->getTriggerOutTTLDelay(delay);
-    	*attr_triggerOutTTLDelay_read = delay;
-    	attr.set_value(attr_triggerOutTTLDelay_read);
-    } catch (Tango::DevFailed& df) {
+    	m_camera->getTriggerInTTLDelay(delay);
+    	*attr_triggerInTTLDelay_read = delay;
+    	attr.set_value(attr_triggerInTTLDelay_read);
+    } 
+    catch (Tango::DevFailed& df) 
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_triggerOutTTLDelay"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_triggerInTTLDelay");
+    } 
+    catch (Exception& e)
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_triggerOutTTLDelay"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_triggerInTTLDelay");
     }
-	/*----- PROTECTED REGION END -----*/	//	Merlin::read_triggerOutTTLDelay
+	/*----- PROTECTED REGION END -----*/	//	Merlin::read_triggerInTTLDelay
 }
 //--------------------------------------------------------
 /**
- *	Write attribute triggerOutTTLDelay related method
+ *	Write attribute triggerInTTLDelay related method
  *	Description: 
  *
  *	Data type:	Tango::DevLong64
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Merlin::write_triggerOutTTLDelay(Tango::WAttribute &attr)
+void Merlin::write_triggerInTTLDelay(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_triggerOutTTLDelay(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Merlin::write_triggerInTTLDelay(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevLong64	w_val;
 	attr.get_write_value(w_val);
-	/*----- PROTECTED REGION ID(Merlin::write_triggerOutTTLDelay) ENABLED START -----*/
-	try {
-		////m_camera->setTriggerOutTTLDelay(w_val);
-	} catch (Tango::DevFailed& df) {
+	/*----- PROTECTED REGION ID(Merlin::write_triggerInTTLDelay) ENABLED START -----*/
+	try
+    {
+		m_camera->setTriggerInTTLDelay(w_val);
+	} 
+    catch (Tango::DevFailed& df) 
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_triggerOutTTLDelay"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_triggerInTTLDelay");
+	}
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_triggerOutTTLDelay"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_triggerInTTLDelay");
 	}
 	
 	
-	/*----- PROTECTED REGION END -----*/	//	Merlin::write_triggerOutTTLDelay
+	/*----- PROTECTED REGION END -----*/	//	Merlin::write_triggerInTTLDelay
 }
 //--------------------------------------------------------
 /**
- *	Read attribute triggerOutLVDSDelay related method
+ *	Read attribute triggerInLVDSDelay related method
  *	Description: 
  *
  *	Data type:	Tango::DevLong64
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Merlin::read_triggerOutLVDSDelay(Tango::Attribute &attr)
+void Merlin::read_triggerInLVDSDelay(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Merlin::read_triggerOutLVDSDelay(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Merlin::read_triggerOutLVDSDelay) ENABLED START -----*/
+	DEBUG_STREAM << "Merlin::read_triggerInLVDSDelay(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Merlin::read_triggerInLVDSDelay) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try 
+    {
     	long long delay = 0;
-    	////m_camera->getTriggerOutLVDSDelay(delay);
-    	*attr_triggerOutLVDSDelay_read = delay;
-    	attr.set_value(attr_triggerOutLVDSDelay_read);
-    } catch (Tango::DevFailed& df) {
+    	m_camera->getTriggerInLVDSDelay(delay);
+    	*attr_triggerInLVDSDelay_read = delay;
+    	attr.set_value(attr_triggerInLVDSDelay_read);
+    } 
+    catch (Tango::DevFailed& df) 
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_triggerOutLVDSDelay"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_triggerInLVDSDelay");
+    } 
+    catch (Exception& e)
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_triggerOutLVDSDelay"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_triggerInLVDSDelay");
     }
-	/*----- PROTECTED REGION END -----*/	//	Merlin::read_triggerOutLVDSDelay
+	/*----- PROTECTED REGION END -----*/	//	Merlin::read_triggerInLVDSDelay
 }
 //--------------------------------------------------------
 /**
- *	Write attribute triggerOutLVDSDelay related method
+ *	Write attribute triggerInLVDSDelay related method
  *	Description: 
  *
  *	Data type:	Tango::DevLong64
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Merlin::write_triggerOutLVDSDelay(Tango::WAttribute &attr)
+void Merlin::write_triggerInLVDSDelay(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_triggerOutLVDSDelay(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Merlin::write_triggerInLVDSDelay(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevLong64	w_val;
 	attr.get_write_value(w_val);
-	/*----- PROTECTED REGION ID(Merlin::write_triggerOutLVDSDelay) ENABLED START -----*/
-	try {
-		////m_camera->setTriggerOutLVDSDelay(w_val);
-	} catch (Tango::DevFailed& df) {
+	/*----- PROTECTED REGION ID(Merlin::write_triggerInLVDSDelay) ENABLED START -----*/
+	try
+    {
+		m_camera->setTriggerInLVDSDelay(w_val);
+	} 
+    catch (Tango::DevFailed& df)
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_triggerOutLVDSDelay"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_triggerInLVDSDelay");
+	} 
+    catch (Exception& e) 
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_triggerOutLVDSDelay"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_triggerInLVDSDelay");
 	}
 	
 	
-	/*----- PROTECTED REGION END -----*/	//	Merlin::write_triggerOutLVDSDelay
+	/*----- PROTECTED REGION END -----*/	//	Merlin::write_triggerInLVDSDelay
 }
 //--------------------------------------------------------
 /**
@@ -2004,22 +2300,27 @@ void Merlin::read_triggerUseDelay(Tango::Attribute &attr)
 	DEBUG_STREAM << "Merlin::read_triggerUseDelay(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::read_triggerUseDelay) ENABLED START -----*/
 	//	Set the attribute value
-    try {
+    try
+    {
     	lima::Merlin::Camera::Switch mode;
     	m_camera->getTriggerUseDelay(mode);
     	*attr_triggerUseDelay_read = mode;
     	attr.set_value(attr_triggerUseDelay_read);
-    } catch (Tango::DevFailed& df) {
+    } 
+    catch (Tango::DevFailed& df)
+    {
         ERROR_STREAM << df << endl;
         Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_triggerUseDelay"));
-    } catch (Exception& e) {
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Merlin::read_triggerUseDelay");
+    } 
+    catch (Exception& e)
+    {
         ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_triggerUseDelay"));
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Merlin::read_triggerUseDelay");
     }
 	/*----- PROTECTED REGION END -----*/	//	Merlin::read_triggerUseDelay
 }
@@ -2039,282 +2340,27 @@ void Merlin::write_triggerUseDelay(Tango::WAttribute &attr)
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_triggerUseDelay) ENABLED START -----*/
-	try {
+	try 
+    {
     	lima::Merlin::Camera::Switch mode = static_cast<lima::Merlin::Camera::Switch>(w_val);
 		m_camera->setTriggerUseDelay(mode);
-	} catch (Tango::DevFailed& df) {
+	} 
+    catch (Tango::DevFailed& df) 
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_triggerUseDelay"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::write_triggerUseDelay");
+	}
+    catch (Exception& e) 
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_triggerUseDelay"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::write_triggerUseDelay");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::write_triggerUseDelay
-}
-//--------------------------------------------------------
-/**
- *	Read attribute thScanNum related method
- *	Description: 
- *
- *	Data type:	Tango::DevLong
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void Merlin::read_thScanNum(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "Merlin::read_thScanNum(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Merlin::read_thScanNum) ENABLED START -----*/
-	//	Set the attribute value
-    try {
-    	int scanNum;
-    	m_camera->getTHScanNum(scanNum);
-    	*attr_thScanNum_read = scanNum;
-    	attr.set_value(attr_thScanNum_read);
-    } catch (Tango::DevFailed& df) {
-        ERROR_STREAM << df << endl;
-        Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_thScanNum"));
-    } catch (Exception& e) {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_thScanNum"));
-    }
-	/*----- PROTECTED REGION END -----*/	//	Merlin::read_thScanNum
-}
-//--------------------------------------------------------
-/**
- *	Write attribute thScanNum related method
- *	Description: 
- *
- *	Data type:	Tango::DevLong
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void Merlin::write_thScanNum(Tango::WAttribute &attr)
-{
-	DEBUG_STREAM << "Merlin::write_thScanNum(Tango::WAttribute &attr) entering... " << endl;
-	//	Retrieve write value
-	Tango::DevLong	w_val;
-	attr.get_write_value(w_val);
-	/*----- PROTECTED REGION ID(Merlin::write_thScanNum) ENABLED START -----*/
-	try {
-		m_camera->setTHScanNum(w_val);
-	} catch (Tango::DevFailed& df) {
-		ERROR_STREAM << df << endl;
-		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_thScanNum"));
-	} catch (Exception& e) {
-		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_thScanNum"));
-	}
-	/*----- PROTECTED REGION END -----*/	//	Merlin::write_thScanNum
-}
-//--------------------------------------------------------
-/**
- *	Read attribute thStart related method
- *	Description: 
- *
- *	Data type:	Tango::DevFloat
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void Merlin::read_thStart(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "Merlin::read_thStart(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Merlin::read_thStart) ENABLED START -----*/
-	//	Set the attribute value
-    try {
-    	float startKev;
-    	m_camera->getTHStart(startKev);
-    	*attr_thStart_read = startKev;
-    	attr.set_value(attr_thStart_read);
-    } catch (Tango::DevFailed& df) {
-        ERROR_STREAM << df << endl;
-        Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_thStart"));
-    } catch (Exception& e) {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_thStart"));
-    }
-	/*----- PROTECTED REGION END -----*/	//	Merlin::read_thStart
-}
-//--------------------------------------------------------
-/**
- *	Write attribute thStart related method
- *	Description: 
- *
- *	Data type:	Tango::DevFloat
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void Merlin::write_thStart(Tango::WAttribute &attr)
-{
-	DEBUG_STREAM << "Merlin::write_thStart(Tango::WAttribute &attr) entering... " << endl;
-	//	Retrieve write value
-	Tango::DevFloat	w_val;
-	attr.get_write_value(w_val);
-	/*----- PROTECTED REGION ID(Merlin::write_thStart) ENABLED START -----*/
-	try {
-		m_camera->setTHStart(w_val);
-	} catch (Tango::DevFailed& df) {
-		ERROR_STREAM << df << endl;
-		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_thStart"));
-	} catch (Exception& e) {
-		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_thStart"));
-	}
-	/*----- PROTECTED REGION END -----*/	//	Merlin::write_thStart
-}
-//--------------------------------------------------------
-/**
- *	Read attribute thStop related method
- *	Description: 
- *
- *	Data type:	Tango::DevFloat
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void Merlin::read_thStop(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "Merlin::read_thStop(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Merlin::read_thStop) ENABLED START -----*/
-	//	Set the attribute value
-    try {
-    	float stopKev;
-    	m_camera->getTHStop(stopKev);
-    	*attr_thStop_read = stopKev;
-    	attr.set_value(attr_thStop_read);
-    } catch (Tango::DevFailed& df) {
-        ERROR_STREAM << df << endl;
-        Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_thStop"));
-    } catch (Exception& e) {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_thStop"));
-    }
-	/*----- PROTECTED REGION END -----*/	//	Merlin::read_thStop
-}
-//--------------------------------------------------------
-/**
- *	Write attribute thStop related method
- *	Description: 
- *
- *	Data type:	Tango::DevFloat
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void Merlin::write_thStop(Tango::WAttribute &attr)
-{
-	DEBUG_STREAM << "Merlin::write_thStop(Tango::WAttribute &attr) entering... " << endl;
-	//	Retrieve write value
-	Tango::DevFloat	w_val;
-	attr.get_write_value(w_val);
-	/*----- PROTECTED REGION ID(Merlin::write_thStop) ENABLED START -----*/
-	try {
-		m_camera->setTHStop(w_val);
-	} catch (Tango::DevFailed& df) {
-		ERROR_STREAM << df << endl;
-		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_thStop"));
-	} catch (Exception& e) {
-		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_thStop"));
-	}
-	/*----- PROTECTED REGION END -----*/	//	Merlin::write_thStop
-}
-//--------------------------------------------------------
-/**
- *	Read attribute thStep related method
- *	Description: 
- *
- *	Data type:	Tango::DevFloat
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void Merlin::read_thStep(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "Merlin::read_thStep(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Merlin::read_thStep) ENABLED START -----*/
-	//	Set the attribute value
-    try {
-    	float stepKev;
-    	m_camera->getTHStep(stepKev);
-    	*attr_thStep_read = stepKev;
-    	attr.set_value(attr_thStep_read);
-    } catch (Tango::DevFailed& df) {
-        ERROR_STREAM << df << endl;
-        Tango::Except::re_throw_exception(df,
-                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                          static_cast<const char*> ("Merlin::read_thStep"));
-    } catch (Exception& e) {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                       static_cast<const char*> ("Unknown exception caught."),
-                                       static_cast<const char*> ("Merlin::read_thStep"));
-    }
-	/*----- PROTECTED REGION END -----*/	//	Merlin::read_thStep
-}
-//--------------------------------------------------------
-/**
- *	Write attribute thStep related method
- *	Description: 
- *
- *	Data type:	Tango::DevFloat
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void Merlin::write_thStep(Tango::WAttribute &attr)
-{
-	DEBUG_STREAM << "Merlin::write_thStep(Tango::WAttribute &attr) entering... " << endl;
-	//	Retrieve write value
-	Tango::DevFloat	w_val;
-	attr.get_write_value(w_val);
-	/*----- PROTECTED REGION ID(Merlin::write_thStep) ENABLED START -----*/
-	try {
-		m_camera->setTHStep(w_val);
-	} catch (Tango::DevFailed& df) {
-		ERROR_STREAM << df << endl;
-		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::write_thStep"));
-	} catch (Exception& e) {
-		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::write_thStep"));
-	}
-	/*----- PROTECTED REGION END -----*/	//	Merlin::write_thStep
 }
 
 //--------------------------------------------------------
@@ -2349,10 +2395,13 @@ Tango::DevState Merlin::dev_state()
 	stringstream DeviceStatus;
     DeviceStatus << "";
     Tango::DevState DeviceState = Tango::STANDBY;
-    if (!m_is_device_initialized) {
+    if (!m_is_device_initialized)
+    {
         DeviceState = Tango::FAULT;
         DeviceStatus << m_status_message.str();
-    } else {
+    } 
+    else
+    {
         //state&status are retrieved from specific device
         DeviceState = ControlFactory::instance().get_state();
         DeviceStatus << ControlFactory::instance().get_status();
@@ -2374,106 +2423,30 @@ void Merlin::soft_trigger()
 {
 	DEBUG_STREAM << "Merlin::SoftTrigger()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Merlin::soft_trigger) ENABLED START -----*/
-	try {
+	try
+    {
 		m_camera->softTrigger();
-	} catch (Tango::DevFailed& df) {
+	}
+    catch (Tango::DevFailed& df)
+    {
 		ERROR_STREAM << df << endl;
 		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::SoftTrigger"));
-	} catch (Exception& e) {
+                                      "TANGO_DEVICE_ERROR",
+                                      string(df.errors[0].desc).c_str(),
+                                      "Merlin::SoftTrigger");
+	}
+    catch (Exception& e)
+    {
 		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::SoftTrigger"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   e.getErrMsg().c_str(),
+                                   "Merlin::SoftTrigger");
 	}
 	/*----- PROTECTED REGION END -----*/	//	Merlin::soft_trigger
 }
-//--------------------------------------------------------
-/**
- *	Command Abort related method
- *	Description: 
- *
- */
-//--------------------------------------------------------
-void Merlin::abort()
-{
-	DEBUG_STREAM << "Merlin::Abort()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(Merlin::abort) ENABLED START -----*/
-	try {
-		m_camera->abort();
-	} catch (Tango::DevFailed& df) {
-		ERROR_STREAM << df << endl;
-		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::Abort"));
-	} catch (Exception& e) {
-		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::Abort"));
-	}
-	/*----- PROTECTED REGION END -----*/	//	Merlin::abort
-}
-//--------------------------------------------------------
-/**
- *	Command THScan related method
- *	Description: 
- *
- */
-//--------------------------------------------------------
-void Merlin::thscan()
-{
-	DEBUG_STREAM << "Merlin::THScan()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(Merlin::thscan) ENABLED START -----*/
-	try {
-		m_camera->thscan();
-	} catch (Tango::DevFailed& df) {
-		ERROR_STREAM << df << endl;
-		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::THScan"));
-	} catch (Exception& e) {
-		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::THScan"));
-	}
-	/*----- PROTECTED REGION END -----*/	//	Merlin::thscan
-}
-//--------------------------------------------------------
-/**
- *	Command ResetHW related method
- *	Description: 
- *
- */
-//--------------------------------------------------------
-void Merlin::reset_hw()
-{
-	DEBUG_STREAM << "Merlin::ResetHW()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(Merlin::reset_hw) ENABLED START -----*/
-	try {
-		m_camera->resetHw();
-	} catch (Tango::DevFailed& df) {
-		ERROR_STREAM << df << endl;
-		Tango::Except::re_throw_exception(df,
-                                      static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                      static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                                      static_cast<const char*> ("Merlin::ResetHW"));
-	} catch (Exception& e) {
-		ERROR_STREAM << e.getErrMsg() << endl;
-		Tango::Except::throw_exception(static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                                   static_cast<const char*> ("Unknown exception caught."),
-                                   static_cast<const char*> ("Merlin::ResetHW"));
-	}
-	
-	//	Add your own code
-	
-	/*----- PROTECTED REGION END -----*/	//	Merlin::reset_hw
-}
+
+
+
 
 /*----- PROTECTED REGION ID(Merlin::namespace_ending) ENABLED START -----*/
 
@@ -2503,9 +2476,9 @@ void Merlin::create_property_if_empty(Tango::DbData& dev_prop,T value,string pro
             ERROR_STREAM<<df<<endl;
             //- rethrow exception
             Tango::Except::re_throw_exception(df,
-                        static_cast<const char*> ("TANGO_DEVICE_ERROR"),
-                        static_cast<const char*> (string(df.errors[0].desc).c_str()),
-                        static_cast<const char*> ("Merlin::create_property_if_empty"));
+                        "TANGO_DEVICE_ERROR",
+                        string(df.errors[0].desc).c_str(),
+                        "Merlin::create_property_if_empty");
         }
     }
 }

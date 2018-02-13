@@ -295,6 +295,28 @@ public:
 		{return (static_cast<Merlin *>(dev))->is_threshold7_allowed(ty);}
 };
 
+//	Attribute framesPerTrigger class definition
+class framesPerTriggerAttrib : public Tango::Attr
+{
+public:
+    framesPerTriggerAttrib() :Attr("framesPerTrigger",
+        Tango::DEV_LONG, Tango::READ_WRITE) {};
+    ~framesPerTriggerAttrib() {};
+    virtual void read(Tango::DeviceImpl *dev, Tango::Attribute &att)
+    {
+        (static_cast<Merlin *>(dev))->read_framesPerTrigger(att);
+    }
+    virtual void write(Tango::DeviceImpl *dev, Tango::WAttribute &att)
+    {
+        (static_cast<Merlin *>(dev))->write_framesPerTrigger(att);
+    }
+    virtual bool is_allowed(Tango::DeviceImpl *dev, Tango::AttReqType ty)
+    {
+        return (static_cast<Merlin *>(dev))->is_framesPerTrigger_allowed(ty);
+    }
+};
+
+
 //	Attribute triggerStartType class definition
 class triggerStartTypeAttrib: public Tango::Attr
 {
@@ -385,34 +407,34 @@ public:
 		{return (static_cast<Merlin *>(dev))->is_triggerOutLVDSInvert_allowed(ty);}
 };
 
-//	Attribute triggerOutTTLDelay class definition
-class triggerOutTTLDelayAttrib: public Tango::Attr
+//	Attribute triggerInTTLDelay class definition
+class triggerInTTLDelayAttrib: public Tango::Attr
 {
 public:
-	triggerOutTTLDelayAttrib():Attr("triggerOutTTLDelay",
+	triggerInTTLDelayAttrib():Attr("triggerInTTLDelay",
 			Tango::DEV_LONG64, Tango::READ_WRITE) {};
-	~triggerOutTTLDelayAttrib() {};
+	~triggerInTTLDelayAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Merlin *>(dev))->read_triggerOutTTLDelay(att);}
+		{(static_cast<Merlin *>(dev))->read_triggerInTTLDelay(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<Merlin *>(dev))->write_triggerOutTTLDelay(att);}
+		{(static_cast<Merlin *>(dev))->write_triggerInTTLDelay(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Merlin *>(dev))->is_triggerOutTTLDelay_allowed(ty);}
+		{return (static_cast<Merlin *>(dev))->is_triggerInTTLDelay_allowed(ty);}
 };
 
-//	Attribute triggerOutLVDSDelay class definition
-class triggerOutLVDSDelayAttrib: public Tango::Attr
+//	Attribute triggerInLVDSDelay class definition
+class triggerInLVDSDelayAttrib: public Tango::Attr
 {
 public:
-	triggerOutLVDSDelayAttrib():Attr("triggerOutLVDSDelay",
+	triggerInLVDSDelayAttrib():Attr("triggerInLVDSDelay",
 			Tango::DEV_LONG64, Tango::READ_WRITE) {};
-	~triggerOutLVDSDelayAttrib() {};
+	~triggerInLVDSDelayAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Merlin *>(dev))->read_triggerOutLVDSDelay(att);}
+		{(static_cast<Merlin *>(dev))->read_triggerInLVDSDelay(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<Merlin *>(dev))->write_triggerOutLVDSDelay(att);}
+		{(static_cast<Merlin *>(dev))->write_triggerInLVDSDelay(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Merlin *>(dev))->is_triggerOutLVDSDelay_allowed(ty);}
+		{return (static_cast<Merlin *>(dev))->is_triggerInLVDSDelay_allowed(ty);}
 };
 
 //	Attribute triggerUseDelay class definition
@@ -428,66 +450,6 @@ public:
 		{(static_cast<Merlin *>(dev))->write_triggerUseDelay(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 		{return (static_cast<Merlin *>(dev))->is_triggerUseDelay_allowed(ty);}
-};
-
-//	Attribute thScanNum class definition
-class thScanNumAttrib: public Tango::Attr
-{
-public:
-	thScanNumAttrib():Attr("thScanNum",
-			Tango::DEV_LONG, Tango::READ_WRITE) {};
-	~thScanNumAttrib() {};
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Merlin *>(dev))->read_thScanNum(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<Merlin *>(dev))->write_thScanNum(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Merlin *>(dev))->is_thScanNum_allowed(ty);}
-};
-
-//	Attribute thStart class definition
-class thStartAttrib: public Tango::Attr
-{
-public:
-	thStartAttrib():Attr("thStart",
-			Tango::DEV_FLOAT, Tango::READ_WRITE) {};
-	~thStartAttrib() {};
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Merlin *>(dev))->read_thStart(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<Merlin *>(dev))->write_thStart(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Merlin *>(dev))->is_thStart_allowed(ty);}
-};
-
-//	Attribute thStop class definition
-class thStopAttrib: public Tango::Attr
-{
-public:
-	thStopAttrib():Attr("thStop",
-			Tango::DEV_FLOAT, Tango::READ_WRITE) {};
-	~thStopAttrib() {};
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Merlin *>(dev))->read_thStop(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<Merlin *>(dev))->write_thStop(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Merlin *>(dev))->is_thStop_allowed(ty);}
-};
-
-//	Attribute thStep class definition
-class thStepAttrib: public Tango::Attr
-{
-public:
-	thStepAttrib():Attr("thStep",
-			Tango::DEV_FLOAT, Tango::READ_WRITE) {};
-	~thStepAttrib() {};
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Merlin *>(dev))->read_thStep(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<Merlin *>(dev))->write_thStep(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Merlin *>(dev))->is_thStep_allowed(ty);}
 };
 
 
@@ -540,74 +502,8 @@ public:
 	{return (static_cast<Merlin *>(dev))->is_SoftTrigger_allowed(any);}
 };
 
-//	Command Abort class definition
-class AbortClass : public Tango::Command
-{
-public:
-	AbortClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	AbortClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~AbortClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Merlin *>(dev))->is_Abort_allowed(any);}
-};
 
-//	Command THScan class definition
-class THScanClass : public Tango::Command
-{
-public:
-	THScanClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	THScanClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~THScanClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Merlin *>(dev))->is_THScan_allowed(any);}
-};
-
-//	Command ResetHW class definition
-class ResetHWClass : public Tango::Command
-{
-public:
-	ResetHWClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	ResetHWClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~ResetHWClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Merlin *>(dev))->is_ResetHW_allowed(any);}
-};
 
 
 /**

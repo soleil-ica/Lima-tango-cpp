@@ -84,8 +84,8 @@ class Merlin : public Tango::Device_4Impl
 public:
 	//	HostName:	The name of the Merlin PC
 	string	hostName;
-	//	Port:	The Merlin command port
-	Tango::DevLong	port;
+	//	CmdPort:	The Merlin command port
+	Tango::DevLong	cmdPort;
 	//	DataPort:	The Merlin data port
 	Tango::DevLong	dataPort;
 	//	Chips:	Nos of Medipix chips
@@ -115,19 +115,16 @@ public:
 	Tango::DevFloat	*attr_threshold5_read;
 	Tango::DevFloat	*attr_threshold6_read;
 	Tango::DevFloat	*attr_threshold7_read;
+    Tango::DevLong	*attr_framesPerTrigger_read;
 	Tango::DevLong	*attr_triggerStartType_read;
 	Tango::DevLong	*attr_triggerStopType_read;
 	Tango::DevLong	*attr_triggerOutTTL_read;
 	Tango::DevLong	*attr_triggerOutLVDS_read;
 	Tango::DevLong	*attr_triggerOutTTLInvert_read;
 	Tango::DevLong	*attr_triggerOutLVDSInvert_read;
-	Tango::DevLong64	*attr_triggerOutTTLDelay_read;
-	Tango::DevLong64	*attr_triggerOutLVDSDelay_read;
+	Tango::DevLong64	*attr_triggerInTTLDelay_read;
+	Tango::DevLong64	*attr_triggerInLVDSDelay_read;
 	Tango::DevBoolean	*attr_triggerUseDelay_read;
-	Tango::DevLong	*attr_thScanNum_read;
-	Tango::DevFloat	*attr_thStart_read;
-	Tango::DevFloat	*attr_thStop_read;
-	Tango::DevFloat	*attr_thStep_read;
 
 //	Constructors and destructors
 public:
@@ -355,6 +352,16 @@ public:
 	virtual void write_threshold7(Tango::WAttribute &attr);
 	virtual bool is_threshold7_allowed(Tango::AttReqType type);
 /**
+    *	Attribute framesPerTrigger related methods
+    *	Description:
+    *
+    *	Data type:	Tango::DevFloat
+    *	Attr type:	Scalar
+    */
+    virtual void read_framesPerTrigger(Tango::Attribute &attr);
+    virtual void write_framesPerTrigger(Tango::WAttribute &attr);
+    virtual bool is_framesPerTrigger_allowed(Tango::AttReqType type);
+/**
  *	Attribute triggerStartType related methods
  *	Description: 
  *
@@ -415,25 +422,25 @@ public:
 	virtual void write_triggerOutLVDSInvert(Tango::WAttribute &attr);
 	virtual bool is_triggerOutLVDSInvert_allowed(Tango::AttReqType type);
 /**
- *	Attribute triggerOutTTLDelay related methods
+ *	Attribute triggerInTTLDelay related methods
  *	Description: 
  *
  *	Data type:	Tango::DevLong64
  *	Attr type:	Scalar
  */
-	virtual void read_triggerOutTTLDelay(Tango::Attribute &attr);
-	virtual void write_triggerOutTTLDelay(Tango::WAttribute &attr);
-	virtual bool is_triggerOutTTLDelay_allowed(Tango::AttReqType type);
+	virtual void read_triggerInTTLDelay(Tango::Attribute &attr);
+	virtual void write_triggerInTTLDelay(Tango::WAttribute &attr);
+	virtual bool is_triggerInTTLDelay_allowed(Tango::AttReqType type);
 /**
- *	Attribute triggerOutLVDSDelay related methods
+ *	Attribute triggerInLVDSDelay related methods
  *	Description: 
  *
  *	Data type:	Tango::DevLong64
  *	Attr type:	Scalar
  */
-	virtual void read_triggerOutLVDSDelay(Tango::Attribute &attr);
-	virtual void write_triggerOutLVDSDelay(Tango::WAttribute &attr);
-	virtual bool is_triggerOutLVDSDelay_allowed(Tango::AttReqType type);
+	virtual void read_triggerInLVDSDelay(Tango::Attribute &attr);
+	virtual void write_triggerInLVDSDelay(Tango::WAttribute &attr);
+	virtual bool is_triggerInLVDSDelay_allowed(Tango::AttReqType type);
 /**
  *	Attribute triggerUseDelay related methods
  *	Description: 
@@ -444,46 +451,7 @@ public:
 	virtual void read_triggerUseDelay(Tango::Attribute &attr);
 	virtual void write_triggerUseDelay(Tango::WAttribute &attr);
 	virtual bool is_triggerUseDelay_allowed(Tango::AttReqType type);
-/**
- *	Attribute thScanNum related methods
- *	Description: 
- *
- *	Data type:	Tango::DevLong
- *	Attr type:	Scalar
- */
-	virtual void read_thScanNum(Tango::Attribute &attr);
-	virtual void write_thScanNum(Tango::WAttribute &attr);
-	virtual bool is_thScanNum_allowed(Tango::AttReqType type);
-/**
- *	Attribute thStart related methods
- *	Description: 
- *
- *	Data type:	Tango::DevFloat
- *	Attr type:	Scalar
- */
-	virtual void read_thStart(Tango::Attribute &attr);
-	virtual void write_thStart(Tango::WAttribute &attr);
-	virtual bool is_thStart_allowed(Tango::AttReqType type);
-/**
- *	Attribute thStop related methods
- *	Description: 
- *
- *	Data type:	Tango::DevFloat
- *	Attr type:	Scalar
- */
-	virtual void read_thStop(Tango::Attribute &attr);
-	virtual void write_thStop(Tango::WAttribute &attr);
-	virtual bool is_thStop_allowed(Tango::AttReqType type);
-/**
- *	Attribute thStep related methods
- *	Description: 
- *
- *	Data type:	Tango::DevFloat
- *	Attr type:	Scalar
- */
-	virtual void read_thStep(Tango::Attribute &attr);
-	virtual void write_thStep(Tango::WAttribute &attr);
-	virtual bool is_thStep_allowed(Tango::AttReqType type);
+
 
 
 	//--------------------------------------------------------
@@ -513,27 +481,7 @@ public:
 	 */
 	virtual void soft_trigger();
 	virtual bool is_SoftTrigger_allowed(const CORBA::Any &any);
-	/**
-	 *	Command Abort related method
-	 *	Description: 
-	 *
-	 */
-	virtual void abort();
-	virtual bool is_Abort_allowed(const CORBA::Any &any);
-	/**
-	 *	Command THScan related method
-	 *	Description: 
-	 *
-	 */
-	virtual void thscan();
-	virtual bool is_THScan_allowed(const CORBA::Any &any);
-	/**
-	 *	Command ResetHW related method
-	 *	Description: 
-	 *
-	 */
-	virtual void reset_hw();
-	virtual bool is_ResetHW_allowed(const CORBA::Any &any);
+
 
 
 /*----- PROTECTED REGION ID(Merlin::Additional Method prototypes) ENABLED START -----*/

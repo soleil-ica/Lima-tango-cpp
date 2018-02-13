@@ -193,59 +193,10 @@ CORBA::Any *SoftTriggerClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(co
 	return new CORBA::Any();
 }
 
-//--------------------------------------------------------
-/**
- * method : 		AbortClass::execute()
- * description : 	method to trigger the execution of the command.
- *
- * @param	device	The device on which the command must be executed
- * @param	in_any	The command input data
- *
- *	returns The command output data (packed in the Any object)
- */
-//--------------------------------------------------------
-CORBA::Any *AbortClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
-{
-	cout2 << "AbortClass::execute(): arrived" << endl;
-	((static_cast<Merlin *>(device))->abort());
-	return new CORBA::Any();
-}
 
-//--------------------------------------------------------
-/**
- * method : 		THScanClass::execute()
- * description : 	method to trigger the execution of the command.
- *
- * @param	device	The device on which the command must be executed
- * @param	in_any	The command input data
- *
- *	returns The command output data (packed in the Any object)
- */
-//--------------------------------------------------------
-CORBA::Any *THScanClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
-{
-	cout2 << "THScanClass::execute(): arrived" << endl;
-	((static_cast<Merlin *>(device))->thscan());
-	return new CORBA::Any();
-}
 
-//--------------------------------------------------------
-/**
- * method : 		ResetHWClass::execute()
- * description : 	method to trigger the execution of the command.
- *
- * @param	device	The device on which the command must be executed
- * @param	in_any	The command input data
- *
- *	returns The command output data (packed in the Any object)
- */
-//--------------------------------------------------------
-CORBA::Any *ResetHWClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
-{
-	cout2 << "ResetHWClass::execute(): arrived" << endl;
-	((static_cast<Merlin *>(device))->reset_hw());
-	return new CORBA::Any();
-}
+
+
 
 
 //===================================================================
@@ -620,6 +571,7 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : softwareVersion
 	softwareVersionAttrib	*softwareversion = new softwareVersionAttrib();
 	Tango::UserDefaultAttrProp	softwareversion_prop;
+    softwareversion_prop.set_unit(" ");
 	//	description	not set for softwareVersion
 	//	label	not set for softwareVersion
 	//	unit	not set for softwareVersion
@@ -637,13 +589,15 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	softwareversion->set_default_properties(softwareversion_prop);
 	//	Not Polled
-	softwareversion->set_disp_level(Tango::OPERATOR);
+	softwareversion->set_disp_level(Tango::EXPERT);
 	//	Not Memorized
 	att_list.push_back(softwareversion);
 
 	//	Attribute : chargeSumming
 	chargeSummingAttrib	*chargesumming = new chargeSummingAttrib();
 	Tango::UserDefaultAttrProp	chargesumming_prop;
+    chargesumming_prop.set_description("ON/OFF");
+    chargesumming_prop.set_unit(" ");
 	//	description	not set for chargeSumming
 	//	label	not set for chargeSumming
 	//	unit	not set for chargeSumming
@@ -668,6 +622,8 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : colourMode
 	colourModeAttrib	*colourmode = new colourModeAttrib();
 	Tango::UserDefaultAttrProp	colourmode_prop;
+    colourmode_prop.set_description("MONOCHROME/COLOUR");
+    colourmode_prop.set_unit(" ");
 	//	description	not set for colourMode
 	//	label	not set for colourMode
 	//	unit	not set for colourMode
@@ -692,6 +648,8 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : continuousRW
 	continuousRWAttrib	*continuousrw = new continuousRWAttrib();
 	Tango::UserDefaultAttrProp	continuousrw_prop;
+    continuousrw_prop.set_description("ON/OFF");
+    continuousrw_prop.set_unit(" ");
 	//	description	not set for continuousRW
 	//	label	not set for continuousRW
 	//	unit	not set for continuousRW
@@ -716,6 +674,11 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : counter
 	counterAttrib	*counter = new counterAttrib();
 	Tango::UserDefaultAttrProp	counter_prop;
+    counter_prop.set_description("0 = COUNTER0\n1 = COUNTER1\n2 = BOTH");
+    counter_prop.set_unit(" ");
+    counter_prop.set_min_value("0");
+    counter_prop.set_max_value("2");
+    counter_prop.set_format("%1d");
 	//	description	not set for counter
 	//	label	not set for counter
 	//	unit	not set for counter
@@ -740,6 +703,11 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : gain
 	gainAttrib	*gain = new gainAttrib();
 	Tango::UserDefaultAttrProp	gain_prop;
+    gain_prop.set_description("0 = SHGM\n1 = HGM\n2 = LGM\n3 = SLGM");
+    gain_prop.set_unit(" ");
+    gain_prop.set_min_value("0");
+    gain_prop.set_max_value("3");
+    gain_prop.set_format("%1d");
 	//	description	not set for gain
 	//	label	not set for gain
 	//	unit	not set for gain
@@ -764,6 +732,9 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : operatingEnergy
 	operatingEnergyAttrib	*operatingenergy = new operatingEnergyAttrib();
 	Tango::UserDefaultAttrProp	operatingenergy_prop;
+    operatingenergy_prop.set_unit("keV");
+    operatingenergy_prop.set_min_value("0");
+    operatingenergy_prop.set_max_value("999.99");
 	//	description	not set for operatingEnergy
 	//	label	not set for operatingEnergy
 	//	unit	not set for operatingEnergy
@@ -788,6 +759,7 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : temperature
 	temperatureAttrib	*temperature = new temperatureAttrib();
 	Tango::UserDefaultAttrProp	temperature_prop;
+    temperature_prop.set_unit("deg C");
 	//	description	not set for temperature
 	//	label	not set for temperature
 	//	unit	not set for temperature
@@ -812,6 +784,9 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : threshold0
 	threshold0Attrib	*threshold0 = new threshold0Attrib();
 	Tango::UserDefaultAttrProp	threshold0_prop;
+    threshold0_prop.set_unit("keV");
+    threshold0_prop.set_min_value("0");
+    threshold0_prop.set_max_value("999.99");
 	//	description	not set for threshold0
 	//	label	not set for threshold0
 	//	unit	not set for threshold0
@@ -836,6 +811,9 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : threshold1
 	threshold1Attrib	*threshold1 = new threshold1Attrib();
 	Tango::UserDefaultAttrProp	threshold1_prop;
+    threshold1_prop.set_unit("keV");
+    threshold1_prop.set_min_value("0");
+    threshold1_prop.set_max_value("999.99");
 	//	description	not set for threshold1
 	//	label	not set for threshold1
 	//	unit	not set for threshold1
@@ -860,6 +838,9 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : threshold2
 	threshold2Attrib	*threshold2 = new threshold2Attrib();
 	Tango::UserDefaultAttrProp	threshold2_prop;
+    threshold2_prop.set_unit("keV");
+    threshold2_prop.set_min_value("0");
+    threshold2_prop.set_max_value("999.99");
 	//	description	not set for threshold2
 	//	label	not set for threshold2
 	//	unit	not set for threshold2
@@ -884,6 +865,9 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : threshold3
 	threshold3Attrib	*threshold3 = new threshold3Attrib();
 	Tango::UserDefaultAttrProp	threshold3_prop;
+    threshold3_prop.set_unit("keV");
+    threshold3_prop.set_min_value("0");
+    threshold3_prop.set_max_value("999.99");
 	//	description	not set for threshold3
 	//	label	not set for threshold3
 	//	unit	not set for threshold3
@@ -908,6 +892,9 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : threshold4
 	threshold4Attrib	*threshold4 = new threshold4Attrib();
 	Tango::UserDefaultAttrProp	threshold4_prop;
+    threshold4_prop.set_unit("keV");
+    threshold4_prop.set_min_value("0");
+    threshold4_prop.set_max_value("999.99");
 	//	description	not set for threshold4
 	//	label	not set for threshold4
 	//	unit	not set for threshold4
@@ -932,6 +919,9 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : threshold5
 	threshold5Attrib	*threshold5 = new threshold5Attrib();
 	Tango::UserDefaultAttrProp	threshold5_prop;
+    threshold5_prop.set_unit("keV");
+    threshold5_prop.set_min_value("0");
+    threshold5_prop.set_max_value("999.99");
 	//	description	not set for threshold5
 	//	label	not set for threshold5
 	//	unit	not set for threshold5
@@ -956,6 +946,9 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : threshold6
 	threshold6Attrib	*threshold6 = new threshold6Attrib();
 	Tango::UserDefaultAttrProp	threshold6_prop;
+    threshold6_prop.set_unit("keV");
+    threshold6_prop.set_min_value("0");
+    threshold6_prop.set_max_value("999.99");
 	//	description	not set for threshold6
 	//	label	not set for threshold6
 	//	unit	not set for threshold6
@@ -980,6 +973,9 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : threshold7
 	threshold7Attrib	*threshold7 = new threshold7Attrib();
 	Tango::UserDefaultAttrProp	threshold7_prop;
+    threshold7_prop.set_unit("keV");
+    threshold7_prop.set_min_value("0");
+    threshold7_prop.set_max_value("999.99");
 	//	description	not set for threshold7
 	//	label	not set for threshold7
 	//	unit	not set for threshold7
@@ -1001,9 +997,37 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Not Memorized
 	att_list.push_back(threshold7);
 
+    //	Attribute : framesPerTrigger
+    framesPerTriggerAttrib	*framesPerTrigger = new framesPerTriggerAttrib();
+    Tango::UserDefaultAttrProp	framesPerTrigger_prop;
+    framesPerTrigger_prop.set_description("Number of frames per trigger");
+    framesPerTrigger_prop.set_unit(" ");
+    //	description	not set for framesPerTrigger
+    //	label	not set for framesPerTrigger
+    //	unit	not set for framesPerTrigger
+    //	standard_unit	not set for framesPerTrigger
+    //	display_unit	not set for framesPerTrigger
+    //	format	not set for framesPerTrigger
+    //	max_value	not set for framesPerTrigger
+    //	min_value	not set for framesPerTrigger
+    //	max_alarm	not set for framesPerTrigger
+    //	min_alarm	not set for framesPerTrigger
+    //	max_warning	not set for framesPerTrigger
+    //	min_warning	not set for framesPerTrigger
+    //	delta_t	not set for framesPerTrigger
+    //	delta_val	not set for framesPerTrigger
+
+    framesPerTrigger->set_default_properties(framesPerTrigger_prop);
+    //	Not Polled
+    framesPerTrigger->set_disp_level(Tango::OPERATOR);
+    //	Not Memorized
+    att_list.push_back(framesPerTrigger);
+
 	//	Attribute : triggerStartType
 	triggerStartTypeAttrib	*triggerstarttype = new triggerStartTypeAttrib();
 	Tango::UserDefaultAttrProp	triggerstarttype_prop;
+    triggerstarttype_prop.set_description("Trigger start mode:\n0 = INTERNAL\n1 = RISING_EDGE_TTL\n2 = FALLING_EDGE_TTL\n3 = RISING_EDGE_LVDS\n4 = FALLING_EDGE_LVDS\n5 = SOFT");
+    triggerstarttype_prop.set_unit(" ");
 	//	description	not set for triggerStartType
 	//	label	not set for triggerStartType
 	//	unit	not set for triggerStartType
@@ -1028,6 +1052,8 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : triggerStopType
 	triggerStopTypeAttrib	*triggerstoptype = new triggerStopTypeAttrib();
 	Tango::UserDefaultAttrProp	triggerstoptype_prop;
+    triggerstoptype_prop.set_description("Trigger stop mode:\n0 = INTERNAL\n1 = RISING_EDGE_TTL\n2 = FALLING_EDGE_TTL\n3 = RISING_EDGE_LVDS\n4 = FALLING_EDGE_LVDS\n5 = SOFT");
+    triggerstoptype_prop.set_unit(" ");
 	//	description	not set for triggerStopType
 	//	label	not set for triggerStopType
 	//	unit	not set for triggerStopType
@@ -1052,6 +1078,10 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : triggerOutTTL
 	triggerOutTTLAttrib	*triggeroutttl = new triggerOutTTLAttrib();
 	Tango::UserDefaultAttrProp	triggeroutttl_prop;
+    triggeroutttl_prop.set_description("TTL Trigger stop mode:\n0 = TTL\n1 = LVDS \
+                                         \n2 = TTL_DELAYED\n3 = LVDS_DELAYED\n4 = FOLLOW_SHUTTER\n5 = ONE_PER_ACQ_BURST \
+                                         \n5 = SHUTTER_AND_SENSOR_READ\n5 = OUTPUT_BUSY");
+    triggeroutttl_prop.set_unit(" ");
 	//	description	not set for triggerOutTTL
 	//	label	not set for triggerOutTTL
 	//	unit	not set for triggerOutTTL
@@ -1076,6 +1106,10 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : triggerOutLVDS
 	triggerOutLVDSAttrib	*triggeroutlvds = new triggerOutLVDSAttrib();
 	Tango::UserDefaultAttrProp	triggeroutlvds_prop;
+    triggeroutlvds_prop.set_description("LVDS Trigger stop mode:\n0 = TTL\n1 = LVDS \
+                                         \n2 = TTL_DELAYED\n3 = LVDS_DELAYED\n4 = FOLLOW_SHUTTER\n5 = ONE_PER_ACQ_BURST \
+                                         \n5 = SHUTTER_AND_SENSOR_READ\n5 = OUTPUT_BUSY");
+    triggeroutlvds_prop.set_unit(" ");
 	//	description	not set for triggerOutLVDS
 	//	label	not set for triggerOutLVDS
 	//	unit	not set for triggerOutLVDS
@@ -1100,6 +1134,8 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : triggerOutTTLInvert
 	triggerOutTTLInvertAttrib	*triggeroutttlinvert = new triggerOutTTLInvertAttrib();
 	Tango::UserDefaultAttrProp	triggeroutttlinvert_prop;
+    triggeroutttlinvert_prop.set_description("TTL Trigger invert mode:\n0 = NORMAL\n1 = INVERTED");
+    triggeroutttlinvert_prop.set_unit(" ");
 	//	description	not set for triggerOutTTLInvert
 	//	label	not set for triggerOutTTLInvert
 	//	unit	not set for triggerOutTTLInvert
@@ -1124,6 +1160,8 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : triggerOutLVDSInvert
 	triggerOutLVDSInvertAttrib	*triggeroutlvdsinvert = new triggerOutLVDSInvertAttrib();
 	Tango::UserDefaultAttrProp	triggeroutlvdsinvert_prop;
+    triggeroutlvdsinvert_prop.set_description("LVDS Trigger invert mode:\n0 = NORMAL\n1 = INVERTED");
+    triggeroutlvdsinvert_prop.set_unit(" ");
 	//	description	not set for triggerOutLVDSInvert
 	//	label	not set for triggerOutLVDSInvert
 	//	unit	not set for triggerOutLVDSInvert
@@ -1145,53 +1183,63 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Not Memorized
 	att_list.push_back(triggeroutlvdsinvert);
 
-	//	Attribute : triggerOutTTLDelay
-	triggerOutTTLDelayAttrib	*triggeroutttldelay = new triggerOutTTLDelayAttrib();
-	Tango::UserDefaultAttrProp	triggeroutttldelay_prop;
-	//	description	not set for triggerOutTTLDelay
-	//	label	not set for triggerOutTTLDelay
-	//	unit	not set for triggerOutTTLDelay
-	//	standard_unit	not set for triggerOutTTLDelay
-	//	display_unit	not set for triggerOutTTLDelay
-	//	format	not set for triggerOutTTLDelay
-	//	max_value	not set for triggerOutTTLDelay
-	//	min_value	not set for triggerOutTTLDelay
-	//	max_alarm	not set for triggerOutTTLDelay
-	//	min_alarm	not set for triggerOutTTLDelay
-	//	max_warning	not set for triggerOutTTLDelay
-	//	min_warning	not set for triggerOutTTLDelay
-	//	delta_t	not set for triggerOutTTLDelay
-	//	delta_val	not set for triggerOutTTLDelay
+	//	Attribute : triggerInTTLDelay
+	triggerInTTLDelayAttrib	*triggerinttldelay = new triggerInTTLDelayAttrib();
+    Tango::UserDefaultAttrProp	triggerinttldelay_prop;
+    triggerinttldelay_prop.set_description("TTL Trigger delay");
+    triggerinttldelay_prop.set_unit("ns");
+    triggerinttldelay_prop.set_min_value("0");
+    triggerinttldelay_prop.set_max_value("68719476720");
+    triggerinttldelay_prop.set_format("%7d");
+	//	description	not set for triggerInTTLDelay
+	//	label	not set for triggerInTTLDelay
+	//	unit	not set for triggerInTTLDelay
+	//	standard_unit	not set for triggerInTTLDelay
+	//	display_unit	not set for triggerInTTLDelay
+	//	format	not set for triggerInTTLDelay
+	//	max_value	not set for triggerInTTLDelay
+	//	min_value	not set for triggerInTTLDelay
+	//	max_alarm	not set for triggerInTTLDelay
+	//	min_alarm	not set for triggerInTTLDelay
+	//	max_warning	not set for triggerInTTLDelay
+	//	min_warning	not set for triggerInTTLDelay
+	//	delta_t	not set for triggerInTTLDelay
+	//	delta_val	not set for triggerInTTLDelay
 	
-	triggeroutttldelay->set_default_properties(triggeroutttldelay_prop);
+    triggerinttldelay->set_default_properties(triggerinttldelay_prop);
 	//	Not Polled
-	triggeroutttldelay->set_disp_level(Tango::OPERATOR);
+    triggerinttldelay->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
-	att_list.push_back(triggeroutttldelay);
+    att_list.push_back(triggerinttldelay);
 
-	//	Attribute : triggerOutLVDSDelay
-	triggerOutLVDSDelayAttrib	*triggeroutlvdsdelay = new triggerOutLVDSDelayAttrib();
-	Tango::UserDefaultAttrProp	triggeroutlvdsdelay_prop;
-	//	description	not set for triggerOutLVDSDelay
-	//	label	not set for triggerOutLVDSDelay
-	//	unit	not set for triggerOutLVDSDelay
-	//	standard_unit	not set for triggerOutLVDSDelay
-	//	display_unit	not set for triggerOutLVDSDelay
-	//	format	not set for triggerOutLVDSDelay
-	//	max_value	not set for triggerOutLVDSDelay
-	//	min_value	not set for triggerOutLVDSDelay
-	//	max_alarm	not set for triggerOutLVDSDelay
-	//	min_alarm	not set for triggerOutLVDSDelay
-	//	max_warning	not set for triggerOutLVDSDelay
-	//	min_warning	not set for triggerOutLVDSDelay
-	//	delta_t	not set for triggerOutLVDSDelay
-	//	delta_val	not set for triggerOutLVDSDelay
+	//	Attribute : triggerInLVDSDelay
+	triggerInLVDSDelayAttrib	*triggerinlvdsdelay = new triggerInLVDSDelayAttrib();
+    Tango::UserDefaultAttrProp	triggerinlvdsdelay_prop;
+    triggerinlvdsdelay_prop.set_description("LVDS Trigger delay");
+    triggerinlvdsdelay_prop.set_unit("ns");
+    triggerinlvdsdelay_prop.set_min_value("0");
+    triggerinlvdsdelay_prop.set_max_value("68719476720");
+    triggerinlvdsdelay_prop.set_format("%7d");
+	//	description	not set for triggerInLVDSDelay
+	//	label	not set for triggerInLVDSDelay
+	//	unit	not set for triggerInLVDSDelay
+	//	standard_unit	not set for triggerInLVDSDelay
+	//	display_unit	not set for triggerInLVDSDelay
+	//	format	not set for triggerInLVDSDelay
+	//	max_value	not set for triggerInLVDSDelay
+	//	min_value	not set for triggerInLVDSDelay
+	//	max_alarm	not set for triggerInLVDSDelay
+	//	min_alarm	not set for triggerInLVDSDelay
+	//	max_warning	not set for triggerInLVDSDelay
+	//	min_warning	not set for triggerInLVDSDelay
+	//	delta_t	not set for triggerInLVDSDelay
+	//	delta_val	not set for triggerInLVDSDelay
 	
-	triggeroutlvdsdelay->set_default_properties(triggeroutlvdsdelay_prop);
+    triggerinlvdsdelay->set_default_properties(triggerinlvdsdelay_prop);
 	//	Not Polled
-	triggeroutlvdsdelay->set_disp_level(Tango::OPERATOR);
+    triggerinlvdsdelay->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
-	att_list.push_back(triggeroutlvdsdelay);
+    att_list.push_back(triggerinlvdsdelay);
 
 	//	Attribute : triggerUseDelay
 	triggerUseDelayAttrib	*triggerusedelay = new triggerUseDelayAttrib();
@@ -1216,102 +1264,6 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	triggerusedelay->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
 	att_list.push_back(triggerusedelay);
-
-	//	Attribute : thScanNum
-	thScanNumAttrib	*thscannum = new thScanNumAttrib();
-	Tango::UserDefaultAttrProp	thscannum_prop;
-	//	description	not set for thScanNum
-	//	label	not set for thScanNum
-	//	unit	not set for thScanNum
-	//	standard_unit	not set for thScanNum
-	//	display_unit	not set for thScanNum
-	//	format	not set for thScanNum
-	//	max_value	not set for thScanNum
-	//	min_value	not set for thScanNum
-	//	max_alarm	not set for thScanNum
-	//	min_alarm	not set for thScanNum
-	//	max_warning	not set for thScanNum
-	//	min_warning	not set for thScanNum
-	//	delta_t	not set for thScanNum
-	//	delta_val	not set for thScanNum
-	
-	thscannum->set_default_properties(thscannum_prop);
-	//	Not Polled
-	thscannum->set_disp_level(Tango::OPERATOR);
-	//	Not Memorized
-	att_list.push_back(thscannum);
-
-	//	Attribute : thStart
-	thStartAttrib	*thstart = new thStartAttrib();
-	Tango::UserDefaultAttrProp	thstart_prop;
-	//	description	not set for thStart
-	//	label	not set for thStart
-	//	unit	not set for thStart
-	//	standard_unit	not set for thStart
-	//	display_unit	not set for thStart
-	//	format	not set for thStart
-	//	max_value	not set for thStart
-	//	min_value	not set for thStart
-	//	max_alarm	not set for thStart
-	//	min_alarm	not set for thStart
-	//	max_warning	not set for thStart
-	//	min_warning	not set for thStart
-	//	delta_t	not set for thStart
-	//	delta_val	not set for thStart
-	
-	thstart->set_default_properties(thstart_prop);
-	//	Not Polled
-	thstart->set_disp_level(Tango::OPERATOR);
-	//	Not Memorized
-	att_list.push_back(thstart);
-
-	//	Attribute : thStop
-	thStopAttrib	*thstop = new thStopAttrib();
-	Tango::UserDefaultAttrProp	thstop_prop;
-	//	description	not set for thStop
-	//	label	not set for thStop
-	//	unit	not set for thStop
-	//	standard_unit	not set for thStop
-	//	display_unit	not set for thStop
-	//	format	not set for thStop
-	//	max_value	not set for thStop
-	//	min_value	not set for thStop
-	//	max_alarm	not set for thStop
-	//	min_alarm	not set for thStop
-	//	max_warning	not set for thStop
-	//	min_warning	not set for thStop
-	//	delta_t	not set for thStop
-	//	delta_val	not set for thStop
-	
-	thstop->set_default_properties(thstop_prop);
-	//	Not Polled
-	thstop->set_disp_level(Tango::OPERATOR);
-	//	Not Memorized
-	att_list.push_back(thstop);
-
-	//	Attribute : thStep
-	thStepAttrib	*thstep = new thStepAttrib();
-	Tango::UserDefaultAttrProp	thstep_prop;
-	//	description	not set for thStep
-	//	label	not set for thStep
-	//	unit	not set for thStep
-	//	standard_unit	not set for thStep
-	//	display_unit	not set for thStep
-	//	format	not set for thStep
-	//	max_value	not set for thStep
-	//	min_value	not set for thStep
-	//	max_alarm	not set for thStep
-	//	min_alarm	not set for thStep
-	//	max_warning	not set for thStep
-	//	min_warning	not set for thStep
-	//	delta_t	not set for thStep
-	//	delta_val	not set for thStep
-	
-	thstep->set_default_properties(thstep_prop);
-	//	Not Polled
-	thstep->set_disp_level(Tango::OPERATOR);
-	//	Not Memorized
-	att_list.push_back(thstep);
 
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());
@@ -1355,32 +1307,7 @@ void MerlinClass::command_factory()
 			Tango::OPERATOR);
 	command_list.push_back(pSoftTriggerCmd);
 
-	//	Command Abort
-	AbortClass	*pAbortCmd =
-		new AbortClass("Abort",
-			Tango::DEV_VOID, Tango::DEV_VOID,
-			"",
-			"",
-			Tango::OPERATOR);
-	command_list.push_back(pAbortCmd);
-
-	//	Command THScan
-	THScanClass	*pTHScanCmd =
-		new THScanClass("THScan",
-			Tango::DEV_VOID, Tango::DEV_VOID,
-			"",
-			"",
-			Tango::OPERATOR);
-	command_list.push_back(pTHScanCmd);
-
-	//	Command ResetHW
-	ResetHWClass	*pResetHWCmd =
-		new ResetHWClass("ResetHW",
-			Tango::DEV_VOID, Tango::DEV_VOID,
-			"",
-			"",
-			Tango::OPERATOR);
-	command_list.push_back(pResetHWCmd);
+	
 
 	/*----- PROTECTED REGION ID(MerlinClass::command_factory_after) ENABLED START -----*/
 	
