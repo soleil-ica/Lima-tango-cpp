@@ -292,8 +292,8 @@ void LimaDetector::init_device()
         INFO_STREAM << "Define ImageType of detector (16 bits, 32 bits, ...) following the DetectorPixelDepth property (" << detectorPixelDepth << ")." << endl;
         configure_image_type();
 
-        //fix percent of memory to allocate for the lima buffer
-        INFO_STREAM << "Fix amount percent of memory for the lima ring buffer following the ExpertBufferMaxMemoryPercent property (" << expertBufferMaxMemoryPercent << ")." << endl;
+        //- set percent of memory to allocate for the lima buffer
+        INFO_STREAM << "Set amount percent of memory for the lima ring buffer following the ExpertBufferMaxMemoryPercent property (" << expertBufferMaxMemoryPercent << ")." << endl;
         m_ct->buffer()->setMaxMemory((short) expertBufferMaxMemoryPercent);
 		
         //- reset image, allow to redefine type image according to  CurrentImageType of the HwDetInfoCtrlObj
@@ -319,7 +319,7 @@ void LimaDetector::init_device()
             m_ct->video()->setActive(true);
         }
 
-        //add dynamic attribue for Shutter if necessary
+        //- add dynamic attribute for Shutter if necessary
         INFO_STREAM << "Add shutter dynamic attributes following the model of the detector." << endl;
         add_shutter_dynamic_attributes();
 
@@ -331,7 +331,7 @@ void LimaDetector::init_device()
         INFO_STREAM << "Configure parameters used to save image into a file (path/name/format/...)." << endl;
         configure_saving_parameters();
 
-        //video stuff
+        //- video stuff
         INFO_STREAM << "Configure the video mode following the DetectorVideoMode property (" << detectorVideoMode << ")." << endl;
         configure_video_mode();
 
@@ -339,8 +339,8 @@ void LimaDetector::init_device()
         INFO_STREAM << "Configure available trigger mode following the model of the detector." << endl;
         configure_available_trigger_mode();
 
-        //fix nb thread
-        INFO_STREAM << "Fix Nb. Pool Thread Manager to ("<<expertNbPoolThread<<")." << endl;
+        //- Set nb thread
+        INFO_STREAM << "Set Nb. Pool Thread Manager to ("<<expertNbPoolThread<<")." << endl;
         PoolThreadMgr::get().setNumberOfThread(expertNbPoolThread);
 		
 		//----------------------------------------------------------------------------------
@@ -4248,7 +4248,7 @@ void LimaDetector::configure_saving_parameters(void)
     transform(fileWriteMode.begin(), fileWriteMode.end(), fileWriteMode.begin(), ::toupper);
     transform(fileMemoryMode.begin(), fileMemoryMode.end(), fileMemoryMode.begin(), ::toupper);
 
-    //fix file image type
+    //set file image type
     ImageType image_type;
     HwDetInfoCtrlObj *hw_det_info;
     m_hw->getHwCtrlObj(hw_det_info);
@@ -4257,7 +4257,7 @@ void LimaDetector::configure_saving_parameters(void)
     {
         image_type = Bpp32F;
     }
-    //fix many parametes( target_path/name_pattern/nbFramesPerFile/...)
+    //set many parameters( target_path/name_pattern/nbFramesPerFile/...)
     m_saving_par.directory = fileTargetPath;
     m_saving_par.prefix = filePrefix;
     m_saving_par.imageType = image_type;
@@ -4267,7 +4267,7 @@ void LimaDetector::configure_saving_parameters(void)
     m_saving_par.framesPerFile = memorizedFileNbFrames;
     m_saving_par.nbframes = attr_nbFrames_write;
 
-    //fix file format
+    //set file format
     if(fileFormat == "NXS")
     {
         m_saving_par.fileFormat = CtSaving::NXS;
@@ -4314,7 +4314,7 @@ void LimaDetector::configure_saving_parameters(void)
         m_saving_par.suffix = ".raw";
     }
 
-    //fix managed mode
+    //set managed mode
     if(fileManagedMode == "SOFTWARE")
     {
         m_ct->saving()->setManagedMode(CtSaving::Software) ; //enable streaming/let plugin write file

@@ -59,7 +59,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 			
 			//- Set Serialisation mode
 			//- this is the default mode
-			YAT_LOG_INFO("Fix Serialisation Model : BY_DEVICE");
+			YAT_LOG_INFO("Set Serialisation Model : BY_DEVICE");
 			Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_DEVICE);			
 
             {
@@ -389,7 +389,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             {
 				//- Set Serialisation mode
 				//- this allow dynamic attr in pco specific device
-				YAT_LOG_INFO("Fix Serialisation Model : BY_PROCESS");
+				YAT_LOG_INFO("Set Serialisation Model : BY_PROCESS");
 				Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_PROCESS);
 	
                 Tango::DbData db_data;
