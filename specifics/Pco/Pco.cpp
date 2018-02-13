@@ -539,19 +539,19 @@ void Pco::always_executed_hook()
     catch(lima::Exception& e)
     {
         m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
-        ERROR_STREAM << m_status_message << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
         return;
     }
     catch(Tango::DevFailed& df)
     {
         m_status_message << "Initialization Failed : " << string(df.errors[0].desc) << endl;
-        ERROR_STREAM << m_status_message << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
         return;
     }
     catch(...)
     {
         m_status_message << "Initialization Failed : Unknown error" << endl;
-        ERROR_STREAM << m_status_message << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
         return;
     }
 
