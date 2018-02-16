@@ -1292,6 +1292,21 @@ void LimaDetectorClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
+	prop_name = "ExpertTimeoutCmd";
+	prop_desc = "Define the Timeout (in ms) for some commands (snap/start/stop/prepare).<br>";
+	prop_def  = "5000";
+	vect_data.clear();
+	vect_data.push_back("5000");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 	prop_name = "MemorizedRoi";
 	prop_desc = "Memorize/Define the Region of Interest of the Acquisition: <br>\norigin X<br>\norigin Y<br>\nWidth<br>\nHeight<br>\n<br>\nNota:<br>\nif any roi value is <0, then we consider all detector area as Roi.";
 	prop_def  = "-1\n-1\n-1\n-1";

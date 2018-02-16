@@ -77,7 +77,7 @@ namespace LimaDetector_ns
 {
 
 int LimaDetector::m_init_count = 0;
-const unsigned int ROI_SIZE = 4;
+
 
 //+----------------------------------------------------------------------------
 //
@@ -453,6 +453,7 @@ void LimaDetector::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("ExpertBufferMaxMemoryPercent"));
 	dev_prop.push_back(Tango::DbDatum("ExpertNbPoolThread"));
 	dev_prop.push_back(Tango::DbDatum("ExpertUsePrepareCmd"));
+	dev_prop.push_back(Tango::DbDatum("ExpertTimeoutCmd"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedRoi"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedBinningH"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedBinningV"));
@@ -742,6 +743,17 @@ void LimaDetector::get_device_property()
 	//	And try to extract ExpertUsePrepareCmd value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertUsePrepareCmd;
 
+	//	Try to initialize ExpertTimeoutCmd from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  expertTimeoutCmd;
+	else {
+		//	Try to initialize ExpertTimeoutCmd from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  expertTimeoutCmd;
+	}
+	//	And try to extract ExpertTimeoutCmd value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertTimeoutCmd;
+
 	//	Try to initialize MemorizedRoi from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedRoi;
@@ -951,7 +963,7 @@ void LimaDetector::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "70", "ExpertBufferMaxMemoryPercent");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "4", "ExpertNbPoolThread");	
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "ExpertUsePrepareCmd");
-
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "5000", "ExpertTimeoutCmd");
     vec_init.clear();
     vec_init.push_back("-1");
     vec_init.push_back("-1");
@@ -3156,7 +3168,7 @@ void LimaDetector::prepare()
             {
                 yat::Message* msg = yat::Message::allocate(DEVICE_PREPARE_MSG, DEFAULT_MSG_PRIORITY, true);
                 msg->attach_data(m_acq_conf);
-                m_acquisition_task->wait_msg_handled(msg, 5000);
+                m_acquisition_task->wait_msg_handled(msg, expertTimeoutCmd);
             }
         }
     }
@@ -3243,7 +3255,7 @@ void LimaDetector::snap()
         {
             yat::Message* msg = yat::Message::allocate(DEVICE_SNAP_MSG, DEFAULT_MSG_PRIORITY, true);
             msg->attach_data(m_acq_conf);
-            m_acquisition_task->wait_msg_handled(msg, 5000);
+            m_acquisition_task->wait_msg_handled(msg, expertTimeoutCmd);
         }
     }
     catch(Tango::DevFailed& df)
@@ -3295,8 +3307,8 @@ void LimaDetector::start()
         {
             //- throw exception
             THROW_DEVFAILED("CONFIGURATION_ERROR",
-                                           "Start command is not Available when 'fileGeneration' is enabled\n",
-                                           "LimaDetector::start");
+                            "Start command is not Available when 'fileGeneration' is enabled\n",
+                            "LimaDetector::start");
         }
 
         m_saving_par.nbframes = 0;
@@ -3318,9 +3330,8 @@ void LimaDetector::start()
         yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
         {
             yat::Message* msg = yat::Message::allocate(DEVICE_START_MSG, DEFAULT_MSG_PRIORITY, true);
-            m_acquisition_task->wait_msg_handled(msg, 5000);
+            m_acquisition_task->wait_msg_handled(msg, expertTimeoutCmd);
         }
-
     }
     catch(Tango::DevFailed& df)
     {
@@ -3368,7 +3379,7 @@ void LimaDetector::stop()
         yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
         {
             yat::Message* msg = yat::Message::allocate(DEVICE_STOP_MSG, DEFAULT_MSG_PRIORITY, true);
-            m_acquisition_task->wait_msg_handled(msg, 5000); //to ensure that state was updated in lima
+            m_acquisition_task->wait_msg_handled(msg, expertTimeoutCmd); //to ensure that state was updated in lima
         }
     }
     catch(Tango::DevFailed& df)
@@ -3413,7 +3424,7 @@ void LimaDetector::set_roi(const Tango::DevVarULongArray *argin)
     //    Add your own code to control device here
     try
     {
-        if(argin->length() != ROI_SIZE)
+        if(argin->length() != 4)
         {
             //- throw exception
             THROW_DEVFAILED("TANGO_DEVICE_ERROR",
@@ -3856,8 +3867,8 @@ void LimaDetector::reload_roi()
 
         // Call the set_roi command
         Tango::DevVarULongArray* roi = new Tango::DevVarULongArray();
-        roi->length(ROI_SIZE);
-        for (unsigned int i = 0; i < ROI_SIZE; i++)
+        roi->length(4);
+        for (unsigned int i = 0; i < 4; i++)
         {
             (*roi)[i] = memorizedRoi.at(i);
         }

@@ -95,7 +95,6 @@ using namespace std;
 //-----------------------------------------------
 
 const size_t MAX_ATTRIBUTE_STRING_LENGTH = 256;
-const size_t LOG_BUFFER_DEPTH = 1024;
 
 namespace LimaDetector_ns
 {
@@ -407,6 +406,10 @@ public:
  *	If enabled, a call of 'Prepare' command is necessary before each 'Start' command.
  */
 	Tango::DevBoolean	expertUsePrepareCmd;
+/**
+ *	Define the Timeout (in ms) for some commands (snap/start/stop/prepare).<br>
+ */
+	Tango::DevULong	expertTimeoutCmd;
 /**
  *	Memorize/Define the Region of Interest of the Acquisition: <br>
  *	origin X<br>

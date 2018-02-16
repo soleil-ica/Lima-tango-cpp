@@ -53,6 +53,9 @@
 #include "EigerInterface.h"
 #include "EigerCamera.h"
 
+//- STL 
+#include <algorithm>
+
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
 
 //using namespace lima::Eiger;
@@ -170,6 +173,12 @@ public:
  *	Eiger server IP address (ex: 192.168.0.1)
  */
 	string	detectorIP;
+/**
+ *	Define the timestamp type of each frame: <br>
+ *	- RELATIVE : The time difference between the moment of reading the frame and the start acquisition time<br>
+ *	- ABSOLUTE : The time at the moment of reading the frame from detector<br>
+ */
+	string	timestampType;
 /**
  *	Memorize the value of countrateCorrection attribute.
  */

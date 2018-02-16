@@ -248,6 +248,7 @@ void Eiger::get_device_property()
     //------------------------------------------------------------------
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("DetectorIP"));
+	dev_prop.push_back(Tango::DbDatum("TimestampType"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedCountrateCorrection"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedFlatfieldCorrection"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedPixelMask"));
@@ -289,6 +290,17 @@ void Eiger::get_device_property()
 	}
 	//	And try to extract DetectorIP value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  detectorIP;
+
+	//	Try to initialize TimestampType from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  timestampType;
+	else {
+		//	Try to initialize TimestampType from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  timestampType;
+	}
+	//	And try to extract TimestampType value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  timestampType;
 
 	//	Try to initialize MemorizedCountrateCorrection from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -526,6 +538,7 @@ void Eiger::get_device_property()
     //	End of Automatic code generation
     //------------------------------------------------------------------
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "DetectorIP");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "RELATIVE",  "TimestampType");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", 	 "MemorizedCountrateCorrection");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	 "MemorizedFlatfieldCorrection");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false",	 "MemorizedPixelMask");
@@ -2598,6 +2611,8 @@ void Eiger::initialize()
                                        "Eiger::initialize" );
     }
 }
+
+
 
 
 

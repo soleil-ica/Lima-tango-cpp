@@ -102,6 +102,7 @@ public :
 		Tango::DevString	*attr_calibrationFileName_read;
 		Tango::DevString	*attr_acquisitionMode_read;
 		Tango::DevString	attr_acquisitionMode_write;
+		Tango::DevULong	attr_nbStackingImages_write;
 		Tango::DevString	*attr_outputSignal_read;
 		Tango::DevString	attr_outputSignal_write;
 		Tango::DevString	attr_calibrationMode_write;
@@ -159,6 +160,10 @@ public :
  *	
  */
 	Tango::DevULong	memorizedITHL;
+/**
+ *	Define the number of images in the acquisition mode (STACKING_16 or STACKING_32)
+ */
+	Tango::DevULong	memorizedNbStackingImages;
 //@}
 
 /**
@@ -264,6 +269,14 @@ public :
  */
 	virtual void write_acquisitionMode(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for nbStackingImages acquisition result.
+ */
+	virtual void read_nbStackingImages(Tango::Attribute &attr);
+/**
+ *	Write nbStackingImages attribute values to hardware.
+ */
+	virtual void write_nbStackingImages(Tango::WAttribute &attr);
+/**
  *	Extract real attribute values for outputSignal acquisition result.
  */
 	virtual void read_outputSignal(Tango::Attribute &attr);
@@ -323,6 +336,10 @@ public :
  *	Read/Write allowed for acquisitionMode attribute.
  */
 	virtual bool is_acquisitionMode_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for nbStackingImages attribute.
+ */
+	virtual bool is_nbStackingImages_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for outputSignal attribute.
  */

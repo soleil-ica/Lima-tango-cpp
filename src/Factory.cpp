@@ -546,10 +546,15 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             {
                 Tango::DbData db_data;
                 db_data.push_back(Tango::DbDatum("DetectorIP"));
+				db_data.push_back(Tango::DbDatum("TimestampType"));
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
                 std::string camera_ip;
+				std::string timestamp_type;
                 db_data[0] >> camera_ip;
+				db_data[1] >> timestamp_type;
+				transform(timestamp_type.begin(), timestamp_type.end(), timestamp_type.begin(), ::toupper);
                 m_camera = static_cast<void*> (new Eiger::Camera(camera_ip));
+				static_cast<Eiger::Camera*> (m_camera)->setTimestampType(timestamp_type);
                 m_interface = static_cast<void*> (new Eiger::Interface(*(static_cast<Eiger::Camera*> (m_camera))));
                 m_control = new CtControl(static_cast<Eiger::Interface*> (m_interface));
                 ControlFactory::m_is_created = true;
@@ -818,10 +823,10 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
         //@@@TODO and if not exist ?? get the tango device/instance for layout
         if (!ControlFactory::m_is_created)
         {
-            std::string detector = "Layout";
+            std::string layout = "Layout";
             Tango::DbDatum db_datum;
             m_device_name_generic = Tango::Util::instance()->get_ds_name();
-            db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, detector);
+            db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, layout);
             db_datum >> m_device_name_layout;
         }
         (Tango::Util::instance()->get_device_by_name(m_device_name_layout))->delete_device();
@@ -837,13 +842,13 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
 #ifdef ROICOUNTERS_ENABLED        
     try
     {
-        //@@@TODO and if not exist ?? get the tango device/instance for layout
+        //@@@TODO and if not exist ?? get the tango device/instance for roicounters
         if (!ControlFactory::m_is_created)
         {
-            std::string detector = "RoiCounters";
+            std::string roicounters = "RoiCounters";
             Tango::DbDatum db_datum;
             m_device_name_generic = Tango::Util::instance()->get_ds_name();
-            db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, detector);
+            db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, roicounters);
             db_datum >> m_device_name_roicounters;
         }
         (Tango::Util::instance()->get_device_by_name(m_device_name_roicounters))->delete_device();

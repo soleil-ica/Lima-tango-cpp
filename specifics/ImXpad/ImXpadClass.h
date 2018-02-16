@@ -115,6 +115,20 @@ public:
 	{return (static_cast<ImXpad *>(dev))->is_outputSignal_allowed(ty);}
 };
 
+class nbStackingImagesAttrib: public Tango::Attr
+{
+public:
+	nbStackingImagesAttrib():Attr("nbStackingImages", Tango::DEV_ULONG, Tango::WRITE) {};
+	~nbStackingImagesAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<ImXpad *>(dev))->read_nbStackingImages(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<ImXpad *>(dev))->write_nbStackingImages(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<ImXpad *>(dev))->is_nbStackingImages_allowed(ty);}
+};
+
 class acquisitionModeAttrib: public Tango::Attr
 {
 public:
