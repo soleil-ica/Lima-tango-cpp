@@ -82,12 +82,24 @@ namespace Layout_ns
             m_operation_type = opType;
         }
 
+        //get the operation type ( + - * / >> << )
+        const std::string& getOperationType()
+        {
+            return m_operation_type;
+        }
+        
         //define the operation value
         void setOperationValue(long opValue)
         {
             m_operation_value = opValue;
         }
 
+        //get the operation value
+        long getOperationValue()
+        {
+            return m_operation_value;
+        }
+        
         virtual Data process(Data &aData)
         {
             Data aNewData;
@@ -358,7 +370,7 @@ namespace Layout_ns
         
         //LIMA objects
         lima::CtControl*                m_ct;
-        LayoutTask*                     m_layout_task;
+        std::vector<LayoutTask*>        m_layout_tasks;
     };
 
 } // namespace_ns

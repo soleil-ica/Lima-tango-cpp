@@ -43,9 +43,9 @@
 <Br>
 <center>
 <h1>
-Device specific for Andor CCD detector		<Br>
+		<Br>
 Device Commands Description 		<Br> <Br>
-AndorCCD Class	<Br>
+Eiger Class	<Br>
 </h1>
 <b>
 Revision:  - Author: 
@@ -99,6 +99,34 @@ The language device desctructor automatically calls the <i> delete_device() </i>
  : Status description<Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
 <Li>Tango::INIT<Li>Tango::STANDBY<Li>Tango::FAULT<Li>Tango::RUNNING</Ul>
+<Br>&nbsp
+</ul><Br>
+<Br>
+<A NAME="Abort"><!-- --></A>
+<A NAME="Abort"><!-- --></A>
+<h2>4 - Abort</h2>
+<ul>
+<Li><Strong>Description: </Strong> <Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Argout:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Command allowed for: </Strong><Ul>
+<Li>Tango::STANDBY<Li>Tango::FAULT<Li>Tango::RUNNING</Ul>
+<Br>&nbsp
+</ul><Br>
+<Br>
+<A NAME="Initialize"><!-- --></A>
+<A NAME="Initialize"><!-- --></A>
+<h2>5 - Initialize</h2>
+<ul>
+<Li><Strong>Description: </Strong> <Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Argout:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Command allowed for: </Strong><Ul>
+<Li>Tango::INIT<Li>Tango::STANDBY<Li>Tango::FAULT</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>

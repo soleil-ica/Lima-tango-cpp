@@ -568,6 +568,21 @@ void EigerClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
+	prop_name = "TimestampType";
+	prop_desc = "Define the timestamp type of each frame: <br>\n- RELATIVE : The time difference between the moment of reading the frame and the start acquisition time<br>\n- ABSOLUTE : The time at the moment of reading the frame from detector<br>";
+	prop_def  = "RELATIVE";
+	vect_data.clear();
+	vect_data.push_back("RELATIVE");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 	prop_name = "MemorizedCountrateCorrection";
 	prop_desc = "Memorize the value of countrateCorrection attribute.";
 	prop_def  = "false";

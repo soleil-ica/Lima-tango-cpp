@@ -529,6 +529,12 @@ void ImXpadClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	acquisition_mode->set_memorized_init(false);
 	att_list.push_back(acquisition_mode);
 
+	//	Attribute : nbStackingImages
+	nbStackingImagesAttrib	*nb_stacking_images = new nbStackingImagesAttrib();
+	nb_stacking_images->set_memorized();
+	nb_stacking_images->set_memorized_init(false);
+	att_list.push_back(nb_stacking_images);
+
 	//	Attribute : outputSignal
 	outputSignalAttrib	*output_signal = new outputSignalAttrib();
 	Tango::UserDefaultAttrProp	output_signal_prop;
@@ -795,6 +801,21 @@ void ImXpadClass::set_default_property()
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedNbStackingImages";
+	prop_desc = "Define the number of images in the acquisition mode (STACKING_16 or STACKING_32)";
+	prop_def  = "1";
+	vect_data.clear();
+	vect_data.push_back("1");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

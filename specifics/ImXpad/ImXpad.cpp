@@ -209,7 +209,7 @@ void ImXpad::init_device()
     	attr_mode_write = const_cast<Tango::DevString>(memorizedMode.c_str());
     	mode.set_write_value(attr_mode_write);
     	write_mode(mode);
-
+		
     	Tango::WAttribute &time = dev_attr->get_w_attr_by_name("time");
     	attr_time_write = memorizedTime;
     	time.set_write_value(attr_time_write);
@@ -220,6 +220,11 @@ void ImXpad::init_device()
     	iTHL.set_write_value(attr_iTHL_write);
     	write_iTHL(iTHL);
 
+    	Tango::WAttribute &nbStackingImages = dev_attr->get_w_attr_by_name("nbStackingImages");
+    	attr_nbStackingImages_write = memorizedNbStackingImages;
+    	nbStackingImages.set_write_value(attr_nbStackingImages_write);
+    	write_nbStackingImages(nbStackingImages);
+		
     	Tango::WAttribute &geometrical = dev_attr->get_w_attr_by_name("geometricalCorrectionFlag");
     	*attr_geometricalCorrectionFlag_read = attr_geometricalCorrectionFlag_write = memorizedGeometricalCorrectionFlag;
     	geometrical.set_write_value(attr_geometricalCorrectionFlag_write);
@@ -294,6 +299,7 @@ void ImXpad::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedMode"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedTime"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedITHL"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedNbStackingImages"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -425,6 +431,17 @@ void ImXpad::get_device_property()
 	//	And try to extract MemorizedITHL value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedITHL;
 
+	//	Try to initialize MemorizedNbStackingImages from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedNbStackingImages;
+	else {
+		//	Try to initialize MemorizedNbStackingImages from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedNbStackingImages;
+	}
+	//	And try to extract MemorizedNbStackingImages value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedNbStackingImages;
+
 
 
     //	End of Automatic code generation
@@ -434,8 +451,11 @@ void ImXpad::get_device_property()
     PropertyHelper::create_property_if_empty(this, dev_prop, "TO_BE_DEFINED", "CalibrationPath");
     PropertyHelper::create_property_if_empty(this, dev_prop, "STANDARD", "MemorizedAcquisitionModMode");
     PropertyHelper::create_property_if_empty(this, dev_prop, "EXPOSURE_BUSY", "MemorizedOutputSignal");
-    PropertyHelper::create_property_if_empty(this, dev_prop, "OTN_PULSE", "MemorizedCalibrationMode");
-    PropertyHelper::create_property_if_empty(this, dev_prop, "SLOW", "MemorizedMode");
+    PropertyHelper::create_property_if_empty(this, dev_prop, "OTN_PULSE", "MemorizedCalibrationMode");    
+	PropertyHelper::create_property_if_empty(this, dev_prop, "SLOW", "MemorizedMode");
+	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedTime");
+	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedITHL");	
+	PropertyHelper::create_property_if_empty(this, dev_prop, "1", "MemorizedNbStackingImages");
     PropertyHelper::create_property_if_empty(this, dev_prop, "False", "MemorizedGeometricalCorrectionFlag");
     PropertyHelper::create_property_if_empty(this, dev_prop, "False", "MemorizedFlatFieldCorrectionFlag");
 }
@@ -495,6 +515,7 @@ void ImXpad::read_attr_hardware(vector<long> &attr_list)
     DEBUG_STREAM << "ImXpad::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
     //	Add your own code here
 }
+
 //+----------------------------------------------------------------------------
 //
 // method : 		ImXpad::read_calibrationFileName
@@ -741,6 +762,18 @@ void ImXpad::read_acquisitionMode(Tango::Attribute &attr)
             case imXpad::Camera::XpadAcquisitionMode::DetectorBurst:
                 acquisition_mode = "DETECTOR_BURST";
                 break;
+            case imXpad::Camera::XpadAcquisitionMode::Stacking16bits:
+                acquisition_mode = "STACKING_16";
+                break;
+            case imXpad::Camera::XpadAcquisitionMode::Stacking32bits:
+                acquisition_mode = "STACKING_32";
+                break;
+            case imXpad::Camera::XpadAcquisitionMode::SingleBunch16bits:
+                acquisition_mode = "SINGLE_BUNCH_16";
+                break;
+            case imXpad::Camera::XpadAcquisitionMode::SingleBunch32bits:
+                acquisition_mode = "SINGLE_BUNCH_32";
+                break;				
             default:
                 acquisition_mode = "UNKNOWN ACQUISITION MODE !";
                 break;
@@ -786,14 +819,22 @@ void ImXpad::write_acquisitionMode(Tango::WAttribute &attr)
         transform(current.begin(), current.end(), current.begin(), ::toupper);
         if (current != "STANDARD" &&
             current != "COMPUTER_BURST" &&
-            current != "DETECTOR_BURST")
+			current != "DETECTOR_BURST" &&
+			current != "STACKING_16" &&
+			current != "STACKING_32" &&
+			current != "SINGLE_BUNCH_16" &&
+			current != "SINGLE_BUNCH_32")
         {            
             attr_acquisitionMode_write = const_cast<Tango::DevString>(m_acquisition_mode.c_str());
             string userMsg;
             userMsg = 	string("Available acquisitionMode are:\n- ") +
             string("STANDARD") + string("\n- ") +
             string("COMPUTER_BURST")+ string("\n- ") +
-            string("DETECTOR_BURST") + string("\n");
+            string("DETECTOR_BURST") + string("\n- ")+
+			string("STACKING_16") + string("\n- ")+
+			string("STACKING_32") + string("\n- ")+
+			string("SINGLE_BUNCH_16") + string("\n- ")+
+			string("SINGLE_BUNCH_32") + string("\n");
 
             Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
                                             userMsg.c_str(),
@@ -809,8 +850,17 @@ void ImXpad::write_acquisitionMode(Tango::WAttribute &attr)
             m_acquisition_mode_enum = imXpad::Camera::XpadAcquisitionMode::Standard;
         else if(m_acquisition_mode == "COMPUTER_BURST")
             m_acquisition_mode_enum = imXpad::Camera::XpadAcquisitionMode::ComputerBurst;
-        else// if(m_acquisition_mode == "DETECTOR_BURST")
-            m_acquisition_mode_enum = imXpad::Camera::XpadAcquisitionMode::DetectorBurst;
+        else if(m_acquisition_mode == "DETECTOR_BURST")
+            m_acquisition_mode_enum = imXpad::Camera::XpadAcquisitionMode::DetectorBurst;		
+        else if(m_acquisition_mode == "STACKING_16")
+            m_acquisition_mode_enum = imXpad::Camera::XpadAcquisitionMode::Stacking16bits;
+        else if(m_acquisition_mode == "STACKING_32")
+            m_acquisition_mode_enum = imXpad::Camera::XpadAcquisitionMode::Stacking32bits;		
+        else if(m_acquisition_mode == "SINGLE_BUNCH_16")
+            m_acquisition_mode_enum = imXpad::Camera::XpadAcquisitionMode::SingleBunch16bits;
+        else //if(m_acquisition_mode == "SINGLE_BUNCH_32")
+            m_acquisition_mode_enum = imXpad::Camera::XpadAcquisitionMode::SingleBunch32bits;				
+
 
         m_camera->setAcquisitionMode(m_acquisition_mode_enum);
         //memorize it ...
@@ -824,6 +874,46 @@ void ImXpad::write_acquisitionMode(Tango::WAttribute &attr)
                                           "TANGO_DEVICE_ERROR",
                                           string(df.errors[0].desc).c_str(),
                                           "ImXpad::write_acquisitionMode");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::read_nbStackingImages
+// 
+// description : 	Extract real attribute values for nbStackingImages acquisition result.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::read_nbStackingImages(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::read_nbStackingImages(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::write_nbStackingImages
+// 
+// description : 	Write nbStackingImages attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::write_nbStackingImages(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::write_nbStackingImages(Tango::WAttribute &attr) entering... "<< endl;
+    try
+    {
+        attr.get_write_value(attr_nbStackingImages_write);
+		m_camera->setStackImages(attr_nbStackingImages_write);
+		//memorize it ...
+        yat4tango::PropertyHelper::set_property(this, "MemorizedNbStackingImages", attr_nbStackingImages_write);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          std::string(df.errors[0].desc).c_str(),
+                                          "ImXpad::write_nbStackingImages");
     }
 }
 
@@ -1554,6 +1644,11 @@ void ImXpad::load_calibration_file(Tango::DevString argin)
     }
 
 }
+
+
+
+
+
 
 
 
