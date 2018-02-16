@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.8.2-SNAPSHOT</version>
+    <version>1.8.2</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -31,23 +31,23 @@
         <HDF5.name>HDF5</HDF5.name>
         <HDF5.version>1.8.13-vc9</HDF5.version>
         <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
-        <PROCESSLIB.version>1.3.6</PROCESSLIB.version>
+        <PROCESSLIB.version>1.3.7</PROCESSLIB.version>
         <CORE.name>Core</CORE.name>
         <CORE.version>1.7.7-SNAPSHOT</CORE.version>
         <ANDOR.name>Andor</ANDOR.name>
-        <ANDOR.version>1.3.11</ANDOR.version>
+        <ANDOR.version>1.3.12</ANDOR.version>
         <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
-        <HAMAMATSU.version>2.0.1</HAMAMATSU.version>
+        <HAMAMATSU.version>2.1.0</HAMAMATSU.version>
         <PCO.name>Pco</PCO.name>
-        <PCO.version>1.6.1</PCO.version>
+        <PCO.version>1.6.2</PCO.version>
         <PERKINELMER.name>PerkinElmer</PERKINELMER.name>
-        <PERKINELMER.version>1.3.10</PERKINELMER.version>
+        <PERKINELMER.version>1.3.11</PERKINELMER.version>
         <PRINCETON.name>Princeton</PRINCETON.name>
-        <PRINCETON.version>1.3.11</PRINCETON.version>
+        <PRINCETON.version>1.3.12</PRINCETON.version>
         <UVIEW.name>Uview</UVIEW.name>
-        <UVIEW.version>1.0.9</UVIEW.version>
+        <UVIEW.version>1.0.10</UVIEW.version>
         <SIMULATOR.name>Simulator</SIMULATOR.name>
-        <SIMULATOR.version>1.3.13</SIMULATOR.version>
+        <SIMULATOR.version>1.3.14</SIMULATOR.version>
     </properties>
 
     <scm>
