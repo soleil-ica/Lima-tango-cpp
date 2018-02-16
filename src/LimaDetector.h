@@ -225,12 +225,14 @@ public:
 /**
  *	Define the type of the connected Detector .<BR>
  *	Availables types :<BR>
- *	- AdscCCD<BR>
+ *	- AndorCCD<BR>
  *	- AviexCCD<br>
  *	- BaslerCCD<BR>
  *	- Eiger<br>
  *	- Hamamatsu<br>
+ *	- ImXpad<br>
  *	- MarCCD<BR>
+ *	- Maxipix <BR>
  *	- Merlin <BR>
  *	- Pco<BR>
  *	- PerkinElmer<BR>
@@ -238,6 +240,7 @@ public:
  *	- ProsilicaCCD<BR>
  *	- PrincetonCCD<BR>
  *	- SimulatorCCD<BR>
+ *	- UviewCCD<BR>
  *	- XpadPixelDetector<BR>
  *	
  *	
@@ -247,7 +250,11 @@ public:
  *	Define the pixel depth of the detector : <br>
  *	Availables values : <br>
  *	- 8 <br>
+ *	- 12<br>
  *	- 16<br>
+ *	- 16S<br>
+ *	- 24<br>
+ *	- 24S<br>
  *	- 32<br>
  *	- 32S<br>
  */

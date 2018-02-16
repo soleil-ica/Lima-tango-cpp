@@ -639,6 +639,7 @@ void LimaDetectorClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	detector_width_max_prop;
 	detector_width_max_prop.set_unit(" ");
 	detector_width_max_prop.set_format("%6d");
+    detector_width_max_prop.set_description("Maximum width");
 	detector_width_max->set_default_properties(detector_width_max_prop);
 	att_list.push_back(detector_width_max);
 
@@ -647,6 +648,7 @@ void LimaDetectorClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	detector_height_max_prop;
 	detector_height_max_prop.set_unit(" ");
 	detector_height_max_prop.set_format("%6d");
+    detector_height_max_prop.set_description("Maximum height");
 	detector_height_max->set_default_properties(detector_height_max_prop);
 	att_list.push_back(detector_height_max);
 
