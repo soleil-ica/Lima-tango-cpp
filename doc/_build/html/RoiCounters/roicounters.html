@@ -1,0 +1,279 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>RoiCounters &mdash; LimaDetector C++ Tango device server 1.8.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.8.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="LimaDetector C++ Tango device server 1.8.1 documentation" href="../index.html" />
+    <link rel="next" title="Layout class" href="../Layout/layout.html" />
+    <link rel="prev" title="XpadPixelDtector Tango device" href="../XpadPixelDetector/xpadpixeldetector.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../Layout/layout.html" title="Layout class"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../XpadPixelDetector/xpadpixeldetector.html" title="XpadPixelDtector Tango device"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">LimaDetector C++ Tango device server 1.8.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="roicounters">
+<h1>RoiCounters<a class="headerlink" href="#roicounters" title="Permalink to this headline">¶</a></h1>
+<p>The Region-of-Interest to Counter operation is very useful to provide online statistics on some detector areas. The operation will calculate for each image acquired the <strong>average</strong>, the <strong>standard deviation</strong>, the <strong>sum</strong>, the <strong>minimum</strong> and the <strong>maximum pixel</strong> values.</p>
+<p>The Roi can be defined either with rectangle coordinates (x begin,y begin, width, height) or with arc coordinates (center x, center y, radius1, radius2, angle start, angle end). Different commands are provided for that purpose: <strong>setRois</strong> and <strong>setArcRois</strong>.</p>
+<p>You must create first the Rois by providing unique names (<strong>addNames</strong> command) and then set the Roi position using the Roi index and the position (rectangle or arc position).</p>
+<p>The statistics can be retrieved by calling the <strong>readCounters</strong> command, the command returns a list of statistics per Roi and frame.</p>
+<p>In addition to the statistics calculation one can set a mask file (<strong>setMask</strong> command) where null pixel will not be taken into account.</p>
+<div class="section" id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<p>This device has no property.</p>
+</div>
+<div class="section" id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="6%" />
+<col width="12%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute name</th>
+<th class="head">RW</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>BufferSize</td>
+<td>rw</td>
+<td>DevLong</td>
+<td>Circular buffer size in image, default is 128</td>
+</tr>
+<tr class="row-odd"><td>CounterStatus</td>
+<td>ro</td>
+<td>DevLong</td>
+<td>Counter related to the current number of proceeded images</td>
+</tr>
+<tr class="row-even"><td>RunLevel</td>
+<td>rw</td>
+<td>DevLong</td>
+<td>Run level in the processing chain, from 0 to N</td>
+</tr>
+<tr class="row-odd"><td>State</td>
+<td>ro</td>
+<td>State</td>
+<td>OFF or ON (stopped or started)</td>
+</tr>
+<tr class="row-even"><td>Status</td>
+<td>ro</td>
+<td>DevString</td>
+<td>&#8220;OFF&#8221; &#8220;ON&#8221; (stopped or started)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="commands">
+<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="22%" />
+<col width="22%" />
+<col width="38%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Command name</th>
+<th class="head">Arg. in</th>
+<th class="head">Arg. out</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>addNames</td>
+<td>DevVarStringArray
+list of Roi names</td>
+<td>DevVarStringArray
+list of Roi indexes</td>
+<td>Set the names and return the corresponding indexes</td>
+</tr>
+<tr class="row-odd"><td>clearAllRois</td>
+<td>DevVoid</td>
+<td>DevVoid</td>
+<td>Remove the Rois</td>
+</tr>
+<tr class="row-even"><td>getNames</td>
+<td>DevVoid</td>
+<td>DevVarStringArray</td>
+<td>Return the list of Roi names</td>
+</tr>
+<tr class="row-odd"><td>getRoiModes</td>
+<td>DevVarStringArray</td>
+<td>DevVarStringArray</td>
+<td>Return the Roi modes</td>
+</tr>
+<tr class="row-even"><td>getRois</td>
+<td>DevVarStringArray
+list of Roi names</td>
+<td>DevVarStringArray
+list of Roi position
+(roi_id,x,y,width,heigth,...)</td>
+<td>Return the Roi positions</td>
+</tr>
+<tr class="row-odd"><td>Init</td>
+<td>DevVoid</td>
+<td>DevVoid</td>
+<td>Do not use</td>
+</tr>
+<tr class="row-even"><td>readCounters</td>
+<td>DevVarLongArray</td>
+<td>DevVarLongArray</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>removeRois</td>
+<td>roi_id,first image</td>
+<td>spectrum stack</td>
+<td>Return the stack of spectrum from the specified
+image index until the last image acquired</td>
+</tr>
+<tr class="row-even"><td>setArcRois</td>
+<td>DevVarDoublArray
+(roi_id0,centerx,centery,
+radius1,raduis2,start_angle,
+end_angle,roi_id1,...)</td>
+<td>DevVoid</td>
+<td>Set the Arc Rois</td>
+</tr>
+<tr class="row-odd"><td>setMaskFile</td>
+<td>DevVarStringArray
+full path file</td>
+<td>DevVoid</td>
+<td>Set the mask file</td>
+</tr>
+<tr class="row-even"><td>setRois</td>
+<td>DevArLongArray
+(roi_id0,x,y,w,h,roi_id1..)</td>
+<td>DevVoid</td>
+<td>Set roi positions</td>
+</tr>
+<tr class="row-odd"><td>Start</td>
+<td>DevVoid</td>
+<td>DevVoid</td>
+<td>Start the operation on image</td>
+</tr>
+<tr class="row-even"><td>State</td>
+<td>DevVoid</td>
+<td>DevLong</td>
+<td>Return the device state</td>
+</tr>
+<tr class="row-odd"><td>Status</td>
+<td>DevVoid</td>
+<td>DevString</td>
+<td>Return the device state as a string</td>
+</tr>
+<tr class="row-even"><td>Stop</td>
+<td>DevVoid</td>
+<td>DevVoid</td>
+<td>Stop the operation on image</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">RoiCounters</a><ul>
+<li><a class="reference internal" href="#properties">Properties</a></li>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#commands">Commands</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../XpadPixelDetector/xpadpixeldetector.html"
+                        title="previous chapter">XpadPixelDtector Tango device</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../Layout/layout.html"
+                        title="next chapter">Layout class</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/RoiCounters/roicounters.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../Layout/layout.html" title="Layout class"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../XpadPixelDetector/xpadpixeldetector.html" title="XpadPixelDtector Tango device"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">LimaDetector C++ Tango device server 1.8.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2018, langlois/noureddine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+    </div>
+  </body>
+</html>

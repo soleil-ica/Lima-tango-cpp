@@ -98,6 +98,7 @@ public :
 		Tango::DevDouble	attr_topViewExposureTime_write;
 		Tango::DevDouble	*attr_bottomViewExposureTime_read;
 		Tango::DevDouble	attr_bottomViewExposureTime_write;
+		Tango::DevDouble	*attr_Temperature_read;
 //@}
 
 /**
@@ -249,6 +250,10 @@ public :
  */
 	virtual void write_bottomViewExposureTime(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for Temperature acquisition result.
+ */
+	virtual void read_Temperature(Tango::Attribute &attr);
+/**
  *	Read/Write allowed for readoutSpeed attribute.
  */
 	virtual bool is_readoutSpeed_allowed(Tango::AttReqType type);
@@ -272,6 +277,10 @@ public :
  *	Read/Write allowed for bottomViewExposureTime attribute.
  */
 	virtual bool is_bottomViewExposureTime_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for Temperature attribute.
+ */
+	virtual bool is_Temperature_allowed(Tango::AttReqType type);
 /**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code

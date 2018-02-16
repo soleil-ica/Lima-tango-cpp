@@ -115,6 +115,7 @@ void Hamamatsu::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_wViewEnabled_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_topViewExposureTime_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_bottomViewExposureTime_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_Temperature_read);
 }
 
 //+----------------------------------------------------------------------------
@@ -138,6 +139,7 @@ void Hamamatsu::init_device()
 	CREATE_SCALAR_ATTRIBUTE(attr_wViewEnabled_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_topViewExposureTime_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_bottomViewExposureTime_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_Temperature_read);
 
 	m_is_device_initialized = false;
 	set_state(Tango::INIT);
@@ -512,6 +514,46 @@ void Hamamatsu::read_attr_hardware(vector<long> &attr_list)
 	DEBUG_STREAM << "Hamamatsu::read_attr_hardware(vector<long> &attr_list) entering... "<< endl;
 	//	Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_Temperature
+// 
+// description : 	Extract real attribute values for Temperature acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_Temperature(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_Temperature(Tango::Attribute &attr) entering... "<< endl;
+    
+	try
+	{
+		double temperature = 0.0;
+        bool   NotSupported;
+
+        temperature = m_camera->getSensorTemperature(NotSupported);
+		*attr_Temperature_read = (Tango::DevDouble)temperature;
+		attr.set_value  (attr_Temperature_read);
+        attr.set_quality((NotSupported) ? Tango::ATTR_INVALID : Tango::ATTR_VALID);
+	}
+	catch(Tango::DevFailed& df)
+	{
+		ERROR_STREAM << df << endl;
+		//- rethrow exception
+		Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Hamamatsu::read_Temperature");
+	}
+	catch(Exception& e)
+	{
+		ERROR_STREAM << e.getErrMsg() << endl;
+		//- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Hamamatsu::read_Temperature");
+	}
+}
+
 //+----------------------------------------------------------------------------
 //
 // method : 		Hamamatsu::read_topViewExposureTime
@@ -989,8 +1031,7 @@ Tango::DevState Hamamatsu::dev_state()
 	stringstream    DeviceStatus;
 	DeviceStatus     << "";
 	Tango::DevState DeviceState    = Tango::STANDBY;
-
-    if(!m_is_device_initialized )
+	if(!m_is_device_initialized )
 	{
 		DeviceState            = Tango::FAULT;
 		DeviceStatus        << m_status_message.str();
@@ -1007,5 +1048,7 @@ Tango::DevState Hamamatsu::dev_state()
 
 	return DeviceState;
 }
+
+
 
 }	//	namespace

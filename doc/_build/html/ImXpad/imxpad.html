@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ImXpad Tango device &mdash; LimaDetector C++ Tango device server 1.8.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.8.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="LimaDetector C++ Tango device server 1.8.1 documentation" href="../index.html" />
+    <link rel="next" title="MarCCD class" href="../MarCCD/marccd.html" />
+    <link rel="prev" title="Hamamatsu Tango device" href="../Hamamatsu/hamamatsu.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../MarCCD/marccd.html" title="MarCCD class"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../Hamamatsu/hamamatsu.html" title="Hamamatsu Tango device"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">LimaDetector C++ Tango device server 1.8.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="imxpad-tango-device">
+<h1>ImXpad Tango device<a class="headerlink" href="#imxpad-tango-device" title="Permalink to this headline">¶</a></h1>
+<p>This is the reference documentation of the ImXpad Tango device.</p>
+<p>you can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the <span class="xref std std-ref">ImXPAD camera plugin</span> section.</p>
+<div class="section" id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="14%" />
+<col width="13%" />
+<col width="13%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property name</th>
+<th class="head">Mandatory</th>
+<th class="head">Default value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>camera_ip_address</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>IP address</td>
+</tr>
+<tr class="row-odd"><td>port</td>
+<td>No</td>
+<td>3456</td>
+<td>socket port number</td>
+</tr>
+<tr class="row-even"><td>model</td>
+<td>No</td>
+<td>XPAD_S70</td>
+<td>detector model</td>
+</tr>
+<tr class="row-odd"><td>usb_device_id</td>
+<td>No</td>
+<td>N/A</td>
+<td>reserved, do not use</td>
+</tr>
+<tr class="row-even"><td>config_path</td>
+<td>Yes</td>
+<td>N/A</td>
+<td>The configuration directory path (see loadConfig command)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<p>This camera device has no attribute.</p>
+</div>
+<div class="section" id="commands">
+<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="14%" />
+<col width="22%" />
+<col width="41%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Command name</th>
+<th class="head">Arg. in</th>
+<th class="head">Arg. out</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Init</td>
+<td>DevVoid</td>
+<td>DevVoid</td>
+<td>Do not use</td>
+</tr>
+<tr class="row-odd"><td>State</td>
+<td>DevVoid</td>
+<td>DevLong</td>
+<td>Return the device state</td>
+</tr>
+<tr class="row-even"><td>Status</td>
+<td>DevVoid</td>
+<td>DevString</td>
+<td>Return the device state as a string</td>
+</tr>
+<tr class="row-odd"><td>getAttrStringValueList</td>
+<td>DevString:
+Attribute name</td>
+<td>DevVarStringArray:
+String value list</td>
+<td>Return the authorized string value list for
+a given attribute name</td>
+</tr>
+<tr class="row-even"><td>loadConfig</td>
+<td>DevString</td>
+<td>DevVoid</td>
+<td>the config file prefix, the property
+config_path is mandatory</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">ImXpad Tango device</a><ul>
+<li><a class="reference internal" href="#properties">Properties</a></li>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#commands">Commands</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../Hamamatsu/hamamatsu.html"
+                        title="previous chapter">Hamamatsu Tango device</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../MarCCD/marccd.html"
+                        title="next chapter">MarCCD class</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/ImXpad/imxpad.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../MarCCD/marccd.html" title="MarCCD class"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../Hamamatsu/hamamatsu.html" title="Hamamatsu Tango device"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">LimaDetector C++ Tango device server 1.8.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2018, langlois/noureddine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+    </div>
+  </body>
+</html>

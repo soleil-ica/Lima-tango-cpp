@@ -108,7 +108,7 @@ Properties
 |                            |                                     | | SOFTWARE: use the software saving system                                                          |
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
 |FileMemoryMode              |NO_COPY                              | | Available only for Nexus format : Set the SetDataItemMemoryMode(). Available values :             |
-|                            |                                     | | COPY: ???                                                                                         |
+|                            |                                     | | COPY: the nexus lib make its own copy of the image and then works on it                                                                                         |
 |                            |                                     | | NO_COPY: ???                                                                                      |
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
 |FileTimestampEnabled        |true                                 |Available only for Nexus format: enable the timestamp                                                |
@@ -116,7 +116,6 @@ Properties
 |FileWriteMode               |SYNCHRONOUS                          | | Available only for Nexus format : Set the SetWriteMode(). Available values :                      |
 |                            |                                     | | ASYNCHRONOUS                                                                                      |
 |                            |                                     | | SYNCHRONOUS                                                                                       |
-|                            |                                     | | DELAYED: ???                                                                                      |
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
 |ImageOpMode                 |HardAndSoft                          | | Define ImageOpMode for Roi/Binning/etc... Available values :                                      |
 |                            |                                     | | HardOnly                                                                                          |

@@ -1,0 +1,556 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PCO Tango device &mdash; LimaDetector C++ Tango device server 1.8.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.8.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="LimaDetector C++ Tango device server 1.8.1 documentation" href="../index.html" />
+    <link rel="next" title="PerkinElmer Tango device" href="../PerkinElmer/perkinelmer.html" />
+    <link rel="prev" title="Merlin Tango device" href="../Merlin/merlin.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../PerkinElmer/perkinelmer.html" title="PerkinElmer Tango device"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../Merlin/merlin.html" title="Merlin Tango device"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">LimaDetector C++ Tango device server 1.8.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="pco-tango-device">
+<h1>PCO Tango device<a class="headerlink" href="#pco-tango-device" title="Permalink to this headline">¶</a></h1>
+<p>This is the reference documentation of the PCO Tango device.</p>
+<p>You can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the <span class="xref std std-ref">PCO camera plugin</span> section.</p>
+<div class="section" id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="13%" />
+<col width="13%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property name</th>
+<th class="head">Mandatory</th>
+<th class="head">Default value</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>debug_control</td>
+<td>No</td>
+<td>0</td>
+<td>Enable/Disble the debug (0/1)</td>
+</tr>
+<tr class="row-odd"><td>debug_module</td>
+<td>No</td>
+<td>0</td>
+<td><dl class="first last docutils">
+<dt>To set the debug module list (in hex format 0x....)</dt>
+<dd><ul class="first last simple">
+<li>None           = 0x001</li>
+<li>Common         = 0x002</li>
+<li>Hardware       = 0x004</li>
+<li>HardwareSerial = 0x008</li>
+<li>Control        = 0x010</li>
+<li>Espia          = 0x020</li>
+<li>EspiaSerial    = 0x040</li>
+<li>Focla          = 0x080</li>
+<li>Camera         = 0x100</li>
+<li>CameraCom      = 0x200</li>
+<li>Test           = 0x400</li>
+<li>Application    = 0x800</li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-even"><td>debug_format</td>
+<td>No</td>
+<td>0</td>
+<td><dl class="first last docutils">
+<dt>To set the debug format (in hex format 0x....)</dt>
+<dd><ul class="first last simple">
+<li>DateTime = 0x001</li>
+<li>Thread   = 0x002</li>
+<li>Module   = 0x004</li>
+<li>Obj      = 0x008</li>
+<li>Funct    = 0x010</li>
+<li>FileLine = 0x020</li>
+<li>Type     = 0x040</li>
+<li>Indent   = 0x080</li>
+<li>Color    = 0x100</li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-odd"><td>debug_type</td>
+<td>No</td>
+<td>0</td>
+<td><dl class="first last docutils">
+<dt>To set the debug type (in hex format 0x....)</dt>
+<dd><ul class="first last simple">
+<li>Fatal   = 0x001</li>
+<li>Error   = 0x002</li>
+<li>Warning = 0x004</li>
+<li>Trace   = 0x008</li>
+<li>Funct   = 0x010</li>
+<li>Param   = 0x020</li>
+<li>Return  = 0x040</li>
+<li>Always  = 0x080</li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-even"><td>params</td>
+<td>No</td>
+<td>empty</td>
+<td><dl class="first last docutils">
+<dt>List of parameters/options (one per line)</dt>
+<dd><ul class="first last simple">
+<li>sn = &lt;camera serial number&gt;
+(
+if it is 0 or doesn&#8217;t exist, the first camera found will be opened
+if the serial number is not found, OpenCam will fail
+)</li>
+<li>trigSingleMulti = 1
+(
+enable TriggerSingleMulti as TriggerMulti for compability
+with SPEC START
+)</li>
+<li>xMinSize = 1
+(
+enable correction for the X minimum size for the CLHS firmware bug
+)</li>
+<li>bitAligment = &lt;MSB | LSB&gt;
+(
+bit aligment of the image data, i.e. for 12b:
+[MSB - xxxx xxxx xxxx 0000]
+[LSB - 0000 xxxx xxxx xxxx]
+)</li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="5%" />
+<col width="17%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute name</th>
+<th class="head">RW</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>acqTimeoutRetry</td>
+<td>rw</td>
+<td>DevLong</td>
+<td>Maximum Timeout retries during acq (0 - infinite)</td>
+</tr>
+<tr class="row-odd"><td>adc</td>
+<td>rw</td>
+<td>DevLong</td>
+<td>Number of working ADC&#8217;s</td>
+</tr>
+<tr class="row-even"><td>adcMax</td>
+<td>ro</td>
+<td>DevLong</td>
+<td>Maximum number of ADC&#8217;s</td>
+</tr>
+<tr class="row-odd"><td>binInfo</td>
+<td>ro</td>
+<td>DevLong</td>
+<td>PCO hw binning info</td>
+</tr>
+<tr class="row-even"><td>bitAlignment</td>
+<td>rw</td>
+<td>DevString</td>
+<td><dl class="first last docutils">
+<dt>Bit alignment</dt>
+<dd><ul class="first last simple">
+<li>MSB (0)</li>
+<li>LSB (1)</li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-odd"><td>bytesPerPixel</td>
+<td>ro</td>
+<td>DevLong</td>
+<td>Bytes per Pixel</td>
+</tr>
+<tr class="row-even"><td>camerasFound</td>
+<td>ro</td>
+<td>DevString</td>
+<td>List of cameras found during the Open search</td>
+</tr>
+<tr class="row-odd"><td>camInfo</td>
+<td>ro</td>
+<td>DevString</td>
+<td>General camera parameters information</td>
+</tr>
+<tr class="row-even"><td>camName</td>
+<td>ro</td>
+<td>DevString</td>
+<td>Camera Name</td>
+</tr>
+<tr class="row-odd"><td>camNameBase</td>
+<td>ro</td>
+<td>DevString</td>
+<td>Camera Name (Pco)</td>
+</tr>
+<tr class="row-even"><td>camNameEx</td>
+<td>ro</td>
+<td>DevString</td>
+<td>Camera Name, Interface, Sensor</td>
+</tr>
+<tr class="row-odd"><td>camType</td>
+<td>ro</td>
+<td>DevString</td>
+<td>Camera Type</td>
+</tr>
+<tr class="row-even"><td>cdiMode</td>
+<td>rw</td>
+<td>DevLong</td>
+<td><dl class="first last docutils">
+<dt>Correlated Double Imaging Mode</dt>
+<dd><ul class="first last simple">
+<li>enabled/disabled = 1/0 (rw)</li>
+<li>not allowed = -1 (ro)</li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-odd"><td>clXferPar</td>
+<td>ro</td>
+<td>DevString</td>
+<td>General CameraLink parameters</td>
+</tr>
+<tr class="row-even"><td>cocRunTime</td>
+<td>ro</td>
+<td>DevDouble</td>
+<td>cocRunTime (s) - only valid after the camera is armed</td>
+</tr>
+<tr class="row-odd"><td>coolingTemperature</td>
+<td>ro</td>
+<td>DevDouble</td>
+<td>Cooling Temperature</td>
+</tr>
+<tr class="row-even"><td>debugInt</td>
+<td>rw</td>
+<td>DevString</td>
+<td>PCO plugin internal debug level (hex format: 0x....)</td>
+</tr>
+<tr class="row-odd"><td>debugIntTypes</td>
+<td>r0</td>
+<td>DevString</td>
+<td>PCO plugin internal debug types</td>
+</tr>
+<tr class="row-even"><td>doubleImageMode</td>
+<td>rw</td>
+<td>DevLong</td>
+<td><dl class="first last docutils">
+<dt>Double Image Mode</dt>
+<dd><ul class="first last simple">
+<li>enabled/disabled = 1/0 (rw)</li>
+<li>not allowed = -1 (ro)</li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-odd"><td>firmwareInfo</td>
+<td>ro</td>
+<td>DevString</td>
+<td>Firmware info</td>
+</tr>
+<tr class="row-even"><td>frameRate</td>
+<td>ro</td>
+<td>DevDouble</td>
+<td>Framerate, calculated as: 1/cocRunTime (1/s)</td>
+</tr>
+<tr class="row-odd"><td>info</td>
+<td>ro</td>
+<td>DevString</td>
+<td>General camera parameters information</td>
+</tr>
+<tr class="row-even"><td>lastError</td>
+<td>ro</td>
+<td>DevString</td>
+<td>The last PCO error message</td>
+</tr>
+<tr class="row-odd"><td>lastImgAcquired</td>
+<td>ro</td>
+<td>DevLong</td>
+<td>Last image acquired (during recording)</td>
+</tr>
+<tr class="row-even"><td>lastImgRecorded</td>
+<td>ro</td>
+<td>DevLong</td>
+<td>Last image recorded (during recording)</td>
+</tr>
+<tr class="row-odd"><td>logMsg</td>
+<td>ro</td>
+<td>DevString</td>
+<td>Last Log msgs</td>
+</tr>
+<tr class="row-even"><td>logPcoEnabled</td>
+<td>ro</td>
+<td>DevLong</td>
+<td>PCO logs are enabled</td>
+</tr>
+<tr class="row-odd"><td>maxNbImages</td>
+<td>ro</td>
+<td>DevLong</td>
+<td>The maximum number of images which can be acquired by the camera (recording mode)</td>
+</tr>
+<tr class="row-even"><td>pixelRate</td>
+<td>ro</td>
+<td>DevLong</td>
+<td>Actual Pixel Rate (Hz)</td>
+</tr>
+<tr class="row-odd"><td>pixelRateInfo</td>
+<td>ro</td>
+<td>DevString</td>
+<td>Pixel Rate information</td>
+</tr>
+<tr class="row-even"><td>pixelRateValidValues</td>
+<td>ro</td>
+<td>DevString</td>
+<td>Allowed Pixel Rates</td>
+</tr>
+<tr class="row-odd"><td>roiInfo</td>
+<td>ro</td>
+<td>DevString</td>
+<td>PCO ROI info</td>
+</tr>
+<tr class="row-even"><td>roiLastFixed</td>
+<td>ro</td>
+<td>DevString</td>
+<td>Last fixed ROI info</td>
+</tr>
+<tr class="row-odd"><td>rollingShutter</td>
+<td>rw</td>
+<td>DevLong</td>
+<td><dl class="first last docutils">
+<dt>Rolling Shutter Mode (<strong>only for some types of EDGE</strong>)</dt>
+<dd><ul class="first last simple">
+<li>1 = ROLLING</li>
+<li>2 = GLOBAL</li>
+<li>4 = GLOBAL RESET</li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-even"><td>rollingShutterInfo</td>
+<td>ro</td>
+<td>DevString</td>
+<td>Rolling Shutter info</td>
+</tr>
+<tr class="row-odd"><td>temperatureInfo</td>
+<td>ro</td>
+<td>DevString</td>
+<td>Temperature info</td>
+</tr>
+<tr class="row-even"><td>timestampMode</td>
+<td>rw</td>
+<td>DevLong</td>
+<td><dl class="first last docutils">
+<dt>Timestamp mode</dt>
+<dd><ul class="first last simple">
+<li>0 = none</li>
+<li>1 = BCD coded stamp in the first 14 pixel</li>
+<li>2 = BCD coded stamp in the first 14 pixel + ASCII text</li>
+<li>3 = ASCII text (<strong>only for some cameras</strong>)</li>
+</ul>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="row-odd"><td>traceAcq</td>
+<td>ro</td>
+<td>DevString</td>
+<td>Debug information for some types of acq</td>
+</tr>
+<tr class="row-even"><td>version</td>
+<td>ro</td>
+<td>DevString</td>
+<td>Version information of the plugin</td>
+</tr>
+<tr class="row-odd"><td>versionAtt</td>
+<td>ro</td>
+<td>DevString</td>
+<td>Version of att file</td>
+</tr>
+<tr class="row-even"><td>versionSdk</td>
+<td>ro</td>
+<td>DevString</td>
+<td>PCO SDK Release</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="commands">
+<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="14%" />
+<col width="21%" />
+<col width="43%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Command name</th>
+<th class="head">Arg. in</th>
+<th class="head">Arg. out</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Init</td>
+<td>DevVoid</td>
+<td>DevVoid</td>
+<td>Do NOT use</td>
+</tr>
+<tr class="row-odd"><td>State</td>
+<td>DevVoid</td>
+<td>DevLong</td>
+<td>Return the device state</td>
+</tr>
+<tr class="row-even"><td>Status</td>
+<td>DevVoid</td>
+<td>DevString</td>
+<td>Return the device state as a string</td>
+</tr>
+<tr class="row-odd"><td>getAttrStringValueList</td>
+<td>DevString:
+Attribute name</td>
+<td>DevVarStringArray:
+String value list</td>
+<td>Return the authorized string value list for
+a given attribute name</td>
+</tr>
+<tr class="row-even"><td>talk</td>
+<td>DevString</td>
+<td>DevString</td>
+<td><strong>WARNING</strong>: use this command for test only,
+This is a backdoor cmd and it can distrub Lima</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">PCO Tango device</a><ul>
+<li><a class="reference internal" href="#properties">Properties</a></li>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#commands">Commands</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../Merlin/merlin.html"
+                        title="previous chapter">Merlin Tango device</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../PerkinElmer/perkinelmer.html"
+                        title="next chapter">PerkinElmer Tango device</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/Pco/pco.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../PerkinElmer/perkinelmer.html" title="PerkinElmer Tango device"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../Merlin/merlin.html" title="Merlin Tango device"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">LimaDetector C++ Tango device server 1.8.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2018, langlois/noureddine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.1.
+    </div>
+  </body>
+</html>
