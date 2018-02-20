@@ -4603,6 +4603,9 @@ void LimaDetector::add_image_dynamic_attribute(void)
     dai.dev = this;
     dai.tai.name = "image";
     dai.tai.data_format = Tango::IMAGE;
+    dai.tai.max_dim_x = 100000; //- arbitrary big value
+    dai.tai.max_dim_y = 100000; //- arbitrary big value
+
     if(detectorPixelDepth == "8")
     {
         dai.tai.data_type = Tango::DEV_UCHAR;

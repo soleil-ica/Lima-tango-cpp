@@ -39,12 +39,12 @@
         <dependency>
             <groupId>fr.soleil.lib</groupId>
             <artifactId>YAT4Tango-amd64-Linux-gcc-shared-${mode}</artifactId>
-			<version>1.9.5</version>
+			<version>1.10.4</version>
         </dependency>
         <dependency>
             <groupId>fr.soleil.lib</groupId>
             <artifactId>YAT-amd64-Linux-gcc-shared-${mode}</artifactId>
-			<version>1.12.0</version>
+			<version>1.13.13</version>
         </dependency>                   
 
         <dependency>
@@ -78,13 +78,15 @@
                             <include>*.cpp</include>
                             <include>specifics/SimulatorCCD/*.cpp</include>							
                             <include>specifics/Eiger/*.cpp</include>
-                            <include>specifics/Layout/*.cpp</include>     							
+                            <include>specifics/Layout/*.cpp</include>     			
+                            <include>specifics/RoiCounters/*.cpp</include>
                         </includes>
                         <includePaths>                          
                             <includePath>src</includePath>                                   
                             <includePath>specifics/SimulatorCCD</includePath> 		
                             <includePath>specifics/Eiger</includePath> 		
                             <includePath>specifics/Layout</includePath>         
+                            <includePath>specifics/RoiCounters</includePath>
 							<!-- <includePath>${libs-64bits}/my_breakpad/include</includePath> 		 -->
 
                         </includePaths>
@@ -101,11 +103,13 @@
                             <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
                             <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
 
-                            <define>UNIX_64_EL5</define>	<!-- in order to avoid compilation of BREAKPAD CRASH HANDLER-->
+                            <!-- <define>UNIX_64_EL5</define> -->	<!-- in order to avoid compilation of BREAKPAD CRASH HANDLER-->
                             <!-- define which detector you need to ENABLE -->      
                             <define>SIMULATOR_ENABLED</define> 						
                             <define>EIGER_ENABLED</define> 	
-                            <define>LAYOUT_ENABLED</define>		                            
+                            <define>LAYOUT_ENABLED</define>		  
+                            <define>ROICOUNTERS_ENABLED</define>             
+                            <define>SOLEIL_YAT_STREAM</define>
                         </defines>                        
 			
                     </cpp>        
