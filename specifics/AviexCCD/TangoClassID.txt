@@ -1,0 +1,11 @@
+/**
+ * Device Class Identification:
+ * 
+ * Class Name   :	AviexCCD
+ * Contact      :	noureddine@synchrotron-soleil.fr
+ * Class Family :	Acquisition
+ * Platform     :	Unix Like
+ * Bus          :	PCI
+ * Manufacturer :	Aviex
+ * Reference    :	PCCD-170170
+ */
