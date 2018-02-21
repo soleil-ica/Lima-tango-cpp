@@ -7,19 +7,19 @@
         <version>RELEASE</version>
     </parent>
 	
-	<properties>
-		<!-- path to the 64 bits libs -->
-		<libs-64bits>/home/informatique/ica/noureddine/DeviceSources/lib-el6-64</libs-64bits>
-		<!-- <aol>amd64-Linux-gcc</aol> -->
+    <properties>
+        <!-- path to the 64 bits libs -->
+        <libs-64bits>/home/informatique/ica/noureddine/DeviceSources/lib-el6-64</libs-64bits>
+        <!-- <aol>amd64-Linux-gcc</aol> -->
         <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
         <PROCESSLIB.version>1.3.7</PROCESSLIB.version>
         <CORE.name>Core</CORE.name>
         <CORE.version>1.7.7-SNAPSHOT</CORE.version>
         <EIGER.name>Eiger</EIGER.name>
         <EIGER.version>2.1.5</EIGER.version>
-     	<SIMULATOR.name>Simulator</SIMULATOR.name>
+        <SIMULATOR.name>Simulator</SIMULATOR.name>
         <SIMULATOR.version>1.3.14</SIMULATOR.version>
-	</properties>
+    </properties>
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
@@ -87,9 +87,11 @@
                             <includePath>specifics/Eiger</includePath> 		
                             <includePath>specifics/Layout</includePath>         
                             <includePath>specifics/RoiCounters</includePath>
-							<!-- <includePath>${libs-64bits}/my_breakpad/include</includePath> 		 -->
-
+                            
+                            <includePath>${libs-64bits}/my_breakpad/include</includePath> 		
+                            
                         </includePaths>
+                       
                                 
                         <defines>
                             <define>PROJECT_NAME=${project.name}</define>
@@ -103,7 +105,6 @@
                             <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
                             <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
 
-                            <!-- <define>UNIX_64_EL5</define> -->	<!-- in order to avoid compilation of BREAKPAD CRASH HANDLER-->
                             <!-- define which detector you need to ENABLE -->      
                             <define>SIMULATOR_ENABLED</define> 						
                             <define>EIGER_ENABLED</define> 	
@@ -111,60 +112,59 @@
                             <define>ROICOUNTERS_ENABLED</define>             
                             <define>SOLEIL_YAT_STREAM</define>
                         </defines>                        
-			
                     </cpp>        
 					
-					<linker>
-						<libs>
-							<lib>
-								<!-- breakpad (??) 64 -->
-								<name>breakpad_client</name>
-								<type>static</type>
-								<directory>${libs-64bits}/my_breakpad/lib</directory>
-							</lib>
-							<lib>
-								<!-- omniORB4 (1.6) 64 -->
-								<name>omniORB4</name>
-								<type>shared</type>
+                    <linker>
+                        <libs>
+                            <lib>
+                                <!-- breakpad (??) 64 -->
+                                <name>breakpad_client</name>
+                                <type>static</type>
+                                <directory>${libs-64bits}/my_breakpad/lib</directory>
+                            </lib>
+                            <lib>
+                                <!-- omniORB4 (1.6) 64 -->
+                                <name>omniORB4</name>
+                                <type>shared</type>
                                 <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
-							</lib>
-							<lib>
-								<!-- omniDynamic4 (1.6) 64 -->
-								<name>omniDynamic4</name>
-								<type>shared</type>
-								<directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
-							</lib>
-							<lib>
-								<!-- COS4 (1.6) 64 -->
-								<name>COS4</name>
-								<type>shared</type>
-								<directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
-							</lib>
-							<lib>
-								<!-- omnithread (3.4) 64 -->
-								<name>omnithread</name>
-								<type>shared</type>
-								<directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
-							</lib>
-							<lib>
-								<!-- zmq (3.X.Y) 64 -->
-								<name>zmq</name>
-								<type>shared</type>
-								<directory>${libs-64bits}/zeromq-3.2.5/lib/</directory>
-							</lib>
-							<lib>
-								<!-- tango (8.0.5) 64 -->
-								<name>tango</name>
-								<type>shared</type>
-								<directory>${libs-64bits}/libtango8-8.1.2-16.el6.maxlab.x86_64/usr/lib64</directory>
-							</lib>
-							<lib>
-								<!-- log4tango (4.0.7) 64 -->
-								<name>log4tango</name>
-								<type>shared</type>
-								<directory>${libs-64bits}/liblog4tango5-5.0.0-16.el6.maxlab.x86_64/usr/lib64</directory>
-							</lib>
-                                <lib>
+                            </lib>
+                            <lib>
+                                <!-- omniDynamic4 (1.6) 64 -->
+                                <name>omniDynamic4</name>
+                                <type>shared</type>
+                                <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
+                            </lib>
+                            <lib>
+                                <!-- COS4 (1.6) 64 -->
+                                <name>COS4</name>
+                                <type>shared</type>
+                                <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
+                            </lib>
+                            <lib>
+                                <!-- omnithread (3.4) 64 -->
+                                <name>omnithread</name>
+                                <type>shared</type>
+                                <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
+                            </lib>
+                            <lib>
+                                <!-- zmq (3.X.Y) 64 -->
+                                <name>zmq</name>
+                                <type>shared</type>
+                                <directory>${libs-64bits}/zeromq-3.2.5/lib/</directory>
+                            </lib>
+                            <lib>
+                                <!-- tango (8.0.5) 64 -->
+                                <name>tango</name>
+                                <type>shared</type>
+                                <directory>${libs-64bits}/libtango8-8.1.2-16.el6.maxlab.x86_64/usr/lib64</directory>
+                            </lib>
+                            <lib>
+                                <!-- log4tango (4.0.7) 64 -->
+                                <name>log4tango</name>
+                                <type>shared</type>
+                                <directory>${libs-64bits}/liblog4tango5-5.0.0-16.el6.maxlab.x86_64/usr/lib64</directory>
+                            </lib>
+                            <lib>
                                 <!-- hdf5 (1.8.16) 64 -->
                                 <name>hdf5</name>
                                 <type>shared</type>
@@ -192,10 +192,22 @@
                                 <!-- lz4 131 (1.7.1) 64 -->
                                 <name>lz4</name>
                                 <type>shared</type>
-                                <directory>/home/informatique/ica/langlois/DEV/dev/lz4-r131/lib/</directory>
+                                <directory>${libs-64bits}/lz4-r131/lib/</directory>
                             </lib>
-						</libs>
-					</linker>
+                            <lib>
+                                <!-- YAT (1.13.13) 64 -->
+                                <name>YAT</name>
+                                <type>shared</type>
+                                <directory>${libs-64bits}/yat-1.13.13/lib</directory>
+                            </lib>
+                            <lib>
+                                <!-- YAT (1.13.13) 64 -->
+                                <name>YAT4Tango</name>
+                                <type>shared</type>
+                                <directory>${libs-64bits}/yat4tango-1.10.4/lib</directory>
+                            </lib>                                  
+                        </libs>
+                    </linker>
 
                 </configuration>
             </plugin>
