@@ -333,7 +333,7 @@ namespace Pco_ns
         //- cdi
         void read_cdiMode_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
         void write_cdiMode_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
-        bool is_cdiMode_allowed(Tango::AttReqType type);
+        //bool is_cdiMode_allowed(Tango::AttReqType type);
         //- frameRate
         void read_frameRate_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
         //- coolingSetPoint

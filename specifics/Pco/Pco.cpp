@@ -761,25 +761,25 @@ void Pco::read_cdiMode_callback(yat4tango::DynamicAttributeReadCallbackData& cbd
 // description : 	Read/Write allowed for cdiMode attribute.
 //
 //-----------------------------------------------------------------------------
-bool Pco::is_cdiMode_allowed(Tango::AttReqType type)
-{
-    INFO_STREAM << "Pco::is_cdiMode_allowed" << endl;
-    if (get_state() == Tango::INIT ||
-        get_state() == Tango::FAULT ||
-        get_state() == Tango::RUNNING)
-    {
-        //	End of Generated Code
-
-        if ((get_state() == Tango::RUNNING) && (Tango::READ_REQ == type))
-        {
-            return true;
-        }
-
-        //	Re-Start of Generated Code
-        return false;
-    }
-    return true;
-}
+//bool Pco::is_cdiMode_allowed(Tango::AttReqType type)
+//{
+//    INFO_STREAM << "Pco::is_cdiMode_allowed" << endl;
+//    if (get_state() == Tango::INIT ||
+//        get_state() == Tango::FAULT ||
+//        get_state() == Tango::RUNNING)
+//    {
+//        //	End of Generated Code
+//
+//        if ((get_state() == Tango::RUNNING) && (Tango::READ_REQ == type))
+//        {
+//            return true;
+//        }
+//
+//        //	Re-Start of Generated Code
+//        return false;
+//    }
+//    return true;
+//}
 
 //+----------------------------------------------------------------------------
 //
@@ -877,6 +877,15 @@ void Pco::write_coolingSetPoint_callback(yat4tango::DynamicAttributeWriteCallbac
 
     try
     {
+        if (get_state() == Tango::FAULT ||
+            get_state() == Tango::RUNNING)
+        {
+            std::string reason = "It's currently not allowed to write attribute coolingSetPoint. The device state is " + std::string(Tango::DevStateName[get_state()]);
+            Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                            reason.c_str(),
+                                            "Pco::write_coolingSetPoint_callback()");
+        }
+
         cbd.tga->get_write_value(attr_coolingSetPoint_write);
         m_camera->setCoolingTemperature(attr_coolingSetPoint_write);
         //- Memorize the value
@@ -948,6 +957,15 @@ void Pco::write_adcOperation_callback(yat4tango::DynamicAttributeWriteCallbackDa
 
     try
     {
+        if (get_state() == Tango::FAULT ||
+            get_state() == Tango::RUNNING)
+        {
+            std::string reason = "It's currently not allowed to write attribute adcOperation. The device state is " + std::string(Tango::DevStateName[get_state()]);
+            Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                            reason.c_str(),
+                                            "Pco::write_adcOperation_callback()");
+        }
+
         std::string previous = *attr_adcOperation_read;
         cbd.tga->get_write_value(attr_adcOperation_write);
         std::string current = attr_adcOperation_write;
@@ -1078,10 +1096,11 @@ void Pco::read_pixelRate(Tango::Attribute &attr)
 
     try
     {
-        int temp_pixel_rate = -1;
+        /*int temp_pixel_rate = -1;
         m_camera->getPixelRate(temp_pixel_rate);
         std::string pixel_rate_str = yat::StringUtil::to_string<int>(temp_pixel_rate);
-        strcpy(*attr_pixelRate_read, pixel_rate_str.c_str());
+        strcpy(*attr_pixelRate_read, pixel_rate_str.c_str());*/
+        *attr_pixelRate_read = talk("pixelRate");
         attr.set_value(attr_pixelRate_read);
     }
     catch (yat::Exception& ex)
@@ -1231,7 +1250,7 @@ Tango::DevString Pco::talk(Tango::DevString argin)
     //------------------------------------------------------------
     Tango::DevString	argout  = new char[MAX_ATTRIBUTE_STRING_LENGTH];
     strcpy(argout, "dummy");
-    INFO_STREAM << "Pco::talk(): entering... !" << endl;
+    DEBUG_STREAM << "Pco::talk(): entering... !" << endl;
 
     //	Add your own code to control device here
     try
