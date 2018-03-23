@@ -849,6 +849,21 @@ bool Merlin::is_SoftTrigger_allowed(TANGO_UNUSED(const CORBA::Any &any))
 	return true;
 }
 
+//--------------------------------------------------------
+/**
+*	Method      : Merlin::is_Abort_allowed()
+*	Description : Execution allowed for Abort attribute
+*/
+//--------------------------------------------------------
+bool Merlin::is_Abort_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+    //	Not any excluded states for Abort command.
+    /*----- PROTECTED REGION ID(Merlin::AbortStateAllowed) ENABLED START -----*/
+
+    /*----- PROTECTED REGION END -----*/	//	Merlin::AbortStateAllowed
+    return true;
+}
+
 
 
 }	//	End of namespace

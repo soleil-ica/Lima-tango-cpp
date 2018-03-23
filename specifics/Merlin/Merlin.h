@@ -46,6 +46,9 @@
 #include <lima/Exceptions.h>
 #include "Factory.h"
 
+// YAT / 4Tango
+#include <yat4tango/PropertyHelper.h>
+
 using namespace lima;
 
 /*----- PROTECTED REGION END -----*/	//	Merlin.h
@@ -481,15 +484,20 @@ public:
 	 */
 	virtual void soft_trigger();
 	virtual bool is_SoftTrigger_allowed(const CORBA::Any &any);
+    /**
+    *	Command Abort related method
+    *	Description:
+    *
+    */
+    virtual void abort();
+    virtual bool is_Abort_allowed(const CORBA::Any &any);
 
 
 
 /*----- PROTECTED REGION ID(Merlin::Additional Method prototypes) ENABLED START -----*/
 
 //	Additional Method prototypes
-    int find_index_from_property_name(Tango::DbData& dev_prop, string property_name);
-    template <class T>
-    void create_property_if_empty(Tango::DbData& dev_prop,T value, string property_name);
+    
 
 /*----- PROTECTED REGION END -----*/	//	Merlin::Additional Method prototypes
 };

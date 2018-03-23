@@ -63,6 +63,7 @@ using namespace std;
 //  Status        |  Inherited (no method)
 //  DevState      |  dev_state
 //  SoftTrigger   |  soft_trigger
+//  Abort         |  abort
 //================================================================
 
 //================================================================
@@ -145,7 +146,7 @@ Merlin::Merlin(Tango::DeviceClass *cl, const char *s, const char *d)
 //--------------------------------------------------------
 void Merlin::delete_device()
 {
-	DEBUG_STREAM << "Merlin::delete_device() " << device_name << endl;
+	INFO_STREAM << "Merlin::delete_device() " << device_name << endl;
 	/*----- PROTECTED REGION ID(Merlin::delete_device) ENABLED START -----*/
 	
 	//	Delete device allocated objects
@@ -187,7 +188,7 @@ void Merlin::delete_device()
 //--------------------------------------------------------
 void Merlin::init_device()
 {
-	DEBUG_STREAM << "Merlin::init_device() create device " << device_name << endl;
+	INFO_STREAM << "Merlin::init_device() create device " << device_name << endl;
 	/*----- PROTECTED REGION ID(Merlin::init_device_before) ENABLED START -----*/
 	
 	//	Initialization before get_device_property() call
@@ -275,6 +276,7 @@ void Merlin::init_device()
         return;
     }
     m_is_device_initialized = true;
+    INFO_STREAM << "Merlin::MyAbort()  - " << device_name << endl;
     set_state(Tango::STANDBY);
     dev_state();
 	//	Initialize device
@@ -402,13 +404,13 @@ void Merlin::get_device_property()
 	/*----- PROTECTED REGION ID(Merlin::get_device_property_after) ENABLED START -----*/
 	
 	//	Check device property data members init
-    create_property_if_empty(dev_prop,"no_name","HostName");
-    create_property_if_empty(dev_prop,"6341","CmdPort");
-    create_property_if_empty(dev_prop,"6342","DataPort");
-    create_property_if_empty(dev_prop,"4","Chips");
-    create_property_if_empty(dev_prop,"512","ImageWidth");
-    create_property_if_empty(dev_prop,"512","ImageHeight");
-    create_property_if_empty(dev_prop,"false","Simulate");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "no_name", "HostName");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "6341", "CmdPort");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "6342", "DataPort");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "4", "Chips");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "512", "ImageWidth");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "512", "ImageHeight");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "Simulate");
 	
 	/*----- PROTECTED REGION END -----*/	//	Merlin::get_device_property_after
 }
@@ -451,7 +453,7 @@ void Merlin::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void Merlin::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "Merlin::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	INFO_STREAM << "Merlin::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Merlin::write_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -546,7 +548,7 @@ void Merlin::read_chargeSumming(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_chargeSumming(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_chargeSumming(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_chargeSumming(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
@@ -622,7 +624,7 @@ void Merlin::read_colourMode(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_colourMode(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_colourMode(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_colourMode(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
@@ -699,7 +701,7 @@ void Merlin::read_continuousRW(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_continuousRW(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_continuousRW(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_continuousRW(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
@@ -773,7 +775,7 @@ void Merlin::read_counter(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_counter(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_counter(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_counter(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
@@ -849,7 +851,7 @@ void Merlin::read_gain(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_gain(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_gain(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_gain(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
@@ -925,7 +927,7 @@ void Merlin::read_operatingEnergy(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_operatingEnergy(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_operatingEnergy(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_operatingEnergy(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
@@ -1041,7 +1043,7 @@ void Merlin::read_threshold0(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_threshold0(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_threshold0(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_threshold0(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
@@ -1115,7 +1117,7 @@ void Merlin::read_threshold1(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_threshold1(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_threshold1(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_threshold1(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
@@ -1190,7 +1192,7 @@ void Merlin::read_threshold2(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_threshold2(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_threshold2(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_threshold2(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
@@ -1265,7 +1267,7 @@ void Merlin::read_threshold3(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_threshold3(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_threshold3(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_threshold3(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
@@ -1340,7 +1342,7 @@ void Merlin::read_threshold4(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_threshold4(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_threshold4(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_threshold4(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
@@ -1415,7 +1417,7 @@ void Merlin::read_threshold5(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_threshold5(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_threshold5(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_threshold5(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
@@ -1490,7 +1492,7 @@ void Merlin::read_threshold6(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_threshold6(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_threshold6(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_threshold6(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
@@ -1565,7 +1567,7 @@ void Merlin::read_threshold7(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_threshold7(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_threshold7(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_threshold7(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevFloat	w_val;
 	attr.get_write_value(w_val);
@@ -1641,7 +1643,7 @@ void Merlin::read_framesPerTrigger(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_framesPerTrigger(Tango::WAttribute &attr)
 {
-    DEBUG_STREAM << "Merlin::write_framesPerTrigger(Tango::WAttribute &attr) entering... " << endl;
+    INFO_STREAM << "Merlin::write_framesPerTrigger(Tango::WAttribute &attr) entering... " << endl;
     //	Retrieve write value
     Tango::DevLong	w_val;
     attr.get_write_value(w_val);
@@ -1717,7 +1719,7 @@ void Merlin::read_triggerStartType(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_triggerStartType(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_triggerStartType(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_triggerStartType(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
@@ -1793,7 +1795,7 @@ void Merlin::read_triggerStopType(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_triggerStopType(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_triggerStopType(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_triggerStopType(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
@@ -1869,7 +1871,7 @@ void Merlin::read_triggerOutTTL(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_triggerOutTTL(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_triggerOutTTL(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_triggerOutTTL(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
@@ -1947,7 +1949,7 @@ void Merlin::read_triggerOutLVDS(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_triggerOutLVDS(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_triggerOutLVDS(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_triggerOutLVDS(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
@@ -2025,7 +2027,7 @@ void Merlin::read_triggerOutTTLInvert(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_triggerOutTTLInvert(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_triggerOutTTLInvert(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Merlin::write_triggerOutTTLInvert(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
@@ -2103,7 +2105,7 @@ void Merlin::read_triggerOutLVDSInvert(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_triggerOutLVDSInvert(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_triggerOutLVDSInvert(Tango::WAttribute &attr) entering... " << endl;
+    INFO_STREAM << "Merlin::write_triggerOutLVDSInvert(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
@@ -2181,7 +2183,7 @@ void Merlin::read_triggerInTTLDelay(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_triggerInTTLDelay(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_triggerInTTLDelay(Tango::WAttribute &attr) entering... " << endl;
+    INFO_STREAM << "Merlin::write_triggerInTTLDelay(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevLong64	w_val;
 	attr.get_write_value(w_val);
@@ -2258,7 +2260,7 @@ void Merlin::read_triggerInLVDSDelay(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_triggerInLVDSDelay(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_triggerInLVDSDelay(Tango::WAttribute &attr) entering... " << endl;
+    INFO_STREAM << "Merlin::write_triggerInLVDSDelay(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevLong64	w_val;
 	attr.get_write_value(w_val);
@@ -2335,7 +2337,7 @@ void Merlin::read_triggerUseDelay(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Merlin::write_triggerUseDelay(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Merlin::write_triggerUseDelay(Tango::WAttribute &attr) entering... " << endl;
+    INFO_STREAM << "Merlin::write_triggerUseDelay(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
@@ -2421,7 +2423,7 @@ Tango::DevState Merlin::dev_state()
 //--------------------------------------------------------
 void Merlin::soft_trigger()
 {
-	DEBUG_STREAM << "Merlin::SoftTrigger()  - " << device_name << endl;
+	INFO_STREAM << "Merlin::SoftTrigger()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Merlin::soft_trigger) ENABLED START -----*/
 	try
     {
@@ -2445,60 +2447,43 @@ void Merlin::soft_trigger()
 	/*----- PROTECTED REGION END -----*/	//	Merlin::soft_trigger
 }
 
+//--------------------------------------------------------
+/**
+*	Command Abort related method
+*	Description:
+*
+*/
+//--------------------------------------------------------
+void Merlin::abort()
+{
+    INFO_STREAM << "Merlin::Abort()  - " << device_name << endl;
+    /*----- PROTECTED REGION ID(Merlin::abort) ENABLED START -----*/
+    try
+    {
+        m_camera->abortAcquisition();
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        Tango::Except::re_throw_exception(df,
+                                            "TANGO_DEVICE_ERROR",
+                                            string(df.errors[0].desc).c_str(),
+                                            "Merlin::Abort");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "Merlin::Abort");
+    }
+
+    /*----- PROTECTED REGION END -----*/	//	Merlin::abort
+}
 
 
 
 /*----- PROTECTED REGION ID(Merlin::namespace_ending) ENABLED START -----*/
-
-/*-------------------------------------------------------------------------
-// Merlin::create_property_if_empty
-/-------------------------------------------------------------------------*/
-template <class T>
-void Merlin::create_property_if_empty(Tango::DbData& dev_prop,T value,string property_name)
-{
-    int iPropertyIndex = find_index_from_property_name(dev_prop,property_name);
-    if (iPropertyIndex == -1) return;
-    if (dev_prop[iPropertyIndex].is_empty())
-    {
-        Tango::DbDatum current_value(dev_prop[iPropertyIndex].name);
-        current_value << value;
-        Tango::DbData db_data;
-        db_data.push_back(current_value);
-
-        try
-        {
-            get_db_device()->put_property(db_data);
-        }
-        catch(Tango::DevFailed &df)
-        {
-            string message= "Error in storing " + property_name + " in Configuration DataBase ";
-            LOG_ERROR((message));
-            ERROR_STREAM<<df<<endl;
-            //- rethrow exception
-            Tango::Except::re_throw_exception(df,
-                        "TANGO_DEVICE_ERROR",
-                        string(df.errors[0].desc).c_str(),
-                        "Merlin::create_property_if_empty");
-        }
-    }
-}
-
-
-/*-------------------------------------------------------------------------
-// Merlin::find_index_from_property_name
-/-------------------------------------------------------------------------*/
-int Merlin::find_index_from_property_name(Tango::DbData& dev_prop, string property_name)
-{
-    size_t iNbProperties = dev_prop.size();
-    unsigned int i;
-    for (i=0;i<iNbProperties;i++)
-    {
-        string sPropertyName(dev_prop[i].name);
-        if (sPropertyName == property_name) return i;
-    }
-    if (i == iNbProperties) return -1;
-    return i;
-}
 
 //	Additional Methods
 
