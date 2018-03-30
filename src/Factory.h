@@ -153,6 +153,11 @@
 #include <UviewRoiCtrlObj.h>
 #endif
 
+#ifdef SLSJUNGFRAU_ENABLED
+#include <SlsJungfrauCamera.h>
+#include <SlsJungfrauInterface.h>
+#endif
+
 using namespace lima;
 
 class ControlFactory : public Singleton<ControlFactory>
