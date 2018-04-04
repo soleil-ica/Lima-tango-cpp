@@ -349,7 +349,7 @@
 							<!-- lz4 131 (1.7.1) 64 -->
 							<name>lz4</name>
 							<type>shared</type>
-							<directory>/home/informatique/ica/langlois/DEV/dev/lz4-r131/lib/</directory>
+							<directory>${FL-64bits-libs}/lz4-r131/lib/</directory>
 						</lib>
 					</libs>
 				   </linker>
