@@ -38,17 +38,6 @@
     <dependencies>
         <dependency>
             <groupId>fr.soleil.lib</groupId>
-            <artifactId>YAT4Tango-amd64-Linux-gcc-shared-${mode}</artifactId>
-			<version>1.10.4</version>
-        </dependency>
-        <dependency>
-            <groupId>fr.soleil.lib</groupId>
-            <artifactId>YAT-amd64-Linux-gcc-shared-${mode}</artifactId>
-			<version>1.13.13</version>
-        </dependency>                   
-
-        <dependency>
-            <groupId>fr.soleil.lib</groupId>
             <artifactId>LimaCore-amd64-Linux-gcc-shared-${mode}</artifactId>
             <version>${CORE.version}</version>
         </dependency>
@@ -87,11 +76,11 @@
                             <includePath>specifics/Eiger</includePath> 		
                             <includePath>specifics/Layout</includePath>         
                             <includePath>specifics/RoiCounters</includePath>
-                            
-                            <includePath>${libs-64bits}/my_breakpad/include</includePath> 		
-                            
+                            <!-- <includePath>${libs-64bits}/my_breakpad/include</includePath> 		 -->
+                            <includePath>${libs-64bits}/yat-1.13.13/include</includePath>
+                            <includePath>${libs-64bits}/nexuscpp-3.2.2/include</includePath>     
+                            <includePath>${libs-64bits}/yat4tango-1.10.4/include</includePath>
                         </includePaths>
-                       
                                 
                         <defines>
                             <define>PROJECT_NAME=${project.name}</define>
@@ -105,6 +94,7 @@
                             <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
                             <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
 
+                            <!-- <define>UNIX_64_EL5</define> -->	<!-- in order to avoid compilation of BREAKPAD CRASH HANDLER-->
                             <!-- define which detector you need to ENABLE -->      
                             <define>SIMULATOR_ENABLED</define> 						
                             <define>EIGER_ENABLED</define> 	
@@ -112,6 +102,7 @@
                             <define>ROICOUNTERS_ENABLED</define>             
                             <define>SOLEIL_YAT_STREAM</define>
                         </defines>                        
+			
                     </cpp>        
 					
                     <linker>
@@ -201,11 +192,17 @@
                                 <directory>${libs-64bits}/yat-1.13.13/lib</directory>
                             </lib>
                             <lib>
+                                <!-- NexusCPP (3.2.2) 64 -->
+                                <name>NexusCPP</name>
+                                <type>shared</type>
+                                <directory>${libs-64bits}/nexuscpp-3.2.2/lib</directory>
+                            </lib>  
+                            <lib>
                                 <!-- YAT (1.13.13) 64 -->
                                 <name>YAT4Tango</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/yat4tango-1.10.4/lib</directory>
-                            </lib>                                  
+                            </lib>                                 
                         </libs>
                     </linker>
 
