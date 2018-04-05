@@ -2905,9 +2905,7 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
 
 
         if(imageSource == "ACQUISITION")
-        {
-#define DIMENSIONS_WIDTH_INDEX   0        
-#define DIMENSIONS_HEIGHT_INDEX  1                       
+        {                   
             if(counter > 0)
             {
                 DEBUG_STREAM << "last_image_counter -> " << counter << endl;
@@ -2923,8 +2921,8 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
                         case yat4tango::TangoTraits<Tango::DevUChar>::type_id:
                             DEBUG_STREAM << "image->set_value() : DevUChar" << endl;
                             cbd.tga->set_value((Tango::DevUChar*)last_image.data(),
-                                               last_image.dimensions[DIMENSIONS_WIDTH_INDEX], //- width
-                                               last_image.dimensions[DIMENSIONS_HEIGHT_INDEX] //- height
+                                               last_image.dimensions[WIDTH_INDEX], //- width
+                                               last_image.dimensions[HEIGHT_INDEX] //- height
                                                );
                             break;
 
@@ -2932,8 +2930,8 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
                         case yat4tango::TangoTraits<Tango::DevUShort>::type_id:
                             DEBUG_STREAM << "image->set_value() : DevUShort" << endl;
                             cbd.tga->set_value((Tango::DevUShort*)last_image.data(),
-                                               last_image.dimensions[DIMENSIONS_WIDTH_INDEX], //- width
-                                               last_image.dimensions[DIMENSIONS_HEIGHT_INDEX] //- height
+                                               last_image.dimensions[WIDTH_INDEX], //- width
+                                               last_image.dimensions[HEIGHT_INDEX] //- height
                                                );
                             break;
 
@@ -2941,24 +2939,24 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
                         case yat4tango::TangoTraits<Tango::DevULong>::type_id:
                             DEBUG_STREAM << "image->set_value() : DevULong" << endl;
                             cbd.tga->set_value((Tango::DevULong*)last_image.data(),
-                                               last_image.dimensions[DIMENSIONS_WIDTH_INDEX], //- width
-                                               last_image.dimensions[DIMENSIONS_HEIGHT_INDEX] //- height
+                                               last_image.dimensions[WIDTH_INDEX], //- width
+                                               last_image.dimensions[HEIGHT_INDEX] //- height
                                                );
                             break;
                             //signed 32 bits
                         case yat4tango::TangoTraits<Tango::DevLong>::type_id:
                             DEBUG_STREAM << "image->set_value() : DevLong" << endl;
                             cbd.tga->set_value((Tango::DevLong*)last_image.data(),
-                                               last_image.dimensions[DIMENSIONS_WIDTH_INDEX], //- width
-                                               last_image.dimensions[DIMENSIONS_HEIGHT_INDEX] //- height
+                                               last_image.dimensions[WIDTH_INDEX], //- width
+                                               last_image.dimensions[HEIGHT_INDEX] //- height
                                                );
                             break;
                             //FLOAT
                         case yat4tango::TangoTraits<Tango::DevFloat>::type_id:
                             DEBUG_STREAM << "image->set_value() : DevFloat" << endl;
                             cbd.tga->set_value((Tango::DevFloat*)last_image.data(),
-                                               last_image.dimensions[DIMENSIONS_WIDTH_INDEX], //- width
-                                               last_image.dimensions[DIMENSIONS_HEIGHT_INDEX] //- height
+                                               last_image.dimensions[WIDTH_INDEX], //- width
+                                               last_image.dimensions[HEIGHT_INDEX] //- height
                                                );
                             break;
 
