@@ -57,7 +57,7 @@
 #include <yat4tango/DeviceInfo.h>
 
 //- NEXUSCPP
-//#include <nexuscpp/nexuscpp.h>
+#include <nexuscpp/nexuscpp.h>
 
 //- STL 
 #include <algorithm>
