@@ -102,8 +102,8 @@ Data RoiCounters::copy_roi_from_image(Data& image_data, int roi_num)
     for(int i = attr_y_arrays[roi_num], j = 0; i < attr_y_arrays[roi_num] + attr_height_arrays[roi_num]; i++, j++)
     {
         int chunk = attr_width_arrays[roi_num] * sizeof(T);
-        memcpy( (image_data_roi.data() + chunk * j),
-                (image_data.data() + image_data.dimensions[WIDTH_INDEX] * i * sizeof(T) + attr_x_arrays[roi_num] * sizeof(T)),
+        memcpy( ((char*)(image_data_roi.data()) + chunk * j),
+                ((char*)(image_data.data()) + image_data.dimensions[WIDTH_INDEX] * i * sizeof(T) + attr_x_arrays[roi_num] * sizeof(T)),
                 chunk);
     }
     DEBUG_STREAM << "\t- duration memcpy roi from image : " << t1.elapsed_msec() << " (ms)" << std::endl;    
