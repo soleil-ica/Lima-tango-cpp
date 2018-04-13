@@ -23,7 +23,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.8.2</version>
+    <version>1.8.3</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -194,18 +194,6 @@
                                 <type>shared</type>
                                 <directory>${libs-64bits}/lz4-r131/lib/</directory>
                             </lib>
-                            <lib>
-                                <!-- YAT (1.13.13) 64 -->
-                                <name>YAT</name>
-                                <type>shared</type>
-                                <directory>${libs-64bits}/yat-1.13.13/lib</directory>
-                            </lib>
-                            <lib>
-                                <!-- YAT4Tango (1.10.4) 64 -->
-                                <name>YAT4Tango</name>
-                                <type>shared</type>
-                                <directory>${libs-64bits}/yat4tango-1.10.4/lib</directory>
-                            </lib>                                  
                         </libs>
                     </linker>
 
