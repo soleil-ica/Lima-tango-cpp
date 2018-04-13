@@ -563,9 +563,9 @@ void RoiCounters::read_roi()
 					iter2 != ((*iter1).second).end();
 					iter2++)
 				{
-					//					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
-					//					INFO_STREAM << "+++ roi nï¿½: " << roinum << "\t" << endl;
-					//					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
+					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
+					INFO_STREAM << "+++ roi n°: " << roinum << "\t" << endl;
+					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
 
 					attr_frameNumber_value = (*iter2).frameNumber + 1;
 					attr_sum_arrays[roinum] = (*iter2).sum;
@@ -574,13 +574,13 @@ void RoiCounters::read_roi()
 					attr_minValue_arrays[roinum] = (*iter2).minValue;
 					attr_maxValue_arrays[roinum] = (*iter2).maxValue;
 
-					//					INFO_STREAM << "frameNumber = " << attr_frameNumber_value << endl;
-					//					INFO_STREAM << "sum         = " << attr_sum_arrays[roinum] << endl;
-					//					INFO_STREAM << "average     = " << attr_average_arrays[roinum] << endl;
-					//					INFO_STREAM << "std         = " << attr_std_arrays[roinum] << endl;
-					//					INFO_STREAM << "minValue    = " << attr_minValue_arrays[roinum] << endl;
-					//					INFO_STREAM << "maxValue    = " << attr_maxValue_arrays[roinum] << endl;
-					//					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
+					INFO_STREAM << "frameNumber = " << attr_frameNumber_value << endl;
+					INFO_STREAM << "sum         = " << attr_sum_arrays[roinum] << endl;
+					INFO_STREAM << "average     = " << attr_average_arrays[roinum] << endl;
+					INFO_STREAM << "std         = " << attr_std_arrays[roinum] << endl;
+					INFO_STREAM << "minValue    = " << attr_minValue_arrays[roinum] << endl;
+					INFO_STREAM << "maxValue    = " << attr_maxValue_arrays[roinum] << endl;
+					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
 				}
 			}
 		}
