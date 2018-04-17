@@ -62,6 +62,8 @@ static const char *RcsId = "$Id:  $";
 //================================================================
 //  State         |  Inherited (no method)
 //  Status        |  Inherited (no method)
+//  SetCmd        |  set_cmd
+//  GetCmd        |  get_cmd
 //================================================================
 
 //================================================================
@@ -73,7 +75,6 @@ static const char *RcsId = "$Id:  $";
 //  delayAfterTrigger        |  Tango::DevDouble	Scalar
 //  detectorFirmwareVersion  |  Tango::DevString	Scalar
 //  detectorSoftwareVersion  |  Tango::DevString	Scalar
-//  moduleFirmwareVersion    |  Tango::DevString	Scalar
 //================================================================
 
 namespace SlsJungfrau_ns
@@ -140,7 +141,6 @@ void SlsJungfrau::delete_device()
 	delete[] attr_configFileName_read         [0];
 	delete[] attr_detectorFirmwareVersion_read[0];
 	delete[] attr_detectorSoftwareVersion_read[0];
-	delete[] attr_moduleFirmwareVersion_read  [0];
 
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::delete_device
 	delete[] attr_tresholdEnergy_read;
@@ -149,7 +149,6 @@ void SlsJungfrau::delete_device()
 	delete[] attr_delayAfterTrigger_read;
 	delete[] attr_detectorFirmwareVersion_read;
 	delete[] attr_detectorSoftwareVersion_read;
-	delete[] attr_moduleFirmwareVersion_read;
 }
 
 //--------------------------------------------------------
@@ -210,20 +209,17 @@ void SlsJungfrau::init_device()
 	attr_delayAfterTrigger_read = new Tango::DevDouble[1];
 	attr_detectorFirmwareVersion_read = new Tango::DevString[1];
 	attr_detectorSoftwareVersion_read = new Tango::DevString[1];
-	attr_moduleFirmwareVersion_read = new Tango::DevString[1];
 
 	/*----- PROTECTED REGION ID(SlsJungfrau::init_device) ENABLED START -----*/
 	attr_clockDivider_read           [0] = new char[ 256];
 	attr_configFileName_read         [0] = new char[1024];
 	attr_detectorFirmwareVersion_read[0] = new char[ 256];
 	attr_detectorSoftwareVersion_read[0] = new char[ 256];
-	attr_moduleFirmwareVersion_read  [0] = new char[ 256];
 
 	::strcpy(attr_clockDivider_read           [0], "");
 	::strcpy(attr_configFileName_read         [0], "");
     ::strcpy(attr_detectorFirmwareVersion_read[0], "");
 	::strcpy(attr_detectorSoftwareVersion_read[0], "");
-	::strcpy(attr_moduleFirmwareVersion_read  [0], "");
         
     //	Initialize device
 	m_is_device_initialized = true;
@@ -374,23 +370,21 @@ void SlsJungfrau::read_tresholdEnergy(Tango::Attribute &attr)
 
 	try
 	{
-        int thres;
-
         // get the camera value
-//	    m_camera->getThresholdEnergy(thres);
+        int threshold_energy_eV = m_camera->getThresholdEnergy();
 
-        //Set the attribute value
-		*attr_tresholdEnergy_read = (Tango::DevLong)(thres);
+        // set the attribute value
+        *attr_tresholdEnergy_read = (Tango::DevLong)(threshold_energy_eV);
         attr.set_value(attr_tresholdEnergy_read);
 	}
-	catch(Tango::DevFailed& df)
-	{
+    catch(Tango::DevFailed& df)
+    {
         manage_devfailed_exception(df, "SlsJungfrau::read_tresholdEnergy");
-	}
-	catch(Exception& e)
-	{
+    }
+    catch(Exception& e)
+    {
         manage_lima_exception(e, "SlsJungfrau::read_tresholdEnergy");
-	}
+    }
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_tresholdEnergy
 }
 //--------------------------------------------------------
@@ -411,16 +405,17 @@ void SlsJungfrau::write_tresholdEnergy(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(SlsJungfrau::write_tresholdEnergy) ENABLED START -----*/
     try
 	{
-//        m_camera->setThresholdEnergy(static_cast<int>(w_val));
+        // set the camera value
+        m_camera->setThresholdEnergy(static_cast<int>(w_val));
 	}
-	catch(Tango::DevFailed& df)
-	{
+    catch(Tango::DevFailed& df)
+    {
         manage_devfailed_exception(df, "SlsJungfrau::write_tresholdEnergy");
-	}
-	catch(Exception& e)
-	{
+    }
+    catch(Exception& e)
+    {
         manage_lima_exception(e, "SlsJungfrau::write_tresholdEnergy");
-	}	
+    }	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::write_tresholdEnergy
 }
 //--------------------------------------------------------
@@ -441,14 +436,12 @@ void SlsJungfrau::read_clockDivider(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "SlsJungfrau::read_clockDivider(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsJungfrau::read_clockDivider) ENABLED START -----*/
-    //	Set the attribute value
 
     try
     {
         enum lima::SlsJungfrau::Camera::ClockDivider clock_divider;
 
-        // get the camera value
-//        m_camera->getClockDiv(clock_divider);
+        clock_divider = m_camera->getClockDivider();
 
         const std::vector<enum lima::SlsJungfrau::Camera::ClockDivider>::const_iterator 
         iterator = find(TANGO_CLOCK_DIVIDER_LABELS_TO_TYPE.begin(), 
@@ -474,14 +467,14 @@ void SlsJungfrau::read_clockDivider(Tango::Attribute &attr)
                                            "SlsJungfrau::read_clockDivider");
         }
 	}
-	catch(Tango::DevFailed& df)
-	{
+    catch(Tango::DevFailed& df)
+    {
         manage_devfailed_exception(df, "SlsJungfrau::read_clockDivider");
-	}
-	catch(Exception& e)
-	{
+    }
+    catch(Exception& e)
+    {
         manage_lima_exception(e, "SlsJungfrau::read_clockDivider");
-	}
+    }
 
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_clockDivider
 }
@@ -539,16 +532,16 @@ void SlsJungfrau::write_clockDivider(Tango::WAttribute &attr)
     try
     {
         // set the camera value
-//        m_camera->setClockDiv(clock_divider);
+        m_camera->setClockDivider(clock_divider);
 	}
-	catch(Tango::DevFailed& df)
-	{
+    catch(Tango::DevFailed& df)
+    {
         manage_devfailed_exception(df, "SlsJungfrau::write_clockDivider");
-	}
-	catch(Exception& e)
-	{
+    }
+    catch(Exception& e)
+    {
         manage_lima_exception(e, "SlsJungfrau::write_clockDivider");
-	}
+    }
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::write_clockDivider
 }
@@ -572,15 +565,15 @@ void SlsJungfrau::read_configFileName(Tango::Attribute &attr)
 		strcpy(*attr_configFileName_read, configFileName.c_str());
 		attr.set_value(attr_configFileName_read);
 	}
-	catch(Tango::DevFailed& df)
-	{
+    catch(Tango::DevFailed& df)
+    {
         manage_devfailed_exception(df, "SlsJungfrau::read_configFileName");
-	}
-	catch(Exception& e)
-	{
+    }
+    catch(Exception& e)
+    {
         manage_lima_exception(e, "SlsJungfrau::read_configFileName");
-	}
-	
+    }
+
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_configFileName
 }
 //--------------------------------------------------------
@@ -596,10 +589,59 @@ void SlsJungfrau::read_delayAfterTrigger(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "SlsJungfrau::read_delayAfterTrigger(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsJungfrau::read_delayAfterTrigger) ENABLED START -----*/
-	//	Set the attribute value
-	attr.set_value(attr_delayAfterTrigger_read);
-	
+
+    try
+	{
+        // get the camera value
+        int delay_after_trigger = m_camera->getDelayAfterTrigger();
+
+        // set the attribute value
+        *attr_delayAfterTrigger_read = (Tango::DevDouble)(delay_after_trigger);
+        attr.set_value(attr_delayAfterTrigger_read);
+	}
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::read_delayAfterTrigger");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::read_delayAfterTrigger");
+    }
+
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_delayAfterTrigger
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute delayAfterTrigger related method
+ *	Description: set/get delay after trigger.
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsJungfrau::write_delayAfterTrigger(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "SlsJungfrau::write_delayAfterTrigger(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(SlsJungfrau::write_delayAfterTrigger) ENABLED START -----*/
+
+    try
+	{
+        // set the camera value
+        m_camera->setDelayAfterTrigger(static_cast<double>(w_val));
+	}
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::write_delayAfterTrigger");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::write_delayAfterTrigger");
+    }	
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::write_delayAfterTrigger
 }
 //--------------------------------------------------------
 /**
@@ -624,14 +666,14 @@ void SlsJungfrau::read_detectorFirmwareVersion(Tango::Attribute &attr)
 		strcpy(*attr_detectorFirmwareVersion_read, version.c_str());
 		attr.set_value(attr_detectorFirmwareVersion_read);
 	}
-	catch(Tango::DevFailed& df)
-	{
+    catch(Tango::DevFailed& df)
+    {
         manage_devfailed_exception(df, "SlsJungfrau::read_detectorFirmwareVersion");
-	}
-	catch(Exception& e)
-	{
+    }
+    catch(Exception& e)
+    {
         manage_lima_exception(e, "SlsJungfrau::read_detectorFirmwareVersion");
-	}
+    }
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_detectorFirmwareVersion
 }
@@ -658,50 +700,16 @@ void SlsJungfrau::read_detectorSoftwareVersion(Tango::Attribute &attr)
 		strcpy(*attr_detectorSoftwareVersion_read, version.c_str());
 		attr.set_value(attr_detectorSoftwareVersion_read);
 	}
-	catch(Tango::DevFailed& df)
-	{
+    catch(Tango::DevFailed& df)
+    {
         manage_devfailed_exception(df, "SlsJungfrau::read_detectorSoftwareVersion");
-	}
-	catch(Exception& e)
-	{
+    }
+    catch(Exception& e)
+    {
         manage_lima_exception(e, "SlsJungfrau::read_detectorSoftwareVersion");
-	}
+    }
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_detectorSoftwareVersion
-}
-//--------------------------------------------------------
-/**
- *	Read attribute moduleFirmwareVersion related method
- *	Description: Get module firmware version.
- *
- *	Data type:	Tango::DevString
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void SlsJungfrau::read_moduleFirmwareVersion(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "SlsJungfrau::read_moduleFirmwareVersion(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(SlsJungfrau::read_moduleFirmwareVersion) ENABLED START -----*/
-	//	Set the attribute value
-	try
-	{
-        // get the camera data
-        std::string version = m_camera->getModuleFirmwareVersion();
-
-        //Set the attribute value
-		strcpy(*attr_moduleFirmwareVersion_read, version.c_str());
-		attr.set_value(attr_moduleFirmwareVersion_read);
-	}
-	catch(Tango::DevFailed& df)
-	{
-        manage_devfailed_exception(df, "SlsJungfrau::read_moduleFirmwareVersion");
-	}
-	catch(Exception& e)
-	{
-        manage_lima_exception(e, "SlsJungfrau::read_moduleFirmwareVersion");
-	}
-	
-	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_moduleFirmwareVersion
 }
 
 //--------------------------------------------------------
@@ -720,6 +728,86 @@ void SlsJungfrau::add_dynamic_attributes()
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::add_dynamic_attributes
 }
 
+//--------------------------------------------------------
+/**
+ *	Command SetCmd related method
+ *	Description: Allows to execute a line command (set type)
+ *
+ *	@param argin SlsDetector command
+ *	@returns SlsDetector response
+ */
+//--------------------------------------------------------
+Tango::DevString SlsJungfrau::set_cmd(Tango::DevString argin)
+{
+	Tango::DevString argout;
+	DEBUG_STREAM << "SlsJungfrau::SetCmd()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::set_cmd) ENABLED START -----*/
+	
+    try
+    {
+		std::string result = m_camera->setCmd(std::string(argin));
+		
+        argout = new char[result.size() + 1];
+        
+		if (result.size() > 0)
+        {
+			result.copy(argout, result.size());
+        }
+        
+		argout[result.size()] = '\0';
+	}
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::SetCmd");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::SetCmd");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::set_cmd
+	return argout;
+}
+//--------------------------------------------------------
+/**
+ *	Command GetCmd related method
+ *	Description: Allows to execute a line command (get type)
+ *
+ *	@param argin SlsDetector command
+ *	@returns SlsDetector response
+ */
+//--------------------------------------------------------
+Tango::DevString SlsJungfrau::get_cmd(Tango::DevString argin)
+{
+	Tango::DevString argout;
+	DEBUG_STREAM << "SlsJungfrau::GetCmd()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::get_cmd) ENABLED START -----*/
+	
+    try
+    {
+		std::string result = m_camera->getCmd(std::string(argin));
+		
+        argout = new char[result.size() + 1];
+        
+		if (result.size() > 0)
+        {
+			result.copy(argout, result.size());
+        }
+        
+		argout[result.size()] = '\0';
+	}
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::GetCmd");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::GetCmd");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::get_cmd
+	return argout;
+}
 
 /*----- PROTECTED REGION ID(SlsJungfrau::namespace_ending) ENABLED START -----*/
 

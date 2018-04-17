@@ -94,7 +94,6 @@ public:
 	Tango::DevDouble	*attr_delayAfterTrigger_read;
 	Tango::DevString	*attr_detectorFirmwareVersion_read;
 	Tango::DevString	*attr_detectorSoftwareVersion_read;
-	Tango::DevString	*attr_moduleFirmwareVersion_read;
 
 //	Constructors and destructors
 public:
@@ -205,6 +204,7 @@ public:
  *	Attr type:	Scalar
  */
 	virtual void read_delayAfterTrigger(Tango::Attribute &attr);
+	virtual void write_delayAfterTrigger(Tango::WAttribute &attr);
 	virtual bool is_delayAfterTrigger_allowed(Tango::AttReqType type);
 /**
  *	Attribute detectorFirmwareVersion related methods
@@ -224,15 +224,6 @@ public:
  */
 	virtual void read_detectorSoftwareVersion(Tango::Attribute &attr);
 	virtual bool is_detectorSoftwareVersion_allowed(Tango::AttReqType type);
-/**
- *	Attribute moduleFirmwareVersion related methods
- *	Description: Get module firmware version.
- *
- *	Data type:	Tango::DevString
- *	Attr type:	Scalar
- */
-	virtual void read_moduleFirmwareVersion(Tango::Attribute &attr);
-	virtual bool is_moduleFirmwareVersion_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------
@@ -247,6 +238,24 @@ public:
 
 //	Command related methods
 public:
+	/**
+	 *	Command SetCmd related method
+	 *	Description: Allows to execute a line command (set type)
+	 *
+	 *	@param argin SlsDetector command
+	 *	@returns SlsDetector response
+	 */
+	virtual Tango::DevString set_cmd(Tango::DevString argin);
+	virtual bool is_SetCmd_allowed(const CORBA::Any &any);
+	/**
+	 *	Command GetCmd related method
+	 *	Description: Allows to execute a line command (get type)
+	 *
+	 *	@param argin SlsDetector command
+	 *	@returns SlsDetector response
+	 */
+	virtual Tango::DevString get_cmd(Tango::DevString argin);
+	virtual bool is_GetCmd_allowed(const CORBA::Any &any);
 
 
 /*----- PROTECTED REGION ID(SlsJungfrau::Additional Method prototypes) ENABLED START -----*/

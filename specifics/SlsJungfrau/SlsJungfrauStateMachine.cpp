@@ -84,8 +84,7 @@ bool SlsJungfrau::is_tresholdEnergy_allowed(TANGO_UNUSED(Tango::AttReqType type)
 	{
 		//	Compare device state with not allowed states for READ 
 		if (get_state()==Tango::INIT ||
-			get_state()==Tango::FAULT ||
-			get_state()==Tango::RUNNING)
+			get_state()==Tango::FAULT)
 		{
 		/*----- PROTECTED REGION ID(SlsJungfrau::tresholdEnergyStateAllowed_READ) ENABLED START -----*/
 	
@@ -127,8 +126,7 @@ bool SlsJungfrau::is_clockDivider_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	{
 		//	Compare device state with not allowed states for READ 
 		if (get_state()==Tango::INIT ||
-			get_state()==Tango::FAULT ||
-			get_state()==Tango::RUNNING)
+			get_state()==Tango::FAULT)
 		{
 		/*----- PROTECTED REGION ID(SlsJungfrau::clockDividerStateAllowed_READ) ENABLED START -----*/
 	
@@ -149,10 +147,20 @@ bool SlsJungfrau::is_clockDivider_allowed(TANGO_UNUSED(Tango::AttReqType type))
 bool SlsJungfrau::is_configFileName_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
 
-	//	Not any excluded states for configFileName attribute in read access.
-	/*----- PROTECTED REGION ID(SlsJungfrau::configFileNameStateAllowed_READ) ENABLED START -----*/
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::configFileNameStateAllowed_READ) ENABLED START -----*/
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::configFileNameStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
 	return true;
 }
 
@@ -164,6 +172,10 @@ bool SlsJungfrau::is_configFileName_allowed(TANGO_UNUSED(Tango::AttReqType type)
 //--------------------------------------------------------
 bool SlsJungfrau::is_delayAfterTrigger_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
+	//	Not any excluded states for delayAfterTrigger attribute in Write access.
+	/*----- PROTECTED REGION ID(SlsJungfrau::delayAfterTriggerStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::delayAfterTriggerStateAllowed_WRITE
 
 	//	Not any excluded states for delayAfterTrigger attribute in read access.
 	/*----- PROTECTED REGION ID(SlsJungfrau::delayAfterTriggerStateAllowed_READ) ENABLED START -----*/
@@ -181,10 +193,20 @@ bool SlsJungfrau::is_delayAfterTrigger_allowed(TANGO_UNUSED(Tango::AttReqType ty
 bool SlsJungfrau::is_detectorFirmwareVersion_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
 
-	//	Not any excluded states for detectorFirmwareVersion attribute in read access.
-	/*----- PROTECTED REGION ID(SlsJungfrau::detectorFirmwareVersionStateAllowed_READ) ENABLED START -----*/
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::detectorFirmwareVersionStateAllowed_READ) ENABLED START -----*/
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::detectorFirmwareVersionStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
 	return true;
 }
 
@@ -197,31 +219,65 @@ bool SlsJungfrau::is_detectorFirmwareVersion_allowed(TANGO_UNUSED(Tango::AttReqT
 bool SlsJungfrau::is_detectorSoftwareVersion_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
 
-	//	Not any excluded states for detectorSoftwareVersion attribute in read access.
-	/*----- PROTECTED REGION ID(SlsJungfrau::detectorSoftwareVersionStateAllowed_READ) ENABLED START -----*/
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::detectorSoftwareVersionStateAllowed_READ) ENABLED START -----*/
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::detectorSoftwareVersionStateAllowed_READ
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : SlsJungfrau::is_moduleFirmwareVersion_allowed()
- *	Description : Execution allowed for moduleFirmwareVersion attribute
- */
-//--------------------------------------------------------
-bool SlsJungfrau::is_moduleFirmwareVersion_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-
-	//	Not any excluded states for moduleFirmwareVersion attribute in read access.
-	/*----- PROTECTED REGION ID(SlsJungfrau::moduleFirmwareVersionStateAllowed_READ) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::moduleFirmwareVersionStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
 	return true;
 }
 
 //=================================================
 //		Commands Allowed Methods
 //=================================================
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_SetCmd_allowed()
+ *	Description : Execution allowed for SetCmd attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_SetCmd_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+	//	Compare device state with not allowed states.
+	if (get_state()==Tango::INIT ||
+		get_state()==Tango::RUNNING)
+	{
+	/*----- PROTECTED REGION ID(SlsJungfrau::SetCmdStateAllowed) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::SetCmdStateAllowed
+		return false;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_GetCmd_allowed()
+ *	Description : Execution allowed for GetCmd attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_GetCmd_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+	//	Compare device state with not allowed states.
+	if (get_state()==Tango::INIT ||
+		get_state()==Tango::RUNNING)
+	{
+	/*----- PROTECTED REGION ID(SlsJungfrau::GetCmdStateAllowed) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::GetCmdStateAllowed
+		return false;
+	}
+	return true;
+}
 
 }	//	End of namespace

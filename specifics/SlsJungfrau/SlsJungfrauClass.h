@@ -107,10 +107,12 @@ class delayAfterTriggerAttrib: public Tango::Attr
 {
 public:
 	delayAfterTriggerAttrib():Attr("delayAfterTrigger",
-			Tango::DEV_DOUBLE, Tango::READ) {};
+			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
 	~delayAfterTriggerAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
 		{(static_cast<SlsJungfrau *>(dev))->read_delayAfterTrigger(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->write_delayAfterTrigger(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 		{return (static_cast<SlsJungfrau *>(dev))->is_delayAfterTrigger_allowed(ty);}
 };
@@ -141,17 +143,54 @@ public:
 		{return (static_cast<SlsJungfrau *>(dev))->is_detectorSoftwareVersion_allowed(ty);}
 };
 
-//	Attribute moduleFirmwareVersion class definition
-class moduleFirmwareVersionAttrib: public Tango::Attr
+
+//=========================================
+//	Define classes for commands
+//=========================================
+//	Command SetCmd class definition
+class SetCmdClass : public Tango::Command
 {
 public:
-	moduleFirmwareVersionAttrib():Attr("moduleFirmwareVersion",
-			Tango::DEV_STRING, Tango::READ) {};
-	~moduleFirmwareVersionAttrib() {};
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<SlsJungfrau *>(dev))->read_moduleFirmwareVersion(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<SlsJungfrau *>(dev))->is_moduleFirmwareVersion_allowed(ty);}
+	SetCmdClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	SetCmdClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~SetCmdClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<SlsJungfrau *>(dev))->is_SetCmd_allowed(any);}
+};
+
+//	Command GetCmd class definition
+class GetCmdClass : public Tango::Command
+{
+public:
+	GetCmdClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	GetCmdClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~GetCmdClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<SlsJungfrau *>(dev))->is_GetCmd_allowed(any);}
 };
 
 

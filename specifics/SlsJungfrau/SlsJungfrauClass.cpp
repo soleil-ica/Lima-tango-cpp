@@ -158,6 +158,44 @@ SlsJungfrauClass *SlsJungfrauClass::instance()
 //===================================================================
 //	Command execution method calls
 //===================================================================
+//--------------------------------------------------------
+/**
+ * method : 		SetCmdClass::execute()
+ * description : 	method to trigger the execution of the command.
+ *
+ * @param	device	The device on which the command must be executed
+ * @param	in_any	The command input data
+ *
+ *	returns The command output data (packed in the Any object)
+ */
+//--------------------------------------------------------
+CORBA::Any *SetCmdClass::execute(Tango::DeviceImpl *device, const CORBA::Any &in_any)
+{
+	cout2 << "SetCmdClass::execute(): arrived" << endl;
+	Tango::DevString argin;
+	extract(in_any, argin);
+	return insert((static_cast<SlsJungfrau *>(device))->set_cmd(argin));
+}
+
+//--------------------------------------------------------
+/**
+ * method : 		GetCmdClass::execute()
+ * description : 	method to trigger the execution of the command.
+ *
+ * @param	device	The device on which the command must be executed
+ * @param	in_any	The command input data
+ *
+ *	returns The command output data (packed in the Any object)
+ */
+//--------------------------------------------------------
+CORBA::Any *GetCmdClass::execute(Tango::DeviceImpl *device, const CORBA::Any &in_any)
+{
+	cout2 << "GetCmdClass::execute(): arrived" << endl;
+	Tango::DevString argin;
+	extract(in_any, argin);
+	return insert((static_cast<SlsJungfrau *>(device))->get_cmd(argin));
+}
+
 
 //===================================================================
 //	Properties management
@@ -514,7 +552,7 @@ void SlsJungfrauClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	configfilename->set_default_properties(configfilename_prop);
 	//	Not Polled
-	configfilename->set_disp_level(Tango::OPERATOR);
+	configfilename->set_disp_level(Tango::EXPERT);
 	//	Not Memorized
 	att_list.push_back(configfilename);
 
@@ -590,30 +628,6 @@ void SlsJungfrauClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Not Memorized
 	att_list.push_back(detectorsoftwareversion);
 
-	//	Attribute : moduleFirmwareVersion
-	moduleFirmwareVersionAttrib	*modulefirmwareversion = new moduleFirmwareVersionAttrib();
-	Tango::UserDefaultAttrProp	modulefirmwareversion_prop;
-	modulefirmwareversion_prop.set_description("Get module firmware version.");
-	modulefirmwareversion_prop.set_label("Module firmware version");
-	//	unit	not set for moduleFirmwareVersion
-	//	standard_unit	not set for moduleFirmwareVersion
-	//	display_unit	not set for moduleFirmwareVersion
-	//	format	not set for moduleFirmwareVersion
-	//	max_value	not set for moduleFirmwareVersion
-	//	min_value	not set for moduleFirmwareVersion
-	//	max_alarm	not set for moduleFirmwareVersion
-	//	min_alarm	not set for moduleFirmwareVersion
-	//	max_warning	not set for moduleFirmwareVersion
-	//	min_warning	not set for moduleFirmwareVersion
-	//	delta_t	not set for moduleFirmwareVersion
-	//	delta_val	not set for moduleFirmwareVersion
-	
-	modulefirmwareversion->set_default_properties(modulefirmwareversion_prop);
-	//	Not Polled
-	modulefirmwareversion->set_disp_level(Tango::EXPERT);
-	//	Not Memorized
-	att_list.push_back(modulefirmwareversion);
-
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());
 	/*----- PROTECTED REGION ID(SlsJungfrauClass::attribute_factory_after) ENABLED START -----*/
@@ -637,6 +651,24 @@ void SlsJungfrauClass::command_factory()
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrauClass::command_factory_before
 
+
+	//	Command SetCmd
+	SetCmdClass	*pSetCmdCmd =
+		new SetCmdClass("SetCmd",
+			Tango::DEV_STRING, Tango::DEV_STRING,
+			"SlsDetector command",
+			"SlsDetector response",
+			Tango::EXPERT);
+	command_list.push_back(pSetCmdCmd);
+
+	//	Command GetCmd
+	GetCmdClass	*pGetCmdCmd =
+		new GetCmdClass("GetCmd",
+			Tango::DEV_STRING, Tango::DEV_STRING,
+			"SlsDetector command",
+			"SlsDetector response",
+			Tango::EXPERT);
+	command_list.push_back(pGetCmdCmd);
 
 	/*----- PROTECTED REGION ID(SlsJungfrauClass::command_factory_after) ENABLED START -----*/
 	

@@ -585,7 +585,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             {
                 cout << "m_device_name_specific : " << m_device_name_specific << endl;
 
-				Tango::DbData db_data     ;
+                Tango::DbData db_data     ;
                 std::string   config_file_name;
                 
                 // retrieve the configuration complete path
@@ -595,13 +595,14 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 
                 // create camera, interface and control  
                 m_camera    = static_cast<void*> (new SlsJungfrau::Camera());
-                m_interface = static_cast<void*> (new SlsJungfrau::Interface(*(static_cast<SlsJungfrau::Camera*> (m_camera))));
-                m_control   = new CtControl(static_cast<SlsJungfrau::Interface*> (m_interface));
-                
+
                 // initialize the camera
                 cout << "config_file_name : " << config_file_name << endl;
                 (static_cast<SlsJungfrau::Camera*> (m_camera))->init(config_file_name);
-                
+
+                m_interface = static_cast<void*> (new SlsJungfrau::Interface(*(static_cast<SlsJungfrau::Camera*> (m_camera))));
+                m_control   = new CtControl(static_cast<SlsJungfrau::Interface*> (m_interface));
+               
                 ControlFactory::m_is_created = true;
                 return m_control;
             }
