@@ -482,31 +482,6 @@ void SlsJungfrauClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Add your own code
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrauClass::attribute_factory_before
-	//	Attribute : tresholdEnergy
-	tresholdEnergyAttrib	*tresholdenergy = new tresholdEnergyAttrib();
-	Tango::UserDefaultAttrProp	tresholdenergy_prop;
-	tresholdenergy_prop.set_description("set/get Threshold energy.");
-	//	label	not set for tresholdEnergy
-	//	unit	not set for tresholdEnergy
-	//	standard_unit	not set for tresholdEnergy
-	//	display_unit	not set for tresholdEnergy
-	//	format	not set for tresholdEnergy
-	//	max_value	not set for tresholdEnergy
-	//	min_value	not set for tresholdEnergy
-	//	max_alarm	not set for tresholdEnergy
-	//	min_alarm	not set for tresholdEnergy
-	//	max_warning	not set for tresholdEnergy
-	//	min_warning	not set for tresholdEnergy
-	//	delta_t	not set for tresholdEnergy
-	//	delta_val	not set for tresholdEnergy
-	
-	tresholdenergy->set_default_properties(tresholdenergy_prop);
-	//	Not Polled
-	tresholdenergy->set_disp_level(Tango::OPERATOR);
-	tresholdenergy->set_memorized();
-	tresholdenergy->set_memorized_init(false);
-	att_list.push_back(tresholdenergy);
-
 	//	Attribute : clockDivider
 	clockDividerAttrib	*clockdivider = new clockDividerAttrib();
 	Tango::UserDefaultAttrProp	clockdivider_prop;
@@ -559,12 +534,12 @@ void SlsJungfrauClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : delayAfterTrigger
 	delayAfterTriggerAttrib	*delayaftertrigger = new delayAfterTriggerAttrib();
 	Tango::UserDefaultAttrProp	delayaftertrigger_prop;
-	delayaftertrigger_prop.set_description("set/get delay after trigger.");
+	delayaftertrigger_prop.set_description("set/get delay after trigger in ms.");
 	//	label	not set for delayAfterTrigger
-	//	unit	not set for delayAfterTrigger
-	//	standard_unit	not set for delayAfterTrigger
-	//	display_unit	not set for delayAfterTrigger
-	//	format	not set for delayAfterTrigger
+	delayaftertrigger_prop.set_unit("ms");
+	delayaftertrigger_prop.set_standard_unit("ms");
+	delayaftertrigger_prop.set_display_unit("ms");
+	delayaftertrigger_prop.set_format("%7.4f");
 	//	max_value	not set for delayAfterTrigger
 	//	min_value	not set for delayAfterTrigger
 	//	max_alarm	not set for delayAfterTrigger

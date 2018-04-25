@@ -88,7 +88,6 @@ public:
 
 //	Attribute data members
 public:
-	Tango::DevLong	*attr_tresholdEnergy_read;
 	Tango::DevString	*attr_clockDivider_read;
 	Tango::DevString	*attr_configFileName_read;
 	Tango::DevDouble	*attr_delayAfterTrigger_read;
@@ -163,16 +162,6 @@ public:
 	virtual void write_attr_hardware(vector<long> &attr_list);
 
 /**
- *	Attribute tresholdEnergy related methods
- *	Description: set/get Threshold energy.
- *
- *	Data type:	Tango::DevLong
- *	Attr type:	Scalar
- */
-	virtual void read_tresholdEnergy(Tango::Attribute &attr);
-	virtual void write_tresholdEnergy(Tango::WAttribute &attr);
-	virtual bool is_tresholdEnergy_allowed(Tango::AttReqType type);
-/**
  *	Attribute clockDivider related methods
  *	Description: Changes the readout clock.<br>
  *               Available clock Divider :<br>
@@ -198,7 +187,7 @@ public:
 	virtual bool is_configFileName_allowed(Tango::AttReqType type);
 /**
  *	Attribute delayAfterTrigger related methods
- *	Description: set/get delay after trigger.
+ *	Description: set/get delay after trigger in ms.
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar

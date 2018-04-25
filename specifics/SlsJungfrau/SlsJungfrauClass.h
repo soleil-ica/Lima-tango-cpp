@@ -59,21 +59,6 @@ namespace SlsJungfrau_ns
 //=========================================
 //	Define classes for attributes
 //=========================================
-//	Attribute tresholdEnergy class definition
-class tresholdEnergyAttrib: public Tango::Attr
-{
-public:
-	tresholdEnergyAttrib():Attr("tresholdEnergy",
-			Tango::DEV_LONG, Tango::READ_WRITE) {};
-	~tresholdEnergyAttrib() {};
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<SlsJungfrau *>(dev))->read_tresholdEnergy(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<SlsJungfrau *>(dev))->write_tresholdEnergy(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<SlsJungfrau *>(dev))->is_tresholdEnergy_allowed(ty);}
-};
-
 //	Attribute clockDivider class definition
 class clockDividerAttrib: public Tango::Attr
 {

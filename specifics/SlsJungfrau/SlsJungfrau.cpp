@@ -69,7 +69,6 @@ static const char *RcsId = "$Id:  $";
 //================================================================
 //  Attributes managed are:
 //================================================================
-//  tresholdEnergy           |  Tango::DevLong	Scalar
 //  clockDivider             |  Tango::DevString	Scalar
 //  configFileName           |  Tango::DevString	Scalar
 //  delayAfterTrigger        |  Tango::DevDouble	Scalar
@@ -143,7 +142,6 @@ void SlsJungfrau::delete_device()
 	delete[] attr_detectorSoftwareVersion_read[0];
 
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::delete_device
-	delete[] attr_tresholdEnergy_read;
 	delete[] attr_clockDivider_read;
 	delete[] attr_configFileName_read;
 	delete[] attr_delayAfterTrigger_read;
@@ -164,8 +162,8 @@ void SlsJungfrau::init_device()
 	INFO_STREAM << "SlsJungfrau::init_device() create device " << device_name << endl;
 
     m_is_device_initialized = false;
-	set_state(Tango::INIT);
-	m_status_message.str("");
+    set_state(Tango::INIT);
+    m_status_message.str("");
 
 	try
 	{
@@ -203,7 +201,6 @@ void SlsJungfrau::init_device()
 	//	Get the device properties from database
 	get_device_property();
 	
-	attr_tresholdEnergy_read = new Tango::DevLong[1];
 	attr_clockDivider_read = new Tango::DevString[1];
 	attr_configFileName_read = new Tango::DevString[1];
 	attr_delayAfterTrigger_read = new Tango::DevDouble[1];
@@ -211,15 +208,15 @@ void SlsJungfrau::init_device()
 	attr_detectorSoftwareVersion_read = new Tango::DevString[1];
 
 	/*----- PROTECTED REGION ID(SlsJungfrau::init_device) ENABLED START -----*/
-	attr_clockDivider_read           [0] = new char[ 256];
-	attr_configFileName_read         [0] = new char[1024];
-	attr_detectorFirmwareVersion_read[0] = new char[ 256];
-	attr_detectorSoftwareVersion_read[0] = new char[ 256];
+    attr_clockDivider_read           [0] = new char[ 256];
+    attr_configFileName_read         [0] = new char[1024];
+    attr_detectorFirmwareVersion_read[0] = new char[ 256];
+    attr_detectorSoftwareVersion_read[0] = new char[ 256];
 
-	::strcpy(attr_clockDivider_read           [0], "");
-	::strcpy(attr_configFileName_read         [0], "");
+    ::strcpy(attr_clockDivider_read           [0], "");
+    ::strcpy(attr_configFileName_read         [0], "");
     ::strcpy(attr_detectorFirmwareVersion_read[0], "");
-	::strcpy(attr_detectorSoftwareVersion_read[0], "");
+    ::strcpy(attr_detectorSoftwareVersion_read[0], "");
         
     //	Initialize device
 	m_is_device_initialized = true;
@@ -297,10 +294,10 @@ void SlsJungfrau::always_executed_hook()
     try
     {
         m_status_message.str("");
-		
-		//update state
+
+        //update state
         dev_state();
-	}
+    }
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
@@ -356,70 +353,6 @@ void SlsJungfrau::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 
 //--------------------------------------------------------
 /**
- *	Read attribute tresholdEnergy related method
- *	Description: set/get Threshold energy.
- *
- *	Data type:	Tango::DevLong
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void SlsJungfrau::read_tresholdEnergy(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "SlsJungfrau::read_tresholdEnergy(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(SlsJungfrau::read_tresholdEnergy) ENABLED START -----*/
-
-	try
-	{
-        // get the camera value
-        int threshold_energy_eV = m_camera->getThresholdEnergy();
-
-        // set the attribute value
-        *attr_tresholdEnergy_read = (Tango::DevLong)(threshold_energy_eV);
-        attr.set_value(attr_tresholdEnergy_read);
-	}
-    catch(Tango::DevFailed& df)
-    {
-        manage_devfailed_exception(df, "SlsJungfrau::read_tresholdEnergy");
-    }
-    catch(Exception& e)
-    {
-        manage_lima_exception(e, "SlsJungfrau::read_tresholdEnergy");
-    }
-	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_tresholdEnergy
-}
-//--------------------------------------------------------
-/**
- *	Write attribute tresholdEnergy related method
- *	Description: set/get Threshold energy.
- *
- *	Data type:	Tango::DevLong
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void SlsJungfrau::write_tresholdEnergy(Tango::WAttribute &attr)
-{
-	DEBUG_STREAM << "SlsJungfrau::write_tresholdEnergy(Tango::WAttribute &attr) entering... " << endl;
-	//	Retrieve write value
-	Tango::DevLong	w_val;
-	attr.get_write_value(w_val);
-	/*----- PROTECTED REGION ID(SlsJungfrau::write_tresholdEnergy) ENABLED START -----*/
-    try
-	{
-        // set the camera value
-        m_camera->setThresholdEnergy(static_cast<int>(w_val));
-	}
-    catch(Tango::DevFailed& df)
-    {
-        manage_devfailed_exception(df, "SlsJungfrau::write_tresholdEnergy");
-    }
-    catch(Exception& e)
-    {
-        manage_lima_exception(e, "SlsJungfrau::write_tresholdEnergy");
-    }	
-	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::write_tresholdEnergy
-}
-//--------------------------------------------------------
-/**
  *	Read attribute clockDivider related method
  *	Description: Changes the readout clock.<br>
  *               Available clock Divider :<br>
@@ -466,7 +399,7 @@ void SlsJungfrau::read_clockDivider(Tango::Attribute &attr)
                                            MsgErr.str().c_str(),
                                            "SlsJungfrau::read_clockDivider");
         }
-	}
+    }
     catch(Tango::DevFailed& df)
     {
         manage_devfailed_exception(df, "SlsJungfrau::read_clockDivider");
@@ -533,7 +466,7 @@ void SlsJungfrau::write_clockDivider(Tango::WAttribute &attr)
     {
         // set the camera value
         m_camera->setClockDivider(clock_divider);
-	}
+    }
     catch(Tango::DevFailed& df)
     {
         manage_devfailed_exception(df, "SlsJungfrau::write_clockDivider");
@@ -559,12 +492,12 @@ void SlsJungfrau::read_configFileName(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsJungfrau::read_configFileName(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsJungfrau::read_configFileName) ENABLED START -----*/
 	
-	try
-	{
-		//Set the attribute value
-		strcpy(*attr_configFileName_read, configFileName.c_str());
-		attr.set_value(attr_configFileName_read);
-	}
+    try
+    {
+        //Set the attribute value
+        strcpy(*attr_configFileName_read, configFileName.c_str());
+        attr.set_value(attr_configFileName_read);
+    }
     catch(Tango::DevFailed& df)
     {
         manage_devfailed_exception(df, "SlsJungfrau::read_configFileName");
@@ -579,7 +512,7 @@ void SlsJungfrau::read_configFileName(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute delayAfterTrigger related method
- *	Description: set/get delay after trigger.
+ *	Description: set/get delay after trigger in ms.
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -591,14 +524,17 @@ void SlsJungfrau::read_delayAfterTrigger(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(SlsJungfrau::read_delayAfterTrigger) ENABLED START -----*/
 
     try
-	{
+    {
         // get the camera value
-        int delay_after_trigger = m_camera->getDelayAfterTrigger();
+        // converting delay after trigger because 
+        // - camera delay after trigger is in seconds
+        // - lima delays are in ms
+        double delay_after_trigger = m_camera->getDelayAfterTrigger() * 1000.0;
 
         // set the attribute value
         *attr_delayAfterTrigger_read = (Tango::DevDouble)(delay_after_trigger);
         attr.set_value(attr_delayAfterTrigger_read);
-	}
+    }
     catch(Tango::DevFailed& df)
     {
         manage_devfailed_exception(df, "SlsJungfrau::read_delayAfterTrigger");
@@ -613,7 +549,7 @@ void SlsJungfrau::read_delayAfterTrigger(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Write attribute delayAfterTrigger related method
- *	Description: set/get delay after trigger.
+ *	Description: set/get delay after trigger in ms.
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -628,10 +564,13 @@ void SlsJungfrau::write_delayAfterTrigger(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(SlsJungfrau::write_delayAfterTrigger) ENABLED START -----*/
 
     try
-	{
+    {
         // set the camera value
-        m_camera->setDelayAfterTrigger(static_cast<double>(w_val));
-	}
+        // converting delay after trigger because 
+        // - camera delay after trigger is in seconds
+        // - lima delays are in ms
+        m_camera->setDelayAfterTrigger(static_cast<double>(w_val) / 1000.0);
+    }
     catch(Tango::DevFailed& df)
     {
         manage_devfailed_exception(df, "SlsJungfrau::write_delayAfterTrigger");
@@ -657,15 +596,15 @@ void SlsJungfrau::read_detectorFirmwareVersion(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsJungfrau::read_detectorFirmwareVersion(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsJungfrau::read_detectorFirmwareVersion) ENABLED START -----*/
 	//	Set the attribute value
-	try
-	{
+    try
+    {
         // get the camera data
         std::string version = m_camera->getDetectorFirmwareVersion();
 
         //Set the attribute value
-		strcpy(*attr_detectorFirmwareVersion_read, version.c_str());
-		attr.set_value(attr_detectorFirmwareVersion_read);
-	}
+        strcpy(*attr_detectorFirmwareVersion_read, version.c_str());
+        attr.set_value(attr_detectorFirmwareVersion_read);
+    }
     catch(Tango::DevFailed& df)
     {
         manage_devfailed_exception(df, "SlsJungfrau::read_detectorFirmwareVersion");
@@ -691,15 +630,15 @@ void SlsJungfrau::read_detectorSoftwareVersion(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsJungfrau::read_detectorSoftwareVersion(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsJungfrau::read_detectorSoftwareVersion) ENABLED START -----*/
 	//	Set the attribute value
-	try
-	{
+    try
+    {
         // get the camera data
         std::string version = m_camera->getDetectorSoftwareVersion();
 
         //Set the attribute value
-		strcpy(*attr_detectorSoftwareVersion_read, version.c_str());
-		attr.set_value(attr_detectorSoftwareVersion_read);
-	}
+        strcpy(*attr_detectorSoftwareVersion_read, version.c_str());
+        attr.set_value(attr_detectorSoftwareVersion_read);
+    }
     catch(Tango::DevFailed& df)
     {
         manage_devfailed_exception(df, "SlsJungfrau::read_detectorSoftwareVersion");
@@ -745,16 +684,16 @@ Tango::DevString SlsJungfrau::set_cmd(Tango::DevString argin)
 	
     try
     {
-		std::string result = m_camera->setCmd(std::string(argin));
-		
+        std::string result = m_camera->setCmd(std::string(argin));
+
         argout = new char[result.size() + 1];
-        
-		if (result.size() > 0)
+
+        if (result.size() > 0)
         {
-			result.copy(argout, result.size());
+            result.copy(argout, result.size());
         }
-        
-		argout[result.size()] = '\0';
+
+        argout[result.size()] = '\0';
 	}
     catch(Tango::DevFailed& df)
     {
@@ -785,17 +724,17 @@ Tango::DevString SlsJungfrau::get_cmd(Tango::DevString argin)
 	
     try
     {
-		std::string result = m_camera->getCmd(std::string(argin));
-		
+        std::string result = m_camera->getCmd(std::string(argin));
+
         argout = new char[result.size() + 1];
-        
-		if (result.size() > 0)
+
+        if (result.size() > 0)
         {
-			result.copy(argout, result.size());
+            result.copy(argout, result.size());
         }
-        
-		argout[result.size()] = '\0';
-	}
+
+        argout[result.size()] = '\0';
+    }
     catch(Tango::DevFailed& df)
     {
         manage_devfailed_exception(df, "SlsJungfrau::GetCmd");
@@ -825,29 +764,29 @@ Tango::DevString SlsJungfrau::get_cmd(Tango::DevString argin)
 //+------------------------------------------------------------------
 Tango::DevState SlsJungfrau::dev_state()
 {
-	Tango::DevState	argout = DeviceImpl::dev_state();
-	DEBUG_STREAM << "SlsJungfrau::dev_state(): entering... !" << endl;
+    Tango::DevState	argout = DeviceImpl::dev_state();
+    DEBUG_STREAM << "SlsJungfrau::dev_state(): entering... !" << endl;
 
-	//	Add your own code to control device here
-	stringstream    DeviceStatus;
-	DeviceStatus     << "";
-	Tango::DevState DeviceState    = Tango::STANDBY;
-	if(!m_is_device_initialized )
-	{
-		DeviceState  = Tango::FAULT;
-		DeviceStatus << m_status_message.str();
-	}
-	else
-	{
-		// state & status are retrieved from Factory, Factory is updated by Generic device
-		DeviceState = ControlFactory::instance().get_state();
-		DeviceStatus << ControlFactory::instance().get_status();
-	}
+    // Add your own code to control device here
+    stringstream    DeviceStatus;
+    DeviceStatus     << "";
+    Tango::DevState DeviceState    = Tango::STANDBY;
+    if(!m_is_device_initialized )
+    {
+        DeviceState  = Tango::FAULT;
+        DeviceStatus << m_status_message.str();
+    }
+    else
+    {
+        // state & status are retrieved from Factory, Factory is updated by Generic device
+        DeviceState = ControlFactory::instance().get_state();
+        DeviceStatus << ControlFactory::instance().get_status();
+    }
 
-	set_state (DeviceState);
-	set_status(DeviceStatus.str());
+    set_state (DeviceState);
+    set_status(DeviceStatus.str());
 
-	return DeviceState;
+    return DeviceState;
 }
 
 //+------------------------------------------------------------------
@@ -859,10 +798,10 @@ Tango::DevState SlsJungfrau::dev_state()
 //+------------------------------------------------------------------
 void SlsJungfrau::manage_devfailed_exception(Tango::DevFailed & in_exception, const std::string & in_caller_method_name)
 {
-	ERROR_STREAM << in_exception << endl;
+    ERROR_STREAM << in_exception << endl;
 	
     // rethrow exception
-	Tango::Except::re_throw_exception(in_exception,
+    Tango::Except::re_throw_exception(in_exception,
                                       "TANGO_DEVICE_ERROR",
                                       string(in_exception.errors[0].desc).c_str(),
                                       in_caller_method_name.c_str());
@@ -877,9 +816,9 @@ void SlsJungfrau::manage_devfailed_exception(Tango::DevFailed & in_exception, co
 //+------------------------------------------------------------------
 void SlsJungfrau::manage_lima_exception(lima::Exception & in_exception, const std::string & in_caller_method_name)
 {
-	ERROR_STREAM << in_exception.getErrMsg() << endl;
+    ERROR_STREAM << in_exception.getErrMsg() << endl;
 
-	// throw exception
+    // throw exception
     Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                                    in_exception.getErrMsg().c_str(),
                                    in_caller_method_name.c_str());

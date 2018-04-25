@@ -56,48 +56,6 @@ namespace SlsJungfrau_ns
 
 //--------------------------------------------------------
 /**
- *	Method      : SlsJungfrau::is_tresholdEnergy_allowed()
- *	Description : Execution allowed for tresholdEnergy attribute
- */
-//--------------------------------------------------------
-bool SlsJungfrau::is_tresholdEnergy_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	//	Check access type.
-	if ( type!=Tango::READ_REQ )
-	{
-		//	Compare device state with not allowed states for WRITE 
-		if (get_state()==Tango::INIT ||
-			get_state()==Tango::FAULT ||
-			get_state()==Tango::RUNNING)
-		{
-		/*----- PROTECTED REGION ID(SlsJungfrau::tresholdEnergyStateAllowed_WRITE) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::tresholdEnergyStateAllowed_WRITE
-			return false;
-		}
-		return true;
-	}
-	else
-
-	//	Check access type.
-	if ( type==Tango::READ_REQ )
-	{
-		//	Compare device state with not allowed states for READ 
-		if (get_state()==Tango::INIT ||
-			get_state()==Tango::FAULT)
-		{
-		/*----- PROTECTED REGION ID(SlsJungfrau::tresholdEnergyStateAllowed_READ) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::tresholdEnergyStateAllowed_READ
-			return false;
-		}
-		return true;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
  *	Method      : SlsJungfrau::is_clockDivider_allowed()
  *	Description : Execution allowed for clockDivider attribute
  */
