@@ -57,6 +57,8 @@ static const char *RcsId = "$Id:  $";
 //  GetWhiteImagesList   |  get_white_images_list()
 //  DeleteWhiteImage     |  delete_white_image()
 //  Abort                |  abort()
+//  ITHLIncrease         |  ithlincrease()
+//  ITHLDecrease         |  ithldecrease()
 //
 //===================================================================
 
@@ -1646,10 +1648,68 @@ void ImXpad::load_calibration_file(Tango::DevString argin)
 }
 
 
+//+------------------------------------------------------------------
+/**
+ *	method:	ImXpad::ithlincrease
+ *
+ *	description:	method to execute "ITHLIncrease"
+ *	Increment of one unit of the global ITHL register
+ *
+ *
+ */
+//+------------------------------------------------------------------
+void ImXpad::ithlincrease()
+{
+	DEBUG_STREAM << "ImXpad::ithlincrease(): entering... !" << endl;
 
+	//	Add your own code to control device here
 
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        m_camera->ITHLIncrease();
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "ImXpad::ithlincrease");
+    }
 
+}
 
+//+------------------------------------------------------------------
+/**
+ *	method:	ImXpad::ithldecrease
+ *
+ *	description:	method to execute "ITHLDecrease"
+ *	Decrement of one unit in the global ITHL register
+ *
+ *
+ */
+//+------------------------------------------------------------------
+void ImXpad::ithldecrease()
+{
+	DEBUG_STREAM << "ImXpad::ithldecrease(): entering... !" << endl;
 
+	//	Add your own code to control device here
+
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        m_camera->ITHLDecrease();
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "ImXpad::ithldecrease");
+    }
+
+}
 
 }	//	namespace

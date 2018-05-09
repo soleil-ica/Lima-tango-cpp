@@ -61,6 +61,50 @@ namespace ImXpad_ns
 {
 //+----------------------------------------------------------------------------
 //
+// method : 		ITHLDecreaseCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *ITHLDecreaseCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "ITHLDecreaseCmd::execute(): arrived" << endl;
+
+	((static_cast<ImXpad *>(device))->ithldecrease());
+	return new CORBA::Any();
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ITHLIncreaseCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *ITHLIncreaseCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "ITHLIncreaseCmd::execute(): arrived" << endl;
+
+	((static_cast<ImXpad *>(device))->ithlincrease());
+	return new CORBA::Any();
+}
+
+//+----------------------------------------------------------------------------
+//
 // method : 		LoadCalibrationFileCmd::execute()
 // 
 // description : 	method to trigger the execution of the command.
@@ -378,6 +422,16 @@ void ImXpadClass::command_factory()
 		"",
 		Tango::OPERATOR));
 	command_list.push_back(new AbortClass("Abort",
+		Tango::DEV_VOID, Tango::DEV_VOID,
+		"",
+		"",
+		Tango::OPERATOR));
+	command_list.push_back(new ITHLIncreaseCmd("ITHLIncrease",
+		Tango::DEV_VOID, Tango::DEV_VOID,
+		"",
+		"",
+		Tango::OPERATOR));
+	command_list.push_back(new ITHLDecreaseCmd("ITHLDecrease",
 		Tango::DEV_VOID, Tango::DEV_VOID,
 		"",
 		"",
