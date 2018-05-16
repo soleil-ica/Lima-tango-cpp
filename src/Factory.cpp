@@ -585,14 +585,18 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             {
                 Tango::DbData db_data;
                 std::string   config_file_name;
+                double        readout_time;
                 
                 // retrieve the configuration complete path
                 db_data.push_back(Tango::DbDatum("ConfigFileName"));
+                db_data.push_back(Tango::DbDatum("ExpertReadoutTime"));
+                
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
                 db_data[0] >> config_file_name;
+                db_data[1] >> readout_time;
 
                 // create and initialize the camera and create interface and control  
-                m_camera    = static_cast<void*> (new SlsJungfrau::Camera(config_file_name));
+                m_camera    = static_cast<void*> (new SlsJungfrau::Camera(config_file_name, readout_time));
                 m_interface = static_cast<void*> (new SlsJungfrau::Interface(*(static_cast<SlsJungfrau::Camera*> (m_camera))));
                 m_control   = new CtControl(static_cast<SlsJungfrau::Interface*> (m_interface));
                

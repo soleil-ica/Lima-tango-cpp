@@ -244,6 +244,7 @@ void SlsJungfrau::get_device_property()
 	//	Read device properties from database.
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("ConfigFileName"));
+	dev_prop.push_back(Tango::DbDatum("ExpertReadoutTime"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -269,12 +270,24 @@ void SlsJungfrau::get_device_property()
 		//	And try to extract ConfigFileName value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  configFileName;
 
+		//	Try to initialize ExpertReadoutTime from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertReadoutTime;
+		else {
+			//	Try to initialize ExpertReadoutTime from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertReadoutTime;
+		}
+		//	And try to extract ExpertReadoutTime value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertReadoutTime;
+
 	}
 
 	/*----- PROTECTED REGION ID(SlsJungfrau::get_device_property_after) ENABLED START -----*/
 	
 	//	Check device property data members init
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "", "ConfigFileName");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.00004", "ExpertReadoutTime"); // 40µs by default
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::get_device_property_after
 }
@@ -384,11 +397,15 @@ void SlsJungfrau::read_clockDivider(Tango::Attribute &attr)
         // found it
         if (iterator != TANGO_CLOCK_DIVIDER_LABELS_TO_TYPE.end()) 
         {
+            // if an acquisition is running, the attribute is in alarm because we return the latest cache value.
+            bool attribute_is_in_alarm = (get_state() == Tango::RUNNING);
+
             string clock_divider_label = TANGO_CLOCK_DIVIDER_LABELS[iterator - TANGO_CLOCK_DIVIDER_LABELS_TO_TYPE.begin()]; // calculation gives the index
 
             //Set the attribute value
             strcpy(*attr_clockDivider_read, clock_divider_label.c_str());
             attr.set_value(attr_clockDivider_read);
+            attr.set_quality((attribute_is_in_alarm) ? Tango::ATTR_ALARM : Tango::ATTR_VALID);
         }
         else
         {
@@ -525,6 +542,9 @@ void SlsJungfrau::read_delayAfterTrigger(Tango::Attribute &attr)
 
     try
     {
+        // if an acquisition is running, the attribute is in alarm because we return the latest cache value.
+        bool attribute_is_in_alarm = (get_state() == Tango::RUNNING);
+
         // get the camera value
         // converting delay after trigger because 
         // - camera delay after trigger is in seconds
@@ -534,6 +554,7 @@ void SlsJungfrau::read_delayAfterTrigger(Tango::Attribute &attr)
         // set the attribute value
         *attr_delayAfterTrigger_read = (Tango::DevDouble)(delay_after_trigger);
         attr.set_value(attr_delayAfterTrigger_read);
+        attr.set_quality((attribute_is_in_alarm) ? Tango::ATTR_ALARM : Tango::ATTR_VALID);
     }
     catch(Tango::DevFailed& df)
     {
@@ -598,12 +619,16 @@ void SlsJungfrau::read_detectorFirmwareVersion(Tango::Attribute &attr)
 	//	Set the attribute value
     try
     {
+        // if an acquisition is running, the attribute is in alarm because we return the latest cache value.
+        bool attribute_is_in_alarm = (get_state() == Tango::RUNNING);
+
         // get the camera data
         std::string version = m_camera->getDetectorFirmwareVersion();
 
         //Set the attribute value
         strcpy(*attr_detectorFirmwareVersion_read, version.c_str());
         attr.set_value(attr_detectorFirmwareVersion_read);
+        attr.set_quality((attribute_is_in_alarm) ? Tango::ATTR_ALARM : Tango::ATTR_VALID);
     }
     catch(Tango::DevFailed& df)
     {
@@ -632,12 +657,16 @@ void SlsJungfrau::read_detectorSoftwareVersion(Tango::Attribute &attr)
 	//	Set the attribute value
     try
     {
+        // if an acquisition is running, the attribute is in alarm because we return the latest cache value.
+        bool attribute_is_in_alarm = (get_state() == Tango::RUNNING);
+
         // get the camera data
         std::string version = m_camera->getDetectorSoftwareVersion();
 
         //Set the attribute value
         strcpy(*attr_detectorSoftwareVersion_read, version.c_str());
         attr.set_value(attr_detectorSoftwareVersion_read);
+        attr.set_quality((attribute_is_in_alarm) ? Tango::ATTR_ALARM : Tango::ATTR_VALID);
     }
     catch(Tango::DevFailed& df)
     {

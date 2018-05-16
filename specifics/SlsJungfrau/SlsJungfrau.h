@@ -85,6 +85,9 @@ class SlsJungfrau : public TANGO_BASE_CLASS
 public:
 	//	ConfigFileName:	Configuration files used during the camera instanciation.
 	string	configFileName;
+	//	ExpertReadoutTime:	Only an expert User could change this property<br>
+	//  This is the readout time in seconds of the camera.<BR>
+	Tango::DevDouble	expertReadoutTime;
 
 //	Attribute data members
 public:
