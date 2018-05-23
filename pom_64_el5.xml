@@ -23,7 +23,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.8.2</version>
+    <version>1.8.3</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
