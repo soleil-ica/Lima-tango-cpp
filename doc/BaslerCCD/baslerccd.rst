@@ -5,7 +5,7 @@ BaslerCCD Tango C++ device
 
 This is the reference documentation of the BaslerCCD Tango C++ device.
 
-you can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the Basler camera plugin section.
+you can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the `Basler camera plugin`_ section.
 
 Properties
 ----------
@@ -48,4 +48,4 @@ State			        DevVoid		    DevLong			        Return the device state
 Status			        DevVoid		    DevString		        Return the device state as a string
 =======================	=============== =======================	===========================================
 
-
+.. _Basler camera plugin: http://lima.blissgarden.org/camera/basler/doc/index.html
