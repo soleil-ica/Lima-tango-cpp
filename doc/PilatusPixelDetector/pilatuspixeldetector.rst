@@ -1,0 +1,2 @@
+PilatusPixelDetector C++ Tango device
+=====================================
