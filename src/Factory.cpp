@@ -583,20 +583,32 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         {
             if (!ControlFactory::m_is_created)
             {
-                Tango::DbData db_data;
-                std::string   config_file_name;
-                double        readout_time;
+                Tango::DbData db_data            ;
+                std::string   config_file_name   ;
+                double        readout_time       ;
+                long          receiver_fifo_depth;
+                long          frame_packet_number;
                 
-                // retrieve the configuration complete path
+                // configuration complete path
                 db_data.push_back(Tango::DbDatum("ConfigFileName"));
+                
+                // readout time of the camera
                 db_data.push_back(Tango::DbDatum("ExpertReadoutTime"));
                 
+                // Number of frames in the receiver memory
+                db_data.push_back(Tango::DbDatum("ExpertReceiverFifoDepth"));
+
+                // Number of packets we should get in each receiver frame
+                db_data.push_back(Tango::DbDatum("ExpertFramePacketNumber"));
+
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
-                db_data[0] >> config_file_name;
-                db_data[1] >> readout_time;
+                db_data[0] >> config_file_name   ;
+                db_data[1] >> readout_time       ;
+                db_data[2] >> receiver_fifo_depth;
+                db_data[3] >> frame_packet_number;
 
                 // create and initialize the camera and create interface and control  
-                m_camera    = static_cast<void*> (new SlsJungfrau::Camera(config_file_name, readout_time));
+                m_camera    = static_cast<void*> (new SlsJungfrau::Camera(config_file_name, readout_time, receiver_fifo_depth, frame_packet_number));
                 m_interface = static_cast<void*> (new SlsJungfrau::Interface(*(static_cast<SlsJungfrau::Camera*> (m_camera))));
                 m_control   = new CtControl(static_cast<SlsJungfrau::Interface*> (m_interface));
                

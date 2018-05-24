@@ -4,52 +4,6 @@
 <title> SlsJungfrau Tango Class User&lsquo;s Guide </title>
 </head>
 <body text="Black" bgcolor="White" link="Blue" vlink="Purple" alink="Red">
-<table border="0" width="100%" cellspacing="0" cellpadding="0" >
-        <td align="center">
-            <a href="http://www.esrf.fr/" target=new>
-                <img src="http://www.esrf.fr/gifs/logo/80.gif" border=0 height="35"></a>
-        </td>
-        <td align="center">
-            <a href="http://www.elettra.trieste.it/" target=new>
-                <img src="http://www.esrf.fr/computing/cs/tango/elettra_logo.gif" border=0 height="35"></a>
-        </td>
-        <td align="center">
-            <a href="http://www.synchrotron-soleil.fr/" target=new>
-                <img src="http://www.esrf.fr/computing/cs/tango/soleil_logo.gif" border=0 height="35"></a>
-        </td>
-        <td align="center">
-            <a href="http://www.cells.es/" target=new>
-                <img src="http://www.esrf.fr/computing/cs/tango/alba.jpg" border=0 height="27"></a>
-        </td>
-        <td align="center">
-            <a href="http://www.tango-controls.org/" target="_top">
-               <img src="http://www.esrf.fr/computing/cs/tango/tango_logo.jpg" alt=""  height="40" /></a>
-        </td>
-        <td align="center">
-            <a href="http://www.desy.de/html/home/index_eng.html" target=new>
-                <img src="http://www.esrf.fr/computing/cs/tango/desy.gif" border=0 height="26"></a>
-        </td>
-        <td align="center">
-            <a href="http://www.maxlab.lu.se/maxlab/max4/index.html" target=new>
-                <img src="http://www.esrf.fr/computing/cs/tango/maxlab.gif" border=0 height="21"></a>
-        </td>
-        <td align="center">
-            <a href="http://www.frm2.tum.de/en/index.html" target=new>
-                <img src="http://www.esrf.fr/computing/cs/tango/frm-2.jpg" border=0 height="24"></a>
-        </td>
-         <td align="center">
-            <a href="http://www.synchrotron.uj.edu.pl/" target=new>
-                <img src="http://www.esrf.fr/computing/cs/tango/solaris_logo.gif" border=0 height="21"></a>
-        </td>
-         <td align="center">
-            <a href="http://www.anka.kit.edu/english/28.php" target=new>
-                <img src="http://www.esrf.fr/computing/cs/tango/anka_blau_rot.png" border=0 height="25"></a>
-        </td>
-         <td align="center">
-            <a href="http://www.eli-hu.hu/" target=new>
-                <img src="http://www.esrf.fr/computing/cs/tango/eli-alps.jpg" border=0 height="32"></a>
-        </td>
-   </table>
 <hr>
 <br>
 <center><h2><u><b> SlsJungfrau Tango Cpp Class </b></u></h2></center>	<br><br>
@@ -64,6 +18,7 @@
 				<li> <a href="FullDocument.html#cmdStatus"> Status </a>
 				<li> <a href="FullDocument.html#cmdSetCmd"> SetCmd </a>
 				<li> <a href="FullDocument.html#cmdGetCmd"> GetCmd </a>
+				<li> <a href="FullDocument.html#cmdResetCamera"> ResetCamera </a>
 			</ul>
 			<li> <a href="FullDocument.html#attributes">   Attributes   </a>
 			<ul>
@@ -156,9 +111,23 @@
 	</tr>
 	<tr>
 		<td> ExpertReadoutTime </td>
-		<td> Only an expert User could change this property<br><Br>
+		<td> Only an expert User could change this property.<br><Br>
 			This is the readout time in seconds of the camera.<BR> </td>
 		<td> double </td>
+		<td> none </td>
+	</tr>
+	<tr>
+		<td> ExpertReceiverFifoDepth </td>
+		<td> Only an expert User could change this property.<br><Br>
+			This is the number of frames in memory of the receiver.<BR> </td>
+		<td> int </td>
+		<td> none </td>
+	</tr>
+	<tr>
+		<td> ExpertFramePacketNumber </td>
+		<td> Only an expert User could change this property.<br><Br>
+			This is the number of packet for each received frame part.<BR> </td>
+		<td> int </td>
 		<td> none </td>
 	</tr>
 </table>
@@ -203,6 +172,13 @@
 		<td> DEV_STRING </td>
 		<td> EXPERT </td>
 		<td> Allows to execute a line command (get type) </td>
+	</tr>
+	<tr>
+		<td> <a href="CmdResetCamera.html"> ResetCamera </a> </td>
+		<td> DEV_VOID </td>
+		<td> DEV_VOID </td>
+		<td> EXPERT </td>
+		<td> Execute an hardware reset of the camera. </td>
 	</tr>
 </table>
 <br><br><hr>
@@ -373,6 +349,55 @@
 		<td> Output Argument </td>
 		<td> Tango::DEV_STRING </td>
 		<td> SlsDetector response </td>
+	</tr>
+	<tr>
+		<td> DisplayLevel </td>
+		<td> EXPERT </td>
+		<td> .. </td>
+	</tr>
+	<tr>
+		<td> Inherited </td>
+		<td> false </td>
+		<td> .. </td>
+	</tr>
+	<tr>
+		<td> Abstract </td>
+		<td> false </td>
+		<td> .. </td>
+	</tr>
+	<tr>
+		<td> Polling Period </td>
+		<td> Not polled </td>
+		<td> .. </td>
+	</tr>
+<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td><Td><Hr></Td></Tr>
+	<tr>
+		<td> Command NOT allowed for </td>
+		<td> <font size="-1">  <li> INIT </li>  <li> RUNNING </li> </font> </td>
+		<td> .. </td>
+	</tr>
+</table>
+<br><br><hr>
+<a name="cmdResetCamera"> </a>
+<br><br><br>
+<font size="+1"><u><b> Command ResetCamera : </b></u></font>
+<ul>
+	Execute an hardware reset of the camera.
+</ul>
+<br><br><br>
+<Table Border=2 Cellpadding=3 CELLSPACING=0>
+	<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+	<td colspan=0> <font size=+1> <center><b> ResetCamera Definition </b></font></center></td>
+	</tr>
+	<tr>
+		<td> Input Argument </td>
+		<td> Tango::DEV_VOID </td>
+		<td>  </td>
+	</tr>
+	<tr>
+		<td> Output Argument </td>
+		<td> Tango::DEV_VOID </td>
+		<td>  </td>
 	</tr>
 	<tr>
 		<td> DisplayLevel </td>
@@ -866,12 +891,12 @@
 				</tr>
 			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
 				<tr>
-					<td> Read allowed for </td>
-					<td> All states </td>
+					<td> Read NOT allowed for </td>
+					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li> </font> </td>
 				</tr>
 				<tr>
-					<td> Write allowed for </td>
-					<td> All states </td>
+					<td> Write NOT allowed for </td>
+					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
 				</tr>
 			</table>
 		</td>

@@ -64,6 +64,7 @@ static const char *RcsId = "$Id:  $";
 //  Status        |  Inherited (no method)
 //  SetCmd        |  set_cmd
 //  GetCmd        |  get_cmd
+//  ResetCamera   |  reset_camera
 //================================================================
 
 //================================================================
@@ -245,6 +246,8 @@ void SlsJungfrau::get_device_property()
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("ConfigFileName"));
 	dev_prop.push_back(Tango::DbDatum("ExpertReadoutTime"));
+	dev_prop.push_back(Tango::DbDatum("ExpertReceiverFifoDepth"));
+	dev_prop.push_back(Tango::DbDatum("ExpertFramePacketNumber"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -281,13 +284,37 @@ void SlsJungfrau::get_device_property()
 		//	And try to extract ExpertReadoutTime value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertReadoutTime;
 
+		//	Try to initialize ExpertReceiverFifoDepth from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertReceiverFifoDepth;
+		else {
+			//	Try to initialize ExpertReceiverFifoDepth from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertReceiverFifoDepth;
+		}
+		//	And try to extract ExpertReceiverFifoDepth value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertReceiverFifoDepth;
+
+		//	Try to initialize ExpertFramePacketNumber from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertFramePacketNumber;
+		else {
+			//	Try to initialize ExpertFramePacketNumber from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertFramePacketNumber;
+		}
+		//	And try to extract ExpertFramePacketNumber value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertFramePacketNumber;
+
 	}
 
 	/*----- PROTECTED REGION ID(SlsJungfrau::get_device_property_after) ENABLED START -----*/
 	
 	//	Check device property data members init
-	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "", "ConfigFileName");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.00004", "ExpertReadoutTime"); // 40µs by default
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, ""       , "ConfigFileName"         );
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.00004", "ExpertReadoutTime"      ); // 40µs by default
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "2500"   , "ExpertReceiverFifoDepth"); // 2500 frames by default
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "128"    , "ExpertFramePacketNumber"); // 128 packets by default
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::get_device_property_after
 }
@@ -775,6 +802,34 @@ Tango::DevString SlsJungfrau::get_cmd(Tango::DevString argin)
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::get_cmd
 	return argout;
+}
+//--------------------------------------------------------
+/**
+ *	Command ResetCamera related method
+ *	Description: Execute an hardware reset of the camera.
+ *
+ */
+//--------------------------------------------------------
+void SlsJungfrau::reset_camera()
+{
+	DEBUG_STREAM << "SlsJungfrau::ResetCamera()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::reset_camera) ENABLED START -----*/
+	
+    try
+    {
+        const std::string cmd = "resetfpga 0";
+        m_camera->setCmd(cmd);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::reset_camera");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::reset_camera");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::reset_camera
 }
 
 /*----- PROTECTED REGION ID(SlsJungfrau::namespace_ending) ENABLED START -----*/

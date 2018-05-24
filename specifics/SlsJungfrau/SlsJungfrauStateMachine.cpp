@@ -130,15 +130,37 @@ bool SlsJungfrau::is_configFileName_allowed(TANGO_UNUSED(Tango::AttReqType type)
 //--------------------------------------------------------
 bool SlsJungfrau::is_delayAfterTrigger_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	//	Not any excluded states for delayAfterTrigger attribute in Write access.
-	/*----- PROTECTED REGION ID(SlsJungfrau::delayAfterTriggerStateAllowed_WRITE) ENABLED START -----*/
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::delayAfterTriggerStateAllowed_WRITE) ENABLED START -----*/
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::delayAfterTriggerStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
 
-	//	Not any excluded states for delayAfterTrigger attribute in read access.
-	/*----- PROTECTED REGION ID(SlsJungfrau::delayAfterTriggerStateAllowed_READ) ENABLED START -----*/
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::delayAfterTriggerStateAllowed_READ) ENABLED START -----*/
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::delayAfterTriggerStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
 	return true;
 }
 
@@ -233,6 +255,26 @@ bool SlsJungfrau::is_GetCmd_allowed(TANGO_UNUSED(const CORBA::Any &any))
 	/*----- PROTECTED REGION ID(SlsJungfrau::GetCmdStateAllowed) ENABLED START -----*/
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::GetCmdStateAllowed
+		return false;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_ResetCamera_allowed()
+ *	Description : Execution allowed for ResetCamera attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_ResetCamera_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+	//	Compare device state with not allowed states.
+	if (get_state()==Tango::INIT ||
+		get_state()==Tango::RUNNING)
+	{
+	/*----- PROTECTED REGION ID(SlsJungfrau::ResetCameraStateAllowed) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::ResetCameraStateAllowed
 		return false;
 	}
 	return true;

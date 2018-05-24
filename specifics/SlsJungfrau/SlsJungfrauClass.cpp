@@ -196,6 +196,24 @@ CORBA::Any *GetCmdClass::execute(Tango::DeviceImpl *device, const CORBA::Any &in
 	return insert((static_cast<SlsJungfrau *>(device))->get_cmd(argin));
 }
 
+//--------------------------------------------------------
+/**
+ * method : 		ResetCameraClass::execute()
+ * description : 	method to trigger the execution of the command.
+ *
+ * @param	device	The device on which the command must be executed
+ * @param	in_any	The command input data
+ *
+ *	returns The command output data (packed in the Any object)
+ */
+//--------------------------------------------------------
+CORBA::Any *ResetCameraClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
+{
+	cout2 << "ResetCameraClass::execute(): arrived" << endl;
+	((static_cast<SlsJungfrau *>(device))->reset_camera());
+	return new CORBA::Any();
+}
+
 
 //===================================================================
 //	Properties management
@@ -279,7 +297,33 @@ void SlsJungfrauClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 	prop_name = "ExpertReadoutTime";
-	prop_desc = "Only an expert User could change this property<br>\nThis is the readout time in seconds of the camera.<BR>";
+	prop_desc = "Only an expert User could change this property.<br>\nThis is the readout time in seconds of the camera.<BR>";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertReceiverFifoDepth";
+	prop_desc = "Only an expert User could change this property.<br>\nThis is the number of frames in memory of the receiver.<BR>";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertFramePacketNumber";
+	prop_desc = "Only an expert User could change this property.<br>\nThis is the number of packet for each received frame part.<BR>";
 	prop_def  = "";
 	vect_data.clear();
 	if (prop_def.length()>0)
@@ -657,6 +701,15 @@ void SlsJungfrauClass::command_factory()
 			"SlsDetector response",
 			Tango::EXPERT);
 	command_list.push_back(pGetCmdCmd);
+
+	//	Command ResetCamera
+	ResetCameraClass	*pResetCameraCmd =
+		new ResetCameraClass("ResetCamera",
+			Tango::DEV_VOID, Tango::DEV_VOID,
+			"",
+			"",
+			Tango::EXPERT);
+	command_list.push_back(pResetCameraCmd);
 
 	/*----- PROTECTED REGION ID(SlsJungfrauClass::command_factory_after) ENABLED START -----*/
 	

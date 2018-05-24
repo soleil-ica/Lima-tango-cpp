@@ -85,9 +85,15 @@ class SlsJungfrau : public TANGO_BASE_CLASS
 public:
 	//	ConfigFileName:	Configuration files used during the camera instanciation.
 	string	configFileName;
-	//	ExpertReadoutTime:	Only an expert User could change this property<br>
+	//	ExpertReadoutTime:	Only an expert User could change this property.<br>
 	//  This is the readout time in seconds of the camera.<BR>
 	Tango::DevDouble	expertReadoutTime;
+	//	ExpertReceiverFifoDepth:	Only an expert User could change this property.<br>
+	//  This is the number of frames in memory of the receiver.<BR>
+	Tango::DevLong	expertReceiverFifoDepth;
+	//	ExpertFramePacketNumber:	Only an expert User could change this property.<br>
+	//  This is the number of packet for each received frame part.<BR>
+	Tango::DevLong	expertFramePacketNumber;
 
 //	Attribute data members
 public:
@@ -248,6 +254,13 @@ public:
 	 */
 	virtual Tango::DevString get_cmd(Tango::DevString argin);
 	virtual bool is_GetCmd_allowed(const CORBA::Any &any);
+	/**
+	 *	Command ResetCamera related method
+	 *	Description: Execute an hardware reset of the camera.
+	 *
+	 */
+	virtual void reset_camera();
+	virtual bool is_ResetCamera_allowed(const CORBA::Any &any);
 
 
 /*----- PROTECTED REGION ID(SlsJungfrau::Additional Method prototypes) ENABLED START -----*/

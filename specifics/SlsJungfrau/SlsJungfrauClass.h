@@ -178,6 +178,29 @@ public:
 	{return (static_cast<SlsJungfrau *>(dev))->is_GetCmd_allowed(any);}
 };
 
+//	Command ResetCamera class definition
+class ResetCameraClass : public Tango::Command
+{
+public:
+	ResetCameraClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	ResetCameraClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~ResetCameraClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<SlsJungfrau *>(dev))->is_ResetCamera_allowed(any);}
+};
+
 
 /**
  *	The SlsJungfrauClass singleton definition
