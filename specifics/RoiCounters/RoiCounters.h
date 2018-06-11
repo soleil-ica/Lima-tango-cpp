@@ -65,7 +65,7 @@
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
 #define MAX_NB_ROICOUNTERS              32
 
-#define CURRENT_VERSION                 "1.1.0"
+#define CURRENT_VERSION                 "1.2.0"
 
 
 namespace RoiCounters_ns
@@ -78,10 +78,10 @@ namespace RoiCounters_ns
 
 /*
  *	Device States Description:
- *  Tango::INIT :
- *  Tango::STANDBY :
- *  Tango::FAULT :
- *  Tango::RUNNING :
+*  Tango::INIT :
+*  Tango::STANDBY :
+*  Tango::FAULT :
+*  Tango::RUNNING :
  */
 
 
@@ -99,36 +99,41 @@ public:
      *	Attribute member data.
      */
     //@{
-    Tango::DevString	*attr_version_read;
-    //@}
+		Tango::DevString	*attr_version_read;
+		Tango::DevULong	attr_runLevel_write;
+//@}
 
     /**
      * @name Device properties
      * Device properties member data.
      */
     //@{
-    /**
-     *	Fix the number of Region Of Interest.<br>
-     *	Statistical calculations  (sum, average, std, min, max) will be made for these regions of interest.
-     */
-    Tango::DevULong	nbRoiCounters;
-    /**
-     *	For each Region of Interest . (Origin X)
-     */
-    vector<long>	__x;
-    /**
-     *	For each Region of Interest . (Origin Y)
-     */
-    vector<long>	__y;
-    /**
-     *	For each Region of Interest . (Width)
-     */
-    vector<long>	__width;
-    /**
-     *	For each Region of Interest . (Height)
-     */
-    vector<long>	__height;
-    //@}
+/**
+ *	Fix the number of Region Of Interest.<br>
+ *	Statistical calculations  (sum, average, std, min, max) will be made for these regions of interest.
+ */
+	Tango::DevULong	nbRoiCounters;
+/**
+ *	For each Region of Interest . (Origin X)
+ */
+	vector<long>	__x;
+/**
+ *	For each Region of Interest . (Origin Y)
+ */
+	vector<long>	__y;
+/**
+ *	For each Region of Interest . (Width)
+ */
+	vector<long>	__width;
+/**
+ *	For each Region of Interest . (Height)
+ */
+	vector<long>	__height;
+/**
+ *	Memorize/Define the runLevel attribute<br>
+ */
+	Tango::DevULong	memorizedRunLevel;
+//@}
 
     /**
      *	@name Device properties
@@ -192,37 +197,49 @@ public:
      */
     virtual void always_executed_hook();
 
-    //@}
+//@}
 
-    /**
-     * @name RoiCounters methods prototypes
-     */
+/**
+ * @name RoiCounters methods prototypes
+ */
 
-    //@{
-    /**
-     *	Hardware acquisition for attributes.
-     */
-    virtual void read_attr_hardware(vector<long> &attr_list);
-    /**
-     *	Extract real attribute values for version acquisition result.
-     */
-    virtual void read_version(Tango::Attribute &attr);
-    /**
-     *	Read/Write allowed for version attribute.
-     */
-    virtual bool is_version_allowed(Tango::AttReqType type);
-    /**
-     * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
-     *	@return	State Code
-     *	@exception DevFailed
-     */
-    virtual Tango::DevState	dev_state();
+//@{
+/**
+ *	Hardware acquisition for attributes.
+ */
+	virtual void read_attr_hardware(vector<long> &attr_list);
+/**
+ *	Extract real attribute values for version acquisition result.
+ */
+	virtual void read_version(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for runLevel acquisition result.
+ */
+	virtual void read_runLevel(Tango::Attribute &attr);
+/**
+ *	Write runLevel attribute values to hardware.
+ */
+	virtual void write_runLevel(Tango::WAttribute &attr);
+/**
+ *	Read/Write allowed for version attribute.
+ */
+	virtual bool is_version_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for runLevel attribute.
+ */
+	virtual bool is_runLevel_allowed(Tango::AttReqType type);
+/**
+ * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
+ *	@return	State Code
+ *	@exception DevFailed
+ */
+	virtual Tango::DevState	dev_state();
 
-    /**
-     *	Read the device properties from database
-     */
-    void get_device_property();
-    //@}
+/**
+ *	Read the device properties from database
+ */
+	 void get_device_property();
+//@}
 
     //	Here is the end of the automatic code generation part
     //-------------------------------------------------------------	

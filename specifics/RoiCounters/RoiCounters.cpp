@@ -148,7 +148,7 @@ void RoiCounters::init_device()
 	attr_std_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_minValue_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_maxValue_arrays.resize(MAX_NB_ROICOUNTERS);
-
+	attr_runLevel_write = memorizedRunLevel;
 	try
 	{
 		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
@@ -193,10 +193,15 @@ void RoiCounters::init_device()
 
 	try
 	{
+		Tango::WAttribute &runlevel = dev_attr->get_w_attr_by_name("runLevel");
+    	attr_runLevel_write = memorizedRunLevel;
+    	runlevel.set_write_value(attr_runLevel_write);
+    	write_runLevel(runlevel);
+		
 		//create new operation			
 		std::stringstream opId("ARoiCounters");
 		INFO_STREAM << "addOp(" << opId.str() << ")" << endl;
-		m_ct->externalOperation()->addOp(ROICOUNTERS, opId.str(), 0/*level*/, m_soft_operation);
+		m_ct->externalOperation()->addOp(ROICOUNTERS, opId.str(),attr_runLevel_write , m_soft_operation);
 
 		//Write tango hardware at Init
 		std::stringstream ssName;
@@ -301,81 +306,88 @@ void RoiCounters::get_device_property()
 
 	//	Read device properties from database.(Automatic code generation)
 	//------------------------------------------------------------------
-	Tango::DbData dev_prop;
+	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("NbRoiCounters"));
 	dev_prop.push_back(Tango::DbDatum("__x"));
 	dev_prop.push_back(Tango::DbDatum("__y"));
 	dev_prop.push_back(Tango::DbDatum("__width"));
 	dev_prop.push_back(Tango::DbDatum("__height"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedRunLevel"));
 
 	//	Call database and extract values
 	//--------------------------------------------
-	if(Tango::Util::instance()->_UseDb == true)
+	if (Tango::Util::instance()->_UseDb==true)
 		get_db_device()->get_property(dev_prop);
-	Tango::DbDatum def_prop, cl_prop;
-	RoiCountersClass *ds_class =
-	 (static_cast<RoiCountersClass *> (get_device_class()));
-	int i = -1;
+	Tango::DbDatum	def_prop, cl_prop;
+	RoiCountersClass	*ds_class =
+		(static_cast<RoiCountersClass *>(get_device_class()));
+	int	i = -1;
 
 	//	Try to initialize NbRoiCounters from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if(cl_prop.is_empty() == false) cl_prop >> nbRoiCounters;
-	else
-	{
+	if (cl_prop.is_empty()==false)	cl_prop  >>  nbRoiCounters;
+	else {
 		//	Try to initialize NbRoiCounters from default device value
 		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if(def_prop.is_empty() == false) def_prop >> nbRoiCounters;
+		if (def_prop.is_empty()==false)	def_prop  >>  nbRoiCounters;
 	}
 	//	And try to extract NbRoiCounters value from database
-	if(dev_prop[i].is_empty() == false) dev_prop[i] >> nbRoiCounters;
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  nbRoiCounters;
 
 	//	Try to initialize __x from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if(cl_prop.is_empty() == false) cl_prop >> __x;
-	else
-	{
+	if (cl_prop.is_empty()==false)	cl_prop  >>  __x;
+	else {
 		//	Try to initialize __x from default device value
 		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if(def_prop.is_empty() == false) def_prop >> __x;
+		if (def_prop.is_empty()==false)	def_prop  >>  __x;
 	}
 	//	And try to extract __x value from database
-	if(dev_prop[i].is_empty() == false) dev_prop[i] >> __x;
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  __x;
 
 	//	Try to initialize __y from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if(cl_prop.is_empty() == false) cl_prop >> __y;
-	else
-	{
+	if (cl_prop.is_empty()==false)	cl_prop  >>  __y;
+	else {
 		//	Try to initialize __y from default device value
 		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if(def_prop.is_empty() == false) def_prop >> __y;
+		if (def_prop.is_empty()==false)	def_prop  >>  __y;
 	}
 	//	And try to extract __y value from database
-	if(dev_prop[i].is_empty() == false) dev_prop[i] >> __y;
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  __y;
 
 	//	Try to initialize __width from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if(cl_prop.is_empty() == false) cl_prop >> __width;
-	else
-	{
+	if (cl_prop.is_empty()==false)	cl_prop  >>  __width;
+	else {
 		//	Try to initialize __width from default device value
 		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if(def_prop.is_empty() == false) def_prop >> __width;
+		if (def_prop.is_empty()==false)	def_prop  >>  __width;
 	}
 	//	And try to extract __width value from database
-	if(dev_prop[i].is_empty() == false) dev_prop[i] >> __width;
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  __width;
 
 	//	Try to initialize __height from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if(cl_prop.is_empty() == false) cl_prop >> __height;
-	else
-	{
+	if (cl_prop.is_empty()==false)	cl_prop  >>  __height;
+	else {
 		//	Try to initialize __height from default device value
 		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if(def_prop.is_empty() == false) def_prop >> __height;
+		if (def_prop.is_empty()==false)	def_prop  >>  __height;
 	}
 	//	And try to extract __height value from database
-	if(dev_prop[i].is_empty() == false) dev_prop[i] >> __height;
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  __height;
+
+	//	Try to initialize MemorizedRunLevel from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedRunLevel;
+	else {
+		//	Try to initialize MemorizedRunLevel from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedRunLevel;
+	}
+	//	And try to extract MemorizedRunLevel value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedRunLevel;
 
 
 
@@ -388,6 +400,7 @@ void RoiCounters::get_device_property()
 	vector<string> vecWidthHeight(2, "10");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, vecWidthHeight, "__width");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, vecWidthHeight, "__height");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedRunLevel");
 }
 
 //+----------------------------------------------------------------------------
@@ -454,6 +467,52 @@ void RoiCounters::read_attr_hardware(vector<long> &attr_list)
 									"RoiCounters::read_attr_hardware");
 	}
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		RoiCounters::read_runLevel
+// 
+// description : 	Extract real attribute values for runLevel acquisition result.
+//
+//-----------------------------------------------------------------------------
+void RoiCounters::read_runLevel(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "RoiCounters::read_runLevel(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		RoiCounters::write_runLevel
+// 
+// description : 	Write runLevel attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void RoiCounters::write_runLevel(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "RoiCounters::write_runLevel(Tango::WAttribute &attr) entering... "<< endl;
+	try
+	{
+		attr.get_write_value(attr_runLevel_write);
+		yat4tango::PropertyHelper::set_property(this, "MemorizedRunLevel", attr_runLevel_write);
+	}
+	catch(Tango::DevFailed& df)
+	{
+		ERROR_STREAM << df << endl;
+		//- rethrow exception
+		Tango::Except::re_throw_exception(df,
+										"TANGO_DEVICE_ERROR",
+										string(df.errors[0].desc).c_str(),
+										"RoiCounters::write_runLevel");
+	}
+	catch(Exception& e)
+	{
+		ERROR_STREAM << e.getErrMsg() << endl;
+		//- throw exception
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+									e.getErrMsg().c_str(),
+									"RoiCounters::write_runLevel");
+	}	
+}
+
 //+----------------------------------------------------------------------------
 //
 // method : 		RoiCounters::read_version
@@ -1297,4 +1356,6 @@ Tango::DevState RoiCounters::dev_state()
 
 
 
-} //	namespace
+
+
+}	//	namespace

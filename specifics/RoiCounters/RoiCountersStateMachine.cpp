@@ -74,6 +74,26 @@ bool RoiCounters::is_version_allowed(Tango::AttReqType type)
 		//	Re-Start of Generated Code
 	return true;
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		RoiCounters::is_runLevel_allowed
+// 
+// description : 	Read/Write allowed for runLevel attribute.
+//
+//-----------------------------------------------------------------------------
+bool RoiCounters::is_runLevel_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
 
 //=================================================
 //		Commands Allowed Methods

@@ -51,6 +51,20 @@ namespace RoiCounters_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class runLevelAttrib: public Tango::Attr
+{
+public:
+	runLevelAttrib():Attr("runLevel", Tango::DEV_ULONG, Tango::WRITE) {};
+	~runLevelAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<RoiCounters *>(dev))->read_runLevel(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<RoiCounters *>(dev))->write_runLevel(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<RoiCounters *>(dev))->is_runLevel_allowed(ty);}
+};
+
 class versionAttrib: public Tango::Attr
 {
 public:

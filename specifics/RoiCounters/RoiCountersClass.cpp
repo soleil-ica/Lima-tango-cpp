@@ -263,6 +263,16 @@ void RoiCountersClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	version->set_default_properties(version_prop);
 	att_list.push_back(version);
 
+	//	Attribute : runLevel
+	runLevelAttrib	*run_level = new runLevelAttrib();
+	Tango::UserDefaultAttrProp	run_level_prop;
+	run_level_prop.set_unit(" ");
+	run_level_prop.set_standard_unit(" ");
+	run_level_prop.set_display_unit(" ");
+	run_level_prop.set_description("Fix the execution order of this operation in the processing chain");
+	run_level->set_default_properties(run_level_prop);
+	att_list.push_back(run_level);
+
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
 }
@@ -387,6 +397,21 @@ void RoiCountersClass::set_default_property()
 	vect_data.clear();
 	vect_data.push_back("10");
 	vect_data.push_back("10");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedRunLevel";
+	prop_desc = "Memorize/Define the runLevel attribute<br>";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
