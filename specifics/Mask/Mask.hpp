@@ -35,22 +35,23 @@ Data Mask::create_data_from_mask(Tango::DevShort* mask_image, long mask_dim_x, l
     image_data.dimensions[WIDTH_INDEX] = mask_dim_x;  
     image_data.dimensions[HEIGHT_INDEX] = mask_dim_y;  
     image_data.buffer = new Buffer(mask_dim_x * mask_dim_y * data_depth);
-        
-    INFO_STREAM << "Data type = "      << image_data.type                      << endl;
-    INFO_STREAM << "Data depth = "     << image_data.depth()                   << endl;    
-    INFO_STREAM << "Data Width = "     << image_data.dimensions[WIDTH_INDEX]   << endl;
-    INFO_STREAM << "Data Height = "    << image_data.dimensions[HEIGHT_INDEX]  << endl;    
+            
+    INFO_STREAM << "Data depth = "     << image_data.depth()                   << " (Bytes) "<<endl;    
+    INFO_STREAM << "Data Width = "     << image_data.dimensions[WIDTH_INDEX]   << " (Pixels)"<<endl;
+    INFO_STREAM << "Data Height = "    << image_data.dimensions[HEIGHT_INDEX]  << " (Pixels)"<<endl;
 
     OUTPUT* dst = (OUTPUT*)image_data.data();
+    //foreach line of the image
     for(int i = 0; i < mask_dim_y; i++)
     {
+        //foreach pixels of the current line
         for(int j = 0; j < mask_dim_x; j++)
         {
             dst[i*mask_dim_x + j]  = mask_image[i*mask_dim_x + j];
         }
     }
     
-    INFO_STREAM << "duration creating Data image for Mask : " << t1.elapsed_msec() << " (ms)" << std::endl;    
+    INFO_STREAM << "duration to create Data image for Mask : " << t1.elapsed_msec() << " (ms)" << std::endl;    
     INFO_STREAM << "Mask::create_data_from_mask() : [END]" << endl;
     return image_data;
 }

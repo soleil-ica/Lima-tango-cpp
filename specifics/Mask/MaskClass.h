@@ -54,7 +54,7 @@ namespace Mask_ns
 class maskImageAttrib: public Tango::ImageAttr
 {
 public:
-	maskImageAttrib():ImageAttr("maskImage", Tango::DEV_SHORT, Tango::READ_WRITE, 1000, 1000) {};
+	maskImageAttrib():ImageAttr("maskImage", Tango::DEV_SHORT, Tango::READ_WRITE, 10000, 10000) {};
 	~maskImageAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
@@ -63,6 +63,18 @@ public:
 	{(static_cast<Mask *>(dev))->write_maskImage(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 	{return (static_cast<Mask *>(dev))->is_maskImage_allowed(ty);}
+};
+
+class operationsListAttrib: public Tango::SpectrumAttr
+{
+public:
+	operationsListAttrib():SpectrumAttr("operationsList", Tango::DEV_STRING, Tango::READ, 1024) {};
+	~operationsListAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Mask *>(dev))->read_operationsList(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Mask *>(dev))->is_operationsList_allowed(ty);}
 };
 
 class runLevelAttrib: public Tango::Attr

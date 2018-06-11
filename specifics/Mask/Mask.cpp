@@ -108,6 +108,7 @@ void Mask::delete_device()
 {
 	INFO_STREAM << "Mask::delete_device() delete device " << device_name << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+		
 	//	Delete device allocated objects	
 	DELETE_DEVSTRING_ATTRIBUTE(attr_version_read);
 	if(attr_maskImage_read)
@@ -115,10 +116,6 @@ void Mask::delete_device()
 		delete[] attr_maskImage_read;
 		attr_maskImage_read = 0;
 	}
-	//delete operation			
-	std::stringstream opId("AMask");
-	INFO_STREAM << "delOp [" << opId.str() << "]" << endl;
-	m_ct->externalOperation()->delOp(opId.str());
 }
 
 //+----------------------------------------------------------------------------
@@ -139,6 +136,7 @@ void Mask::init_device()
 	m_dim_x = 0;
 	m_dim_y = 0;
 	attr_maskImage_read = 0;
+	m_operations_list.clear();
 	//By default INIT, need to ensure that all objets are OK before set the device to STANDBY
 	set_state(Tango::INIT);
 	m_is_device_initialized = false;
@@ -151,6 +149,15 @@ void Mask::init_device()
 		//- get the main object used to pilot the lima framework
 		//in fact LimaDetector is create the singleton control objet
 		m_ct = ControlFactory::instance().get_control("Mask");
+		
+	//delete the operation	"AMask"		
+    //remove external operations
+	INFO_STREAM << "- remove all external operations ..."<<endl;	
+	std::stringstream opId("");
+	opId << ":Mask";
+	INFO_STREAM << "\t- delOp [" << opId.str() << "]"<<endl;
+	m_ct->externalOperation()->delOp(opId.str());		
+	
 	}
 	catch(Exception& e)
 	{
@@ -171,48 +178,10 @@ void Mask::init_device()
 
 	try
 	{
-		//create new operation			
-		std::stringstream opId("AMask");
-		INFO_STREAM << "addOp(" << opId.str() << ")" << endl;
-		m_ct->externalOperation()->addOp(MASK, opId.str(), attr_runLevel_write/*level*/, m_soft_operation);
-	}
-	catch(Exception& e)
-	{
-		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
-		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
-		m_is_device_initialized = false;
-		set_state(Tango::FAULT);
-		return;
-	}
-	catch(Tango::DevFailed& df)
-	{
-		ERROR_STREAM << df << endl;
-		m_status_message << "Initialization Failed : ";
-		for(unsigned i = 0;i < df.errors.length();i++)
-		{
-			m_status_message << df.errors[i].desc << endl;
-		}
-		m_is_device_initialized = false;
-		set_state(Tango::FAULT);
-		return;
-	}
-	catch(...)
-	{
-		ERROR_STREAM << "Initialization Failed : UNKNOWN" << endl;
-		m_status_message << "Initialization Failed : UNKNOWN" << endl;
-		set_state(Tango::FAULT);
-		m_is_device_initialized = false;
-		return;
-	}
-
-	//everything is Ok
-	m_is_device_initialized = true;
-	try
-	{
 		Tango::WAttribute &runlevel = dev_attr->get_w_attr_by_name("runLevel");
-    	attr_runLevel_write = memorizedRunLevel;
-    	runlevel.set_write_value(attr_runLevel_write);
-    	write_runLevel(runlevel);
+		attr_runLevel_write = memorizedRunLevel;
+		runlevel.set_write_value(attr_runLevel_write);
+		write_runLevel(runlevel);
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -234,6 +203,8 @@ void Mask::init_device()
 		set_state(Tango::FAULT);
 		return;
 	}
+	//everything is Ok
+	m_is_device_initialized = true;	
 	set_state(Tango::STANDBY);
 	dev_state();
 }
@@ -252,29 +223,28 @@ void Mask::get_device_property()
 
 	//	Read device properties from database.(Automatic code generation)
 	//------------------------------------------------------------------
-	Tango::DbData dev_prop;
+	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("MemorizedRunLevel"));
 
 	//	Call database and extract values
 	//--------------------------------------------
-	if(Tango::Util::instance()->_UseDb == true)
+	if (Tango::Util::instance()->_UseDb==true)
 		get_db_device()->get_property(dev_prop);
-	Tango::DbDatum def_prop, cl_prop;
-	MaskClass *ds_class =
-	 (static_cast<MaskClass *> (get_device_class()));
-	int i = -1;
+	Tango::DbDatum	def_prop, cl_prop;
+	MaskClass	*ds_class =
+		(static_cast<MaskClass *>(get_device_class()));
+	int	i = -1;
 
 	//	Try to initialize MemorizedRunLevel from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if(cl_prop.is_empty() == false) cl_prop >> memorizedRunLevel;
-	else
-	{
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedRunLevel;
+	else {
 		//	Try to initialize MemorizedRunLevel from default device value
 		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if(def_prop.is_empty() == false) def_prop >> memorizedRunLevel;
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedRunLevel;
 	}
 	//	And try to extract MemorizedRunLevel value from database
-	if(dev_prop[i].is_empty() == false) dev_prop[i] >> memorizedRunLevel;
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedRunLevel;
 
 
 
@@ -348,6 +318,50 @@ void Mask::read_attr_hardware(vector<long> &attr_list)
 }
 //+----------------------------------------------------------------------------
 //
+// method : 		Mask::read_operationsList
+// 
+// description : 	Extract real attribute values for operationsList acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Mask::read_operationsList(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Mask::read_operationsList(Tango::Attribute &attr) entering... "<< endl;
+	try
+	{
+		//list all operations
+		Tango::DevString *ptr = new Tango::DevString[ 1024 ];
+
+		int item_idx = 0;
+		ptr[item_idx] = CORBA::string_dup("");
+		for(int i = 0;i < m_operations_list.size();i++)
+		{
+			ptr[item_idx] = CORBA::string_dup(m_operations_list.at(i).c_str());
+			item_idx++;
+		}
+
+		attr.set_value(ptr, item_idx, 0, true);
+	}
+	catch(Exception& e)
+	{
+		ERROR_STREAM << e.getErrMsg() << endl;
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"Mask::read_operationsList");
+	}	
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"Mask::read_operationsList");
+    }		
+}
+
+//+----------------------------------------------------------------------------
+//
 // method : 		Mask::read_maskImage
 // 
 // description : 	Extract real attribute values for maskImage acquisition result.
@@ -371,77 +385,57 @@ void Mask::read_maskImage(Tango::Attribute &attr)
 void Mask::write_maskImage(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Mask::write_maskImage(Tango::WAttribute &attr) entering... " << endl;
-	//	Retrieve number of write values	
-	int w_length = attr.get_write_value_length();
-	//	Retrieve pointer on write values (Do not delete !)	
-	const Tango::DevShort *w_val;
-	attr.get_write_value(w_val);
-	const short * p;
-	attr.get_write_value(p);
+	try
+	{
+		//	Retrieve number of write values	
+		int w_length = attr.get_write_value_length();
+		//	Retrieve pointer on write values (Do not delete !)	
+		const Tango::DevShort *w_val;
+		attr.get_write_value(w_val);
+		const short * p;
+		attr.get_write_value(p);
 
-	m_dim_x = attr.get_w_dim_x();
-	m_dim_y = attr.get_w_dim_y();
-	if(attr_maskImage_read)
-	{
-		delete[] attr_maskImage_read;
-		attr_maskImage_read = 0;
-	}
-	INFO_STREAM << "m_dim_x = " << m_dim_x << endl;
-	INFO_STREAM << "m_dim_y = " << m_dim_y << endl;
-	attr_maskImage_read = new Tango::DevShort[m_dim_x * m_dim_y];
-	::memcpy(attr_maskImage_read, p, (m_dim_x * m_dim_y) * sizeof(Tango::DevShort));
+		m_dim_x = attr.get_w_dim_x();
+		m_dim_y = attr.get_w_dim_y();
+		if(attr_maskImage_read)
+		{
+			delete[] attr_maskImage_read;
+			attr_maskImage_read = 0;
+		}
+		INFO_STREAM << "m_dim_x = " << m_dim_x << endl;
+		INFO_STREAM << "m_dim_y = " << m_dim_y << endl;
+		attr_maskImage_read = new Tango::DevShort[m_dim_x * m_dim_y];
+		::memcpy(attr_maskImage_read, p, (m_dim_x * m_dim_y) * sizeof(Tango::DevShort));
 
-	//get DetectorPixelDepth from LimaDetector Property
-	std::string class_name = "LimaDetector";
-	std::string device_name_generic;
-	Tango::DbDatum db_datum;
-	std::string server_name = Tango::Util::instance()->get_ds_name();
-	db_datum = (Tango::Util::instance()->get_database())->get_device_name(server_name, class_name);
-	db_datum >> device_name_generic;
-	Tango::DbData db_data;
-	db_data.push_back(Tango::DbDatum("DetectorPixelDepth"));
-	(Tango::Util::instance()->get_database())->get_device_property(device_name_generic, db_data);
-	std::string pixel_depth;
-	db_data[0] >> pixel_depth;
-
-	//prepare Data for the Mask ProcessLib Task	
-	Data data;
-	if(pixel_depth == "8")
-	{
-		data = create_data_from_mask<Tango::DevUChar>(attr_maskImage_read, m_dim_x, m_dim_y, Data::UINT8, 1);
+		//prepare Data for the Mask ProcessLib Task	
+		set_mask_image();
 	}
-	else if(pixel_depth == "12" || pixel_depth == "16")
+	catch(ProcessException& p)
 	{
-		data = create_data_from_mask<Tango::DevUShort>(attr_maskImage_read, m_dim_x, m_dim_y, Data::UINT16, 2);
+		ERROR_STREAM << p.getErrMsg()<< endl;
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						p.getErrMsg().c_str(),
+						"Mask::write_maskImage");		
+	}	
+	catch(Exception& e)
+	{
+		ERROR_STREAM << e.getErrMsg() << endl;
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"Mask::write_maskImage");
 	}
-	else if(pixel_depth == "24")
+	catch(Tango::DevFailed& df)
 	{
-		data = create_data_from_mask<Tango::DevULong>(attr_maskImage_read, m_dim_x, m_dim_y, Data::UINT32, 4);
-	}
-	else if(pixel_depth == "32")
-	{
-		data = create_data_from_mask<Tango::DevULong>(attr_maskImage_read, m_dim_x, m_dim_y, Data::UINT32, 4);
-	}
-	else if(pixel_depth == "16S")
-	{
-		data = create_data_from_mask<Tango::DevShort>(attr_maskImage_read, m_dim_x, m_dim_y, Data::INT16, 2);
-	}
-	else if(pixel_depth == "32S")
-	{
-		data = create_data_from_mask<Tango::DevLong>(attr_maskImage_read, m_dim_x, m_dim_y, Data::INT32, 4);
-	}
-	else
-	{
-		stringstream ss;
-		ss << "Failed to Create a Mask image !" << endl;
-		ss << "DetectorPixelDepth " << "(" << pixel_depth << ") is not supported!" << endl;
-		ERROR_STREAM << ss.str() << std::endl;
-		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-									ss.str().c_str(),
-									"Mask::write_maskImage");
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"Mask::write_maskImage");
 	}
 
-	(reinterpret_cast<SoftOpMask*> (m_soft_operation.m_opt))->setMaskImage(data);
 	INFO_STREAM << "Mask Image is Defined and Activated ." << endl;
 }
 
@@ -469,8 +463,10 @@ void Mask::write_runLevel(Tango::WAttribute &attr)
 	DEBUG_STREAM << "Mask::write_runLevel(Tango::WAttribute &attr) entering... " << endl;
 	try
 	{
-		attr.get_write_value(attr_runLevel_write);
-		yat4tango::PropertyHelper::set_property(this, "MemorizedRunLevel", attr_runLevel_write);
+		attr.get_write_value(attr_runLevel_write);		
+		
+		//prepare Data for the Mask ProcessLib Task	
+		set_mask_image();
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -518,6 +514,123 @@ void Mask::read_version(Tango::Attribute &attr)
 	}
 }
 
+
+//-----------------------------------------------------------------------------
+//
+// 	Mask::set_mask_image(void)
+//-----------------------------------------------------------------------------
+void Mask::set_mask_image(void)
+{
+	
+	//only if a write_maskImage was called previously & device is already initialized !
+	if(!is_device_initialized())
+		return;
+	
+	if(m_dim_x == 0 || m_dim_y == 0)
+	{
+		Tango::Except::throw_exception(
+										"TANGO_DEVICE_ERROR",
+										"Cannot Define the Mask, the 'maskImage' attribute is Empty !",
+										"Mask::set_mask_image()");	
+		return;
+	}
+	
+	try
+	{			
+		
+		//get DetectorPixelDepth from LimaDetector Property
+		std::string class_name = "LimaDetector";
+		std::string device_name_generic;
+		Tango::DbDatum db_datum;
+		std::string server_name = Tango::Util::instance()->get_ds_name();
+		db_datum = (Tango::Util::instance()->get_database())->get_device_name(server_name, class_name);
+		db_datum >> device_name_generic;
+		Tango::DbData db_data;
+		db_data.push_back(Tango::DbDatum("DetectorPixelDepth"));
+		(Tango::Util::instance()->get_database())->get_device_property(device_name_generic, db_data);
+		std::string pixel_depth;
+		db_data[0] >> pixel_depth;
+		
+		//prepare Data for the Mask ProcessLib Task	
+		Data data;
+		if(pixel_depth == "8")
+		{
+			data = create_data_from_mask<Tango::DevUChar>(attr_maskImage_read, m_dim_x, m_dim_y, Data::UINT8, 1);
+		}
+		else if(pixel_depth == "12" || pixel_depth == "16")
+		{
+			data = create_data_from_mask<Tango::DevUShort>(attr_maskImage_read, m_dim_x, m_dim_y, Data::UINT16, 2);
+		}
+		else if(pixel_depth == "24" || pixel_depth == "32")
+		{
+			data = create_data_from_mask<Tango::DevULong>(attr_maskImage_read, m_dim_x, m_dim_y, Data::UINT32, 4);
+		}
+		else if(pixel_depth == "16S")
+		{
+			data = create_data_from_mask<Tango::DevShort>(attr_maskImage_read, m_dim_x, m_dim_y, Data::INT16, 2);
+		}
+		else if(pixel_depth == "32S")
+		{
+			data = create_data_from_mask<Tango::DevLong>(attr_maskImage_read, m_dim_x, m_dim_y, Data::INT32, 4);
+		}
+		else
+		{
+			stringstream ss;
+			ss << "Failed to Create a Mask image !" << endl;
+			ss << "DetectorPixelDepth " << "(" << pixel_depth << ") is not supported!" << endl;
+			ERROR_STREAM << ss.str() << std::endl;
+			Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+										ss.str().c_str(),
+										"Mask::write_maskImage");
+		}
+
+		//first delete the operation	"AMask"		
+		std::stringstream opId("");
+		opId << ":Mask";
+		INFO_STREAM << "delOp [" << opId.str() << "]" << endl;
+		m_ct->externalOperation()->delOp(opId.str());
+		
+		//INFO_STREAM<<(!m_soft_operation.m_opt) ? "deOp() NOT NECESSARY" : "deOp() NECESSARY"<<endl;
+		//create new operation			
+		INFO_STREAM << "addOp [" << opId.str() << "]" << endl;
+		m_ct->externalOperation()->addOp(MASK, opId.str(), attr_runLevel_write, m_soft_operation);		
+		yat4tango::PropertyHelper::set_property(this, "MemorizedRunLevel", attr_runLevel_write);
+		
+		//activate the Mask
+		(reinterpret_cast<SoftOpMask*> (m_soft_operation.m_opt))->setMaskImage(data);
+		
+		//in order to update operationsList attribute		
+		m_operations_list.clear();
+		std::stringstream ss("");
+		ss<<"runLevel = "<<attr_runLevel_write<<" : Operation = "<<"Mask"<<endl;
+		m_operations_list.push_back(ss.str());
+	}
+	catch(ProcessException& p)
+	{
+		ERROR_STREAM << p.getErrMsg()<< endl;
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						p.getErrMsg().c_str(),
+						"Mask::write_maskImage");		
+	}	
+	catch(Exception& e)
+	{
+		ERROR_STREAM << e.getErrMsg() << endl;
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"Mask::write_maskImage");
+	}
+	catch(Tango::DevFailed& df)
+	{
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"Mask::write_maskImage");
+	}
+}
 //+------------------------------------------------------------------
 /**
  *	method:	Mask::dev_state
@@ -562,4 +675,7 @@ Tango::DevState Mask::dev_state()
 
 
 
-} //	namespace
+
+
+
+}	//	namespace

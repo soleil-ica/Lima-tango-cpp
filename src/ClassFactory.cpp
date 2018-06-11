@@ -47,6 +47,10 @@ static const char *RcsId = "$Id:  $";
 #include <RoiCountersClass.h>
 #endif
 
+#ifdef MASK_ENABLED
+#include <MaskClass.h>
+#endif
+
 #ifdef SIMULATOR_ENABLED
 #include <SimulatorCCDClass.h>
 #endif
@@ -217,6 +221,10 @@ void Tango::DServer::class_factory()
 	
 #ifdef ROICOUNTERS_ENABLED    
     add_class(RoiCounters_ns::RoiCountersClass::init("RoiCounters"));
+#endif	
+	
+#ifdef MASK_ENABLED    
+    add_class(Mask_ns::MaskClass::init("Mask"));
 #endif	
 }
 

@@ -63,7 +63,6 @@
 
 
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
-
 #define CURRENT_VERSION                 "1.0.0"
 
 
@@ -100,6 +99,7 @@ public:
     //@{
 		Tango::DevString	*attr_version_read;
 		Tango::DevULong	attr_runLevel_write;
+		Tango::DevString	*attr_operationsList_read;
 		Tango::DevShort	*attr_maskImage_read;
 		Tango::DevShort	attr_maskImage_write;
 //@}
@@ -201,6 +201,10 @@ public:
  */
 	virtual void write_runLevel(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for operationsList acquisition result.
+ */
+	virtual void read_operationsList(Tango::Attribute &attr);
+/**
  *	Extract real attribute values for maskImage acquisition result.
  */
 	virtual void read_maskImage(Tango::Attribute &attr);
@@ -216,6 +220,10 @@ public:
  *	Read/Write allowed for runLevel attribute.
  */
 	virtual bool is_runLevel_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for operationsList attribute.
+ */
+	virtual bool is_operationsList_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for maskImage attribute.
  */
@@ -247,6 +255,8 @@ public:
                                 long mask_dim_y,                //dim_y of the mask
                                 Data::TYPE data_type,      //type of the object Data to create (Data::INT8 Data::UINT8 Data::INT16 ...)
                                 long data_depth);               //number of bytes occupied by the Data::TYPE (1->Data::INT8 2->Data::INT16 ...)
+    
+    void set_mask_image(void);
 protected:
     //	Add your own data members here
     //-----------------------------------------
@@ -254,10 +264,11 @@ protected:
     stringstream    m_status_message;
 
     //LIMA objects
-    lima::CtControl*        m_ct;
-    lima::SoftOpInstance    m_soft_operation;
-    long                    m_dim_x;
-    long                    m_dim_y;
+    lima::CtControl*            m_ct;
+    lima::SoftOpInstance        m_soft_operation;
+    long                        m_dim_x;
+    long                        m_dim_y;
+    std::vector<std::string >   m_operations_list;
 } ;
 
 }	// namespace_ns

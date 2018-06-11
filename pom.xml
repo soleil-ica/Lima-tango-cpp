@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.8.3</version>
+    <version>1.8.4-SNAPSHOT</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -164,6 +164,7 @@
                                     <include>specifics/ImXpad/*.cpp</include>
                                     <include>specifics/Layout/*.cpp</include>                            
                                     <include>specifics/MarCCD/*.cpp</include>
+                                    <include>specifics/Mask/*.cpp</include>
                                     <include>specifics/Merlin/*.cpp</include>
                                     <include>specifics/PilatusPixelDetector/*.cpp</include>
                                     <include>specifics/RoiCounters/*.cpp</include>
@@ -180,6 +181,7 @@
                                     <includePath>specifics/Eiger</includePath>    
                                     <includePath>specifics/Layout</includePath>                                                        
                                     <includePath>specifics/MarCCD</includePath>
+                                    <includePath>specifics/Mask</includePath>
                                     <includePath>specifics/Merlin</includePath>
                                     <includePath>specifics/PilatusPixelDetector</includePath>
                                     <includePath>specifics/RoiCounters</includePath>
@@ -227,6 +229,7 @@
                                     <define>EIGER_ENABLED</define>                  
                                     <define>LAYOUT_ENABLED</define>		                                                                                                       								 
                                     <define>MARCCD_ENABLED</define>
+                                    <define>MASK_ENABLED</define>
                                     <define>MERLIN_ENABLED</define>
                                     <define>PILATUS_ENABLED</define>
                                     <define>ROICOUNTERS_ENABLED</define>
@@ -594,6 +597,7 @@
                                     <include>specifics/PrincetonCCD/*.cpp</include>
                                     <include>specifics/RoiCounters/*.cpp</include>
                                     <include>specifics/Layout/*.cpp</include>
+                                    <include>specifics/Mask/*.cpp</include>
                                     <include>specifics/UviewCCD/*.cpp</include>
                                     <include>specifics/SimulatorCCD/*.cpp</include>                                    
                                 </includes>
@@ -610,6 +614,7 @@
                                     <include>specifics/PrincetonCCD</include>
                                     <include>specifics/RoiCounters</include>
                                     <include>specifics/Layout</include>
+                                    <include>specifics/Mask</include>
                                     <include>specifics/UviewCCD</include>
                                     <include>specifics/SimulatorCCD</include>                         
                                 </includePaths>
@@ -650,6 +655,7 @@
                                     <define>PRINCETON_ENABLED</define>                                    
                                     <define>ROICOUNTERS_ENABLED</define>	
                                     <define>LAYOUT_ENABLED</define>
+                                    <define>MASK_ENABLED</define>
                                     <define>UVIEW_ENABLED</define>
                                     <define>SIMULATOR_ENABLED</define>
                                     <define>SOLEIL_YAT_STREAM</define>

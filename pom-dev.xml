@@ -38,24 +38,6 @@
                 <PROCESSLIB.version>1.3.7</PROCESSLIB.version>
                 <CORE.name>Core</CORE.name>
                 <CORE.version>1.7.7-SNAPSHOT</CORE.version>
-                <AVIEX.name>Aviex</AVIEX.name>
-                <AVIEX.version>1.0.12</AVIEX.version>
-                <BASLER.name>Basler</BASLER.name>
-                <BASLER.version>1.5.2</BASLER.version>
-                <EIGER.name>Eiger</EIGER.name>
-                <EIGER.version>2.1.6</EIGER.version>
-                <IMXPAD.name>ImXpad</IMXPAD.name>
-                <IMXPAD.version>1.0.5</IMXPAD.version>
-                <MARCCD.name>Marccd</MARCCD.name>
-                <MARCCD.version>1.3.13</MARCCD.version>
-                <MERLIN.name>Merlin</MERLIN.name>
-                <MERLIN.version>1.1.1</MERLIN.version>
-                <PILATUS.name>Pilatus</PILATUS.name>
-                <PILATUS.version>2.1.5</PILATUS.version>
-                <PROSILICA.name>Prosilica</PROSILICA.name>
-                <PROSILICA.version>1.4.5</PROSILICA.version>
-                <XPAD.name>Xpad</XPAD.name>
-                <XPAD.version>1.4.13</XPAD.version>
                 <SIMULATOR.name>Simulator</SIMULATOR.name>
                 <SIMULATOR.version>1.3.14</SIMULATOR.version>
             </properties>
@@ -87,59 +69,6 @@
                     <version>${CORE.version}</version>
                 </dependency>
                 <!-- Lima Camera Plugins -->
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaAviex-${aol}-shared-${mode}</artifactId>
-                    <version>${AVIEX.version}</version>
-                </dependency>
-
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaBasler-${aol}-shared-${mode}</artifactId>
-                    <version>${BASLER.version}</version>
-                </dependency>
-
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaEiger-${aol}-shared-${mode}</artifactId>
-                    <version>${EIGER.version}</version>
-                </dependency>
-
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaImXpad-${aol}-shared-${mode}</artifactId>
-                    <version>${IMXPAD.version}</version>
-                </dependency>
-
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaMarccd-${aol}-shared-${mode}</artifactId>
-                    <version>${MARCCD.version}</version>
-                </dependency>
-
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaMerlin-${aol}-shared-${mode}</artifactId>
-                    <version>${MERLIN.version}</version>
-                </dependency>
-
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaPilatus-${aol}-shared-${mode}</artifactId>
-                    <version>${PILATUS.version}</version>
-                </dependency>
-
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaProsilica-${aol}-shared-${mode}</artifactId>
-                    <version>${PROSILICA.version}</version>
-                </dependency>             
-
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaXpad-${aol}-shared-${mode}</artifactId>
-                    <version>${XPAD.version}</version>
-                </dependency>
 
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
@@ -158,33 +87,17 @@
                                 <sourceDirectory>${project.basedir}</sourceDirectory>                        
                                 <includes>
                                     <include>*.cpp</include>
-                                    <include>specifics/AviexCCD/*.cpp</include>
-                                    <include>specifics/BaslerCCD/*.cpp</include>
-                                    <include>specifics/Eiger/*.cpp</include> 
-                                    <include>specifics/ImXpad/*.cpp</include>
                                     <include>specifics/Layout/*.cpp</include>                            
-                                    <include>specifics/MarCCD/*.cpp</include>
-                                    <include>specifics/Merlin/*.cpp</include>
-                                    <include>specifics/PilatusPixelDetector/*.cpp</include>
+                                    <include>specifics/Mask/*.cpp</include>
                                     <include>specifics/RoiCounters/*.cpp</include>
-                                    <include>specifics/ProsilicaCCD/*.cpp</include>                                                        
-                                    <include>specifics/XpadPixelDetector/*.cpp</include>
                                     <include>specifics/SimulatorCCD/*.cpp</include>                                    
                                 </includes>
                                 
                                 <includePaths>                          
                                     <includePath>src</includePath>                            
-                                    <includePath>specifics/AviexCCD</includePath>
-                                    <includePath>specifics/BaslerCCD</includePath>                            
-                                    <includePath>specifics/ImXpad</includePath>                             
-                                    <includePath>specifics/Eiger</includePath>    
                                     <includePath>specifics/Layout</includePath>                                                        
-                                    <includePath>specifics/MarCCD</includePath>
-                                    <includePath>specifics/Merlin</includePath>
-                                    <includePath>specifics/PilatusPixelDetector</includePath>
+                                    <includePath>specifics/Mask</includePath>
                                     <includePath>specifics/RoiCounters</includePath>
-                                    <includePath>specifics/ProsilicaCCD</includePath>                                                                                     
-                                    <includePath>specifics/XpadPixelDetector</includePath>
                                     <includePath>specifics/SimulatorCCD</includePath>
                                 </includePaths>
                                 
@@ -195,24 +108,6 @@
                                     <define>PROCESSLIB_VERSION=${PROCESSLIB.version}</define>
                                     <define>CORE_NAME=${CORE.name}</define>
                                     <define>CORE_VERSION=${CORE.version}</define>
-                                    <define>AVIEX_NAME=${AVIEX.name}</define>
-                                    <define>AVIEX_VERSION=${AVIEX.version}</define>
-                                    <define>BASLER_NAME=${BASLER.name}</define>
-                                    <define>BASLER_VERSION=${BASLER.version}</define>
-                                    <define>EIGER_NAME=${EIGER.name}</define>
-                                    <define>EIGER_VERSION=${EIGER.version}</define>
-                                    <define>IMXPAD_NAME=${IMXPAD.name}</define>
-                                    <define>IMXPAD_VERSION=${IMXPAD.version}</define>
-                                    <define>MARCCD_NAME=${MARCCD.name}</define>
-                                    <define>MARCCD_VERSION=${MARCCD.version}</define>
-                                    <define>MERLIN_NAME=${MERLIN.name}</define>
-                                    <define>MERLIN_VERSION=${MERLIN.version}</define>
-                                    <define>PILATUS_NAME=${PILATUS.name}</define>
-                                    <define>PILATUS_VERSION=${PILATUS.version}</define>
-                                    <define>PROSILICA_NAME=${PROSILICA.name}</define>
-                                    <define>PROSILICA_VERSION=${PROSILICA.version}</define>
-                                    <define>XPAD_NAME=${XPAD.name}</define>
-                                    <define>XPAD_VERSION=${XPAD.version}</define>
                                     <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
                                     <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
 
@@ -220,18 +115,10 @@
                                     <define>USE_GIGE</define>
                                     <!-- Needed By Aviex -->
                                     <define>OS_UNIX</define>
-                                    <!-- define which detector you need to ENABLE -->                            
-                                    <define>AVIEX_ENABLED</define>	
-                                    <define>BASLER_ENABLED</define>                               
-                                    <define>IMXPAD_ENABLED</define>
-                                    <define>EIGER_ENABLED</define>                  
+                                    <!-- define which detector you need to ENABLE -->                                       
                                     <define>LAYOUT_ENABLED</define>		                                                                                                       								 
-                                    <define>MARCCD_ENABLED</define>
-                                    <define>MERLIN_ENABLED</define>
-                                    <define>PILATUS_ENABLED</define>
+                                    <define>MASK_ENABLED</define>
                                     <define>ROICOUNTERS_ENABLED</define>
-                                    <define>PROSILICA_ENABLED</define>				                                                      		
-                                    <define>XPAD_ENABLED</define>
                                     <define>SIMULATOR_ENABLED</define>
                                     <define>SOLEIL_YAT_STREAM</define>
                                 </defines>               
@@ -447,7 +334,7 @@
         <profile>
             <id>win_32</id>
             <activation>
-                <activeByDefault>true</activeByDefault>                
+                <activeByDefault>false</activeByDefault>                
                 <property>
                     <name>env</name>
                     <value>win_32</value>
@@ -539,7 +426,7 @@
                 </dependency>
 
                 <!-- Lima Camera Plugins -->
-                <!-- <dependency>
+                <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaAndor-${aol}-shared-${mode}</artifactId>
                     <version>${ANDOR.version}</version>
@@ -548,13 +435,13 @@
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaHamamatsu-${aol}-shared-${mode}</artifactId>
                     <version>${HAMAMATSU.version}</version>
-                </dependency> -->
+                </dependency>
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaPco-${aol}-shared-${mode}</artifactId>
                     <version>${PCO.version}</version>
                 </dependency>
-                <!-- <dependency>
+                <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaPerkinElmer-${aol}-shared-${mode}</artifactId>
                     <version>${PERKINELMER.version}</version>
@@ -569,7 +456,7 @@
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaUview-${aol}-shared-${mode}</artifactId>
                     <version>${UVIEW.version}</version>
-                </dependency> -->
+                </dependency>
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaSimulator-${aol}-shared-${mode}</artifactId>
@@ -587,17 +474,16 @@
                                 <sourceDirectory>${project.basedir}</sourceDirectory>                        
                                 <includes>
                                     <include>*.cpp</include>
-                                    
-                                    <!-- <include>specifics/AndorCCD/*.cpp</include>
-                                    <include>specifics/Hamamatsu/*.cpp</include> -->
+                                    <include>specifics/AndorCCD/*.cpp</include>
+                                    <include>specifics/Hamamatsu/*.cpp</include>
                                     <include>specifics/Pco/*.cpp</include>
-                                    <!-- <include>specifics/PerkinElmer/*.cpp</include>
+                                    <include>specifics/PerkinElmer/*.cpp</include>
                                     <include>specifics/PrincetonCCD/*.cpp</include>
-                                    <include>specifics/UviewCCD/*.cpp</include> -->
-                                    <include>specifics/SimulatorCCD/*.cpp</include>        
-
                                     <include>specifics/RoiCounters/*.cpp</include>
                                     <include>specifics/Layout/*.cpp</include>
+                                    <include>specifics/Mask/*.cpp</include>
+                                    <include>specifics/UviewCCD/*.cpp</include>
+                                    <include>specifics/SimulatorCCD/*.cpp</include>                                    
                                 </includes>
                                 <systemIncludePaths>
                                     <systemIncludePath>../../../camera/hamamatsu/temp-new-sdk/include</systemIncludePath>
@@ -605,17 +491,16 @@
                                                 
                                 <includePaths>
                                     <includePath>src</includePath>
-                                    
-                                    <!-- <include>specifics/AndorCCD</include>
-                                    <include>specifics/Hamamatsu</include> -->
+                                    <include>specifics/AndorCCD</include>
+                                    <include>specifics/Hamamatsu</include>
                                     <include>specifics/Pco</include>
-                                    <!-- <include>specifics/PerkinElmer</include>
+                                    <include>specifics/PerkinElmer</include>
                                     <include>specifics/PrincetonCCD</include>
-                                    <include>specifics/UviewCCD</include> -->
-                                    <include>specifics/SimulatorCCD</include>                 
-
                                     <include>specifics/RoiCounters</include>
-                                    <include>specifics/Layout</include>                                    
+                                    <include>specifics/Layout</include>
+                                    <include>specifics/Mask</include>
+                                    <include>specifics/UviewCCD</include>
+                                    <include>specifics/SimulatorCCD</include>                         
                                 </includePaths>
                                 
                                 <defines>
@@ -647,16 +532,16 @@
                                     <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
 
                                     <!-- define which detector you need to ENABLE -->
-                                    <!-- <define>ANDOR_ENABLED</define>		
-                                    <define>HAMAMATSU_ENABLED</define>     -->                        
+                                    <define>ANDOR_ENABLED</define>		
+                                    <define>HAMAMATSU_ENABLED</define>                            
                                     <define>PCO_ENABLED</define>
-                                    <!-- <define>PERKINELMER_ENABLED</define>
-                                    <define>PRINCETON_ENABLED</define>       -->                              
-                                    <!-- <define>UVIEW_ENABLED</define> -->
-                                    <define>SIMULATOR_ENABLED</define>
-                                    
+                                    <define>PERKINELMER_ENABLED</define>
+                                    <define>PRINCETON_ENABLED</define>                                    
                                     <define>ROICOUNTERS_ENABLED</define>	
                                     <define>LAYOUT_ENABLED</define>
+                                    <define>MASK_ENABLED</define>
+                                    <define>UVIEW_ENABLED</define>
+                                    <define>SIMULATOR_ENABLED</define>
                                     <define>SOLEIL_YAT_STREAM</define>
                                 </defines>                                                                            
                             </cpp> 

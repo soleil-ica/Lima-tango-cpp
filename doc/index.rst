@@ -15,6 +15,7 @@ This device server provides several Tango classes:
 - Optionnal classes:
  * **RoiCounters** : Allows to set Rois and get some statistic for each roi (sum, average, std ...)
  * **Layout** : Allows to modify the original image (flip, rotation, additions ...)
+ * **Mask** : Allows to define a mask on the original image (force some pixels to 0) 
  * **FlatField** : Allows to modify the original image by substracting a flatfield image
  * **BackgroundSubstraction** : Allows to modify the original image by substracting a background image
  
@@ -54,3 +55,4 @@ This device server provides several Tango classes:
   
   RoiCounters <RoiCounters/roicounters>
   Layout <Layout/layout>
+  Mask <Mask/mask>

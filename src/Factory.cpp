@@ -36,6 +36,9 @@ void ControlFactory::initialize()
     m_device_name_roicounters = "none";
 #endif  
 
+#ifdef MASK_ENABLED    
+    m_device_name_mask = "none";
+#endif
     m_status.str("");
     m_state = Tango::INIT;
 }
@@ -89,6 +92,17 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_datum >> m_device_name_roicounters;
             }
 #endif     
+			
+#ifdef MASK_ENABLED
+            {
+                std::string mask = "Mask";
+                Tango::DbDatum db_datum;
+                m_device_name_generic = Tango::Util::instance()->get_ds_name();
+                db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, mask);
+                db_datum >> m_device_name_mask;
+            }
+#endif         
+			
         }
 
 #ifdef SIMULATOR_ENABLED
@@ -860,6 +874,29 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
         ////throw LIMA_HW_EXC(Error, std::string(df.errors[0].desc).c_str());
     }
 #endif 
+	
+#ifdef MASK_ENABLED        
+    try
+    {
+        //@@@TODO and if not exist ?? get the tango device/instance for layout
+        if (!ControlFactory::m_is_created)
+        {
+            std::string mask = "Mask";
+            Tango::DbDatum db_datum;
+            m_device_name_generic = Tango::Util::instance()->get_ds_name();
+            db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, mask);
+            db_datum >> m_device_name_mask;
+        }
+        (Tango::Util::instance()->get_device_by_name(m_device_name_mask))->delete_device();
+        (Tango::Util::instance()->get_device_by_name(m_device_name_mask))->init_device();
+    }
+    catch (Tango::DevFailed& df)
+    {
+        //- rethrow exception
+        ////throw LIMA_HW_EXC(Error, std::string(df.errors[0].desc).c_str());
+    }
+#endif
+	
 }
 
 //-----------------------------------------------------------------------------------------

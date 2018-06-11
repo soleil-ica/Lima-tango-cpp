@@ -221,6 +221,9 @@ private:
 #ifdef ROICOUNTERS_ENABLED    
     std::string                     m_device_name_roicounters;
 #endif        
+#ifdef MASK_ENABLED    
+    std::string                     m_device_name_mask;
+#endif      
     Tango::DevState                 m_state;
     stringstream                    m_status;
     stringstream                    m_event_status;	
