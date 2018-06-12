@@ -38,6 +38,7 @@ This device server provides several Tango classes:
   Hamamatsu <Hamamatsu/hamamatsu>
   ImXpad <ImXpad/imxpad>
   MarCCD <MarCCD/marccd>
+  Maxipix <Maxipix/maxipix>
   Merlin <Merlin/merlin>
   Pco <Pco/pco>
   PerkinElmer <PerkinElmer/perkinelmer>
