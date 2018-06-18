@@ -64,7 +64,6 @@
 
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
 #define MAX_NB_ROICOUNTERS              32
-
 #define CURRENT_VERSION                 "1.2.0"
 
 
@@ -101,6 +100,7 @@ public:
     //@{
 		Tango::DevString	*attr_version_read;
 		Tango::DevULong	attr_runLevel_write;
+		Tango::DevString	*attr_operationsList_read;
 //@}
 
     /**
@@ -221,6 +221,10 @@ public:
  */
 	virtual void write_runLevel(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for operationsList acquisition result.
+ */
+	virtual void read_operationsList(Tango::Attribute &attr);
+/**
  *	Read/Write allowed for version attribute.
  */
 	virtual bool is_version_allowed(Tango::AttReqType type);
@@ -228,6 +232,10 @@ public:
  *	Read/Write allowed for runLevel attribute.
  */
 	virtual bool is_runLevel_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for operationsList attribute.
+ */
+	virtual bool is_operationsList_allowed(Tango::AttReqType type);
 /**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
@@ -320,6 +328,7 @@ protected:
     std::vector<Tango::DevDouble>    attr_std_arrays;
     std::vector<Tango::DevDouble>    attr_minValue_arrays;
     std::vector<Tango::DevDouble>    attr_maxValue_arrays;    
+    std::vector<std::string >   m_operations_list;
 } ;
 
 }	// namespace_ns

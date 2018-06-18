@@ -51,6 +51,18 @@ namespace RoiCounters_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class operationsListAttrib: public Tango::SpectrumAttr
+{
+public:
+	operationsListAttrib():SpectrumAttr("operationsList", Tango::DEV_STRING, Tango::READ, 1024) {};
+	~operationsListAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<RoiCounters *>(dev))->read_operationsList(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<RoiCounters *>(dev))->is_operationsList_allowed(ty);}
+};
+
 class runLevelAttrib: public Tango::Attr
 {
 public:

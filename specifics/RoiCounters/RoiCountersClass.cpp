@@ -273,6 +273,16 @@ void RoiCountersClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	run_level->set_default_properties(run_level_prop);
 	att_list.push_back(run_level);
 
+	//	Attribute : operationsList
+	operationsListAttrib	*operations_list = new operationsListAttrib();
+	Tango::UserDefaultAttrProp	operations_list_prop;
+	operations_list_prop.set_unit(" ");
+	operations_list_prop.set_standard_unit(" ");
+	operations_list_prop.set_display_unit(" ");
+	operations_list_prop.set_description("Enumerate all RoiCounters 'post processing' operations on the image.");
+	operations_list->set_default_properties(operations_list_prop);
+	att_list.push_back(operations_list);
+
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
 }

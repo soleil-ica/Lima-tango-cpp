@@ -110,7 +110,8 @@ void RoiCounters::delete_device()
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	//	Delete device allocated objects	
 	DELETE_DEVSTRING_ATTRIBUTE(attr_version_read);
-
+	
+	
 	//- remove any dynamic attr or command
 	INFO_STREAM << "remove any dynamic attributes or commands" << endl;
 	m_dim.remove();
@@ -136,7 +137,8 @@ void RoiCounters::init_device()
 	set_state(Tango::INIT);
 	m_is_device_initialized = false;
 	m_status_message.str("");
-
+	m_operations_list.clear();
+	
 	//initialize user data members attached to tango attributes
 	attr_frameNumber_value = 0;
 	attr_x_arrays.resize(MAX_NB_ROICOUNTERS);
@@ -155,6 +157,14 @@ void RoiCounters::init_device()
 		//- get the main object used to pilot the lima framework
 		//in fact LimaDetector is create the singleton control objet
 		m_ct = ControlFactory::instance().get_control("RoiCounters");
+		
+	//delete the operation	"RoiCounters"		
+    //remove external operations
+	INFO_STREAM << "- remove all external operations ..."<<endl;	
+	std::stringstream opId("");
+	opId << ":RoiCounters";
+	INFO_STREAM << "\t- delOp [" << opId.str() << "]"<<endl;
+	m_ct->externalOperation()->delOp(opId.str());			
 	}
 	catch(Exception& e)
 	{
@@ -198,11 +208,6 @@ void RoiCounters::init_device()
     	runlevel.set_write_value(attr_runLevel_write);
     	write_runLevel(runlevel);
 		
-		//create new operation			
-		std::stringstream opId("ARoiCounters");
-		INFO_STREAM << "addOp(" << opId.str() << ")" << endl;
-		m_ct->externalOperation()->addOp(ROICOUNTERS, opId.str(),attr_runLevel_write , m_soft_operation);
-
 		//Write tango hardware at Init
 		std::stringstream ssName;
 		std::string strName;
@@ -256,6 +261,14 @@ void RoiCounters::init_device()
 			write_rois_callback(cbd_height);
 		}
 	}
+	catch(ProcessException& p)
+	{
+		ERROR_STREAM << "Initialization Failed : " << p.getErrMsg() << endl;
+		m_status_message << "Initialization Failed : " << p.getErrMsg() << endl;
+		m_is_device_initialized = false;
+		set_state(Tango::FAULT);
+		return;
+	}	
 	catch(Exception& e)
 	{
 		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
@@ -469,6 +482,50 @@ void RoiCounters::read_attr_hardware(vector<long> &attr_list)
 }
 //+----------------------------------------------------------------------------
 //
+// method : 		RoiCounters::read_operationsList
+// 
+// description : 	Extract real attribute values for operationsList acquisition result.
+//
+//-----------------------------------------------------------------------------
+void RoiCounters::read_operationsList(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "RoiCounters::read_operationsList(Tango::Attribute &attr) entering... "<< endl;
+	try
+	{
+		//list all operations
+		Tango::DevString *ptr = new Tango::DevString[ 1024 ];
+
+		int item_idx = 0;
+		ptr[item_idx] = CORBA::string_dup("");
+		for(int i = 0;i < m_operations_list.size();i++)
+		{
+			ptr[item_idx] = CORBA::string_dup(m_operations_list.at(i).c_str());
+			item_idx++;
+		}
+
+		attr.set_value(ptr, item_idx, 0, true);
+	}
+	catch(Exception& e)
+	{
+		ERROR_STREAM << e.getErrMsg() << endl;
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"Mask::read_operationsList");
+	}	
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"Mask::read_operationsList");
+    }		
+}
+
+//+----------------------------------------------------------------------------
+//
 // method : 		RoiCounters::read_runLevel
 // 
 // description : 	Extract real attribute values for runLevel acquisition result.
@@ -492,8 +549,27 @@ void RoiCounters::write_runLevel(Tango::WAttribute &attr)
 	try
 	{
 		attr.get_write_value(attr_runLevel_write);
+				//first delete the operation	"RoiCounters"		
+		std::stringstream opId("");
+		opId << ":RoiCounters";
+		INFO_STREAM << "delOp [" << opId.str() << "]" << endl;
+		m_ct->externalOperation()->delOp(opId.str());		
+		
+		//create new operation			
+		INFO_STREAM << "addOp [" << opId.str() << "]" << endl;
+		m_ct->externalOperation()->addOp(ROICOUNTERS, opId.str(), attr_runLevel_write , m_soft_operation);
 		yat4tango::PropertyHelper::set_property(this, "MemorizedRunLevel", attr_runLevel_write);
+		
+		update_roi();
 	}
+	catch(ProcessException& p)
+	{
+		ERROR_STREAM << p.getErrMsg() << endl;
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						p.getErrMsg().c_str(),
+						"RoiCounters::write_runLevel()");		
+	}	
 	catch(Tango::DevFailed& df)
 	{
 		ERROR_STREAM << df << endl;
@@ -551,6 +627,8 @@ void RoiCounters::update_roi()
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
+		std::stringstream ss_rois("");
+		ss_rois<<"runLevel = "<<attr_runLevel_write<<" : Operation = "<<"RoiCounters :"<<endl;		
 		std::list<SoftOpRoiCounter::RoiNameAndRoi> listNameAndRois;
 		SoftOpRoiCounter::RoiNameAndRoi roiNameAndRoi;
 		for(int i = 0;i < nbRoiCounters;i++)
@@ -566,27 +644,37 @@ void RoiCounters::update_roi()
 			iter != listNameAndRois.end();
 			iter++)
 		{
-			INFO_STREAM << "roi " << (*iter).first << "\t : " << (*iter).second << endl;
+			ss_rois<< "- roi " << (*iter).first << " : " << (*iter).second << endl;			
 		}
-
+		INFO_STREAM << ss_rois.str() << endl;
+		
 		if((reinterpret_cast<SoftOpRoiCounter*> (m_soft_operation.m_opt)) != 0)
 		{
 			(reinterpret_cast<SoftOpRoiCounter*> (m_soft_operation.m_opt))->clearCounterStatus();
 			(reinterpret_cast<SoftOpRoiCounter*> (m_soft_operation.m_opt))->updateRois(listNameAndRois);
 		}
+		
+		//in order to update operationsList attribute
+		m_operations_list.clear();			
+		m_operations_list.push_back(ss_rois.str());		
 	}
 	catch(ProcessException& p)
 	{
-		ERROR_STREAM << "ERROR ProcessException" << endl;
+		ERROR_STREAM << p.getErrMsg() << endl;
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						p.getErrMsg().c_str(),
+						"RoiCounters::update_roi()");		
 	}
 	catch(Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		//- throw exception
-		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-									e.getErrMsg().c_str(),
-									"RoiCounters::update_roi");
-	}
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"RoiCounters::update_roi()");
+	}	
+	
 	INFO_STREAM << "RoiCounters::update_roi() - [END]" << endl;
 }
 
@@ -932,11 +1020,7 @@ bool RoiCounters::create_image_dynamic_attributes(void)
 			{
 				dai.tai.data_type = Tango::DEV_USHORT;
 			}
-			else if(pixel_depth == "24")
-			{
-				dai.tai.data_type = Tango::DEV_ULONG;
-			}
-			else if(pixel_depth == "32")
+			else if(pixel_depth == "24" || pixel_depth == "32")
 			{
 				dai.tai.data_type = Tango::DEV_ULONG;
 			}
@@ -1353,6 +1437,7 @@ Tango::DevState RoiCounters::dev_state()
 	argout = DeviceState;
 	return argout;
 }
+
 
 
 
