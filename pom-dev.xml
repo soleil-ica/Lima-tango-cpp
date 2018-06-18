@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.8.3</version>
+    <version>1.8.4-SNAPSHOT</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -26,7 +26,7 @@
         <profile>
             <id>linux_32</id>
             <activation>
-                <activeByDefault>true</activeByDefault>                
+                <activeByDefault>false</activeByDefault>                
                 <property>
                     <name>env</name>
                     <value>linux_32</value>
@@ -334,7 +334,7 @@
         <profile>
             <id>win_32</id>
             <activation>
-                <activeByDefault>false</activeByDefault>                
+                <activeByDefault>true</activeByDefault>                
                 <property>
                     <name>env</name>
                     <value>win_32</value>
@@ -425,7 +425,7 @@
                     <version>${CORE.version}</version>
                 </dependency>
 
-                <!-- Lima Camera Plugins -->
+<!--                 Lima Camera Plugins 
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaAndor-${aol}-shared-${mode}</artifactId>
@@ -456,7 +456,7 @@
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaUview-${aol}-shared-${mode}</artifactId>
                     <version>${UVIEW.version}</version>
-                </dependency>
+                </dependency>-->
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaSimulator-${aol}-shared-${mode}</artifactId>
@@ -474,32 +474,32 @@
                                 <sourceDirectory>${project.basedir}</sourceDirectory>                        
                                 <includes>
                                     <include>*.cpp</include>
-                                    <include>specifics/AndorCCD/*.cpp</include>
+<!--                                    <include>specifics/AndorCCD/*.cpp</include>
                                     <include>specifics/Hamamatsu/*.cpp</include>
                                     <include>specifics/Pco/*.cpp</include>
                                     <include>specifics/PerkinElmer/*.cpp</include>
                                     <include>specifics/PrincetonCCD/*.cpp</include>
+                                    <include>specifics/UviewCCD/*.cpp</include>-->
                                     <include>specifics/RoiCounters/*.cpp</include>
                                     <include>specifics/Layout/*.cpp</include>
                                     <include>specifics/Mask/*.cpp</include>
-                                    <include>specifics/UviewCCD/*.cpp</include>
                                     <include>specifics/SimulatorCCD/*.cpp</include>                                    
                                 </includes>
                                 <systemIncludePaths>
-                                    <systemIncludePath>../../../camera/hamamatsu/temp-new-sdk/include</systemIncludePath>
+                                    <!--<systemIncludePath>../../../camera/hamamatsu/temp-new-sdk/include</systemIncludePath>-->
                                 </systemIncludePaths>
                                                 
                                 <includePaths>
                                     <includePath>src</includePath>
-                                    <include>specifics/AndorCCD</include>
+<!--                                    <include>specifics/AndorCCD</include>
                                     <include>specifics/Hamamatsu</include>
                                     <include>specifics/Pco</include>
                                     <include>specifics/PerkinElmer</include>
                                     <include>specifics/PrincetonCCD</include>
+                                    <include>specifics/UviewCCD</include>                                    -->
                                     <include>specifics/RoiCounters</include>
                                     <include>specifics/Layout</include>
                                     <include>specifics/Mask</include>
-                                    <include>specifics/UviewCCD</include>
                                     <include>specifics/SimulatorCCD</include>                         
                                 </includePaths>
                                 
@@ -516,7 +516,7 @@
                                     <define>PROCESSLIB_VERSION=${PROCESSLIB.version}</define>
                                     <define>CORE_NAME=${CORE.name}</define>
                                     <define>CORE_VERSION=${CORE.version}</define>
-                                    <define>ANDOR_NAME=${ANDOR.name}</define>
+<!--                                    <define>ANDOR_NAME=${ANDOR.name}</define>
                                     <define>ANDOR_VERSION=${ANDOR.version}</define>
                                     <define>HAMAMATSU_NAME=${HAMAMATSU.name}</define>
                                     <define>HAMAMATSU_VERSION=${HAMAMATSU.version}</define>
@@ -527,20 +527,20 @@
                                     <define>PRINCETON_NAME=${PRINCETON.name}</define>
                                     <define>PRINCETON_VERSION=${PRINCETON.version}</define>
                                     <define>UVIEW_NAME=${UVIEW.name}</define>
-                                    <define>UVIEW_VERSION=${UVIEW.version}</define>
+                                    <define>UVIEW_VERSION=${UVIEW.version}</define>-->
                                     <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
                                     <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
 
                                     <!-- define which detector you need to ENABLE -->
-                                    <define>ANDOR_ENABLED</define>		
+<!--                                    <define>ANDOR_ENABLED</define>		
                                     <define>HAMAMATSU_ENABLED</define>                            
                                     <define>PCO_ENABLED</define>
                                     <define>PERKINELMER_ENABLED</define>
                                     <define>PRINCETON_ENABLED</define>                                    
                                     <define>ROICOUNTERS_ENABLED</define>	
+                                    <define>UVIEW_ENABLED</define>                                    -->
                                     <define>LAYOUT_ENABLED</define>
                                     <define>MASK_ENABLED</define>
-                                    <define>UVIEW_ENABLED</define>
                                     <define>SIMULATOR_ENABLED</define>
                                     <define>SOLEIL_YAT_STREAM</define>
                                 </defines>                                                                            

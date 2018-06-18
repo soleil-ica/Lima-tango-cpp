@@ -639,7 +639,7 @@ void LimaDetectorClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	detector_width_max_prop;
 	detector_width_max_prop.set_unit(" ");
 	detector_width_max_prop.set_format("%6d");
-    detector_width_max_prop.set_description("Maximum width");
+	detector_width_max_prop.set_description("Maximum width");
 	detector_width_max->set_default_properties(detector_width_max_prop);
 	att_list.push_back(detector_width_max);
 
@@ -648,7 +648,7 @@ void LimaDetectorClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	detector_height_max_prop;
 	detector_height_max_prop.set_unit(" ");
 	detector_height_max_prop.set_format("%6d");
-    detector_height_max_prop.set_description("Maximum height");
+	detector_height_max_prop.set_description("Maximum height");
 	detector_height_max->set_default_properties(detector_height_max_prop);
 	att_list.push_back(detector_height_max);
 
@@ -873,6 +873,16 @@ void LimaDetectorClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	file_nb_frames->set_memorized_init(false);
 	att_list.push_back(file_nb_frames);
 
+	//	Attribute : operationsList
+	operationsListAttrib	*operations_list = new operationsListAttrib();
+	Tango::UserDefaultAttrProp	operations_list_prop;
+	operations_list_prop.set_unit(" ");
+	operations_list_prop.set_standard_unit(" ");
+	operations_list_prop.set_display_unit(" ");
+	operations_list_prop.set_description("Enumerate all active 'post processing' operations on the image.");
+	operations_list->set_default_properties(operations_list_prop);
+	att_list.push_back(operations_list);
+
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
 }
@@ -970,7 +980,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "DetectorType";
-	prop_desc = "Define the type of the connected Detector .<BR>\nAvailables types :<BR>\n- AdscCCD<BR>\n- AviexCCD<br>\n- BaslerCCD<BR>\n- Eiger<br>\n- Hamamatsu<br>\n- MarCCD<BR>\n- Merlin <BR>\n- Pco<BR>\n- PerkinElmer<BR>\n- PilatusPixelDetector<BR>\n- ProsilicaCCD<BR>\n- PrincetonCCD<BR>\n- SimulatorCCD<BR>\n- XpadPixelDetector<BR>\n\n";
+	prop_desc = "Define the type of the connected Detector .<BR>\nAvailables types :<BR>\n- AndorCCD<BR>\n- AviexCCD<br>\n- BaslerCCD<BR>\n- Eiger<br>\n- Hamamatsu<br>\n- ImXpad<br>\n- MarCCD<BR>\n- Maxipix <BR>\n- Merlin <BR>\n- Pco<BR>\n- PerkinElmer<BR>\n- PilatusPixelDetector<BR>\n- ProsilicaCCD<BR>\n- PrincetonCCD<BR>\n- SimulatorCCD<BR>\n- UviewCCD<BR>\n- XpadPixelDetector<BR>\n\n";
 	prop_def  = "SimulatorCCD";
 	vect_data.clear();
 	vect_data.push_back("SimulatorCCD");
@@ -985,7 +995,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "DetectorPixelDepth";
-	prop_desc = "Define the pixel depth of the detector : <br>\nAvailables values : <br>\n- 8 <br>\n- 16<br>\n- 32<br>\n- 32S<br>";
+	prop_desc = "Define the pixel depth of the detector : <br>\nAvailables values : <br>\n- 8 <br>\n- 12<br>\n- 16<br>\n- 16S<br>\n- 24<br>\n- 24S<br>\n- 32<br>\n- 32S<br>";
 	prop_def  = "16";
 	vect_data.clear();
 	vect_data.push_back("16");

@@ -73,6 +73,8 @@
 #include "lima/CtSaving.h"
 #include "lima/CtBuffer.h"
 #include "lima/CtImage.h"
+#include "lima/SoftOpId.h"
+#include "lima/SoftOpExternalMgr.h"
 #include "processlib/Data.h"
 #include "lima/CtVideo.h"
 #include "lima/CtShutter.h"
@@ -199,6 +201,7 @@ public:
 		Tango::DevString	attr_fileTargetPath_write;
 		Tango::DevLong	*attr_fileNbFrames_read;
 		Tango::DevLong	attr_fileNbFrames_write;
+		Tango::DevString	*attr_operationsList_read;
 //@}
 
     /**
@@ -718,6 +721,10 @@ public:
  */
 	virtual void write_fileNbFrames(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for operationsList acquisition result.
+ */
+	virtual void read_operationsList(Tango::Attribute &attr);
+/**
  *	Read/Write allowed for detectorDescription attribute.
  */
 	virtual bool is_detectorDescription_allowed(Tango::AttReqType type);
@@ -821,6 +828,10 @@ public:
  *	Read/Write allowed for fileNbFrames attribute.
  */
 	virtual bool is_fileNbFrames_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for operationsList attribute.
+ */
+	virtual bool is_operationsList_allowed(Tango::AttReqType type);
 /**
  *	Execution allowed for Prepare command.
  */

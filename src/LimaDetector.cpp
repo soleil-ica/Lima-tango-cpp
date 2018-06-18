@@ -1013,6 +1013,65 @@ void LimaDetector::read_attr_hardware(vector<long> &attr_list)
     DEBUG_STREAM << "LimaDetector::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
     //    Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		LimaDetector::read_operationsList
+// 
+// description : 	Extract real attribute values for operationsList acquisition result.
+//
+//-----------------------------------------------------------------------------
+void LimaDetector::read_operationsList(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "LimaDetector::read_operationsList(Tango::Attribute &attr) entering... "<< endl;
+	try
+	{
+		Tango::DevString *ptr = new Tango::DevString[ 1024 ];
+
+		//list all operations
+		int item_idx = 0;	
+		std::map<int, std::list<std::string> > map_active_ops;		
+		m_ct->externalOperation()->getActiveOp(map_active_ops);
+		for(std::map<int, std::list<std::string> >::const_iterator it_map = map_active_ops.begin();it_map != map_active_ops.end();++it_map)
+		{
+			for(std::list<string>::const_iterator it_list = it_map->second.begin();it_list != it_map->second.end();++it_list)
+			{
+				std::string op_name = (*it_list).substr((*it_list).find(":")+1);
+				std::stringstream ss("");
+				ss<< "runLevel = " << it_map->first << " : Operation = " << op_name;
+				ptr[item_idx] = CORBA::string_dup(ss.str().c_str());
+				item_idx++;	
+			}
+		}
+
+		attr.set_value(ptr, item_idx, 0, true);	
+	}
+	catch(ProcessException& p)
+	{
+		ERROR_STREAM << p.getErrMsg() << endl;
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						p.getErrMsg().c_str(),
+						"LimaDetector::read_operationsList");		
+	}
+	catch(Exception& e)
+	{
+		ERROR_STREAM << e.getErrMsg() << endl;
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"LimaDetector::read_operationsList");
+	}	
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_operationsList");
+    }	
+}
+
 
 //+----------------------------------------------------------------------------
 //
@@ -4622,11 +4681,7 @@ void LimaDetector::add_image_dynamic_attribute(void)
     {
         dai.tai.data_type = Tango::DEV_USHORT;
     }
-    else if(detectorPixelDepth == "24")
-    {
-        dai.tai.data_type = Tango::DEV_ULONG;
-    }
-    else if(detectorPixelDepth == "32")
+    else if(detectorPixelDepth == "24" || detectorPixelDepth == "32")
     {
         dai.tai.data_type = Tango::DEV_ULONG;
     }
@@ -4826,11 +4881,6 @@ void LimaDetector::execute_close_shutter_callback(yat4tango::DynamicCommandExecu
                         "LimaDetector::execute_close_shutter_callback");
     }
 }
-
-
-
-
-
 
 
 }	//	namespace
