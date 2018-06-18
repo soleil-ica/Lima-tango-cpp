@@ -36,6 +36,7 @@ static const char *RcsId = "$Id $";
 #include <tango.h>
 #endif
 
+
 #include <Layout.h>
 #include <LayoutClass.h>
 
@@ -60,7 +61,20 @@ namespace Layout_ns
 //=================================================
 //		Attributes Allowed Methods
 //=================================================
+//+----------------------------------------------------------------------------
+//
+// method : 		Layout::is_version_allowed
+// 
+// description : 	Read/Write allowed for version attribute.
+//
+//-----------------------------------------------------------------------------
+bool Layout::is_version_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
 
+		//	Re-Start of Generated Code
+	return true;
+}
 //+----------------------------------------------------------------------------
 //
 // method : 		Layout::is_operationType_allowed

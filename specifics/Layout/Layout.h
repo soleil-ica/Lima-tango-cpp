@@ -59,6 +59,7 @@
 
 
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
+#define CURRENT_VERSION                 "1.2.0"
 
 namespace Layout_ns
 {
@@ -174,6 +175,7 @@ namespace Layout_ns
          *	Attribute member data.
          */
         //@{
+		Tango::DevString	*attr_version_read;
 		Tango::DevString	*attr_operationType_read;
 		Tango::DevString	attr_operationType_write;
 		Tango::DevString	*attr_operationValue_read;
@@ -275,6 +277,10 @@ namespace Layout_ns
  */
 	virtual void read_attr_hardware(vector<long> &attr_list);
 /**
+ *	Extract real attribute values for version acquisition result.
+ */
+	virtual void read_version(Tango::Attribute &attr);
+/**
  *	Extract real attribute values for operationType acquisition result.
  */
 	virtual void read_operationType(Tango::Attribute &attr);
@@ -294,6 +300,10 @@ namespace Layout_ns
  *	Extract real attribute values for operationsList acquisition result.
  */
 	virtual void read_operationsList(Tango::Attribute &attr);
+/**
+ *	Read/Write allowed for version attribute.
+ */
+	virtual bool is_version_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for operationType attribute.
  */
@@ -362,6 +372,7 @@ namespace Layout_ns
         //map used to memorize all active operations
         struct operationParams
         {
+            std::string opId;
             std::string operationType;
             std::string operationValue;
         };
