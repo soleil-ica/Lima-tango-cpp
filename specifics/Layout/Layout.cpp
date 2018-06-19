@@ -608,10 +608,10 @@ void Layout::delete_external_operation(long level)
     {
         try
         {			
-            std::stringstream opId("");
-            opId << m_mapOperations[level].opId;
-            INFO_STREAM << "\t- delOp [" << opId.str() << "]"<<endl;
-            m_ct->externalOperation()->delOp(opId.str());
+			std::stringstream opId("");
+			opId << m_mapOperations[level].opId;
+			INFO_STREAM << "\t- delOp [" << opId.str() << "]"<<endl;
+			m_ct->externalOperation()->delOp(opId.str());
 			m_mapOperations.erase(level);
         }
         catch (Exception& e)
@@ -857,8 +857,13 @@ void Layout::remove_operation(Tango::DevLong argin)
     try
     {
         yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-        delete_external_operation(argin);
-        memorize_all_operations();
+		std::map<long, operationParams >::iterator it;			
+		it = m_mapOperations.find (argin);	
+		if (it != m_mapOperations.end())
+		{		
+			delete_external_operation(argin);
+			memorize_all_operations();			
+		}
     }
     catch (Exception& e)
     {
