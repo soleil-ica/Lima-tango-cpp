@@ -106,6 +106,7 @@ void Pco::delete_device()
     DELETE_DEVSTRING_ATTRIBUTE(attr_cameraModel_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_dllVersion_read);
     DELETE_SCALAR_ATTRIBUTE(attr_sensorTemperature_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_forcedFIFOMode_read);
 
     //- For dyn attr
     DELETE_SCALAR_ATTRIBUTE(attr_maxNbImage_read);
@@ -148,7 +149,7 @@ void Pco::init_device()
     CREATE_DEVSTRING_ATTRIBUTE(attr_cameraModel_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dllVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_SCALAR_ATTRIBUTE(attr_sensorTemperature_read);
-
+    CREATE_SCALAR_ATTRIBUTE(attr_forcedFIFOMode_read);
     
     //- For dyn attr
     CREATE_SCALAR_ATTRIBUTE(attr_maxNbImage_read); 
@@ -158,7 +159,6 @@ void Pco::init_device()
     CREATE_DEVSTRING_ATTRIBUTE(attr_adcOperation_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_shutterMode_read, MAX_ATTRIBUTE_STRING_LENGTH);
 
-   
     m_is_device_initialized = false;
     strcpy(*attr_pixelRate_read, "Not Initialised");
     m_camera_model = "Not Initialised";
@@ -390,7 +390,7 @@ void Pco::create_dynamic_interface()
                 Tango::SCALAR,
                 Tango::READ_WRITE,
                 Tango::OPERATOR,
-                "°C",
+                "deg C",
                 "%d",
                 "set / get the cooling set point",
                 "Cooling Set Point",
@@ -466,7 +466,7 @@ void Pco::create_dynamic_interface()
                 Tango::SCALAR,
                 Tango::READ_WRITE,
                 Tango::OPERATOR,
-                "°C",
+                "deg C",
                 "%d",
                 "set / get the cooling set point",
                 "Cooling Set Point",
@@ -571,6 +571,60 @@ void Pco::read_attr_hardware(vector<long> &attr_list)
     DEBUG_STREAM << "Pco::read_attr_hardware(vector<long> &attr_list) entering... "<< endl;
     //	Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Pco::read_forcedFIFOMode
+// 
+// description : 	Extract real attribute values for forcedFIFOMode acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Pco::read_forcedFIFOMode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Pco::read_forcedFIFOMode(Tango::Attribute &attr) entering... "<< endl;
+
+    try
+    {
+        int temp_fifo = -1;
+        m_camera->getRecorderForcedFifo(temp_fifo);
+        *attr_forcedFIFOMode_read = (Tango::DevBoolean) temp_fifo;
+        attr.set_value(attr_forcedFIFOMode_read);
+    }
+    catch (lima::Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "LIMA_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "Pco::read_forcedFIFOMode");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Pco::write_forcedFIFOMode
+// 
+// description : 	Write forcedFIFOMode attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Pco::write_forcedFIFOMode(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Pco::write_forcedFIFOMode(Tango::WAttribute &attr) entering... "<< endl;
+
+    try
+    {
+        attr.get_write_value(attr_forcedFIFOMode_write);
+        m_camera->setRecorderForcedFifo((int)attr_forcedFIFOMode_write);
+    }
+    catch (lima::Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "LIMA_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "Pco::write_forcedFIFOMode");
+    }
+}
+
 //+----------------------------------------------------------------------------
 //
 // method : 		Pco::read_currentRecordedFrame
@@ -1348,6 +1402,7 @@ Tango::DevState Pco::dev_state()
     argout = DeviceState;
     return argout;
 }
+
 
 
 

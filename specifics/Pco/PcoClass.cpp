@@ -344,11 +344,20 @@ void PcoClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	sensorTemperatureAttrib	*sensor_temperature = new sensorTemperatureAttrib();
 	Tango::UserDefaultAttrProp	sensor_temperature_prop;
 	sensor_temperature_prop.set_label("sensor Temperature");
-	sensor_temperature_prop.set_unit("°C");
+	sensor_temperature_prop.set_unit("deg C");
 	sensor_temperature_prop.set_format("%6.2f");
 	sensor_temperature_prop.set_description("image sensor temperature in degree");
 	sensor_temperature->set_default_properties(sensor_temperature_prop);
 	att_list.push_back(sensor_temperature);
+
+	//	Attribute : forcedFIFOMode
+	forcedFIFOModeAttrib	*forced_fifomode = new forcedFIFOModeAttrib();
+	Tango::UserDefaultAttrProp	forced_fifomode_prop;
+	forced_fifomode_prop.set_description("Forced FIFO Mode");
+	forced_fifomode->set_default_properties(forced_fifomode_prop);
+	forced_fifomode->set_memorized();
+	forced_fifomode->set_memorized_init(true);
+	att_list.push_back(forced_fifomode);
 
 	//	Attribute : dllVersion
 	dllVersionAttrib	*dll_version = new dllVersionAttrib();
