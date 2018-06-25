@@ -109,7 +109,7 @@ Properties
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
 |FileMemoryMode              |NO_COPY                              | | Available only for Nexus format : Set the SetDataItemMemoryMode(). Available values :             |
 |                            |                                     | | COPY: the nexus lib make its own copy of the image and then works on it                           |
-|                            |                                     | | NO_COPY: ???                                                                                      |
+|                            |                                     | | NO_COPY: the nexus lib use the buffer image allocated by the lima memory manager                  |
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
 |FileTimestampEnabled        |true                                 |Available only for Nexus format: enable the timestamp                                                |
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
@@ -123,7 +123,8 @@ Properties
 |                            |                                     | | HardAndSoft                                                                                       |
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
 |ImageSource                 |VIDEO                                | | Choose the source of Data given to the image attribute :                                          |
-|                            |                                     | | VIDEO : use ctVideo->LastImage()                                                                  |
+|                            |                                     | | VIDEO : use ctVideo->LastImage() : 				                                                 |
+																   | |	       ATTENTION: specifics process as Flip/Rotation/Mask/etc... are disabled in this mode !	 |
 |                            |                                     | | ACQUISITION : use ctControl->ReadImage()                                                          |
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
 |SpecialDisplayType          |NOT_USED                             |Special type of the image attribute for display and saving (NOT_USED, FLOAT, ...)                    |

@@ -337,7 +337,7 @@ public:
  */
 	Tango::DevLong	fileNbFrames;
 /**
- *	Define the File manged Mode :<br>
+ *	Define the File managed Mode :<br>
  *	- HARDWARE : <br>
  *	- SOFTWARE :
  */
@@ -345,7 +345,7 @@ public:
 /**
  *	Available only for Nexus format : Fix the SetWriteMode(). <br>
  *	Available values :<br>
- *	- IMMEDIATE<br>
+ *	- ASYNCHRONOUS<br>
  *	- SYNCHRONOUS<br>
  *	- DELAYED
  */
@@ -402,7 +402,7 @@ public:
  */
 	Tango::DevUShort	expertBufferMaxMemoryPercent;
 /**
- *	Defines the number of threads dedicated to process images in the PricessLib
+ *	Defines the number of threads dedicated to process images in the ProcessLib
  */
 	Tango::DevUShort	expertNbPoolThread;
 /**

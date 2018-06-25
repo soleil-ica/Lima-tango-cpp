@@ -259,7 +259,7 @@ void RoiCountersClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	version_prop.set_unit(" ");
 	version_prop.set_standard_unit(" ");
 	version_prop.set_display_unit(" ");
-	version_prop.set_description("Display the Version of RoiCounters Device");
+	version_prop.set_description("Display the Version of the RoiCounters Device");
 	version->set_default_properties(version_prop);
 	att_list.push_back(version);
 

@@ -259,7 +259,7 @@ void MaskClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	version_prop.set_unit(" ");
 	version_prop.set_standard_unit(" ");
 	version_prop.set_display_unit(" ");
-	version_prop.set_description("Display the Version of Mask Device");
+	version_prop.set_description("Display the Version of the Mask Device");
 	version->set_default_properties(version_prop);
 	att_list.push_back(version);
 
@@ -289,7 +289,7 @@ void MaskClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	mask_image_prop.set_unit(" ");
 	mask_image_prop.set_standard_unit(" ");
 	mask_image_prop.set_display_unit(" ");
-	mask_image_prop.set_description("Define the image (bool) for the Mask Processing ");
+	mask_image_prop.set_description("Define the mask image for the Mask Processing ");
 	mask_image->set_default_properties(mask_image_prop);
 	att_list.push_back(mask_image);
 

@@ -1160,10 +1160,10 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "FileWriteMode";
-	prop_desc = "Available only for Nexus format : Fix the SetWriteMode(). <br>\nAvailable values :<br>\n- IMMEDIATE<br>\n- SYNCHRONOUS<br>\n- DELAYED";
-	prop_def  = "IMMEDIATE";
+	prop_desc = "Available only for Nexus format : Fix the SetWriteMode(). <br>\nAvailable values :<br>\n- ASYNCHRONOUS<br>\n- SYNCHRONOUS<br>\n- DELAYED";
+	prop_def  = "ASYNCHRONOUS";
 	vect_data.clear();
-	vect_data.push_back("IMMEDIATE");
+	vect_data.push_back("ASYNCHRONOUS");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -1273,7 +1273,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "ExpertNbPoolThread";
-	prop_desc = "Defines the number of threads dedicated to process images in the PricessLib";
+	prop_desc = "Defines the number of threads dedicated to process images in the ProcessLib";
 	prop_def  = "4";
 	vect_data.clear();
 	vect_data.push_back("4");
