@@ -3,7 +3,7 @@ static const char *RcsId = "$Id:  $";
 //
 // file :         RoiCounters.cpp
 //
-// description :  C++ source for the RoiCounters and its commands. 
+// description :  C++ source for the RoiCounters and its commands.
 //                The class is derived from Device. It represents the
 //                CORBA servant object which will be accessed from the
 //                network. All commands which can be executed on the
@@ -25,7 +25,7 @@ static const char *RcsId = "$Id:  $";
 // $Source:  $
 // $Log:  $
 //
-// copyleft :    Synchrotron SOLEIL 
+// copyleft :    Synchrotron SOLEIL
 //               L'Orme des merisiers - Saint Aubin
 //               BP48 - 91192 Gif sur Yvette
 //               FRANCE
@@ -74,11 +74,11 @@ namespace RoiCounters_ns
 //+----------------------------------------------------------------------------
 //
 // method : 		RoiCounters::RoiCounters(string &s)
-// 
+//
 // description : 	constructor for simulated RoiCounters
 //
 // in : - cl : Pointer to the DeviceClass object
-//      - s : Device name 
+//      - s : Device name
 //
 //-----------------------------------------------------------------------------
 RoiCounters::RoiCounters(Tango::DeviceClass *cl, string &s)
@@ -100,7 +100,7 @@ RoiCounters::RoiCounters(Tango::DeviceClass *cl, const char *s, const char *d)
 //+----------------------------------------------------------------------------
 //
 // method : 		RoiCounters::delete_device()
-// 
+//
 // description : 	will be called at device destruction or at init command.
 //
 //-----------------------------------------------------------------------------
@@ -108,10 +108,10 @@ void RoiCounters::delete_device()
 {
 	INFO_STREAM << "RoiCounters::delete_device() delete device " << device_name << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-	//	Delete device allocated objects	
+	//	Delete device allocated objects
 	DELETE_DEVSTRING_ATTRIBUTE(attr_version_read);
-	
-	
+
+
 	//- remove any dynamic attr or command
 	INFO_STREAM << "remove any dynamic attributes or commands" << endl;
 	m_dim.remove();
@@ -120,7 +120,7 @@ void RoiCounters::delete_device()
 //+----------------------------------------------------------------------------
 //
 // method : 		RoiCounters::init_device()
-// 
+//
 // description : 	will be called at device initialization.
 //
 //-----------------------------------------------------------------------------
@@ -129,7 +129,7 @@ void RoiCounters::init_device()
 	INFO_STREAM << "RoiCounters::init_device() create device " << device_name << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	// Initialise variables to default values
-	//--------------------------------------------	
+	//--------------------------------------------
 	get_device_property();
 
 	CREATE_DEVSTRING_ATTRIBUTE(attr_version_read, 256);
@@ -138,7 +138,7 @@ void RoiCounters::init_device()
 	m_is_device_initialized = false;
 	m_status_message.str("");
 	m_operations_list.clear();
-	
+
 	//initialize user data members attached to tango attributes
 	attr_frameNumber_value = 0;
 	attr_x_arrays.resize(MAX_NB_ROICOUNTERS);
@@ -149,7 +149,11 @@ void RoiCounters::init_device()
 	attr_average_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_std_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_minValue_arrays.resize(MAX_NB_ROICOUNTERS);
+	attr_minX_arrays.resize(MAX_NB_ROICOUNTERS);
+	attr_minY_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_maxValue_arrays.resize(MAX_NB_ROICOUNTERS);
+	attr_maxX_arrays.resize(MAX_NB_ROICOUNTERS);
+	attr_maxY_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_runLevel_write = memorizedRunLevel;
 	try
 	{
@@ -157,14 +161,14 @@ void RoiCounters::init_device()
 		//- get the main object used to pilot the lima framework
 		//in fact LimaDetector is create the singleton control objet
 		m_ct = ControlFactory::instance().get_control("RoiCounters");
-		
-	//delete the operation	"RoiCounters"		
+
+	//delete the operation	"RoiCounters"
     //remove external operations
-	INFO_STREAM << "- remove all external operations ..."<<endl;	
+	INFO_STREAM << "- remove all external operations ..."<<endl;
 	std::stringstream opId("");
 	opId << ":RoiCounters";
 	INFO_STREAM << "\t- delOp [" << opId.str() << "]"<<endl;
-	m_ct->externalOperation()->delOp(opId.str());			
+	m_ct->externalOperation()->delOp(opId.str());
 	}
 	catch(Exception& e)
 	{
@@ -207,7 +211,7 @@ void RoiCounters::init_device()
     	attr_runLevel_write = memorizedRunLevel;
     	runlevel.set_write_value(attr_runLevel_write);
     	write_runLevel(runlevel);
-		
+
 		//Write tango hardware at Init
 		std::stringstream ssName;
 		std::string strName;
@@ -268,7 +272,7 @@ void RoiCounters::init_device()
 		m_is_device_initialized = false;
 		set_state(Tango::FAULT);
 		return;
-	}	
+	}
 	catch(Exception& e)
 	{
 		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
@@ -308,7 +312,7 @@ void RoiCounters::init_device()
 //+----------------------------------------------------------------------------
 //
 // method : 		RoiCounters::get_device_property()
-// 
+//
 // description : 	Read the device properties from database.
 //
 //-----------------------------------------------------------------------------
@@ -419,7 +423,7 @@ void RoiCounters::get_device_property()
 //+----------------------------------------------------------------------------
 //
 // method : 		RoiCounters::always_executed_hook()
-// 
+//
 // description : 	method always executed before any command is executed
 //
 //-----------------------------------------------------------------------------
@@ -458,7 +462,7 @@ void RoiCounters::always_executed_hook()
 //+----------------------------------------------------------------------------
 //
 // method : 		RoiCounters::read_attr_hardware
-// 
+//
 // description : 	Hardware acquisition for attributes.
 //
 //-----------------------------------------------------------------------------
@@ -483,7 +487,7 @@ void RoiCounters::read_attr_hardware(vector<long> &attr_list)
 //+----------------------------------------------------------------------------
 //
 // method : 		RoiCounters::read_operationsList
-// 
+//
 // description : 	Extract real attribute values for operationsList acquisition result.
 //
 //-----------------------------------------------------------------------------
@@ -512,7 +516,7 @@ void RoiCounters::read_operationsList(Tango::Attribute &attr)
 		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
 						e.getErrMsg().c_str(),
 						"Mask::read_operationsList");
-	}	
+	}
     catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
@@ -521,13 +525,13 @@ void RoiCounters::read_operationsList(Tango::Attribute &attr)
 							"TANGO_DEVICE_ERROR",
 							std::string(df.errors[0].desc).c_str(),
 							"Mask::read_operationsList");
-    }		
+    }
 }
 
 //+----------------------------------------------------------------------------
 //
 // method : 		RoiCounters::read_runLevel
-// 
+//
 // description : 	Extract real attribute values for runLevel acquisition result.
 //
 //-----------------------------------------------------------------------------
@@ -539,7 +543,7 @@ void RoiCounters::read_runLevel(Tango::Attribute &attr)
 //+----------------------------------------------------------------------------
 //
 // method : 		RoiCounters::write_runLevel
-// 
+//
 // description : 	Write runLevel attribute values to hardware.
 //
 //-----------------------------------------------------------------------------
@@ -549,17 +553,17 @@ void RoiCounters::write_runLevel(Tango::WAttribute &attr)
 	try
 	{
 		attr.get_write_value(attr_runLevel_write);
-				//first delete the operation	"RoiCounters"		
+				//first delete the operation	"RoiCounters"
 		std::stringstream opId("");
 		opId << ":RoiCounters";
 		INFO_STREAM << "delOp [" << opId.str() << "]" << endl;
-		m_ct->externalOperation()->delOp(opId.str());		
-		
-		//create new operation			
+		m_ct->externalOperation()->delOp(opId.str());
+
+		//create new operation
 		INFO_STREAM << "addOp [" << opId.str() << "]" << endl;
 		m_ct->externalOperation()->addOp(ROICOUNTERS, opId.str(), attr_runLevel_write , m_soft_operation);
 		yat4tango::PropertyHelper::set_property(this, "MemorizedRunLevel", attr_runLevel_write);
-		
+
 		update_roi();
 	}
 	catch(ProcessException& p)
@@ -568,8 +572,8 @@ void RoiCounters::write_runLevel(Tango::WAttribute &attr)
 		//- throw exception
 		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
 						p.getErrMsg().c_str(),
-						"RoiCounters::write_runLevel()");		
-	}	
+						"RoiCounters::write_runLevel()");
+	}
 	catch(Tango::DevFailed& df)
 	{
 		ERROR_STREAM << df << endl;
@@ -586,13 +590,13 @@ void RoiCounters::write_runLevel(Tango::WAttribute &attr)
 		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
 									e.getErrMsg().c_str(),
 									"RoiCounters::write_runLevel");
-	}	
+	}
 }
 
 //+----------------------------------------------------------------------------
 //
 // method : 		RoiCounters::read_version
-// 
+//
 // description : 	Extract real attribute values for version acquisition result.
 //
 //-----------------------------------------------------------------------------
@@ -628,7 +632,7 @@ void RoiCounters::update_roi()
 	try
 	{
 		std::stringstream ss_rois("");
-		ss_rois<<"runLevel = "<<attr_runLevel_write<<" : Operation = "<<"RoiCounters :"<<endl;		
+		ss_rois<<"runLevel = "<<attr_runLevel_write<<" : Operation = "<<"RoiCounters :"<<endl;
 		std::list<SoftOpRoiCounter::RoiNameAndRoi> listNameAndRois;
 		SoftOpRoiCounter::RoiNameAndRoi roiNameAndRoi;
 		for(int i = 0;i < nbRoiCounters;i++)
@@ -644,19 +648,19 @@ void RoiCounters::update_roi()
 			iter != listNameAndRois.end();
 			iter++)
 		{
-			ss_rois<< "- roi " << (*iter).first << " : " << (*iter).second << endl;			
+			ss_rois<< "- roi " << (*iter).first << " : " << (*iter).second << endl;
 		}
 		INFO_STREAM << ss_rois.str() << endl;
-		
+
 		if((reinterpret_cast<SoftOpRoiCounter*> (m_soft_operation.m_opt)) != 0)
 		{
 			(reinterpret_cast<SoftOpRoiCounter*> (m_soft_operation.m_opt))->clearCounterStatus();
 			(reinterpret_cast<SoftOpRoiCounter*> (m_soft_operation.m_opt))->updateRois(listNameAndRois);
 		}
-		
+
 		//in order to update operationsList attribute
-		m_operations_list.clear();			
-		m_operations_list.push_back(ss_rois.str());		
+		m_operations_list.clear();
+		m_operations_list.push_back(ss_rois.str());
 	}
 	catch(ProcessException& p)
 	{
@@ -664,7 +668,7 @@ void RoiCounters::update_roi()
 		//- throw exception
 		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
 						p.getErrMsg().c_str(),
-						"RoiCounters::update_roi()");		
+						"RoiCounters::update_roi()");
 	}
 	catch(Exception& e)
 	{
@@ -673,8 +677,8 @@ void RoiCounters::update_roi()
 		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
 						e.getErrMsg().c_str(),
 						"RoiCounters::update_roi()");
-	}	
-	
+	}
+
 	INFO_STREAM << "RoiCounters::update_roi() - [END]" << endl;
 }
 
@@ -713,20 +717,26 @@ void RoiCounters::read_roi()
 					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
 					INFO_STREAM << "+++ roi n°: " << roinum << "\t" << endl;
 					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
-
 					attr_frameNumber_value = (*iter2).frameNumber + 1;
-					attr_sum_arrays[roinum] = (*iter2).sum;
-					attr_average_arrays[roinum] = (*iter2).average;
-					attr_std_arrays[roinum] = (*iter2).std;
-					attr_minValue_arrays[roinum] = (*iter2).minValue;
-					attr_maxValue_arrays[roinum] = (*iter2).maxValue;
-
 					INFO_STREAM << "frameNumber = " << attr_frameNumber_value << endl;
+					attr_sum_arrays[roinum] = (*iter2).sum;
 					INFO_STREAM << "sum         = " << attr_sum_arrays[roinum] << endl;
+					attr_average_arrays[roinum] = (*iter2).average;
 					INFO_STREAM << "average     = " << attr_average_arrays[roinum] << endl;
+					attr_std_arrays[roinum] = (*iter2).std;
 					INFO_STREAM << "std         = " << attr_std_arrays[roinum] << endl;
+					attr_minValue_arrays[roinum] = (*iter2).minValue;
 					INFO_STREAM << "minValue    = " << attr_minValue_arrays[roinum] << endl;
+					attr_minX_arrays[roinum] = (*iter2).minX;
+					INFO_STREAM << "minX		= " << attr_minX_arrays[roinum] << endl;
+					attr_minY_arrays[roinum] = (*iter2).minY;
+					INFO_STREAM << "minY		= " << attr_minY_arrays[roinum] << endl;
+					attr_maxValue_arrays[roinum] = (*iter2).maxValue;
 					INFO_STREAM << "maxValue    = " << attr_maxValue_arrays[roinum] << endl;
+					attr_maxX_arrays[roinum] = (*iter2).maxX;
+					INFO_STREAM << "maxX		= " << attr_maxX_arrays[roinum] << endl;
+					attr_maxY_arrays[roinum] = (*iter2).maxY;
+					INFO_STREAM << "maxY		= " << attr_maxY_arrays[roinum] << endl;
 					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
 				}
 			}
@@ -927,6 +937,34 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&attr_minValue_arrays[i]);
 
 			ssName.str("");
+			ssName << "minX" << i;
+			create_attribute(ssName.str(),
+							Tango::DEV_LONG,
+							Tango::SCALAR,
+							Tango::READ,
+							Tango::OPERATOR,
+							" ",
+							"%d",
+							"The coordinate X of the min of pixels in the Roi",
+							&RoiCounters::read_stats_callback,
+							&RoiCounters::write_callback_null,
+							&attr_minX_arrays[i]);
+
+			ssName.str("");
+			ssName << "minY" << i;
+			create_attribute(ssName.str(),
+							Tango::DEV_LONG,
+							Tango::SCALAR,
+							Tango::READ,
+							Tango::OPERATOR,
+							" ",
+							"%d",
+							"The coordinate Y of the min of pixels in the Roi",
+							&RoiCounters::read_stats_callback,
+							&RoiCounters::write_callback_null,
+							&attr_minY_arrays[i]);
+			
+			ssName.str("");
 			ssName << "maxValue" << i;
 			create_attribute(ssName.str(),
 							Tango::DEV_DOUBLE,
@@ -939,6 +977,35 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::read_stats_callback,
 							&RoiCounters::write_callback_null,
 							&attr_maxValue_arrays[i]);
+			
+			ssName.str("");
+			ssName << "maxX" << i;
+			create_attribute(ssName.str(),
+							Tango::DEV_LONG,
+							Tango::SCALAR,
+							Tango::READ,
+							Tango::OPERATOR,
+							" ",
+							"%d",
+							"The coordinate X of the max of pixels in the Roi",
+							&RoiCounters::read_stats_callback,
+							&RoiCounters::write_callback_null,
+							&attr_maxX_arrays[i]);
+
+			ssName.str("");
+			ssName << "maxY" << i;
+			create_attribute(ssName.str(),
+							Tango::DEV_LONG,
+							Tango::SCALAR,
+							Tango::READ,
+							Tango::OPERATOR,
+							" ",
+							"%d",
+							"The coordinate Y of the max of pixels in the Roi",
+							&RoiCounters::read_stats_callback,
+							&RoiCounters::write_callback_null,
+							&attr_maxY_arrays[i]);
+			
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -982,7 +1049,7 @@ bool RoiCounters::create_image_dynamic_attributes(void)
 		return false;
 	}
 
-	//- create image dyn attr (UChar, UShort or ULong)     
+	//- create image dyn attr (UChar, UShort or ULong)
 	std::string class_name = "LimaDetector";
 	std::string device_name_generic;
 	Tango::DbDatum db_datum;
@@ -1123,6 +1190,17 @@ void RoiCounters::read_stats_callback(yat4tango::DynamicAttributeReadCallbackDat
 			//- set the attribute value
 			cbd.tga->set_value((Tango::DevDouble*)val);
 		}
+		else if(
+		(attributeName.find("minX") != std::string::npos) ||
+		(attributeName.find("minY") != std::string::npos) ||
+		(attributeName.find("maxX") != std::string::npos) ||
+		(attributeName.find("maxY") != std::string::npos))
+		{
+			val = (Tango::DevLong*)cbd.dya->get_user_data<Tango::DevLong>();
+
+			//- set the attribute value
+			cbd.tga->set_value((Tango::DevLong*)val);
+		}		
 		else if(attributeName.find("frameNumber") != std::string::npos)
 		{
 			val = (Tango::DevULong*)cbd.dya->get_user_data<Tango::DevULong>();
@@ -1211,10 +1289,10 @@ void RoiCounters::write_rois_callback(yat4tango::DynamicAttributeWriteCallbackDa
 		std::string attrName = cbd.tga->get_name();
 		int attrIndex = -1;
 		void* val;
-		//- log	
+		//- log
 		INFO_STREAM << "Write on attribute  : " << attrName << std::endl;
 
-		//-------------------------------------------------------------- 
+		//--------------------------------------------------------------
 		if(attrName.find("x") != std::string::npos)
 		{
 			std::string strIndex = attrName.substr(1);
@@ -1243,7 +1321,7 @@ void RoiCounters::write_rois_callback(yat4tango::DynamicAttributeWriteCallbackDa
 		//- get the attribute value
 		cbd.tga->get_write_value(*((Tango::DevULong*)val));
 
-		//- update rois in the processLib  : SoftOpRoiCounter        
+		//- update rois in the processLib  : SoftOpRoiCounter
 		update_roi();
 
 		//memorize the attribute in its position in the vector property
@@ -1286,7 +1364,7 @@ void RoiCounters::write_rois_callback(yat4tango::DynamicAttributeWriteCallbackDa
 //-----------------------------------------------------------------------------
 void RoiCounters::read_image_callback(yat4tango::DynamicAttributeReadCallbackData & cbd)
 {
-	DEBUG_STREAM << "RoiCounters::read_image_callback()" << cbd.dya->get_name() << endl;//  << cbd.dya->get_name() << endl;	
+	DEBUG_STREAM << "RoiCounters::read_image_callback()" << cbd.dya->get_name() << endl;//  << cbd.dya->get_name() << endl;
 	try
 	{
 		if(!m_ct)
@@ -1302,8 +1380,8 @@ void RoiCounters::read_image_callback(yat4tango::DynamicAttributeReadCallbackDat
 
 		if(counter > -1)
 		{
-			DEBUG_STREAM << "counter -> " << counter << endl;
-			DEBUG_STREAM << "attr_frameNumber_value -> " << attr_frameNumber_value << endl;
+			INFO_STREAM << "counter -> " << counter << endl;
+			INFO_STREAM << "attr_frameNumber_value -> " << attr_frameNumber_value << endl;
 
 			Data image_data;
 			m_ct->ReadImage(image_data, -1);
@@ -1324,7 +1402,7 @@ void RoiCounters::read_image_callback(yat4tango::DynamicAttributeReadCallbackDat
 					}
 						break;
 
-						//16 bits	
+						//16 bits
 					case yat4tango::TangoTraits<Tango::DevUShort>::type_id:
 					{
 						DEBUG_STREAM << "image->set_value() : DevUShort" << endl;
@@ -1415,7 +1493,7 @@ Tango::DevState RoiCounters::dev_state()
 {
 	Tango::DevState argout = DeviceImpl::dev_state();
 	DEBUG_STREAM << "RoiCounters::dev_state(): entering... !" << endl;
-	//    Add your own code to control device here	
+	//    Add your own code to control device here
 	stringstream DeviceStatus;
 	DeviceStatus << "";
 	Tango::DevState DeviceState = Tango::STANDBY;

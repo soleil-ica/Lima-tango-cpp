@@ -327,7 +327,11 @@ protected:
     std::vector<Tango::DevDouble>    attr_average_arrays;
     std::vector<Tango::DevDouble>    attr_std_arrays;
     std::vector<Tango::DevDouble>    attr_minValue_arrays;
+    std::vector<Tango::DevLong>      attr_minX_arrays;
+    std::vector<Tango::DevLong>      attr_minY_arrays;
     std::vector<Tango::DevDouble>    attr_maxValue_arrays;    
+    std::vector<Tango::DevLong>      attr_maxX_arrays;
+    std::vector<Tango::DevLong>      attr_maxY_arrays;    
     std::vector<std::string >   m_operations_list;
 } ;
 
