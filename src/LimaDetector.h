@@ -57,7 +57,7 @@
 #include <yat4tango/DeviceInfo.h>
 
 //- NEXUSCPP
-#include <nexuscpp/nexuscpp.h>
+#include <nexuscpp/nexuscpp.h> // needed by nxcpp::get_name() in dependecies
 
 //- STL 
 #include <algorithm>
@@ -343,7 +343,7 @@ public:
  */
 	string	fileManagedMode;
 /**
- *	Available only for Nexus format : Fix the SetWriteMode(). <br>
+ *	Available only for Nexus format : set the SetWriteMode(). <br>
  *	Available values :<br>
  *	- ASYNCHRONOUS<br>
  *	- SYNCHRONOUS<br>
@@ -351,7 +351,7 @@ public:
  */
 	string	fileWriteMode;
 /**
- *	Available only for Nexus format : Fix the SetDataItemMemoryMode().<br>
+ *	Available only for Nexus format : set the SetDataItemMemoryMode().<br>
  *	Available values :<br>
  *	- COPY<br>
  *	- NO_COPY

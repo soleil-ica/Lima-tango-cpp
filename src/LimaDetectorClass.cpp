@@ -1160,7 +1160,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "FileWriteMode";
-	prop_desc = "Available only for Nexus format : Fix the SetWriteMode(). <br>\nAvailable values :<br>\n- ASYNCHRONOUS<br>\n- SYNCHRONOUS<br>\n- DELAYED";
+	prop_desc = "Available only for Nexus format : Set the SetWriteMode(). <br>\nAvailable values :<br>\n- ASYNCHRONOUS<br>\n- SYNCHRONOUS<br>\n- DELAYED";
 	prop_def  = "ASYNCHRONOUS";
 	vect_data.clear();
 	vect_data.push_back("ASYNCHRONOUS");
@@ -1175,7 +1175,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "FileMemoryMode";
-	prop_desc = "Available only for Nexus format : Fix the SetDataItemMemoryMode().<br>\nAvailable values :<br>\n- COPY<br>\n- NO_COPY";
+	prop_desc = "Available only for Nexus format : Set the SetDataItemMemoryMode().<br>\nAvailable values :<br>\n- COPY<br>\n- NO_COPY";
 	prop_def  = "COPY";
 	vect_data.clear();
 	vect_data.push_back("COPY");
