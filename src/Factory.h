@@ -153,9 +153,17 @@
 #include <UviewRoiCtrlObj.h>
 #endif
 
+#ifdef SLSJUNGFRAU_ENABLED
+#include <SlsJungfrauCamera.h>
+#include <SlsJungfrauInterface.h>
+#endif
+
+
 //ProcessLib/Data : define dimensions of image
 #define WIDTH_INDEX   0
 #define HEIGHT_INDEX  1
+
+
 
 using namespace lima;
 
