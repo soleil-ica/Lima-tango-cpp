@@ -278,22 +278,27 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data.push_back(Tango::DbDatum("DetectorPort"));
                 db_data.push_back(Tango::DbDatum("DetectorTargetPath"));
                 db_data.push_back(Tango::DbDatum("ReaderTimeout"));
-
+				db_data.push_back(Tango::DbDatum("ReaderNbRetry"));
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
                 std::string camera_ip;
                 std::string img_path;
                 unsigned long camera_port = 2222;
                 unsigned short reader_timeout = 10000;
+				long reader_nb_retry = 0;
 
                 db_data[0] >> camera_ip;
                 db_data[1] >> camera_port;
                 db_data[2] >> img_path;
                 db_data[3] >> reader_timeout;
+				db_data[4] >> reader_nb_retry;
 
                 m_camera = static_cast<void*> (new Marccd::Camera(camera_ip.c_str(), camera_port, img_path));
                 m_interface = static_cast<void*> (new Marccd::Interface(*static_cast<Marccd::Camera*> (m_camera)));
                 if (m_interface)
+				{
                     static_cast<Marccd::Interface*> (m_interface)->setTimeout(reader_timeout / 1000);
+					static_cast<Marccd::Interface*> (m_interface)->setNbRetry(reader_nb_retry);
+				}
 
                 m_control = new CtControl(static_cast<Marccd::Interface*> (m_interface));
                 ControlFactory::m_is_created = true;

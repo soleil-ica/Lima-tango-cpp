@@ -206,6 +206,7 @@ void MarCCD::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("DetectorPort"));
 	dev_prop.push_back(Tango::DbDatum("DetectorTargetPath"));
 	dev_prop.push_back(Tango::DbDatum("ReaderTimeout"));
+	dev_prop.push_back(Tango::DbDatum("ReaderNbRetry"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedWaitFileOnDiskTime"));
 
 	//	Call database and extract values
@@ -261,6 +262,17 @@ void MarCCD::get_device_property()
 	//	And try to extract ReaderTimeout value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  readerTimeout;
 
+	//	Try to initialize ReaderNbRetry from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  readerNbRetry;
+	else {
+		//	Try to initialize ReaderNbRetry from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  readerNbRetry;
+	}
+	//	And try to extract ReaderNbRetry value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  readerNbRetry;
+
 	//	Try to initialize MemorizedWaitFileOnDiskTime from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedWaitFileOnDiskTime;
@@ -280,6 +292,7 @@ void MarCCD::get_device_property()
     PropertyHelper::create_property_if_empty(this, dev_prop, "-1", "DetectorPort");
     PropertyHelper::create_property_if_empty(this, dev_prop, "/no/path/defined/", "DetectorTargetPath");
     PropertyHelper::create_property_if_empty(this, dev_prop, "10000", "ReaderTimeout");
+	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "ReaderNbRetry");	
     PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedWaitFileOnDiskTime");    
 }
 //+----------------------------------------------------------------------------
@@ -637,6 +650,7 @@ Tango::DevState MarCCD::dev_state()
     argout = DeviceState;
     return argout;
 }
+
 
 
 
