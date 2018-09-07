@@ -109,6 +109,7 @@ void Eiger::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_beamCenterX_read);
     DELETE_SCALAR_ATTRIBUTE(attr_beamCenterY_read);
     DELETE_SCALAR_ATTRIBUTE(attr_detectorDistance_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_detectorReadoutTime_read);
     DELETE_SCALAR_ATTRIBUTE(attr_photonEnergy_read);
     DELETE_SCALAR_ATTRIBUTE(attr_temperature_read);
     DELETE_SCALAR_ATTRIBUTE(attr_humidity_read);
@@ -151,6 +152,7 @@ void Eiger::init_device()
     CREATE_SCALAR_ATTRIBUTE(attr_beamCenterX_read);
     CREATE_SCALAR_ATTRIBUTE(attr_beamCenterY_read);
     CREATE_SCALAR_ATTRIBUTE(attr_detectorDistance_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_detectorReadoutTime_read);	
     CREATE_SCALAR_ATTRIBUTE(attr_photonEnergy_read);
     CREATE_SCALAR_ATTRIBUTE(attr_temperature_read);
     CREATE_SCALAR_ATTRIBUTE(attr_humidity_read);
@@ -617,6 +619,7 @@ void Eiger::read_attr_hardware(vector<long> &attr_list)
     DEBUG_STREAM << "Eiger::read_attr_hardware(vector<long> &attr_list) entering... "<< endl;
     //	Add your own code here
 }
+
 //+----------------------------------------------------------------------------
 //
 // method : 		Eiger::read_compressionType
@@ -1516,6 +1519,51 @@ void Eiger::write_detectorDistance(Tango::WAttribute &attr)
                                        e.getErrMsg().c_str(),
                                        "Eiger::write_detectorDistance" );
     }
+}
+
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::read_detectorReadoutTime
+// 
+// description : 	Extract real attribute values for detectorReadoutTime acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Eiger::read_detectorReadoutTime(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Eiger::read_detectorReadoutTime(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        if ( Tango::STANDBY == get_state() )
+        {
+            m_camera->getDetectorReadoutTime(*attr_detectorReadoutTime_read);
+            attr_detectorReadoutTime_read_cache = *attr_detectorReadoutTime_read;
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            *attr_detectorReadoutTime_read = attr_detectorReadoutTime_read_cache;
+        }
+
+        attr.set_value(attr_detectorDistance_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::attr_detectorReadoutTime_read");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::attr_detectorReadoutTime_read" );
+    }	
 }
 
 //+----------------------------------------------------------------------------
@@ -2621,6 +2669,7 @@ void Eiger::initialize()
                                        "Eiger::initialize" );
     }
 }
+
 
 
 

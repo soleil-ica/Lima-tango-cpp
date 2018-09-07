@@ -384,6 +384,15 @@ void EigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	detector_distance->set_default_properties(detector_distance_prop);
 	att_list.push_back(detector_distance);
 
+	//	Attribute : detectorReadoutTime
+	detectorReadoutTimeAttrib	*detector_readout_time = new detectorReadoutTimeAttrib();
+	Tango::UserDefaultAttrProp	detector_readout_time_prop;
+	detector_readout_time_prop.set_unit(" ");
+	detector_readout_time_prop.set_standard_unit(" ");
+	detector_readout_time_prop.set_display_unit(" ");
+	detector_readout_time->set_default_properties(detector_readout_time_prop);
+	att_list.push_back(detector_readout_time);
+
 	//	Attribute : temperature
 	temperatureAttrib	*temperature = new temperatureAttrib();
 	Tango::UserDefaultAttrProp	temperature_prop;

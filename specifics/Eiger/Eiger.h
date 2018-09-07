@@ -99,6 +99,7 @@ public:
     Tango::DevDouble attr_beamCenterX_read_cache;
     Tango::DevDouble attr_beamCenterY_read_cache;
     Tango::DevDouble attr_detectorDistance_read_cache;
+    Tango::DevDouble attr_detectorReadoutTime_read_cache;
     std::string attr_compressionType_read_cache;
     std::string attr_dataCollectionDate_read_cache;
     Tango::DevDouble attr_chiIncrement_read_cache;
@@ -138,6 +139,7 @@ public:
 		Tango::DevDouble	attr_beamCenterY_write;
 		Tango::DevDouble	*attr_detectorDistance_read;
 		Tango::DevDouble	attr_detectorDistance_write;
+		Tango::DevDouble	*attr_detectorReadoutTime_read;
 		Tango::DevDouble	*attr_temperature_read;
 		Tango::DevDouble	*attr_humidity_read;
 		Tango::DevDouble	*attr_chiIncrement_read;
@@ -424,6 +426,10 @@ public:
  */
 	virtual void write_detectorDistance(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for detectorReadoutTime acquisition result.
+ */
+	virtual void read_detectorReadoutTime(Tango::Attribute &attr);
+/**
  *	Extract real attribute values for temperature acquisition result.
  */
 	virtual void read_temperature(Tango::Attribute &attr);
@@ -567,6 +573,10 @@ public:
  *	Read/Write allowed for detectorDistance attribute.
  */
 	virtual bool is_detectorDistance_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for detectorReadoutTime attribute.
+ */
+	virtual bool is_detectorReadoutTime_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for temperature attribute.
  */

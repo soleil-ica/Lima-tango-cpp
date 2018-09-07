@@ -235,6 +235,18 @@ public:
 	{return (static_cast<Eiger *>(dev))->is_temperature_allowed(ty);}
 };
 
+class detectorReadoutTimeAttrib: public Tango::Attr
+{
+public:
+	detectorReadoutTimeAttrib():Attr("detectorReadoutTime", Tango::DEV_DOUBLE, Tango::READ) {};
+	~detectorReadoutTimeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_detectorReadoutTime(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_detectorReadoutTime_allowed(ty);}
+};
+
 class detectorDistanceAttrib: public Tango::Attr
 {
 public:
