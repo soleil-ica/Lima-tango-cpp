@@ -218,6 +218,13 @@ void Eiger::init_device()
         attr_compressionType_write = const_cast<Tango::DevString> (memorizedCompressionType.c_str());
         compression_type.set_write_value(attr_compressionType_write);
         write_compressionType(compression_type);
+		
+        INFO_STREAM << "- Write tango hardware at Init - roiMode" << endl;
+        Tango::WAttribute &roi_mode = dev_attr->get_w_attr_by_name("roiMode");
+        attr_roiMode_write = const_cast<Tango::DevString> (memorizedRoiMode.c_str());
+        roi_mode.set_write_value(attr_roiMode_write);
+        write_roiMode(roi_mode);
+		
     }
     catch (Tango::DevFailed& df)
     {
@@ -261,6 +268,7 @@ void Eiger::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedCompression"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedCompressionType"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedWavelength"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedRoiMode"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedBeamCenterX"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedBeamCenterY"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedDetectorDistance"));
@@ -414,6 +422,17 @@ void Eiger::get_device_property()
 	//	And try to extract MemorizedWavelength value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedWavelength;
 
+	//	Try to initialize MemorizedRoiMode from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedRoiMode;
+	else {
+		//	Try to initialize MemorizedRoiMode from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedRoiMode;
+	}
+	//	And try to extract MemorizedRoiMode value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedRoiMode;
+
 	//	Try to initialize MemorizedBeamCenterX from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedBeamCenterX;
@@ -552,6 +571,7 @@ void Eiger::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedBeamCenterX");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedBeamCenterY");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedWavelength");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "DISABLED",  "MemorizedRoiMode");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedDetectorDistance");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedChiIncrement");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedChiStart");
@@ -619,6 +639,108 @@ void Eiger::read_attr_hardware(vector<long> &attr_list)
     DEBUG_STREAM << "Eiger::read_attr_hardware(vector<long> &attr_list) entering... "<< endl;
     //	Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::read_roiMode
+// 
+// description : 	Extract real attribute values for roiMode acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Eiger::read_roiMode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Eiger::read_roiMode(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    
+    try
+    {
+        if ( Tango::STANDBY == get_state() )
+        {
+            attr_roiMode_read_cache = "DISABLED";
+            std::string roi_mode;
+
+            m_camera->getRoiMode(roi_mode);
+            attr_roiMode_read_cache = roi_mode;                
+            strcpy(*attr_roiMode_read, attr_roiMode_read_cache.c_str());            
+        }
+        else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
+        {
+            strcpy(*attr_roiMode_read, attr_roiMode_read_cache.c_str());
+        }
+
+        attr.set_value(attr_compressionType_read);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_roiMode");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_roiMode");
+    }	
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::write_roiMode
+// 
+// description : 	Write roiMode attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Eiger::write_roiMode(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Eiger::write_roiMode(Tango::WAttribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());    
+
+    try
+    {        
+        attr.get_write_value(attr_roiMode_write);
+        string current = attr_roiMode_write;
+        transform(current.begin(), current.end(), current.begin(), ::toupper);
+        if ((current != "4M") &&
+            (current != "DISABLED")
+            )
+        {
+            strcpy(attr_compressionType_write, attr_compressionType_read_cache.c_str());
+            Tango::Except::throw_exception("CONFIGURATION_ERROR",
+                                           "Possible compressionType values are:"
+                                           "\n- 4M"
+                                           "\n- DISABLED",
+                                           "Eiger::write_roiMode");
+        }
+
+        //- THIS IS AN AVAILABLE FILLTYPE
+        m_camera->setRoiMode(current);
+
+        yat4tango::PropertyHelper::set_property(this, "MemorizedRoiMode", current);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::write_roiMode");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::write_roiMode");
+    }
+}
+
 
 //+----------------------------------------------------------------------------
 //
@@ -636,7 +758,7 @@ void Eiger::read_compressionType(Tango::Attribute &attr)
     {
         if ( Tango::STANDBY == get_state() )
         {
-            attr_compressionType_read_cache = "UNKNOWN";
+            attr_compressionType_read_cache = "BSLZ4";
             lima::Eiger::Camera::CompressionType type;
 
             m_camera->getCompressionType(type);
@@ -2669,6 +2791,8 @@ void Eiger::initialize()
                                        "Eiger::initialize" );
     }
 }
+
+
 
 
 

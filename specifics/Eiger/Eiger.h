@@ -96,6 +96,7 @@ public:
     Tango::DevDouble attr_temperature_read_cache;
     Tango::DevDouble attr_humidity_read_cache;
     Tango::DevDouble attr_wavelength_read_cache;
+    std::string attr_roiMode_read_cache;    
     Tango::DevDouble attr_beamCenterX_read_cache;
     Tango::DevDouble attr_beamCenterY_read_cache;
     Tango::DevDouble attr_detectorDistance_read_cache;
@@ -133,6 +134,8 @@ public:
 		Tango::DevDouble	attr_photonEnergy_write;
 		Tango::DevDouble	*attr_wavelength_read;
 		Tango::DevDouble	attr_wavelength_write;
+		Tango::DevString	*attr_roiMode_read;
+		Tango::DevString	attr_roiMode_write;
 		Tango::DevDouble	*attr_beamCenterX_read;
 		Tango::DevDouble	attr_beamCenterX_write;
 		Tango::DevDouble	*attr_beamCenterY_read;
@@ -222,6 +225,10 @@ public:
  *	Memorize the value of wavelength attribute.
  */
 	Tango::DevDouble	memorizedWavelength;
+/**
+ *	Memorize the value of roiMode attribute.
+ */
+	string	memorizedRoiMode;
 /**
  *	Memorize the value of beamCenterX attribute.
  */
@@ -402,6 +409,14 @@ public:
  */
 	virtual void write_wavelength(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for roiMode acquisition result.
+ */
+	virtual void read_roiMode(Tango::Attribute &attr);
+/**
+ *	Write roiMode attribute values to hardware.
+ */
+	virtual void write_roiMode(Tango::WAttribute &attr);
+/**
  *	Extract real attribute values for beamCenterX acquisition result.
  */
 	virtual void read_beamCenterX(Tango::Attribute &attr);
@@ -561,6 +576,10 @@ public:
  *	Read/Write allowed for wavelength attribute.
  */
 	virtual bool is_wavelength_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for roiMode attribute.
+ */
+	virtual bool is_roiMode_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for beamCenterX attribute.
  */

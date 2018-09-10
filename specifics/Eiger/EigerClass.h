@@ -289,6 +289,20 @@ public:
 	{return (static_cast<Eiger *>(dev))->is_beamCenterX_allowed(ty);}
 };
 
+class roiModeAttrib: public Tango::Attr
+{
+public:
+	roiModeAttrib():Attr("roiMode", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~roiModeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_roiMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_roiMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_roiMode_allowed(ty);}
+};
+
 class wavelengthAttrib: public Tango::Attr
 {
 public:

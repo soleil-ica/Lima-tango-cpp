@@ -357,6 +357,10 @@ void EigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	wavelength->set_default_properties(wavelength_prop);
 	att_list.push_back(wavelength);
 
+	//	Attribute : roiMode
+	roiModeAttrib	*roi_mode = new roiModeAttrib();
+	att_list.push_back(roi_mode);
+
 	//	Attribute : beamCenterX
 	beamCenterXAttrib	*beam_center_x = new beamCenterXAttrib();
 	Tango::UserDefaultAttrProp	beam_center_x_prop;
@@ -732,6 +736,21 @@ void EigerClass::set_default_property()
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedRoiMode";
+	prop_desc = "Memorize the value of roiMode attribute.";
+	prop_def  = "DISABLED";
+	vect_data.clear();
+	vect_data.push_back("DISABLED");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
