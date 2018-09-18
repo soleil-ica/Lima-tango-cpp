@@ -20,7 +20,7 @@ Attributes
 ----------
 
 ======================= ========== ========= ==============================================================================================
-Attribute name		    Read/Write Type		 Description
+Attribute name		Read/Write Type		 Description
 ======================= ========== ========= ==============================================================================================
 clockDivider            R/W        DevString Change the readout clock. Available clock divider :
 
