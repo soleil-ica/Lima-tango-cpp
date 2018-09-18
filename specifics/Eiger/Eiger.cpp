@@ -109,13 +109,14 @@ void Eiger::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_beamCenterX_read);
     DELETE_SCALAR_ATTRIBUTE(attr_beamCenterY_read);
     DELETE_SCALAR_ATTRIBUTE(attr_detectorDistance_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_detectorReadoutTime_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_detectorReadoutTime_read);
     DELETE_SCALAR_ATTRIBUTE(attr_photonEnergy_read);
     DELETE_SCALAR_ATTRIBUTE(attr_temperature_read);
     DELETE_SCALAR_ATTRIBUTE(attr_humidity_read);
     DELETE_SCALAR_ATTRIBUTE(attr_compression_read);
     DELETE_SCALAR_ATTRIBUTE(attr_autoSummation_read);
     DELETE_SCALAR_ATTRIBUTE(attr_compressionType_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_roiMode_read);
     DELETE_SCALAR_ATTRIBUTE(attr_softwareVersion_read);
     DELETE_SCALAR_ATTRIBUTE(attr_dataCollectionDate_read);
     DELETE_SCALAR_ATTRIBUTE(attr_chiIncrement_read);
@@ -152,15 +153,18 @@ void Eiger::init_device()
     CREATE_SCALAR_ATTRIBUTE(attr_beamCenterX_read);
     CREATE_SCALAR_ATTRIBUTE(attr_beamCenterY_read);
     CREATE_SCALAR_ATTRIBUTE(attr_detectorDistance_read);
-	CREATE_SCALAR_ATTRIBUTE(attr_detectorReadoutTime_read);	
+    CREATE_SCALAR_ATTRIBUTE(attr_detectorReadoutTime_read);	
     CREATE_SCALAR_ATTRIBUTE(attr_photonEnergy_read);
     CREATE_SCALAR_ATTRIBUTE(attr_temperature_read);
     CREATE_SCALAR_ATTRIBUTE(attr_humidity_read);
     CREATE_SCALAR_ATTRIBUTE(attr_compression_read);
     CREATE_SCALAR_ATTRIBUTE(attr_autoSummation_read);
+
     CREATE_DEVSTRING_ATTRIBUTE(attr_compressionType_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_softwareVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dataCollectionDate_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_roiMode_read, MAX_ATTRIBUTE_STRING_LENGTH);
+
     CREATE_SCALAR_ATTRIBUTE(attr_chiIncrement_read);
     CREATE_SCALAR_ATTRIBUTE(attr_chiStart_read);
     CREATE_SCALAR_ATTRIBUTE(attr_kappaIncrement_read);
@@ -571,7 +575,7 @@ void Eiger::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedBeamCenterX");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedBeamCenterY");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedWavelength");
-	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "DISABLED",  "MemorizedRoiMode");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "disabled",  "MemorizedRoiMode");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedDetectorDistance");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedChiIncrement");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedChiStart");
@@ -655,7 +659,7 @@ void Eiger::read_roiMode(Tango::Attribute &attr)
     {
         if ( Tango::STANDBY == get_state() )
         {
-            attr_roiMode_read_cache = "DISABLED";
+            attr_roiMode_read_cache = "disabled";
             std::string roi_mode;
 
             m_camera->getRoiMode(roi_mode);
@@ -667,7 +671,7 @@ void Eiger::read_roiMode(Tango::Attribute &attr)
             strcpy(*attr_roiMode_read, attr_roiMode_read_cache.c_str());
         }
 
-        attr.set_value(attr_compressionType_read);
+        attr.set_value(attr_roiMode_read);
     }
     catch (Tango::DevFailed& df)
     {
@@ -704,16 +708,16 @@ void Eiger::write_roiMode(Tango::WAttribute &attr)
     {        
         attr.get_write_value(attr_roiMode_write);
         string current = attr_roiMode_write;
-        transform(current.begin(), current.end(), current.begin(), ::toupper);
+        //transform(current.begin(), current.end(), current.begin(), ::toupper);
         if ((current != "4M") &&
-            (current != "DISABLED")
+            (current != "disabled")
             )
         {
-            strcpy(attr_compressionType_write, attr_compressionType_read_cache.c_str());
+            strcpy(attr_roiMode_write, attr_roiMode_read_cache.c_str());
             Tango::Except::throw_exception("CONFIGURATION_ERROR",
-                                           "Possible compressionType values are:"
+                                           "Possible roiMode values are (ATTENTION : case sensitive)  :"
                                            "\n- 4M"
-                                           "\n- DISABLED",
+                                           "\n- disabled",
                                            "Eiger::write_roiMode");
         }
 
@@ -1660,6 +1664,7 @@ void Eiger::read_detectorReadoutTime(Tango::Attribute &attr)
         if ( Tango::STANDBY == get_state() )
         {
             m_camera->getDetectorReadoutTime(*attr_detectorReadoutTime_read);
+	    *attr_detectorReadoutTime_read = *attr_detectorReadoutTime_read*1000;//OUTPUT is in millisec
             attr_detectorReadoutTime_read_cache = *attr_detectorReadoutTime_read;
         }
         else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
@@ -1667,7 +1672,7 @@ void Eiger::read_detectorReadoutTime(Tango::Attribute &attr)
             *attr_detectorReadoutTime_read = attr_detectorReadoutTime_read_cache;
         }
 
-        attr.set_value(attr_detectorDistance_read);
+        attr.set_value(attr_detectorReadoutTime_read);
     }
     catch(Tango::DevFailed& df)
     {
