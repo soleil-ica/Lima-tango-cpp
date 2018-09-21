@@ -292,7 +292,7 @@ void MarCCD::get_device_property()
     PropertyHelper::create_property_if_empty(this, dev_prop, "-1", "DetectorPort");
     PropertyHelper::create_property_if_empty(this, dev_prop, "/no/path/defined/", "DetectorTargetPath");
     PropertyHelper::create_property_if_empty(this, dev_prop, "10000", "ReaderTimeout");
-	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "ReaderNbRetry");	
+	PropertyHelper::create_property_if_empty(this, dev_prop, "3", "ReaderNbRetry");	
     PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedWaitFileOnDiskTime");    
 }
 //+----------------------------------------------------------------------------

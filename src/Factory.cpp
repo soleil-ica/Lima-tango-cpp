@@ -284,7 +284,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 std::string img_path;
                 unsigned long camera_port = 2222;
                 unsigned short reader_timeout = 10000;
-				long reader_nb_retry = 0;
+				long reader_nb_retry = 3;
 
                 db_data[0] >> camera_ip;
                 db_data[1] >> camera_port;

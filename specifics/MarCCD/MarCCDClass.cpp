@@ -435,7 +435,7 @@ void MarCCDClass::set_default_property()
 
 	prop_name = "ReaderNbRetry";
 	prop_desc = "The number of retry before the Reader declares that there are no images in the directory target path.";
-	prop_def  = "0";
+	prop_def  = "3";
 	vect_data.clear();
 	vect_data.push_back("0");
 	if (prop_def.length()>0)
