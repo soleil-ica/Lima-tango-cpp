@@ -127,6 +127,7 @@ public:
 		Tango::DevBoolean	attr_pixelMask_write;
 		Tango::DevBoolean	*attr_virtualPixelCorrection_read;
 		Tango::DevBoolean	attr_virtualPixelCorrection_write;
+		Tango::DevString	*attr_managedMode_read;
 		Tango::DevString	*attr_dataCollectionDate_read;
 		Tango::DevDouble	*attr_thresholdEnergy_read;
 		Tango::DevDouble	attr_thresholdEnergy_write;
@@ -185,6 +186,11 @@ public:
  *	- ABSOLUTE : The time at the moment of reading the frame from detector<br>
  */
 	string	timestampType;
+/**
+ *	Enable/Disable downloading data files from DCU.
+ *	Do not download data files (master+data) [by default]
+ */
+	Tango::DevBoolean	downloadDataFile;
 /**
  *	Memorize the value of countrateCorrection attribute.
  */
@@ -381,6 +387,10 @@ public:
  */
 	virtual void write_virtualPixelCorrection(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for managedMode acquisition result.
+ */
+	virtual void read_managedMode(Tango::Attribute &attr);
+/**
  *	Extract real attribute values for dataCollectionDate acquisition result.
  */
 	virtual void read_dataCollectionDate(Tango::Attribute &attr);
@@ -560,6 +570,10 @@ public:
  *	Read/Write allowed for virtualPixelCorrection attribute.
  */
 	virtual bool is_virtualPixelCorrection_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for managedMode attribute.
+ */
+	virtual bool is_managedMode_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for dataCollectionDate attribute.
  */

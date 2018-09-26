@@ -117,6 +117,7 @@ void Eiger::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_autoSummation_read);
     DELETE_SCALAR_ATTRIBUTE(attr_compressionType_read);
     DELETE_SCALAR_ATTRIBUTE(attr_roiMode_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_managedMode_read);	
     DELETE_SCALAR_ATTRIBUTE(attr_softwareVersion_read);
     DELETE_SCALAR_ATTRIBUTE(attr_dataCollectionDate_read);
     DELETE_SCALAR_ATTRIBUTE(attr_chiIncrement_read);
@@ -164,6 +165,7 @@ void Eiger::init_device()
     CREATE_DEVSTRING_ATTRIBUTE(attr_softwareVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dataCollectionDate_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_roiMode_read, MAX_ATTRIBUTE_STRING_LENGTH);
+	CREATE_DEVSTRING_ATTRIBUTE(attr_managedMode_read, MAX_ATTRIBUTE_STRING_LENGTH);
 
     CREATE_SCALAR_ATTRIBUTE(attr_chiIncrement_read);
     CREATE_SCALAR_ATTRIBUTE(attr_chiStart_read);
@@ -262,6 +264,7 @@ void Eiger::get_device_property()
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("DetectorIP"));
 	dev_prop.push_back(Tango::DbDatum("TimestampType"));
+	dev_prop.push_back(Tango::DbDatum("DownloadDataFile"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedCountrateCorrection"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedFlatfieldCorrection"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedPixelMask"));
@@ -315,6 +318,17 @@ void Eiger::get_device_property()
 	}
 	//	And try to extract TimestampType value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  timestampType;
+
+	//	Try to initialize DownloadDataFile from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  downloadDataFile;
+	else {
+		//	Try to initialize DownloadDataFile from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  downloadDataFile;
+	}
+	//	And try to extract DownloadDataFile value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  downloadDataFile;
 
 	//	Try to initialize MemorizedCountrateCorrection from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -564,6 +578,7 @@ void Eiger::get_device_property()
     //------------------------------------------------------------------
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "DetectorIP");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "RELATIVE",  "TimestampType");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false",     "DownloadDataFile");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", 	 "MemorizedCountrateCorrection");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	 "MemorizedFlatfieldCorrection");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false",	 "MemorizedPixelMask");
@@ -643,6 +658,51 @@ void Eiger::read_attr_hardware(vector<long> &attr_list)
     DEBUG_STREAM << "Eiger::read_attr_hardware(vector<long> &attr_list) entering... "<< endl;
     //	Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::read_managedMode
+// 
+// description : 	Extract real attribute values for managedMode acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Eiger::read_managedMode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Eiger::read_managedMode(Tango::Attribute &attr) entering... "<< endl;
+    try
+    {
+	
+		CtSaving::ManagedMode mode;
+		m_ct->saving()->getManagedMode(mode) ; 
+		if(mode == CtSaving::Software)
+			strcpy(*attr_managedMode_read, "STREAMING");
+		else if(mode == CtSaving::Hardware && downloadDataFile)
+			strcpy(*attr_managedMode_read, "FILEWRITER");
+		else if (mode == CtSaving::Hardware && !downloadDataFile)
+			strcpy(*attr_managedMode_read, "LAZY");
+		else
+			strcpy(*attr_managedMode_read, "ERROR : UNKNOWN Mode !");
+        attr.set_value(attr_managedMode_read);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "Eiger::read_roiMode");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::read_roiMode");
+    }		
+}
+
+
 //+----------------------------------------------------------------------------
 //
 // method : 		Eiger::read_roiMode
@@ -2796,6 +2856,11 @@ void Eiger::initialize()
                                        "Eiger::initialize" );
     }
 }
+
+
+
+
+
 
 
 

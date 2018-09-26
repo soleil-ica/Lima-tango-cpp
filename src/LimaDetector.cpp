@@ -4884,4 +4884,7 @@ void LimaDetector::execute_close_shutter_callback(yat4tango::DynamicCommandExecu
 }
 
 
+
+
+
 }	//	namespace

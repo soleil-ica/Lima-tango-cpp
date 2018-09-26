@@ -357,6 +357,18 @@ public:
 	{return (static_cast<Eiger *>(dev))->is_dataCollectionDate_allowed(ty);}
 };
 
+class managedModeAttrib: public Tango::Attr
+{
+public:
+	managedModeAttrib():Attr("managedMode", Tango::DEV_STRING, Tango::READ) {};
+	~managedModeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_managedMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_managedMode_allowed(ty);}
+};
+
 class virtualPixelCorrectionAttrib: public Tango::Attr
 {
 public:

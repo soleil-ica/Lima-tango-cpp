@@ -326,6 +326,16 @@ void EigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	virtual_pixel_correction->set_disp_level(Tango::EXPERT);
 	att_list.push_back(virtual_pixel_correction);
 
+	//	Attribute : managedMode
+	managedModeAttrib	*managed_mode = new managedModeAttrib();
+	Tango::UserDefaultAttrProp	managed_mode_prop;
+	managed_mode_prop.set_unit(" ");
+	managed_mode_prop.set_standard_unit(" ");
+	managed_mode_prop.set_display_unit(" ");
+	managed_mode_prop.set_description("Available values of Managed Mode are : <br>\n- STREAMING: Image and header data are transferred via zeromq sockets & Nexus files could be generated into an user defined path. <br>\n- FILEWRITER: Image and the metadata are generated into the DCU in HDF5 format & data files are tranferred into an user defined path through the device & data files are deleted from DCU. <br>\n- LAZY : Image and the metadata are generated in DCU in HDF5 format .\n\n");
+	managed_mode->set_default_properties(managed_mode_prop);
+	att_list.push_back(managed_mode);
+
 	//	Attribute : dataCollectionDate
 	dataCollectionDateAttrib	*data_collection_date = new dataCollectionDateAttrib();
 	att_list.push_back(data_collection_date);
@@ -586,6 +596,21 @@ void EigerClass::set_default_property()
 	prop_def  = "RELATIVE";
 	vect_data.clear();
 	vect_data.push_back("RELATIVE");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "DownloadDataFile";
+	prop_desc = "Enable/Disable downloading data files from DCU.\nDo not download data files (master+data) [by default]";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

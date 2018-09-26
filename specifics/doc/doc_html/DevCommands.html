@@ -43,9 +43,9 @@
 <Br>
 <center>
 <h1>
-Lima		<Br>
+		<Br>
 Device Commands Description 		<Br> <Br>
-Layout Class	<Br>
+Eiger Class	<Br>
 </h1>
 <b>
 Revision:  - Author: 
@@ -102,33 +102,31 @@ The language device desctructor automatically calls the <i> delete_device() </i>
 <Br>&nbsp
 </ul><Br>
 <Br>
-<A NAME="AddOperation"><!-- --></A>
-<A NAME="AddOperation"><!-- --></A>
-<h2>4 - AddOperation</h2>
+<A NAME="Abort"><!-- --></A>
+<A NAME="Abort"><!-- --></A>
+<h2>4 - Abort</h2>
 <ul>
-<Li><Strong>Description: </Strong> Add Lima external operation in order to transform the image acquired from the detector.<br>
-User must first define the operationType, operationValue<br>
-argin will define the level of operation.<Br>&nbsp
-<Li><Strong>Argin:<Br>DEV_LONG</Strong>
+<Li><Strong>Description: </Strong> <Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY</Ul>
+<Li>Tango::STANDBY<Li>Tango::FAULT<Li>Tango::RUNNING</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
-<A NAME="RemoveOperation"><!-- --></A>
-<A NAME="RemoveOperation"><!-- --></A>
-<h2>5 - RemoveOperation</h2>
+<A NAME="Initialize"><!-- --></A>
+<A NAME="Initialize"><!-- --></A>
+<h2>5 - Initialize</h2>
 <ul>
-<Li><Strong>Description: </Strong> Remove a Lima external operation previously defined at the the level = argin.<br><Br>&nbsp
-<Li><Strong>Argin:<Br>DEV_LONG</Strong>
+<Li><Strong>Description: </Strong> <Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY</Ul>
+<Li>Tango::INIT<Li>Tango::STANDBY<Li>Tango::FAULT</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
