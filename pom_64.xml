@@ -110,7 +110,7 @@
                             <define>EIGER_VERSION=${EIGER.version}</define>
                             <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
                             <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
-                            <define>SIMULATOR_NAME=${SLSJUNGFRAU.name}</define>
+                            <define>SLSJUNGFRAU_NAME=${SLSJUNGFRAU.name}</define>
                             <define>SLSJUNGFRAU_VERSION=${SLSJUNGFRAU.version}</define>
 
                             <!-- define which detector you need to ENABLE -->      
