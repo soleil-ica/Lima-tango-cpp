@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.8.4</version>
+    <version>1.8.5</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -43,11 +43,11 @@
                 <BASLER.name>Basler</BASLER.name>
                 <BASLER.version>1.5.3</BASLER.version>
                 <EIGER.name>Eiger</EIGER.name>
-                <EIGER.version>2.1.7</EIGER.version>
+                <EIGER.version>2.1.8</EIGER.version>
                 <IMXPAD.name>ImXpad</IMXPAD.name>
-                <IMXPAD.version>1.0.6</IMXPAD.version>
+                <IMXPAD.version>1.0.7</IMXPAD.version>
                 <MARCCD.name>Marccd</MARCCD.name>
-                <MARCCD.version>1.3.14</MARCCD.version>
+                <MARCCD.version>1.3.15</MARCCD.version>
                 <MERLIN.name>Merlin</MERLIN.name>
                 <MERLIN.version>1.1.2</MERLIN.version>
                 <PILATUS.name>Pilatus</PILATUS.name>
@@ -258,14 +258,14 @@
 
             <properties>
                 <!-- path to the 64 bits libs -->
-                <libs-64bits>/home/informatique/ica/noureddine/DeviceSources/lib-el6-64</libs-64bits>
+                <libs-64bits>/home/informatique/ica/ica/LIB_EL6_64</libs-64bits>
                 <!-- <aol>amd64-Linux-gcc</aol> -->
                 <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
                 <PROCESSLIB.version>1.3.8</PROCESSLIB.version>
                 <CORE.name>Core</CORE.name>
                 <CORE.version>1.7.7</CORE.version>
                 <EIGER.name>Eiger</EIGER.name>
-                <EIGER.version>2.1.7</EIGER.version>
+                <EIGER.version>2.1.8</EIGER.version>
                 <SIMULATOR.name>Simulator</SIMULATOR.name>
                 <SIMULATOR.version>1.3.15</SIMULATOR.version>
             </properties>
@@ -450,7 +450,7 @@
         <profile>
             <id>win_32</id>
             <activation>
-                <activeByDefault>true</activeByDefault>                
+                <activeByDefault>false</activeByDefault>                
                 <property>
                     <name>env</name>
                     <value>win_32</value>
