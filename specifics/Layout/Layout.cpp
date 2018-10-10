@@ -111,23 +111,11 @@ void Layout::delete_device()
     INFO_STREAM << "Layout::delete_device() delete device " << device_name << endl;    
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());		
     //    Delete device allocated objects
+	DELETE_DEVSTRING_ATTRIBUTE(attr_version_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_operationType_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_operationValue_read);
 	
-    //remove external operations
-	INFO_STREAM << "- remove all external operations ..."<<endl;
-	if(!m_mapOperations.empty())
-	{
-		// No need to delete external operations, because the CtControl obectt is deleted !
-		std::map<long, operationParams >::iterator it;
-		for(it = m_mapOperations.begin() ; it!= m_mapOperations.end() ; ++it)
-		{
-			INFO_STREAM << "\t- delete external operation [" << it->first << "]"<<endl;
-			delete_external_operation(it->first);
-		}    
-		
-		m_mapOperations.clear();
-	}
+
 		
     //remove user layout tasks associated to externalOperation
 	INFO_STREAM << "- remove all user layout tasks ..."<<endl;
@@ -157,7 +145,8 @@ void Layout::init_device()
     // Initialise variables to default values
     //--------------------------------------------
     get_device_property();
-
+	
+	CREATE_DEVSTRING_ATTRIBUTE(attr_version_read, 256);
     CREATE_DEVSTRING_ATTRIBUTE(attr_operationType_read, 255);
     CREATE_DEVSTRING_ATTRIBUTE(attr_operationValue_read, 255);
 
@@ -165,7 +154,7 @@ void Layout::init_device()
     set_state(Tango::INIT);
     m_is_device_initialized = false;
     m_status_message.str("");
-	m_mapOperations.clear();
+//	m_mapOperations.clear();
     m_layout_tasks.clear();
     m_ct = 0;
     try
@@ -174,6 +163,19 @@ void Layout::init_device()
         //in fact LimaDetector is create the singleton control objet
         //so this call, will only return existing object!
         m_ct = ControlFactory::instance().get_control("Layout");
+		
+		//remove external operations
+		INFO_STREAM << "- remove all external operations ..."<<endl;
+		if(!m_mapOperations.empty())
+		{			
+			std::map<long, operationParams >::iterator it;
+			for(it = m_mapOperations.begin() ; it!= m_mapOperations.end() ; ++it)
+			{
+				delete_external_operation(it->first);
+			}    
+
+			m_mapOperations.clear();
+		}		
     }
     catch (Exception& e)
     {
@@ -218,14 +220,20 @@ void Layout::init_device()
 
                 // AddOp()
                 INFO_STREAM << "Write tango hardware at Init - Add Operations to the processLib." << endl;
-                add_external_operation(memorizedOperationLevels.at(i));
-                operationParams params = {attr_operationType_write, attr_operationValue_write};
-                m_mapOperations[memorizedOperationLevels.at(i)] = params;
+                add_external_operation(memorizedOperationLevels.at(i));               
             }
         }
+		catch(ProcessException& p)
+		{
+            INFO_STREAM << "Initialization Failed : " << p.getErrMsg() << endl;
+            m_status_message << "Initialization Failed : " << p.getErrMsg( ) << endl;
+            m_is_device_initialized = false;
+            set_state(Tango::FAULT);
+            return;
+		}		
         catch (Exception& e)
         {
-            INFO_STREAM << "Initialization Failed 2: " << e.getErrMsg() << endl;
+            INFO_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
             m_status_message << "Initialization Failed : " << e.getErrMsg( ) << endl;
             m_is_device_initialized = false;
             set_state(Tango::FAULT);
@@ -262,55 +270,52 @@ void Layout::get_device_property()
 
     //	Read device properties from database.(Automatic code generation)
     //------------------------------------------------------------------
-    Tango::DbData	dev_prop;
-    dev_prop.push_back(Tango::DbDatum("MemorizedOperationTypes"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedOperationValues"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedOperationLevels"));
+	Tango::DbData	dev_prop;
+	dev_prop.push_back(Tango::DbDatum("MemorizedOperationTypes"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedOperationValues"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedOperationLevels"));
 
-    //	Call database and extract values
-    //--------------------------------------------
-    if (Tango::Util::instance()->_UseDb == true)
-        get_db_device()->get_property(dev_prop);
-    Tango::DbDatum	def_prop, cl_prop;
-    LayoutClass	*ds_class =
-    (static_cast<LayoutClass *>(get_device_class()));
-    int	i = -1;
+	//	Call database and extract values
+	//--------------------------------------------
+	if (Tango::Util::instance()->_UseDb==true)
+		get_db_device()->get_property(dev_prop);
+	Tango::DbDatum	def_prop, cl_prop;
+	LayoutClass	*ds_class =
+		(static_cast<LayoutClass *>(get_device_class()));
+	int	i = -1;
 
-    //	Try to initialize MemorizedOperationTypes from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty() == false)	cl_prop  >>  memorizedOperationTypes;
-    else
-    {
-        //	Try to initialize MemorizedOperationTypes from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty() == false)	def_prop  >>  memorizedOperationTypes;
-    }
-    //	And try to extract MemorizedOperationTypes value from database
-    if (dev_prop[i].is_empty() == false)	dev_prop[i]  >>  memorizedOperationTypes;
+	//	Try to initialize MemorizedOperationTypes from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedOperationTypes;
+	else {
+		//	Try to initialize MemorizedOperationTypes from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedOperationTypes;
+	}
+	//	And try to extract MemorizedOperationTypes value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedOperationTypes;
 
-    //	Try to initialize MemorizedOperationValues from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty() == false)	cl_prop  >>  memorizedOperationValues;
-    else
-    {
-        //	Try to initialize MemorizedOperationValues from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty() == false)	def_prop  >>  memorizedOperationValues;
-    }
-    //	And try to extract MemorizedOperationValues value from database
-    if (dev_prop[i].is_empty() == false)	dev_prop[i]  >>  memorizedOperationValues;
+	//	Try to initialize MemorizedOperationValues from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedOperationValues;
+	else {
+		//	Try to initialize MemorizedOperationValues from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedOperationValues;
+	}
+	//	And try to extract MemorizedOperationValues value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedOperationValues;
 
-    //	Try to initialize MemorizedOperationLevels from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty() == false)	cl_prop  >>  memorizedOperationLevels;
-    else
-    {
-        //	Try to initialize MemorizedOperationLevels from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty() == false)	def_prop  >>  memorizedOperationLevels;
-    }
-    //	And try to extract MemorizedOperationLevels value from database
-    if (dev_prop[i].is_empty() == false)	dev_prop[i]  >>  memorizedOperationLevels;
+	//	Try to initialize MemorizedOperationLevels from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedOperationLevels;
+	else {
+		//	Try to initialize MemorizedOperationLevels from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedOperationLevels;
+	}
+	//	And try to extract MemorizedOperationLevels value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedOperationLevels;
 
 
 
@@ -382,6 +387,32 @@ void Layout::read_attr_hardware(vector<long> &attr_list)
 }
 //+----------------------------------------------------------------------------
 //
+// method : 		Layout::read_version
+// 
+// description : 	Extract real attribute values for version acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Layout::read_version(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Layout::read_version(Tango::Attribute &attr) entering... "<< endl;
+	try
+	{
+		strcpy(*attr_version_read, CURRENT_VERSION);
+		attr.set_value(attr_version_read);
+	}
+	catch(Tango::DevFailed& df)
+	{
+		ERROR_STREAM << df << endl;
+		//- rethrow exception
+		Tango::Except::re_throw_exception(df,
+										"TANGO_DEVICE_ERROR",
+										string(df.errors[0].desc).c_str(),
+										"Layout::read_version()");
+	}	
+}
+
+//+----------------------------------------------------------------------------
+//
 // method : 		Layout::read_operationsList
 // 
 // description : 	Extract real attribute values for operationsList acquisition result.
@@ -394,20 +425,23 @@ void Layout::read_operationsList(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     Tango::DevString *ptr = new Tango::DevString[ 1024 ];
 
-    int nbItem = 0;
+    int item_idx = 0;
+	ptr[item_idx] = CORBA::string_dup("");
     for (std::map<long, operationParams >::iterator itMap = m_mapOperations.begin(); itMap != m_mapOperations.end(); ++itMap)
     {
-
-        std::stringstream item("");
-        item << "Level = " << itMap->first
-        << " : "
-        << "OperationType = " << itMap->second.operationType
-        << " : "
-        << "OperationValue = " << itMap->second.operationValue;
-        ptr[nbItem] = CORBA::string_dup((item.str()).c_str());
-        nbItem++;
+		if(itMap->second.operationType != "NONE")
+		{
+			std::stringstream item("");
+			item << "runLevel = " << itMap->first
+			<< " : "
+			<< "Operation = " << itMap->second.operationType
+			<< " ( "<< itMap->second.operationValue<<" )";
+			ptr[item_idx] = CORBA::string_dup((item.str()).c_str());
+			item_idx++;
+		}
     }
-    attr.set_value(ptr, nbItem, 0, true);
+	
+    attr.set_value(ptr, item_idx, 0, true);
 }
 
 
@@ -573,11 +607,12 @@ void Layout::delete_external_operation(long level)
     if (m_ct != 0)
     {
         try
-        {
-            std::stringstream opId("");
-            opId << level;
-            INFO_STREAM << "\t- delOp [" << opId.str() << "]"<<endl;
-            m_ct->externalOperation()->delOp(opId.str());
+        {			
+			std::stringstream opId("");
+			opId << m_mapOperations[level].opId;
+			INFO_STREAM << "\t- delOp [" << opId.str() << "]"<<endl;
+			m_ct->externalOperation()->delOp(opId.str());
+			m_mapOperations.erase(level);
         }
         catch (Exception& e)
         {
@@ -607,16 +642,10 @@ void Layout::add_external_operation(long level)
     {
         try
         {			
+            bool flipX = false;
+            bool flipY = false;			
             if (m_operationType == "FLIP")
             {
-                //create new operation
-                std::stringstream opId("");
-                SoftOpInstance op;
-                opId << level;
-                bool flipX = false;
-                bool flipY = false;
-				INFO_STREAM << "\t- addOp  [" << opId.str() << "]"<<endl;
-                m_ct->externalOperation()->addOp(FLIP, opId.str(), level, op);
                 if (m_operationValue == "X")
                 {
                     flipX = true;
@@ -639,18 +668,21 @@ void Layout::add_external_operation(long level)
                                                    "\n- XY",
                                                    "Layout::add_external_operation");
                 }
+				
+                //create new operation
+                std::stringstream opId("");
+                SoftOpInstance op;
+                opId << level<<":FLIP ("<<m_operationValue<<")";
+				INFO_STREAM << "\t- addOp [" << opId.str() << "]"<<endl;
+				operationParams params = {opId.str(), attr_operationType_write, attr_operationValue_write};
+				m_mapOperations[level] = params;				
+                m_ct->externalOperation()->addOp(FLIP, opId.str(), level, op);				
                 (reinterpret_cast<SoftOpFlip*> (op.m_opt))->setFlip(flipX, flipY);
                 return;
             }
 
             if (m_operationType == "ROTATION")
-            {
-                //create new operation
-                std::stringstream opId("");
-                SoftOpInstance op;
-                opId << level;
-				INFO_STREAM << "\t- addOp  [" << opId.str() << "]"<<endl;
-                m_ct->externalOperation()->addOp(ROTATION, opId.str(), level, op);
+            {                
 				SoftOpRotation::Type type;
                 if (m_operationValue == "90")
                 {
@@ -673,6 +705,14 @@ void Layout::add_external_operation(long level)
                                                    "\n- 270",
                                                    "Layout::add_external_operation");
                 }
+				//create new operation
+                std::stringstream opId("");
+                SoftOpInstance op;
+                opId << level<<":ROTATION ("<<m_operationValue<<")";
+				INFO_STREAM << "\t- addOp [" << opId.str() << "]"<<endl;
+				operationParams params = {opId.str(), attr_operationType_write, attr_operationValue_write};
+				m_mapOperations[level] = params;						
+                m_ct->externalOperation()->addOp(ROTATION, opId.str(), level, op);				
                 (reinterpret_cast<SoftOpRotation*> (op.m_opt))->setType(type);
                 return;
             }
@@ -687,8 +727,10 @@ void Layout::add_external_operation(long level)
                 //create new operation
                 std::stringstream opId("");
                 SoftOpInstance op;
-                opId << level;
-				INFO_STREAM << "\t- addOp  [" << opId.str() << "]"<<endl;
+				opId << level<<":"<<m_operationType<<" ("<<m_operationValue<<")";
+				INFO_STREAM << "\t- addOp [" << opId.str() << "]"<<endl;
+				operationParams params = {opId.str(), attr_operationType_write, attr_operationValue_write};
+				m_mapOperations[level] = params;				
                 m_ct->externalOperation()->addOp(USER_LINK_TASK, opId.str(), level, op);
 
 				//prepare l'externalOperation Task
@@ -771,7 +813,6 @@ void Layout::memorize_all_operations(void)
  *
  */
 //+------------------------------------------------------------------
-
 void Layout::add_operation(Tango::DevLong argin)
 {
     DEBUG_STREAM << "Layout::add_operation(): entering... !" << endl;
@@ -781,8 +822,6 @@ void Layout::add_operation(Tango::DevLong argin)
     {
         yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
         add_external_operation(argin);
-        operationParams params = {attr_operationType_write, attr_operationValue_write};
-        m_mapOperations[argin] = params;
         memorize_all_operations();
     }
     catch (Exception& e)
@@ -809,7 +848,6 @@ void Layout::add_operation(Tango::DevLong argin)
  *
  */
 //+------------------------------------------------------------------
-
 void Layout::remove_operation(Tango::DevLong argin)
 {
     DEBUG_STREAM << "Layout::remove_operation(): entering... !" << endl;
@@ -819,9 +857,13 @@ void Layout::remove_operation(Tango::DevLong argin)
     try
     {
         yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-        delete_external_operation(argin);
-        m_mapOperations.erase(argin);
-        memorize_all_operations();
+		std::map<long, operationParams >::iterator it;			
+		it = m_mapOperations.find (argin);	
+		if (it != m_mapOperations.end())
+		{		
+			delete_external_operation(argin);
+			memorize_all_operations();			
+		}
     }
     catch (Exception& e)
     {
@@ -874,5 +916,7 @@ Tango::DevState Layout::dev_state()
     argout = DeviceState;
     return argout;
 }
+
+
 
 }	//	namespace

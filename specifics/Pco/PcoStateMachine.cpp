@@ -104,9 +104,14 @@ bool Pco::is_dllVersion_allowed(Tango::AttReqType type)
 bool Pco::is_pixelRate_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT)
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
 	{
 		//	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
 
 		//	Re-Start of Generated Code
 		return false;
@@ -123,9 +128,14 @@ bool Pco::is_pixelRate_allowed(Tango::AttReqType type)
 bool Pco::is_doubleImage_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT)
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
 	{
 		//	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
 
 		//	Re-Start of Generated Code
 		return false;
@@ -162,6 +172,26 @@ bool Pco::is_currentRecordedFrame_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Pco::is_forcedFIFOMode_allowed
+// 
+// description : 	Read/Write allowed for forcedFIFOMode attribute.
+//
+//-----------------------------------------------------------------------------
+bool Pco::is_forcedFIFOMode_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
 	{
 		//	End of Generated Code
 

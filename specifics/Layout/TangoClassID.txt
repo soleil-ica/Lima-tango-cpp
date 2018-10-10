@@ -1,0 +1,11 @@
+/**
+ * Device Class Identification:
+ * 
+ * Class Name   :	Layout
+ * Contact      :	arafat.noureddine@synchrotro-soleil.fr
+ * Class Family :	Acquisition
+ * Platform     :	All Platforms
+ * Bus          :	Not Applicable
+ * Manufacturer :	SOLEIL
+ * Reference    :	
+ */

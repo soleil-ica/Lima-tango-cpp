@@ -198,6 +198,54 @@ public:
 //=========================================
 //	Define classes for commands
 //=========================================
+class ITHLDecreaseCmd : public Tango::Command
+{
+public:
+	ITHLDecreaseCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	ITHLDecreaseCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~ITHLDecreaseCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<ImXpad *>(dev))->is_ITHLDecrease_allowed(any);}
+};
+
+
+
+class ITHLIncreaseCmd : public Tango::Command
+{
+public:
+	ITHLIncreaseCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	ITHLIncreaseCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~ITHLIncreaseCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<ImXpad *>(dev))->is_ITHLIncrease_allowed(any);}
+};
+
+
+
 class AbortClass : public Tango::Command
 {
 public:

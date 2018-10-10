@@ -518,5 +518,45 @@ bool ImXpad::is_LoadCalibrationFile_allowed(const CORBA::Any &any)
 	}
 	return true;
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_ITHLIncrease_allowed
+// 
+// description : 	Execution allowed for ITHLIncrease command.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_ITHLIncrease_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_ITHLDecrease_allowed
+// 
+// description : 	Execution allowed for ITHLDecrease command.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_ITHLDecrease_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
 
 }	// namespace ImXpad_ns

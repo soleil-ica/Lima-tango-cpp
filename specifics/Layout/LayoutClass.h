@@ -91,6 +91,18 @@ public:
 	{return (static_cast<Layout *>(dev))->is_operationType_allowed(ty);}
 };
 
+class versionAttrib: public Tango::Attr
+{
+public:
+	versionAttrib():Attr("version", Tango::DEV_STRING, Tango::READ) {};
+	~versionAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Layout *>(dev))->read_version(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Layout *>(dev))->is_version_allowed(ty);}
+};
+
 //=========================================
 //	Define classes for commands
 //=========================================

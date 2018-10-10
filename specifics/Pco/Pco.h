@@ -114,6 +114,8 @@ namespace Pco_ns
 		Tango::DevULong	*attr_currentRecordedFrame_read;
 		Tango::DevString	*attr_cameraModel_read;
 		Tango::DevFloat	*attr_sensorTemperature_read;
+		Tango::DevBoolean	*attr_forcedFIFOMode_read;
+		Tango::DevBoolean	attr_forcedFIFOMode_write;
 		Tango::DevString	*attr_dllVersion_read;
 //@}
 
@@ -231,6 +233,14 @@ namespace Pco_ns
  */
 	virtual void read_sensorTemperature(Tango::Attribute &attr);
 /**
+ *	Extract real attribute values for forcedFIFOMode acquisition result.
+ */
+	virtual void read_forcedFIFOMode(Tango::Attribute &attr);
+/**
+ *	Write forcedFIFOMode attribute values to hardware.
+ */
+	virtual void write_forcedFIFOMode(Tango::WAttribute &attr);
+/**
  *	Extract real attribute values for dllVersion acquisition result.
  */
 	virtual void read_dllVersion(Tango::Attribute &attr);
@@ -254,6 +264,10 @@ namespace Pco_ns
  *	Read/Write allowed for sensorTemperature attribute.
  */
 	virtual bool is_sensorTemperature_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for forcedFIFOMode attribute.
+ */
+	virtual bool is_forcedFIFOMode_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for dllVersion attribute.
  */
@@ -333,7 +347,7 @@ namespace Pco_ns
         //- cdi
         void read_cdiMode_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
         void write_cdiMode_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
-        bool is_cdiMode_allowed(Tango::AttReqType type);
+        //bool is_cdiMode_allowed(Tango::AttReqType type);
         //- frameRate
         void read_frameRate_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
         //- coolingSetPoint

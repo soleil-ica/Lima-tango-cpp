@@ -1,0 +1,93 @@
+@startuml
+
+title
+<font color=red>Lima</font>
+<font color=red>GetStatus</font>
+<b>Diagram Sequence</b>
+20/04/2018
+<u>Arafat Noureddine</u>
+
+end title
+
+actor User
+
+participant "LimaDetector" as Device
+participant "Factory" as Factory
+box "TANGO" #LightGreen
+	participant Device
+    participant Factory
+end box
+
+participant "Controller" as Ctrl
+box "       LIMA CORE      " #Orange
+	participant Ctrl
+end box
+
+participant "Interface" as Hw
+participant "Camera" as Cam
+box "PLUGIN" #LightBlue
+	participant Hw	
+	participant Cam	
+end box
+
+
+User -> Device: State()
+activate Device
+
+Device -> Factory : get_state()
+activate Factory
+
+Factory -> Ctrl : getStatus()\t\t\t
+activate Ctrl
+
+note over Ctrl 
+            _calcAcqStatus()  compute an internal Control status :
+                    * Control status is AcqReady if All frames are acquired.
+                    * Control status is AcqReady if All frames are saved.
+                    * Control status is AcqReady if All process on frames are finished.
+                    * Control status is AcqFault if  acquisition is started and overrun is occured
+                    * Control status is AcqRunning if acquisition is started and none of the previous conditions is true 
+end note
+
+Ctrl -> Hw : getStatus()
+activate Hw
+
+Hw -> Cam : getStatus()
+note over Cam 
+            Compute the camera status according to each type of detector
+end note
+
+activate Cam
+
+Cam --> Hw
+deactivate Cam
+
+Hw --> Ctrl
+deactivate Hw
+
+        alt Camera status is AcqFault [aHwStatus.acq == AcqFault]
+            Ctrl -> Ctrl : return Fault [status.AcquisitionStatus is AcqFault]
+        end
+
+        alt Control status is AcqReady [status.AcquisitionStatus == AcqReady]
+            Ctrl -> Ctrl : return the Camera status [status.AcquisitionStatus = aHwStatus.acq]
+        end
+
+        alt else
+            Ctrl -> Ctrl : return the Control status [AcqRunning/AcqFault]
+        end
+Ctrl --> Factory
+deactivate Ctrl
+
+note over Factory 
+            if (AcquisitionStatus == AcqReady) : Device state = Tango::STANDBY
+            if (AcquisitionStatus == AcqRunning) : Device state = Tango::RUNNING
+            if (AcquisitionStatus == AcqConfig) : Device state = Tango::DISABLE
+            else  : Device state = Tango::FAULT
+end note
+
+Factory --> Device 
+Device --> User : state (STANDBY/RUNNING/DISABLE/FAULT)
+deactivate Device
+
+@enduml

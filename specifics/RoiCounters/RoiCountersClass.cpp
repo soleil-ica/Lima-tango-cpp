@@ -259,9 +259,29 @@ void RoiCountersClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	version_prop.set_unit(" ");
 	version_prop.set_standard_unit(" ");
 	version_prop.set_display_unit(" ");
-	version_prop.set_description("Display the Version of RoiCounters Device");
+	version_prop.set_description("Display the Version of the RoiCounters Device");
 	version->set_default_properties(version_prop);
 	att_list.push_back(version);
+
+	//	Attribute : runLevel
+	runLevelAttrib	*run_level = new runLevelAttrib();
+	Tango::UserDefaultAttrProp	run_level_prop;
+	run_level_prop.set_unit(" ");
+	run_level_prop.set_standard_unit(" ");
+	run_level_prop.set_display_unit(" ");
+	run_level_prop.set_description("Fix the execution order of this operation in the processing chain");
+	run_level->set_default_properties(run_level_prop);
+	att_list.push_back(run_level);
+
+	//	Attribute : operationsList
+	operationsListAttrib	*operations_list = new operationsListAttrib();
+	Tango::UserDefaultAttrProp	operations_list_prop;
+	operations_list_prop.set_unit(" ");
+	operations_list_prop.set_standard_unit(" ");
+	operations_list_prop.set_display_unit(" ");
+	operations_list_prop.set_description("Enumerate all RoiCounters 'post processing' operations on the image.");
+	operations_list->set_default_properties(operations_list_prop);
+	att_list.push_back(operations_list);
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
@@ -387,6 +407,21 @@ void RoiCountersClass::set_default_property()
 	vect_data.clear();
 	vect_data.push_back("10");
 	vect_data.push_back("10");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedRunLevel";
+	prop_desc = "Memorize/Define the runLevel attribute<br>";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

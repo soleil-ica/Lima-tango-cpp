@@ -1902,6 +1902,16 @@ void Eiger::write_compression(Tango::WAttribute &attr)
 {
     DEBUG_STREAM << "Eiger::write_compression(Tango::WAttribute &attr) entering... "<< endl;
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+
+    lima::CtSaving::ManagedMode managed_mode;
+    m_ct->saving()->getManagedMode(managed_mode);
+    if (managed_mode != lima::CtSaving::Hardware) //- ie Hardware == FileWriter
+    {
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                        "In Software Saving Managed mode (ie Eiger Streaming), compression is always enabled",
+                                        "Eiger::write_compression" );
+    } 
+
     try
     {
         attr.get_write_value(attr_compression_write);
