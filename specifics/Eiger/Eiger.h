@@ -50,6 +50,7 @@
 #include "lima/CtControl.h"
 #include "lima/CtAcquisition.h"
 #include "lima/CtImage.h"
+#include "lima/CtSaving.h"
 #include "EigerInterface.h"
 #include "EigerCamera.h"
 

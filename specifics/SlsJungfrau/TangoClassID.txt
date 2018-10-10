@@ -1,0 +1,11 @@
+/**
+ * Device Class Identification:
+ * 
+ * Class Name   :	SlsJungfrau
+ * Contact      :	cedric.castel@synchrotron-soleil.fr
+ * Class Family :	Acquisition
+ * Platform     :	Unix Like
+ * Bus          :	Not Applicable
+ * Manufacturer :	SLS
+ * Reference    :	
+ */

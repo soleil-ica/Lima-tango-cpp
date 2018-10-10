@@ -30,8 +30,8 @@
 //
 //         (c) - Software Engineering Group - ESRF
 //=============================================================================
-#ifndef _MAXIPIX_H
-#define _MAXIPIX_H
+#ifndef _IMXPAD_H
+#define _IMXPAD_H
 
 #include <tango.h>
 //using namespace Tango;
@@ -393,6 +393,14 @@ public :
  */
 	virtual bool is_Abort_allowed(const CORBA::Any &any);
 /**
+ *	Execution allowed for ITHLIncrease command.
+ */
+	virtual bool is_ITHLIncrease_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for ITHLDecrease command.
+ */
+	virtual bool is_ITHLDecrease_allowed(const CORBA::Any &any);
+/**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
  *	@exception DevFailed
@@ -444,6 +452,16 @@ public :
  *	@exception DevFailed
  */
 	void	abort();
+/**
+ * Increment of one unit of the global ITHL register
+ *	@exception DevFailed
+ */
+	void	ithlincrease();
+/**
+ * Decrement of one unit in the global ITHL register
+ *	@exception DevFailed
+ */
+	void	ithldecrease();
 
 /**
  *	Read the device properties from database
@@ -478,4 +496,4 @@ protected :
 
 }	// namespace_ns
 
-#endif	// _MAXIPIX_H
+#endif	// _IMXPAD_H

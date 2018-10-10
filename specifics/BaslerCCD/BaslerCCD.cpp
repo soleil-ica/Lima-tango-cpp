@@ -670,14 +670,14 @@ void BaslerCCD::read_dataRate(Tango::Attribute &attr)
                 ImageType image_type;
                 hw_det_info->getCurrImageType(image_type);
                 FrameDim frame_dim;
-                int pixelDepth = frame_dim.getImageTypeBpp(image_type);
+                int pixelDepth = frame_dim.getImageTypeDepth(image_type);				
 
                 //get the detector ROI
                 Roi roi;
                 m_ct->image()->getRoi(roi);
 
                 //compute data rate in MB/s
-                dataRate = frameRate * (ceil(pixelDepth / 8.0))*(roi.getSize().getWidth() * roi.getSize().getHeight()) / (1024.0 * 1024.0);
+                dataRate = frameRate * pixelDepth *(roi.getSize().getWidth() * roi.getSize().getHeight()) / (1024.0 * 1024.0);
                 *attr_dataRate_read = dataRate;
 
                 attr.set_value(attr_dataRate_read);

@@ -1013,6 +1013,65 @@ void LimaDetector::read_attr_hardware(vector<long> &attr_list)
     DEBUG_STREAM << "LimaDetector::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
     //    Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		LimaDetector::read_operationsList
+// 
+// description : 	Extract real attribute values for operationsList acquisition result.
+//
+//-----------------------------------------------------------------------------
+void LimaDetector::read_operationsList(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "LimaDetector::read_operationsList(Tango::Attribute &attr) entering... "<< endl;
+	try
+	{
+		Tango::DevString *ptr = new Tango::DevString[ 1024 ];
+
+		//list all operations
+		int item_idx = 0;	
+		std::map<int, std::list<std::string> > map_active_ops;		
+		m_ct->externalOperation()->getActiveOp(map_active_ops);
+		for(std::map<int, std::list<std::string> >::const_iterator it_map = map_active_ops.begin();it_map != map_active_ops.end();++it_map)
+		{
+			for(std::list<string>::const_iterator it_list = it_map->second.begin();it_list != it_map->second.end();++it_list)
+			{
+				std::string op_name = (*it_list).substr((*it_list).find(":")+1);
+				std::stringstream ss("");
+				ss<< "runLevel = " << it_map->first << " : Operation = " << op_name;
+				ptr[item_idx] = CORBA::string_dup(ss.str().c_str());
+				item_idx++;	
+			}
+		}
+
+		attr.set_value(ptr, item_idx, 0, true);	
+	}
+	catch(ProcessException& p)
+	{
+		ERROR_STREAM << p.getErrMsg() << endl;
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						p.getErrMsg().c_str(),
+						"LimaDetector::read_operationsList");		
+	}
+	catch(Exception& e)
+	{
+		ERROR_STREAM << e.getErrMsg() << endl;
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"LimaDetector::read_operationsList");
+	}	
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_operationsList");
+    }	
+}
+
 
 //+----------------------------------------------------------------------------
 //
@@ -2905,9 +2964,7 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
 
 
         if(imageSource == "ACQUISITION")
-        {
-#define DIMENSIONS_WIDTH_INDEX   0        
-#define DIMENSIONS_HEIGHT_INDEX  1                       
+        {                   
             if(counter > 0)
             {
                 DEBUG_STREAM << "last_image_counter -> " << counter << endl;
@@ -2923,8 +2980,8 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
                         case yat4tango::TangoTraits<Tango::DevUChar>::type_id:
                             DEBUG_STREAM << "image->set_value() : DevUChar" << endl;
                             cbd.tga->set_value((Tango::DevUChar*)last_image.data(),
-                                               last_image.dimensions[DIMENSIONS_WIDTH_INDEX], //- width
-                                               last_image.dimensions[DIMENSIONS_HEIGHT_INDEX] //- height
+                                               last_image.dimensions[WIDTH_INDEX], //- width
+                                               last_image.dimensions[HEIGHT_INDEX] //- height
                                                );
                             break;
 
@@ -2932,8 +2989,8 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
                         case yat4tango::TangoTraits<Tango::DevUShort>::type_id:
                             DEBUG_STREAM << "image->set_value() : DevUShort" << endl;
                             cbd.tga->set_value((Tango::DevUShort*)last_image.data(),
-                                               last_image.dimensions[DIMENSIONS_WIDTH_INDEX], //- width
-                                               last_image.dimensions[DIMENSIONS_HEIGHT_INDEX] //- height
+                                               last_image.dimensions[WIDTH_INDEX], //- width
+                                               last_image.dimensions[HEIGHT_INDEX] //- height
                                                );
                             break;
 
@@ -2941,24 +2998,24 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
                         case yat4tango::TangoTraits<Tango::DevULong>::type_id:
                             DEBUG_STREAM << "image->set_value() : DevULong" << endl;
                             cbd.tga->set_value((Tango::DevULong*)last_image.data(),
-                                               last_image.dimensions[DIMENSIONS_WIDTH_INDEX], //- width
-                                               last_image.dimensions[DIMENSIONS_HEIGHT_INDEX] //- height
+                                               last_image.dimensions[WIDTH_INDEX], //- width
+                                               last_image.dimensions[HEIGHT_INDEX] //- height
                                                );
                             break;
                             //signed 32 bits
                         case yat4tango::TangoTraits<Tango::DevLong>::type_id:
                             DEBUG_STREAM << "image->set_value() : DevLong" << endl;
                             cbd.tga->set_value((Tango::DevLong*)last_image.data(),
-                                               last_image.dimensions[DIMENSIONS_WIDTH_INDEX], //- width
-                                               last_image.dimensions[DIMENSIONS_HEIGHT_INDEX] //- height
+                                               last_image.dimensions[WIDTH_INDEX], //- width
+                                               last_image.dimensions[HEIGHT_INDEX] //- height
                                                );
                             break;
                             //FLOAT
                         case yat4tango::TangoTraits<Tango::DevFloat>::type_id:
                             DEBUG_STREAM << "image->set_value() : DevFloat" << endl;
                             cbd.tga->set_value((Tango::DevFloat*)last_image.data(),
-                                               last_image.dimensions[DIMENSIONS_WIDTH_INDEX], //- width
-                                               last_image.dimensions[DIMENSIONS_HEIGHT_INDEX] //- height
+                                               last_image.dimensions[WIDTH_INDEX], //- width
+                                               last_image.dimensions[HEIGHT_INDEX] //- height
                                                );
                             break;
 
@@ -4432,12 +4489,21 @@ void LimaDetector::create_log_info_attributes(void)
 #endif
 
 #ifdef Linux
-#ifdef  UNIX_64_EL5
+    #ifdef  UNIX_64_EL5
+        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MAXIPIX_NAME), YAT_XSTR(MAXIPIX_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
-#else
+    #else
+        #ifdef UNIX_64_EL6
+        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION));
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION));
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION));
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION));
+
+        #else // UNIX_32
         yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
@@ -4450,8 +4516,10 @@ void LimaDetector::create_log_info_attributes(void)
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSJUNGFRAU_NAME), YAT_XSTR(SLSJUNGFRAU_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
-#endif
+        #endif
+    #endif
 #endif
 
 		//- instanciate the log Adapter
@@ -4614,11 +4682,7 @@ void LimaDetector::add_image_dynamic_attribute(void)
     {
         dai.tai.data_type = Tango::DEV_USHORT;
     }
-    else if(detectorPixelDepth == "24")
-    {
-        dai.tai.data_type = Tango::DEV_ULONG;
-    }
-    else if(detectorPixelDepth == "32")
+    else if(detectorPixelDepth == "24" || detectorPixelDepth == "32")
     {
         dai.tai.data_type = Tango::DEV_ULONG;
     }
@@ -4818,11 +4882,6 @@ void LimaDetector::execute_close_shutter_callback(yat4tango::DynamicCommandExecu
                         "LimaDetector::execute_close_shutter_callback");
     }
 }
-
-
-
-
-
 
 
 }	//	namespace

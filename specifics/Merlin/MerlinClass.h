@@ -502,6 +502,28 @@ public:
 	{return (static_cast<Merlin *>(dev))->is_SoftTrigger_allowed(any);}
 };
 
+//	Command Abort class definition
+class AbortClass : public Tango::Command
+{
+public:
+    AbortClass(const char   *name,
+        Tango::CmdArgType in,
+        Tango::CmdArgType out,
+        const char        *in_desc,
+        const char        *out_desc,
+        Tango::DispLevel  level)
+        :Command(name, in, out, in_desc, out_desc, level)	{};
+
+    AbortClass(const char   *name,
+        Tango::CmdArgType in,
+        Tango::CmdArgType out)
+        :Command(name, in, out)	{};
+    ~AbortClass() {};
+
+    virtual CORBA::Any *execute(Tango::DeviceImpl *dev, const CORBA::Any &any);
+    virtual bool is_allowed(Tango::DeviceImpl *dev, const CORBA::Any &any)
+    {return (static_cast<Merlin *>(dev))->is_Abort_allowed(any);}
+};
 
 
 

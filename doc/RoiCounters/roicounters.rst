@@ -1,61 +1,104 @@
-RoiCounters
-===========
+RoiCounters C++ Tango device
+============================
 
-The Region-of-Interest to Counter operation is very useful to provide online statistics on some detector areas. The operation will calculate for each image acquired the **average**, the **standard deviation**, the **sum**, the **minimum** and the **maximum pixel** values.
+**RoiCounters** is a post process specific device
 
-The Roi can be defined either with rectangle coordinates (x begin,y begin, width, height) or with arc coordinates (center x, center y, radius1, radius2, angle start, angle end). Different commands are provided for that purpose: **setRois** and **setArcRois**.
+The Region-of-Interest to Counter operation is very useful to provide online statistics on some image areas.
 
-You must create first the Rois by providing unique names (**addNames** command) and then set the Roi position using the Roi index and the position (rectangle or arc position). 
+The operation will calculate for each acquired image the : 
 
-The statistics can be retrieved by calling the **readCounters** command, the command returns a list of statistics per Roi and frame.
+- the average of pixels
+- the standard deviation
+- the sum of pixels
+- the minimum pixel value
+- the coordinates (X,Y) of the minimum pixel
+- the maximum pixel value
+- the coordinates (X,Y) of the maximum pixel
 
-In addition to the statistics calculation one can set a mask file (**setMask** command) where null pixel will not be taken into account.
+User can configure one or many Region Of Interest (32 Rois at Maximum)
+
+User can also configure the order of this operation in the chain of operations already defined
+
 
 Properties
 ----------
-This device has no property.
+
++----------------------------+-------------------------------------+-----------------------------------------------------------------------+
+| Property name              | Default value                       | Description                                                           |
++============================+=====================================+=======================================================================+
+| NbRoiCounters              | 2                                   | Fix the number of Region Of Interest                                  |
++----------------------------+-------------------------------------+-----------------------------------------------------------------------+
+| __x                        || 0                                  | (Origin X) for each Region of Interest                                |
+|                            || 0                                  |                                                                       |
++----------------------------+-------------------------------------+-----------------------------------------------------------------------+
+| __y                        || 0                                  | (Origin Y) for each Region of Interest                                |
+|                            || 0                                  |                                                                       |
++----------------------------+-------------------------------------+-----------------------------------------------------------------------+
+| __width                    || 10                                 | (Width) for each Region of Interest                                   |
+|                            || 10                                 |                                                                       |
++----------------------------+-------------------------------------+-----------------------------------------------------------------------+
+| __height                   || 10                                 | (Height) for each Region of Interest                                  |
+|                            || 10                                 |                                                                       |
++----------------------------+-------------------------------------+-----------------------------------------------------------------------+
+
 
 Attributes
 ----------
 
-======================= ======= ============= ======================================================================
-Attribute name		RW	Type			Description
-======================= ======= ============= ======================================================================
-BufferSize		rw	DevLong	      Circular buffer size in image, default is 128
-CounterStatus		ro	DevLong	      Counter related to the current number of proceeded images
-RunLevel		rw	DevLong	      Run level in the processing chain, from 0 to N		
-State		 	ro 	State	      OFF or ON (stopped or started)
-Status		 	ro	DevString     "OFF" "ON" (stopped or started)
-======================= ======= ============= ======================================================================
++----------------------------+--------------+---------------------+------------------------------------------------------------------------------+
+| Attribute name             | Read/Write   | Type                | Description                                                                  |
++============================+==============+=====================+==============================================================================+
+| version                    | R            | DevString           | Display the Version of the RoiCounters Device                                |
++----------------------------+--------------+---------------------+------------------------------------------------------------------------------+
+| runLevel                   | W            | DevULong            | Fix the execution order of this operation in the processing chain            |
++----------------------------+--------------+---------------------+------------------------------------------------------------------------------+
+| frameNumber                | R            | DevULong            | The frame number on wich the 'roi counters' computation were made            |
++----------------------------+--------------+---------------------+------------------------------------------------------------------------------+
+| operationsList             | R            | DevString           | Enumerate all RoiCounters active 'post processing' operations on the image   |
++----------------------------+--------------+---------------------+------------------------------------------------------------------------------+
+
+Dynamic attributes (for each defined Roi)
+---------------------------------------------------------------
++----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+|  Attribute name            |  Read/Write  |  Type                         |  Description                                                                                        |
++============================+==============+===============================+=====================================================================================================+
+|x                           |R/W           |DevULong                       | The x coordinate of the Roi                                                                         |
++----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+|y                           |R/W           |DevULong                       | The y coordinate of the Roi                                                                         |
++----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+|width                       |R/W           |DevULong                       | The width of the Roi                                                                                |
++----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+|height                      |R/W           |DevULong                       | The height of the Roi                                                                               |
++----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+|sum                         |R             |DevDouble                      | The sum of pixels in the Roi                                                                        |
++----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+|average                     |R             |DevDouble                      | The average of pixels in the Roi                                                                    |
++----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+|std                         |R             |DevDouble                      | The std deviation of pixels in the Roi                                                              |
++----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+|minValue                    |R             |DevDouble                      | The min of pixels in the Roi                                                                        |
++----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+|minX                        |R             |DevDouble                      | The coordinate X of the min of pixels in the Roi                                                    |
++----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+|minY                        |R             |DevDouble                      | The coordinate Y of the min of pixels in the Roi                                                    |
++----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+|maxValue                    |R             |DevDouble                      | The max of pixels in the Roi                                                                        |
++----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+|maxX                        |R             |DevDouble                      | The coordinate X of the max of pixels in the Roi                                                    |
++----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+|maxY                        |R             |DevDouble                      | The coordinate Y of the max of pixels in the Roi                                                    |
++----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+
 
 Commands
 --------
 
-=======================	============================ ============================= ==================================================
-Command name		Arg. in		             Arg. out		 	   Description
-=======================	============================ ============================= ==================================================
-addNames		DevVarStringArray    	     DevVarStringArray	 	   Set the names and return the corresponding indexes		
-			list of Roi names    	     list of Roi indexes	
-clearAllRois		DevVoid	    	     	     DevVoid			   Remove the Rois 
-getNames		DevVoid		     	     DevVarStringArray	 	   Return the list of Roi names
-getRoiModes		DevVarStringArray    	     DevVarStringArray	 	   Return the Roi modes 
-getRois			DevVarStringArray    	     DevVarStringArray	 	   Return the Roi positions
-			list of Roi names    	     list of Roi position
-			     	    	     	     (roi_id,x,y,width,heigth,...)
-Init			DevVoid		     	     DevVoid			   Do not use
-readCounters		DevVarLongArray	     	     DevVarLongArray		 
-removeRois		roi_id,first image   	     spectrum stack		   Return the stack of spectrum from the specified 
-				     	   		 		   	   image index until the last image acquired
-setArcRois		DevVarDoublArray     	     DevVoid		   	   Set the Arc Rois
-			(roi_id0,centerx,centery,
-			radius1,raduis2,start_angle,
-			end_angle,roi_id1,...)
-setMaskFile		DevVarStringArray	     DevVoid			   Set the mask file
-			full path file
-setRois			DevArLongArray		     DevVoid			   Set roi positions
-			(roi_id0,x,y,w,h,roi_id1..)
-Start			DevVoid			     DevVoid			   Start the operation on image
-State			DevVoid		     	     DevLong		    	   Return the device state
-Status			DevVoid		     	     DevString			   Return the device state as a string
-Stop			DevVoid		     	     DevVoid			   Stop the operation on image
-=======================	============================ ============================= ==================================================
++----------------------------+--------------+---------------------+------------------------------------------------------------------------+
+| Command name               | Arg. in      | Arg. out            | Description                                                            |
++============================+==============+=====================+========================================================================+
+| Init                       | DevVoid      | DevVoid             | Do not use                                                             |
++----------------------------+--------------+---------------------+------------------------------------------------------------------------+
+| State                      | DevVoid      | DevLong             | Return the device state                                                |
++----------------------------+--------------+---------------------+------------------------------------------------------------------------+
+| Status                     | DevVoid      | DevString           | Return the device state as a string                                    |
++----------------------------+--------------+---------------------+------------------------------------------------------------------------+

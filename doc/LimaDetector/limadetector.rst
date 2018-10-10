@@ -10,7 +10,7 @@ To run a LimaDetector device you will need at least to configure the **DetectorT
 Properties
 ----------
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
-|Property name               |Default value                        |Description                                                                                          |
+| Property name              | Default value                       | Description                                                                                         |
 +============================+=====================================+=====================================================================================================+
 |DetectorType                |SimulatorCCD                         | | Define the type of the Detector. Availables types : (one of these)                                |
 |                            |                                     | | AndorCCD                                                                                          |
@@ -40,28 +40,28 @@ Properties
 |DebugFormats                | | DateTime                          | | Define Lima traces formats. Availables values : (a combination of these)                          |
 |                            | | Module                            | | DateTime                                                                                          |
 |                            | | Type                              | | Thread                                                                                            |
-|                            |                                     | | Module                                                                                            |
-|                            |                                     | | Obj                                                                                               |
-|                            |                                     | | Funct                                                                                             |
-|                            |                                     | | FileLine                                                                                          |
+|                            | |                                   | | Module                                                                                            |
+|                            | |                                   | | Obj                                                                                               |
+|                            | |                                   | | Funct                                                                                             |
+|                            | |                                   | | FileLine                                                                                          |
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
 |DebugLevels                 | | Fatal                             | | Define Lima traces levels. Availables values : (a combination of these)                           |
 |                            | | Error                             | | Fatal                                                                                             |
 |                            | | Warning                           | | Error                                                                                             |
-|                            |                                     | | Warning                                                                                           |
-|                            |                                     | | Trace                                                                                             |
-|                            |                                     | | Funct                                                                                             |
-|                            |                                     | | Param                                                                                             |
-|                            |                                     | | Return                                                                                            |
-|                            |                                     | | Always                                                                                            |
+|                            | |                                   | | Warning                                                                                           |
+|                            | |                                   | | Trace                                                                                             |
+|                            | |                                   | | Funct                                                                                             |
+|                            | |                                   | | Param                                                                                             |
+|                            | |                                   | | Return                                                                                            |
+|                            | |                                   | | Always                                                                                            |
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
 |DebugModules                | | Hardware                          | | Define Lima traces modules. Availables values : (a combination of these)                          |
 |                            | | Control                           | | None                                                                                              |
 |                            | | Common                            | | Hardware                                                                                          |
 |                            | | Camera                            | | Warning                                                                                           |
-|                            |                                     | | Control                                                                                           |
-|                            |                                     | | Common                                                                                            |
-|                            |                                     | | Camera                                                                                            |
+|                            | |                                   | | Control                                                                                           |
+|                            | |                                   | | Common                                                                                            |
+|                            | |                                   | | Camera                                                                                            |
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
 |DetectorDescription         |This is my Simulator                 |Detector user-defined text to identify the engine.                                                   |
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
@@ -109,7 +109,7 @@ Properties
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
 |FileMemoryMode              |NO_COPY                              | | Available only for Nexus format : Set the SetDataItemMemoryMode(). Available values :             |
 |                            |                                     | | COPY: the nexus lib make its own copy of the image and then works on it                           |
-|                            |                                     | | NO_COPY: ???                                                                                      |
+|                            |                                     | | NO_COPY: the nexus lib use the buffer image allocated by the lima memory manager                  |
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
 |FileTimestampEnabled        |true                                 |Available only for Nexus format: enable the timestamp                                                |
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
@@ -123,7 +123,8 @@ Properties
 |                            |                                     | | HardAndSoft                                                                                       |
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
 |ImageSource                 |VIDEO                                | | Choose the source of Data given to the image attribute :                                          |
-|                            |                                     | | VIDEO : use ctVideo->LastImage()                                                                  |
+|                            |                                     | | VIDEO : use ctVideo->LastImage() : 				                                                 |
+|                            |                                     | |         ATTENTION: specifics process as Flip/Rotation/Mask/etc... are disabled in this mode       |
 |                            |                                     | | ACQUISITION : use ctControl->ReadImage()                                                          |
 +----------------------------+-------------------------------------+-----------------------------------------------------------------------------------------------------+
 |SpecialDisplayType          |NOT_USED                             |Special type of the image attribute for display and saving (NOT_USED, FLOAT, ...)                    |
@@ -196,10 +197,13 @@ Attributes
 |                            |              | | DevLong                     |                                                                                                     |
 |                            |              | | DevFloat                    |                                                                                                     |
 +----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+|operationsList              |R             |DevString (Spectrum)           |Enumerate all (Layout, Mask, RoiCounters) active 'post processing' operations on the image           |
++----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
 |log                         |R             |Array of DevString             |Logs from Tango and Lima                                                                             |
 +----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
 |info                        |R             |Array of DevString             |Informations on version of LimaCore and plugins                                                      |
 +----------------------------+--------------+-------------------------------+-----------------------------------------------------------------------------------------------------+
+
 
 Optionnal attributes (depend on config)
 ---------------------------------------

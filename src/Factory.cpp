@@ -36,6 +36,9 @@ void ControlFactory::initialize()
     m_device_name_roicounters = "none";
 #endif  
 
+#ifdef MASK_ENABLED    
+    m_device_name_mask = "none";
+#endif
     m_status.str("");
     m_state = Tango::INIT;
 }
@@ -89,6 +92,17 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_datum >> m_device_name_roicounters;
             }
 #endif     
+			
+#ifdef MASK_ENABLED
+            {
+                std::string mask = "Mask";
+                Tango::DbDatum db_datum;
+                m_device_name_generic = Tango::Util::instance()->get_ds_name();
+                db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, mask);
+                db_datum >> m_device_name_mask;
+            }
+#endif         
+			
         }
 
 #ifdef SIMULATOR_ENABLED
@@ -264,22 +278,27 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data.push_back(Tango::DbDatum("DetectorPort"));
                 db_data.push_back(Tango::DbDatum("DetectorTargetPath"));
                 db_data.push_back(Tango::DbDatum("ReaderTimeout"));
-
+				db_data.push_back(Tango::DbDatum("ReaderNbRetry"));
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
                 std::string camera_ip;
                 std::string img_path;
                 unsigned long camera_port = 2222;
                 unsigned short reader_timeout = 10000;
+				long reader_nb_retry = 3;
 
                 db_data[0] >> camera_ip;
                 db_data[1] >> camera_port;
                 db_data[2] >> img_path;
                 db_data[3] >> reader_timeout;
+				db_data[4] >> reader_nb_retry;
 
                 m_camera = static_cast<void*> (new Marccd::Camera(camera_ip.c_str(), camera_port, img_path));
                 m_interface = static_cast<void*> (new Marccd::Interface(*static_cast<Marccd::Camera*> (m_camera)));
                 if (m_interface)
+				{
                     static_cast<Marccd::Interface*> (m_interface)->setTimeout(reader_timeout / 1000);
+					static_cast<Marccd::Interface*> (m_interface)->setNbRetry(reader_nb_retry);
+				}
 
                 m_control = new CtControl(static_cast<Marccd::Interface*> (m_interface));
                 ControlFactory::m_is_created = true;
@@ -578,6 +597,46 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 
+#ifdef SLSJUNGFRAU_ENABLED
+        if (detector_type == "SlsJungfrau")
+        {
+            if (!ControlFactory::m_is_created)
+            {
+                Tango::DbData db_data            ;
+                std::string   config_file_name   ;
+                double        readout_time       ;
+                long          receiver_fifo_depth;
+                long          frame_packet_number;
+                
+                // configuration complete path
+                db_data.push_back(Tango::DbDatum("ConfigFileName"));
+                
+                // readout time of the camera
+                db_data.push_back(Tango::DbDatum("ExpertReadoutTime"));
+                
+                // Number of frames in the receiver memory
+                db_data.push_back(Tango::DbDatum("ExpertReceiverFifoDepth"));
+
+                // Number of packets we should get in each receiver frame
+                db_data.push_back(Tango::DbDatum("ExpertFramePacketNumber"));
+
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                db_data[0] >> config_file_name   ;
+                db_data[1] >> readout_time       ;
+                db_data[2] >> receiver_fifo_depth;
+                db_data[3] >> frame_packet_number;
+
+                // create and initialize the camera and create interface and control  
+                m_camera    = static_cast<void*> (new SlsJungfrau::Camera(config_file_name, readout_time, receiver_fifo_depth, frame_packet_number));
+                m_interface = static_cast<void*> (new SlsJungfrau::Interface(*(static_cast<SlsJungfrau::Camera*> (m_camera))));
+                m_control   = new CtControl(static_cast<SlsJungfrau::Interface*> (m_interface));
+               
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
+#endif           
+
         if (!ControlFactory::m_is_created)
         {
             string strMsg = "Unable to create the lima control object : Unknown Detector Type : ";
@@ -766,6 +825,13 @@ void ControlFactory::reset(const std::string& detector_type)
                 }
 #endif     
 
+#ifdef SLSJUNGFRAU_ENABLED        
+                if (detector_type == "SlsJungfrau")
+                {
+                    delete (static_cast<SlsJungfrau::Camera*> (m_camera));
+                }
+#endif     
+
                 m_camera = 0;
             }
 
@@ -860,6 +926,29 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
         ////throw LIMA_HW_EXC(Error, std::string(df.errors[0].desc).c_str());
     }
 #endif 
+	
+#ifdef MASK_ENABLED        
+    try
+    {
+        //@@@TODO and if not exist ?? get the tango device/instance for layout
+        if (!ControlFactory::m_is_created)
+        {
+            std::string mask = "Mask";
+            Tango::DbDatum db_datum;
+            m_device_name_generic = Tango::Util::instance()->get_ds_name();
+            db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, mask);
+            db_datum >> m_device_name_mask;
+        }
+        (Tango::Util::instance()->get_device_by_name(m_device_name_mask))->delete_device();
+        (Tango::Util::instance()->get_device_by_name(m_device_name_mask))->init_device();
+    }
+    catch (Tango::DevFailed& df)
+    {
+        //- rethrow exception
+        ////throw LIMA_HW_EXC(Error, std::string(df.errors[0].desc).c_str());
+    }
+#endif
+	
 }
 
 //-----------------------------------------------------------------------------------------

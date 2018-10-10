@@ -15,8 +15,9 @@ This device server provides several Tango classes:
 - Optionnal classes:
  * **RoiCounters** : Allows to set Rois and get some statistic for each roi (sum, average, std ...)
  * **Layout** : Allows to modify the original image (flip, rotation, additions ...)
- * **FlatField** : Allows to modify the original image by substracting a flatfield image
- * **BackgroundSubstraction** : Allows to modify the original image by substracting a background image
+ * **Mask** : Allows to define a mask on the original image (force some pixels to 0) 
+ * **FlatField** : Allows to modify the original image by substracting a flatfield image (not yet available)
+ * **BackgroundSubstraction** : Allows to modify the original image by substracting a background image (not yet available)
  
 --------------------------
 
@@ -37,6 +38,7 @@ This device server provides several Tango classes:
   Hamamatsu <Hamamatsu/hamamatsu>
   ImXpad <ImXpad/imxpad>
   MarCCD <MarCCD/marccd>
+  Maxipix <Maxipix/maxipix>
   Merlin <Merlin/merlin>
   Pco <Pco/pco>
   PerkinElmer <PerkinElmer/perkinelmer>
@@ -44,6 +46,7 @@ This device server provides several Tango classes:
   PrincetonCCD <PrincetonCCD/princetonccd>
   ProsilicaCCD <ProsilicaCCD/prosilicaccd>
   SimulatorCCD <SimulatorCCD/simulatorccd>
+  SlsJungfrau <SlsJungfrau/slsjungfrau>
   Uview <Uview/uview>
   XpadPixelDetector <XpadPixelDetector/xpadpixeldetector>
   
@@ -54,3 +57,4 @@ This device server provides several Tango classes:
   
   RoiCounters <RoiCounters/roicounters>
   Layout <Layout/layout>
+  Mask <Mask/mask>

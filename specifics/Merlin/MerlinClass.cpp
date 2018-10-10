@@ -193,6 +193,23 @@ CORBA::Any *SoftTriggerClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(co
 	return new CORBA::Any();
 }
 
+//--------------------------------------------------------
+/**
+* method : 		AbortClass::execute()
+* description : 	method to trigger the execution of the command.
+*
+* @param	device	The device on which the command must be executed
+* @param	in_any	The command input data
+*
+*	returns The command output data (packed in the Any object)
+*/
+//--------------------------------------------------------
+CORBA::Any *AbortClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
+{
+    cout2 << "AbortClass::execute(): arrived" << endl;
+    ((static_cast<Merlin *>(device))->abort());
+    return new CORBA::Any();
+}
 
 
 
@@ -1306,6 +1323,15 @@ void MerlinClass::command_factory()
 			"",
 			Tango::OPERATOR);
 	command_list.push_back(pSoftTriggerCmd);
+
+    //	Command Abort
+    AbortClass	*pAbortCmd =
+        new AbortClass("Abort",
+            Tango::DEV_VOID, Tango::DEV_VOID,
+            "",
+            "",
+            Tango::OPERATOR);
+    command_list.push_back(pAbortCmd);
 
 	
 

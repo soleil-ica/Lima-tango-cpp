@@ -153,6 +153,18 @@
 #include <UviewRoiCtrlObj.h>
 #endif
 
+#ifdef SLSJUNGFRAU_ENABLED
+#include <SlsJungfrauCamera.h>
+#include <SlsJungfrauInterface.h>
+#endif
+
+
+//ProcessLib/Data : define dimensions of image
+#define WIDTH_INDEX   0
+#define HEIGHT_INDEX  1
+
+
+
 using namespace lima;
 
 class ControlFactory : public Singleton<ControlFactory>
@@ -217,6 +229,9 @@ private:
 #ifdef ROICOUNTERS_ENABLED    
     std::string                     m_device_name_roicounters;
 #endif        
+#ifdef MASK_ENABLED    
+    std::string                     m_device_name_mask;
+#endif      
     Tango::DevState                 m_state;
     stringstream                    m_status;
     stringstream                    m_event_status;	

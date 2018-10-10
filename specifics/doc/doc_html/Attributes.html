@@ -43,9 +43,9 @@
 <Br>
 <center>
 <h1>
-		<Br>
+Lima		<Br>
 Device Attributes Description 		<Br> <Br>
-Eiger Class	<Br>
+Layout Class	<Br>
 </h1>
 <b>
 Revision:  - Author: 
@@ -62,80 +62,28 @@ Revision:  - Author:
 <Td><Center><b>Data Type</b></td></Center>
 <Td><Center><b>R/W Type</b></td></Center>
 <Td><Center><b>Expert</b></td></Center>
-<Tr><Td><b>countrateCorrection</b></Td>
-<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
-
-<Tr><Td><b>flatfieldCorrection</b></Td>
-<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>pixelMask</b></Td>
-<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>virtualPixelCorrection</b></Td>
-<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
-
-<Tr><Td><b>dataCollectionDate</b></Td>
+<Tr><Td><b>version</b>: <Font Size=-1>Display the Version of the Layout Device</Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>thresholdEnergy</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+<Tr><Td><b>operationType</b>: <Font Size=-1>Arithmetic available types :<br> + <br> - <br> * <br> / <br> >> <br> << <br> FLIP<br> NONE <br></Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>photonEnergy</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+<Tr><Td><b>operationValue</b>: <Font Size=-1>Arithmetic available values :<br> any numeric value  Flip available values :<br> X<br> Y<br> XY<br>  Rotation available values :<br> 90<br> 180<br> 270<br></Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>wavelength</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>beamCenterX</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>beamCenterY</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>detectorDistance</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>temperature</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>humidity</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>chiIncrement</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>chiStart</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>kappaIncrement</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>kappaStart</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>omegaIncrement</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>omegaStart</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>phiIncrement</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>phiStart</b></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>autoSummation</b></Td>
-<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
-
-<Tr><Td><b>compression</b>: <Font Size=-1>Controls the compression of images.[Default= ON]</Font></Td>
-<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
-
-<Tr><Td><b>compressionType</b>: <Font Size=-1>The compression type can be set as follows : - LZ4 - BSLZ4   </Font></Td>
-<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
-
-<Tr><Td><b>softwareVersion</b></Td>
-<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+</Table>
+</Center>
+<Br><Br><Br><Br><Br>
+<Table Border=2 Cellpadding=3 CELLSPACING=0 WIDTH="100%">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<Td COLSPAN=4> <Font Size=+2><Center><b>Spectrum Attributes</b></td></Font></Center>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<Td><Center><b>Attribute name</b></td></Center>
+<Td><Center><b>Data Type</b></td></Center>
+<Td><Center><b>X Data Length</b></td></Center>
+<Td><Center><b>Expert</b></td></Center>
+<Tr><Td><b>operationsList</b>: <Font Size=-1>Enumerate all Layout active 'post processing' operations on the image.</Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>1024</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 </Table>
 </Center>
