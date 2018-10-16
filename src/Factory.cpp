@@ -637,6 +637,34 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif           
 
+#ifdef LAMBDA_ENABLED
+        if (detector_type == "Lambda")
+        {
+            if (!ControlFactory::m_is_created)
+            {
+                Tango::DbData db_data;
+                std::string config_file_path = "/opt/xsp/config";
+                bool distortion_correction = true;
+
+                // configuration path
+                db_data.push_back(Tango::DbDatum("ConfigFilesPath"));
+
+                // distortion correction
+                db_data.push_back(Tango::DbDatum("DistortionCorrection"));
+
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                db_data[0] >> config_file_path;
+                db_data[1] >> distortion_correction;
+
+                m_camera    = static_cast<void*> (new Lambda::Camera(config_file_path, distortion_correction));
+                m_interface = static_cast<void*> (new Lambda::Interface(*static_cast<Lambda::Camera*> (m_camera)));
+                m_control   = new CtControl(static_cast<Lambda::Interface*> (m_interface));
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
+#endif
+
         if (!ControlFactory::m_is_created)
         {
             string strMsg = "Unable to create the lima control object : Unknown Detector Type : ";
@@ -832,6 +860,12 @@ void ControlFactory::reset(const std::string& detector_type)
                 }
 #endif     
 
+#ifdef LAMBDA_ENABLED        
+                if (detector_type == "Lambda")
+                {
+                    delete (static_cast<Lambda::Camera*> (m_camera));
+                }
+#endif     
                 m_camera = 0;
             }
 

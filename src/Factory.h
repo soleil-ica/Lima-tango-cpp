@@ -163,7 +163,10 @@
 #define WIDTH_INDEX   0
 #define HEIGHT_INDEX  1
 
-
+#ifdef LAMBDA_ENABLED
+#include <LambdaCamera.h>
+#include <LambdaInterface.h>
+#endif
 
 using namespace lima;
 
