@@ -121,6 +121,13 @@ void XpadPixelDetector::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_enableDoublePixelCorrection_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_normalizationFactor_read);
 
+    //!!!! ONLY LimaDetector device can do this !!!!
+    //if(m_ct!=0)
+    //{
+    //    ControlFactory::instance().reset("AviexCCD");
+    //    m_ct = 0;
+    //}
+
 }
 
 //+----------------------------------------------------------------------------
@@ -142,10 +149,11 @@ void XpadPixelDetector::init_device()
 	CREATE_SCALAR_ATTRIBUTE(attr_enableDoublePixelCorrection_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_normalizationFactor_read);
 
-	m_is_device_initialized = true;
     //By default INIT, need to ensure that all objets are OK before set the device to STANDBY
+    m_is_device_initialized = false;
     set_state(Tango::INIT);
 	m_status_message.str("");
+
 	m_xpad_model = "";
 	m_from_init_device = true;
 
@@ -170,31 +178,37 @@ void XpadPixelDetector::init_device()
 
         //- get interface to specific camera
         m_hw = dynamic_cast<lima::Xpad::Interface*>(m_ct->hwInterface());
-        if(m_hw==0)
-        {
-            m_status_message <<"Initialization Failed : Unable to get the interface of camera plugin (XpadPixelDetector) !"<< endl;
-			ERROR_STREAM << m_status_message.str() << endl;
-            m_is_device_initialized = false;
-            return;
-        }
 
         //- get camera to specific detector
-		m_camera = &(m_hw->getCamera());
-		if(m_camera == 0)
-		{
-			m_status_message <<"Initialization Failed : Unable to get the camera object !"<< endl;
-			ERROR_STREAM << m_status_message.str() << endl;
-			m_is_device_initialized = false;
-			return;			
-		}
+        m_camera = &(m_hw->getCamera());
 
-		//- Xpix Debug
-		m_camera->xpixDebug(xpixDebug);
+        //- Xpix Debug
+        m_camera->xpixDebug(xpixDebug);
 
-		//- get Xpad Model
-		m_camera->getDetectorModel(m_xpad_model);
+        //- get Xpad Model
+        m_camera->getDetectorModel(m_xpad_model);
+    }
+    catch (Exception& e)
+    {
+        m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
+        m_is_device_initialized = false;
+        set_state(Tango::FAULT);
+        return;
+    }
+    catch (...)
+    {
+        m_status_message << "Initialization Failed : UNKNOWN Error" << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
+        set_state(Tango::FAULT);
+        m_is_device_initialized = false;
+        return;
+    }
+    m_is_device_initialized = true;
 
-		//- init the wattributes
+    //- init the wattributes
+    try
+    {
 		Tango::WAttribute &ovf_attr = dev_attr->get_w_attr_by_name("ovf");
 		string ovf_mem_value = ovf_attr.get_mem_value();
 		if (ovf_mem_value == "Not used yet")
@@ -240,16 +254,21 @@ void XpadPixelDetector::init_device()
         m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
 		ERROR_STREAM << m_status_message.str() << endl;
         m_is_device_initialized = false;
+        set_state(Tango::FAULT);
+        return;
     }
     catch(...)
     {
         m_status_message << "Initialization Failed : UNKNOWN" << endl;
 		ERROR_STREAM << m_status_message.str() << endl;
         m_is_device_initialized = false;
+        set_state(Tango::FAULT);
+        return;
     }
 
     m_is_device_initialized = true;
-    this->dev_state();
+    set_state(Tango::STANDBY);
+    dev_state();
 }
 
 
