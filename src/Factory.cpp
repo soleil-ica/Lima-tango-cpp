@@ -637,6 +637,20 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif           
 
+#ifdef DHYANA_ENABLED
+        if (detector_type == "Dhyana")
+        {
+            if (!ControlFactory::m_is_created)
+            {
+                m_camera = static_cast<void*> (new Dhyana::Camera());
+                m_interface = static_cast<void*> (new Dhyana::Interface(*(static_cast<Dhyana::Camera*> (m_camera))));
+                m_control = new CtControl(static_cast<Dhyana::Interface*> (m_interface));
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
+#endif
+		
         if (!ControlFactory::m_is_created)
         {
             string strMsg = "Unable to create the lima control object : Unknown Detector Type : ";
@@ -835,6 +849,13 @@ void ControlFactory::reset(const std::string& detector_type)
                 m_camera = 0;
             }
 
+#ifdef DHYANA_ENABLED        
+                if (detector_type == "Dhyana")
+                {
+                    delete (static_cast<Dhyana::Camera*> (m_camera));
+                }
+#endif    
+			
             if (m_interface)
             {
                 delete m_interface;

@@ -131,6 +131,10 @@ static const char *RcsId = "$Id:  $";
 #include <SlsJungfrauClass.h>
 #endif
 
+#ifdef DHYANA_ENABLED
+#include <DhyanaClass.h>
+#endif
+
 #ifndef WIN32
 #include "tango.h"
 #endif
@@ -234,5 +238,9 @@ void Tango::DServer::class_factory()
 #ifdef SLSJUNGFRAU_ENABLED        
     add_class(SlsJungfrau_ns::SlsJungfrauClass::init("SlsJungfrau"));
 #endif	
+	
+#ifdef DHYANA_ENABLED        
+    add_class(Dhyana_ns::DhyanaClass::init("Dhyana"));
+#endif		
 }
 

@@ -158,6 +158,10 @@
 #include <SlsJungfrauInterface.h>
 #endif
 
+#ifdef DHYANA_ENABLED
+#include <DhyanaCamera.h>
+#include <DhyanaInterface.h>
+#endif
 
 //ProcessLib/Data : define dimensions of image
 #define WIDTH_INDEX   0
