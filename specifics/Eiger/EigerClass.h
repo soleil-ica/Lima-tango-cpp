@@ -428,10 +428,10 @@ public:
 //=========================================
 //	Define classes for commands
 //=========================================
-class InitializeClass : public Tango::Command
+class UpdateTHClass : public Tango::Command
 {
 public:
-	InitializeClass(const char   *name,
+	UpdateTHClass(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -439,23 +439,23 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	InitializeClass(const char   *name,
+	UpdateTHClass(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~InitializeClass() {};
+	~UpdateTHClass() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Eiger *>(dev))->is_Initialize_allowed(any);}
+	{return (static_cast<Eiger *>(dev))->is_UpdateTH_allowed(any);}
 };
 
 
 
-class AbortClass : public Tango::Command
+class DisarmCmd : public Tango::Command
 {
 public:
-	AbortClass(const char   *name,
+	DisarmCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -463,15 +463,39 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	AbortClass(const char   *name,
+	DisarmCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~AbortClass() {};
+	~DisarmCmd() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Eiger *>(dev))->is_Abort_allowed(any);}
+	{return (static_cast<Eiger *>(dev))->is_Disarm_allowed(any);}
+};
+
+
+
+class InitializeCmd : public Tango::Command
+{
+public:
+	InitializeCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	InitializeCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~InitializeCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<Eiger *>(dev))->is_Initialize_allowed(any);}
 };
 
 

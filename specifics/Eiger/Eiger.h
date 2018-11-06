@@ -667,13 +667,17 @@ public:
  */
 	virtual bool is_softwareVersion_allowed(Tango::AttReqType type);
 /**
- *	Execution allowed for Abort command.
- */
-	virtual bool is_Abort_allowed(const CORBA::Any &any);
-/**
  *	Execution allowed for Initialize command.
  */
 	virtual bool is_Initialize_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for Disarm command.
+ */
+	virtual bool is_Disarm_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for UpdateTH command.
+ */
+	virtual bool is_UpdateTH_allowed(const CORBA::Any &any);
 /**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
@@ -684,12 +688,17 @@ public:
  * 
  *	@exception DevFailed
  */
-	void	abort();
+	void	initialize();
 /**
  * 
  *	@exception DevFailed
  */
-	void	initialize();
+	void	disarm();
+/**
+ * 
+ *	@exception DevFailed
+ */
+	void	update_th();
 
 /**
  *	Read the device properties from database
@@ -700,7 +709,10 @@ public:
     //	Here is the end of the automatic code generation part
     //-------------------------------------------------------------	
 
-
+    bool is_device_initialized()
+    {
+        return m_is_device_initialized;
+    };
 
 protected:
     //	Add your own data members here

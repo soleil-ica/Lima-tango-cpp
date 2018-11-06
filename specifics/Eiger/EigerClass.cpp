@@ -61,7 +61,7 @@ namespace Eiger_ns
 {
 //+----------------------------------------------------------------------------
 //
-// method : 		InitializeClass::execute()
+// method : 		UpdateTHClass::execute()
 // 
 // description : 	method to trigger the execution of the command.
 //                PLEASE DO NOT MODIFY this method core without pogo   
@@ -72,18 +72,18 @@ namespace Eiger_ns
 // returns : The command output data (packed in the Any object)
 //
 //-----------------------------------------------------------------------------
-CORBA::Any *InitializeClass::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+CORBA::Any *UpdateTHClass::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
 {
 
-	cout2 << "InitializeClass::execute(): arrived" << endl;
+	cout2 << "UpdateTHClass::execute(): arrived" << endl;
 
-	((static_cast<Eiger *>(device))->initialize());
+	((static_cast<Eiger *>(device))->update_th());
 	return new CORBA::Any();
 }
 
 //+----------------------------------------------------------------------------
 //
-// method : 		AbortClass::execute()
+// method : 		DisarmCmd::execute()
 // 
 // description : 	method to trigger the execution of the command.
 //                PLEASE DO NOT MODIFY this method core without pogo   
@@ -94,14 +94,38 @@ CORBA::Any *InitializeClass::execute(Tango::DeviceImpl *device,const CORBA::Any 
 // returns : The command output data (packed in the Any object)
 //
 //-----------------------------------------------------------------------------
-CORBA::Any *AbortClass::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+CORBA::Any *DisarmCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
 {
 
-	cout2 << "AbortClass::execute(): arrived" << endl;
+	cout2 << "DisarmCmd::execute(): arrived" << endl;
 
-	((static_cast<Eiger *>(device))->abort());
+	((static_cast<Eiger *>(device))->disarm());
 	return new CORBA::Any();
 }
+
+//+----------------------------------------------------------------------------
+//
+// method : 		InitializeCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *InitializeCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "InitializeCmd::execute(): arrived" << endl;
+
+	((static_cast<Eiger *>(device))->initialize());
+	return new CORBA::Any();
+}
+
+
 
 
 
@@ -191,12 +215,17 @@ EigerClass *EigerClass::instance()
 //-----------------------------------------------------------------------------
 void EigerClass::command_factory()
 {
-	command_list.push_back(new AbortClass("Abort",
+	command_list.push_back(new InitializeCmd("Initialize",
 		Tango::DEV_VOID, Tango::DEV_VOID,
 		"",
 		"",
 		Tango::OPERATOR));
-	command_list.push_back(new InitializeClass("Initialize",
+	command_list.push_back(new DisarmCmd("Disarm",
+		Tango::DEV_VOID, Tango::DEV_VOID,
+		"",
+		"",
+		Tango::OPERATOR));
+	command_list.push_back(new UpdateTHClass("UpdateTH",
 		Tango::DEV_VOID, Tango::DEV_VOID,
 		"",
 		"",

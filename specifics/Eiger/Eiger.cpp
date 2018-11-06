@@ -49,8 +49,9 @@ static const char *RcsId = "$Id:  $";
 //	----------------------------------------
 //  State       |  dev_state()
 //  Status      |  dev_status()
-//  Abort       |  abort()
 //  Initialize  |  initialize()
+//  Disarm      |  disarm()
+//  UpdateTH    |  update_th()
 //
 //===================================================================
 
@@ -690,7 +691,7 @@ void Eiger::read_managedMode(Tango::Attribute &attr)
         Tango::Except::re_throw_exception(df,
                                           "TANGO_DEVICE_ERROR",
                                           string(df.errors[0].desc).c_str(),
-                                          "Eiger::read_roiMode");
+                                          "Eiger::read_managedMode");
     }
     catch (Exception& e)
     {
@@ -698,7 +699,7 @@ void Eiger::read_managedMode(Tango::Attribute &attr)
         //- throw exception
         Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                                        e.getErrMsg().c_str(),
-                                       "Eiger::read_roiMode");
+                                       "Eiger::read_managedMode");
     }		
 }
 
@@ -1724,7 +1725,7 @@ void Eiger::read_detectorReadoutTime(Tango::Attribute &attr)
         if ( Tango::STANDBY == get_state() )
         {
             m_camera->getDetectorReadoutTime(*attr_detectorReadoutTime_read);
-	    *attr_detectorReadoutTime_read = *attr_detectorReadoutTime_read*1000;//OUTPUT is in millisec
+			*attr_detectorReadoutTime_read = *attr_detectorReadoutTime_read*1000;//OUTPUT is in millisec
             attr_detectorReadoutTime_read_cache = *attr_detectorReadoutTime_read;
         }
         else if ( Tango::RUNNING == get_state() ) // use the cached value while in RUNNING state
@@ -2328,7 +2329,7 @@ void Eiger::write_flatfieldCorrection(Tango::WAttribute &attr)
         //- throw exception
         Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
                                        e.getErrMsg().c_str(),
-                                       "Eiger::read_countrateCorrection" );
+                                       "Eiger::write_flatfieldCorrection" );
     }
 }
 
@@ -2693,7 +2694,7 @@ void Eiger::read_temperature(Tango::Attribute &attr)
         //- throw exception
         Tango::Except::throw_exception(
                                        "TANGO_DEVICE_ERROR",
-                                       static_cast<const char*> (e.getErrMsg().c_str()),
+                                       e.getErrMsg().c_str(),
                                        "Eiger::read_temperature");
     }
     catch (Exception& e)
@@ -2745,7 +2746,7 @@ void Eiger::read_humidity(Tango::Attribute &attr)
         //- throw exception
         Tango::Except::throw_exception(
                                        "TANGO_DEVICE_ERROR",
-                                       static_cast<const char*> (e.getErrMsg().c_str()),
+                                       e.getErrMsg().c_str(),
                                        "Eiger::read_humidity");
     }
     catch (Exception& e)
@@ -2803,34 +2804,6 @@ Tango::DevState Eiger::dev_state()
 
 //+------------------------------------------------------------------
 /**
- *	method:	Eiger::abort
- *
- *	description:	method to execute "Abort"
- *
- *
- */
-//+------------------------------------------------------------------
-void Eiger::abort()
-{
-    DEBUG_STREAM << "Eiger::abort(): entering... !" << endl;
-
-    //	Add your own code to control device here
-    try
-    {
-        //        m_camera->abort();
-    }
-    catch (Exception& e)
-    {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        //- throw exception
-        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
-                                       e.getErrMsg().c_str(),
-                                       "Eiger::abort" );
-    }
-}
-
-//+------------------------------------------------------------------
-/**
  *	method:	Eiger::initialize
  *
  *	description:	method to execute "Initialize"
@@ -2843,6 +2816,7 @@ void Eiger::initialize()
     DEBUG_STREAM << "Eiger::initialize(): entering... !" << endl;
 
     //	Add your own code to control device here
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
     try
     {
         m_camera->initialize();
@@ -2858,15 +2832,64 @@ void Eiger::initialize()
 }
 
 
+//+------------------------------------------------------------------
+/**
+ *	method:	Eiger::disarm
+ *
+ *	description:	method to execute "Disarm"
+ *
+ *
+ */
+//+------------------------------------------------------------------
+void Eiger::disarm()
+{
+	DEBUG_STREAM << "Eiger::disarm(): entering... !" << endl;
+
+	//	Add your own code to control device here
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
+    try
+    {
+        m_camera->disarm();
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::disarm" );
+    }	
+
+}
 
 
+//+------------------------------------------------------------------
+/**
+ *	method:	Eiger::update_th
+ *
+ *	description:	method to execute "UpdateTH"
+ *
+ *
+ */
+//+------------------------------------------------------------------
+void Eiger::update_th()
+{
+	DEBUG_STREAM << "Eiger::update_th(): entering... !" << endl;
 
-
-
-
-
-
-
-
+	//	Add your own code to control device here
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
+    try
+    {
+        m_camera->statusUpdate();
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "Eiger::update_th" );
+    }		 
+}
 
 }	//	namespace

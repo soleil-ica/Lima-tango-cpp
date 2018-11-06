@@ -746,14 +746,39 @@ bool Eiger::is_managedMode_allowed(Tango::AttReqType type)
 
 //+----------------------------------------------------------------------------
 //
-// method : 		Eiger::is_Abort_allowed
+// method : 		Eiger::is_Initialize_allowed
 // 
-// description : 	Execution allowed for Abort command.
+// description : 	Execution allowed for Initialize command.
 //
 //-----------------------------------------------------------------------------
-bool Eiger::is_Abort_allowed(const CORBA::Any &any)
+bool Eiger::is_Initialize_allowed(const CORBA::Any &any)
 {
-	if (get_state() == Tango::INIT)
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING	||
+		get_state() == Tango::FAULT)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
+		//	Re-Start of Generated Code	
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::is_Disarm_allowed
+// 
+// description : 	Execution allowed for Disarm command.
+//
+//-----------------------------------------------------------------------------
+bool Eiger::is_Disarm_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::STANDBY	||
+		get_state() == Tango::FAULT)
 	{
 		//	End of Generated Code
 
@@ -764,14 +789,16 @@ bool Eiger::is_Abort_allowed(const CORBA::Any &any)
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		Eiger::is_Initialize_allowed
+// method : 		Eiger::is_UpdateTH_allowed
 // 
-// description : 	Execution allowed for Initialize command.
+// description : 	Execution allowed for UpdateTH command.
 //
 //-----------------------------------------------------------------------------
-bool Eiger::is_Initialize_allowed(const CORBA::Any &any)
+bool Eiger::is_UpdateTH_allowed(const CORBA::Any &any)
 {
-	if (get_state() == Tango::RUNNING)
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
 	{
 		//	End of Generated Code
 
