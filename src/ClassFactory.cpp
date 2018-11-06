@@ -131,6 +131,10 @@ static const char *RcsId = "$Id:  $";
 #include <SlsJungfrauClass.h>
 #endif
 
+#ifdef LAMBDA_ENABLED
+#include <LambdaClass.h>
+#endif
+
 #ifndef WIN32
 #include "tango.h"
 #endif
@@ -233,6 +237,10 @@ void Tango::DServer::class_factory()
 
 #ifdef SLSJUNGFRAU_ENABLED        
     add_class(SlsJungfrau_ns::SlsJungfrauClass::init("SlsJungfrau"));
+#endif	
+
+#ifdef LAMBDA_ENABLED        
+    add_class(Lambda_ns::LambdaClass::init("Lambda"));
 #endif	
 }
 

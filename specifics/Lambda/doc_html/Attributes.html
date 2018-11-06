@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title> Lambda Tango Class Attributes </title>
+</head>
+<body text="Black" bgcolor="White" link="Blue" vlink="Purple" alink="Red">
+<br><br><br><br>
+<Table Border=2 Cellpadding=3 CELLSPACING=0>
+	<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+	<td colspan=8> <font size=+1> <center><b> Lambda Class Attributes </b></font></center></td>
+	<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+		<td> <center><b> Name </b></center> </td>
+		<td> <center><b> Inherited </b></center> </td>
+		<td> <center><b> Abstract </b></center> </td>
+		<td> <center><b> Attr. type </b></center> </td>
+		<td> <center><b> R/W type </b></center> </td>
+		<td> <center><b> Data type </b></center> </td>
+		<td> <center><b> Level </b></center> </td>
+		<td> <center><b> Description </b></center> </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrconfigFilesPath.html"> configFilesPath </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ </td>
+		<td> Tango::DEV_STRING </td>
+		<td> EXPERT </td>
+		<td> Path of configuration file. </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrreadoutTime.html"> readoutTime </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ </td>
+		<td> Tango::DEV_FLOAT </td>
+		<td> EXPERT </td>
+		<td> get readout time during image acquisition.<br><Br>
+			Depends of the operating mode.<br> </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrdistortionCorrection.html"> distortionCorrection </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ </td>
+		<td> Tango::DEV_BOOLEAN </td>
+		<td> EXPERT </td>
+		<td> get distortion correction.<br><Br>
+			When distortion correction is enabled :<br><Br>
+			- Large pixels are divided according to predefined denominator. <br><Br>
+			- The values of the pixels are rounded during division. <br><Br>
+			- If pixel value is saturated, the division is not applied.<br> </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrenergyThreshold1.html"> energyThreshold1 </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_FLOAT </td>
+		<td> OPERATOR </td>
+		<td> set/get first energy threshold in eV.<br><Br>
+			The photon is counted If the energy is above this threshold.<br> </td>
+	</tr>
+	<tr>
+		<td> <a href="AttroperatingMode.html"> operatingMode </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ </td>
+		<td> Tango::DEV_STRING </td>
+		<td> OPERATOR </td>
+		<td> get operating mode of the detector:<br><Br>
+			24bit mode : TwentyFourBit<br><Br>
+			12bit mode :  ContinuousReadWrite<br> </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrburstMode.html"> burstMode </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ </td>
+		<td> Tango::DEV_BOOLEAN </td>
+		<td> EXPERT </td>
+		<td> get the value of burst mode.<br><Br>
+			true: 10GE link.<br><Br>
+			false: 1GE link<br> </td>
+	</tr>
+</table>
+<br><br>
+<hr>
+<br><br>
+<font size="+1"><u><b> There is no dynamic attribute defined. </b></u></font>
+</body>
+</html>
