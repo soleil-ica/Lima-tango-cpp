@@ -143,7 +143,7 @@ def run(proxy_name = 'arafat/lima_basler/basler.2', exposure_time = 100, nb_fram
             print '\n========================================================'
             print '\t' + bcolors.RED + 'Loop : ', current_loop, bcolors.ENDC,
             print '\n========================================================'
-            prepare(proxy)
+            #prepare(proxy)
             snap(proxy)
             current_loop=current_loop+1
             state = proxy.state()
