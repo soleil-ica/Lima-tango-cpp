@@ -21,6 +21,7 @@ bool ControlFactory::m_is_created = false;
 //-----------------------------------------------------------------------------------------
 void ControlFactory::initialize()
 {
+	YAT_LOG_INFO("initialize the factory control" );	
     m_control = 0;
     m_camera	 = 0;
     m_interface = 0;
@@ -53,6 +54,7 @@ yat::Mutex& ControlFactory::get_global_mutex()
 CtControl* ControlFactory::create_control(const std::string& detector_type)
 {
     yat::AutoMutex<> _lock(m_lock);
+	YAT_LOG_INFO("create the factory control" );	
     try
     {
         //get the tango device/instance
@@ -693,6 +695,7 @@ CtControl* ControlFactory::get_control(const std::string& detector_type)
 void ControlFactory::reset(const std::string& detector_type)
 {
     yat::AutoMutex<> _lock(m_lock);
+	YAT_LOG_INFO("reset the factory control" );	
     try
     {
         if (ControlFactory::m_is_created)
@@ -846,15 +849,15 @@ void ControlFactory::reset(const std::string& detector_type)
                 }
 #endif     
 
+				#ifdef DHYANA_ENABLED        
+                if (detector_type == "Dhyana")
+                {
+					delete (static_cast<Dhyana::Camera*> (m_camera));				
+                }
+#endif    				
                 m_camera = 0;
             }
 
-#ifdef DHYANA_ENABLED        
-                if (detector_type == "Dhyana")
-                {
-                    delete (static_cast<Dhyana::Camera*> (m_camera));
-                }
-#endif    
 			
             if (m_interface)
             {
@@ -884,6 +887,7 @@ void ControlFactory::reset(const std::string& detector_type)
 void ControlFactory::init_specific_device(const std::string& detector_type)
 {
     yat::AutoMutex<> _lock(m_lock);
+	YAT_LOG_INFO("init the specific device via factory" );		
     try
     {
         //get the tango device/instance
