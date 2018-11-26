@@ -302,6 +302,7 @@ void ImXpad::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedTime"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedITHL"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedNbStackingImages"));
+	dev_prop.push_back(Tango::DbDatum("ModuleMask"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -444,6 +445,17 @@ void ImXpad::get_device_property()
 	//	And try to extract MemorizedNbStackingImages value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedNbStackingImages;
 
+	//	Try to initialize ModuleMask from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  moduleMask;
+	else {
+		//	Try to initialize ModuleMask from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  moduleMask;
+	}
+	//	And try to extract ModuleMask value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  moduleMask;
+
 
 
     //	End of Automatic code generation
@@ -460,6 +472,7 @@ void ImXpad::get_device_property()
 	PropertyHelper::create_property_if_empty(this, dev_prop, "1", "MemorizedNbStackingImages");
     PropertyHelper::create_property_if_empty(this, dev_prop, "False", "MemorizedGeometricalCorrectionFlag");
     PropertyHelper::create_property_if_empty(this, dev_prop, "False", "MemorizedFlatFieldCorrectionFlag");
+	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "ModuleMask");
 }
 //+----------------------------------------------------------------------------
 //
@@ -1711,5 +1724,8 @@ void ImXpad::ithldecrease()
     }
 
 }
+
+
+
 
 }	//	namespace

@@ -177,12 +177,23 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 Tango::DbData db_data;
                 db_data.push_back(Tango::DbDatum("HostName"));
                 db_data.push_back(Tango::DbDatum("Port"));
+				db_data.push_back(Tango::DbDatum("ModuleMask"));
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
                 std::string host_name;
                 long port;
+				std::string module_mask_str;
                 db_data[0] >> host_name;
                 db_data[1] >> port;
-                m_camera = static_cast<void*> (new imXpad::Camera(host_name, port));
+				db_data[2] >> module_mask_str;
+				
+				unsigned int module_mask_hexa;
+				std::stringstream ss;
+				ss << std::hex << module_mask_str;
+				ss >> module_mask_hexa;	
+				
+				std::cout<<"module_mask_str = "<<module_mask_str<<std::endl;
+				std::cout<<"module_mask_hexa = "<<module_mask_hexa<<std::endl;
+                m_camera = static_cast<void*> (new imXpad::Camera(host_name, port, module_mask_hexa));
 
                 m_interface = static_cast<void*> (new imXpad::Interface(*static_cast<imXpad::Camera*> (m_camera)));
                 m_control = new CtControl(static_cast<imXpad::Interface*> (m_interface));
