@@ -579,15 +579,23 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 Tango::DbData db_data;
                 db_data.push_back(Tango::DbDatum("DetectorIP"));
 				db_data.push_back(Tango::DbDatum("TimestampType"));
+				db_data.push_back(Tango::DbDatum("DownloadDataFile"));
+				
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
-                std::string camera_ip;
-				std::string timestamp_type;
+                std::string camera_ip = "127.0.0.1";
+				std::string timestamp_type = "RELATIVE";
+				bool must_download = false;
                 db_data[0] >> camera_ip;
 				db_data[1] >> timestamp_type;
+				db_data[2] >> must_download;
 				transform(timestamp_type.begin(), timestamp_type.end(), timestamp_type.begin(), ::toupper);
                 m_camera = static_cast<void*> (new Eiger::Camera(camera_ip));
 				static_cast<Eiger::Camera*> (m_camera)->setTimestampType(timestamp_type);
                 m_interface = static_cast<void*> (new Eiger::Interface(*(static_cast<Eiger::Camera*> (m_camera))));
+                if (m_interface)
+				{
+                    static_cast<Eiger::Interface*> (m_interface)->setDownloadDataFile(must_download);				
+				}				
                 m_control = new CtControl(static_cast<Eiger::Interface*> (m_interface));
                 ControlFactory::m_is_created = true;
                 return m_control;

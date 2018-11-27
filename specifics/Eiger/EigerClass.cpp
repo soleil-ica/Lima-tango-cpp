@@ -61,7 +61,7 @@ namespace Eiger_ns
 {
 //+----------------------------------------------------------------------------
 //
-// method : 		InitializeClass::execute()
+// method : 		UpdateTHClass::execute()
 // 
 // description : 	method to trigger the execution of the command.
 //                PLEASE DO NOT MODIFY this method core without pogo   
@@ -72,18 +72,18 @@ namespace Eiger_ns
 // returns : The command output data (packed in the Any object)
 //
 //-----------------------------------------------------------------------------
-CORBA::Any *InitializeClass::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+CORBA::Any *UpdateTHClass::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
 {
 
-	cout2 << "InitializeClass::execute(): arrived" << endl;
+	cout2 << "UpdateTHClass::execute(): arrived" << endl;
 
-	((static_cast<Eiger *>(device))->initialize());
+	((static_cast<Eiger *>(device))->update_th());
 	return new CORBA::Any();
 }
 
 //+----------------------------------------------------------------------------
 //
-// method : 		AbortClass::execute()
+// method : 		DisarmCmd::execute()
 // 
 // description : 	method to trigger the execution of the command.
 //                PLEASE DO NOT MODIFY this method core without pogo   
@@ -94,14 +94,38 @@ CORBA::Any *InitializeClass::execute(Tango::DeviceImpl *device,const CORBA::Any 
 // returns : The command output data (packed in the Any object)
 //
 //-----------------------------------------------------------------------------
-CORBA::Any *AbortClass::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+CORBA::Any *DisarmCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
 {
 
-	cout2 << "AbortClass::execute(): arrived" << endl;
+	cout2 << "DisarmCmd::execute(): arrived" << endl;
 
-	((static_cast<Eiger *>(device))->abort());
+	((static_cast<Eiger *>(device))->disarm());
 	return new CORBA::Any();
 }
+
+//+----------------------------------------------------------------------------
+//
+// method : 		InitializeCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *InitializeCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "InitializeCmd::execute(): arrived" << endl;
+
+	((static_cast<Eiger *>(device))->initialize());
+	return new CORBA::Any();
+}
+
+
 
 
 
@@ -191,12 +215,17 @@ EigerClass *EigerClass::instance()
 //-----------------------------------------------------------------------------
 void EigerClass::command_factory()
 {
-	command_list.push_back(new AbortClass("Abort",
+	command_list.push_back(new InitializeCmd("Initialize",
 		Tango::DEV_VOID, Tango::DEV_VOID,
 		"",
 		"",
 		Tango::OPERATOR));
-	command_list.push_back(new InitializeClass("Initialize",
+	command_list.push_back(new DisarmCmd("Disarm",
+		Tango::DEV_VOID, Tango::DEV_VOID,
+		"",
+		"",
+		Tango::OPERATOR));
+	command_list.push_back(new UpdateTHClass("UpdateTH",
 		Tango::DEV_VOID, Tango::DEV_VOID,
 		"",
 		"",
@@ -326,6 +355,16 @@ void EigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	virtual_pixel_correction->set_disp_level(Tango::EXPERT);
 	att_list.push_back(virtual_pixel_correction);
 
+	//	Attribute : managedMode
+	managedModeAttrib	*managed_mode = new managedModeAttrib();
+	Tango::UserDefaultAttrProp	managed_mode_prop;
+	managed_mode_prop.set_unit(" ");
+	managed_mode_prop.set_standard_unit(" ");
+	managed_mode_prop.set_display_unit(" ");
+	managed_mode_prop.set_description("Available values of Managed Mode are : <br>\n- STREAMING: Image and header data are transferred via zeromq sockets & Nexus files could be generated into an user defined path. <br>\n- FILEWRITER: Image and the metadata are generated into the DCU in HDF5 format & data files are tranferred into an user defined path through the device & data files are deleted from DCU. <br>\n- LAZY : Image and the metadata are generated in DCU in HDF5 format .\n\n");
+	managed_mode->set_default_properties(managed_mode_prop);
+	att_list.push_back(managed_mode);
+
 	//	Attribute : dataCollectionDate
 	dataCollectionDateAttrib	*data_collection_date = new dataCollectionDateAttrib();
 	att_list.push_back(data_collection_date);
@@ -357,6 +396,10 @@ void EigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	wavelength->set_default_properties(wavelength_prop);
 	att_list.push_back(wavelength);
 
+	//	Attribute : roiMode
+	roiModeAttrib	*roi_mode = new roiModeAttrib();
+	att_list.push_back(roi_mode);
+
 	//	Attribute : beamCenterX
 	beamCenterXAttrib	*beam_center_x = new beamCenterXAttrib();
 	Tango::UserDefaultAttrProp	beam_center_x_prop;
@@ -383,6 +426,15 @@ void EigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	detector_distance_prop.set_display_unit("m");
 	detector_distance->set_default_properties(detector_distance_prop);
 	att_list.push_back(detector_distance);
+
+	//	Attribute : detectorReadoutTime
+	detectorReadoutTimeAttrib	*detector_readout_time = new detectorReadoutTimeAttrib();
+	Tango::UserDefaultAttrProp	detector_readout_time_prop;
+	detector_readout_time_prop.set_unit(" ");
+	detector_readout_time_prop.set_standard_unit(" ");
+	detector_readout_time_prop.set_display_unit(" ");
+	detector_readout_time->set_default_properties(detector_readout_time_prop);
+	att_list.push_back(detector_readout_time);
 
 	//	Attribute : temperature
 	temperatureAttrib	*temperature = new temperatureAttrib();
@@ -583,6 +635,21 @@ void EigerClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
+	prop_name = "DownloadDataFile";
+	prop_desc = "Enable/Disable downloading data files from DCU.\nDo not download data files (master+data) [by default]";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 	prop_name = "MemorizedCountrateCorrection";
 	prop_desc = "Memorize the value of countrateCorrection attribute.";
 	prop_def  = "false";
@@ -723,6 +790,21 @@ void EigerClass::set_default_property()
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedRoiMode";
+	prop_desc = "Memorize the value of roiMode attribute.";
+	prop_def  = "DISABLED";
+	vect_data.clear();
+	vect_data.push_back("DISABLED");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

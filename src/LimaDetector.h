@@ -339,7 +339,7 @@ public:
 /**
  *	Define the File managed Mode :<br>
  *	- HARDWARE : <br>
- *	- SOFTWARE :
+ *	- SOFTWARE  : <br>
  */
 	string	fileManagedMode;
 /**

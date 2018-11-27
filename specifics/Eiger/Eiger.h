@@ -96,9 +96,11 @@ public:
     Tango::DevDouble attr_temperature_read_cache;
     Tango::DevDouble attr_humidity_read_cache;
     Tango::DevDouble attr_wavelength_read_cache;
+    std::string attr_roiMode_read_cache;    
     Tango::DevDouble attr_beamCenterX_read_cache;
     Tango::DevDouble attr_beamCenterY_read_cache;
     Tango::DevDouble attr_detectorDistance_read_cache;
+    Tango::DevDouble attr_detectorReadoutTime_read_cache;
     std::string attr_compressionType_read_cache;
     std::string attr_dataCollectionDate_read_cache;
     Tango::DevDouble attr_chiIncrement_read_cache;
@@ -125,6 +127,7 @@ public:
 		Tango::DevBoolean	attr_pixelMask_write;
 		Tango::DevBoolean	*attr_virtualPixelCorrection_read;
 		Tango::DevBoolean	attr_virtualPixelCorrection_write;
+		Tango::DevString	*attr_managedMode_read;
 		Tango::DevString	*attr_dataCollectionDate_read;
 		Tango::DevDouble	*attr_thresholdEnergy_read;
 		Tango::DevDouble	attr_thresholdEnergy_write;
@@ -132,12 +135,15 @@ public:
 		Tango::DevDouble	attr_photonEnergy_write;
 		Tango::DevDouble	*attr_wavelength_read;
 		Tango::DevDouble	attr_wavelength_write;
+		Tango::DevString	*attr_roiMode_read;
+		Tango::DevString	attr_roiMode_write;
 		Tango::DevDouble	*attr_beamCenterX_read;
 		Tango::DevDouble	attr_beamCenterX_write;
 		Tango::DevDouble	*attr_beamCenterY_read;
 		Tango::DevDouble	attr_beamCenterY_write;
 		Tango::DevDouble	*attr_detectorDistance_read;
 		Tango::DevDouble	attr_detectorDistance_write;
+		Tango::DevDouble	*attr_detectorReadoutTime_read;
 		Tango::DevDouble	*attr_temperature_read;
 		Tango::DevDouble	*attr_humidity_read;
 		Tango::DevDouble	*attr_chiIncrement_read;
@@ -181,6 +187,11 @@ public:
  */
 	string	timestampType;
 /**
+ *	Enable/Disable downloading data files from DCU.
+ *	Do not download data files (master+data) [by default]
+ */
+	Tango::DevBoolean	downloadDataFile;
+/**
  *	Memorize the value of countrateCorrection attribute.
  */
 	Tango::DevBoolean	memorizedCountrateCorrection;
@@ -220,6 +231,10 @@ public:
  *	Memorize the value of wavelength attribute.
  */
 	Tango::DevDouble	memorizedWavelength;
+/**
+ *	Memorize the value of roiMode attribute.
+ */
+	string	memorizedRoiMode;
 /**
  *	Memorize the value of beamCenterX attribute.
  */
@@ -372,6 +387,10 @@ public:
  */
 	virtual void write_virtualPixelCorrection(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for managedMode acquisition result.
+ */
+	virtual void read_managedMode(Tango::Attribute &attr);
+/**
  *	Extract real attribute values for dataCollectionDate acquisition result.
  */
 	virtual void read_dataCollectionDate(Tango::Attribute &attr);
@@ -400,6 +419,14 @@ public:
  */
 	virtual void write_wavelength(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for roiMode acquisition result.
+ */
+	virtual void read_roiMode(Tango::Attribute &attr);
+/**
+ *	Write roiMode attribute values to hardware.
+ */
+	virtual void write_roiMode(Tango::WAttribute &attr);
+/**
  *	Extract real attribute values for beamCenterX acquisition result.
  */
 	virtual void read_beamCenterX(Tango::Attribute &attr);
@@ -423,6 +450,10 @@ public:
  *	Write detectorDistance attribute values to hardware.
  */
 	virtual void write_detectorDistance(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for detectorReadoutTime acquisition result.
+ */
+	virtual void read_detectorReadoutTime(Tango::Attribute &attr);
 /**
  *	Extract real attribute values for temperature acquisition result.
  */
@@ -540,6 +571,10 @@ public:
  */
 	virtual bool is_virtualPixelCorrection_allowed(Tango::AttReqType type);
 /**
+ *	Read/Write allowed for managedMode attribute.
+ */
+	virtual bool is_managedMode_allowed(Tango::AttReqType type);
+/**
  *	Read/Write allowed for dataCollectionDate attribute.
  */
 	virtual bool is_dataCollectionDate_allowed(Tango::AttReqType type);
@@ -556,6 +591,10 @@ public:
  */
 	virtual bool is_wavelength_allowed(Tango::AttReqType type);
 /**
+ *	Read/Write allowed for roiMode attribute.
+ */
+	virtual bool is_roiMode_allowed(Tango::AttReqType type);
+/**
  *	Read/Write allowed for beamCenterX attribute.
  */
 	virtual bool is_beamCenterX_allowed(Tango::AttReqType type);
@@ -567,6 +606,10 @@ public:
  *	Read/Write allowed for detectorDistance attribute.
  */
 	virtual bool is_detectorDistance_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for detectorReadoutTime attribute.
+ */
+	virtual bool is_detectorReadoutTime_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for temperature attribute.
  */
@@ -624,13 +667,17 @@ public:
  */
 	virtual bool is_softwareVersion_allowed(Tango::AttReqType type);
 /**
- *	Execution allowed for Abort command.
- */
-	virtual bool is_Abort_allowed(const CORBA::Any &any);
-/**
  *	Execution allowed for Initialize command.
  */
 	virtual bool is_Initialize_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for Disarm command.
+ */
+	virtual bool is_Disarm_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for UpdateTH command.
+ */
+	virtual bool is_UpdateTH_allowed(const CORBA::Any &any);
 /**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
@@ -641,12 +688,17 @@ public:
  * 
  *	@exception DevFailed
  */
-	void	abort();
+	void	initialize();
 /**
  * 
  *	@exception DevFailed
  */
-	void	initialize();
+	void	disarm();
+/**
+ * 
+ *	@exception DevFailed
+ */
+	void	update_th();
 
 /**
  *	Read the device properties from database
@@ -657,7 +709,10 @@ public:
     //	Here is the end of the automatic code generation part
     //-------------------------------------------------------------	
 
-
+    bool is_device_initialized()
+    {
+        return m_is_device_initialized;
+    };
 
 protected:
     //	Add your own data members here
