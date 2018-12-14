@@ -168,6 +168,12 @@
 #include <DhyanaInterface.h>
 #endif
 
+
+#ifdef UFXC_ENABLED
+#include <UfxcCamera.h>
+#include <UfxcInterface.h>
+#endif
+
 //ProcessLib/Data : define dimensions of image
 #define WIDTH_INDEX   0
 #define HEIGHT_INDEX  1

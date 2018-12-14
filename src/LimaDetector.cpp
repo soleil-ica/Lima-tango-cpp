@@ -303,11 +303,11 @@ void LimaDetector::init_device()
         if(fileManagedMode != "HARDWARE")
         {
             //- reload Roi from property
-            INFO_STREAM << "Reload ROI of detector from Roi property." << endl;
+            INFO_STREAM << "Reload ROI of detector from Roi property (" << memorizedRoi.at(0)<<","<<memorizedRoi.at(1)<<","<<memorizedRoi.at(2)<<","<<memorizedRoi.at(3)<< ")." << endl;
             configure_roi();
 
             //- reload Binning from property
-            INFO_STREAM << "Reload BIN of detector from Binning property." << endl;
+            INFO_STREAM << "Reload BIN of detector from Binning property (" << memorizedBinningH<< "," << memorizedBinningV << ")." << endl;
             configure_binning();
 
 			//- Define ImageOpMode for Roi/Binning/etc...  (HardOnly, SoftOnly or HardAndSoft)
@@ -324,8 +324,8 @@ void LimaDetector::init_device()
         add_shutter_dynamic_attributes();
 
         //- Set default nb frames of acquisition at start-up
-        INFO_STREAM << "Set default nb. frames of acquisition at start-up to " << attr_nbFrames_write << "." << endl;
-        m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
+        INFO_STREAM << "Set default nb. frames of acquisition at start-up to (" << memorizedNbFrames << ")." << endl;
+        m_ct->acquisition()->setAcqNbFrames(memorizedNbFrames);
 
         //- define parameters of ctSaving object used to store image in files
         INFO_STREAM << "Configure parameters used to save image into a file (path/name/format/...)." << endl;

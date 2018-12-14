@@ -698,6 +698,57 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 
+#ifdef UFXC_ENABLED
+        if (detector_type == "Ufxc")
+        {
+            if (!ControlFactory::m_is_created)
+            {
+                Tango::DbData db_data;
+                db_data.push_back(Tango::DbDatum("ConfigIpAddress"));
+				db_data.push_back(Tango::DbDatum("ConfigPort"));
+				db_data.push_back(Tango::DbDatum("SFP1IpAddress"));
+				db_data.push_back(Tango::DbDatum("SFP1Port"));
+				db_data.push_back(Tango::DbDatum("SFP2IpAddress"));
+				db_data.push_back(Tango::DbDatum("SFP2Port"));
+				db_data.push_back(Tango::DbDatum("SFP3IpAddress"));
+				db_data.push_back(Tango::DbDatum("SFP3Port"));
+				db_data.push_back(Tango::DbDatum("Timeout"));
+				
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                std::string config_ip_address = "127.0.0.1";
+				unsigned long config_port = 0;
+				std::string SFP1_ip_address = "127.0.0.1";
+				unsigned long SFP1_port = 0;				
+				std::string SFP2_ip_address = "127.0.0.1";
+				unsigned long SFP2_port = 0;	
+				std::string SFP3_ip_address = "127.0.0.1";
+				unsigned long SFP3_port = 0;	
+				unsigned long timeout = 0;
+                db_data[0] >> config_ip_address;
+				db_data[1] >> config_port;
+                db_data[2] >> SFP1_ip_address;
+				db_data[3] >> SFP1_port;
+                db_data[4] >> SFP2_ip_address;
+				db_data[5] >> SFP2_port;
+                db_data[6] >> SFP3_ip_address;
+				db_data[7] >> SFP3_port;
+				db_data[8] >> timeout;
+				
+                m_camera = static_cast<void*> (new Ufxc::Camera(config_ip_address, config_port,
+																SFP1_ip_address, SFP1_port,
+																SFP2_ip_address, SFP2_port,
+																SFP3_ip_address, SFP3_port,
+																timeout
+																));
+                m_interface = static_cast<void*> (new Ufxc::Interface(*(static_cast<Ufxc::Camera*> (m_camera))));
+                m_control = new CtControl(static_cast<Ufxc::Interface*> (m_interface));
+
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
+#endif
+				
         if (!ControlFactory::m_is_created)
         {
             string strMsg = "Unable to create the lima control object : Unknown Detector Type : ";
@@ -909,6 +960,12 @@ void ControlFactory::reset(const std::string& detector_type)
                 }
 #endif
 
+#ifdef UFXC_ENABLED        
+                if (detector_type == "Ufxc")
+                {
+					delete (static_cast<Ufxc::Camera*> (m_camera));				
+                }
+#endif
                 m_camera = 0;
             }
 
