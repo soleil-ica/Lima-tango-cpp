@@ -4501,6 +4501,7 @@ void LimaDetector::create_log_info_attributes(void)
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION));
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION));
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION));
+		yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSJUNGFRAU_NAME), YAT_XSTR(SLSJUNGFRAU_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION));
 
         #else // UNIX_32
@@ -4515,8 +4516,7 @@ void LimaDetector::create_log_info_attributes(void)
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MERLIN_NAME), YAT_XSTR(MERLIN_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSJUNGFRAU_NAME), YAT_XSTR(SLSJUNGFRAU_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );        
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
         #endif
     #endif
