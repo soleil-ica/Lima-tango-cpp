@@ -681,6 +681,11 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 m_camera    = static_cast<void*> (new Lambda::Camera(config_file_path, distortion_correction));
                 m_interface = static_cast<void*> (new Lambda::Interface(*static_cast<Lambda::Camera*> (m_camera)));
                 m_control   = new CtControl(static_cast<Lambda::Interface*> (m_interface));
+
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
 #endif
 
 #ifdef DHYANA_ENABLED
