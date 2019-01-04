@@ -250,7 +250,11 @@ void LimaDetector::init_device()
         LimaDetector::m_init_count++;
         //add image dynamic attribute
         INFO_STREAM << "Add \'image\' dynamic attribute." << endl;
-        add_image_dynamic_attribute();
+		add_image_dynamic_attribute("image");
+
+		//add image dynamic attribute
+		INFO_STREAM << "Add \'baseImage\' dynamic attribute." << endl;
+		add_image_dynamic_attribute("baseImage");
 
         //- Manage LIMA logs verbose
         INFO_STREAM << "Define Lima Traces levels." << endl;
@@ -2032,9 +2036,17 @@ void LimaDetector::write_acquisitionMode(Tango::WAttribute &attr)
         INFO_STREAM << "Remove image dynamic attribute." << endl;
         m_dim.dynamic_attributes_manager().remove_attribute("image");
 
+		//remove attributes from dam
+		INFO_STREAM << "Remove baseImage dynamic attribute." << endl;
+		m_dim.dynamic_attributes_manager().remove_attribute("baseImage");
+
         //add image dynamic attribute
         INFO_STREAM << "Add image dynamic attribute." << endl;
-        add_image_dynamic_attribute();
+		add_image_dynamic_attribute("image");
+
+		//add baseImage dynamic attribute
+		INFO_STREAM << "Add baseImage dynamic attribute." << endl;
+		add_image_dynamic_attribute("baseImage");
         //////*******************************************************************************************//////
     }
     catch(Exception& e)
@@ -2970,7 +2982,14 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
                 DEBUG_STREAM << "last_image_counter -> " << counter << endl;
 
                 Data last_image;
+				if(cbd.dya->get_name() == "image")
+				{
                 m_ct->ReadImage(last_image, -1);
+				}
+				else //NECESSARY "baseImage"
+				{
+					m_ct->ReadBaseImage(last_image, -1);
+				}
 
                 if(last_image.data() != 0)
                 {
@@ -3037,6 +3056,7 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
             {
                 DEBUG_STREAM << "last_image_counter -> " << counter << endl;
                 CtVideo::Image last_image; //never put this variable in the class data member, refrence is locked in ctVideo (mantis 0021083)
+				//NB : it s always the base image  no processLib operations are applied in video mode
                 m_ct->video()->getLastImage(last_image); //last image acquired
                 if(last_image.buffer() != 0)
                 {
@@ -4664,13 +4684,13 @@ void LimaDetector::configure_attributes_hardware_at_init(void)
 // method :         LimaDetector::add_image_dynamic_attribute
 //
 //-----------------------------------------------------------------------------
-void LimaDetector::add_image_dynamic_attribute(void)
+void LimaDetector::add_image_dynamic_attribute(const std::string& attr_name)
 {
     //- add image dynamic attribute
     //- create image dyn attr (UChar, UShort or ULong)        
     yat4tango::DynamicAttributeInfo dai;
     dai.dev = this;
-    dai.tai.name = "image";
+	dai.tai.name = attr_name;
     dai.tai.data_format = Tango::IMAGE;
     dai.tai.max_dim_x = 100000; //- arbitrary big value
     dai.tai.max_dim_y = 100000; //- arbitrary big value
@@ -4695,15 +4715,15 @@ void LimaDetector::add_image_dynamic_attribute(void)
     {
         dai.tai.data_type = Tango::DEV_LONG;
     }
-    else
-    {
-        stringstream ss;
-        ss << "DetectorPixelDepth " << "(" << detectorPixelDepth << ") is not supported!" << endl;
-        THROW_DEVFAILED("INTERNAL_ERROR", 
-						(ss.str()).c_str(), 
-						"LimaDetector::configure_image_type");
-        return;
-    }
+	else
+	{
+		stringstream ss;
+		ss << "DetectorPixelDepth " << "(" << detectorPixelDepth << ") is not supported!" << endl;
+		THROW_DEVFAILED("INTERNAL_ERROR",
+						(ss.str()).c_str(),
+						"LimaDetector::add_image_dynamic_attribute");
+		return;
+	}
 
     //- Check if specialDisplayType is set (FLOAT for example)
     transform(specialDisplayType.begin(), specialDisplayType.end(), specialDisplayType.begin(), ::toupper);
