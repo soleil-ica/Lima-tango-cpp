@@ -52,6 +52,7 @@
 #include "lima/CtImage.h"
 
 #include <yat4tango/PropertyHelper.h>
+#include <yat/utils/StringTokenizer.h>
 #include "UfxcInterface.h"
 #include "UfxcCamera.h"
 
@@ -95,7 +96,17 @@ public :
 //@{
 		Tango::DevString	*attr_libVersion_read;
 		Tango::DevString	*attr_firmwareVersion_read;
+		Tango::DevString	*attr_currentAlias_read;
+		Tango::DevString	*attr_currentConfigFile_read;
 		Tango::DevULong	*attr_detectorTemperature_read;
+		Tango::DevULong	*attr_thresholdLow_read;
+		Tango::DevULong	attr_thresholdLow_write;
+		Tango::DevULong	*attr_thresholdHigh_read;
+		Tango::DevULong	attr_thresholdHigh_write;
+		Tango::DevULong	*attr_thresholdLow1_read;
+		Tango::DevULong	*attr_thresholdHigh1_read;
+		Tango::DevULong	*attr_thresholdLow2_read;
+		Tango::DevULong	*attr_thresholdHigh2_read;
 //@}
 
 /**
@@ -103,6 +114,10 @@ public :
  * Device properties member data.
  */
 //@{
+/**
+ *	Allow to Reload the last used configuration file at each init of the device.
+ */
+	Tango::DevBoolean	autoLoad;
 /**
  *	Config Ip Address
  */
@@ -139,6 +154,22 @@ public :
  *	Timeout in ms
  */
 	Tango::DevULong	timeout;
+/**
+ *	
+ */
+	vector<string>	detectorConfigFiles;
+/**
+ *	
+ */
+	Tango::DevULong	memorizedThresholdLow;
+/**
+ *	
+ */
+	Tango::DevULong	memorizedThresholdHigh;
+/**
+ *	
+ */
+	string	memorizedConfigAlias;
 //@}
 
 /**
@@ -220,9 +251,49 @@ public :
  */
 	virtual void read_firmwareVersion(Tango::Attribute &attr);
 /**
+ *	Extract real attribute values for currentAlias acquisition result.
+ */
+	virtual void read_currentAlias(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for currentConfigFile acquisition result.
+ */
+	virtual void read_currentConfigFile(Tango::Attribute &attr);
+/**
  *	Extract real attribute values for detectorTemperature acquisition result.
  */
 	virtual void read_detectorTemperature(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for thresholdLow acquisition result.
+ */
+	virtual void read_thresholdLow(Tango::Attribute &attr);
+/**
+ *	Write thresholdLow attribute values to hardware.
+ */
+	virtual void write_thresholdLow(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for thresholdHigh acquisition result.
+ */
+	virtual void read_thresholdHigh(Tango::Attribute &attr);
+/**
+ *	Write thresholdHigh attribute values to hardware.
+ */
+	virtual void write_thresholdHigh(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for thresholdLow1 acquisition result.
+ */
+	virtual void read_thresholdLow1(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for thresholdHigh1 acquisition result.
+ */
+	virtual void read_thresholdHigh1(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for thresholdLow2 acquisition result.
+ */
+	virtual void read_thresholdLow2(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for thresholdHigh2 acquisition result.
+ */
+	virtual void read_thresholdHigh2(Tango::Attribute &attr);
 /**
  *	Read/Write allowed for libVersion attribute.
  */
@@ -232,15 +303,57 @@ public :
  */
 	virtual bool is_firmwareVersion_allowed(Tango::AttReqType type);
 /**
+ *	Read/Write allowed for currentAlias attribute.
+ */
+	virtual bool is_currentAlias_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for currentConfigFile attribute.
+ */
+	virtual bool is_currentConfigFile_allowed(Tango::AttReqType type);
+/**
  *	Read/Write allowed for detectorTemperature attribute.
  */
 	virtual bool is_detectorTemperature_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for thresholdLow attribute.
+ */
+	virtual bool is_thresholdLow_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for thresholdHigh attribute.
+ */
+	virtual bool is_thresholdHigh_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for thresholdLow1 attribute.
+ */
+	virtual bool is_thresholdLow1_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for thresholdHigh1 attribute.
+ */
+	virtual bool is_thresholdHigh1_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for thresholdLow2 attribute.
+ */
+	virtual bool is_thresholdLow2_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for thresholdHigh2 attribute.
+ */
+	virtual bool is_thresholdHigh2_allowed(Tango::AttReqType type);
+/**
+ *	Execution allowed for LoadConfigFile command.
+ */
+	virtual bool is_LoadConfigFile_allowed(const CORBA::Any &any);
 /**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
  *	@exception DevFailed
  */
 	virtual Tango::DevState	dev_state();
+/**
+ * 
+ *	@param	argin	alias of the Detector configuration file
+ *	@exception DevFailed
+ */
+	void	load_config_file(Tango::DevString);
 
 /**
  *	Read the device properties from database
@@ -262,10 +375,10 @@ protected :
     stringstream              m_status_message;
     
     //lima OBJECTS
-    lima::Ufxc::Interface*  m_hw;
-    lima::CtControl*          m_ct;
-    lima::Ufxc::Camera*     m_camera;	    
-	
+    lima::Ufxc::Interface*      m_hw;
+    lima::CtControl*            m_ct;
+    lima::Ufxc::Camera*         m_camera;	    
+	std::map<std::string, std::string>  m_map_alias_config_files;
 };
 
 }	// namespace_ns

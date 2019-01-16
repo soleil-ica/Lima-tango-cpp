@@ -63,6 +63,31 @@ __declspec(dllexport)
 
 namespace Ufxc_ns
 {
+//+----------------------------------------------------------------------------
+//
+// method : 		LoadConfigFileClass::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *LoadConfigFileClass::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "LoadConfigFileClass::execute(): arrived" << endl;
+
+	Tango::DevString	argin;
+	extract(in_any, argin);
+
+	((static_cast<Ufxc *>(device))->load_config_file(argin));
+	return new CORBA::Any();
+}
+
 
 
 
@@ -166,6 +191,11 @@ UfxcClass *UfxcClass::instance()
 //-----------------------------------------------------------------------------
 void UfxcClass::command_factory()
 {
+	command_list.push_back(new LoadConfigFileClass("LoadConfigFile",
+		Tango::DEV_STRING, Tango::DEV_VOID,
+		"alias of the Detector configuration file",
+		"",
+		Tango::OPERATOR));
 
 	//	add polling if any
 	for (unsigned int i=0 ; i<command_list.size(); i++)
@@ -269,6 +299,7 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	lib_version_prop.set_display_unit("  ");
 	lib_version_prop.set_description("Ufxc Tucam Version.");
 	lib_version->set_default_properties(lib_version_prop);
+	lib_version->set_disp_level(Tango::EXPERT);
 	att_list.push_back(lib_version);
 
 	//	Attribute : firmwareVersion
@@ -278,16 +309,93 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	firmware_version_prop.set_standard_unit(" ");
 	firmware_version_prop.set_display_unit(" ");
 	firmware_version->set_default_properties(firmware_version_prop);
+	firmware_version->set_disp_level(Tango::EXPERT);
 	att_list.push_back(firmware_version);
+
+	//	Attribute : currentAlias
+	currentAliasAttrib	*current_alias = new currentAliasAttrib();
+	Tango::UserDefaultAttrProp	current_alias_prop;
+	current_alias_prop.set_unit(" ");
+	current_alias_prop.set_standard_unit(" ");
+	current_alias_prop.set_display_unit(" ");
+	current_alias_prop.set_format("%s");
+	current_alias_prop.set_description("Display the current Alias used to load the configuration file.");
+	current_alias->set_default_properties(current_alias_prop);
+	att_list.push_back(current_alias);
+
+	//	Attribute : currentConfigFile
+	currentConfigFileAttrib	*current_config_file = new currentConfigFileAttrib();
+	Tango::UserDefaultAttrProp	current_config_file_prop;
+	current_config_file_prop.set_unit(" ");
+	current_config_file_prop.set_standard_unit(" ");
+	current_config_file_prop.set_display_unit(" ");
+	current_config_file_prop.set_format("%s");
+	current_config_file_prop.set_description("Display the path+name of current configuration file.");
+	current_config_file->set_default_properties(current_config_file_prop);
+	att_list.push_back(current_config_file);
 
 	//	Attribute : detectorTemperature
 	detectorTemperatureAttrib	*detector_temperature = new detectorTemperatureAttrib();
 	Tango::UserDefaultAttrProp	detector_temperature_prop;
-	detector_temperature_prop.set_unit(" ");
-	detector_temperature_prop.set_standard_unit(" ");
-	detector_temperature_prop.set_display_unit(" ");
+	detector_temperature_prop.set_unit("Celsius");
+	detector_temperature_prop.set_standard_unit("Celsius");
+	detector_temperature_prop.set_display_unit("?C");
 	detector_temperature->set_default_properties(detector_temperature_prop);
 	att_list.push_back(detector_temperature);
+
+	//	Attribute : thresholdLow
+	thresholdLowAttrib	*threshold_low = new thresholdLowAttrib();
+	Tango::UserDefaultAttrProp	threshold_low_prop;
+	threshold_low_prop.set_unit("keV");
+	threshold_low_prop.set_standard_unit("keV");
+	threshold_low_prop.set_display_unit("keV");
+	threshold_low->set_default_properties(threshold_low_prop);
+	att_list.push_back(threshold_low);
+
+	//	Attribute : thresholdHigh
+	thresholdHighAttrib	*threshold_high = new thresholdHighAttrib();
+	Tango::UserDefaultAttrProp	threshold_high_prop;
+	threshold_high_prop.set_unit("keV");
+	threshold_high_prop.set_standard_unit("keV");
+	threshold_high_prop.set_display_unit("keV");
+	threshold_high->set_default_properties(threshold_high_prop);
+	att_list.push_back(threshold_high);
+
+	//	Attribute : thresholdLow1
+	thresholdLow1Attrib	*threshold_low1 = new thresholdLow1Attrib();
+	Tango::UserDefaultAttrProp	threshold_low1_prop;
+	threshold_low1_prop.set_unit("mV");
+	threshold_low1_prop.set_standard_unit("mV");
+	threshold_low1_prop.set_display_unit("mV");
+	threshold_low1->set_default_properties(threshold_low1_prop);
+	att_list.push_back(threshold_low1);
+
+	//	Attribute : thresholdHigh1
+	thresholdHigh1Attrib	*threshold_high1 = new thresholdHigh1Attrib();
+	Tango::UserDefaultAttrProp	threshold_high1_prop;
+	threshold_high1_prop.set_unit("mV");
+	threshold_high1_prop.set_standard_unit("mV");
+	threshold_high1_prop.set_display_unit("mV");
+	threshold_high1->set_default_properties(threshold_high1_prop);
+	att_list.push_back(threshold_high1);
+
+	//	Attribute : thresholdLow2
+	thresholdLow2Attrib	*threshold_low2 = new thresholdLow2Attrib();
+	Tango::UserDefaultAttrProp	threshold_low2_prop;
+	threshold_low2_prop.set_unit("mV");
+	threshold_low2_prop.set_standard_unit("mV");
+	threshold_low2_prop.set_display_unit("mV");
+	threshold_low2->set_default_properties(threshold_low2_prop);
+	att_list.push_back(threshold_low2);
+
+	//	Attribute : thresholdHigh2
+	thresholdHigh2Attrib	*threshold_high2 = new thresholdHigh2Attrib();
+	Tango::UserDefaultAttrProp	threshold_high2_prop;
+	threshold_high2_prop.set_unit("mV");
+	threshold_high2_prop.set_standard_unit("mV");
+	threshold_high2_prop.set_display_unit("mV");
+	threshold_high2->set_default_properties(threshold_high2_prop);
+	att_list.push_back(threshold_high2);
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
@@ -342,6 +450,21 @@ void UfxcClass::set_default_property()
 	vector<string>	vect_data;
 	//	Set Default Class Properties
 	//	Set Default Device Properties
+	prop_name = "AutoLoad";
+	prop_desc = "Allow to Reload the last used configuration file at each init of the device.";
+	prop_def  = "False";
+	vect_data.clear();
+	vect_data.push_back("False");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 	prop_name = "ConfigIpAddress";
 	prop_desc = "Config Ip Address";
 	prop_def  = "127.0.0.1";
@@ -467,6 +590,66 @@ void UfxcClass::set_default_property()
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "DetectorConfigFiles";
+	prop_desc = "";
+	prop_def  = "ALIAS;PATH_AND_FILE_NAME";
+	vect_data.clear();
+	vect_data.push_back("ALIAS;PATH_AND_FILE_NAME");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedThresholdLow";
+	prop_desc = "";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedThresholdHigh";
+	prop_desc = "";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedConfigAlias";
+	prop_desc = "";
+	prop_def  = "ALIAS";
+	vect_data.clear();
+	vect_data.push_back("ALIAS");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

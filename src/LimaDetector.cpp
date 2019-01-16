@@ -4220,7 +4220,11 @@ void LimaDetector::configure_image_type(void)
 {
     HwDetInfoCtrlObj *hw_det_info;
     m_hw->getHwCtrlObj(hw_det_info);
-    if(detectorPixelDepth == "8")
+    if(detectorPixelDepth == "2")
+    {
+        hw_det_info->setCurrImageType(Bpp2);
+    }	
+    else if(detectorPixelDepth == "8")
     {
         hw_det_info->setCurrImageType(Bpp8);
     }
@@ -4228,6 +4232,10 @@ void LimaDetector::configure_image_type(void)
     {
         hw_det_info->setCurrImageType(Bpp12);
     }
+    else if(detectorPixelDepth == "14")
+    {
+        hw_det_info->setCurrImageType(Bpp14);
+    }	
     else if(detectorPixelDepth == "16")
     {
         hw_det_info->setCurrImageType(Bpp16);
@@ -4674,11 +4682,11 @@ void LimaDetector::add_image_dynamic_attribute(void)
     dai.tai.max_dim_x = 100000; //- arbitrary big value
     dai.tai.max_dim_y = 100000; //- arbitrary big value
 
-    if(detectorPixelDepth == "8")
+    if(detectorPixelDepth == "8" ||detectorPixelDepth == "2")
     {
         dai.tai.data_type = Tango::DEV_UCHAR;
     }
-    else if(detectorPixelDepth == "12" || detectorPixelDepth == "16")
+    else if(detectorPixelDepth == "12" || detectorPixelDepth == "16" ||detectorPixelDepth == "14")
     {
         dai.tai.data_type = Tango::DEV_USHORT;
     }
@@ -4700,7 +4708,7 @@ void LimaDetector::add_image_dynamic_attribute(void)
         ss << "DetectorPixelDepth " << "(" << detectorPixelDepth << ") is not supported!" << endl;
         THROW_DEVFAILED("INTERNAL_ERROR", 
 						(ss.str()).c_str(), 
-						"LimaDetector::configure_image_type");
+						"LimaDetector::add_image_dynamic_attribute");
         return;
     }
 

@@ -72,11 +72,11 @@
                 </dependency>
                 <!-- Lima Camera Plugins -->
 
-                <dependency>
+<!--                <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaSimulator-${aol}-shared-${mode}</artifactId>
                     <version>${SIMULATOR.version}</version>
-                </dependency>
+                </dependency>-->
                 
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
@@ -96,19 +96,19 @@
                                 <sourceDirectory>${project.basedir}</sourceDirectory>                        
                                 <includes>
                                     <include>*.cpp</include>
-                                    <include>specifics/Layout/*.cpp</include>                            
+<!--                                    <include>specifics/Layout/*.cpp</include>                            
                                     <include>specifics/Mask/*.cpp</include>
-                                    <include>specifics/RoiCounters/*.cpp</include>
-                                    <include>specifics/SimulatorCCD/*.cpp</include>                                    
+                                    <include>specifics/RoiCounters/*.cpp</include>-
+                                    <include>specifics/SimulatorCCD/*.cpp</include>                                    -->
                                     <include>specifics/Ufxc/*.cpp</include>
                                 </includes>
                                 
                                 <includePaths>                          
                                     <includePath>src</includePath>                            
-                                    <includePath>specifics/Layout</includePath>                                                        
+<!--                                    <includePath>specifics/Layout</includePath>                                                        
                                     <includePath>specifics/Mask</includePath>
                                     <includePath>specifics/RoiCounters</includePath>
-                                    <includePath>specifics/SimulatorCCD</includePath>
+                                    <includePath>specifics/SimulatorCCD</includePath>-->
                                     <includePath>specifics/Ufxc</includePath>
                                 </includePaths>
                                 
@@ -128,10 +128,10 @@
                                     <!-- Needed By Aviex -->
                                     <define>OS_UNIX</define>
                                     <!-- define which detector you need to ENABLE -->                                       
-                                    <define>LAYOUT_ENABLED</define>		                                                                                                       								 
+<!--                                    <define>LAYOUT_ENABLED</define>		                                                                                                       								 
                                     <define>MASK_ENABLED</define>
                                     <define>ROICOUNTERS_ENABLED</define>
-                                    <define>SIMULATOR_ENABLED</define>
+                                    <define>SIMULATOR_ENABLED</define>-->
                                     <define>UFXC_ENABLED</define>
                                     <define>SOLEIL_YAT_STREAM</define>
                                 </defines>               
