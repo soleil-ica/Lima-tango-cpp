@@ -116,6 +116,10 @@ void Ufxc::delete_device()
 	//    m_ct = 0;
 	//}    
 	
+// Exit acquisition task
+    INFO_STREAM << "Exit yat::DeviceTask." << endl;
+    m_my_task.reset();
+	
 	m_map_alias_config_files.clear();	
 }
 
@@ -232,6 +236,10 @@ void Ufxc::init_device()
 		return;
 	}
 
+	
+	//- Create the task
+    m_my_task.reset(new MyTask(this) , TaskExiter());
+	m_my_task->go();
 	set_state(Tango::STANDBY);
 	if(autoLoad)
 	{
@@ -527,10 +535,10 @@ void Ufxc::read_currentAlias(Tango::Attribute &attr)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-										  "TANGO_DEVICE_ERROR",
-										  string(df.errors[0].desc).c_str(),
-										  "Ufxc::read_currentAlias()");
+		RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::read_currentAlias()");
 	}	
 }
 
@@ -552,10 +560,10 @@ void Ufxc::read_currentConfigFile(Tango::Attribute &attr)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-										  "TANGO_DEVICE_ERROR",
-										  string(df.errors[0].desc).c_str(),
-										  "Ufxc::read_currentConfigFile()");
+		RETHROW_DEVFAILED(df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::read_currentConfigFile()");
 	}	
 }
 
@@ -583,18 +591,18 @@ void Ufxc::read_thresholdLow1(Tango::Attribute &attr)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		//- throw exception
-		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-									   e.getErrMsg().c_str(),
-									   "Ufxc::read_thresholdLow1");
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"Ufxc::read_thresholdLow1");
 	}	
 	catch(Tango::DevFailed& df)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-										  "TANGO_DEVICE_ERROR",
-										  string(df.errors[0].desc).c_str(),
-										  "Ufxc::read_thresholdLow1");
+		RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::read_thresholdLow1");
 	}	
 }
 
@@ -620,18 +628,18 @@ void Ufxc::read_thresholdHigh1(Tango::Attribute &attr)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		//- throw exception
-		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-									   e.getErrMsg().c_str(),
-									   "Ufxc::read_thresholdHigh1");
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"Ufxc::read_thresholdHigh1");
 	}	
 	catch(Tango::DevFailed& df)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-										  "TANGO_DEVICE_ERROR",
-										  string(df.errors[0].desc).c_str(),
-										  "Ufxc::read_thresholdHigh1");
+		RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::read_thresholdHigh1");
 	}	
 }
 
@@ -657,18 +665,18 @@ void Ufxc::read_thresholdLow2(Tango::Attribute &attr)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		//- throw exception
-		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-									   e.getErrMsg().c_str(),
-									   "Ufxc::read_thresholdLow2");
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"Ufxc::read_thresholdLow2");
 	}	
 	catch(Tango::DevFailed& df)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-										  "TANGO_DEVICE_ERROR",
-										  string(df.errors[0].desc).c_str(),
-										  "Ufxc::read_thresholdLow2");
+		RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::read_thresholdLow2");
 	}	
 }
 
@@ -694,18 +702,18 @@ void Ufxc::read_thresholdHigh2(Tango::Attribute &attr)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		//- throw exception
-		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-									   e.getErrMsg().c_str(),
-									   "Ufxc::read_thresholdHigh2");
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"Ufxc::read_thresholdHigh2");
 	}	
 	catch(Tango::DevFailed& df)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-										  "TANGO_DEVICE_ERROR",
-										  string(df.errors[0].desc).c_str(),
-										  "Ufxc::read_thresholdHigh2");
+		RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::read_thresholdHigh2");
 	}	
 }
 
@@ -729,10 +737,10 @@ void Ufxc::read_thresholdLow(Tango::Attribute &attr)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-										  "TANGO_DEVICE_ERROR",
-										  string(df.errors[0].desc).c_str(),
-										  "Ufxc::read_thresholdLow");
+		RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::read_thresholdLow");
 	}		
 }
 
@@ -758,18 +766,18 @@ void Ufxc::write_thresholdLow(Tango::WAttribute &attr)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		//- throw exception
-		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-									   e.getErrMsg().c_str(),
-									   "Ufxc::write_thresholdLow");
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"Ufxc::write_thresholdLow");
 	}
 	catch(Tango::DevFailed& df)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-										  "TANGO_DEVICE_ERROR",
-										  string(df.errors[0].desc).c_str(),
-										  "Ufxc::write_thresholdLow");
+		RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::write_thresholdLow");
 	}	
 }
 
@@ -793,10 +801,10 @@ void Ufxc::read_thresholdHigh(Tango::Attribute &attr)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-										  "TANGO_DEVICE_ERROR",
-										  string(df.errors[0].desc).c_str(),
-										  "Ufxc::read_thresholdHigh");
+		RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::read_thresholdHigh");
 	}		
 }
 
@@ -822,18 +830,18 @@ void Ufxc::write_thresholdHigh(Tango::WAttribute &attr)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		//- throw exception
-		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-									   e.getErrMsg().c_str(),
-									   "Ufxc::write_thresholdHigh");
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"Ufxc::write_thresholdHigh");
 	}
 	catch(Tango::DevFailed& df)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-										  "TANGO_DEVICE_ERROR",
-										  string(df.errors[0].desc).c_str(),
-										  "Ufxc::write_thresholdHigh");
+		RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::write_thresholdHigh");
 	}	
 }
 
@@ -859,18 +867,18 @@ void Ufxc::read_detectorTemperature(Tango::Attribute &attr)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-										  "TANGO_DEVICE_ERROR",
-										  string(df.errors[0].desc).c_str(),
-										  "Ufxc::read_detectorTemperature");
+		RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::read_detectorTemperature");
 	}
 	catch(Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		//- throw exception
-		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-									   e.getErrMsg().c_str(),
-									   "Ufxc::read_detectorTemperature");
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"Ufxc::read_detectorTemperature");
 	}	
 }
 
@@ -897,18 +905,18 @@ void Ufxc::read_firmwareVersion(Tango::Attribute &attr)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-										  "TANGO_DEVICE_ERROR",
-										  string(df.errors[0].desc).c_str(),
-										  "Ufxc::read_firmwareVersion");
+		RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::read_firmwareVersion");
 	}
 	catch(Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		//- throw exception
-		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-									   e.getErrMsg().c_str(),
-									   "Ufxc::read_firmwareVersion");
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"Ufxc::read_firmwareVersion");
 	}		
 }
 
@@ -935,18 +943,18 @@ void Ufxc::read_libVersion(Tango::Attribute &attr)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-										  "TANGO_DEVICE_ERROR",
-										  string(df.errors[0].desc).c_str(),
-										  "Ufxc::read_libVersion");
+		RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::read_libVersion");
 	}
 	catch(Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		//- throw exception
-		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-									   e.getErrMsg().c_str(),
-									   "Ufxc::read_libVersion");
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"Ufxc::read_libVersion");
 	}	
 }
 
@@ -1009,7 +1017,7 @@ void Ufxc::load_config_file(Tango::DevString argin)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		//  in the property parser "ALIAS;MCA OR MAPPING OR MAPPING_FULL OR MAPPING_SCA;c:\mondossier\monfichier.ini"
+		//  in the property parser "ALIAS;c:\mondossier\monfichier.ini"
 		std::string alias = argin;
 		std::transform(alias.begin(), alias.end(), alias.begin(), ::toupper);
 		//check if alias exist !
@@ -1018,15 +1026,16 @@ void Ufxc::load_config_file(Tango::DevString argin)
 		{
 			stringstream ss;
 			ss << "Unable to find the alias [" << alias << "]" << endl;
-			Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-										   (ss.str()).c_str(),
-										   "Ufxc::load_config_file()");
+			THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+							ss.str().c_str(),
+							"Ufxc::load_config_file()");
 		}
 
 		//ask the camera to load the file on the board
-		INFO_STREAM<<"Load the detector config file : "<<m_map_alias_config_files[alias]<<std::endl;
-		m_camera->set_detector_config_file(m_map_alias_config_files[alias]);
-		INFO_STREAM<<"File loaded"<<std::endl;
+        //- create an msg to pass it some data (Conf)
+        INFO_STREAM<<"Load the detector config file : "<<m_map_alias_config_files[alias]<<std::endl;
+        m_my_task->load_config_file(m_camera, m_map_alias_config_files[alias]);
+
 		//update attributes related to config ini file
 		strcpy(*attr_currentAlias_read, alias.c_str());
 		strcpy(*attr_currentConfigFile_read, (m_map_alias_config_files[alias].c_str()));
@@ -1036,22 +1045,20 @@ void Ufxc::load_config_file(Tango::DevString argin)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-										  "TANGO_DEVICE_ERROR",
-										  string(df.errors[0].desc).c_str(),
-										  "Ufxc::load_config_file()");
+		RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::load_config_file()");
 	}
 	catch(Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		//- throw exception
-		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-									   e.getErrMsg().c_str(),
-									   "Ufxc::load_config_file");
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"Ufxc::load_config_file");
 	}	
 }
-
-
 
 
 }	//	namespace

@@ -51,10 +51,15 @@
 #include "lima/CtAcquisition.h"
 #include "lima/CtImage.h"
 
+#include <yat/memory/SharedPtr.h>
 #include <yat4tango/PropertyHelper.h>
+#include <yat4tango/InnerAppender.h>
 #include <yat/utils/StringTokenizer.h>
+#include <yat4tango/DeviceTask.h>
 #include "UfxcInterface.h"
 #include "UfxcCamera.h"
+
+#include "MyTask.h"
 
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
 
@@ -65,7 +70,7 @@ using namespace yat4tango;
 
 namespace Ufxc_ns
 {
-
+    
 /**
  * Class Description:
  * 
@@ -370,9 +375,13 @@ public :
 protected :	
 	//	Add your own data members here
 	//-----------------------------------------
+    //Create Yat::task to manage device LoadConfigFile command
+    bool                       create_acquisition_task(void);        
     //state & status stuff
     bool                      m_is_device_initialized ;
     stringstream              m_status_message;
+    //- yat4tango::DeviceTask object : manage device LoadConfigFile command
+    yat::SharedPtr<MyTask>     m_my_task;
     
     //lima OBJECTS
     lima::Ufxc::Interface*      m_hw;
