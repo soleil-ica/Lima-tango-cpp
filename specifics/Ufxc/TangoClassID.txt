@@ -1,0 +1,11 @@
+/**
+ * Device Class Identification:
+ * 
+ * Class Name   :	Ufxc
+ * Contact      :	arafat.noureddine@synchrotron-soleil.fr
+ * Class Family :	Acquisition
+ * Platform     :	Win Like
+ * Bus          :	Not Applicable
+ * Manufacturer :	SOLEIL
+ * Reference    :	
+ */

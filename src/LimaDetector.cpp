@@ -303,11 +303,11 @@ void LimaDetector::init_device()
         if(fileManagedMode != "HARDWARE")
         {
             //- reload Roi from property
-            INFO_STREAM << "Reload ROI of detector from Roi property." << endl;
+            INFO_STREAM << "Reload ROI of detector from Roi property (" << memorizedRoi.at(0)<<","<<memorizedRoi.at(1)<<","<<memorizedRoi.at(2)<<","<<memorizedRoi.at(3)<< ")." << endl;
             configure_roi();
 
             //- reload Binning from property
-            INFO_STREAM << "Reload BIN of detector from Binning property." << endl;
+            INFO_STREAM << "Reload BIN of detector from Binning property (" << memorizedBinningH<< "," << memorizedBinningV << ")." << endl;
             configure_binning();
 
 			//- Define ImageOpMode for Roi/Binning/etc...  (HardOnly, SoftOnly or HardAndSoft)
@@ -324,8 +324,8 @@ void LimaDetector::init_device()
         add_shutter_dynamic_attributes();
 
         //- Set default nb frames of acquisition at start-up
-        INFO_STREAM << "Set default nb. frames of acquisition at start-up to " << attr_nbFrames_write << "." << endl;
-        m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
+        INFO_STREAM << "Set default nb. frames of acquisition at start-up to (" << memorizedNbFrames << ")." << endl;
+        m_ct->acquisition()->setAcqNbFrames(memorizedNbFrames);
 
         //- define parameters of ctSaving object used to store image in files
         INFO_STREAM << "Configure parameters used to save image into a file (path/name/format/...)." << endl;
@@ -4220,7 +4220,11 @@ void LimaDetector::configure_image_type(void)
 {
     HwDetInfoCtrlObj *hw_det_info;
     m_hw->getHwCtrlObj(hw_det_info);
-    if(detectorPixelDepth == "8")
+    if(detectorPixelDepth == "2")
+    {
+        hw_det_info->setCurrImageType(Bpp2);
+    }	
+    else if(detectorPixelDepth == "8")
     {
         hw_det_info->setCurrImageType(Bpp8);
     }
@@ -4228,6 +4232,10 @@ void LimaDetector::configure_image_type(void)
     {
         hw_det_info->setCurrImageType(Bpp12);
     }
+    else if(detectorPixelDepth == "14")
+    {
+        hw_det_info->setCurrImageType(Bpp14);
+    }	
     else if(detectorPixelDepth == "16")
     {
         hw_det_info->setCurrImageType(Bpp16);
@@ -4675,11 +4683,11 @@ void LimaDetector::add_image_dynamic_attribute(void)
     dai.tai.max_dim_x = 100000; //- arbitrary big value
     dai.tai.max_dim_y = 100000; //- arbitrary big value
 
-    if(detectorPixelDepth == "8")
+    if(detectorPixelDepth == "8" ||detectorPixelDepth == "2")
     {
         dai.tai.data_type = Tango::DEV_UCHAR;
     }
-    else if(detectorPixelDepth == "12" || detectorPixelDepth == "16")
+    else if(detectorPixelDepth == "12" || detectorPixelDepth == "16" ||detectorPixelDepth == "14")
     {
         dai.tai.data_type = Tango::DEV_USHORT;
     }
@@ -4701,7 +4709,7 @@ void LimaDetector::add_image_dynamic_attribute(void)
         ss << "DetectorPixelDepth " << "(" << detectorPixelDepth << ") is not supported!" << endl;
         THROW_DEVFAILED("INTERNAL_ERROR", 
 						(ss.str()).c_str(), 
-						"LimaDetector::configure_image_type");
+						"LimaDetector::add_image_dynamic_attribute");
         return;
     }
 
