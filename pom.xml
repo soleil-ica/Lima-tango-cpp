@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.8.6</version>
+    <version>1.8.7-SNAPSHOT</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -56,6 +56,8 @@
                 <PROSILICA.version>1.4.6</PROSILICA.version>
                 <XPAD.name>Xpad</XPAD.name>
                 <XPAD.version>1.4.14</XPAD.version>
+                <UFXC.name>Ufxc</UFXC.name>
+                <UFXC.version>1.0.0</UFXC.version>                
                 <SIMULATOR.name>Simulator</SIMULATOR.name>
                 <SIMULATOR.version>1.3.15</SIMULATOR.version>
             </properties>
@@ -143,6 +145,12 @@
 
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
+                    <artifactId>LimaUfxc-${aol}-shared-${mode}</artifactId>
+                    <version>${UFXC.version}</version>
+                </dependency>
+                
+                <dependency>
+                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaSimulator-${aol}-shared-${mode}</artifactId>
                     <version>${SIMULATOR.version}</version>
                 </dependency>
@@ -170,6 +178,7 @@
                                     <include>specifics/RoiCounters/*.cpp</include>
                                     <include>specifics/ProsilicaCCD/*.cpp</include>                                                        
                                     <include>specifics/XpadPixelDetector/*.cpp</include>
+                                    <include>specifics/Ufxc/*.cpp</include>
                                     <include>specifics/SimulatorCCD/*.cpp</include>                                    
                                 </includes>
                                 
@@ -187,6 +196,7 @@
                                     <includePath>specifics/RoiCounters</includePath>
                                     <includePath>specifics/ProsilicaCCD</includePath>                                                                                     
                                     <includePath>specifics/XpadPixelDetector</includePath>
+                                    <includePath>specifics/Ufxc</includePath>
                                     <includePath>specifics/SimulatorCCD</includePath>
                                 </includePaths>
                                 
@@ -215,6 +225,8 @@
                                     <define>PROSILICA_VERSION=${PROSILICA.version}</define>
                                     <define>XPAD_NAME=${XPAD.name}</define>
                                     <define>XPAD_VERSION=${XPAD.version}</define>
+                                    <define>UFXC_NAME=${UFXC.name}</define>
+                                    <define>UFXC_VERSION=${UFXC.version}</define>                                    
                                     <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
                                     <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
 
@@ -235,6 +247,7 @@
                                     <define>ROICOUNTERS_ENABLED</define>
                                     <define>PROSILICA_ENABLED</define>				                                                      		
                                     <define>XPAD_ENABLED</define>
+                                    <define>UFXC_ENABLED</define>
                                     <define>SIMULATOR_ENABLED</define>
                                     <define>SOLEIL_YAT_STREAM</define>
                                 </defines>               
@@ -485,9 +498,11 @@
                 <PERKINELMER.name>PerkinElmer</PERKINELMER.name>
                 <PERKINELMER.version>1.3.12</PERKINELMER.version>
                 <PRINCETON.name>Princeton</PRINCETON.name>
-                <PRINCETON.version>1.3.13</PRINCETON.version>
+                <PRINCETON.version>1.3.14</PRINCETON.version>
                 <UVIEW.name>Uview</UVIEW.name>
                 <UVIEW.version>1.0.11</UVIEW.version>
+                <DHYANA.name>Dhyana</DHYANA.name>
+                <DHYANA.version>1.0.0</DHYANA.version>
                 <SIMULATOR.name>Simulator</SIMULATOR.name>
                 <SIMULATOR.version>1.3.15</SIMULATOR.version>
             </properties>
@@ -554,6 +569,13 @@
                     <artifactId>LimaAndor-${aol}-shared-${mode}</artifactId>
                     <version>${ANDOR.version}</version>
                 </dependency>
+                
+                <dependency>
+                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
+                    <artifactId>LimaDhyana-${aol}-shared-${mode}</artifactId>
+                    <version>${DHYANA.version}</version>
+                </dependency>   
+                
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaHamamatsu-${aol}-shared-${mode}</artifactId>
@@ -598,6 +620,7 @@
                                 <includes>
                                     <include>*.cpp</include>
                                     <include>specifics/AndorCCD/*.cpp</include>
+                                    <include>specifics/Dhyana/*.cpp</include>
                                     <include>specifics/Hamamatsu/*.cpp</include>
                                     <include>specifics/Pco/*.cpp</include>
                                     <include>specifics/PerkinElmer/*.cpp</include>
@@ -615,6 +638,7 @@
                                 <includePaths>
                                     <includePath>src</includePath>
                                     <include>specifics/AndorCCD</include>
+                                    <include>specifics/Dhyana</include>
                                     <include>specifics/Hamamatsu</include>
                                     <include>specifics/Pco</include>
                                     <include>specifics/PerkinElmer</include>
@@ -641,6 +665,8 @@
                                     <define>CORE_VERSION=${CORE.version}</define>
                                     <define>ANDOR_NAME=${ANDOR.name}</define>
                                     <define>ANDOR_VERSION=${ANDOR.version}</define>
+                                    <define>DHYANA_NAME=${DHYANA.name}</define>
+                                    <define>DHYANA_VERSION=${DHYANA.version}</define>
                                     <define>HAMAMATSU_NAME=${HAMAMATSU.name}</define>
                                     <define>HAMAMATSU_VERSION=${HAMAMATSU.version}</define>
                                     <define>PCO_NAME=${PCO.name}</define>
@@ -656,6 +682,7 @@
 
                                     <!-- define which detector you need to ENABLE -->
                                     <define>ANDOR_ENABLED</define>		
+                                    <define>DHYANA_ENABLED</define>
                                     <define>HAMAMATSU_ENABLED</define>                            
                                     <define>PCO_ENABLED</define>
                                     <define>PERKINELMER_ENABLED</define>
