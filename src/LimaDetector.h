@@ -1013,8 +1013,9 @@ public:
     }
 
     //image dynamic attribute management
-    void    add_image_dynamic_attribute(void);
+    void    add_image_dynamic_attribute(const std::string& attr_name);
     void    read_image_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
+    void    read_baseImage_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
 
     //sutter dynamic attributes management
     void    add_shutter_dynamic_attributes(void);
