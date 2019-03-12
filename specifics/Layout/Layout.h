@@ -44,6 +44,7 @@
 #include "Factory.h"
 #include <tango.h>
 #include <yat4tango/PropertyHelper.h>
+#include <yat4tango/InnerAppender.h>
 #include <yat/threading/Mutex.h>
 #include <yat/utils/XString.h>
 

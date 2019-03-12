@@ -128,6 +128,8 @@ void Layout::delete_device()
 		m_layout_tasks.clear();
 	}
 	
+	INFO_STREAM << "Remove the inner-appender." << endl;
+	yat4tango::InnerAppender::release(this);		
 }
 
 //+----------------------------------------------------------------------------
@@ -157,6 +159,11 @@ void Layout::init_device()
 //	m_mapOperations.clear();
     m_layout_tasks.clear();
     m_ct = 0;
+	
+	//- instanciate the appender in order to manage logs
+	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;
+	yat4tango::InnerAppender::initialize(this, 512);	
+	
     try
     {
         //- get the main object used to pilot the lima framework
