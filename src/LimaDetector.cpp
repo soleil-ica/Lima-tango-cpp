@@ -3295,9 +3295,6 @@ void LimaDetector::snap()
             *attr_fileGeneration_read = attr_fileGeneration_write;
             m_ct->saving()->setParameters(m_saving_par);
 
-            //- in SNAP mode, we request attr_nbFrames_write frames
-            m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
-			
 			//reset event list
 			m_ct->event()->resetEventList();
 			ControlFactory::instance().set_event_status("");

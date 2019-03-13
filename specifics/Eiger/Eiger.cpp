@@ -764,6 +764,9 @@ void Eiger::write_nbTriggers(Tango::WAttribute &attr)
 		{		
 			attr.get_write_value(attr_nbTriggers_write);
 			m_camera->setNbTriggers(attr_nbTriggers_write);
+			//fix nbFrames to nbTriggers*nbFramesPerTrigger
+			//if(trig_mode == IntTrig || trig_mode == ExtTrigSingle)
+			m_ct->acquisition()->setAcqNbFrames(attr_nbTriggers_write*attr_nbFramesPerTrigger_write);
 			yat4tango::PropertyHelper::set_property(this, "MemorizedNbTriggers", attr_nbTriggers_write);
 		}
     }
@@ -847,6 +850,9 @@ void Eiger::write_nbFramesPerTrigger(Tango::WAttribute &attr)
 		{
 			attr.get_write_value(attr_nbFramesPerTrigger_write);
 			m_camera->setNbFramesPerTrigger(attr_nbFramesPerTrigger_write);
+			//fix nbFrames to nbTriggers*nbFramesPerTrigger
+			//if(trig_mode == IntTrig || trig_mode == ExtTrigSingle)
+			m_ct->acquisition()->setAcqNbFrames(attr_nbTriggers_write*attr_nbFramesPerTrigger_write);			
 			yat4tango::PropertyHelper::set_property(this, "MemorizedNbFramesPerTrigger", attr_nbFramesPerTrigger_write);
 		}
     }
