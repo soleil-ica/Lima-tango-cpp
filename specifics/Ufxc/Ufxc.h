@@ -104,10 +104,10 @@ public :
 		Tango::DevString	*attr_currentAlias_read;
 		Tango::DevString	*attr_currentConfigFile_read;
 		Tango::DevULong	*attr_detectorTemperature_read;
-		Tango::DevULong	*attr_thresholdLow_read;
-		Tango::DevULong	attr_thresholdLow_write;
-		Tango::DevULong	*attr_thresholdHigh_read;
-		Tango::DevULong	attr_thresholdHigh_write;
+		Tango::DevFloat	*attr_thresholdLow_read;
+		Tango::DevFloat	attr_thresholdLow_write;
+		Tango::DevFloat	*attr_thresholdHigh_read;
+		Tango::DevFloat	attr_thresholdHigh_write;
 		Tango::DevULong	*attr_thresholdLow1_read;
 		Tango::DevULong	*attr_thresholdHigh1_read;
 		Tango::DevULong	*attr_thresholdLow2_read;
@@ -166,11 +166,11 @@ public :
 /**
  *	
  */
-	Tango::DevULong	memorizedThresholdLow;
+	Tango::DevFloat	memorizedThresholdLow;
 /**
  *	
  */
-	Tango::DevULong	memorizedThresholdHigh;
+	Tango::DevFloat	memorizedThresholdHigh;
 /**
  *	
  */

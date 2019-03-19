@@ -101,7 +101,7 @@ public:
 class thresholdHighAttrib: public Tango::Attr
 {
 public:
-	thresholdHighAttrib():Attr("thresholdHigh", Tango::DEV_ULONG, Tango::READ_WRITE) {};
+	thresholdHighAttrib():Attr("thresholdHigh", Tango::DEV_FLOAT, Tango::READ_WRITE) {};
 	~thresholdHighAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
@@ -115,7 +115,7 @@ public:
 class thresholdLowAttrib: public Tango::Attr
 {
 public:
-	thresholdLowAttrib():Attr("thresholdLow", Tango::DEV_ULONG, Tango::READ_WRITE) {};
+	thresholdLowAttrib():Attr("thresholdLow", Tango::DEV_FLOAT, Tango::READ_WRITE) {};
 	~thresholdLowAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
