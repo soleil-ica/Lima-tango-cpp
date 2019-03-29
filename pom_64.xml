@@ -9,16 +9,17 @@
 	
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.8.6</version>
+    <version>1.8.7-SNAPSHOT</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
     <description>LimaDetector device</description>
-    
+
     <properties>
         <!-- path to the 64 bits libs -->
         <libs-64bits>/home/informatique/ica/ica/LIB_EL6_64</libs-64bits>
         <libs-lambda>../../../camera/lambda/sdk/bin</libs-lambda>
+        <libs-xspress3>../../../camera/xspress3/sdk</libs-xspress3>
         <!--<aol>amd64-Linux-gcc</aol> -->
         <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
         <PROCESSLIB.version>1.3.8</PROCESSLIB.version>
@@ -34,6 +35,8 @@
         <SLSJUNGFRAU.version>1.0.0</SLSJUNGFRAU.version>
         <LAMBDA.name>Lambda</LAMBDA.name>
         <LAMBDA.version>1.0.0</LAMBDA.version>
+        <XSPRESS3.name>Xspress3</XSPRESS3.name>
+        <XSPRESS3.version>1.0.0</XSPRESS3.version>        
     </properties>
 
     <scm>
@@ -73,6 +76,11 @@
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaLambda-amd64-Linux-gcc-shared-${mode}</artifactId>
             <version>${LAMBDA.version}</version>
+       </dependency>
+       <dependency>
+	        <groupId>fr.soleil.lib.Lima.Camera</groupId>
+	        <artifactId>LimaXspress3-amd64-Linux-gcc-shared-${mode}</artifactId>
+	        <version>${XSPRESS3.version}</version>
         </dependency>
     </dependencies>
         
@@ -82,7 +90,7 @@
                 <groupId>org.freehep</groupId>
                 <artifactId>freehep-nar-plugin</artifactId>
                 <configuration>
-                   
+
                     <cpp>
                         <sourceDirectory>${project.basedir}</sourceDirectory>                        
                         <includes>
@@ -92,19 +100,22 @@
                             <include>specifics/SlsJungfrau/*.cpp</include>
                             <include>specifics/Merlin/*.cpp</include>
                             <include>specifics/Lambda/*.cpp</include>
+							<include>specifics/Xspress3/*.cpp</include>
                             <include>specifics/Layout/*.cpp</include>     			
                             <include>specifics/RoiCounters/*.cpp</include>
                         </includes>
+
                         <includePaths>                          
                             <includePath>src</includePath>                                   
                             <includePath>specifics/SimulatorCCD</includePath> 		
                             <includePath>specifics/Eiger</includePath> 
                             <includePath>specifics/SlsJungfrau</includePath>            
                             <includePath>specifics/Merlin</includePath>                            
-                            <includePath>specifics/Lambda</includePath>                            
+                            <includePath>specifics/Lambda</includePath>   
+							<includePath>specifics/Xspress3</includePath>                         
                             <includePath>specifics/Layout</includePath>         
                             <includePath>specifics/RoiCounters</includePath>
-                            
+
                             <includePath>${libs-64bits}/my_breakpad/include</includePath> 		
                             <includePath>${libs-64bits}/gsl-1.11/include</includePath>       
                             <includePath>${libs-64bits}/lz4-r131/lib</includePath>       
@@ -112,11 +123,12 @@
                             <includePath>${libs-64bits}/liblog4tango5-devel-5.0.0-16.el6.maxlab.x86_64/usr/include</includePath>    
                             <includePath>${libs-64bits}/omniORB-devel-4.1.7-1.el6.x86_64/usr/include</includePath>  
                             <includePath>${libs-64bits}/zeromq-3.2.5/include</includePath>   
-                                                       
+
                             <includePath>${libs-64bits}/hdf5-1.8.16/include</includePath>
                             <includePath>${libs-64bits}/yat-1.13.16/include</includePath>
                             <includePath>${libs-64bits}/yat4tango-1.10.6/include</includePath>
                             <includePath>${libs-64bits}/nexuscpp-3.2.2/include</includePath>                 
+							<includePath>${libs-xspress3}/include/</includePath>
                         </includePaths>
                        
                         <defines>
@@ -136,18 +148,21 @@
                             <define>LAMBDA_VERSION_DEVICE=${LAMBDA.version}</define> <!-- name conflict with lambda sdk --> 
                             <define>MERLIN_NAME=${MERLIN.name}</define>
                             <define>MERLIN_VERSION=${MERLIN.version}</define>
-
+                            <define>XSPRESS3_NAME=${XSPRESS3.name}</define>
+                            <define>XSPRESS3_VERSION=${XSPRESS3.version}</define>
                             <!-- define which detector you need to ENABLE -->      
                             <define>SIMULATOR_ENABLED</define> 						
                             <define>EIGER_ENABLED</define> 	
                             <define>SLSJUNGFRAU_ENABLED</define> 
                             <define>MERLIN_ENABLED</define>
                             <define>LAMBDA_ENABLED</define>
+							<define>XSPRESS3_ENABLED</define>
                             <define>LAYOUT_ENABLED</define>		  
                             <define>ROICOUNTERS_ENABLED</define>             
                             <define>SOLEIL_YAT_STREAM</define>
                             <define>UNIX_64_EL6</define>
-                            
+                            <define>__LINUX__</define>
+                            <define>linux</define>                            
                         </defines>                        
 			
                     </cpp>        
@@ -160,124 +175,151 @@
                                 <type>static</type>
                                 <directory>${libs-64bits}/my_breakpad/lib</directory>
                             </lib>
+
                             <lib>
                                 <!-- omniORB4 (1.6) 64 -->
                                 <name>omniORB4</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
                             </lib>
+
                             <lib>
                                 <!-- omniDynamic4 (1.6) 64 -->
                                 <name>omniDynamic4</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
                             </lib>
+
                             <lib>
                                 <!-- COS4 (1.6) 64 -->
                                 <name>COS4</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
                             </lib>
+
                             <lib>
                                 <!-- omniCodeSets4 (3.4) 64 -->
                                 <name>omniCodeSets4</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
                             </lib>
+
                             <lib>
                                 <!-- omnithread (3.4) 64 -->
                                 <name>omnithread</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
                             </lib>
+
                             <lib>
                                 <!-- zmq (3.X.Y) 64 -->
                                 <name>zmq</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/zeromq-3.2.5/lib/</directory>
                             </lib>
+
                             <lib>
                                 <!-- tango (8.0.5) 64 -->
                                 <name>tango</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/libtango8-8.1.2-16.el6.maxlab.x86_64/usr/lib64</directory>
                             </lib>
+
                             <lib>
                                 <!-- log4tango (4.0.7) 64 -->
                                 <name>log4tango</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/liblog4tango5-5.0.0-16.el6.maxlab.x86_64/usr/lib64</directory>
                             </lib>
+
                             <lib>
                                 <!-- hdf5 (1.8.16) 64 -->
                                 <name>hdf5</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/hdf5-1.8.16/lib</directory>
                             </lib>
+
                             <lib>
                                 <!-- hdf5 (1.8.16) 64 -->
                                 <name>hdf5_cpp</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/hdf5-1.8.16/lib</directory>
                             </lib>
+
                             <lib>
                                 <!-- hdf5 (1.8.16) 64 -->
                                 <name>hdf5_hl</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/hdf5-1.8.16/lib</directory>
                             </lib>
+
                             <lib>
                                 <!-- hdf5 (1.8.16) 64 -->
                                 <name>hdf5_hl_cpp</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/hdf5-1.8.16/lib</directory>
                             </lib>
+
                             <lib>
                                 <!-- lz4 131 (1.7.1) 64 -->
                                 <name>lz4</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/lz4-r131/lib/</directory>
                             </lib>
+
                             <lib>
                                 <!-- YAT (1.13.16) 64 -->
                                 <name>YAT-amd64-Linux-gcc-shared-release-1.13.16</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/yat-1.13.16/lib</directory>
                             </lib>
+
                             <lib>
                                 <!-- YAT (1.10.4) 64 -->
                                 <name>YAT4Tango-amd64-Linux-gcc-shared-release-1.10.6</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/yat4tango-1.10.6/lib</directory>
-                            </lib>                           
+                            </lib>      
+
                             <lib>
                                 <!-- NexusCPP (3.2.2) 64 -->
                                 <name>NexusCPP-amd64-Linux-gcc-shared-release-3.2.2</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/nexuscpp-3.2.2/lib</directory>
-                            </lib>                                
+                            </lib>   
+
                             <lib>
  				                <!-- liblambda -->
  				                <name>lambda</name>
  				                <type>shared</type>
  				                <directory>${libs-lambda}/</directory>
  			                </lib>
+
  			                <lib>
  				                <!-- libfsdetcore -->
  				                <name>fsdetcore</name>
  				                <type>shared</type>
  				                <directory>${libs-lambda}/</directory>
  			                </lib>
+
  			                <lib>
  				                <name>boost_thread</name>
  				                <type>shared</type>
  				                <directory>${libs-lambda}/</directory>
  			                </lib>
+
  			                <lib>
  				                <name>boost_system</name>
  				                <type>shared</type>
  				                <directory>${libs-lambda}/</directory>
  			                </lib>
+
+                            <lib>
+                                <name>xspress3</name>
+                                <type>shared</type>
+                                <directory>${libs-xspress3}/bin/</directory>
+                            </lib>
+                                                        
                         </libs>
                     </linker>
 
