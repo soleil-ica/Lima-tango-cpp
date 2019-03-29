@@ -297,7 +297,7 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	lib_version_prop.set_unit("  ");
 	lib_version_prop.set_standard_unit("  ");
 	lib_version_prop.set_display_unit("  ");
-	lib_version_prop.set_description("Ufxc Tucam Version.");
+	lib_version_prop.set_description("Display the Ufxc Library Version.");
 	lib_version->set_default_properties(lib_version_prop);
 	lib_version->set_disp_level(Tango::EXPERT);
 	att_list.push_back(lib_version);
@@ -308,6 +308,7 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	firmware_version_prop.set_unit(" ");
 	firmware_version_prop.set_standard_unit(" ");
 	firmware_version_prop.set_display_unit(" ");
+	firmware_version_prop.set_description("Dis^lay the firmware version of the DAQ");
 	firmware_version->set_default_properties(firmware_version_prop);
 	firmware_version->set_disp_level(Tango::EXPERT);
 	att_list.push_back(firmware_version);
@@ -340,6 +341,7 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	detector_temperature_prop.set_unit("Celsius");
 	detector_temperature_prop.set_standard_unit("Celsius");
 	detector_temperature_prop.set_display_unit("?C");
+	detector_temperature_prop.set_description("Display the detector temperature in degree Celsius ");
 	detector_temperature->set_default_properties(detector_temperature_prop);
 	att_list.push_back(detector_temperature);
 
@@ -349,6 +351,7 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	threshold_low_prop.set_unit("keV");
 	threshold_low_prop.set_standard_unit("keV");
 	threshold_low_prop.set_display_unit("keV");
+	threshold_low_prop.set_description("Set threshold Low for the chip A & chip B");
 	threshold_low->set_default_properties(threshold_low_prop);
 	att_list.push_back(threshold_low);
 
@@ -358,6 +361,7 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	threshold_high_prop.set_unit("keV");
 	threshold_high_prop.set_standard_unit("keV");
 	threshold_high_prop.set_display_unit("keV");
+	threshold_high_prop.set_description("Set threshold High for the chip A & chip B");
 	threshold_high->set_default_properties(threshold_high_prop);
 	att_list.push_back(threshold_high);
 
@@ -367,6 +371,7 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	threshold_low1_prop.set_unit("mV");
 	threshold_low1_prop.set_standard_unit("mV");
 	threshold_low1_prop.set_display_unit("mV");
+	threshold_low1_prop.set_description("Get threshold Low  for the chip A");
 	threshold_low1->set_default_properties(threshold_low1_prop);
 	att_list.push_back(threshold_low1);
 
@@ -376,6 +381,7 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	threshold_high1_prop.set_unit("mV");
 	threshold_high1_prop.set_standard_unit("mV");
 	threshold_high1_prop.set_display_unit("mV");
+	threshold_high1_prop.set_description("Get threshold High for the chip A");
 	threshold_high1->set_default_properties(threshold_high1_prop);
 	att_list.push_back(threshold_high1);
 
@@ -385,6 +391,7 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	threshold_low2_prop.set_unit("mV");
 	threshold_low2_prop.set_standard_unit("mV");
 	threshold_low2_prop.set_display_unit("mV");
+	threshold_low2_prop.set_description("Get threshold Low for the chip B");
 	threshold_low2->set_default_properties(threshold_low2_prop);
 	att_list.push_back(threshold_low2);
 
@@ -394,6 +401,7 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	threshold_high2_prop.set_unit("mV");
 	threshold_high2_prop.set_standard_unit("mV");
 	threshold_high2_prop.set_display_unit("mV");
+	threshold_high2_prop.set_description("Get threshold High for the chip B");
 	threshold_high2->set_default_properties(threshold_high2_prop);
 	att_list.push_back(threshold_high2);
 
@@ -451,7 +459,7 @@ void UfxcClass::set_default_property()
 	//	Set Default Class Properties
 	//	Set Default Device Properties
 	prop_name = "AutoLoad";
-	prop_desc = "Allow to Reload the last used configuration file at each init of the device.";
+	prop_desc = "Allow to Reload the last used Detector Configuration file at each init of the device.";
 	prop_def  = "False";
 	vect_data.clear();
 	vect_data.push_back("False");
@@ -601,7 +609,7 @@ void UfxcClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "DetectorConfigFiles";
-	prop_desc = "";
+	prop_desc = "Define the list of Detector Configuration files files and their associated alias.";
 	prop_def  = "ALIAS;PATH_AND_FILE_NAME";
 	vect_data.clear();
 	vect_data.push_back("ALIAS;PATH_AND_FILE_NAME");
@@ -616,7 +624,7 @@ void UfxcClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedThresholdLow";
-	prop_desc = "";
+	prop_desc = "Only the device could modify this property <br>\nThe User should never change this property<br>";
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
@@ -631,7 +639,7 @@ void UfxcClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedThresholdHigh";
-	prop_desc = "";
+	prop_desc = "Only the device could modify this property <br>\nThe User should never change this property<br>";
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
@@ -646,7 +654,7 @@ void UfxcClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedConfigAlias";
-	prop_desc = "";
+	prop_desc = "Only the device could modify this property <br>\nThe User should never change this property<br>";
 	prop_def  = "ALIAS";
 	vect_data.clear();
 	vect_data.push_back("ALIAS");

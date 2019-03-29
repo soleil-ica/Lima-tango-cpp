@@ -4,7 +4,7 @@
 //
 // description : Include for the Layout class.
 //
-// project :	Lima
+// project :	Lima Layout Device Specific
 //
 // $Author:  $
 //
@@ -150,7 +150,7 @@ namespace Layout_ns
 
     /**
      * Class Description:
-     * 
+     * Lima Device Specific for post process image
  */
 
 /*
@@ -327,7 +327,7 @@ namespace Layout_ns
 	virtual bool is_RemoveOperation_allowed(const CORBA::Any &any);
 /**
  * Add Lima external operation in order to transform the image acquired from the detector.<br>
- *	User must first define the operationType, operationValue<br>
+ *	User must first define the operationType, operationValue attributes<br>
  *	argin will define the level of operation.
  *	@param	argin	
  *	@exception DevFailed

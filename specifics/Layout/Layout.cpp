@@ -813,7 +813,7 @@ void Layout::memorize_all_operations(void)
  *
  *	description:	method to execute "AddOperation"
  *	Add Lima external operation in order to transform the image acquired from the detector.<br>
- *	User must first define the operationType, operationValue<br>
+ *	User must first define the operationType, operationValue attributes<br>
  *	argin will define the level of operation.
  *
  * @param	argin	
@@ -923,6 +923,9 @@ Tango::DevState Layout::dev_state()
     argout = DeviceState;
     return argout;
 }
+
+
+
 
 
 

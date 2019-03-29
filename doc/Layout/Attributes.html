@@ -43,7 +43,7 @@
 <Br>
 <center>
 <h1>
-Lima		<Br>
+Lima Layout Device Specific		<Br>
 Device Attributes Description 		<Br> <Br>
 Layout Class	<Br>
 </h1>
@@ -62,10 +62,13 @@ Revision:  - Author:
 <Td><Center><b>Data Type</b></td></Center>
 <Td><Center><b>R/W Type</b></td></Center>
 <Td><Center><b>Expert</b></td></Center>
-<Tr><Td><b>operationType</b>: <Font Size=-1>Arithmetic available types :<br> + <br> - <br> * <br> / <br> >> <br> << <br> FLIP<br> NONE <br></Font></Td>
+<Tr><Td><b>version</b>: <Font Size=-1>Display the Version of the Layout Device</Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>operationType</b>: <Font Size=-1>Arithmetic available types :<br> + <br> - <br> * <br> / <br> >> <br> << <br> FLIP<br> ROTATION<br> NONE <br></Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>operationValue</b>: <Font Size=-1>Arithmetic available values :<br> any numeric value  Flip available values :<br> X<br> Y<br> XY<br>  </Font></Td>
+<Tr><Td><b>operationValue</b>: <Font Size=-1>Arithmetic available values :<br> any numeric value  Flip available values :<br> X<br> Y<br> XY<br>  Rotation available values :<br> 90<br> 180<br> 270<br> </Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 </Table>
@@ -79,7 +82,7 @@ Revision:  - Author:
 <Td><Center><b>Data Type</b></td></Center>
 <Td><Center><b>X Data Length</b></td></Center>
 <Td><Center><b>Expert</b></td></Center>
-<Tr><Td><b>operationsList</b></Td>
+<Tr><Td><b>operationsList</b>: <Font Size=-1>Enumerate all Layout active 'post processing' operations on the image.</Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>1024</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 </Table>

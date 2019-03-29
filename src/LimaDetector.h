@@ -4,7 +4,7 @@
 //
 // description : Include for the LimaDetector class.
 //
-// project :	LimaDetector
+// project :	Lima Devie Generic
 //
 // $Author:  $
 //

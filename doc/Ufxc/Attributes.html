@@ -43,7 +43,7 @@
 <Br>
 <center>
 <h1>
-Device specific for Ufxc detector		<Br>
+Lima Device specific for Ufxc detector		<Br>
 Device Attributes Description 		<Br> <Br>
 Ufxc Class	<Br>
 </h1>
@@ -62,8 +62,38 @@ Revision:  - Author:
 <Td><Center><b>Data Type</b></td></Center>
 <Td><Center><b>R/W Type</b></td></Center>
 <Td><Center><b>Expert</b></td></Center>
-<Tr><Td><b>libVersion</b>: <Font Size=-1>Ufxc Tucam Version.</Font></Td>
+<Tr><Td><b>libVersion</b>: <Font Size=-1>Display the Ufxc Library Version.</Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>firmwareVersion</b>: <Font Size=-1>Dis^lay the firmware version of the DAQ</Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>currentAlias</b>: <Font Size=-1>Display the current Alias used to load the configuration file.</Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>currentConfigFile</b>: <Font Size=-1>Display the path+name of current configuration file.</Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>detectorTemperature</b>: <Font Size=-1>Display the detector temperature in degree Celsius </Font></Td>
+<Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>thresholdLow</b>: <Font Size=-1>Set threshold Low for the chip A & chip B</Font></Td>
+<Td><Center><Font Size=-1>DEV_FLOAT</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>thresholdHigh</b>: <Font Size=-1>Set threshold High for the chip A & chip B</Font></Td>
+<Td><Center><Font Size=-1>DEV_FLOAT</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>thresholdLow1</b>: <Font Size=-1>Get threshold Low  for the chip A</Font></Td>
+<Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>thresholdHigh1</b>: <Font Size=-1>Get threshold High for the chip A</Font></Td>
+<Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>thresholdLow2</b>: <Font Size=-1>Get threshold Low for the chip B</Font></Td>
+<Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>thresholdHigh2</b>: <Font Size=-1>Get threshold High for the chip B</Font></Td>
+<Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 </Table>
 </Center>

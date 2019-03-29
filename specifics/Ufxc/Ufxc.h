@@ -120,7 +120,7 @@ public :
  */
 //@{
 /**
- *	Allow to Reload the last used configuration file at each init of the device.
+ *	Allow to Reload the last used Detector Configuration file at each init of the device.
  */
 	Tango::DevBoolean	autoLoad;
 /**
@@ -160,19 +160,22 @@ public :
  */
 	Tango::DevULong	timeout;
 /**
- *	
+ *	Define the list of Detector Configuration files files and their associated alias.
  */
 	vector<string>	detectorConfigFiles;
 /**
- *	
+ *	Only the device could modify this property <br>
+ *	The User should never change this property<br>
  */
 	Tango::DevFloat	memorizedThresholdLow;
 /**
- *	
+ *	Only the device could modify this property <br>
+ *	The User should never change this property<br>
  */
 	Tango::DevFloat	memorizedThresholdHigh;
 /**
- *	
+ *	Only the device could modify this property <br>
+ *	The User should never change this property<br>
  */
 	string	memorizedConfigAlias;
 //@}
