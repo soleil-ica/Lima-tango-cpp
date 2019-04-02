@@ -362,7 +362,7 @@ void Pco::create_dynamic_interface()
                 Tango::OPERATOR,
                 " ",
                 "%1d",
-                "set / get the adc operation: \nSINGLE\nDUAL",
+                "get / set the adc operation: \nSINGLE\nDUAL",
                 "ADC Operation",
                 /*MEMORIZED,
                 WRITE_MEMORIZED_AT_INIT,*/
@@ -392,7 +392,7 @@ void Pco::create_dynamic_interface()
                 Tango::OPERATOR,
                 "deg C",
                 "%d",
-                "set / get the cooling set point",
+                "get / set the cooling set point",
                 "Cooling Set Point",
                 /*MEMORIZED,
                 WRITE_MEMORIZED_AT_INIT,*/
@@ -423,7 +423,7 @@ void Pco::create_dynamic_interface()
                 Tango::OPERATOR,
                 " ",
                 " ",
-                "set / get the shutterMode operation: \nROLLING_SHUTTER\nGLOBAL_SHUTTER\nGLOBAL_RESET",
+                "get / set the shutterMode operation: \nROLLING_SHUTTER\nGLOBAL_SHUTTER\nGLOBAL_RESET",
                 "Shutter Mode",
                 /*MEMORIZED,
                 WRITE_MEMORIZED_AT_INIT,*/
