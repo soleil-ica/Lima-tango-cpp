@@ -1,0 +1,315 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Ufxc Tango C++ device &mdash; LimaDetector C++ Tango device server 1.8.6 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.8.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="LimaDetector C++ Tango device server 1.8.6 documentation" href="../index.html" />
+    <link rel="next" title="Uview C++ Tango device" href="../Uview/uview.html" />
+    <link rel="prev" title="SlsJungfrau Tango device" href="../SlsJungfrau/slsjungfrau.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../Uview/uview.html" title="Uview C++ Tango device"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../SlsJungfrau/slsjungfrau.html" title="SlsJungfrau Tango device"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">LimaDetector C++ Tango device server 1.8.6 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ufxc-tango-c-device">
+<span id="lima-tango-ufxc"></span><h1>Ufxc Tango C++ device<a class="headerlink" href="#ufxc-tango-c-device" title="Permalink to this headline">¶</a></h1>
+<p>This is the reference documentation of the Ufxc Tango C++ device.</p>
+<p>you can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the <a class="reference external" href="https://lima1.readthedocs.io/en/latest/camera/ufxc/doc/index.html">Ufxc camera plugin</a> section.</p>
+<div class="section" id="properties">
+<h2>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="15%" />
+<col width="11%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Property name</th>
+<th class="head">Default value</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>AutoLoad</td>
+<td>False</td>
+<td>Boolean</td>
+<td>Allow to Reload the last used Detector Configuration file at each init of the device</td>
+</tr>
+<tr class="row-odd"><td>ConfigIpAddress</td>
+<td>127.0.0.1</td>
+<td>String</td>
+<td>Config Ip Address</td>
+</tr>
+<tr class="row-even"><td>ConfigPort</td>
+<td>0</td>
+<td>String</td>
+<td>Config Port</td>
+</tr>
+<tr class="row-odd"><td>SFP1IpAddress</td>
+<td>127.0.0.1</td>
+<td>String</td>
+<td>SFP1 Ip Address</td>
+</tr>
+<tr class="row-even"><td>SFP1Port</td>
+<td>0</td>
+<td>String</td>
+<td>SFP1 Port</td>
+</tr>
+<tr class="row-odd"><td>SFP2IpAddress</td>
+<td>127.0.0.1</td>
+<td>String</td>
+<td>SFP2 Ip Address</td>
+</tr>
+<tr class="row-even"><td>SFP2Port</td>
+<td>0</td>
+<td>String</td>
+<td>SFP2 Port</td>
+</tr>
+<tr class="row-odd"><td>SFP3IpAddress</td>
+<td>127.0.0.1</td>
+<td>String</td>
+<td>SFP3 Ip Address</td>
+</tr>
+<tr class="row-even"><td>SFP3Port</td>
+<td>0</td>
+<td>String</td>
+<td>SFP3 Port</td>
+</tr>
+<tr class="row-odd"><td>Timeout</td>
+<td>0</td>
+<td>ULong</td>
+<td>Timeout in ms</td>
+</tr>
+<tr class="row-even"><td>DetectorConfigFiles</td>
+<td>ALIAS;PATH_AND_FILE_NAME</td>
+<td>Array of String</td>
+<td>Define the list of Detector Configuration files and their associated alias</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="18%" />
+<col width="14%" />
+<col width="44%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Attribute name</th>
+<th class="head">Read/Write</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>libVersion</td>
+<td>R</td>
+<td>String</td>
+<td>Get the Ufxc Library Version</td>
+</tr>
+<tr class="row-odd"><td>firmwareVersion</td>
+<td>R</td>
+<td>String</td>
+<td>Get the firmware version of the DAQ</td>
+</tr>
+<tr class="row-even"><td>currentAlias</td>
+<td>R</td>
+<td>String</td>
+<td>Get the current Alias used to load the configuration file</td>
+</tr>
+<tr class="row-odd"><td>currentConfigFile</td>
+<td>R</td>
+<td>String</td>
+<td>Get the path+name of the current configuration file</td>
+</tr>
+<tr class="row-even"><td>detetorTemperature</td>
+<td>R</td>
+<td>ULong</td>
+<td>Get the detector temperature in degree Celsius</td>
+</tr>
+<tr class="row-odd"><td>thresholdLow</td>
+<td>R/W</td>
+<td>Float</td>
+<td>Set threshold Low for the chip A &amp; chip B</td>
+</tr>
+<tr class="row-even"><td>thresholdHigh</td>
+<td>R/W</td>
+<td>Float</td>
+<td>Set threshold High for the chip A &amp; chip B</td>
+</tr>
+<tr class="row-odd"><td>thresholdLow1</td>
+<td>R</td>
+<td>Ulong</td>
+<td>Get threshold Low for the chip A</td>
+</tr>
+<tr class="row-even"><td>thresholdHigh1</td>
+<td>R</td>
+<td>Ulong</td>
+<td>Get threshold High for the chip A</td>
+</tr>
+<tr class="row-odd"><td>thresholdLow2</td>
+<td>R</td>
+<td>Ulong</td>
+<td>Get threshold Low for the chip B</td>
+</tr>
+<tr class="row-even"><td>thresholdHigh2</td>
+<td>R</td>
+<td>Ulong</td>
+<td>Get threshold High for the chip B</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="commands">
+<h2>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="18%" />
+<col width="14%" />
+<col width="45%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Command name</th>
+<th class="head">Arg. in</th>
+<th class="head">Arg. out</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Init</td>
+<td>Void</td>
+<td>Void</td>
+<td>Do not use</td>
+</tr>
+<tr class="row-odd"><td>State</td>
+<td>Void</td>
+<td>Long</td>
+<td>Return the device state</td>
+</tr>
+<tr class="row-even"><td>Status</td>
+<td>Void</td>
+<td>String</td>
+<td>Return the device state as a string</td>
+</tr>
+<tr class="row-odd"><td>LoadConfigFile</td>
+<td>String</td>
+<td>Void</td>
+<td>Load  the detector configuration file designed by its alias</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Ufxc Tango C++ device</a><ul>
+<li><a class="reference internal" href="#properties">Properties</a></li>
+<li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#commands">Commands</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../SlsJungfrau/slsjungfrau.html"
+                        title="previous chapter">SlsJungfrau Tango device</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../Uview/uview.html"
+                        title="next chapter">Uview C++ Tango device</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/Ufxc/ufxc.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../Uview/uview.html" title="Uview C++ Tango device"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../SlsJungfrau/slsjungfrau.html" title="SlsJungfrau Tango device"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">LimaDetector C++ Tango device server 1.8.6 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2018, langlois/noureddine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.2.
+    </div>
+  </body>
+</html>
