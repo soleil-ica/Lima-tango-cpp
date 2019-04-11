@@ -10,7 +10,7 @@ Properties
 ================= =============== ================== =========================================================================
 Property name	  Default value   Type               Description
 ================= =============== ================== =========================================================================
-HostName          none            String             The name of the Merlin PC
+HostName          no_name         String             The name of the Merlin PC
 CmdPort           6431            Long               The Merlin command port
 DataPort          6432            Long               The Merlin data port
 ImageWidth        512             Long               The width of Merlin detector head in pixels
@@ -24,34 +24,33 @@ Attributes
 ======================= ========== ================ ======================================================================
 Attribute name		    Read/Write	    Type			 Description
 ======================= ========== ================ ======================================================================
-acqRunning              R          Boolean          Is acquisition active
-chargeSumming           R/W        String           Charge Summming mode 
+chargeSumming           R/W        Boolean          Charge Summming mode:
                                                        
-                                                       - ON
-                                                       - OFF
+                                                       - True: ON
+                                                       - False: OFF 
                                                        
-colourMode              R/W        String           Colour mode
+colourMode              R/W        Long          Colour mode:
                                                        
-                                                       - MONOCHROME
-                                                       - COLOUR
+                                                       - 0: MONOCHROME
+                                                       - 1: COLOUR
                                                        
-continuousRW            R/W        String           Continuous Collection
+continuousRW            R/W        Boolean           Continuous Collection:
                                                        
-                                                       - ON
-                                                       - OFF
+                                                       - True: ON
+                                                       - False: OFF
                                                        
-counter                 R/W        String           Counter
+counter                 R/W        Long             Counter: 
                                                        
-                                                       - COUNTER0
-                                                       - COUNTER1
-                                                       - BOTH
+                                                       - 0: COUNTER0
+                                                       - 1: COUNTER1
+                                                       - 2: BOTH (image will be double size)
                                                        
-gain                    R/W        String           Gain Settings
+gain                    R/W        Long             Gain Settings:
                                                     
-                                                       - SHGM
-                                                       - HGM
-                                                       - LGM
-                                                       - SLGM
+                                                       - 0: SHGM
+                                                       - 1: HGM
+                                                       - 2: LGM
+                                                       - 3: SLGM
                                                        
 operatingEnergy         R/W        Float            Energy keV  (0 < e < 999.99)             
 softwareVersion         R          Float            Software version number
@@ -64,22 +63,57 @@ threshold4              R/W        Float            Threshold 4 keV (0 < th < 99
 threshold5              R/W        Float            Threshold 5 keV (0 < th < 999.99)
 threshold6              R/W        Float            Threshold 6 keV (0 < th < 999.99)
 threshold7              R/W        Float            Threshold 7 keV (0 < th < 999.99)
-triggerStartType        R/W        Long             Trigger start mode
+framesPerTrigger        R/W        Long             Number of frame per trigger
+triggerStartType        R/W        Long             Trigger start type:
                                                     
-                                                       - INTERNAL
-                                                       - RISING_EDGE_TTL
-                                                       - FALLING_EDGE_TTL
-                                                       - RISING_EDGE_LVDS
-                                                       - FALLING_EDGE_LVDS
-                                                       - SOFT
-triggerStopType         R/W        Long             Trigger stop mode (**INTERNAL/RISING_EDGE_TTL/FALLING_EDGE_TTL/RISING_EDGE_LVDS/FALLING_EDGE_LVDS/SOFT**)
-triggerOutTTL           R/W        Long             TTL Trigger stop mode (**TTL/LVDS/TTL_DELAYED/LVDS_DELAYED/FOLLOW_SHUTTER/ONE_PER_ACQ_BURST/SHUTTER_AND_SENSOR_READ/OUTPUT_BUSY**)
-triggerOutLVDS          R/W        Long             LVDS Trigger stop mode (**TTL/LVDS/TTL_DELAYED/LVDS_DELAYED/FOLLOW_SHUTTER/ONE_PER_ACQ_BURST/SHUTTER_AND_SENSOR_READ/OUTPUT_BUSY**)
-triggerOutTTLInvert     R/W        Long             TTL Trigger invert mode (**NORMAL/INVERTED**)
-triggerOutLVDSInvert    R/W        Long             LVDS Trigger invert mode (**NORMAL/INVERTED**)
+                                                       - 0: INTERNAL
+                                                       - 1: RISING_EDGE_TTL
+                                                       - 2: FALLING_EDGE_TTL
+                                                       - 3: RISING_EDGE_LVDS
+                                                       - 4: FALLING_EDGE_LVDS
+                                                       - 5: SOFT
+triggerStopType         R/W        Long             Trigger stop type:
+
+                                                       - 0: INTERNAL
+                                                       - 1: RISING_EDGE_TTL
+                                                       - 2: FALLING_EDGE_TTL
+                                                       - 3: RISING_EDGE_LVDS
+                                                       - 4: FALLING_EDGE_LVDS
+                                                       - 5: SOFT
+triggerOutTTL           R/W        Long             TTL Trigger out type:
+                                                    
+                                                       - 0: TTL
+                                                       - 1: LVDS
+                                                       - 2: TTL_DELAYED
+                                                       - 3: LVDS_DELAYED
+                                                       - 4: FOLLOW_SHUTTER
+                                                       - 5: ONE_PER_ACQ_BURST
+                                                       - 6: SHUTTER_AND_SENSOR_READ
+                                                       - 7: OUTPUT_BUSY
+triggerOutLVDS          R/W        Long             LVDS Trigger out type:
+
+                                                       - 0: TTL
+                                                       - 1: LVDS
+                                                       - 2: TTL_DELAYED
+                                                       - 3: LVDS_DELAYED
+                                                       - 4: FOLLOW_SHUTTER
+                                                       - 5: ONE_PER_ACQ_BURST
+                                                       - 6: SHUTTER_AND_SENSOR_READ
+                                                       - 7: OUTPUT_BUSY
+triggerOutTTLInvert     R/W        Long             TTL Trigger out invert type
+                      
+                                                       - 0: NORMAL
+                                                       - 1: INVERTED
+triggerOutLVDSInvert    R/W        Long             LVDS Trigger out invert type
+
+                                                       - 0: NORMAL
+                                                       - 1: INVERTED
 triggerInTTLDelay       R/W        Long64           TTL Trigger delay in ns (0 < del < 68719476720)
 triggerInLVDSDelay      R/W        Long64           LVDS Trigger delay in ns (0 < del < 68719476720)
-triggerUseDelay         R/W        Boolean          Use Trigger delay (**ON/OFF**)
+triggerUseDelay         R/W        Boolean          Use Trigger delay
+
+                                                       - True:  ON
+                                                       - False: OFF
 ======================= ========== ================ ======================================================================
 
 Commands
