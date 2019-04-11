@@ -98,6 +98,7 @@ void Ufxc::delete_device()
 {
 	DELETE_DEVSTRING_ATTRIBUTE(attr_libVersion_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_firmwareVersion_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_triggerAcquisitionFrequency_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_detectorTemperature_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_thresholdLow_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_thresholdHigh_read);
@@ -106,7 +107,7 @@ void Ufxc::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_thresholdLow2_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_thresholdHigh2_read);		
 	DELETE_DEVSTRING_ATTRIBUTE(attr_currentAlias_read);
-	DELETE_DEVSTRING_ATTRIBUTE(attr_currentConfigFile_read);	
+	DELETE_DEVSTRING_ATTRIBUTE(attr_currentConfigFile_read);		
 	//	Delete device allocated objects
 
 	//!!!! ONLY LimaDetector device can do this !!!!
@@ -140,6 +141,7 @@ void Ufxc::init_device()
 
 	CREATE_DEVSTRING_ATTRIBUTE(attr_libVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
 	CREATE_DEVSTRING_ATTRIBUTE(attr_firmwareVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
+	CREATE_SCALAR_ATTRIBUTE(attr_triggerAcquisitionFrequency_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_detectorTemperature_read);	
 	CREATE_SCALAR_ATTRIBUTE(attr_thresholdLow_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_thresholdHigh_read);
@@ -148,7 +150,7 @@ void Ufxc::init_device()
 	CREATE_SCALAR_ATTRIBUTE(attr_thresholdLow2_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_thresholdHigh2_read);	
 	CREATE_DEVSTRING_ATTRIBUTE(attr_currentAlias_read, 255);
-	CREATE_DEVSTRING_ATTRIBUTE(attr_currentConfigFile_read, 255);	
+	CREATE_DEVSTRING_ATTRIBUTE(attr_currentConfigFile_read, 255);		
 
 	m_is_device_initialized = false;
 	set_state(Tango::INIT);
@@ -213,7 +215,25 @@ void Ufxc::init_device()
 		*attr_thresholdHigh_read = attr_thresholdHigh_write = memorizedThresholdHigh;
 		thresholdHigh.set_write_value(*attr_thresholdHigh_read);
 		write_thresholdHigh(thresholdHigh);				
+/////////
+		ImageType image_type;
+		m_camera->getImageType(image_type);
+                INFO_STREAM<<"image_type = "<<image_type<<endl;
 
+		TrigMode trig_mode;
+                m_ct->acquisition()->getTriggerMode(trig_mode);
+                INFO_STREAM<<"trig_mode = "<<trig_mode<<endl;
+
+		//available only in mode pump & probe (i.e Trigger Ext Multi and Bpp2)
+		if(trig_mode == ExtTrigMult && image_type == Bpp2)	
+		{
+			INFO_STREAM << "Write tango hardware at Init - triggerAcquisitionFrequency." << endl;
+			Tango::WAttribute &triggerAcquisitionFrequency = dev_attr->get_w_attr_by_name("triggerAcquisitionFrequency");
+			*attr_triggerAcquisitionFrequency_read = attr_triggerAcquisitionFrequency_write = memorizedTriggerAcquisitionFrequency;
+			triggerAcquisitionFrequency.set_write_value(*attr_triggerAcquisitionFrequency_read);
+			write_triggerAcquisitionFrequency(triggerAcquisitionFrequency);
+		}
+/////////		
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -278,6 +298,7 @@ void Ufxc::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedThresholdLow"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedThresholdHigh"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedConfigAlias"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedTriggerAcquisitionFrequency"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -442,6 +463,17 @@ void Ufxc::get_device_property()
 	//	And try to extract MemorizedConfigAlias value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedConfigAlias;
 
+	//	Try to initialize MemorizedTriggerAcquisitionFrequency from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedTriggerAcquisitionFrequency;
+	else {
+		//	Try to initialize MemorizedTriggerAcquisitionFrequency from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedTriggerAcquisitionFrequency;
+	}
+	//	And try to extract MemorizedTriggerAcquisitionFrequency value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedTriggerAcquisitionFrequency;
+
 
 
 	//	End of Automatic code generation
@@ -459,6 +491,7 @@ void Ufxc::get_device_property()
 	PropertyHelper::create_property_if_empty(this, dev_prop, "ALIAS;PATH_AND_FILE_NAME", "DetectorConfigFiles");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedThresholdLow");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedThresholdHigh");
+	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedTriggerAcquisitionFrequency");
 	
 }
 //+----------------------------------------------------------------------------
@@ -517,6 +550,93 @@ void Ufxc::read_attr_hardware(vector<long> &attr_list)
 	DEBUG_STREAM << "Ufxc::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	//	Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Ufxc::read_triggerAcquisitionFrequency
+// 
+// description : 	Extract real attribute values for triggerAcquisitionFrequency acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Ufxc::read_triggerAcquisitionFrequency(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Ufxc::read_triggerAcquisitionFrequency(Tango::Attribute &attr) entering... "<< endl;
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+	try
+	{
+		*attr_triggerAcquisitionFrequency_read = attr_triggerAcquisitionFrequency_write;
+		attr.set_value(attr_triggerAcquisitionFrequency_read);	
+	}	
+	catch(Tango::DevFailed& df)
+	{
+		ERROR_STREAM << df << endl;
+		//- rethrow exception
+		RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::read_triggerAcquisitionFrequency");
+	}		
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Ufxc::write_triggerAcquisitionFrequency
+// 
+// description : 	Write triggerAcquisitionFrequency attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Ufxc::write_triggerAcquisitionFrequency(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Ufxc::write_triggerAcquisitionFrequency(Tango::WAttribute &attr) entering... "<< endl;	
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+	try
+	{
+		attr.get_write_value(attr_triggerAcquisitionFrequency_write);
+		ImageType image_type;
+		m_camera->getImageType(image_type);
+                DEBUG_STREAM<<"image_type = "<<image_type<<endl;
+
+		TrigMode trig_mode;
+                m_ct->acquisition()->getTriggerMode(trig_mode);
+                DEBUG_STREAM<<"trig_mode = "<<trig_mode<<endl;
+
+		//available only in mode pump & probe (i.e Trigger Ext Multi and Bpp2)
+		if(trig_mode == ExtTrigMult && image_type == Bpp2)		
+		{
+			double exposure ;
+			m_ct->acquisition()->getAcqExpoTime(exposure);
+			int nb_frames_pump_probe = static_cast<int>(round(exposure*attr_triggerAcquisitionFrequency_write/2)*2);
+                        INFO_STREAM<<"nb_frames_pump_probe = "<<nb_frames_pump_probe<<endl;
+			m_ct->acquisition()->setAcqNbFrames(nb_frames_pump_probe);		
+			PropertyHelper::set_property(this, "MemorizedTriggerAcquisitionFrequency", attr_triggerAcquisitionFrequency_write);
+		}
+		else
+		{
+                        //- throw exception
+                        THROW_DEVFAILED("CONFIGURATION_ERROR",
+					"triggerAcquisitionFrequency is used to compute the nbFrames to acquire according to the exposureTime.\n"
+					"This functionnality is available only in 'pump & probe mode' (i.e Trigger External Multi & 2 bits).\n",
+					"Ufxc::write_triggerAcquisitionFrequency");			
+		}
+	}
+	catch(Exception& e)
+	{
+		ERROR_STREAM << e.getErrMsg() << endl;
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						e.getErrMsg().c_str(),
+						"Ufxc::write_triggerAcquisitionFrequency");
+	}
+	catch(Tango::DevFailed& df)
+	{
+		ERROR_STREAM << df << endl;
+		//- rethrow exception
+		RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"Ufxc::write_triggerAcquisitionFrequency");
+	}		
+}
+
 //+----------------------------------------------------------------------------
 //
 // method : 		Ufxc::read_currentAlias
@@ -1059,8 +1179,5 @@ void Ufxc::load_config_file(Tango::DevString argin)
 						"Ufxc::load_config_file");
 	}	
 }
-
-
-
 
 }	//	namespace

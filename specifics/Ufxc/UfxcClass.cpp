@@ -405,6 +405,16 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	threshold_high2->set_default_properties(threshold_high2_prop);
 	att_list.push_back(threshold_high2);
 
+	//	Attribute : triggerAcquisitionFrequency
+	triggerAcquisitionFrequencyAttrib	*trigger_acquisition_frequency = new triggerAcquisitionFrequencyAttrib();
+	Tango::UserDefaultAttrProp	trigger_acquisition_frequency_prop;
+	trigger_acquisition_frequency_prop.set_unit("Hz");
+	trigger_acquisition_frequency_prop.set_standard_unit(" ");
+	trigger_acquisition_frequency_prop.set_display_unit(" ");
+	trigger_acquisition_frequency_prop.set_description("Define the trigger acquisition frequency in the pump & probe mode");
+	trigger_acquisition_frequency->set_default_properties(trigger_acquisition_frequency_prop);
+	att_list.push_back(trigger_acquisition_frequency);
+
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
 }
@@ -658,6 +668,21 @@ void UfxcClass::set_default_property()
 	prop_def  = "ALIAS";
 	vect_data.clear();
 	vect_data.push_back("ALIAS");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedTriggerAcquisitionFrequency";
+	prop_desc = "Only the device could modify this property <br>\nThe User should never change this property<br>";
+	prop_def  = "1";
+	vect_data.clear();
+	vect_data.push_back("1");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

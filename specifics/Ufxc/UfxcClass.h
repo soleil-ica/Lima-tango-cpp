@@ -50,6 +50,20 @@ namespace Ufxc_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class triggerAcquisitionFrequencyAttrib: public Tango::Attr
+{
+public:
+	triggerAcquisitionFrequencyAttrib():Attr("triggerAcquisitionFrequency", Tango::DEV_FLOAT, Tango::READ_WRITE) {};
+	~triggerAcquisitionFrequencyAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Ufxc *>(dev))->read_triggerAcquisitionFrequency(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Ufxc *>(dev))->write_triggerAcquisitionFrequency(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Ufxc *>(dev))->is_triggerAcquisitionFrequency_allowed(ty);}
+};
+
 class thresholdHigh2Attrib: public Tango::Attr
 {
 public:
