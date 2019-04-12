@@ -3234,8 +3234,12 @@ void LimaDetector::prepare()
             *attr_fileGeneration_read = attr_fileGeneration_write;
             m_ct->saving()->setParameters(m_saving_par);
 
-            //- in SNAP mode, we request attr_nbFrames_write frames
-            m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
+			//TODO : check later if it is possible to remove completly setAcqNbFrames from here !
+			if(detectorType != "Ufxc")			
+			{
+				//- in SNAP mode, we request attr_nbFrames_write frames
+				m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
+			}
 
             ////////////////////////////////////////////////////////
 
@@ -3315,8 +3319,12 @@ void LimaDetector::snap()
             *attr_fileGeneration_read = attr_fileGeneration_write;
             m_ct->saving()->setParameters(m_saving_par);
 
-            //- in SNAP mode, we request attr_nbFrames_write frames
-            m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
+			//TODO : check later if it is possible to remove completly setAcqNbFrames from here !
+			if(detectorType != "Ufxc")
+			{
+				//- in SNAP mode, we request attr_nbFrames_write frames
+				m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
+			}
 			
 			//reset event list
 			m_ct->event()->resetEventList();
