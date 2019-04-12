@@ -202,7 +202,7 @@ void Merlin::init_device()
 	
 	attr_softwareVersion_read = new Tango::DevFloat[1];
 	attr_chargeSumming_read = new Tango::DevBoolean[1];
-	attr_colourMode_read = new Tango::DevDevLong[1];
+	attr_colourMode_read = new Tango::DevLong[1];
 	attr_continuousRW_read = new Tango::DevBoolean[1];
 	attr_counter_read = new Tango::DevLong[1];
 	attr_gain_read = new Tango::DevLong[1];
