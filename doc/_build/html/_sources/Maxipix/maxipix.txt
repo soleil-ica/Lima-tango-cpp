@@ -1,2 +1,0 @@
-Maxipix C++ Tango device
-=========================
