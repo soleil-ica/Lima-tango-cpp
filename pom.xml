@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.8.7-SNAPSHOT</version>
+    <version>1.9.0</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -37,29 +37,29 @@
                 <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
                 <PROCESSLIB.version>1.3.8</PROCESSLIB.version>
                 <CORE.name>Core</CORE.name>
-                <CORE.version>1.7.7</CORE.version>
+                <CORE.version>1.7.8</CORE.version>
                 <AVIEX.name>Aviex</AVIEX.name>
-                <AVIEX.version>1.0.13</AVIEX.version>
+                <AVIEX.version>1.0.14</AVIEX.version>
                 <BASLER.name>Basler</BASLER.name>
-                <BASLER.version>1.5.3</BASLER.version>
+                <BASLER.version>1.5.4</BASLER.version>
                 <EIGER.name>Eiger</EIGER.name>
-                <EIGER.version>2.2.0</EIGER.version>
+                <EIGER.version>2.2.1</EIGER.version>
                 <IMXPAD.name>ImXpad</IMXPAD.name>
-                <IMXPAD.version>1.0.8</IMXPAD.version>
+                <IMXPAD.version>1.0.9</IMXPAD.version>
                 <MARCCD.name>Marccd</MARCCD.name>
-                <MARCCD.version>1.3.15</MARCCD.version>
+                <MARCCD.version>1.3.16</MARCCD.version>
                 <MERLIN.name>Merlin</MERLIN.name>
-                <MERLIN.version>1.1.2</MERLIN.version>
+                <MERLIN.version>1.2.0</MERLIN.version>
                 <PILATUS.name>Pilatus</PILATUS.name>
-                <PILATUS.version>2.1.6</PILATUS.version>
+                <PILATUS.version>2.1.7</PILATUS.version>
                 <PROSILICA.name>Prosilica</PROSILICA.name>
-                <PROSILICA.version>1.4.6</PROSILICA.version>
-                <XPAD.name>Xpad</XPAD.name>
-                <XPAD.version>1.4.14</XPAD.version>
+                <PROSILICA.version>1.4.7</PROSILICA.version>
                 <UFXC.name>Ufxc</UFXC.name>
-                <UFXC.version>1.0.1-SNAPSHOT</UFXC.version>                
+                <UFXC.version>1.0.0</UFXC.version>       
+                <XPAD.name>Xpad</XPAD.name>
+                <XPAD.version>1.4.15</XPAD.version>
                 <SIMULATOR.name>Simulator</SIMULATOR.name>
-                <SIMULATOR.version>1.3.15</SIMULATOR.version>
+                <SIMULATOR.version>1.3.16</SIMULATOR.version>
             </properties>
            
             <dependencies>
@@ -136,6 +136,12 @@
                     <artifactId>LimaProsilica-${aol}-shared-${mode}</artifactId>
                     <version>${PROSILICA.version}</version>
                 </dependency>             
+                
+                <dependency>
+                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
+                    <artifactId>LimaUfxc-${aol}-shared-${mode}</artifactId>
+                    <version>${UFXC.version}</version>
+                </dependency>
 
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
@@ -143,12 +149,6 @@
                     <version>${XPAD.version}</version>
                 </dependency>
 
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaUfxc-${aol}-shared-${mode}</artifactId>
-                    <version>${UFXC.version}</version>
-                </dependency>
-                
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaSimulator-${aol}-shared-${mode}</artifactId>
@@ -176,9 +176,9 @@
                                     <include>specifics/Merlin/*.cpp</include>
                                     <include>specifics/PilatusPixelDetector/*.cpp</include>
                                     <include>specifics/RoiCounters/*.cpp</include>
-                                    <include>specifics/ProsilicaCCD/*.cpp</include>                                                        
-                                    <include>specifics/XpadPixelDetector/*.cpp</include>
+                                    <include>specifics/ProsilicaCCD/*.cpp</include>           
                                     <include>specifics/Ufxc/*.cpp</include>
+                                    <include>specifics/XpadPixelDetector/*.cpp</include>
                                     <include>specifics/SimulatorCCD/*.cpp</include>                                    
                                 </includes>
                                 
@@ -194,9 +194,9 @@
                                     <includePath>specifics/Merlin</includePath>
                                     <includePath>specifics/PilatusPixelDetector</includePath>
                                     <includePath>specifics/RoiCounters</includePath>
-                                    <includePath>specifics/ProsilicaCCD</includePath>                                                                                     
-                                    <includePath>specifics/XpadPixelDetector</includePath>
+                                    <includePath>specifics/ProsilicaCCD</includePath>        
                                     <includePath>specifics/Ufxc</includePath>
+                                    <includePath>specifics/XpadPixelDetector</includePath>
                                     <includePath>specifics/SimulatorCCD</includePath>
                                 </includePaths>
                                 
@@ -223,10 +223,10 @@
                                     <define>PILATUS_VERSION=${PILATUS.version}</define>
                                     <define>PROSILICA_NAME=${PROSILICA.name}</define>
                                     <define>PROSILICA_VERSION=${PROSILICA.version}</define>
+                                    <define>UFXC_NAME=${UFXC.name}</define>
+                                    <define>UFXC_VERSION=${UFXC.version}</define>        
                                     <define>XPAD_NAME=${XPAD.name}</define>
                                     <define>XPAD_VERSION=${XPAD.version}</define>
-                                    <define>UFXC_NAME=${UFXC.name}</define>
-                                    <define>UFXC_VERSION=${UFXC.version}</define>                                    
                                     <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
                                     <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
 
@@ -245,10 +245,11 @@
                                     <define>MERLIN_ENABLED</define>
                                     <define>PILATUS_ENABLED</define>
                                     <define>ROICOUNTERS_ENABLED</define>
-                                    <define>PROSILICA_ENABLED</define>				                                                      		
-                                    <define>XPAD_ENABLED</define>
+                                    <define>PROSILICA_ENABLED</define>			
                                     <define>UFXC_ENABLED</define>
+                                    <define>XPAD_ENABLED</define>
                                     <define>SIMULATOR_ENABLED</define>
+                                    
                                     <define>SOLEIL_YAT_STREAM</define>
                                 </defines>               
                             </cpp>
@@ -488,23 +489,23 @@
                 <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
                 <PROCESSLIB.version>1.3.8</PROCESSLIB.version>
                 <CORE.name>Core</CORE.name>
-                <CORE.version>1.7.7</CORE.version>
+                <CORE.version>1.7.8</CORE.version>
                 <ANDOR.name>Andor</ANDOR.name>
-                <ANDOR.version>1.3.13</ANDOR.version>
+                <ANDOR.version>1.3.14</ANDOR.version>
                 <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
-                <HAMAMATSU.version>2.1.1</HAMAMATSU.version>
+                <HAMAMATSU.version>2.1.2</HAMAMATSU.version>
                 <PCO.name>Pco</PCO.name>
-                <PCO.version>1.6.3</PCO.version>
+                <PCO.version>1.6.4</PCO.version>
                 <PERKINELMER.name>PerkinElmer</PERKINELMER.name>
-                <PERKINELMER.version>1.3.12</PERKINELMER.version>
+                <PERKINELMER.version>1.3.13</PERKINELMER.version>
                 <PRINCETON.name>Princeton</PRINCETON.name>
-                <PRINCETON.version>1.3.14</PRINCETON.version>
+                <PRINCETON.version>1.4.0</PRINCETON.version>
                 <UVIEW.name>Uview</UVIEW.name>
-                <UVIEW.version>1.0.11</UVIEW.version>
+                <UVIEW.version>1.0.12</UVIEW.version>
                 <DHYANA.name>Dhyana</DHYANA.name>
-                <DHYANA.version>1.0.0</DHYANA.version>
+                <DHYANA.version>1.1.0</DHYANA.version>
                 <SIMULATOR.name>Simulator</SIMULATOR.name>
-                <SIMULATOR.version>1.3.15</SIMULATOR.version>
+                <SIMULATOR.version>1.3.16</SIMULATOR.version>
             </properties>
                 
             <dependencies>
@@ -560,7 +561,7 @@
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>LimaProcesslib-${aol}-shared-${mode}</artifactId>
-                    <version>1.3.8</version>
+                    <version>${PROCESSLIB.version}</version>
                 </dependency>
                 
                 <!-- Lima Camera Plugins -->
