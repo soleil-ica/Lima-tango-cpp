@@ -637,6 +637,116 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif           
 
+#ifdef SLSEIGER_ENABLED
+        if (detector_type == "SlsEiger")
+        {
+            if (!ControlFactory::m_is_created)
+            {
+                std::string   config_file_name   ;
+                double        readout_time       ;
+                long          receiver_fifo_depth;
+                long          pixel_depth        ;
+                long          frame_packet_number_8  = 32 ;
+                long          frame_packet_number_16 = 64 ;
+                long          frame_packet_number_32 = 128;
+
+                // generic device properties
+                {
+                    // get the generic device name
+                    Tango::DbDatum db_datum    ;
+                    std::string    device_name ;
+                    std::string    class_name  = "LimaDetector";
+                    std::string    server_name = Tango::Util::instance()->get_ds_name();
+
+                    db_datum = (Tango::Util::instance()->get_database())->get_device_name(server_name, class_name);
+                    db_datum >> device_name;
+
+                    // get the detector pixel depth property value in string
+                    Tango::DbData db_data           ;
+                    std::string   pixel_depth_string;
+
+                    db_data.push_back(Tango::DbDatum("DetectorPixelDepth"));
+                    (Tango::Util::instance()->get_database())->get_device_property(device_name, db_data);
+                    db_data[0] >> pixel_depth_string;
+
+                    // convert the string value to an integer value and manage conversion errors
+                    std::istringstream iss(pixel_depth_string);
+                    iss >> pixel_depth;
+                }
+
+                // specific device properties
+                {
+                    Tango::DbData db_data;
+
+                    // configuration complete path
+                    db_data.push_back(Tango::DbDatum("ConfigFileName"));
+                    
+                    // readout time of the camera
+                    db_data.push_back(Tango::DbDatum("ExpertReadoutTime"));
+                    
+                    // Number of frames in the receiver memory
+                    db_data.push_back(Tango::DbDatum("ExpertReceiverFifoDepth"));
+
+                    // Number of packets we should get in each receiver frame
+                    db_data.push_back(Tango::DbDatum("ExpertFramePacketNumber8"));
+                    db_data.push_back(Tango::DbDatum("ExpertFramePacketNumber16"));
+                    db_data.push_back(Tango::DbDatum("ExpertFramePacketNumber32"));
+
+                    (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                    db_data[0] >> config_file_name      ;
+                    db_data[1] >> readout_time          ;
+                    db_data[2] >> receiver_fifo_depth   ;
+                    db_data[3] >> frame_packet_number_8 ;
+                    db_data[4] >> frame_packet_number_16;
+                    db_data[5] >> frame_packet_number_32;
+                }
+
+                // create and initialize the camera and create interface and control  
+                m_camera    = static_cast<void*> (new SlsEiger::Camera(config_file_name      , 
+                                                                       readout_time          ,
+                                                                       receiver_fifo_depth   ,
+                                                                       pixel_depth           ,
+                                                                       frame_packet_number_8 ,
+                                                                       frame_packet_number_16,
+                                                                       frame_packet_number_32));
+
+                m_interface = static_cast<void*> (new SlsEiger::Interface(*(static_cast<SlsEiger::Camera*> (m_camera))));
+                m_control   = new CtControl(static_cast<SlsEiger::Interface*> (m_interface));
+               
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
+#endif           
+
+#ifdef LAMBDA_ENABLED
+        if (detector_type == "Lambda")
+        {
+            if (!ControlFactory::m_is_created)
+            {
+                Tango::DbData db_data;
+                std::string config_file_path = "/opt/xsp/config";
+                bool distortion_correction = true;
+
+                // configuration path
+                db_data.push_back(Tango::DbDatum("ConfigFilesPath"));
+
+                // distortion correction
+                db_data.push_back(Tango::DbDatum("DistortionCorrection"));
+
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                db_data[0] >> config_file_path;
+                db_data[1] >> distortion_correction;
+
+                m_camera    = static_cast<void*> (new Lambda::Camera(config_file_path, distortion_correction));
+                m_interface = static_cast<void*> (new Lambda::Interface(*static_cast<Lambda::Camera*> (m_camera)));
+                m_control   = new CtControl(static_cast<Lambda::Interface*> (m_interface));
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
+#endif
+
         if (!ControlFactory::m_is_created)
         {
             string strMsg = "Unable to create the lima control object : Unknown Detector Type : ";
@@ -832,6 +942,19 @@ void ControlFactory::reset(const std::string& detector_type)
                 }
 #endif     
 
+#ifdef SLSEIGER_ENABLED        
+                if (detector_type == "SlsEiger")
+                {
+                    delete (static_cast<SlsEiger::Camera*> (m_camera));
+                }
+#endif     
+
+#ifdef LAMBDA_ENABLED        
+                if (detector_type == "Lambda")
+                {
+                    delete (static_cast<Lambda::Camera*> (m_camera));
+                }
+#endif     
                 m_camera = 0;
             }
 

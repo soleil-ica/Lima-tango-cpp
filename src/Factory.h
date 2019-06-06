@@ -158,12 +158,19 @@
 #include <SlsJungfrauInterface.h>
 #endif
 
+#ifdef SLSEIGER_ENABLED
+#include <SlsEigerCamera.h>
+#include <SlsEigerInterface.h>
+#endif
 
 //ProcessLib/Data : define dimensions of image
 #define WIDTH_INDEX   0
 #define HEIGHT_INDEX  1
 
-
+#ifdef LAMBDA_ENABLED
+#include <LambdaCamera.h>
+#include <LambdaInterface.h>
+#endif
 
 using namespace lima;
 
