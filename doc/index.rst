@@ -37,6 +37,7 @@ This device server provides several Tango classes:
   Eiger <Eiger/eiger>
   Hamamatsu <Hamamatsu/hamamatsu>
   ImXpad <ImXpad/imxpad>
+  Lambda <Lambda/lambda>
   MarCCD <MarCCD/marccd>
   Maxipix <Maxipix/maxipix>
   Merlin <Merlin/merlin>
