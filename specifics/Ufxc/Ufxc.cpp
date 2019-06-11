@@ -593,11 +593,11 @@ void Ufxc::write_triggerAcquisitionFrequency(Tango::WAttribute &attr)
 		attr.get_write_value(attr_triggerAcquisitionFrequency_write);
 		ImageType image_type;
 		m_camera->getImageType(image_type);
-                DEBUG_STREAM<<"image_type = "<<image_type<<endl;
+        DEBUG_STREAM<<"image_type = "<<image_type<<endl;
 
 		TrigMode trig_mode;
-                m_ct->acquisition()->getTriggerMode(trig_mode);
-                DEBUG_STREAM<<"trig_mode = "<<trig_mode<<endl;
+		m_ct->acquisition()->getTriggerMode(trig_mode);
+		DEBUG_STREAM<<"trig_mode = "<<trig_mode<<endl;
 
 		//available only in mode pump & probe (i.e Trigger Ext Multi and Bpp2)
 		if(trig_mode == ExtTrigMult && image_type == Bpp2)		
@@ -605,17 +605,17 @@ void Ufxc::write_triggerAcquisitionFrequency(Tango::WAttribute &attr)
 			double exposure ;
 			m_ct->acquisition()->getAcqExpoTime(exposure);
 			int nb_frames_pump_probe = static_cast<int>(round(exposure*attr_triggerAcquisitionFrequency_write/2)*2);
-                        INFO_STREAM<<"nb_frames_pump_probe = "<<nb_frames_pump_probe<<endl;
+            INFO_STREAM<<"nb_frames_pump_probe = "<<nb_frames_pump_probe<<endl;
 			m_ct->acquisition()->setAcqNbFrames(nb_frames_pump_probe);		
 			PropertyHelper::set_property(this, "MemorizedTriggerAcquisitionFrequency", attr_triggerAcquisitionFrequency_write);
 		}
 		else
 		{
-                        //- throw exception
-                        THROW_DEVFAILED("CONFIGURATION_ERROR",
-					"triggerAcquisitionFrequency is used to compute the nbFrames to acquire according to the exposureTime.\n"
-					"This functionnality is available only in 'pump & probe mode' (i.e Trigger External Multi & 2 bits).\n",
-					"Ufxc::write_triggerAcquisitionFrequency");			
+			//- throw exception
+			THROW_DEVFAILED("CONFIGURATION_ERROR",
+							"triggerAcquisitionFrequency is used to compute the nbFrames to acquire according to the exposureTime.\n"
+							"This functionnality is available only in 'pump & probe mode' (i.e Trigger External Multi & 2 bits).\n",
+							"Ufxc::write_triggerAcquisitionFrequency");			
 		}
 	}
 	catch(Exception& e)
