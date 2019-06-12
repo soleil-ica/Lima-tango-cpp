@@ -68,6 +68,53 @@
 		<td> Set sub frame exposure time for 32 bit mode .<br> </td>
 	</tr>
 	<tr>
+		<td> <a href="AttrgainMode.html"> gainMode </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_STRING </td>
+		<td> OPERATOR </td>
+		<td> Changes the gain mode.<br><Br>
+			Available gain modes:<br><Br>
+			STANDARD<br><Br>
+			LOW<br><Br>
+			MEDIUM<br><Br>
+			HIGH<br><Br>
+			VERY_HIGH<br> </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrthresholdEnergy.html"> thresholdEnergy </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_LONG </td>
+		<td> OPERATOR </td>
+		<td> Get/Set threshold energy for modules in eV.<br> </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrcountRateCorrectionActivation.html"> countRateCorrectionActivation </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_BOOLEAN </td>
+		<td> OPERATOR </td>
+		<td> Set/get count rate correction activation value.<br> </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrcountRateCorrection.html"> countRateCorrection </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ </td>
+		<td> Tango::DEV_LONG </td>
+		<td> OPERATOR </td>
+		<td> Get count rate correction in ns.<br><Br>
+			When the count rate correction is disabled, the value will be 0.<br> </td>
+	</tr>
+	<tr>
 		<td> <a href="AttrconfigFileName.html"> configFileName </a> </td>
 		<td> false </td>
 		<td> false </td>
@@ -98,35 +145,6 @@
 		<td> Get detector software version. </td>
 	</tr>
 	<tr>
-		<td> <a href="AttrgainMode.html"> gainMode </a> </td>
-		<td> false </td>
-		<td> false </td>
-		<td> Scalar </td>
-		<td> READ_WRITE </td>
-		<td> Tango::DEV_STRING </td>
-		<td> OPERATOR </td>
-		<td> Changes the gain mode.<br><Br>
-			Available gain modes:<br><Br>
-			STANDARD<br><Br>
-			LOW<br><Br>
-			MEDIUM<br><Br>
-			HIGH<br><Br>
-			VERY_HIGH<br> </td>
-	</tr>
-	<tr>
-		<td> <a href="AttrcountRateCorrection.html"> countRateCorrection </a> </td>
-		<td> false </td>
-		<td> false </td>
-		<td> Scalar </td>
-		<td> READ_WRITE </td>
-		<td> Tango::DEV_LONG </td>
-		<td> OPERATOR </td>
-		<td> Set count rate correction in ns.<br><Br>
-			A value of 0 is used to disabled the correction.<br><Br>
-			A value of 1 is used to use the default correction.<br><Br>
-			Others values are used to set the count rate correction in ns.<br> </td>
-	</tr>
-	<tr>
 		<td> <a href="AttrtempFpga1.html"> tempFpga1 </a> </td>
 		<td> false </td>
 		<td> false </td>
@@ -134,8 +152,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (fpga) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempFpga2.html"> tempFpga2 </a> </td>
@@ -145,7 +162,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (fpga) for second module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempFpgaext1.html"> tempFpgaext1 </a> </td>
@@ -155,8 +172,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (close to the fpga) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempFpgaext2.html"> tempFpgaext2 </a> </td>
@@ -166,7 +182,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (close to the fpga) for second module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="Attrtemp10ge1.html"> temp10ge1 </a> </td>
@@ -176,8 +192,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (close to the 10GE) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="Attrtemp10ge2.html"> temp10ge2 </a> </td>
@@ -187,7 +202,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (close to the 10GE) for second module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempDcdc1.html"> tempDcdc1 </a> </td>
@@ -197,8 +212,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (close to the dc dc converter) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempDcdc2.html"> tempDcdc2 </a> </td>
@@ -208,7 +222,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (close to the dc dc converter) for second module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempSodl1.html"> tempSodl1 </a> </td>
@@ -218,8 +232,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (close to the left so-dimm memory) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempSodl2.html"> tempSodl2 </a> </td>
@@ -229,7 +242,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (close to the left so-dimm memory) for second module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempSodr1.html"> tempSodr1 </a> </td>
@@ -239,8 +252,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (close to the right so-dimm memory) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempSodr2.html"> tempSodr2 </a> </td>
@@ -250,7 +262,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (close to the right so-dimm memory) for second module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempFpgafl1.html"> tempFpgafl1 </a> </td>
@@ -260,8 +272,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (left front end board fpga) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempFpgafl2.html"> tempFpgafl2 </a> </td>
@@ -271,7 +282,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (left front end board fpga) for second module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempFpgafr1.html"> tempFpgafr1 </a> </td>
@@ -281,8 +292,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (right front end board fpga) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempFpgafr2.html"> tempFpgafr2 </a> </td>
@@ -292,7 +302,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (right front end board fpga) for second module in millidegree Celsius.<br> </td>
 	</tr>
 </table>
 <br><br>

@@ -7,10 +7,8 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute countRateCorrection : </b></u></font>
 <ul>
-	Set count rate correction in ns.<br><Br>
-	A value of 0 is used to disabled the correction.<br><Br>
-	A value of 1 is used to use the default correction.<br><Br>
-	Others values are used to set the count rate correction in ns.<br>
+	Get count rate correction in ns.<br><Br>
+	When the count rate correction is disabled, the value will be 0.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -26,7 +24,7 @@
 				</tr>
 				<tr>
 					<td> R/W Type </td>
-					<td> READ_WRITE </td>
+					<td> READ </td>
 				</tr>
 				<tr>
 					<td> Data Type </td>
@@ -50,20 +48,12 @@
 				</tr>
 				<tr>
 					<td> Memorized </td>
-					<td> true </td>
-				</tr>
-				<tr>
-					<td> Write hardware at init. </td>
-					<td> true </td>
+					<td> Not set </td>
 				</tr>
 			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
 				<tr>
 					<td> Read NOT allowed for </td>
 					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li> </font> </td>
-				</tr>
-				<tr>
-					<td> Write NOT allowed for </td>
-					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
 				</tr>
 			</table>
 		</td>

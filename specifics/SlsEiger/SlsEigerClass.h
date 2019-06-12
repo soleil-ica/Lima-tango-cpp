@@ -119,6 +119,64 @@ public:
 		{return (static_cast<SlsEiger *>(dev))->is_subFrameExposureTime_allowed(ty);}
 };
 
+//	Attribute gainMode class definition
+class gainModeAttrib: public Tango::Attr
+{
+public:
+	gainModeAttrib():Attr("gainMode",
+			Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~gainModeAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsEiger *>(dev))->read_gainMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<SlsEiger *>(dev))->write_gainMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsEiger *>(dev))->is_gainMode_allowed(ty);}
+};
+
+//	Attribute thresholdEnergy class definition
+class thresholdEnergyAttrib: public Tango::Attr
+{
+public:
+	thresholdEnergyAttrib():Attr("thresholdEnergy",
+			Tango::DEV_LONG, Tango::READ_WRITE) {};
+	~thresholdEnergyAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsEiger *>(dev))->read_thresholdEnergy(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<SlsEiger *>(dev))->write_thresholdEnergy(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsEiger *>(dev))->is_thresholdEnergy_allowed(ty);}
+};
+
+//	Attribute countRateCorrectionActivation class definition
+class countRateCorrectionActivationAttrib: public Tango::Attr
+{
+public:
+	countRateCorrectionActivationAttrib():Attr("countRateCorrectionActivation",
+			Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~countRateCorrectionActivationAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsEiger *>(dev))->read_countRateCorrectionActivation(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<SlsEiger *>(dev))->write_countRateCorrectionActivation(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsEiger *>(dev))->is_countRateCorrectionActivation_allowed(ty);}
+};
+
+//	Attribute countRateCorrection class definition
+class countRateCorrectionAttrib: public Tango::Attr
+{
+public:
+	countRateCorrectionAttrib():Attr("countRateCorrection",
+			Tango::DEV_LONG, Tango::READ) {};
+	~countRateCorrectionAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsEiger *>(dev))->read_countRateCorrection(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsEiger *>(dev))->is_countRateCorrection_allowed(ty);}
+};
+
 //	Attribute configFileName class definition
 class configFileNameAttrib: public Tango::Attr
 {
@@ -156,36 +214,6 @@ public:
 		{(static_cast<SlsEiger *>(dev))->read_detectorSoftwareVersion(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 		{return (static_cast<SlsEiger *>(dev))->is_detectorSoftwareVersion_allowed(ty);}
-};
-
-//	Attribute gainMode class definition
-class gainModeAttrib: public Tango::Attr
-{
-public:
-	gainModeAttrib():Attr("gainMode",
-			Tango::DEV_STRING, Tango::READ_WRITE) {};
-	~gainModeAttrib() {};
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<SlsEiger *>(dev))->read_gainMode(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<SlsEiger *>(dev))->write_gainMode(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<SlsEiger *>(dev))->is_gainMode_allowed(ty);}
-};
-
-//	Attribute countRateCorrection class definition
-class countRateCorrectionAttrib: public Tango::Attr
-{
-public:
-	countRateCorrectionAttrib():Attr("countRateCorrection",
-			Tango::DEV_LONG, Tango::READ_WRITE) {};
-	~countRateCorrectionAttrib() {};
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<SlsEiger *>(dev))->read_countRateCorrection(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<SlsEiger *>(dev))->write_countRateCorrection(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<SlsEiger *>(dev))->is_countRateCorrection_allowed(ty);}
 };
 
 //	Attribute tempFpga1 class definition
@@ -444,29 +472,6 @@ public:
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
 	{return (static_cast<SlsEiger *>(dev))->is_GetCmd_allowed(any);}
-};
-
-//	Command ResetCamera class definition
-class ResetCameraClass : public Tango::Command
-{
-public:
-	ResetCameraClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	ResetCameraClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~ResetCameraClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<SlsEiger *>(dev))->is_ResetCamera_allowed(any);}
 };
 
 

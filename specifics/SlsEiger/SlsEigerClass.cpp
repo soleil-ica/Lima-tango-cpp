@@ -196,24 +196,6 @@ CORBA::Any *GetCmdClass::execute(Tango::DeviceImpl *device, const CORBA::Any &in
 	return insert((static_cast<SlsEiger *>(device))->get_cmd(argin));
 }
 
-//--------------------------------------------------------
-/**
- * method : 		ResetCameraClass::execute()
- * description : 	method to trigger the execution of the command.
- *
- * @param	device	The device on which the command must be executed
- * @param	in_any	The command input data
- *
- *	returns The command output data (packed in the Any object)
- */
-//--------------------------------------------------------
-CORBA::Any *ResetCameraClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
-{
-	cout2 << "ResetCameraClass::execute(): arrived" << endl;
-	((static_cast<SlsEiger *>(device))->reset_camera());
-	return new CORBA::Any();
-}
-
 
 //===================================================================
 //	Properties management
@@ -669,6 +651,105 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	subframeexposuretime->set_memorized_init(true);
 	att_list.push_back(subframeexposuretime);
 
+	//	Attribute : gainMode
+	gainModeAttrib	*gainmode = new gainModeAttrib();
+	Tango::UserDefaultAttrProp	gainmode_prop;
+	gainmode_prop.set_description("Changes the gain mode.<br>\nAvailable gain modes:<br>\nSTANDARD<br>\nLOW<br>\nMEDIUM<br>\nHIGH<br>\nVERY_HIGH<br>");
+	//	label	not set for gainMode
+	//	unit	not set for gainMode
+	//	standard_unit	not set for gainMode
+	//	display_unit	not set for gainMode
+	//	format	not set for gainMode
+	//	max_value	not set for gainMode
+	//	min_value	not set for gainMode
+	//	max_alarm	not set for gainMode
+	//	min_alarm	not set for gainMode
+	//	max_warning	not set for gainMode
+	//	min_warning	not set for gainMode
+	//	delta_t	not set for gainMode
+	//	delta_val	not set for gainMode
+	
+	gainmode->set_default_properties(gainmode_prop);
+	//	Not Polled
+	gainmode->set_disp_level(Tango::OPERATOR);
+	gainmode->set_memorized();
+	gainmode->set_memorized_init(true);
+	att_list.push_back(gainmode);
+
+	//	Attribute : thresholdEnergy
+	thresholdEnergyAttrib	*thresholdenergy = new thresholdEnergyAttrib();
+	Tango::UserDefaultAttrProp	thresholdenergy_prop;
+	thresholdenergy_prop.set_description("Get/Set threshold energy for modules in eV.<br>");
+	//	label	not set for thresholdEnergy
+	thresholdenergy_prop.set_unit("eV");
+	//	standard_unit	not set for thresholdEnergy
+	//	display_unit	not set for thresholdEnergy
+	//	format	not set for thresholdEnergy
+	//	max_value	not set for thresholdEnergy
+	//	min_value	not set for thresholdEnergy
+	//	max_alarm	not set for thresholdEnergy
+	//	min_alarm	not set for thresholdEnergy
+	//	max_warning	not set for thresholdEnergy
+	//	min_warning	not set for thresholdEnergy
+	//	delta_t	not set for thresholdEnergy
+	//	delta_val	not set for thresholdEnergy
+	
+	thresholdenergy->set_default_properties(thresholdenergy_prop);
+	//	Not Polled
+	thresholdenergy->set_disp_level(Tango::OPERATOR);
+	thresholdenergy->set_memorized();
+	thresholdenergy->set_memorized_init(true);
+	att_list.push_back(thresholdenergy);
+
+	//	Attribute : countRateCorrectionActivation
+	countRateCorrectionActivationAttrib	*countratecorrectionactivation = new countRateCorrectionActivationAttrib();
+	Tango::UserDefaultAttrProp	countratecorrectionactivation_prop;
+	countratecorrectionactivation_prop.set_description("Set/get count rate correction activation value.<br>");
+	//	label	not set for countRateCorrectionActivation
+	//	unit	not set for countRateCorrectionActivation
+	//	standard_unit	not set for countRateCorrectionActivation
+	//	display_unit	not set for countRateCorrectionActivation
+	//	format	not set for countRateCorrectionActivation
+	//	max_value	not set for countRateCorrectionActivation
+	//	min_value	not set for countRateCorrectionActivation
+	//	max_alarm	not set for countRateCorrectionActivation
+	//	min_alarm	not set for countRateCorrectionActivation
+	//	max_warning	not set for countRateCorrectionActivation
+	//	min_warning	not set for countRateCorrectionActivation
+	//	delta_t	not set for countRateCorrectionActivation
+	//	delta_val	not set for countRateCorrectionActivation
+	
+	countratecorrectionactivation->set_default_properties(countratecorrectionactivation_prop);
+	//	Not Polled
+	countratecorrectionactivation->set_disp_level(Tango::OPERATOR);
+	countratecorrectionactivation->set_memorized();
+	countratecorrectionactivation->set_memorized_init(true);
+	att_list.push_back(countratecorrectionactivation);
+
+	//	Attribute : countRateCorrection
+	countRateCorrectionAttrib	*countratecorrection = new countRateCorrectionAttrib();
+	Tango::UserDefaultAttrProp	countratecorrection_prop;
+	countratecorrection_prop.set_description("Get count rate correction in ns.<br>\nWhen the count rate correction is disabled, the value will be 0.<br>");
+	//	label	not set for countRateCorrection
+	countratecorrection_prop.set_unit("ns");
+	//	standard_unit	not set for countRateCorrection
+	//	display_unit	not set for countRateCorrection
+	//	format	not set for countRateCorrection
+	//	max_value	not set for countRateCorrection
+	//	min_value	not set for countRateCorrection
+	//	max_alarm	not set for countRateCorrection
+	//	min_alarm	not set for countRateCorrection
+	//	max_warning	not set for countRateCorrection
+	//	min_warning	not set for countRateCorrection
+	//	delta_t	not set for countRateCorrection
+	//	delta_val	not set for countRateCorrection
+	
+	countratecorrection->set_default_properties(countratecorrection_prop);
+	//	Not Polled
+	countratecorrection->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(countratecorrection);
+
 	//	Attribute : configFileName
 	configFileNameAttrib	*configfilename = new configFileNameAttrib();
 	Tango::UserDefaultAttrProp	configfilename_prop;
@@ -741,60 +822,10 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Not Memorized
 	att_list.push_back(detectorsoftwareversion);
 
-	//	Attribute : gainMode
-	gainModeAttrib	*gainmode = new gainModeAttrib();
-	Tango::UserDefaultAttrProp	gainmode_prop;
-	gainmode_prop.set_description("Changes the gain mode.<br>\nAvailable gain modes:<br>\nSTANDARD<br>\nLOW<br>\nMEDIUM<br>\nHIGH<br>\nVERY_HIGH<br>");
-	//	label	not set for gainMode
-	//	unit	not set for gainMode
-	//	standard_unit	not set for gainMode
-	//	display_unit	not set for gainMode
-	//	format	not set for gainMode
-	//	max_value	not set for gainMode
-	//	min_value	not set for gainMode
-	//	max_alarm	not set for gainMode
-	//	min_alarm	not set for gainMode
-	//	max_warning	not set for gainMode
-	//	min_warning	not set for gainMode
-	//	delta_t	not set for gainMode
-	//	delta_val	not set for gainMode
-	
-	gainmode->set_default_properties(gainmode_prop);
-	//	Not Polled
-	gainmode->set_disp_level(Tango::OPERATOR);
-	gainmode->set_memorized();
-	gainmode->set_memorized_init(true);
-	att_list.push_back(gainmode);
-
-	//	Attribute : countRateCorrection
-	countRateCorrectionAttrib	*countratecorrection = new countRateCorrectionAttrib();
-	Tango::UserDefaultAttrProp	countratecorrection_prop;
-	countratecorrection_prop.set_description("Set count rate correction in ns.<br>\nA value of 0 is used to disabled the correction.<br>\nA value of 1 is used to use the default correction.<br>\nOthers values are used to set the count rate correction in ns.<br>");
-	//	label	not set for countRateCorrection
-	countratecorrection_prop.set_unit("ns");
-	//	standard_unit	not set for countRateCorrection
-	//	display_unit	not set for countRateCorrection
-	//	format	not set for countRateCorrection
-	//	max_value	not set for countRateCorrection
-	//	min_value	not set for countRateCorrection
-	//	max_alarm	not set for countRateCorrection
-	//	min_alarm	not set for countRateCorrection
-	//	max_warning	not set for countRateCorrection
-	//	min_warning	not set for countRateCorrection
-	//	delta_t	not set for countRateCorrection
-	//	delta_val	not set for countRateCorrection
-	
-	countratecorrection->set_default_properties(countratecorrection_prop);
-	//	Not Polled
-	countratecorrection->set_disp_level(Tango::OPERATOR);
-	countratecorrection->set_memorized();
-	countratecorrection->set_memorized_init(true);
-	att_list.push_back(countratecorrection);
-
 	//	Attribute : tempFpga1
 	tempFpga1Attrib	*tempfpga1 = new tempFpga1Attrib();
 	Tango::UserDefaultAttrProp	tempfpga1_prop;
-	tempfpga1_prop.set_description("Get temperature of hardware element for first module in millidegree Celsius.<br>\n");
+	tempfpga1_prop.set_description("Get temperature of hardware element (fpga) for first module in millidegree Celsius.<br>");
 	//	label	not set for tempFpga1
 	tempfpga1_prop.set_unit("mC");
 	//	standard_unit	not set for tempFpga1
@@ -818,7 +849,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : tempFpga2
 	tempFpga2Attrib	*tempfpga2 = new tempFpga2Attrib();
 	Tango::UserDefaultAttrProp	tempfpga2_prop;
-	tempfpga2_prop.set_description("Get temperature of hardware element for second module in millidegree Celsius.<br>");
+	tempfpga2_prop.set_description("Get temperature of hardware element (fpga) for second module in millidegree Celsius.<br>");
 	//	label	not set for tempFpga2
 	tempfpga2_prop.set_unit("mC");
 	//	standard_unit	not set for tempFpga2
@@ -842,7 +873,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : tempFpgaext1
 	tempFpgaext1Attrib	*tempfpgaext1 = new tempFpgaext1Attrib();
 	Tango::UserDefaultAttrProp	tempfpgaext1_prop;
-	tempfpgaext1_prop.set_description("Get temperature of hardware element for first module in millidegree Celsius.<br>\n");
+	tempfpgaext1_prop.set_description("Get temperature of hardware element (close to the fpga) for first module in millidegree Celsius.<br>");
 	//	label	not set for tempFpgaext1
 	tempfpgaext1_prop.set_unit("mC");
 	//	standard_unit	not set for tempFpgaext1
@@ -866,7 +897,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : tempFpgaext2
 	tempFpgaext2Attrib	*tempfpgaext2 = new tempFpgaext2Attrib();
 	Tango::UserDefaultAttrProp	tempfpgaext2_prop;
-	tempfpgaext2_prop.set_description("Get temperature of hardware element for second module in millidegree Celsius.<br>");
+	tempfpgaext2_prop.set_description("Get temperature of hardware element (close to the fpga) for second module in millidegree Celsius.<br>");
 	//	label	not set for tempFpgaext2
 	tempfpgaext2_prop.set_unit("mC");
 	//	standard_unit	not set for tempFpgaext2
@@ -890,7 +921,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : temp10ge1
 	temp10ge1Attrib	*temp10ge1 = new temp10ge1Attrib();
 	Tango::UserDefaultAttrProp	temp10ge1_prop;
-	temp10ge1_prop.set_description("Get temperature of hardware element for first module in millidegree Celsius.<br>\n");
+	temp10ge1_prop.set_description("Get temperature of hardware element (close to the 10GE) for first module in millidegree Celsius.<br>");
 	//	label	not set for temp10ge1
 	temp10ge1_prop.set_unit("mC");
 	//	standard_unit	not set for temp10ge1
@@ -914,7 +945,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : temp10ge2
 	temp10ge2Attrib	*temp10ge2 = new temp10ge2Attrib();
 	Tango::UserDefaultAttrProp	temp10ge2_prop;
-	temp10ge2_prop.set_description("Get temperature of hardware element for second module in millidegree Celsius.<br>");
+	temp10ge2_prop.set_description("Get temperature of hardware element (close to the 10GE) for second module in millidegree Celsius.<br>");
 	//	label	not set for temp10ge2
 	temp10ge2_prop.set_unit("mC");
 	//	standard_unit	not set for temp10ge2
@@ -938,7 +969,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : tempDcdc1
 	tempDcdc1Attrib	*tempdcdc1 = new tempDcdc1Attrib();
 	Tango::UserDefaultAttrProp	tempdcdc1_prop;
-	tempdcdc1_prop.set_description("Get temperature of hardware element for first module in millidegree Celsius.<br>\n");
+	tempdcdc1_prop.set_description("Get temperature of hardware element (close to the dc dc converter) for first module in millidegree Celsius.<br>");
 	//	label	not set for tempDcdc1
 	tempdcdc1_prop.set_unit("mC");
 	//	standard_unit	not set for tempDcdc1
@@ -962,7 +993,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : tempDcdc2
 	tempDcdc2Attrib	*tempdcdc2 = new tempDcdc2Attrib();
 	Tango::UserDefaultAttrProp	tempdcdc2_prop;
-	tempdcdc2_prop.set_description("Get temperature of hardware element for second module in millidegree Celsius.<br>");
+	tempdcdc2_prop.set_description("Get temperature of hardware element (close to the dc dc converter) for second module in millidegree Celsius.<br>");
 	//	label	not set for tempDcdc2
 	tempdcdc2_prop.set_unit("mC");
 	//	standard_unit	not set for tempDcdc2
@@ -986,7 +1017,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : tempSodl1
 	tempSodl1Attrib	*tempsodl1 = new tempSodl1Attrib();
 	Tango::UserDefaultAttrProp	tempsodl1_prop;
-	tempsodl1_prop.set_description("Get temperature of hardware element for first module in millidegree Celsius.<br>\n");
+	tempsodl1_prop.set_description("Get temperature of hardware element (close to the left so-dimm memory) for first module in millidegree Celsius.<br>");
 	//	label	not set for tempSodl1
 	tempsodl1_prop.set_unit("mC");
 	//	standard_unit	not set for tempSodl1
@@ -1010,7 +1041,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : tempSodl2
 	tempSodl2Attrib	*tempsodl2 = new tempSodl2Attrib();
 	Tango::UserDefaultAttrProp	tempsodl2_prop;
-	tempsodl2_prop.set_description("Get temperature of hardware element for second module in millidegree Celsius.<br>");
+	tempsodl2_prop.set_description("Get temperature of hardware element (close to the left so-dimm memory) for second module in millidegree Celsius.<br>");
 	//	label	not set for tempSodl2
 	tempsodl2_prop.set_unit("mC");
 	//	standard_unit	not set for tempSodl2
@@ -1034,7 +1065,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : tempSodr1
 	tempSodr1Attrib	*tempsodr1 = new tempSodr1Attrib();
 	Tango::UserDefaultAttrProp	tempsodr1_prop;
-	tempsodr1_prop.set_description("Get temperature of hardware element for first module in millidegree Celsius.<br>\n");
+	tempsodr1_prop.set_description("Get temperature of hardware element (close to the right so-dimm memory) for first module in millidegree Celsius.<br>");
 	//	label	not set for tempSodr1
 	tempsodr1_prop.set_unit("mC");
 	//	standard_unit	not set for tempSodr1
@@ -1058,7 +1089,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : tempSodr2
 	tempSodr2Attrib	*tempsodr2 = new tempSodr2Attrib();
 	Tango::UserDefaultAttrProp	tempsodr2_prop;
-	tempsodr2_prop.set_description("Get temperature of hardware element for second module in millidegree Celsius.<br>");
+	tempsodr2_prop.set_description("Get temperature of hardware element (close to the right so-dimm memory) for second module in millidegree Celsius.<br>");
 	//	label	not set for tempSodr2
 	tempsodr2_prop.set_unit("mC");
 	//	standard_unit	not set for tempSodr2
@@ -1082,7 +1113,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : tempFpgafl1
 	tempFpgafl1Attrib	*tempfpgafl1 = new tempFpgafl1Attrib();
 	Tango::UserDefaultAttrProp	tempfpgafl1_prop;
-	tempfpgafl1_prop.set_description("Get temperature of hardware element for first module in millidegree Celsius.<br>\n");
+	tempfpgafl1_prop.set_description("Get temperature of hardware element (left front end board fpga) for first module in millidegree Celsius.<br>");
 	//	label	not set for tempFpgafl1
 	tempfpgafl1_prop.set_unit("mC");
 	//	standard_unit	not set for tempFpgafl1
@@ -1106,7 +1137,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : tempFpgafl2
 	tempFpgafl2Attrib	*tempfpgafl2 = new tempFpgafl2Attrib();
 	Tango::UserDefaultAttrProp	tempfpgafl2_prop;
-	tempfpgafl2_prop.set_description("Get temperature of hardware element for second module in millidegree Celsius.<br>");
+	tempfpgafl2_prop.set_description("Get temperature of hardware element (left front end board fpga) for second module in millidegree Celsius.<br>");
 	//	label	not set for tempFpgafl2
 	tempfpgafl2_prop.set_unit("mC");
 	//	standard_unit	not set for tempFpgafl2
@@ -1130,7 +1161,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : tempFpgafr1
 	tempFpgafr1Attrib	*tempfpgafr1 = new tempFpgafr1Attrib();
 	Tango::UserDefaultAttrProp	tempfpgafr1_prop;
-	tempfpgafr1_prop.set_description("Get temperature of hardware element for first module in millidegree Celsius.<br>\n");
+	tempfpgafr1_prop.set_description("Get temperature of hardware element (right front end board fpga) for first module in millidegree Celsius.<br>");
 	//	label	not set for tempFpgafr1
 	tempfpgafr1_prop.set_unit("mC");
 	//	standard_unit	not set for tempFpgafr1
@@ -1154,7 +1185,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : tempFpgafr2
 	tempFpgafr2Attrib	*tempfpgafr2 = new tempFpgafr2Attrib();
 	Tango::UserDefaultAttrProp	tempfpgafr2_prop;
-	tempfpgafr2_prop.set_description("Get temperature of hardware element for second module in millidegree Celsius.<br>");
+	tempfpgafr2_prop.set_description("Get temperature of hardware element (right front end board fpga) for second module in millidegree Celsius.<br>");
 	//	label	not set for tempFpgafr2
 	tempfpgafr2_prop.set_unit("mC");
 	//	standard_unit	not set for tempFpgafr2
@@ -1216,15 +1247,6 @@ void SlsEigerClass::command_factory()
 			"SlsDetector response",
 			Tango::EXPERT);
 	command_list.push_back(pGetCmdCmd);
-
-	//	Command ResetCamera
-	ResetCameraClass	*pResetCameraCmd =
-		new ResetCameraClass("ResetCamera",
-			Tango::DEV_VOID, Tango::DEV_VOID,
-			"",
-			"",
-			Tango::EXPERT);
-	command_list.push_back(pResetCameraCmd);
 
 	/*----- PROTECTED REGION ID(SlsEigerClass::command_factory_after) ENABLED START -----*/
 	

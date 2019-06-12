@@ -224,6 +224,158 @@ bool SlsEiger::is_subFrameExposureTime_allowed(TANGO_UNUSED(Tango::AttReqType ty
 
 //--------------------------------------------------------
 /**
+ *	Method      : SlsEiger::is_gainMode_allowed()
+ *	Description : Execution allowed for gainMode attribute
+ */
+//--------------------------------------------------------
+bool SlsEiger::is_gainMode_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(SlsEiger::gainModeStateAllowed_WRITE) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsEiger::gainModeStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsEiger::gainModeStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsEiger::gainModeStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsEiger::is_thresholdEnergy_allowed()
+ *	Description : Execution allowed for thresholdEnergy attribute
+ */
+//--------------------------------------------------------
+bool SlsEiger::is_thresholdEnergy_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(SlsEiger::thresholdEnergyStateAllowed_WRITE) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsEiger::thresholdEnergyStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsEiger::thresholdEnergyStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsEiger::thresholdEnergyStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsEiger::is_countRateCorrectionActivation_allowed()
+ *	Description : Execution allowed for countRateCorrectionActivation attribute
+ */
+//--------------------------------------------------------
+bool SlsEiger::is_countRateCorrectionActivation_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(SlsEiger::countRateCorrectionActivationStateAllowed_WRITE) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsEiger::countRateCorrectionActivationStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsEiger::countRateCorrectionActivationStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsEiger::countRateCorrectionActivationStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsEiger::is_countRateCorrection_allowed()
+ *	Description : Execution allowed for countRateCorrection attribute
+ */
+//--------------------------------------------------------
+bool SlsEiger::is_countRateCorrection_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsEiger::countRateCorrectionStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsEiger::countRateCorrectionStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
  *	Method      : SlsEiger::is_configFileName_allowed()
  *	Description : Execution allowed for configFileName attribute
  */
@@ -293,90 +445,6 @@ bool SlsEiger::is_detectorSoftwareVersion_allowed(TANGO_UNUSED(Tango::AttReqType
 		/*----- PROTECTED REGION ID(SlsEiger::detectorSoftwareVersionStateAllowed_READ) ENABLED START -----*/
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::detectorSoftwareVersionStateAllowed_READ
-			return false;
-		}
-		return true;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : SlsEiger::is_gainMode_allowed()
- *	Description : Execution allowed for gainMode attribute
- */
-//--------------------------------------------------------
-bool SlsEiger::is_gainMode_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	//	Check access type.
-	if ( type!=Tango::READ_REQ )
-	{
-		//	Compare device state with not allowed states for WRITE 
-		if (get_state()==Tango::INIT ||
-			get_state()==Tango::FAULT ||
-			get_state()==Tango::RUNNING)
-		{
-		/*----- PROTECTED REGION ID(SlsEiger::gainModeStateAllowed_WRITE) ENABLED START -----*/
-		
-		/*----- PROTECTED REGION END -----*/	//	SlsEiger::gainModeStateAllowed_WRITE
-			return false;
-		}
-		return true;
-	}
-	else
-
-	//	Check access type.
-	if ( type==Tango::READ_REQ )
-	{
-		//	Compare device state with not allowed states for READ 
-		if (get_state()==Tango::INIT ||
-			get_state()==Tango::FAULT)
-		{
-		/*----- PROTECTED REGION ID(SlsEiger::gainModeStateAllowed_READ) ENABLED START -----*/
-		
-		/*----- PROTECTED REGION END -----*/	//	SlsEiger::gainModeStateAllowed_READ
-			return false;
-		}
-		return true;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : SlsEiger::is_countRateCorrection_allowed()
- *	Description : Execution allowed for countRateCorrection attribute
- */
-//--------------------------------------------------------
-bool SlsEiger::is_countRateCorrection_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	//	Check access type.
-	if ( type!=Tango::READ_REQ )
-	{
-		//	Compare device state with not allowed states for WRITE 
-		if (get_state()==Tango::INIT ||
-			get_state()==Tango::FAULT ||
-			get_state()==Tango::RUNNING)
-		{
-		/*----- PROTECTED REGION ID(SlsEiger::countRateCorrectionStateAllowed_WRITE) ENABLED START -----*/
-		
-		/*----- PROTECTED REGION END -----*/	//	SlsEiger::countRateCorrectionStateAllowed_WRITE
-			return false;
-		}
-		return true;
-	}
-	else
-
-	//	Check access type.
-	if ( type==Tango::READ_REQ )
-	{
-		//	Compare device state with not allowed states for READ 
-		if (get_state()==Tango::INIT ||
-			get_state()==Tango::FAULT)
-		{
-		/*----- PROTECTED REGION ID(SlsEiger::countRateCorrectionStateAllowed_READ) ENABLED START -----*/
-		
-		/*----- PROTECTED REGION END -----*/	//	SlsEiger::countRateCorrectionStateAllowed_READ
 			return false;
 		}
 		return true;
@@ -839,26 +907,6 @@ bool SlsEiger::is_GetCmd_allowed(TANGO_UNUSED(const CORBA::Any &any))
 	/*----- PROTECTED REGION ID(SlsEiger::GetCmdStateAllowed) ENABLED START -----*/
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::GetCmdStateAllowed
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : SlsEiger::is_ResetCamera_allowed()
- *	Description : Execution allowed for ResetCamera attribute
- */
-//--------------------------------------------------------
-bool SlsEiger::is_ResetCamera_allowed(TANGO_UNUSED(const CORBA::Any &any))
-{
-	//	Compare device state with not allowed states.
-	if (get_state()==Tango::INIT ||
-		get_state()==Tango::RUNNING)
-	{
-	/*----- PROTECTED REGION ID(SlsEiger::ResetCameraStateAllowed) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	SlsEiger::ResetCameraStateAllowed
 		return false;
 	}
 	return true;

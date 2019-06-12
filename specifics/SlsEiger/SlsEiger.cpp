@@ -64,37 +64,38 @@ static const char *RcsId = "$Id:  $";
 //  Status        |  Inherited (no method)
 //  SetCmd        |  set_cmd
 //  GetCmd        |  get_cmd
-//  ResetCamera   |  reset_camera
 //================================================================
 
 //================================================================
 //  Attributes managed are:
 //================================================================
-//  clockDivider             |  Tango::DevString	Scalar
-//  parallelMode             |  Tango::DevString	Scalar
-//  overflowMode             |  Tango::DevBoolean	Scalar
-//  subFrameExposureTime     |  Tango::DevDouble	Scalar
-//  configFileName           |  Tango::DevString	Scalar
-//  detectorFirmwareVersion  |  Tango::DevString	Scalar
-//  detectorSoftwareVersion  |  Tango::DevString	Scalar
-//  gainMode                 |  Tango::DevString	Scalar
-//  countRateCorrection      |  Tango::DevLong	Scalar
-//  tempFpga1                |  Tango::DevLong	Scalar
-//  tempFpga2                |  Tango::DevLong	Scalar
-//  tempFpgaext1             |  Tango::DevLong	Scalar
-//  tempFpgaext2             |  Tango::DevLong	Scalar
-//  temp10ge1                |  Tango::DevLong	Scalar
-//  temp10ge2                |  Tango::DevLong	Scalar
-//  tempDcdc1                |  Tango::DevLong	Scalar
-//  tempDcdc2                |  Tango::DevLong	Scalar
-//  tempSodl1                |  Tango::DevLong	Scalar
-//  tempSodl2                |  Tango::DevLong	Scalar
-//  tempSodr1                |  Tango::DevLong	Scalar
-//  tempSodr2                |  Tango::DevLong	Scalar
-//  tempFpgafl1              |  Tango::DevLong	Scalar
-//  tempFpgafl2              |  Tango::DevLong	Scalar
-//  tempFpgafr1              |  Tango::DevLong	Scalar
-//  tempFpgafr2              |  Tango::DevLong	Scalar
+//  clockDivider                   |  Tango::DevString	Scalar
+//  parallelMode                   |  Tango::DevString	Scalar
+//  overflowMode                   |  Tango::DevBoolean	Scalar
+//  subFrameExposureTime           |  Tango::DevDouble	Scalar
+//  gainMode                       |  Tango::DevString	Scalar
+//  thresholdEnergy                |  Tango::DevLong	Scalar
+//  countRateCorrectionActivation  |  Tango::DevBoolean	Scalar
+//  countRateCorrection            |  Tango::DevLong	Scalar
+//  configFileName                 |  Tango::DevString	Scalar
+//  detectorFirmwareVersion        |  Tango::DevString	Scalar
+//  detectorSoftwareVersion        |  Tango::DevString	Scalar
+//  tempFpga1                      |  Tango::DevLong	Scalar
+//  tempFpga2                      |  Tango::DevLong	Scalar
+//  tempFpgaext1                   |  Tango::DevLong	Scalar
+//  tempFpgaext2                   |  Tango::DevLong	Scalar
+//  temp10ge1                      |  Tango::DevLong	Scalar
+//  temp10ge2                      |  Tango::DevLong	Scalar
+//  tempDcdc1                      |  Tango::DevLong	Scalar
+//  tempDcdc2                      |  Tango::DevLong	Scalar
+//  tempSodl1                      |  Tango::DevLong	Scalar
+//  tempSodl2                      |  Tango::DevLong	Scalar
+//  tempSodr1                      |  Tango::DevLong	Scalar
+//  tempSodr2                      |  Tango::DevLong	Scalar
+//  tempFpgafl1                    |  Tango::DevLong	Scalar
+//  tempFpgafl2                    |  Tango::DevLong	Scalar
+//  tempFpgafr1                    |  Tango::DevLong	Scalar
+//  tempFpgafr2                    |  Tango::DevLong	Scalar
 //================================================================
 
 namespace SlsEiger_ns
@@ -189,11 +190,13 @@ void SlsEiger::delete_device()
 	delete[] attr_parallelMode_read;
 	delete[] attr_overflowMode_read;
 	delete[] attr_subFrameExposureTime_read;
+	delete[] attr_gainMode_read;
+	delete[] attr_thresholdEnergy_read;
+	delete[] attr_countRateCorrectionActivation_read;
+	delete[] attr_countRateCorrection_read;
 	delete[] attr_configFileName_read;
 	delete[] attr_detectorFirmwareVersion_read;
 	delete[] attr_detectorSoftwareVersion_read;
-	delete[] attr_gainMode_read;
-	delete[] attr_countRateCorrection_read;
 	delete[] attr_tempFpga1_read;
 	delete[] attr_tempFpga2_read;
 	delete[] attr_tempFpgaext1_read;
@@ -268,11 +271,13 @@ void SlsEiger::init_device()
 	attr_parallelMode_read = new Tango::DevString[1];
 	attr_overflowMode_read = new Tango::DevBoolean[1];
 	attr_subFrameExposureTime_read = new Tango::DevDouble[1];
+	attr_gainMode_read = new Tango::DevString[1];
+	attr_thresholdEnergy_read = new Tango::DevLong[1];
+	attr_countRateCorrectionActivation_read = new Tango::DevBoolean[1];
+	attr_countRateCorrection_read = new Tango::DevLong[1];
 	attr_configFileName_read = new Tango::DevString[1];
 	attr_detectorFirmwareVersion_read = new Tango::DevString[1];
 	attr_detectorSoftwareVersion_read = new Tango::DevString[1];
-	attr_gainMode_read = new Tango::DevString[1];
-	attr_countRateCorrection_read = new Tango::DevLong[1];
 	attr_tempFpga1_read = new Tango::DevLong[1];
 	attr_tempFpga2_read = new Tango::DevLong[1];
 	attr_tempFpgaext1_read = new Tango::DevLong[1];
@@ -904,113 +909,6 @@ void SlsEiger::write_subFrameExposureTime(Tango::WAttribute &attr)
 }
 //--------------------------------------------------------
 /**
- *	Read attribute configFileName related method
- *	Description: 
- *
- *	Data type:	Tango::DevString
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void SlsEiger::read_configFileName(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "SlsEiger::read_configFileName(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(SlsEiger::read_configFileName) ENABLED START -----*/
-	
-    try
-    {
-        //Set the attribute value
-        strcpy(*attr_configFileName_read, configFileName.c_str());
-        attr.set_value(attr_configFileName_read);
-    }
-    catch(Tango::DevFailed& df)
-    {
-        manage_devfailed_exception(df, "SlsEiger::read_configFileName");
-    }
-    catch(Exception& e)
-    {
-        manage_lima_exception(e, "SlsEiger::read_configFileName");
-    }
-
-	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_configFileName
-}
-//--------------------------------------------------------
-/**
- *	Read attribute detectorFirmwareVersion related method
- *	Description: Get detector firmware version.
- *
- *	Data type:	Tango::DevString
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void SlsEiger::read_detectorFirmwareVersion(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "SlsEiger::read_detectorFirmwareVersion(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(SlsEiger::read_detectorFirmwareVersion) ENABLED START -----*/
-	//	Set the attribute value
-    try
-    {
-        // if an acquisition is running, the attribute is in alarm because we return the latest cache value.
-        bool attribute_is_in_alarm = (get_state() == Tango::RUNNING);
-
-        // get the camera data
-        std::string version = m_camera->getDetectorFirmwareVersion();
-
-        //Set the attribute value
-        strcpy(*attr_detectorFirmwareVersion_read, version.c_str());
-        attr.set_value(attr_detectorFirmwareVersion_read);
-        attr.set_quality((attribute_is_in_alarm) ? Tango::ATTR_ALARM : Tango::ATTR_VALID);
-    }
-    catch(Tango::DevFailed& df)
-    {
-        manage_devfailed_exception(df, "SlsEiger::read_detectorFirmwareVersion");
-    }
-    catch(Exception& e)
-    {
-        manage_lima_exception(e, "SlsEiger::read_detectorFirmwareVersion");
-    }
-	
-	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_detectorFirmwareVersion
-}
-//--------------------------------------------------------
-/**
- *	Read attribute detectorSoftwareVersion related method
- *	Description: Get detector software version.
- *
- *	Data type:	Tango::DevString
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void SlsEiger::read_detectorSoftwareVersion(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "SlsEiger::read_detectorSoftwareVersion(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(SlsEiger::read_detectorSoftwareVersion) ENABLED START -----*/
-	//	Set the attribute value
-    try
-    {
-        // if an acquisition is running, the attribute is in alarm because we return the latest cache value.
-        bool attribute_is_in_alarm = (get_state() == Tango::RUNNING);
-
-        // get the camera data
-        std::string version = m_camera->getDetectorSoftwareVersion();
-
-        //Set the attribute value
-        strcpy(*attr_detectorSoftwareVersion_read, version.c_str());
-        attr.set_value(attr_detectorSoftwareVersion_read);
-        attr.set_quality((attribute_is_in_alarm) ? Tango::ATTR_ALARM : Tango::ATTR_VALID);
-    }
-    catch(Tango::DevFailed& df)
-    {
-        manage_devfailed_exception(df, "SlsEiger::read_detectorSoftwareVersion");
-    }
-    catch(Exception& e)
-    {
-        manage_lima_exception(e, "SlsEiger::read_detectorSoftwareVersion");
-    }
-	
-	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_detectorSoftwareVersion
-}
-//--------------------------------------------------------
-/**
  *	Read attribute gainMode related method
  *	Description: Changes the gain mode.<br>
  *               Available gain modes:<br>
@@ -1137,11 +1035,143 @@ void SlsEiger::write_gainMode(Tango::WAttribute &attr)
 }
 //--------------------------------------------------------
 /**
+ *	Read attribute thresholdEnergy related method
+ *	Description: Get/Set threshold energy for modules in eV.<br>
+ *
+ *	Data type:	Tango::DevLong
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsEiger::read_thresholdEnergy(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsEiger::read_thresholdEnergy(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsEiger::read_thresholdEnergy) ENABLED START -----*/
+    try
+    {
+        // if an acquisition is running, the attribute is in alarm because we return the latest cache value.
+        bool attribute_is_in_alarm = (get_state() == Tango::RUNNING);
+        // get the camera value
+        int threshold_energy = m_camera->getThresholdEnergy();
+        // set the attribute value
+        *attr_thresholdEnergy_read = (Tango::DevLong)(threshold_energy);
+        attr.set_value(attr_thresholdEnergy_read);
+        attr.set_quality((attribute_is_in_alarm) ? Tango::ATTR_ALARM : Tango::ATTR_VALID);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsEiger::read_thresholdEnergy");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsEiger::read_thresholdEnergy");
+    }
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_thresholdEnergy
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute thresholdEnergy related method
+ *	Description: Get/Set threshold energy for modules in eV.<br>
+ *
+ *	Data type:	Tango::DevLong
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsEiger::write_thresholdEnergy(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "SlsEiger::write_thresholdEnergy(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevLong	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(SlsEiger::write_thresholdEnergy) ENABLED START -----*/
+	
+    try
+    {
+        // set the camera value
+        m_camera->setThresholdEnergy(static_cast<int>(w_val));
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsEiger::write_thresholdEnergy");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsEiger::write_thresholdEnergy");
+    }	
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::write_thresholdEnergy
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute countRateCorrectionActivation related method
+ *	Description: Set/get count rate correction activation value.<br>
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsEiger::read_countRateCorrectionActivation(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsEiger::read_countRateCorrectionActivation(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsEiger::read_countRateCorrectionActivation) ENABLED START -----*/
+    try
+    {
+        // if an acquisition is running, the attribute is in alarm because we return the latest cache value.
+        bool attribute_is_in_alarm = (get_state() == Tango::RUNNING);
+        // get the camera value
+        bool count_rate_correction_activation = m_camera->getCountRateCorrectionActivation();
+        // set the attribute value
+        *attr_countRateCorrectionActivation_read = (Tango::DevBoolean)(count_rate_correction_activation);
+        attr.set_value(attr_countRateCorrectionActivation_read);
+        attr.set_quality((attribute_is_in_alarm) ? Tango::ATTR_ALARM : Tango::ATTR_VALID);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsEiger::read_countRateCorrectionActivation");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsEiger::read_countRateCorrectionActivation");
+    }
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_countRateCorrectionActivation
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute countRateCorrectionActivation related method
+ *	Description: Set/get count rate correction activation value.<br>
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsEiger::write_countRateCorrectionActivation(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "SlsEiger::write_countRateCorrectionActivation(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevBoolean	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(SlsEiger::write_countRateCorrectionActivation) ENABLED START -----*/
+	
+    try
+    {
+        // set the camera value
+        m_camera->setCountRateCorrectionActivation(static_cast<bool>(w_val));
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsEiger::write_countRateCorrectionActivation");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsEiger::write_countRateCorrectionActivation");
+    }	
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::write_countRateCorrectionActivation
+}
+//--------------------------------------------------------
+/**
  *	Read attribute countRateCorrection related method
- *	Description: Set count rate correction in ns.<br>
- *               A value of 0 is used to disabled the correction.<br>
- *               A value of 1 is used to use the default correction.<br>
- *               Others values are used to set the count rate correction in ns.<br>
+ *	Description: Get count rate correction in ns.<br>
+ *               When the count rate correction is disabled, the value will be 0.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1178,45 +1208,115 @@ void SlsEiger::read_countRateCorrection(Tango::Attribute &attr)
 }
 //--------------------------------------------------------
 /**
- *	Write attribute countRateCorrection related method
- *	Description: Set count rate correction in ns.<br>
- *               A value of 0 is used to disabled the correction.<br>
- *               A value of 1 is used to use the default correction.<br>
- *               Others values are used to set the count rate correction in ns.<br>
+ *	Read attribute configFileName related method
+ *	Description: 
  *
- *	Data type:	Tango::DevLong
+ *	Data type:	Tango::DevString
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void SlsEiger::write_countRateCorrection(Tango::WAttribute &attr)
+void SlsEiger::read_configFileName(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "SlsEiger::write_countRateCorrection(Tango::WAttribute &attr) entering... " << endl;
-	//	Retrieve write value
-	Tango::DevLong	w_val;
-	attr.get_write_value(w_val);
-	/*----- PROTECTED REGION ID(SlsEiger::write_countRateCorrection) ENABLED START -----*/
+	DEBUG_STREAM << "SlsEiger::read_configFileName(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsEiger::read_configFileName) ENABLED START -----*/
 	
     try
     {
-        // set the camera value
-        m_camera->setCountRateCorrection(static_cast<int>(w_val));
+        //Set the attribute value
+        strcpy(*attr_configFileName_read, configFileName.c_str());
+        attr.set_value(attr_configFileName_read);
     }
     catch(Tango::DevFailed& df)
     {
-        manage_devfailed_exception(df, "SlsEiger::write_countRateCorrection");
+        manage_devfailed_exception(df, "SlsEiger::read_configFileName");
     }
     catch(Exception& e)
     {
-        manage_lima_exception(e, "SlsEiger::write_countRateCorrection");
-    }	
+        manage_lima_exception(e, "SlsEiger::read_configFileName");
+    }
+
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_configFileName
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute detectorFirmwareVersion related method
+ *	Description: Get detector firmware version.
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsEiger::read_detectorFirmwareVersion(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsEiger::read_detectorFirmwareVersion(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsEiger::read_detectorFirmwareVersion) ENABLED START -----*/
+	//	Set the attribute value
+    try
+    {
+        // if an acquisition is running, the attribute is in alarm because we return the latest cache value.
+        bool attribute_is_in_alarm = (get_state() == Tango::RUNNING);
+
+        // get the camera data
+        std::string version = m_camera->getDetectorFirmwareVersion();
+
+        //Set the attribute value
+        strcpy(*attr_detectorFirmwareVersion_read, version.c_str());
+        attr.set_value(attr_detectorFirmwareVersion_read);
+        attr.set_quality((attribute_is_in_alarm) ? Tango::ATTR_ALARM : Tango::ATTR_VALID);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsEiger::read_detectorFirmwareVersion");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsEiger::read_detectorFirmwareVersion");
+    }
 	
-	/*----- PROTECTED REGION END -----*/	//	SlsEiger::write_countRateCorrection
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_detectorFirmwareVersion
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute detectorSoftwareVersion related method
+ *	Description: Get detector software version.
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsEiger::read_detectorSoftwareVersion(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsEiger::read_detectorSoftwareVersion(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsEiger::read_detectorSoftwareVersion) ENABLED START -----*/
+	//	Set the attribute value
+    try
+    {
+        // if an acquisition is running, the attribute is in alarm because we return the latest cache value.
+        bool attribute_is_in_alarm = (get_state() == Tango::RUNNING);
+
+        // get the camera data
+        std::string version = m_camera->getDetectorSoftwareVersion();
+
+        //Set the attribute value
+        strcpy(*attr_detectorSoftwareVersion_read, version.c_str());
+        attr.set_value(attr_detectorSoftwareVersion_read);
+        attr.set_quality((attribute_is_in_alarm) ? Tango::ATTR_ALARM : Tango::ATTR_VALID);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsEiger::read_detectorSoftwareVersion");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsEiger::read_detectorSoftwareVersion");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_detectorSoftwareVersion
 }
 //--------------------------------------------------------
 /**
  *	Read attribute tempFpga1 related method
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (fpga) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1234,7 +1334,7 @@ void SlsEiger::read_tempFpga1(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute tempFpga2 related method
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (fpga) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1252,8 +1352,7 @@ void SlsEiger::read_tempFpga2(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute tempFpgaext1 related method
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (close to the fpga) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1271,7 +1370,7 @@ void SlsEiger::read_tempFpgaext1(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute tempFpgaext2 related method
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (close to the fpga) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1289,8 +1388,7 @@ void SlsEiger::read_tempFpgaext2(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute temp10ge1 related method
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (close to the 10GE) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1308,7 +1406,7 @@ void SlsEiger::read_temp10ge1(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute temp10ge2 related method
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (close to the 10GE) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1326,8 +1424,7 @@ void SlsEiger::read_temp10ge2(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute tempDcdc1 related method
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (close to the dc dc converter) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1345,7 +1442,7 @@ void SlsEiger::read_tempDcdc1(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute tempDcdc2 related method
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (close to the dc dc converter) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1363,8 +1460,7 @@ void SlsEiger::read_tempDcdc2(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute tempSodl1 related method
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (close to the left so-dimm memory) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1382,7 +1478,7 @@ void SlsEiger::read_tempSodl1(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute tempSodl2 related method
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (close to the left so-dimm memory) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1400,8 +1496,7 @@ void SlsEiger::read_tempSodl2(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute tempSodr1 related method
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (close to the right so-dimm memory) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1419,7 +1514,7 @@ void SlsEiger::read_tempSodr1(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute tempSodr2 related method
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (close to the right so-dimm memory) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1437,8 +1532,7 @@ void SlsEiger::read_tempSodr2(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute tempFpgafl1 related method
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (left front end board fpga) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1456,7 +1550,7 @@ void SlsEiger::read_tempFpgafl1(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute tempFpgafl2 related method
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (left front end board fpga) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1474,8 +1568,7 @@ void SlsEiger::read_tempFpgafl2(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute tempFpgafr1 related method
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (right front end board fpga) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1493,7 +1586,7 @@ void SlsEiger::read_tempFpgafr1(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute tempFpgafr2 related method
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (right front end board fpga) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -1604,34 +1697,6 @@ Tango::DevString SlsEiger::get_cmd(Tango::DevString argin)
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::get_cmd
 	return argout;
-}
-//--------------------------------------------------------
-/**
- *	Command ResetCamera related method
- *	Description: Execute an hardware reset of the camera.
- *
- */
-//--------------------------------------------------------
-void SlsEiger::reset_camera()
-{
-	DEBUG_STREAM << "SlsEiger::ResetCamera()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(SlsEiger::reset_camera) ENABLED START -----*/
-	
-    try
-    {
-        const std::string cmd = "resetfpga 0";
-        m_camera->setCmd(cmd);
-	}
-    catch(Tango::DevFailed & df)
-    {
-        manage_devfailed_exception(df, "SlsEiger::reset_camera");
-    }
-    catch(Exception & e)
-    {
-        manage_lima_exception(e, "SlsEiger::reset_camera");
-    }
-	
-	/*----- PROTECTED REGION END -----*/	//	SlsEiger::reset_camera
 }
 
 /*----- PROTECTED REGION ID(SlsEiger::namespace_ending) ENABLED START -----*/

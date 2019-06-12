@@ -18,7 +18,6 @@
 				<li> <a href="FullDocument.html#cmdStatus"> Status </a>
 				<li> <a href="FullDocument.html#cmdSetCmd"> SetCmd </a>
 				<li> <a href="FullDocument.html#cmdGetCmd"> GetCmd </a>
-				<li> <a href="FullDocument.html#cmdResetCamera"> ResetCamera </a>
 			</ul>
 			<li> <a href="FullDocument.html#attributes">   Attributes   </a>
 			<ul>
@@ -26,11 +25,13 @@
 				<li> <a href="FullDocument.html#attrparallelMode"> parallelMode </a>
 				<li> <a href="FullDocument.html#attroverflowMode"> overflowMode </a>
 				<li> <a href="FullDocument.html#attrsubFrameExposureTime"> subFrameExposureTime </a>
+				<li> <a href="FullDocument.html#attrgainMode"> gainMode </a>
+				<li> <a href="FullDocument.html#attrthresholdEnergy"> thresholdEnergy </a>
+				<li> <a href="FullDocument.html#attrcountRateCorrectionActivation"> countRateCorrectionActivation </a>
+				<li> <a href="FullDocument.html#attrcountRateCorrection"> countRateCorrection </a>
 				<li> <a href="FullDocument.html#attrconfigFileName"> configFileName </a>
 				<li> <a href="FullDocument.html#attrdetectorFirmwareVersion"> detectorFirmwareVersion </a>
 				<li> <a href="FullDocument.html#attrdetectorSoftwareVersion"> detectorSoftwareVersion </a>
-				<li> <a href="FullDocument.html#attrgainMode"> gainMode </a>
-				<li> <a href="FullDocument.html#attrcountRateCorrection"> countRateCorrection </a>
 				<li> <a href="FullDocument.html#attrtempFpga1"> tempFpga1 </a>
 				<li> <a href="FullDocument.html#attrtempFpga2"> tempFpga2 </a>
 				<li> <a href="FullDocument.html#attrtempFpgaext1"> tempFpgaext1 </a>
@@ -206,13 +207,6 @@
 		<td> DEV_STRING </td>
 		<td> EXPERT </td>
 		<td> Allows to execute a line command (get type) </td>
-	</tr>
-	<tr>
-		<td> <a href="CmdResetCamera.html"> ResetCamera </a> </td>
-		<td> DEV_VOID </td>
-		<td> DEV_VOID </td>
-		<td> EXPERT </td>
-		<td> Execute an hardware reset of the camera. </td>
 	</tr>
 </table>
 <br><br><hr>
@@ -411,55 +405,6 @@
 		<td> .. </td>
 	</tr>
 </table>
-<br><br><hr>
-<a name="cmdResetCamera"> </a>
-<br><br><br>
-<font size="+1"><u><b> Command ResetCamera : </b></u></font>
-<ul>
-	Execute an hardware reset of the camera.
-</ul>
-<br><br><br>
-<Table Border=2 Cellpadding=3 CELLSPACING=0>
-	<tr bgcolor="#CCCCFF" class="TableHeadingColor">
-	<td colspan=0> <font size=+1> <center><b> ResetCamera Definition </b></font></center></td>
-	</tr>
-	<tr>
-		<td> Input Argument </td>
-		<td> Tango::DEV_VOID </td>
-		<td>  </td>
-	</tr>
-	<tr>
-		<td> Output Argument </td>
-		<td> Tango::DEV_VOID </td>
-		<td>  </td>
-	</tr>
-	<tr>
-		<td> DisplayLevel </td>
-		<td> EXPERT </td>
-		<td> .. </td>
-	</tr>
-	<tr>
-		<td> Inherited </td>
-		<td> false </td>
-		<td> .. </td>
-	</tr>
-	<tr>
-		<td> Abstract </td>
-		<td> false </td>
-		<td> .. </td>
-	</tr>
-	<tr>
-		<td> Polling Period </td>
-		<td> Not polled </td>
-		<td> .. </td>
-	</tr>
-<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td><Td><Hr></Td></Tr>
-	<tr>
-		<td> Command NOT allowed for </td>
-		<td> <font size="-1">  <li> INIT </li>  <li> RUNNING </li> </font> </td>
-		<td> .. </td>
-	</tr>
-</table>
 <br><br>
 <hr>
 <a name="attributes"> </a>
@@ -527,6 +472,53 @@
 		<td> Set sub frame exposure time for 32 bit mode .<br> </td>
 	</tr>
 	<tr>
+		<td> <a href="AttrgainMode.html"> gainMode </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_STRING </td>
+		<td> OPERATOR </td>
+		<td> Changes the gain mode.<br><Br>
+			Available gain modes:<br><Br>
+			STANDARD<br><Br>
+			LOW<br><Br>
+			MEDIUM<br><Br>
+			HIGH<br><Br>
+			VERY_HIGH<br> </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrthresholdEnergy.html"> thresholdEnergy </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_LONG </td>
+		<td> OPERATOR </td>
+		<td> Get/Set threshold energy for modules in eV.<br> </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrcountRateCorrectionActivation.html"> countRateCorrectionActivation </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_BOOLEAN </td>
+		<td> OPERATOR </td>
+		<td> Set/get count rate correction activation value.<br> </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrcountRateCorrection.html"> countRateCorrection </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ </td>
+		<td> Tango::DEV_LONG </td>
+		<td> OPERATOR </td>
+		<td> Get count rate correction in ns.<br><Br>
+			When the count rate correction is disabled, the value will be 0.<br> </td>
+	</tr>
+	<tr>
 		<td> <a href="AttrconfigFileName.html"> configFileName </a> </td>
 		<td> false </td>
 		<td> false </td>
@@ -557,35 +549,6 @@
 		<td> Get detector software version. </td>
 	</tr>
 	<tr>
-		<td> <a href="AttrgainMode.html"> gainMode </a> </td>
-		<td> false </td>
-		<td> false </td>
-		<td> Scalar </td>
-		<td> READ_WRITE </td>
-		<td> Tango::DEV_STRING </td>
-		<td> OPERATOR </td>
-		<td> Changes the gain mode.<br><Br>
-			Available gain modes:<br><Br>
-			STANDARD<br><Br>
-			LOW<br><Br>
-			MEDIUM<br><Br>
-			HIGH<br><Br>
-			VERY_HIGH<br> </td>
-	</tr>
-	<tr>
-		<td> <a href="AttrcountRateCorrection.html"> countRateCorrection </a> </td>
-		<td> false </td>
-		<td> false </td>
-		<td> Scalar </td>
-		<td> READ_WRITE </td>
-		<td> Tango::DEV_LONG </td>
-		<td> OPERATOR </td>
-		<td> Set count rate correction in ns.<br><Br>
-			A value of 0 is used to disabled the correction.<br><Br>
-			A value of 1 is used to use the default correction.<br><Br>
-			Others values are used to set the count rate correction in ns.<br> </td>
-	</tr>
-	<tr>
 		<td> <a href="AttrtempFpga1.html"> tempFpga1 </a> </td>
 		<td> false </td>
 		<td> false </td>
@@ -593,8 +556,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (fpga) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempFpga2.html"> tempFpga2 </a> </td>
@@ -604,7 +566,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (fpga) for second module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempFpgaext1.html"> tempFpgaext1 </a> </td>
@@ -614,8 +576,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (close to the fpga) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempFpgaext2.html"> tempFpgaext2 </a> </td>
@@ -625,7 +586,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (close to the fpga) for second module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="Attrtemp10ge1.html"> temp10ge1 </a> </td>
@@ -635,8 +596,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (close to the 10GE) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="Attrtemp10ge2.html"> temp10ge2 </a> </td>
@@ -646,7 +606,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (close to the 10GE) for second module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempDcdc1.html"> tempDcdc1 </a> </td>
@@ -656,8 +616,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (close to the dc dc converter) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempDcdc2.html"> tempDcdc2 </a> </td>
@@ -667,7 +626,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (close to the dc dc converter) for second module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempSodl1.html"> tempSodl1 </a> </td>
@@ -677,8 +636,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (close to the left so-dimm memory) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempSodl2.html"> tempSodl2 </a> </td>
@@ -688,7 +646,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (close to the left so-dimm memory) for second module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempSodr1.html"> tempSodr1 </a> </td>
@@ -698,8 +656,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (close to the right so-dimm memory) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempSodr2.html"> tempSodr2 </a> </td>
@@ -709,7 +666,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (close to the right so-dimm memory) for second module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempFpgafl1.html"> tempFpgafl1 </a> </td>
@@ -719,8 +676,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (left front end board fpga) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempFpgafl2.html"> tempFpgafl2 </a> </td>
@@ -730,7 +686,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (left front end board fpga) for second module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempFpgafr1.html"> tempFpgafr1 </a> </td>
@@ -740,8 +696,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
-			 </td>
+		<td> Get temperature of hardware element (right front end board fpga) for first module in millidegree Celsius.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrtempFpgafr2.html"> tempFpgafr2 </a> </td>
@@ -751,7 +706,7 @@
 		<td> READ </td>
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
-		<td> Get temperature of hardware element for second module in millidegree Celsius.<br> </td>
+		<td> Get temperature of hardware element (right front end board fpga) for second module in millidegree Celsius.<br> </td>
 	</tr>
 </table>
 <br><br>
@@ -1453,6 +1408,689 @@
 </table>
 <br><br>
 <hr>
+<a name="attrgainMode"> </a>
+<br><br><br>
+<font size="+1"><u><b> Attribute gainMode : </b></u></font>
+<ul>
+	Changes the gain mode.<br><Br>
+	Available gain modes:<br><Br>
+	STANDARD<br><Br>
+	LOW<br><Br>
+	MEDIUM<br><Br>
+	HIGH<br><Br>
+	VERY_HIGH<br>
+</ul>
+<br><br><br>
+<Table Border=0 Cellpadding=0 CELLSPACING=20>
+	<TR>
+		<TD ALIGN="left" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Definition </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Attribute Type </td>
+					<td> Scalar </td>
+				</tr>
+				<tr>
+					<td> R/W Type </td>
+					<td> READ_WRITE </td>
+				</tr>
+				<tr>
+					<td> Data Type </td>
+					<td> Tango::DEV_STRING </td>
+				</tr>
+				<tr>
+					<td> Display Level </td>
+					<td> OPERATOR </td>
+				</tr>
+				<tr>
+					<td> Inherited </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Abstract </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Polling Period </td>
+					<td> Not polled </td>
+				</tr>
+				<tr>
+					<td> Memorized </td>
+					<td> true </td>
+				</tr>
+				<tr>
+					<td> Write hardware at init. </td>
+					<td> true </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Read NOT allowed for </td>
+					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li> </font> </td>
+				</tr>
+				<tr>
+					<td> Write NOT allowed for </td>
+					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Center" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Properties </b></font></center></td>
+				</tr>
+				<tr>
+					<td> label </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> standard unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> display unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> format </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_time </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_val </td>
+					<td>  </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Right" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Event Criteria </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Archive Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Push Change event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push Archive event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push DataReady event by user code </td>
+					<td> false </td>
+				</tr>
+			</table>
+		</td>
+	</TR>
+</table>
+<br><br>
+<hr>
+<a name="attrthresholdEnergy"> </a>
+<br><br><br>
+<font size="+1"><u><b> Attribute thresholdEnergy : </b></u></font>
+<ul>
+	Get/Set threshold energy for modules in eV.<br>
+</ul>
+<br><br><br>
+<Table Border=0 Cellpadding=0 CELLSPACING=20>
+	<TR>
+		<TD ALIGN="left" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Definition </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Attribute Type </td>
+					<td> Scalar </td>
+				</tr>
+				<tr>
+					<td> R/W Type </td>
+					<td> READ_WRITE </td>
+				</tr>
+				<tr>
+					<td> Data Type </td>
+					<td> Tango::DEV_LONG </td>
+				</tr>
+				<tr>
+					<td> Display Level </td>
+					<td> OPERATOR </td>
+				</tr>
+				<tr>
+					<td> Inherited </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Abstract </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Polling Period </td>
+					<td> Not polled </td>
+				</tr>
+				<tr>
+					<td> Memorized </td>
+					<td> true </td>
+				</tr>
+				<tr>
+					<td> Write hardware at init. </td>
+					<td> true </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Read NOT allowed for </td>
+					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li> </font> </td>
+				</tr>
+				<tr>
+					<td> Write NOT allowed for </td>
+					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Center" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Properties </b></font></center></td>
+				</tr>
+				<tr>
+					<td> label </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> unit </td>
+					<td> eV </td>
+				</tr>
+				<tr>
+					<td> standard unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> display unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> format </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_time </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_val </td>
+					<td>  </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Right" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Event Criteria </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Archive Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Push Change event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push Archive event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push DataReady event by user code </td>
+					<td> false </td>
+				</tr>
+			</table>
+		</td>
+	</TR>
+</table>
+<br><br>
+<hr>
+<a name="attrcountRateCorrectionActivation"> </a>
+<br><br><br>
+<font size="+1"><u><b> Attribute countRateCorrectionActivation : </b></u></font>
+<ul>
+	Set/get count rate correction activation value.<br>
+</ul>
+<br><br><br>
+<Table Border=0 Cellpadding=0 CELLSPACING=20>
+	<TR>
+		<TD ALIGN="left" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Definition </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Attribute Type </td>
+					<td> Scalar </td>
+				</tr>
+				<tr>
+					<td> R/W Type </td>
+					<td> READ_WRITE </td>
+				</tr>
+				<tr>
+					<td> Data Type </td>
+					<td> Tango::DEV_BOOLEAN </td>
+				</tr>
+				<tr>
+					<td> Display Level </td>
+					<td> OPERATOR </td>
+				</tr>
+				<tr>
+					<td> Inherited </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Abstract </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Polling Period </td>
+					<td> Not polled </td>
+				</tr>
+				<tr>
+					<td> Memorized </td>
+					<td> true </td>
+				</tr>
+				<tr>
+					<td> Write hardware at init. </td>
+					<td> true </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Read NOT allowed for </td>
+					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li> </font> </td>
+				</tr>
+				<tr>
+					<td> Write NOT allowed for </td>
+					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Center" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Properties </b></font></center></td>
+				</tr>
+				<tr>
+					<td> label </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> standard unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> display unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> format </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_time </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_val </td>
+					<td>  </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Right" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Event Criteria </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Archive Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Push Change event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push Archive event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push DataReady event by user code </td>
+					<td> false </td>
+				</tr>
+			</table>
+		</td>
+	</TR>
+</table>
+<br><br>
+<hr>
+<a name="attrcountRateCorrection"> </a>
+<br><br><br>
+<font size="+1"><u><b> Attribute countRateCorrection : </b></u></font>
+<ul>
+	Get count rate correction in ns.<br><Br>
+	When the count rate correction is disabled, the value will be 0.<br>
+</ul>
+<br><br><br>
+<Table Border=0 Cellpadding=0 CELLSPACING=20>
+	<TR>
+		<TD ALIGN="left" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Definition </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Attribute Type </td>
+					<td> Scalar </td>
+				</tr>
+				<tr>
+					<td> R/W Type </td>
+					<td> READ </td>
+				</tr>
+				<tr>
+					<td> Data Type </td>
+					<td> Tango::DEV_LONG </td>
+				</tr>
+				<tr>
+					<td> Display Level </td>
+					<td> OPERATOR </td>
+				</tr>
+				<tr>
+					<td> Inherited </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Abstract </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Polling Period </td>
+					<td> Not polled </td>
+				</tr>
+				<tr>
+					<td> Memorized </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Read NOT allowed for </td>
+					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li> </font> </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Center" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Properties </b></font></center></td>
+				</tr>
+				<tr>
+					<td> label </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> unit </td>
+					<td> ns </td>
+				</tr>
+				<tr>
+					<td> standard unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> display unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> format </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_time </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_val </td>
+					<td>  </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Right" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Event Criteria </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Archive Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Push Change event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push Archive event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push DataReady event by user code </td>
+					<td> false </td>
+				</tr>
+			</table>
+		</td>
+	</TR>
+</table>
+<br><br>
+<hr>
 <a name="attrconfigFileName"> </a>
 <br><br><br>
 <font size="+1"><u><b> Attribute configFileName : </b></u></font>
@@ -1941,362 +2579,11 @@
 </table>
 <br><br>
 <hr>
-<a name="attrgainMode"> </a>
-<br><br><br>
-<font size="+1"><u><b> Attribute gainMode : </b></u></font>
-<ul>
-	Changes the gain mode.<br><Br>
-	Available gain modes:<br><Br>
-	STANDARD<br><Br>
-	LOW<br><Br>
-	MEDIUM<br><Br>
-	HIGH<br><Br>
-	VERY_HIGH<br>
-</ul>
-<br><br><br>
-<Table Border=0 Cellpadding=0 CELLSPACING=20>
-	<TR>
-		<TD ALIGN="left" VALIGN=top>
-			<Table Border=2 Cellpadding=3 CELLSPACING=0>
-				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
-				<td colspan=0> <font size=+1> <center><b> Attribute Definition </b></font></center></td>
-				</tr>
-				<tr>
-					<td> Attribute Type </td>
-					<td> Scalar </td>
-				</tr>
-				<tr>
-					<td> R/W Type </td>
-					<td> READ_WRITE </td>
-				</tr>
-				<tr>
-					<td> Data Type </td>
-					<td> Tango::DEV_STRING </td>
-				</tr>
-				<tr>
-					<td> Display Level </td>
-					<td> OPERATOR </td>
-				</tr>
-				<tr>
-					<td> Inherited </td>
-					<td> false </td>
-				</tr>
-				<tr>
-					<td> Abstract </td>
-					<td> false </td>
-				</tr>
-				<tr>
-					<td> Polling Period </td>
-					<td> Not polled </td>
-				</tr>
-				<tr>
-					<td> Memorized </td>
-					<td> true </td>
-				</tr>
-				<tr>
-					<td> Write hardware at init. </td>
-					<td> true </td>
-				</tr>
-			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
-				<tr>
-					<td> Read NOT allowed for </td>
-					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li> </font> </td>
-				</tr>
-				<tr>
-					<td> Write NOT allowed for </td>
-					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
-				</tr>
-			</table>
-		</td>
-		<TD ALIGN="Center" VALIGN=top>
-			<Table Border=2 Cellpadding=3 CELLSPACING=0>
-				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
-				<td colspan=0> <font size=+1> <center><b> Attribute Properties </b></font></center></td>
-				</tr>
-				<tr>
-					<td> label </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> unit </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> standard unit </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> display unit </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> format </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> max_value </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> min_value </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> max_alarm </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> min_alarm </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> max_warning </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> min_warning </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> delta_time </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> delta_val </td>
-					<td>  </td>
-				</tr>
-			</table>
-		</td>
-		<TD ALIGN="Right" VALIGN=top>
-			<Table Border=2 Cellpadding=3 CELLSPACING=0>
-				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
-				<td colspan=0> <font size=+1> <center><b> Attribute Event Criteria </b></font></center></td>
-				</tr>
-				<tr>
-					<td> Periodic </td>
-					<td> Not set </td>
-				</tr>
-				<tr>
-					<td> Relative Change </td>
-					<td> Not set </td>
-				</tr>
-				<tr>
-					<td> Absolute Change </td>
-					<td> Not set </td>
-				</tr>
-			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
-				<tr>
-					<td> Archive Periodic </td>
-					<td> Not set </td>
-				</tr>
-				<tr>
-					<td> Archive Relative Change </td>
-					<td> Not set </td>
-				</tr>
-				<tr>
-					<td> Archive Absolute Change </td>
-					<td> Not set </td>
-				</tr>
-			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
-				<tr>
-					<td> Push Change event by user code </td>
-					<td> false </td>
-				</tr>
-			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
-				<tr>
-					<td> Push Archive event by user code </td>
-					<td> false </td>
-				</tr>
-			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
-				<tr>
-					<td> Push DataReady event by user code </td>
-					<td> false </td>
-				</tr>
-			</table>
-		</td>
-	</TR>
-</table>
-<br><br>
-<hr>
-<a name="attrcountRateCorrection"> </a>
-<br><br><br>
-<font size="+1"><u><b> Attribute countRateCorrection : </b></u></font>
-<ul>
-	Set count rate correction in ns.<br><Br>
-	A value of 0 is used to disabled the correction.<br><Br>
-	A value of 1 is used to use the default correction.<br><Br>
-	Others values are used to set the count rate correction in ns.<br>
-</ul>
-<br><br><br>
-<Table Border=0 Cellpadding=0 CELLSPACING=20>
-	<TR>
-		<TD ALIGN="left" VALIGN=top>
-			<Table Border=2 Cellpadding=3 CELLSPACING=0>
-				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
-				<td colspan=0> <font size=+1> <center><b> Attribute Definition </b></font></center></td>
-				</tr>
-				<tr>
-					<td> Attribute Type </td>
-					<td> Scalar </td>
-				</tr>
-				<tr>
-					<td> R/W Type </td>
-					<td> READ_WRITE </td>
-				</tr>
-				<tr>
-					<td> Data Type </td>
-					<td> Tango::DEV_LONG </td>
-				</tr>
-				<tr>
-					<td> Display Level </td>
-					<td> OPERATOR </td>
-				</tr>
-				<tr>
-					<td> Inherited </td>
-					<td> false </td>
-				</tr>
-				<tr>
-					<td> Abstract </td>
-					<td> false </td>
-				</tr>
-				<tr>
-					<td> Polling Period </td>
-					<td> Not polled </td>
-				</tr>
-				<tr>
-					<td> Memorized </td>
-					<td> true </td>
-				</tr>
-				<tr>
-					<td> Write hardware at init. </td>
-					<td> true </td>
-				</tr>
-			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
-				<tr>
-					<td> Read NOT allowed for </td>
-					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li> </font> </td>
-				</tr>
-				<tr>
-					<td> Write NOT allowed for </td>
-					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
-				</tr>
-			</table>
-		</td>
-		<TD ALIGN="Center" VALIGN=top>
-			<Table Border=2 Cellpadding=3 CELLSPACING=0>
-				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
-				<td colspan=0> <font size=+1> <center><b> Attribute Properties </b></font></center></td>
-				</tr>
-				<tr>
-					<td> label </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> unit </td>
-					<td> ns </td>
-				</tr>
-				<tr>
-					<td> standard unit </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> display unit </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> format </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> max_value </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> min_value </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> max_alarm </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> min_alarm </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> max_warning </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> min_warning </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> delta_time </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> delta_val </td>
-					<td>  </td>
-				</tr>
-			</table>
-		</td>
-		<TD ALIGN="Right" VALIGN=top>
-			<Table Border=2 Cellpadding=3 CELLSPACING=0>
-				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
-				<td colspan=0> <font size=+1> <center><b> Attribute Event Criteria </b></font></center></td>
-				</tr>
-				<tr>
-					<td> Periodic </td>
-					<td> Not set </td>
-				</tr>
-				<tr>
-					<td> Relative Change </td>
-					<td> Not set </td>
-				</tr>
-				<tr>
-					<td> Absolute Change </td>
-					<td> Not set </td>
-				</tr>
-			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
-				<tr>
-					<td> Archive Periodic </td>
-					<td> Not set </td>
-				</tr>
-				<tr>
-					<td> Archive Relative Change </td>
-					<td> Not set </td>
-				</tr>
-				<tr>
-					<td> Archive Absolute Change </td>
-					<td> Not set </td>
-				</tr>
-			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
-				<tr>
-					<td> Push Change event by user code </td>
-					<td> false </td>
-				</tr>
-			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
-				<tr>
-					<td> Push Archive event by user code </td>
-					<td> false </td>
-				</tr>
-			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
-				<tr>
-					<td> Push DataReady event by user code </td>
-					<td> false </td>
-				</tr>
-			</table>
-		</td>
-	</TR>
-</table>
-<br><br>
-<hr>
 <a name="attrtempFpga1"> </a>
 <br><br><br>
 <font size="+1"><u><b> Attribute tempFpga1 : </b></u></font>
 <ul>
-	Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
+	Get temperature of hardware element (fpga) for first module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -2459,7 +2746,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute tempFpga2 : </b></u></font>
 <ul>
-	Get temperature of hardware element for second module in millidegree Celsius.<br>
+	Get temperature of hardware element (fpga) for second module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -2622,7 +2909,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute tempFpgaext1 : </b></u></font>
 <ul>
-	Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
+	Get temperature of hardware element (close to the fpga) for first module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -2785,7 +3072,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute tempFpgaext2 : </b></u></font>
 <ul>
-	Get temperature of hardware element for second module in millidegree Celsius.<br>
+	Get temperature of hardware element (close to the fpga) for second module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -2948,7 +3235,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute temp10ge1 : </b></u></font>
 <ul>
-	Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
+	Get temperature of hardware element (close to the 10GE) for first module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -3111,7 +3398,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute temp10ge2 : </b></u></font>
 <ul>
-	Get temperature of hardware element for second module in millidegree Celsius.<br>
+	Get temperature of hardware element (close to the 10GE) for second module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -3274,7 +3561,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute tempDcdc1 : </b></u></font>
 <ul>
-	Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
+	Get temperature of hardware element (close to the dc dc converter) for first module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -3437,7 +3724,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute tempDcdc2 : </b></u></font>
 <ul>
-	Get temperature of hardware element for second module in millidegree Celsius.<br>
+	Get temperature of hardware element (close to the dc dc converter) for second module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -3600,7 +3887,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute tempSodl1 : </b></u></font>
 <ul>
-	Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
+	Get temperature of hardware element (close to the left so-dimm memory) for first module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -3763,7 +4050,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute tempSodl2 : </b></u></font>
 <ul>
-	Get temperature of hardware element for second module in millidegree Celsius.<br>
+	Get temperature of hardware element (close to the left so-dimm memory) for second module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -3926,7 +4213,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute tempSodr1 : </b></u></font>
 <ul>
-	Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
+	Get temperature of hardware element (close to the right so-dimm memory) for first module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -4089,7 +4376,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute tempSodr2 : </b></u></font>
 <ul>
-	Get temperature of hardware element for second module in millidegree Celsius.<br>
+	Get temperature of hardware element (close to the right so-dimm memory) for second module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -4252,7 +4539,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute tempFpgafl1 : </b></u></font>
 <ul>
-	Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
+	Get temperature of hardware element (left front end board fpga) for first module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -4415,7 +4702,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute tempFpgafl2 : </b></u></font>
 <ul>
-	Get temperature of hardware element for second module in millidegree Celsius.<br>
+	Get temperature of hardware element (left front end board fpga) for second module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -4578,7 +4865,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute tempFpgafr1 : </b></u></font>
 <ul>
-	Get temperature of hardware element for first module in millidegree Celsius.<br><Br>
+	Get temperature of hardware element (right front end board fpga) for first module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -4741,7 +5028,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute tempFpgafr2 : </b></u></font>
 <ul>
-	Get temperature of hardware element for second module in millidegree Celsius.<br>
+	Get temperature of hardware element (right front end board fpga) for second module in millidegree Celsius.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>

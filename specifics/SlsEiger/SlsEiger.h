@@ -107,11 +107,13 @@ public:
 	Tango::DevString	*attr_parallelMode_read;
 	Tango::DevBoolean	*attr_overflowMode_read;
 	Tango::DevDouble	*attr_subFrameExposureTime_read;
+	Tango::DevString	*attr_gainMode_read;
+	Tango::DevLong	*attr_thresholdEnergy_read;
+	Tango::DevBoolean	*attr_countRateCorrectionActivation_read;
+	Tango::DevLong	*attr_countRateCorrection_read;
 	Tango::DevString	*attr_configFileName_read;
 	Tango::DevString	*attr_detectorFirmwareVersion_read;
 	Tango::DevString	*attr_detectorSoftwareVersion_read;
-	Tango::DevString	*attr_gainMode_read;
-	Tango::DevLong	*attr_countRateCorrection_read;
 	Tango::DevLong	*attr_tempFpga1_read;
 	Tango::DevLong	*attr_tempFpga2_read;
 	Tango::DevLong	*attr_tempFpgaext1_read;
@@ -246,6 +248,52 @@ public:
 	virtual void write_subFrameExposureTime(Tango::WAttribute &attr);
 	virtual bool is_subFrameExposureTime_allowed(Tango::AttReqType type);
 /**
+ *	Attribute gainMode related methods
+ *	Description: Changes the gain mode.<br>
+ *               Available gain modes:<br>
+ *               STANDARD<br>
+ *               LOW<br>
+ *               MEDIUM<br>
+ *               HIGH<br>
+ *               VERY_HIGH<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+	virtual void read_gainMode(Tango::Attribute &attr);
+	virtual void write_gainMode(Tango::WAttribute &attr);
+	virtual bool is_gainMode_allowed(Tango::AttReqType type);
+/**
+ *	Attribute thresholdEnergy related methods
+ *	Description: Get/Set threshold energy for modules in eV.<br>
+ *
+ *	Data type:	Tango::DevLong
+ *	Attr type:	Scalar
+ */
+	virtual void read_thresholdEnergy(Tango::Attribute &attr);
+	virtual void write_thresholdEnergy(Tango::WAttribute &attr);
+	virtual bool is_thresholdEnergy_allowed(Tango::AttReqType type);
+/**
+ *	Attribute countRateCorrectionActivation related methods
+ *	Description: Set/get count rate correction activation value.<br>
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void read_countRateCorrectionActivation(Tango::Attribute &attr);
+	virtual void write_countRateCorrectionActivation(Tango::WAttribute &attr);
+	virtual bool is_countRateCorrectionActivation_allowed(Tango::AttReqType type);
+/**
+ *	Attribute countRateCorrection related methods
+ *	Description: Get count rate correction in ns.<br>
+ *               When the count rate correction is disabled, the value will be 0.<br>
+ *
+ *	Data type:	Tango::DevLong
+ *	Attr type:	Scalar
+ */
+	virtual void read_countRateCorrection(Tango::Attribute &attr);
+	virtual bool is_countRateCorrection_allowed(Tango::AttReqType type);
+/**
  *	Attribute configFileName related methods
  *	Description: 
  *
@@ -273,38 +321,8 @@ public:
 	virtual void read_detectorSoftwareVersion(Tango::Attribute &attr);
 	virtual bool is_detectorSoftwareVersion_allowed(Tango::AttReqType type);
 /**
- *	Attribute gainMode related methods
- *	Description: Changes the gain mode.<br>
- *               Available gain modes:<br>
- *               STANDARD<br>
- *               LOW<br>
- *               MEDIUM<br>
- *               HIGH<br>
- *               VERY_HIGH<br>
- *
- *	Data type:	Tango::DevString
- *	Attr type:	Scalar
- */
-	virtual void read_gainMode(Tango::Attribute &attr);
-	virtual void write_gainMode(Tango::WAttribute &attr);
-	virtual bool is_gainMode_allowed(Tango::AttReqType type);
-/**
- *	Attribute countRateCorrection related methods
- *	Description: Set count rate correction in ns.<br>
- *               A value of 0 is used to disabled the correction.<br>
- *               A value of 1 is used to use the default correction.<br>
- *               Others values are used to set the count rate correction in ns.<br>
- *
- *	Data type:	Tango::DevLong
- *	Attr type:	Scalar
- */
-	virtual void read_countRateCorrection(Tango::Attribute &attr);
-	virtual void write_countRateCorrection(Tango::WAttribute &attr);
-	virtual bool is_countRateCorrection_allowed(Tango::AttReqType type);
-/**
  *	Attribute tempFpga1 related methods
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (fpga) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -313,7 +331,7 @@ public:
 	virtual bool is_tempFpga1_allowed(Tango::AttReqType type);
 /**
  *	Attribute tempFpga2 related methods
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (fpga) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -322,8 +340,7 @@ public:
 	virtual bool is_tempFpga2_allowed(Tango::AttReqType type);
 /**
  *	Attribute tempFpgaext1 related methods
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (close to the fpga) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -332,7 +349,7 @@ public:
 	virtual bool is_tempFpgaext1_allowed(Tango::AttReqType type);
 /**
  *	Attribute tempFpgaext2 related methods
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (close to the fpga) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -341,8 +358,7 @@ public:
 	virtual bool is_tempFpgaext2_allowed(Tango::AttReqType type);
 /**
  *	Attribute temp10ge1 related methods
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (close to the 10GE) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -351,7 +367,7 @@ public:
 	virtual bool is_temp10ge1_allowed(Tango::AttReqType type);
 /**
  *	Attribute temp10ge2 related methods
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (close to the 10GE) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -360,8 +376,7 @@ public:
 	virtual bool is_temp10ge2_allowed(Tango::AttReqType type);
 /**
  *	Attribute tempDcdc1 related methods
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (close to the dc dc converter) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -370,7 +385,7 @@ public:
 	virtual bool is_tempDcdc1_allowed(Tango::AttReqType type);
 /**
  *	Attribute tempDcdc2 related methods
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (close to the dc dc converter) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -379,8 +394,7 @@ public:
 	virtual bool is_tempDcdc2_allowed(Tango::AttReqType type);
 /**
  *	Attribute tempSodl1 related methods
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (close to the left so-dimm memory) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -389,7 +403,7 @@ public:
 	virtual bool is_tempSodl1_allowed(Tango::AttReqType type);
 /**
  *	Attribute tempSodl2 related methods
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (close to the left so-dimm memory) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -398,8 +412,7 @@ public:
 	virtual bool is_tempSodl2_allowed(Tango::AttReqType type);
 /**
  *	Attribute tempSodr1 related methods
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (close to the right so-dimm memory) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -408,7 +421,7 @@ public:
 	virtual bool is_tempSodr1_allowed(Tango::AttReqType type);
 /**
  *	Attribute tempSodr2 related methods
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (close to the right so-dimm memory) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -417,8 +430,7 @@ public:
 	virtual bool is_tempSodr2_allowed(Tango::AttReqType type);
 /**
  *	Attribute tempFpgafl1 related methods
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (left front end board fpga) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -427,7 +439,7 @@ public:
 	virtual bool is_tempFpgafl1_allowed(Tango::AttReqType type);
 /**
  *	Attribute tempFpgafl2 related methods
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (left front end board fpga) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -436,8 +448,7 @@ public:
 	virtual bool is_tempFpgafl2_allowed(Tango::AttReqType type);
 /**
  *	Attribute tempFpgafr1 related methods
- *	Description: Get temperature of hardware element for first module in millidegree Celsius.<br>
- *               
+ *	Description: Get temperature of hardware element (right front end board fpga) for first module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -446,7 +457,7 @@ public:
 	virtual bool is_tempFpgafr1_allowed(Tango::AttReqType type);
 /**
  *	Attribute tempFpgafr2 related methods
- *	Description: Get temperature of hardware element for second module in millidegree Celsius.<br>
+ *	Description: Get temperature of hardware element (right front end board fpga) for second module in millidegree Celsius.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
@@ -485,13 +496,6 @@ public:
 	 */
 	virtual Tango::DevString get_cmd(Tango::DevString argin);
 	virtual bool is_GetCmd_allowed(const CORBA::Any &any);
-	/**
-	 *	Command ResetCamera related method
-	 *	Description: Execute an hardware reset of the camera.
-	 *
-	 */
-	virtual void reset_camera();
-	virtual bool is_ResetCamera_allowed(const CORBA::Any &any);
 
 
 /*----- PROTECTED REGION ID(SlsEiger::Additional Method prototypes) ENABLED START -----*/
