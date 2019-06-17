@@ -306,17 +306,17 @@ void LimaDetector::init_device()
         //DO NOT ENABLE ROI/VIDEO IN HARDWARE MODE
         if(fileManagedMode != "HARDWARE")
         {
-            //- reload Roi from property
+			//- Define ImageOpMode for Roi/Binning/etc...  (HardOnly, SoftOnly or HardAndSoft)
+			INFO_STREAM<<"Define ImageOpMode for Roi/Binning  following the ImageOpMode property (" << imageOpMode << ")." << endl;
+			configure_image_op_mode();
+            
+			//- reload Roi from property
             INFO_STREAM << "Reload ROI of detector from Roi property (" << memorizedRoi.at(0)<<","<<memorizedRoi.at(1)<<","<<memorizedRoi.at(2)<<","<<memorizedRoi.at(3)<< ")." << endl;
             configure_roi();
 
             //- reload Binning from property
             INFO_STREAM << "Reload BIN of detector from Binning property (" << memorizedBinningH<< "," << memorizedBinningV << ")." << endl;
             configure_binning();
-
-			//- Define ImageOpMode for Roi/Binning/etc...  (HardOnly, SoftOnly or HardAndSoft)
-			INFO_STREAM<<"Define ImageOpMode for Roi/Binning  following the ImageOpMode property (" << imageOpMode << ")." << endl;
-			configure_image_op_mode();
 		
             //- Activate video mode in order to get notification associated to image acquisition
             INFO_STREAM << "Activate video mode in order to get notification for each acquired image." << endl;
