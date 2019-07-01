@@ -300,7 +300,8 @@ void LimaDetector::init_device()
         INFO_STREAM << "Set amount percent of memory for the lima ring buffer following the ExpertBufferMaxMemoryPercent property (" << expertBufferMaxMemoryPercent << ")." << endl;
         m_ct->buffer()->setMaxMemory((short) expertBufferMaxMemoryPercent);
 		
-        //- reset image, allow to redefine type image according to  CurrentImageType of the HwDetInfoCtrlObj
+        //- reset image, allow to redefine type image according to  CurrentImageType of the HwDetInfoCtrlObj		
+		INFO_STREAM << "Reset image, allow to redefine type image according to  CurrentImageType." << endl;		
         m_ct->image()->reset();		
 	
         //DO NOT ENABLE ROI/VIDEO IN HARDWARE MODE
