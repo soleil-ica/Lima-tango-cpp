@@ -37,11 +37,11 @@
                 <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
                 <PROCESSLIB.version>1.3.8</PROCESSLIB.version>
                 <CORE.name>Core</CORE.name>
-                <CORE.version>1.7.7</CORE.version>
+                <CORE.version>1.7.8</CORE.version>
                 <SIMULATOR.name>Simulator</SIMULATOR.name>
-                <SIMULATOR.version>1.3.15</SIMULATOR.version>
+                <SIMULATOR.version>1.3.16</SIMULATOR.version>
                 <UFXC.name>Ufxc</UFXC.name>
-                <UFXC.version>1.0.0</UFXC.version>                
+                <UFXC.version>1.0.1</UFXC.version>                
             </properties>
            
             <dependencies>

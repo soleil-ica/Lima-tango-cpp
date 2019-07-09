@@ -718,6 +718,8 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 				db_data.push_back(Tango::DbDatum("SFP3IpAddress"));
 				db_data.push_back(Tango::DbDatum("SFP3Port"));
 				db_data.push_back(Tango::DbDatum("Timeout"));
+				db_data.push_back(Tango::DbDatum("GeometricalCorrectionEnabled"));
+				db_data.push_back(Tango::DbDatum("StackFramesSumEnabled"));
 				
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
                 std::string config_ip_address = "127.0.0.1";
@@ -729,6 +731,9 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 				std::string SFP3_ip_address = "127.0.0.1";
 				unsigned long SFP3_port = 0;	
 				unsigned long timeout = 0;
+				bool geometrical_correction_enabled = true ;
+				bool stack_frames_sum_enabled = true ;
+				
                 db_data[0] >> config_ip_address;
 				db_data[1] >> config_port;
                 db_data[2] >> SFP1_ip_address;
@@ -738,12 +743,16 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data[6] >> SFP3_ip_address;
 				db_data[7] >> SFP3_port;
 				db_data[8] >> timeout;
+				db_data[9] >> geometrical_correction_enabled;
+				db_data[10]>> stack_frames_sum_enabled;
 				
                 m_camera = static_cast<void*> (new Ufxc::Camera(config_ip_address, config_port,
 																SFP1_ip_address, SFP1_port,
 																SFP2_ip_address, SFP2_port,
 																SFP3_ip_address, SFP3_port,
-																timeout
+																timeout,
+																geometrical_correction_enabled,
+																stack_frames_sum_enabled
 																));
                 m_interface = static_cast<void*> (new Ufxc::Interface(*(static_cast<Ufxc::Camera*> (m_camera))));
                 m_control = new CtControl(static_cast<Ufxc::Interface*> (m_interface));
