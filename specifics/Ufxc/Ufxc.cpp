@@ -225,7 +225,7 @@ void Ufxc::init_device()
 		INFO_STREAM << "trig_mode = " << trig_mode << endl;
 
 		//available only in mode pump & probe (i.e Trigger Ext Multi and Bpp2)
-		if(trig_mode == ExtTrigMult && image_type == Bpp2)
+		if(trig_mode == ExtTrigMult && (image_type==Bpp2 ||image_type==Bpp32))
 		{
 			INFO_STREAM << "Write tango hardware at Init - triggerAcquisitionFrequency." << endl;
 			Tango::WAttribute &triggerAcquisitionFrequency = dev_attr->get_w_attr_by_name("triggerAcquisitionFrequency");
@@ -626,7 +626,7 @@ void Ufxc::write_triggerAcquisitionFrequency(Tango::WAttribute &attr)
 		DEBUG_STREAM << "trig_mode = " << trig_mode << endl;
 
 		//available only in mode pump & probe (i.e Trigger Ext Multi and Bpp2)
-		if(trig_mode == ExtTrigMult && image_type == Bpp2)
+		if(trig_mode == ExtTrigMult && (image_type==Bpp2 ||image_type==Bpp32))
 		{
 			double exposure;
 			m_ct->acquisition()->getAcqExpoTime(exposure);
@@ -634,7 +634,7 @@ void Ufxc::write_triggerAcquisitionFrequency(Tango::WAttribute &attr)
 			INFO_STREAM << "nb_frames_pump_probe = " << nb_frames_pump_probe << endl;
 			m_camera->set_pump_probe_trigger_acquisition_frequency(attr_triggerAcquisitionFrequency_write);
 			m_camera->set_pump_probe_nb_frames(nb_frames_pump_probe);
-			m_ct->acquisition()->setAcqNbFrames(nb_frames_pump_probe);
+			m_ct->acquisition()->setAcqNbFrames(stackFramesSumEnabled?1:nb_frames_pump_probe);
 			PropertyHelper::set_property(this, "MemorizedTriggerAcquisitionFrequency", attr_triggerAcquisitionFrequency_write);
 		}
 		else
