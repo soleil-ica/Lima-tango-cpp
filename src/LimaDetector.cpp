@@ -250,7 +250,11 @@ void LimaDetector::init_device()
         LimaDetector::m_init_count++;
         //add image dynamic attribute
         INFO_STREAM << "Add \'image\' dynamic attribute." << endl;
-        add_image_dynamic_attribute();
+		add_image_dynamic_attribute("image");
+
+		//add image dynamic attribute
+		INFO_STREAM << "Add \'baseImage\' dynamic attribute." << endl;
+		add_image_dynamic_attribute("baseImage");
 
         //- Manage LIMA logs verbose
         INFO_STREAM << "Define Lima Traces levels." << endl;
@@ -296,23 +300,24 @@ void LimaDetector::init_device()
         INFO_STREAM << "Set amount percent of memory for the lima ring buffer following the ExpertBufferMaxMemoryPercent property (" << expertBufferMaxMemoryPercent << ")." << endl;
         m_ct->buffer()->setMaxMemory((short) expertBufferMaxMemoryPercent);
 		
-        //- reset image, allow to redefine type image according to  CurrentImageType of the HwDetInfoCtrlObj
+        //- reset image, allow to redefine type image according to  CurrentImageType of the HwDetInfoCtrlObj		
+		INFO_STREAM << "Reset image, allow to redefine type image according to  CurrentImageType." << endl;		
         m_ct->image()->reset();		
 	
         //DO NOT ENABLE ROI/VIDEO IN HARDWARE MODE
         if(fileManagedMode != "HARDWARE")
         {
-            //- reload Roi from property
-            INFO_STREAM << "Reload ROI of detector from Roi property." << endl;
-            configure_roi();
-
-            //- reload Binning from property
-            INFO_STREAM << "Reload BIN of detector from Binning property." << endl;
-            configure_binning();
-
 			//- Define ImageOpMode for Roi/Binning/etc...  (HardOnly, SoftOnly or HardAndSoft)
 			INFO_STREAM<<"Define ImageOpMode for Roi/Binning  following the ImageOpMode property (" << imageOpMode << ")." << endl;
 			configure_image_op_mode();
+            
+			//- reload Roi from property
+            INFO_STREAM << "Reload ROI of detector from Roi property (" << memorizedRoi.at(0)<<","<<memorizedRoi.at(1)<<","<<memorizedRoi.at(2)<<","<<memorizedRoi.at(3)<< ")." << endl;
+            configure_roi();
+
+            //- reload Binning from property
+            INFO_STREAM << "Reload BIN of detector from Binning property (" << memorizedBinningH<< "," << memorizedBinningV << ")." << endl;
+            configure_binning();
 		
             //- Activate video mode in order to get notification associated to image acquisition
             INFO_STREAM << "Activate video mode in order to get notification for each acquired image." << endl;
@@ -324,8 +329,8 @@ void LimaDetector::init_device()
         add_shutter_dynamic_attributes();
 
         //- Set default nb frames of acquisition at start-up
-        INFO_STREAM << "Set default nb. frames of acquisition at start-up to " << attr_nbFrames_write << "." << endl;
-        m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
+        INFO_STREAM << "Set default nb. frames of acquisition at start-up to (" << memorizedNbFrames << ")." << endl;
+        m_ct->acquisition()->setAcqNbFrames(memorizedNbFrames);
 
         //- define parameters of ctSaving object used to store image in files
         INFO_STREAM << "Configure parameters used to save image into a file (path/name/format/...)." << endl;
@@ -2032,9 +2037,17 @@ void LimaDetector::write_acquisitionMode(Tango::WAttribute &attr)
         INFO_STREAM << "Remove image dynamic attribute." << endl;
         m_dim.dynamic_attributes_manager().remove_attribute("image");
 
+		//remove attributes from dam
+		INFO_STREAM << "Remove baseImage dynamic attribute." << endl;
+		m_dim.dynamic_attributes_manager().remove_attribute("baseImage");
+
         //add image dynamic attribute
         INFO_STREAM << "Add image dynamic attribute." << endl;
-        add_image_dynamic_attribute();
+		add_image_dynamic_attribute("image");
+
+		//add baseImage dynamic attribute
+		INFO_STREAM << "Add baseImage dynamic attribute." << endl;
+		add_image_dynamic_attribute("baseImage");
         //////*******************************************************************************************//////
     }
     catch(Exception& e)
@@ -2970,7 +2983,14 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
                 DEBUG_STREAM << "last_image_counter -> " << counter << endl;
 
                 Data last_image;
+				if(cbd.dya->get_name() == "image")
+				{
                 m_ct->ReadImage(last_image, -1);
+				}
+				else //NECESSARY "baseImage"
+				{
+					m_ct->ReadBaseImage(last_image, -1);
+				}
 
                 if(last_image.data() != 0)
                 {
@@ -3037,6 +3057,7 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
             {
                 DEBUG_STREAM << "last_image_counter -> " << counter << endl;
                 CtVideo::Image last_image; //never put this variable in the class data member, refrence is locked in ctVideo (mantis 0021083)
+				//NB : it s always the base image  no processLib operations are applied in video mode
                 m_ct->video()->getLastImage(last_image); //last image acquired
                 if(last_image.buffer() != 0)
                 {
@@ -3214,8 +3235,12 @@ void LimaDetector::prepare()
             *attr_fileGeneration_read = attr_fileGeneration_write;
             m_ct->saving()->setParameters(m_saving_par);
 
-            //- in SNAP mode, we request attr_nbFrames_write frames
-            m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
+			//TODO : check later if it is possible to remove completly setAcqNbFrames from here !
+			if(detectorType != "Ufxc")			
+			{
+				//- in SNAP mode, we request attr_nbFrames_write frames
+				m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
+			}
 
             ////////////////////////////////////////////////////////
 
@@ -3295,8 +3320,12 @@ void LimaDetector::snap()
             *attr_fileGeneration_read = attr_fileGeneration_write;
             m_ct->saving()->setParameters(m_saving_par);
 
-            //- in SNAP mode, we request attr_nbFrames_write frames
-            m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
+			//TODO : check later if it is possible to remove completly setAcqNbFrames from here !
+			if(detectorType != "Ufxc")
+			{
+				//- in SNAP mode, we request attr_nbFrames_write frames
+				m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
+			}
 			
 			//reset event list
 			m_ct->event()->resetEventList();
@@ -4220,7 +4249,11 @@ void LimaDetector::configure_image_type(void)
 {
     HwDetInfoCtrlObj *hw_det_info;
     m_hw->getHwCtrlObj(hw_det_info);
-    if(detectorPixelDepth == "8")
+    if(detectorPixelDepth == "2")
+    {
+        hw_det_info->setCurrImageType(Bpp2);
+    }	
+    else if(detectorPixelDepth == "8")
     {
         hw_det_info->setCurrImageType(Bpp8);
     }
@@ -4228,6 +4261,10 @@ void LimaDetector::configure_image_type(void)
     {
         hw_det_info->setCurrImageType(Bpp12);
     }
+    else if(detectorPixelDepth == "14")
+    {
+        hw_det_info->setCurrImageType(Bpp14);
+    }	
     else if(detectorPixelDepth == "16")
     {
         hw_det_info->setCurrImageType(Bpp16);
@@ -4501,7 +4538,9 @@ void LimaDetector::create_log_info_attributes(void)
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION));
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION));
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION));
+		yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSJUNGFRAU_NAME), YAT_XSTR(SLSJUNGFRAU_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION));
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(LAMBDA_NAME), YAT_XSTR(LAMBDA_VERSION_DEVICE));//- name conflict with lambda sdk
 
         #else // UNIX_32
         yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
@@ -4515,8 +4554,7 @@ void LimaDetector::create_log_info_attributes(void)
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MERLIN_NAME), YAT_XSTR(MERLIN_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSJUNGFRAU_NAME), YAT_XSTR(SLSJUNGFRAU_VERSION) );
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );        
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
         #endif
     #endif
@@ -4663,22 +4701,22 @@ void LimaDetector::configure_attributes_hardware_at_init(void)
 // method :         LimaDetector::add_image_dynamic_attribute
 //
 //-----------------------------------------------------------------------------
-void LimaDetector::add_image_dynamic_attribute(void)
+void LimaDetector::add_image_dynamic_attribute(const std::string& attr_name)
 {
     //- add image dynamic attribute
     //- create image dyn attr (UChar, UShort or ULong)        
     yat4tango::DynamicAttributeInfo dai;
     dai.dev = this;
-    dai.tai.name = "image";
+	dai.tai.name = attr_name;
     dai.tai.data_format = Tango::IMAGE;
     dai.tai.max_dim_x = 100000; //- arbitrary big value
     dai.tai.max_dim_y = 100000; //- arbitrary big value
 
-    if(detectorPixelDepth == "8")
+    if(detectorPixelDepth == "8" ||detectorPixelDepth == "2")
     {
         dai.tai.data_type = Tango::DEV_UCHAR;
     }
-    else if(detectorPixelDepth == "12" || detectorPixelDepth == "16")
+    else if(detectorPixelDepth == "12" || detectorPixelDepth == "16" ||detectorPixelDepth == "14")
     {
         dai.tai.data_type = Tango::DEV_USHORT;
     }
@@ -4694,15 +4732,15 @@ void LimaDetector::add_image_dynamic_attribute(void)
     {
         dai.tai.data_type = Tango::DEV_LONG;
     }
-    else
-    {
-        stringstream ss;
-        ss << "DetectorPixelDepth " << "(" << detectorPixelDepth << ") is not supported!" << endl;
-        THROW_DEVFAILED("INTERNAL_ERROR", 
-						(ss.str()).c_str(), 
-						"LimaDetector::configure_image_type");
-        return;
-    }
+	else
+	{
+		stringstream ss;
+		ss << "DetectorPixelDepth " << "(" << detectorPixelDepth << ") is not supported!" << endl;
+		THROW_DEVFAILED("INTERNAL_ERROR",
+						(ss.str()).c_str(),
+						"LimaDetector::add_image_dynamic_attribute");
+		return;
+	}
 
     //- Check if specialDisplayType is set (FLOAT for example)
     transform(specialDisplayType.begin(), specialDisplayType.end(), specialDisplayType.begin(), ::toupper);
@@ -4882,6 +4920,10 @@ void LimaDetector::execute_close_shutter_callback(yat4tango::DynamicCommandExecu
                         "LimaDetector::execute_close_shutter_callback");
     }
 }
+
+
+
+
 
 
 }	//	namespace

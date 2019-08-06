@@ -46,7 +46,7 @@
 #include "Factory.h"
 #include <tango.h>
 #include <yat4tango/PropertyHelper.h>
-
+#include <yat4tango/InnerAppender.h>
 #include "lima/HwInterface.h"
 #include "lima/CtControl.h"
 #include "lima/CtAcquisition.h"

@@ -66,6 +66,16 @@ Revision:  - Author:
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
 <Td><Font Size=-1>Detector Number.</Font></Td></Tr>
 
+<Tr><Td><b><a href=#Dev_DefaultValues>TemperatureTargetAtInit </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>Define which Temperature must be used at init device<br>
+- DEFAULT : use DefaultTemperatureTarget value<br>
+- MEMORIZED : use MemorizedTemperatureTarget value<br></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>DefaultTemperatureTarget </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Define the Temperature Target of the Cooler at Init device if TemperatureAtInit = DEFAULT. (in Celsius)<br></Font></Td></Tr>
+
 <Tr><Td><b><a href=#Dev_DefaultValues>MemorizedInternalAcquisitionMode </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
 <Td><Font Size=-1>Memorize/Define the internalAcquisitionMode attribute at Init device<br>
@@ -83,7 +93,7 @@ Availables values :<br>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>MemorizedTemperatureTarget </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
-<Td><Font Size=-1>Memorize/Define the Temperature Target of the Cooler at Init device. (in ?C)<br></Font></Td></Tr>
+<Td><Font Size=-1>Define the Temperature Target of the Cooler at Init device if TemperatureAtInit = MEMORIZED. (in Celsius)<br></Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>MemorizedGain </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_USHORT</Font></Td>
@@ -109,6 +119,14 @@ Availables values :<br>
     <Tr>
         <Td>DetectorNum</Td>
         <td>No default value</td>
+    </Tr>
+    <Tr>
+        <Td>TemperatureTargetAtInit</Td>
+        <td>DEFAULT</td>
+    </Tr>
+    <Tr>
+        <Td>DefaultTemperatureTarget</Td>
+        <td>-110</td>
     </Tr>
     <Tr>
         <Td>MemorizedInternalAcquisitionMode</Td>

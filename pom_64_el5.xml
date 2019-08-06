@@ -9,7 +9,7 @@
 	
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.8.4</version>
+    <version>1.8.5</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -24,9 +24,9 @@
         <CORE.name>Core</CORE.name>
         <CORE.version>1.7.7</CORE.version>
         <MAXIPIX.name>Maxipix</MAXIPIX.name>
-        <MAXIPIX.version>1.0.1</MAXIPIX.version>
+        <MAXIPIX.version>1.0.2</MAXIPIX.version>
      	<SIMULATOR.name>Simulator</SIMULATOR.name>
-        <SIMULATOR.version>1.3.14</SIMULATOR.version>
+        <SIMULATOR.version>1.3.15</SIMULATOR.version>
 	</properties>
 
     <scm>
@@ -78,11 +78,17 @@
                             <include>*.cpp</include>
                             <include>specifics/SimulatorCCD/*.cpp</include>							
                             <include>specifics/Maxipix/*.cpp</include>							
+							<include>specifics/Layout/*.cpp</include>  			
+							<include>specifics/Mask/*.cpp</include>	
+							<include>specifics/RoiCounters/*.cpp</include>
                         </includes>
                         <includePaths>                          
                             <includePath>src</includePath>                                   
                             <includePath>specifics/SimulatorCCD</includePath> 		
                             <includePath>specifics/Maxipix</includePath> 		
+						    <includePath>specifics/Layout</includePath>
+							<includePath>specifics/Mask</includePath>
+							<includePath>specifics/RoiCounters</includePath>
 							<!-- <includePath>${libs-64bits}/my_breakpad/include</includePath> 		 -->
 
                         </includePaths>
@@ -103,6 +109,10 @@
                             <!-- define which detector you need to ENABLE -->      
                             <define>SIMULATOR_ENABLED</define> 						
                             <define>MAXIPIX_ENABLED</define> 						
+							<define>LAYOUT_ENABLED</define>		
+							<define>MASK_ENABLED</define>  
+							<define>ROICOUNTERS_ENABLED</define>     
+							<define>SOLEIL_YAT_STREAM</define>                   				
                         </defines>                        
 			
                     </cpp>        

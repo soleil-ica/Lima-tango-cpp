@@ -164,6 +164,12 @@ public :
  *	Define the number of images in the acquisition mode (STACKING_16 or STACKING_32)
  */
 	Tango::DevULong	memorizedNbStackingImages;
+/**
+ *	Dfine the modules Mask. <BR>
+ *	Each bit of this Mask fix if a specific module is enabled or disabled.<BR>
+ *	Value must be in Hexadecimal format 
+ */
+	string	moduleMask;
 //@}
 
 /**

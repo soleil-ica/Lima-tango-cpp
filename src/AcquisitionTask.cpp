@@ -216,10 +216,9 @@ void AcquisitionTask::process_message(yat::Message& msg) throw(Tango::DevFailed)
         stringstream ssError;
         for(unsigned i = 0; i < ex.errors.size(); i++)
             ssError << ex.errors[i].desc << endl;
-        Tango::Except::throw_exception(
-        static_cast<const char*>("TANGO_DEVICE_ERROR"),
-        static_cast<const char*>(ssError.str().c_str()),
-        static_cast<const char*>("AcquisitionTask::process_message"));
+        THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						ssError.str().c_str(),
+						"AcquisitionTask::process_message");
         throw;
     }
 }
@@ -292,10 +291,9 @@ void AcquisitionTask::on_abort(Tango::DevFailed df)
     //    yat::Message* msg = yat::Message::allocate(DEVICE_ABORT_MSG, HIGHEST_MSG_PRIORITY, false);
     //    post(msg);
 
-    Tango::Except::throw_exception(
-    static_cast<const char*>("TANGO_DEVICE_ERROR"),
-    static_cast<const char*>(m_acq_conf.abort_status_message.c_str()),
-    static_cast<const char*>("AcquisitionTask::on_abort"));
+    THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+					m_acq_conf.abort_status_message.c_str(),
+					"AcquisitionTask::on_abort");
 }
 
 // ============================================================================
@@ -315,10 +313,9 @@ void AcquisitionTask::on_abort(const std::string& st)
     //    yat::Message* msg = yat::Message::allocate(DEVICE_ABORT_MSG, HIGHEST_MSG_PRIORITY, false);
     //    post(msg);    
 
-    Tango::Except::throw_exception(
-    static_cast<const char*>("TANGO_DEVICE_ERROR"),
-    static_cast<const char*>(m_acq_conf.abort_status_message.c_str()),
-    static_cast<const char*>("AcquisitionTask::on_abort"));
+    THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+					m_acq_conf.abort_status_message.c_str(),
+					"AcquisitionTask::on_abort");
 
 }
 

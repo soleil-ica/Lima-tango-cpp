@@ -71,7 +71,7 @@ using namespace std;
 //================================================================
 //  softwareVersion       |  Tango::DevFloat	Scalar
 //  chargeSumming         |  Tango::DevBoolean	Scalar
-//  colourMode            |  Tango::DevBoolean	Scalar
+//  colourMode            |  Tango::DevLong	Scalar
 //  continuousRW          |  Tango::DevBoolean	Scalar
 //  counter               |  Tango::DevLong	Scalar
 //  gain                  |  Tango::DevLong	Scalar
@@ -91,8 +91,8 @@ using namespace std;
 //  triggerOutLVDS        |  Tango::DevLong	Scalar
 //  triggerOutTTLInvert   |  Tango::DevLong	Scalar
 //  triggerOutLVDSInvert  |  Tango::DevLong	Scalar
-//  triggerInTTLDelay    |  Tango::DevLong64	Scalar
-//  triggerInLVDSDelay   |  Tango::DevLong64	Scalar
+//  triggerInTTLDelay     |  Tango::DevLong64	Scalar
+//  triggerInLVDSDelay    |  Tango::DevLong64	Scalar
 //  triggerUseDelay       |  Tango::DevBoolean	Scalar
 //================================================================
 
@@ -202,7 +202,7 @@ void Merlin::init_device()
 	
 	attr_softwareVersion_read = new Tango::DevFloat[1];
 	attr_chargeSumming_read = new Tango::DevBoolean[1];
-	attr_colourMode_read = new Tango::DevBoolean[1];
+	attr_colourMode_read = new Tango::DevLong[1];
 	attr_continuousRW_read = new Tango::DevBoolean[1];
 	attr_counter_read = new Tango::DevLong[1];
 	attr_gain_read = new Tango::DevLong[1];
@@ -580,7 +580,7 @@ void Merlin::write_chargeSumming(Tango::WAttribute &attr)
  *	Read attribute colourMode related method
  *	Description: 
  *
- *	Data type:	Tango::DevBoolean
+ *	Data type:	Tango::DevDevLong
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
@@ -618,7 +618,7 @@ void Merlin::read_colourMode(Tango::Attribute &attr)
  *	Write attribute colourMode related method
  *	Description: 
  *
- *	Data type:	Tango::DevBoolean
+ *	Data type:	Tango::DevLong
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
@@ -626,7 +626,7 @@ void Merlin::write_colourMode(Tango::WAttribute &attr)
 {
 	INFO_STREAM << "Merlin::write_colourMode(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-	Tango::DevBoolean	w_val;
+	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Merlin::write_colourMode) ENABLED START -----*/
 	try 

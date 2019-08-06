@@ -1145,7 +1145,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "FileManagedMode";
-	prop_desc = "Define the File manged Mode :<br>\n- HARDWARE : <br>\n- SOFTWARE :";
+	prop_desc = "Define the File managed Mode :<br>\n- HARDWARE : <br>\n- SOFTWARE  : <br>";
 	prop_def  = "SOFTWARE";
 	vect_data.clear();
 	vect_data.push_back("SOFTWARE");
@@ -1160,7 +1160,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "FileWriteMode";
-	prop_desc = "Available only for Nexus format : Set the SetWriteMode(). <br>\nAvailable values :<br>\n- ASYNCHRONOUS<br>\n- SYNCHRONOUS<br>\n- DELAYED";
+	prop_desc = "Available only for Nexus format : set the SetWriteMode(). <br>\nAvailable values :<br>\n- ASYNCHRONOUS<br>\n- SYNCHRONOUS<br>\n- DELAYED";
 	prop_def  = "ASYNCHRONOUS";
 	vect_data.clear();
 	vect_data.push_back("ASYNCHRONOUS");
@@ -1175,7 +1175,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "FileMemoryMode";
-	prop_desc = "Available only for Nexus format : Set the SetDataItemMemoryMode().<br>\nAvailable values :<br>\n- COPY<br>\n- NO_COPY";
+	prop_desc = "Available only for Nexus format : set the SetDataItemMemoryMode().<br>\nAvailable values :<br>\n- COPY<br>\n- NO_COPY";
 	prop_def  = "COPY";
 	vect_data.clear();
 	vect_data.push_back("COPY");
@@ -1566,7 +1566,7 @@ void LimaDetectorClass::write_class_property()
 
 	//	Put title
 	Tango::DbDatum	title("ProjectTitle");
-	string	str_title("LimaDetector");
+	string	str_title("Lima Devie Generic");
 	title << str_title;
 	data.push_back(title);
 

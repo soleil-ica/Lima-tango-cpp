@@ -131,6 +131,23 @@ static const char *RcsId = "$Id:  $";
 #include <SlsJungfrauClass.h>
 #endif
 
+
+#ifdef LAMBDA_ENABLED
+#include <LambdaClass.h>
+#endif
+
+#ifdef DHYANA_ENABLED
+#include <DhyanaClass.h>
+#endif
+
+#ifdef UFXC_ENABLED
+#include <UfxcClass.h>
+#endif
+
+#ifdef XSPRESS3_ENABLED
+#include <Xspress3Class.h>
+#endif
+
 #ifndef WIN32
 #include "tango.h"
 #endif
@@ -234,5 +251,23 @@ void Tango::DServer::class_factory()
 #ifdef SLSJUNGFRAU_ENABLED        
     add_class(SlsJungfrau_ns::SlsJungfrauClass::init("SlsJungfrau"));
 #endif	
+
+#ifdef LAMBDA_ENABLED        
+    add_class(Lambda_ns::LambdaClass::init("Lambda"));
+#endif	
+
+	
+#ifdef DHYANA_ENABLED        
+    add_class(Dhyana_ns::DhyanaClass::init("Dhyana"));
+#endif
+	
+#ifdef UFXC_ENABLED        
+    add_class(Ufxc_ns::UfxcClass::init("Ufxc"));
+#endif	
+
+#ifdef XSPRESS3_ENABLED        
+    add_class(Xspress3_ns::Xspress3Class::init("Xspress3"));
+#endif	
+	
 }
 

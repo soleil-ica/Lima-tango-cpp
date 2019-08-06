@@ -1100,6 +1100,7 @@ void PilatusPixelDetector::set_energy(Tango::DevDouble argin)
  *	method:	PilatusPixelDetector::get_th
  *
  *	description:	method to execute "GetTH"
+ *	Read temperature (of nb sensors) and humidity (of nb sensors) of the detector
  *
  * @return	
  *
@@ -1146,5 +1147,7 @@ Tango::DevVarDoubleArray *PilatusPixelDetector::get_th()
     }
 	return argout;
 }
+
+
 
 }	//	namespace

@@ -115,6 +115,9 @@ void RoiCounters::delete_device()
 	//- remove any dynamic attr or command
 	INFO_STREAM << "remove any dynamic attributes or commands" << endl;
 	m_dim.remove();
+	
+	INFO_STREAM << "Remove the inner-appender." << endl;
+	yat4tango::InnerAppender::release(this);		
 }
 
 //+----------------------------------------------------------------------------
@@ -139,6 +142,10 @@ void RoiCounters::init_device()
 	m_status_message.str("");
 	m_operations_list.clear();
 
+	//- instanciate the appender in order to manage logs
+	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;
+	yat4tango::InnerAppender::initialize(this, 512);	
+	
 	//initialize user data members attached to tango attributes
 	attr_frameNumber_value = 0;
 	attr_x_arrays.resize(MAX_NB_ROICOUNTERS);

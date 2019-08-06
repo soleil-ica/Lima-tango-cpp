@@ -235,6 +235,18 @@ public:
 	{return (static_cast<Eiger *>(dev))->is_temperature_allowed(ty);}
 };
 
+class detectorReadoutTimeAttrib: public Tango::Attr
+{
+public:
+	detectorReadoutTimeAttrib():Attr("detectorReadoutTime", Tango::DEV_DOUBLE, Tango::READ) {};
+	~detectorReadoutTimeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_detectorReadoutTime(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_detectorReadoutTime_allowed(ty);}
+};
+
 class detectorDistanceAttrib: public Tango::Attr
 {
 public:
@@ -275,6 +287,20 @@ public:
 	{(static_cast<Eiger *>(dev))->write_beamCenterX(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 	{return (static_cast<Eiger *>(dev))->is_beamCenterX_allowed(ty);}
+};
+
+class roiModeAttrib: public Tango::Attr
+{
+public:
+	roiModeAttrib():Attr("roiMode", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~roiModeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_roiMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_roiMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_roiMode_allowed(ty);}
 };
 
 class wavelengthAttrib: public Tango::Attr
@@ -329,6 +355,18 @@ public:
 	{(static_cast<Eiger *>(dev))->read_dataCollectionDate(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 	{return (static_cast<Eiger *>(dev))->is_dataCollectionDate_allowed(ty);}
+};
+
+class managedModeAttrib: public Tango::Attr
+{
+public:
+	managedModeAttrib():Attr("managedMode", Tango::DEV_STRING, Tango::READ) {};
+	~managedModeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_managedMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_managedMode_allowed(ty);}
 };
 
 class virtualPixelCorrectionAttrib: public Tango::Attr
@@ -390,10 +428,10 @@ public:
 //=========================================
 //	Define classes for commands
 //=========================================
-class InitializeClass : public Tango::Command
+class UpdateTHClass : public Tango::Command
 {
 public:
-	InitializeClass(const char   *name,
+	UpdateTHClass(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -401,23 +439,23 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	InitializeClass(const char   *name,
+	UpdateTHClass(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~InitializeClass() {};
+	~UpdateTHClass() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Eiger *>(dev))->is_Initialize_allowed(any);}
+	{return (static_cast<Eiger *>(dev))->is_UpdateTH_allowed(any);}
 };
 
 
 
-class AbortClass : public Tango::Command
+class DisarmCmd : public Tango::Command
 {
 public:
-	AbortClass(const char   *name,
+	DisarmCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -425,15 +463,39 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	AbortClass(const char   *name,
+	DisarmCmd(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~AbortClass() {};
+	~DisarmCmd() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<Eiger *>(dev))->is_Abort_allowed(any);}
+	{return (static_cast<Eiger *>(dev))->is_Disarm_allowed(any);}
+};
+
+
+
+class InitializeCmd : public Tango::Command
+{
+public:
+	InitializeCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	InitializeCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~InitializeCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<Eiger *>(dev))->is_Initialize_allowed(any);}
 };
 
 

@@ -880,6 +880,21 @@ void ImXpadClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
+	prop_name = "ModuleMask";
+	prop_desc = "Dfine the modules Mask. <BR>\nEach bit of this Mask fix if a specific module is enabled or disabled.<BR>\nValue must be in Hexadecimal format ";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 }
 //+----------------------------------------------------------------------------
 //

@@ -409,6 +409,8 @@ void PilatusPixelDetectorClass::attribute_factory(vector<Tango::Attr *> &att_lis
 	energyAttrib	*energy = new energyAttrib();
 	Tango::UserDefaultAttrProp	energy_prop;
 	energy_prop.set_unit("eV");
+	energy_prop.set_standard_unit(" ");
+	energy_prop.set_display_unit(" ");
 	energy_prop.set_format("%6.2f");
 	energy_prop.set_description("Define a new energy (in eV).");
 	energy->set_default_properties(energy_prop);
@@ -420,6 +422,8 @@ void PilatusPixelDetectorClass::attribute_factory(vector<Tango::Attr *> &att_lis
 	thresholdAttrib	*threshold = new thresholdAttrib();
 	Tango::UserDefaultAttrProp	threshold_prop;
 	threshold_prop.set_unit("eV");
+	threshold_prop.set_standard_unit(" ");
+	threshold_prop.set_display_unit(" ");
 	threshold_prop.set_format("%6.2f");
 	threshold_prop.set_description("Define a new threshold (in eV).");
 	threshold->set_default_properties(threshold_prop);
@@ -430,6 +434,9 @@ void PilatusPixelDetectorClass::attribute_factory(vector<Tango::Attr *> &att_lis
 	//	Attribute : gain
 	gainAttrib	*gain = new gainAttrib();
 	Tango::UserDefaultAttrProp	gain_prop;
+	gain_prop.set_unit(" ");
+	gain_prop.set_standard_unit(" ");
+	gain_prop.set_display_unit(" ");
 	gain_prop.set_description("Available Gain values :<br>\nLOW<br>\nMID<br>\nHIGH<br>\nUHIGH<br>");
 	gain->set_default_properties(gain_prop);
 	gain->set_memorized();
@@ -439,6 +446,9 @@ void PilatusPixelDetectorClass::attribute_factory(vector<Tango::Attr *> &att_lis
 	//	Attribute : imagePath
 	imagePathAttrib	*image_path = new imagePathAttrib();
 	Tango::UserDefaultAttrProp	image_path_prop;
+	image_path_prop.set_unit(" ");
+	image_path_prop.set_standard_unit(" ");
+	image_path_prop.set_display_unit(" ");
 	image_path_prop.set_description("Change the image path.<br>\n<br>\nIf the directory does not exist, it will be created if it is possible to do so with write permission.<br>\nA path relative to the current path is accepted.<br>");
 	image_path->set_default_properties(image_path_prop);
 	image_path->set_memorized();
@@ -448,6 +458,9 @@ void PilatusPixelDetectorClass::attribute_factory(vector<Tango::Attr *> &att_lis
 	//	Attribute : fileName
 	fileNameAttrib	*file_name = new fileNameAttrib();
 	Tango::UserDefaultAttrProp	file_name_prop;
+	file_name_prop.set_unit(" ");
+	file_name_prop.set_standard_unit(" ");
+	file_name_prop.set_display_unit(" ");
 	file_name_prop.set_description("Image file pattern name.");
 	file_name->set_default_properties(file_name_prop);
 	file_name->set_memorized();
@@ -509,7 +522,7 @@ void PilatusPixelDetectorClass::set_default_property()
 	//	Set Default Class Properties
 	//	Set Default Device Properties
 	prop_name = "DetectorPort";
-	prop_desc = "Detector port number";
+	prop_desc = "Detector port number of CamServer";
 	prop_def  = "6666";
 	vect_data.clear();
 	vect_data.push_back("6666");
@@ -524,7 +537,7 @@ void PilatusPixelDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "DetectorIP";
-	prop_desc = "Detector IP address";
+	prop_desc = "Detector IP address of CamServer";
 	prop_def  = "127.0.0.1";
 	vect_data.clear();
 	vect_data.push_back("127.0.0.1");
@@ -554,7 +567,7 @@ void PilatusPixelDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "UseReader";
-	prop_desc = "Enable/Disable monitoring of directory receiving image files.\n[default = enable reading directory]";
+	prop_desc = "Enable/Disable monitoring of the directory receiving image files in order to read images provided by CamServer & to display image in the attribut image<br>\n[default = enable reading directory]";
 	prop_def  = "true";
 	vect_data.clear();
 	vect_data.push_back("true");
@@ -569,7 +582,7 @@ void PilatusPixelDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "ReaderTimeout";
-	prop_desc = "During acquisition, this is the elapsed time before declaring that is no available image returned by detector. (in ms)";
+	prop_desc = "This is the elapsed time before declaring that is no available image returned by CamServer during the Acquisition. ";
 	prop_def  = "10000";
 	vect_data.clear();
 	vect_data.push_back("10000");

@@ -158,12 +158,31 @@
 #include <SlsJungfrauInterface.h>
 #endif
 
+#ifdef LAMBDA_ENABLED
+#include <LambdaCamera.h>
+#include <LambdaInterface.h>
+#endif
+
+#ifdef DHYANA_ENABLED
+#include <DhyanaCamera.h>
+#include <DhyanaInterface.h>
+#endif
+
+
+#ifdef UFXC_ENABLED
+#include <UfxcCamera.h>
+#include <UfxcInterface.h>
+#endif
+
+
+#ifdef XSPRESS3_ENABLED
+#include <Xspress3Camera.h>
+#include <Xspress3Interface.h>
+#endif
 
 //ProcessLib/Data : define dimensions of image
 #define WIDTH_INDEX   0
 #define HEIGHT_INDEX  1
-
-
 
 using namespace lima;
 

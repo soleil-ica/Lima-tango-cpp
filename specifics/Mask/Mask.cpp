@@ -116,6 +116,9 @@ void Mask::delete_device()
 		delete[] attr_maskImage_read;
 		attr_maskImage_read = 0;
 	}
+	
+	INFO_STREAM << "Remove the inner-appender." << endl;
+	yat4tango::InnerAppender::release(this);		
 }
 
 //+----------------------------------------------------------------------------
@@ -142,7 +145,10 @@ void Mask::init_device()
 	m_is_device_initialized = false;
 	m_status_message.str("");
 	attr_runLevel_write = memorizedRunLevel;
-
+	
+	//- instanciate the appender in order to manage logs
+	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;
+	yat4tango::InnerAppender::initialize(this, 512);	
 	try
 	{
 		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
