@@ -45,8 +45,9 @@ void MyTask::load_config_file(lima::Ufxc::Camera* cam, const std::string& file_n
 {
 	m_camera = cam;
 	m_config_file = file_name;
-	yat::Message* msg = yat::Message::allocate(DEVICE_LOAD_CONFIG_FILE_MSG, DEFAULT_MSG_PRIORITY);
-	post(msg);
+	yat::Message* msg = yat::Message::allocate(DEVICE_LOAD_CONFIG_FILE_MSG, DEFAULT_MSG_PRIORITY,true);
+	wait_msg_handled(msg, 50000);	
+	//post(msg);
 }
 
 // ============================================================================
@@ -81,7 +82,7 @@ void MyTask::process_message(yat::Message& msg) throw(Tango::DevFailed)
 				INFO_STREAM << "-> yat::DEVICE_LOAD_CONFIG_FILE_MSG" << endl;
 				try
 				{
-					yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());					
+					//yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());					
 					INFO_STREAM<<"Load the detector config file in progress ..."<<std::endl;
 					m_camera->set_detector_config_file(m_config_file);
 					INFO_STREAM<<"Load the detector config file Done."<<std::endl;

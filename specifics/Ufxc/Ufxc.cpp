@@ -204,6 +204,17 @@ void Ufxc::init_device()
 	m_is_device_initialized = true;
 	try
 	{
+		set_state(Tango::DISABLE);
+		//- Create the task in order to load_config_file() with last memorized file
+		m_my_task.reset(new MyTask(this), TaskExiter());
+		m_my_task->go();
+
+		if(autoLoad)
+		{
+			load_config_file(const_cast<Tango::DevString> (memorizedConfigAlias.c_str()));
+		}
+
+		//then write attributes at init with last memorized values
 		INFO_STREAM << "Write tango hardware at Init - thresholdLow." << endl;
 		Tango::WAttribute &thresholdLow = dev_attr->get_w_attr_by_name("thresholdLow");
 		*attr_thresholdLow_read = attr_thresholdLow_write = memorizedThresholdLow;
@@ -233,7 +244,7 @@ void Ufxc::init_device()
 			triggerAcquisitionFrequency.set_write_value(*attr_triggerAcquisitionFrequency_read);
 			write_triggerAcquisitionFrequency(triggerAcquisitionFrequency);
 		}
-		/////////		
+		/////////
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -257,14 +268,6 @@ void Ufxc::init_device()
 	}
 
 
-	//- Create the task
-	m_my_task.reset(new MyTask(this), TaskExiter());
-	m_my_task->go();
-	set_state(Tango::STANDBY);
-	if(autoLoad)
-	{
-		load_config_file(const_cast<Tango::DevString> (memorizedConfigAlias.c_str()));
-	}
 	dev_state();
 }
 
