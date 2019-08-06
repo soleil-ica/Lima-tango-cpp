@@ -1154,7 +1154,11 @@ void Pco::read_pixelRate(Tango::Attribute &attr)
         m_camera->getPixelRate(temp_pixel_rate);
         std::string pixel_rate_str = yat::StringUtil::to_string<int>(temp_pixel_rate);
         strcpy(*attr_pixelRate_read, pixel_rate_str.c_str());*/
-        *attr_pixelRate_read = talk("pixelRate");
+        
+        // correction : the allocated char * buffer in attr_pixelRate_read was replaced
+        // by the static const char * buffer of the talk method.
+        const char * pixel_rate_str = talk("pixelRate");
+        strcpy(*attr_pixelRate_read, pixel_rate_str);
         attr.set_value(attr_pixelRate_read);
     }
     catch (yat::Exception& ex)
