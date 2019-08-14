@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.9.0</version>
+    <version>1.9.1-SNAPSHOT</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -63,6 +63,12 @@
             </properties>
            
             <dependencies>
+		<!-- Numero de version pylon force car il faut mettre la BOM a jour -->
+  	 	<dependency>
+        	    <groupId>com.basler</groupId>
+        	    <artifactId>Pylon-${aol}-shared-${mode}</artifactId>
+        	    <version>5.0.5</version>
+       	 	</dependency>
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>YAT4Tango-${aol}-shared-${mode}</artifactId>
