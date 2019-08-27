@@ -41,7 +41,7 @@
                 <AVIEX.name>Aviex</AVIEX.name>
                 <AVIEX.version>1.0.14</AVIEX.version>
                 <BASLER.name>Basler</BASLER.name>
-                <BASLER.version>1.5.4</BASLER.version>
+                <BASLER.version>2.0.0</BASLER.version>
                 <EIGER.name>Eiger</EIGER.name>
                 <EIGER.version>2.2.1</EIGER.version>
                 <IMXPAD.name>ImXpad</IMXPAD.name>
@@ -55,7 +55,7 @@
                 <PROSILICA.name>Prosilica</PROSILICA.name>
                 <PROSILICA.version>1.4.7</PROSILICA.version>
                 <UFXC.name>Ufxc</UFXC.name>
-                <UFXC.version>1.0.0</UFXC.version>       
+                <UFXC.version>1.1.0</UFXC.version>       
                 <XPAD.name>Xpad</XPAD.name>
                 <XPAD.version>1.4.15</XPAD.version>
                 <SIMULATOR.name>Simulator</SIMULATOR.name>
@@ -63,6 +63,13 @@
             </properties>
            
             <dependencies>
+                <!-- Numero de version pylon force car il faut mettre la BOM a jour -->
+                <dependency>
+                    <groupId>com.basler</groupId>
+                    <artifactId>Pylon-${aol}-shared-${mode}</artifactId>
+                    <version>5.0.5</version>
+                </dependency>
+                
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>YAT4Tango-${aol}-shared-${mode}</artifactId>
@@ -251,8 +258,29 @@
                                     <define>SIMULATOR_ENABLED</define>
                                     
                                     <define>SOLEIL_YAT_STREAM</define>
-                                </defines>               
+                                </defines>         
+                                
+                                <options>
+                                    <option>-fopenmp</option>
+                                </options>                                                                                                
                             </cpp>
+                            
+                            <linker>                                                                   
+                                <libs>    
+                                    <lib>
+                                        <!-- UFXC -->
+                                        <name>UFXCLib-i386-Linux-gcc-shared-release-1.0.1</name>
+                                        <type>shared</type>
+                                        <directory>../../../camera/ufxc/sdk/linux/lib</directory>
+                                    </lib>
+                                    <lib>
+                                        <!-- openMP -->
+                                        <name>gomp</name>
+                                        <type>shared</type>
+                                        <directory>/usr/lib</directory>
+                                    </lib>   
+                                </libs>
+                            </linker>
                         </configuration>           
                     </plugin>
                 </plugins>
@@ -356,6 +384,12 @@
 					
                             <linker>
                                 <libs>
+                                    <lib>
+                                        <!-- openMP -->
+                                        <name>gomp</name>
+                                        <type>shared</type>
+                                        <directory>/usr/lib</directory>
+                                    </lib>
                                     <lib>
                                         <!-- breakpad (??) 64 -->
                                         <name>breakpad_client</name>
