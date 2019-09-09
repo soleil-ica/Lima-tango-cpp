@@ -483,6 +483,21 @@ void UfxcClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
+	prop_name = "DetectorConfigFiles";
+	prop_desc = "Define the list of Detector Configuration files and their associated alias.";
+	prop_def  = "ALIAS;PATH_AND_FILE_NAME";
+	vect_data.clear();
+	vect_data.push_back("ALIAS;PATH_AND_FILE_NAME");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 	prop_name = "ConfigIpAddress";
 	prop_desc = "Config Ip Address";
 	prop_def  = "127.0.0.1";
@@ -618,11 +633,26 @@ void UfxcClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
-	prop_name = "DetectorConfigFiles";
-	prop_desc = "Define the list of Detector Configuration files files and their associated alias.";
-	prop_def  = "ALIAS;PATH_AND_FILE_NAME";
+	prop_name = "GeometricalCorrectionEnabled";
+	prop_desc = "Enable/Disable the geometrical corrections";
+	prop_def  = "true";
 	vect_data.clear();
-	vect_data.push_back("ALIAS;PATH_AND_FILE_NAME");
+	vect_data.push_back("true");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "StackFramesSumEnabled";
+	prop_desc = "Enable/Disable the sum of the frames stack";
+	prop_def  = "true";
+	vect_data.clear();
+	vect_data.push_back("true");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

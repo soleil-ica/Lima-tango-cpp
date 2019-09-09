@@ -126,6 +126,10 @@ public :
  */
 	Tango::DevBoolean	autoLoad;
 /**
+ *	Define the list of Detector Configuration files and their associated alias.
+ */
+	vector<string>	detectorConfigFiles;
+/**
  *	Config Ip Address
  */
 	string	configIpAddress;
@@ -162,9 +166,13 @@ public :
  */
 	Tango::DevULong	timeout;
 /**
- *	Define the list of Detector Configuration files files and their associated alias.
+ *	Enable/Disable the geometrical corrections
  */
-	vector<string>	detectorConfigFiles;
+	Tango::DevBoolean	geometricalCorrectionEnabled;
+/**
+ *	Enable/Disable the sum of the frames stack
+ */
+	Tango::DevBoolean	stackFramesSumEnabled;
 /**
  *	Only the device could modify this property <br>
  *	The User should never change this property<br>
