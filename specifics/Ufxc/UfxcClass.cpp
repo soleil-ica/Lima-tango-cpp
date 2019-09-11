@@ -411,7 +411,7 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	trigger_acquisition_frequency_prop.set_unit("Hz");
 	trigger_acquisition_frequency_prop.set_standard_unit(" ");
 	trigger_acquisition_frequency_prop.set_display_unit(" ");
-	trigger_acquisition_frequency_prop.set_description("Define the trigger acquisition frequency in the pump & probe mode");
+	trigger_acquisition_frequency_prop.set_description("Define the trigger acquisition frequency in the pump & probe mode. <BR>\npump_probe_nb_frames = (round(exposureTime*triggerAcquisitionFrequency/2))*2 <br>\n");
 	trigger_acquisition_frequency->set_default_properties(trigger_acquisition_frequency_prop);
 	att_list.push_back(trigger_acquisition_frequency);
 
