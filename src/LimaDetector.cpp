@@ -2985,7 +2985,7 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
                 Data last_image;
 				if(cbd.dya->get_name() == "image")
 				{
-                m_ct->ReadImage(last_image, -1);
+					m_ct->ReadImage(last_image, -1);
 				}
 				else //NECESSARY "baseImage"
 				{
