@@ -145,10 +145,6 @@ public :
  *	
  */
 	Tango::DevBoolean	noUDP;
-/**
- *	Enable or Disable dead time correction
- */
-	Tango::DevBoolean	useDtc;
 //@}
 
 /**

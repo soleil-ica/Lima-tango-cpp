@@ -773,12 +773,11 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 std::string   base_mac_address = "02.00.00.00.00.00";				
                 long		  base_port = 30123;				 
                 long		  card_index = 0;
-                std::string   directory_name = "/home/xspress3/xspress3-autocalib/calibration/initial/settings";
+                std::string   directory_name = "/etc/xspress3/calibration/me4_mar_2018/settings/";
                 long          max_frames = 16384;
-                long          nb_cards = 1;
-                long          nb_chans = 2;
-				bool          no_udp = false;
-				bool          use_dtc = true;
+                long          nb_cards = 2;
+                long          nb_chans = 4;
+		bool          no_udp = false;
                 
                 // configuration complete path
                 db_data.push_back(Tango::DbDatum("BaseIPAdress"));
@@ -789,8 +788,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data.push_back(Tango::DbDatum("MaxFrames"));				
                 db_data.push_back(Tango::DbDatum("NbCards"));				
                 db_data.push_back(Tango::DbDatum("NbChans"));				
-				db_data.push_back(Tango::DbDatum("NoUDP"));
-				db_data.push_back(Tango::DbDatum("UseDtc"));
+		db_data.push_back(Tango::DbDatum("NoUDP"));
 
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
 
@@ -802,8 +800,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data[5] >> max_frames;
                 db_data[6] >> nb_cards;
                 db_data[7] >> nb_chans;
-				db_data[8] >> no_udp;
-				db_data[9] >> use_dtc;
+		db_data[8] >> no_udp;
 				
 				std::cout<<"- base_ip_adress = "<<base_ip_adress<<std::endl;
 				std::cout<<"- base_mac_address = "<<base_mac_address<<std::endl;
@@ -814,7 +811,6 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 				std::cout<<"- nb_cards = "<<nb_cards<<std::endl;
 				std::cout<<"- nb_chans = "<<nb_chans<<std::endl;
 				std::cout<<"- no_udp = "<<no_udp<<std::endl;
-				std::cout<<"- use_dtc = "<<use_dtc<<std::endl;
 				
                 // create and initialize the camera and create interface and control  
                 m_camera    = static_cast<void*> (new Xspress3::Camera(nb_cards,
@@ -829,10 +825,8 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 																	   card_index,
 																	   no_udp,
 																	   directory_name));
-                if(m_camera)
-				{
-					static_cast<Xspress3::Camera*> (m_camera)->setUseDtc(use_dtc);
-				}
+
+		static_cast<Xspress3::Camera*> (m_camera)->setUseDtc(false);
                 m_interface = static_cast<void*> (new Xspress3::Interface(*(static_cast<Xspress3::Camera*> (m_camera))));
                 m_control   = new CtControl(static_cast<Xspress3::Interface*> (m_interface));
                 ControlFactory::m_is_created = true;

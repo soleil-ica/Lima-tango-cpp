@@ -245,7 +245,6 @@ void Xspress3::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("NbCards"));
 	dev_prop.push_back(Tango::DbDatum("NbChans"));
 	dev_prop.push_back(Tango::DbDatum("NoUDP"));
-	dev_prop.push_back(Tango::DbDatum("UseDtc"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -355,17 +354,6 @@ void Xspress3::get_device_property()
 	//	And try to extract NoUDP value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  noUDP;
 
-	//	Try to initialize UseDtc from class property
-	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  useDtc;
-	else {
-		//	Try to initialize UseDtc from default device value
-		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if (def_prop.is_empty()==false)	def_prop  >>  useDtc;
-	}
-	//	And try to extract UseDtc value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  useDtc;
-
 
 
 	//	End of Automatic code generation
@@ -374,12 +362,11 @@ void Xspress3::get_device_property()
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"02.00.00.00.00.00","BaseMacAddress");	
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"30123","BasePort");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"0","CardIndex");
-	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"/home/xspress3/xspress3-autocalib/calibration/initial/settings","DirectoryName");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"/etc/xspress3/calibration/me4_mar_2018/settings/","DirectoryName");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"16384","MaxFrames");
-	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"1","NbCards");
-	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"2","NbChans");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"2","NbCards");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"4","NbChans");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"false","NoUDP");
-	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"true","UseDtc");
 }
 //+----------------------------------------------------------------------------
 //
@@ -456,11 +443,12 @@ void Xspress3::read_attr_hardware(vector<long> &attr_list)
 			{
 				//- update channel attribute		
 				//dyn attribute channel
+				//useDtc = true, for readScalers() (seems there is a bug if useDtc = false)
 				Data data_histograms;
 				m_camera->readHistogram(data_histograms, my_frame_nb-1, channel_nb);		
-				std::vector<Tango::DevDouble> vec;
+				std::vector<unsigned int> vec;
 				//std::copy((double*)data_histograms.data(), (double*)(data_histograms.data()+(maxFrames/nbChans-1)), back_inserter(vec));
-				std::copy(&((double*)data_histograms.data())[0], &((double*)data_histograms.data())[maxFrames/nbChans-1], back_inserter(vec));
+				std::copy(&((unsigned int*)data_histograms.data())[0], &((unsigned int*)data_histograms.data())[maxFrames/nbChans-1], back_inserter(vec));
 				m_dyn_channel[channel_nb]->set_value(vec);			
 				DEBUG_STREAM<<attr_name<<" - updated"<<std::endl;
 			}
@@ -480,7 +468,10 @@ void Xspress3::read_attr_hardware(vector<long> &attr_list)
 				scalar 8  - Total Ticks
 				scalar 9  - Deadtime %
 				scalar 10 - Deadtime correction factor			
-				*************************************/					
+				NB:
+				80Mhz => tick = 1/80000000 = 12.5/1E9
+				*************************************/			
+				//useDtc = false, for readScalers() (seems there is a bug if useDtc = true)				
 				Data data_scalers;
 				m_camera->readScalers(data_scalers, my_frame_nb-1, channel_nb);	
 				DEBUG_STREAM<<"data_scalers["<<0 <<"] = "<<((double*)data_scalers.data())[0 ]<<" - Time"						<<std::endl;
@@ -497,11 +488,11 @@ void Xspress3::read_attr_hardware(vector<long> &attr_list)
 
 				m_dyn_total_count[channel_nb]->set_value(((double*)data_scalers.data())[3]);//AllEvent
 				m_dyn_total_processed_count[channel_nb]->set_value(((double*)data_scalers.data())[4]);//AllGood    
-				m_dyn_icr[channel_nb]->set_value(((double*)data_scalers.data())[3]/((double*)data_scalers.data())[0]);//AllEvent/Time
-				m_dyn_ocr[channel_nb]->set_value(((double*)data_scalers.data())[4]/((double*)data_scalers.data())[0]);//AllGood/Time
+				m_dyn_icr[channel_nb]->set_value((((double*)data_scalers.data())[3]/(((double*)data_scalers.data())[0]/80000000.0))); //AllEvent/Time *12.5/1E9
+				m_dyn_ocr[channel_nb]->set_value((((double*)data_scalers.data())[4]/(((double*)data_scalers.data())[8]/80000000.0)));//AllGood/Time   *12.5/1E9
 				m_dyn_deadtime[channel_nb]->set_value(((double*)data_scalers.data())[9]);//Deadtime	
 				m_dyn_pileup[channel_nb]->set_value(((double*)data_scalers.data())[7]);//Pileup
-				m_dyn_realtime[channel_nb]->set_value(((double*)data_scalers.data())[8]*12.5/(1000000000));//TotalTicks*12.5/1E9		
+				m_dyn_realtime[channel_nb]->set_value(((double*)data_scalers.data())[8]/80000000.0);//TotalTicks * 12.5/1E9
 				DEBUG_STREAM<<attr_name<<" - updated"<<std::endl;
 			}			
 		}
@@ -655,7 +646,7 @@ void Xspress3::init_dyn_attributes()
                          Tango::READ,
                          Tango::OPERATOR,
                          "cts/sec",
-                         "%f",
+                         "%.2f",
                          "Input Count Rate = AllEvent/Time.",
                          &Xspress3::read_stat_callback,
                          &Xspress3::write_callback_null,
@@ -672,7 +663,7 @@ void Xspress3::init_dyn_attributes()
                          Tango::READ,
                          Tango::OPERATOR,
                          "cts/sec",
-                         "%f",
+                         "%.2f",
                          "Output Count Rate = AllGood/Time.",
                          &Xspress3::read_stat_callback,
                          &Xspress3::write_callback_null,
@@ -689,7 +680,7 @@ void Xspress3::init_dyn_attributes()
                          Tango::READ,
                          Tango::OPERATOR,
                          "%",
-                         "%f",
+                         "%.2f",
                          "Temps mort = 100*(1-AllGood/AllEvent) ",
                          &Xspress3::read_stat_callback,
                          &Xspress3::write_callback_null,
@@ -706,7 +697,7 @@ void Xspress3::init_dyn_attributes()
                          Tango::READ,
                          Tango::OPERATOR,
                          " ",
-                         "%f",
+                         "%.2f",
                          "Pileup = 100*PileUp/AllGood.",
                          &Xspress3::read_stat_callback,
                          &Xspress3::write_callback_null,
@@ -724,7 +715,7 @@ void Xspress3::init_dyn_attributes()
                          Tango::READ,
                          Tango::OPERATOR,
                          "sec",
-                         "%f",
+                         "%.3f",
                          "TotalTicks*12.5/109",
                          &Xspress3::read_stat_callback,
                          &Xspress3::write_callback_null,
@@ -737,7 +728,7 @@ void Xspress3::init_dyn_attributes()
 		//- associate the dyn. attr. with its data
 		m_dyn_channel[i] = new ChannelUserData(ss.str(), maxFrames/nbChans);
         create_attribute(ss.str(),
-                         Tango::DEV_DOUBLE,
+                         Tango::DEV_ULONG,
                          Tango::SPECTRUM,
                          Tango::READ,
                          Tango::OPERATOR,
@@ -886,7 +877,7 @@ void Xspress3::read_channel_callback(yat4tango::DynamicAttributeReadCallbackData
 	{
 		ChannelUserData* channel_data = cbd.dya->get_user_data<ChannelUserData>();
 		//- set the attribute value
-		cbd.tga->set_value(const_cast<Tango::DevDouble*> (&channel_data->get_value()[0]), channel_data->get_value().size());
+		cbd.tga->set_value(const_cast<Tango::DevULong*> (&channel_data->get_value()[0]), channel_data->get_value().size());
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -899,6 +890,7 @@ void Xspress3::read_channel_callback(yat4tango::DynamicAttributeReadCallbackData
 	}
 	DEBUG_STREAM << "Xspress3::read_channel_callback() - [END]" << endl;
 }
+
 
 
 }	//	namespace

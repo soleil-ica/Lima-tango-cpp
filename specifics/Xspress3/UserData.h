@@ -99,12 +99,12 @@ class ChannelUserData
 public:
     ChannelUserData(const std::string& name, int nb_bins);
     ~ChannelUserData();
-    const std::vector<Tango::DevDouble>& get_value();
-    void set_value(std::vector<Tango::DevDouble> value);
+    const std::vector<unsigned int>& get_value();
+    void set_value(std::vector<unsigned int> value);
 private:
     yat::Mutex m_lock;
     std::string m_name;
-    std::vector<Tango::DevDouble> m_data;
+    std::vector<unsigned int> m_data;
 };
 
 } // namespace
