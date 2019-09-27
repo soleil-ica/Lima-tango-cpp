@@ -554,7 +554,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : clockDivider
 	clockDividerAttrib	*clockdivider = new clockDividerAttrib();
 	Tango::UserDefaultAttrProp	clockdivider_prop;
-	clockdivider_prop.set_description("Changes the readout clock.<br>\nAvailable clock Divider :<br>\nFULL_SPEED<br>\nHALF_SPEED<br>\nQUARTER_SPEED<br>\nSUPER_SLOW_SPEED<br>");
+	clockdivider_prop.set_description("Changes the readout clock.<br>\nAvailable clock Divider :<br>\nFULL_SPEED (equivalent to the 0 sls value)<br>\nHALF_SPEED (equivalent to the 1 sls value)<br>\nQUARTER_SPEED (equivalent to the 2 sls value)<br>\nSUPER_SLOW_SPEED (currently not used)<br>");
 	//	label	not set for clockDivider
 	//	unit	not set for clockDivider
 	//	standard_unit	not set for clockDivider
@@ -634,7 +634,7 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	subframeexposuretime_prop.set_unit("ms");
 	//	standard_unit	not set for subFrameExposureTime
 	//	display_unit	not set for subFrameExposureTime
-	//	format	not set for subFrameExposureTime
+	subframeexposuretime_prop.set_format("%1.8f");
 	//	max_value	not set for subFrameExposureTime
 	//	min_value	not set for subFrameExposureTime
 	//	max_alarm	not set for subFrameExposureTime

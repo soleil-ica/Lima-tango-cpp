@@ -202,10 +202,10 @@ public:
  *	Attribute clockDivider related methods
  *	Description: Changes the readout clock.<br>
  *               Available clock Divider :<br>
- *               FULL_SPEED<br>
- *               HALF_SPEED<br>
- *               QUARTER_SPEED<br>
- *               SUPER_SLOW_SPEED<br>
+ *               FULL_SPEED (equivalent to the 0 sls value)<br>
+ *               HALF_SPEED (equivalent to the 1 sls value)<br>
+ *               QUARTER_SPEED (equivalent to the 2 sls value)<br>
+ *               SUPER_SLOW_SPEED (currently not used)<br>
  *
  *	Data type:	Tango::DevString
  *	Attr type:	Scalar
@@ -531,17 +531,17 @@ private:
  */
     void read_temp(Tango::Attribute & out_attr,
                    Tango::DevLong * out_attr_read,
-                   lima::SlsEiger::Camera::Temperature in_temperature_type,
+                   lima::SlsEiger::Temperature in_temperature_type,
                    int in_module_index,
                    const std::string & in_caller_method_name);
 
 protected :	
     //lima OBJECTS
     lima::SlsEiger::Interface * m_hw    ;
-    lima::CtControl              * m_ct    ;
+    lima::CtControl           * m_ct    ;
     lima::SlsEiger::Camera    * m_camera;
-	bool                           m_is_device_initialized;
-    stringstream                   m_status_message        ;
+	bool                        m_is_device_initialized;
+    stringstream                m_status_message        ;
 
 	yat4tango::DynamicInterfaceManager m_dim;
 

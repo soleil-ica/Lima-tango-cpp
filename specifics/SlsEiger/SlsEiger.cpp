@@ -108,30 +108,31 @@ namespace SlsEiger_ns
 //-------------------------------------------------------------------------
 static const std::vector<std::string> TANGO_CLOCK_DIVIDER_LABELS{"FULL_SPEED", "HALF_SPEED", "QUARTER_SPEED", "SUPER_SLOW_SPEED" }; // labels of clock divider
 
-std::vector<enum lima::SlsEiger::Camera::ClockDivider> TANGO_CLOCK_DIVIDER_LABELS_TO_TYPE{lima::SlsEiger::Camera::ClockDivider::FullSpeed     ,
-                                                                                          lima::SlsEiger::Camera::ClockDivider::HalfSpeed     ,
-                                                                                          lima::SlsEiger::Camera::ClockDivider::QuarterSpeed  ,
-                                                                                          lima::SlsEiger::Camera::ClockDivider::SuperSlowSpeed};
+std::vector<enum lima::SlsEiger::ClockDivider> TANGO_CLOCK_DIVIDER_LABELS_TO_TYPE{lima::SlsEiger::ClockDivider::FullSpeed     ,
+                                                                                  lima::SlsEiger::ClockDivider::HalfSpeed     ,
+                                                                                  lima::SlsEiger::ClockDivider::QuarterSpeed  ,
+                                                                                  lima::SlsEiger::ClockDivider::SuperSlowSpeed};
 
 //-------------------------------------------------------------------------
 // PARALLEL MODE
 //-------------------------------------------------------------------------
 static const std::vector<std::string> TANGO_PARALLEL_MODE_LABELS{"NON_PARALLEL", "PARALLEL", "SAFE" }; // labels of parallel mode
 
-std::vector<enum lima::SlsEiger::Camera::ParallelMode> TANGO_PARALLEL_MODE_LABELS_TO_TYPE{lima::SlsEiger::Camera::ParallelMode::NonParallel,
-                                                                                          lima::SlsEiger::Camera::ParallelMode::Parallel   ,
-                                                                                          lima::SlsEiger::Camera::ParallelMode::Safe       };
+std::vector<enum lima::SlsEiger::ParallelMode> TANGO_PARALLEL_MODE_LABELS_TO_TYPE{lima::SlsEiger::ParallelMode::NonParallel,
+                                                                                  lima::SlsEiger::ParallelMode::Parallel   ,
+                                                                                  lima::SlsEiger::ParallelMode::Safe       };
 
 //-------------------------------------------------------------------------
 // GAIN MODE
 //-------------------------------------------------------------------------
-static const std::vector<std::string> TANGO_GAIN_MODE_LABELS{"STANDARD", "LOW", "MEDIUM", "HIGH", "VERY_HIGH"}; // labels of gain mode
+static const std::vector<std::string> TANGO_GAIN_MODE_LABELS{"STANDARD", "LOW", "MEDIUM", "HIGH", "VERY_HIGH", "UNDEFINED"}; // labels of gain mode
 
-std::vector<enum lima::SlsEiger::Camera::GainMode> TANGO_GAIN_MODE_LABELS_TO_TYPE{lima::SlsEiger::Camera::GainMode::standard ,
-                                                                                  lima::SlsEiger::Camera::GainMode::low      ,
-                                                                                  lima::SlsEiger::Camera::GainMode::medium   ,
-                                                                                  lima::SlsEiger::Camera::GainMode::high     ,
-                                                                                  lima::SlsEiger::Camera::GainMode::very_high};
+std::vector<enum lima::SlsEiger::GainMode> TANGO_GAIN_MODE_LABELS_TO_TYPE{lima::SlsEiger::GainMode::standard ,
+                                                                          lima::SlsEiger::GainMode::low      ,
+                                                                          lima::SlsEiger::GainMode::medium   ,
+                                                                          lima::SlsEiger::GainMode::high     ,
+                                                                          lima::SlsEiger::GainMode::very_high,
+                                                                          lima::SlsEiger::GainMode::undefined};
 /*----- PROTECTED REGION END -----*/	//	SlsEiger::namespace_starting
 
 //--------------------------------------------------------
@@ -444,7 +445,7 @@ void SlsEiger::get_device_property()
 //--------------------------------------------------------
 void SlsEiger::always_executed_hook()
 {
-	INFO_STREAM << "SlsEiger::always_executed_hook()  " << device_name << endl;
+	DEBUG_STREAM << "SlsEiger::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -513,10 +514,10 @@ void SlsEiger::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
  *	Read attribute clockDivider related method
  *	Description: Changes the readout clock.<br>
  *               Available clock Divider :<br>
- *               FULL_SPEED<br>
- *               HALF_SPEED<br>
- *               QUARTER_SPEED<br>
- *               SUPER_SLOW_SPEED<br>
+ *               FULL_SPEED (equivalent to the 0 sls value)<br>
+ *               HALF_SPEED (equivalent to the 1 sls value)<br>
+ *               QUARTER_SPEED (equivalent to the 2 sls value)<br>
+ *               SUPER_SLOW_SPEED (currently not used)<br>
  *
  *	Data type:	Tango::DevString
  *	Attr type:	Scalar
@@ -529,11 +530,11 @@ void SlsEiger::read_clockDivider(Tango::Attribute &attr)
 
     try
     {
-        enum lima::SlsEiger::Camera::ClockDivider clock_divider;
+        enum lima::SlsEiger::ClockDivider clock_divider;
 
         clock_divider = m_camera->getClockDivider();
 
-        const std::vector<enum lima::SlsEiger::Camera::ClockDivider>::const_iterator 
+        const std::vector<enum lima::SlsEiger::ClockDivider>::const_iterator 
         iterator = find(TANGO_CLOCK_DIVIDER_LABELS_TO_TYPE.begin(), 
                         TANGO_CLOCK_DIVIDER_LABELS_TO_TYPE.end  (),
                         clock_divider                             );
@@ -577,10 +578,10 @@ void SlsEiger::read_clockDivider(Tango::Attribute &attr)
  *	Write attribute clockDivider related method
  *	Description: Changes the readout clock.<br>
  *               Available clock Divider :<br>
- *               FULL_SPEED<br>
- *               HALF_SPEED<br>
- *               QUARTER_SPEED<br>
- *               SUPER_SLOW_SPEED<br>
+ *               FULL_SPEED (equivalent to the 0 sls value)<br>
+ *               HALF_SPEED (equivalent to the 1 sls value)<br>
+ *               QUARTER_SPEED (equivalent to the 2 sls value)<br>
+ *               SUPER_SLOW_SPEED (currently not used)<br>
  *
  *	Data type:	Tango::DevString
  *	Attr type:	Scalar
@@ -595,7 +596,7 @@ void SlsEiger::write_clockDivider(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(SlsEiger::write_clockDivider) ENABLED START -----*/
 	
     // we need to convert the clock divider string to the hardware clock divider
-    enum lima::SlsEiger::Camera::ClockDivider clock_divider;
+    enum lima::SlsEiger::ClockDivider clock_divider;
 
     const std::vector<string>::const_iterator 
     iterator = find(TANGO_CLOCK_DIVIDER_LABELS.begin(), 
@@ -660,11 +661,11 @@ void SlsEiger::read_parallelMode(Tango::Attribute &attr)
 
     try
     {
-        enum lima::SlsEiger::Camera::ParallelMode parallel_mode;
+        enum lima::SlsEiger::ParallelMode parallel_mode;
 
         parallel_mode = m_camera->getParallelMode();
 
-        const std::vector<enum lima::SlsEiger::Camera::ParallelMode>::const_iterator 
+        const std::vector<enum lima::SlsEiger::ParallelMode>::const_iterator 
         iterator = find(TANGO_PARALLEL_MODE_LABELS_TO_TYPE.begin(), 
                         TANGO_PARALLEL_MODE_LABELS_TO_TYPE.end  (),
                         parallel_mode                             );
@@ -725,7 +726,7 @@ void SlsEiger::write_parallelMode(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(SlsEiger::write_parallelMode) ENABLED START -----*/
 	
     // we need to convert the parallel mode string to the hardware clock divider
-    enum lima::SlsEiger::Camera::ParallelMode parallel_mode;
+    enum lima::SlsEiger::ParallelMode parallel_mode;
 
     const std::vector<string>::const_iterator 
     iterator = find(TANGO_PARALLEL_MODE_LABELS.begin(), 
@@ -928,9 +929,9 @@ void SlsEiger::read_gainMode(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(SlsEiger::read_gainMode) ENABLED START -----*/
     try
     {
-        enum lima::SlsEiger::Camera::GainMode gain_mode;
+        enum lima::SlsEiger::GainMode gain_mode;
         gain_mode = m_camera->getGainMode();
-        const std::vector<enum lima::SlsEiger::Camera::GainMode>::const_iterator 
+        const std::vector<enum lima::SlsEiger::GainMode>::const_iterator 
         iterator = find(TANGO_GAIN_MODE_LABELS_TO_TYPE.begin(), 
                         TANGO_GAIN_MODE_LABELS_TO_TYPE.end  (),
                         gain_mode                            );
@@ -991,7 +992,7 @@ void SlsEiger::write_gainMode(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(SlsEiger::write_gainMode) ENABLED START -----*/
 	
     // we need to convert the clock divider string to the hardware clock divider
-    enum lima::SlsEiger::Camera::GainMode gain_mode;
+    enum lima::SlsEiger::GainMode gain_mode;
     const std::vector<string>::const_iterator 
     iterator = find(TANGO_GAIN_MODE_LABELS.begin(), 
                     TANGO_GAIN_MODE_LABELS.end  (),
@@ -1327,7 +1328,7 @@ void SlsEiger::read_tempFpga1(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_tempFpga1(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_tempFpga1) ENABLED START -----*/
 
-    read_temp(attr, attr_tempFpga1_read, lima::SlsEiger::Camera::Temperature::hw_fpga, 0, std::string("SlsEiger::read_tempFpga1"));
+    read_temp(attr, attr_tempFpga1_read, lima::SlsEiger::Temperature::hw_fpga, 0, std::string("SlsEiger::read_tempFpga1"));
 
     /*----- PROTECTED REGION END -----*/	//	SlsEiger::read_tempFpga1
 }
@@ -1345,7 +1346,7 @@ void SlsEiger::read_tempFpga2(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_tempFpga2(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_tempFpga2) ENABLED START -----*/
 
-    read_temp(attr, attr_tempFpga2_read, lima::SlsEiger::Camera::Temperature::hw_fpga, 1, std::string("SlsEiger::read_tempFpga2"));
+    read_temp(attr, attr_tempFpga2_read, lima::SlsEiger::Temperature::hw_fpga, 1, std::string("SlsEiger::read_tempFpga2"));
     
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_tempFpga2
 }
@@ -1363,7 +1364,7 @@ void SlsEiger::read_tempFpgaext1(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_tempFpgaext1(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_tempFpgaext1) ENABLED START -----*/
 
-    read_temp(attr, attr_tempFpgaext1_read, lima::SlsEiger::Camera::Temperature::hw_fpgaext, 0, std::string("SlsEiger::read_tempFpgaext1"));
+    read_temp(attr, attr_tempFpgaext1_read, lima::SlsEiger::Temperature::hw_fpgaext, 0, std::string("SlsEiger::read_tempFpgaext1"));
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_tempFpgaext1
 }
@@ -1381,7 +1382,7 @@ void SlsEiger::read_tempFpgaext2(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_tempFpgaext2(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_tempFpgaext2) ENABLED START -----*/
 
-    read_temp(attr, attr_tempFpgaext2_read, lima::SlsEiger::Camera::Temperature::hw_fpgaext, 1, std::string("SlsEiger::read_tempFpgaext2"));
+    read_temp(attr, attr_tempFpgaext2_read, lima::SlsEiger::Temperature::hw_fpgaext, 1, std::string("SlsEiger::read_tempFpgaext2"));
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_tempFpgaext2
 }
@@ -1399,7 +1400,7 @@ void SlsEiger::read_temp10ge1(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_temp10ge1(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_temp10ge1) ENABLED START -----*/
 
-    read_temp(attr, attr_temp10ge1_read, lima::SlsEiger::Camera::Temperature::hw_10ge, 0, std::string("SlsEiger::read_temp10ge1"));
+    read_temp(attr, attr_temp10ge1_read, lima::SlsEiger::Temperature::hw_10ge, 0, std::string("SlsEiger::read_temp10ge1"));
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_temp10ge1
 }
@@ -1417,7 +1418,7 @@ void SlsEiger::read_temp10ge2(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_temp10ge2(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_temp10ge2) ENABLED START -----*/
 
-    read_temp(attr, attr_temp10ge2_read, lima::SlsEiger::Camera::Temperature::hw_10ge, 1, std::string("SlsEiger::read_temp10ge2"));
+    read_temp(attr, attr_temp10ge2_read, lima::SlsEiger::Temperature::hw_10ge, 1, std::string("SlsEiger::read_temp10ge2"));
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_temp10ge2
 }
@@ -1435,7 +1436,7 @@ void SlsEiger::read_tempDcdc1(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_tempDcdc1(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_tempDcdc1) ENABLED START -----*/
 
-    read_temp(attr, attr_tempDcdc1_read, lima::SlsEiger::Camera::Temperature::hw_dcdc, 0, std::string("SlsEiger::read_tempDcdc1"));
+    read_temp(attr, attr_tempDcdc1_read, lima::SlsEiger::Temperature::hw_dcdc, 0, std::string("SlsEiger::read_tempDcdc1"));
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_tempDcdc1
 }
@@ -1453,7 +1454,7 @@ void SlsEiger::read_tempDcdc2(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_tempDcdc2(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_tempDcdc2) ENABLED START -----*/
 
-    read_temp(attr, attr_tempDcdc2_read, lima::SlsEiger::Camera::Temperature::hw_dcdc, 1, std::string("SlsEiger::read_tempDcdc2"));
+    read_temp(attr, attr_tempDcdc2_read, lima::SlsEiger::Temperature::hw_dcdc, 1, std::string("SlsEiger::read_tempDcdc2"));
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_tempDcdc2
 }
@@ -1471,7 +1472,7 @@ void SlsEiger::read_tempSodl1(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_tempSodl1(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_tempSodl1) ENABLED START -----*/
 
-    read_temp(attr, attr_tempSodl1_read, lima::SlsEiger::Camera::Temperature::hw_sodl, 0, std::string("SlsEiger::read_tempSodl1"));
+    read_temp(attr, attr_tempSodl1_read, lima::SlsEiger::Temperature::hw_sodl, 0, std::string("SlsEiger::read_tempSodl1"));
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_tempSodl1
 }
@@ -1489,7 +1490,7 @@ void SlsEiger::read_tempSodl2(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_tempSodl2(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_tempSodl2) ENABLED START -----*/
 
-    read_temp(attr, attr_tempSodl2_read, lima::SlsEiger::Camera::Temperature::hw_sodl, 1, std::string("SlsEiger::read_tempSodl2"));
+    read_temp(attr, attr_tempSodl2_read, lima::SlsEiger::Temperature::hw_sodl, 1, std::string("SlsEiger::read_tempSodl2"));
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_tempSodl2
 }
@@ -1507,7 +1508,7 @@ void SlsEiger::read_tempSodr1(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_tempSodr1(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_tempSodr1) ENABLED START -----*/
 
-    read_temp(attr, attr_tempSodr1_read, lima::SlsEiger::Camera::Temperature::hw_sodr, 0, std::string("SlsEiger::read_tempSodr1"));
+    read_temp(attr, attr_tempSodr1_read, lima::SlsEiger::Temperature::hw_sodr, 0, std::string("SlsEiger::read_tempSodr1"));
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_tempSodr1
 }
@@ -1525,7 +1526,7 @@ void SlsEiger::read_tempSodr2(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_tempSodr2(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_tempSodr2) ENABLED START -----*/
 
-    read_temp(attr, attr_tempSodr2_read, lima::SlsEiger::Camera::Temperature::hw_sodr, 1, std::string("SlsEiger::read_tempSodr2"));
+    read_temp(attr, attr_tempSodr2_read, lima::SlsEiger::Temperature::hw_sodr, 1, std::string("SlsEiger::read_tempSodr2"));
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_tempSodr2
 }
@@ -1543,7 +1544,7 @@ void SlsEiger::read_tempFpgafl1(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_tempFpgafl1(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_tempFpgafl1) ENABLED START -----*/
 	
-    read_temp(attr, attr_tempFpgafl1_read, lima::SlsEiger::Camera::Temperature::hw_fpgafl, 0, std::string("SlsEiger::read_tempFpgafl1"));
+    read_temp(attr, attr_tempFpgafl1_read, lima::SlsEiger::Temperature::hw_fpgafl, 0, std::string("SlsEiger::read_tempFpgafl1"));
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_tempFpgafl1
 }
@@ -1561,7 +1562,7 @@ void SlsEiger::read_tempFpgafl2(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_tempFpgafl2(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_tempFpgafl2) ENABLED START -----*/
 
-    read_temp(attr, attr_tempFpgafl2_read, lima::SlsEiger::Camera::Temperature::hw_fpgafl, 1, std::string("SlsEiger::read_tempFpgafl2"));
+    read_temp(attr, attr_tempFpgafl2_read, lima::SlsEiger::Temperature::hw_fpgafl, 1, std::string("SlsEiger::read_tempFpgafl2"));
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_tempFpgafl2
 }
@@ -1579,7 +1580,7 @@ void SlsEiger::read_tempFpgafr1(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_tempFpgafr1(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_tempFpgafr1) ENABLED START -----*/
 	
-    read_temp(attr, attr_tempFpgafr1_read, lima::SlsEiger::Camera::Temperature::hw_fpgafr, 0, std::string("SlsEiger::read_tempFpgafr1"));
+    read_temp(attr, attr_tempFpgafr1_read, lima::SlsEiger::Temperature::hw_fpgafr, 0, std::string("SlsEiger::read_tempFpgafr1"));
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_tempFpgafr1
 }
@@ -1597,7 +1598,7 @@ void SlsEiger::read_tempFpgafr2(Tango::Attribute &attr)
 	DEBUG_STREAM << "SlsEiger::read_tempFpgafr2(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_tempFpgafr2) ENABLED START -----*/
 
-    read_temp(attr, attr_tempFpgafr2_read, lima::SlsEiger::Camera::Temperature::hw_fpgafr, 1, std::string("SlsEiger::read_tempFpgafr2"));
+    read_temp(attr, attr_tempFpgafr2_read, lima::SlsEiger::Temperature::hw_fpgafr, 1, std::string("SlsEiger::read_tempFpgafr2"));
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_tempFpgafr2
 }
@@ -1785,7 +1786,7 @@ void SlsEiger::manage_lima_exception(lima::Exception & in_exception, const std::
 //+------------------------------------------------------------------
 void SlsEiger::read_temp(Tango::Attribute & out_attr,
                          Tango::DevLong * out_attr_read,
-                         lima::SlsEiger::Camera::Temperature in_temperature_type,
+                         lima::SlsEiger::Temperature in_temperature_type,
                          int in_module_index,
                          const std::string & in_caller_method_name)
 {
