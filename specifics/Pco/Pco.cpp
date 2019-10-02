@@ -188,6 +188,25 @@ void Pco::init_device()
         //- Create dynamic interface
         create_dynamic_interface();
 
+        INFO_STREAM << "Write tango hardware at Init - pixelRate." << endl;
+		Tango::WAttribute &pixelRate = dev_attr->get_w_attr_by_name("pixelRate");
+        std::string pixel_rate_str = yat4tango::PropertyHelper::get_memorized_attribute<std::string>(this, "pixelRate");
+        attr_pixelRate_write = const_cast<Tango::DevString>(pixel_rate_str.c_str());
+		pixelRate.set_write_value(attr_pixelRate_write);
+		write_pixelRate(pixelRate);
+
+        INFO_STREAM << "Write tango hardware at Init - doubleImage." << endl;
+		Tango::WAttribute &doubleImage = dev_attr->get_w_attr_by_name("doubleImage");
+	    attr_doubleImage_write = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "doubleImage");
+		doubleImage.set_write_value(attr_doubleImage_write);
+		write_doubleImage(doubleImage);
+
+        INFO_STREAM << "Write tango hardware at Init - forcedFIFOMode." << endl;
+		Tango::WAttribute &forcedFIFOMode = dev_attr->get_w_attr_by_name("forcedFIFOMode");
+	    attr_forcedFIFOMode_write = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "forcedFIFOMode");
+		forcedFIFOMode.set_write_value(attr_forcedFIFOMode_write);
+		write_forcedFIFOMode(forcedFIFOMode);
+        
     }
     catch(lima::Exception& e)
     {
@@ -1150,15 +1169,9 @@ void Pco::read_pixelRate(Tango::Attribute &attr)
 
     try
     {
-        /*int temp_pixel_rate = -1;
-        m_camera->getPixelRate(temp_pixel_rate);
-        std::string pixel_rate_str = yat::StringUtil::to_string<int>(temp_pixel_rate);
-        strcpy(*attr_pixelRate_read, pixel_rate_str.c_str());*/
-        
-        // correction : the allocated char * buffer in attr_pixelRate_read was replaced
-        // by the static const char * buffer of the talk method.
-        const char * pixel_rate_str = talk("pixelRate");
-        strcpy(*attr_pixelRate_read, pixel_rate_str);
+		const char * pixel_rate_str = talk("pixelRate");
+		strcpy(*attr_pixelRate_read, pixel_rate_str);
+
         attr.set_value(attr_pixelRate_read);
     }
     catch (yat::Exception& ex)
@@ -1306,16 +1319,23 @@ Tango::DevString Pco::talk(Tango::DevString argin)
     //	See "TANGO Device Server Programmer's Manual"
     //		(chapter : Writing a TANGO DS / Exchanging data)
     //------------------------------------------------------------
-    Tango::DevString	argout  = new char[MAX_ATTRIBUTE_STRING_LENGTH];
-    strcpy(argout, "dummy");
     DEBUG_STREAM << "Pco::talk(): entering... !" << endl;
 
     //	Add your own code to control device here
-    try
-    {
-        argout = const_cast<char*>(m_camera->talk(const_cast<char*>(argin)));
-        return argout;
-    }
+	Tango::DevString argout;
+	try
+	{
+		string result("");
+		result = m_camera->talk(std::string(argin));
+
+		argout = new char[result.size() + 1];
+		if (result.size() > 0)
+		{
+			result.copy(argout, result.size());
+		}
+		argout[result.size()] = 0;
+		return argout;
+	}
     catch(lima::Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
@@ -1344,16 +1364,23 @@ Tango::DevString Pco::get_cam_info()
     //	See "TANGO Device Server Programmer's Manual"
     //		(chapter : Writing a TANGO DS / Exchanging data)
     //------------------------------------------------------------
-    Tango::DevString	argout  = new char[MAX_ATTRIBUTE_STRING_LENGTH];
-    strcpy(argout, "dummy");
     INFO_STREAM << "Pco::get_cam_info(): entering... !" << endl;
 
     //	Add your own code to control device here
-    try
-    {
-        argout = const_cast<char*>(m_camera->talk("camInfo"));
-        return argout;
-    }
+	Tango::DevString argout;
+	try
+	{
+		string result("");
+		result = m_camera->talk(std::string("camInfo"));
+
+		argout = new char[result.size() + 1];
+		if (result.size() > 0)
+		{
+			result.copy(argout, result.size());
+		}
+		argout[result.size()] = 0;
+		return argout;
+	}
     catch(lima::Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
