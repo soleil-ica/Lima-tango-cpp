@@ -9,7 +9,7 @@
 	
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.9.0</version>
+    <version>1.9.1</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -28,11 +28,11 @@
         <EIGER.name>Eiger</EIGER.name>
         <EIGER.version>2.2.2</EIGER.version>
         <SIMULATOR.name>Simulator</SIMULATOR.name>
-        <SIMULATOR.version>1.3.17</SIMULATOR.version>
+        <SIMULATOR.version>1.4.0</SIMULATOR.version>
         <SLSJUNGFRAU.name>SlsJungfrau</SLSJUNGFRAU.name>
-        <SLSJUNGFRAU.version>1.0.2</SLSJUNGFRAU.version>
+        <SLSJUNGFRAU.version>1.1.0</SLSJUNGFRAU.version>
         <LAMBDA.name>Lambda</LAMBDA.name>
-        <LAMBDA.version>1.0.1</LAMBDA.version>    
+        <LAMBDA.version>1.0.2</LAMBDA.version>    
     </properties>
 
     <scm>

@@ -262,9 +262,7 @@
                                     <define>SIMULATOR_ENABLED</define>
                                     
                                     <define>SOLEIL_YAT_STREAM</define>
-                                </defines>               
-                                    <define>SOLEIL_YAT_STREAM</define>
-                                </defines>               
+                                </defines>                              
                                 
                                 <options>
                                     <option>-fopenmp</option>
