@@ -873,6 +873,13 @@ void LimaDetectorClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	file_nb_frames->set_memorized_init(false);
 	att_list.push_back(file_nb_frames);
 
+	//	Attribute : fileExtension
+	fileExtensionAttrib	*file_extension = new fileExtensionAttrib();
+	file_format_prop.set_unit(" ");
+	file_extension->set_default_properties(file_format_prop);
+	file_extension->set_disp_level(Tango::EXPERT);
+	att_list.push_back(file_extension);
+
 	//	Attribute : operationsList
 	operationsListAttrib	*operations_list = new operationsListAttrib();
 	Tango::UserDefaultAttrProp	operations_list_prop;
