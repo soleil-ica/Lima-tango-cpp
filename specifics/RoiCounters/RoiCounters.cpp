@@ -110,6 +110,13 @@ void RoiCounters::delete_device()
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	//	Delete device allocated objects
 	DELETE_DEVSTRING_ATTRIBUTE(attr_version_read);
+	
+	// Delete the strings of coordinates
+	for(int i=0; i<nbRoiCounters; i++)
+	{
+		CORBA::string_free(attr_coordinates_arrays[i]);
+		// to be changed for Tango::string_free when Tango will be updated 
+	}
 
 
 	//- remove any dynamic attr or command
@@ -152,6 +159,7 @@ void RoiCounters::init_device()
 	attr_y_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_width_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_height_arrays.resize(MAX_NB_ROICOUNTERS);
+	attr_coordinates_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_sum_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_average_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_std_arrays.resize(MAX_NB_ROICOUNTERS);
@@ -222,6 +230,39 @@ void RoiCounters::init_device()
 		//Write tango hardware at Init
 		std::stringstream ssName;
 		std::string strName;
+
+
+		// If nbRoiCounters is too high compared to the number of (x, y, width, height) properties,
+		// throw exception
+		if(__x.size() < nbRoiCounters)
+		{
+			Tango::Except::throw_exception(	"INVALID_PROPERTY_SIZE",
+										"Array property __x is smaller than the nb of RoiCounters asked", 
+										"RoiCounter::initDevice");
+		}
+		if(__y.size() < nbRoiCounters)
+		{
+			Tango::Except::throw_exception(	"INVALID_PROPERTY_SIZE",
+										"Array property __y is smaller than the nb of RoiCounters asked", 
+										"RoiCounter::initDevice");
+
+		}
+		if(__width.size() < nbRoiCounters)
+		{
+			Tango::Except::throw_exception(	"INVALID_PROPERTY_SIZE",
+										"Array property __width is smaller than the nb of RoiCounters asked", 
+										"RoiCounter::initDevice");
+
+		}
+		if(__height.size() < nbRoiCounters)
+		{
+			Tango::Except::throw_exception(	"INVALID_PROPERTY_SIZE",
+										"Array property __height is smaller than the nb of RoiCounters asked", 
+										"RoiCounter::initDevice");
+
+		}
+
+
 		for(size_t i = 0;i < nbRoiCounters;i++)
 		{
 			//get memorized from properties
@@ -230,6 +271,14 @@ void RoiCounters::init_device()
 			attr_y_arrays[i] = (Tango::DevULong)(__y.at(i));
 			attr_width_arrays[i] = (Tango::DevULong)(__width.at(i));
 			attr_height_arrays[i] = (Tango::DevULong)(__height.at(i));
+			
+			// Initialize coordinate strings to init values of attributes
+			std::stringstream ss;
+			ss  << attr_x_arrays[i] 
+				<< ", " << attr_y_arrays[i] 
+				<< ", " << attr_width_arrays[i] 
+				<< ", " << attr_height_arrays[i];
+			attr_coordinates_arrays[i] = Tango::string_dup(ss.str().c_str());
 
 			ssName.str("");
 			ssName << "x" << i;
@@ -270,6 +319,16 @@ void RoiCounters::init_device()
 			yat4tango::DynamicAttributeWriteCallbackData cbd_height;
 			cbd_height.tga = &height;
 			write_rois_callback(cbd_height);
+
+			ssName.str("");
+			ssName << "coordinates" << i;
+			strName = ssName.str();
+			INFO_STREAM << "Write tango hardware at Init - " << strName << endl;
+			Tango::WAttribute &coordinates = dev_attr->get_w_attr_by_name(strName.c_str());
+			coordinates.set_write_value(attr_coordinates_arrays[i]);
+			yat4tango::DynamicAttributeWriteCallbackData cbd_coordinates;
+			cbd_coordinates.tga = &coordinates;
+			write_rois_callback(cbd_coordinates);
 		}
 	}
 	catch(ProcessException& p)
@@ -722,7 +781,7 @@ void RoiCounters::read_roi()
 					iter2++)
 				{
 					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
-					INFO_STREAM << "+++ roi n°: " << roinum << "\t" << endl;
+					INFO_STREAM << "+++ roi nï¿½: " << roinum << "\t" << endl;
 					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
 					attr_frameNumber_value = (*iter2).frameNumber + 1;
 					INFO_STREAM << "frameNumber = " << attr_frameNumber_value << endl;
@@ -886,6 +945,23 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::read_rois_callback,
 							&RoiCounters::write_rois_callback,
 							&attr_height_arrays[i]);
+
+			ssName.str("");
+			ssName << "coordinates" << i;
+			create_attribute(ssName.str(),
+							Tango::DEV_STRING,
+							Tango::SCALAR,
+							Tango::READ_WRITE,
+							Tango::OPERATOR,
+							" ",
+							"%s",
+							"The full coordinates of the Roi:\n"
+							"take a string of 4 numbers seperated by any other character\n"
+							"and will parse them into the x, y, width and height coordinate of the Roi,\n"
+							"in that exact order.",
+							&RoiCounters::read_rois_callback,
+							&RoiCounters::write_rois_callback,
+							&attr_coordinates_arrays[i]);
 
 			ssName.str("");
 			ssName << "sum" << i;
@@ -1269,8 +1345,29 @@ void RoiCounters::read_rois_callback(yat4tango::DynamicAttributeReadCallbackData
 			std::istringstream(strIndex) >> attrIndex;
 			val = (Tango::DevULong *) & attr_height_arrays[attrIndex];
 		}
+		
+		if(std::size_t pos = attrName.find("coordinates") != std::string::npos)
+		{
+			std::string strIndex = attrName.substr(11);
+			int attrIndex;
+			std::stringstream ss;
+			std::istringstream(strIndex) >> attrIndex;
 
-		cbd.tga->set_value((Tango::DevULong *)val);
+			val = (Tango::DevString *) & attr_coordinates_arrays[attrIndex];
+			
+			// Get the currrent coordinate values into the coordinate string
+			ss  << attr_x_arrays[attrIndex] 
+				<< ", " << attr_y_arrays[attrIndex] 
+				<< ", " << attr_width_arrays[attrIndex] 
+				<< ", " << attr_height_arrays[attrIndex];
+			*((Tango::DevString*)val) = Tango::string_dup(ss.str().c_str());
+
+			cbd.tga->set_value((Tango::DevString *)val);			
+		}
+		else
+		{
+			cbd.tga->set_value((Tango::DevULong *)val);
+		}	
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -1324,9 +1421,22 @@ void RoiCounters::write_rois_callback(yat4tango::DynamicAttributeWriteCallbackDa
 			std::istringstream(strIndex) >> attrIndex;
 			val = (Tango::DevULong*)(&attr_height_arrays[attrIndex]);
 		}
-
+		
+		if(attrName.find("coordinates") != std::string::npos)
+		{
+			std::string strIndex = attrName.substr(11);
+			std::istringstream(strIndex) >> attrIndex;
+			val = (std::string*)(&attr_coordinates_arrays[attrIndex]);
+			cbd.tga->get_write_value(*((Tango::DevString*)val));
+			// Parse the coordinates written:
+			process_coordinates((Tango::DevString *)val, attrIndex);
+		}
+		else
+		{
+			cbd.tga->get_write_value(*((Tango::DevULong*)val));
+		}
 		//- get the attribute value
-		cbd.tga->get_write_value(*((Tango::DevULong*)val));
+		
 
 		//- update rois in the processLib  : SoftOpRoiCounter
 		update_roi();
@@ -1522,10 +1632,65 @@ Tango::DevState RoiCounters::dev_state()
 	argout = DeviceState;
 	return argout;
 }
+//+------------------------------------------------------------------
+/**
+ *	method:	RoiCounters::process_coordinates
+ *
+ *	description:	Parse the string written in attr_coordinates into the 4 coordinates of the Roi
+ *					Throw exception if less than 4 numbers are entered in the string	
+ *
+ */
+//+------------------------------------------------------------------
+void RoiCounters::process_coordinates(Tango::DevString* attr_str, int attrIndex)
+{
 
+	// Get a string from the DevString:
+	std::string str = (std::string)(*attr_str); 
 
+	std::stringstream ss;
 
+ 	// Will contain parsed values
+	Tango::DevULong temp_tab[4];
 
+	// State used to know what was the previous character
+	bool state = false;
 
+    int j=0, i=0;
+
+	// While there are still characters to paste and there are still numbers to find:
+    while((j==0 || str[j-1] != '\0') && i<4)
+    {
+		// If current char is not a number and previous one was a number
+        if(!(str[j]>='0' && str[j]<='9') && state)
+        {
+            ss >> temp_tab[i]; 	// Push the numbers into the tab
+            ss.clear(); 		// Init the stringstream used to receive numeral characters
+            state=false;		// Current char is not a number
+            i++;				// Found one number, can move to next one
+        }
+		// If current char is a number
+        if(str[j]>='0' && str[j]<='9')
+        {
+            ss << str[j];		// Push numeral character into stringstream
+            state = true;		// Current char is a number
+        }
+        j++;					// Moving to next character
+    }
+	// If didn't find 4 numbers, throw exception
+    if(i<4)
+	{
+		Tango::Except::throw_exception(	"INVALID_COORDINATE_ENTRY",
+										"Invalid format: Enter at least 4 numbers", 
+										"RoiCounter::process_coordinates");
+	}
+	// Else fill the variable
+	else
+	{
+		attr_x_arrays[attrIndex] = temp_tab[0];
+		attr_y_arrays[attrIndex] = temp_tab[1];
+		attr_width_arrays[attrIndex] = temp_tab[2];
+		attr_height_arrays[attrIndex] = temp_tab[3];
+	}
+}
 
 }	//	namespace

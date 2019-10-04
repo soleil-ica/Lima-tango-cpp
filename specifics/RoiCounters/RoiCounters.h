@@ -324,6 +324,7 @@ protected:
     std::vector<Tango::DevULong>     attr_y_arrays;
     std::vector<Tango::DevULong>     attr_width_arrays;
     std::vector<Tango::DevULong>     attr_height_arrays;
+    std::vector<Tango::DevString>    attr_coordinates_arrays;
     std::vector<Tango::DevDouble>    attr_sum_arrays;
     std::vector<Tango::DevDouble>    attr_average_arrays;
     std::vector<Tango::DevDouble>    attr_std_arrays;
@@ -333,7 +334,9 @@ protected:
     std::vector<Tango::DevDouble>    attr_maxValue_arrays;    
     std::vector<Tango::DevLong>      attr_maxX_arrays;
     std::vector<Tango::DevLong>      attr_maxY_arrays;    
-    std::vector<std::string >   m_operations_list;
+    std::vector<std::string>        m_operations_list;
+
+    void process_coordinates(Tango::DevString* str,int attrIndex);
 } ;
 
 }	// namespace_ns
