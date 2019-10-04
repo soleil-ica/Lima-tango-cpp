@@ -347,6 +347,20 @@ void SlsEigerClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertLiveModeMinFramePeriodSec";
+	prop_desc = "Only an expert User could change this property.<br>\nThis is the minimum period in seconds between frames for the live mode.<BR>";
+	prop_def  = "1.0";
+	vect_data.clear();
+	vect_data.push_back("1.0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
 }
 
 //--------------------------------------------------------

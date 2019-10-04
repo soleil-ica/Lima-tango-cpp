@@ -342,6 +342,7 @@ void SlsEiger::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("ExpertFramePacketNumber8"));
 	dev_prop.push_back(Tango::DbDatum("ExpertFramePacketNumber16"));
 	dev_prop.push_back(Tango::DbDatum("ExpertFramePacketNumber32"));
+	dev_prop.push_back(Tango::DbDatum("ExpertLiveModeMinFramePeriodSec"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -422,17 +423,29 @@ void SlsEiger::get_device_property()
 		//	And try to extract ExpertFramePacketNumber32 value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertFramePacketNumber32;
 
+		//	Try to initialize ExpertLiveModeMinFramePeriodSec from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertLiveModeMinFramePeriodSec;
+		else {
+			//	Try to initialize ExpertLiveModeMinFramePeriodSec from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertLiveModeMinFramePeriodSec;
+		}
+		//	And try to extract ExpertLiveModeMinFramePeriodSec value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertLiveModeMinFramePeriodSec;
+
 	}
 
 	/*----- PROTECTED REGION ID(SlsEiger::get_device_property_after) ENABLED START -----*/
 	
 	//	Check device property data members init
-	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, ""       , "ConfigFileName"           );
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.00004", "ExpertReadoutTime"        ); // 40µs by default
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "8000"   , "ExpertReceiverFifoDepth"  ); // 8000 frames by default
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "32"     , "ExpertFramePacketNumber8" ); // 32 packets by default for 8bits
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "64"     , "ExpertFramePacketNumber16"); // 64 packets by default for 16bits
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "128"    , "ExpertFramePacketNumber32"); // 128 packets by default for 32bits
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, ""       , "ConfigFileName"                 );
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.00004", "ExpertReadoutTime"              ); // 40µs by default
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "8000"   , "ExpertReceiverFifoDepth"        ); // 8000 frames by default
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "32"     , "ExpertFramePacketNumber8"       ); // 32 packets by default for 8bits
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "64"     , "ExpertFramePacketNumber16"      ); // 64 packets by default for 16bits
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "128"    , "ExpertFramePacketNumber32"      ); // 128 packets by default for 32bits
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1.0"    , "ExpertLiveModeMinFramePeriodSec"); // 1 second by default
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::get_device_property_after
 }

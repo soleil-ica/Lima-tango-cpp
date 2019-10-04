@@ -100,6 +100,9 @@ public:
 	//	ExpertFramePacketNumber32:	Only an expert User could change this property.<br>
 	//  This is the number of packet for each received frame part in bit depth 32bits.<BR>
 	Tango::DevLong	expertFramePacketNumber32;
+	//	ExpertLiveModeMinFramePeriodSec:	Only an expert User could change this property.<br>
+	//  This is the minimum period in seconds between frames for the live mode.<BR>
+	Tango::DevDouble	expertLiveModeMinFramePeriodSec;
 
 //	Attribute data members
 public:

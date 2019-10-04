@@ -646,9 +646,10 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 double        readout_time       ;
                 long          receiver_fifo_depth;
                 long          pixel_depth        ;
-                long          frame_packet_number_8  = 32 ;
-                long          frame_packet_number_16 = 64 ;
-                long          frame_packet_number_32 = 128;
+                long          frame_packet_number_8          = 32 ;
+                long          frame_packet_number_16         = 64 ;
+                long          frame_packet_number_32         = 128;
+                double        live_mode_min_frame_period_sec = 1.0;
 
                 // generic device properties
                 {
@@ -692,23 +693,28 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                     db_data.push_back(Tango::DbDatum("ExpertFramePacketNumber16"));
                     db_data.push_back(Tango::DbDatum("ExpertFramePacketNumber32"));
 
+                    // Minimum period between frames for live mode
+                    db_data.push_back(Tango::DbDatum("ExpertLiveModeMinFramePeriodSec"));
+
                     (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
-                    db_data[0] >> config_file_name      ;
-                    db_data[1] >> readout_time          ;
-                    db_data[2] >> receiver_fifo_depth   ;
-                    db_data[3] >> frame_packet_number_8 ;
-                    db_data[4] >> frame_packet_number_16;
-                    db_data[5] >> frame_packet_number_32;
+                    db_data[0] >> config_file_name              ;
+                    db_data[1] >> readout_time                  ;
+                    db_data[2] >> receiver_fifo_depth           ;
+                    db_data[3] >> frame_packet_number_8         ;
+                    db_data[4] >> frame_packet_number_16        ;
+                    db_data[5] >> frame_packet_number_32        ;
+                    db_data[6] >> live_mode_min_frame_period_sec;
                 }
 
                 // create and initialize the camera and create interface and control  
-                m_camera    = static_cast<void*> (new SlsEiger::Camera(config_file_name      , 
-                                                                       readout_time          ,
-                                                                       receiver_fifo_depth   ,
-                                                                       pixel_depth           ,
-                                                                       frame_packet_number_8 ,
-                                                                       frame_packet_number_16,
-                                                                       frame_packet_number_32));
+                m_camera    = static_cast<void*> (new SlsEiger::Camera(config_file_name              , 
+                                                                       readout_time                  ,
+                                                                       receiver_fifo_depth           ,
+                                                                       pixel_depth                   ,
+                                                                       frame_packet_number_8         ,
+                                                                       frame_packet_number_16        ,
+                                                                       frame_packet_number_32        ,
+                                                                       live_mode_min_frame_period_sec));
 
                 m_interface = static_cast<void*> (new SlsEiger::Interface(*(static_cast<SlsEiger::Camera*> (m_camera))));
                 m_control   = new CtControl(static_cast<SlsEiger::Interface*> (m_interface));
