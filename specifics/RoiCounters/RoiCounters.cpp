@@ -781,7 +781,7 @@ void RoiCounters::read_roi()
 					iter2++)
 				{
 					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
-					INFO_STREAM << "+++ roi n�: " << roinum << "\t" << endl;
+					INFO_STREAM << "+++ roi n°: " << roinum << "\t" << endl;
 					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
 					attr_frameNumber_value = (*iter2).frameNumber + 1;
 					INFO_STREAM << "frameNumber = " << attr_frameNumber_value << endl;

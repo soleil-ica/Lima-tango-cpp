@@ -334,8 +334,9 @@ protected:
     std::vector<Tango::DevDouble>    attr_maxValue_arrays;    
     std::vector<Tango::DevLong>      attr_maxX_arrays;
     std::vector<Tango::DevLong>      attr_maxY_arrays;    
-    std::vector<std::string>        m_operations_list;
+    std::vector<std::string>         m_operations_list;
 
+    // Parse the string into 4 numbers and push it into current attributes
     void process_coordinates(Tango::DevString* str,int attrIndex);
 } ;
 
