@@ -47,6 +47,7 @@ This device server provides several Tango classes:
   PrincetonCCD <PrincetonCCD/princetonccd>
   ProsilicaCCD <ProsilicaCCD/prosilicaccd>
   SimulatorCCD <SimulatorCCD/simulatorccd>
+  SlsEiger <SlsEiger/slseiger>
   SlsJungfrau <SlsJungfrau/slsjungfrau>
   Uview <Uview/uview>
   XpadPixelDetector <XpadPixelDetector/xpadpixeldetector>
