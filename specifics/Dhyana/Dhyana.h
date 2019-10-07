@@ -121,6 +121,11 @@ public :
  *	Memorize/Define the globalGain  attribute  at Init device<br>
  */
 	string	memorizedGlobalGain;
+/**
+ *	Timer period in ms.<cr>
+ *	useful only for Internal Trigger
+ */
+	Tango::DevUShort	__ExpertTimerPeriod;
 //@}
 
 /**
