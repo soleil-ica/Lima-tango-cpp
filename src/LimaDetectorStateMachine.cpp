@@ -815,8 +815,7 @@ bool LimaDetector::is_operationsList_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool LimaDetector::is_fileExtension_allowed(Tango::AttReqType type)
 {
-	if (get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
+	if (get_state() == Tango::FAULT)
 	{
 		//	End of Generated Code
 
