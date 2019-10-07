@@ -949,8 +949,7 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							"%s",
 							"The full coordinates of the Roi:\n"
 							"take a string of 4 numbers seperated by any other character\n"
-							"and will parse them into the x, y, width and height coordinate of the Roi,\n"
-							"in that exact order.",
+							"and will parse them into x, y, width and height in that exact order.",
 							&RoiCounters::read_rois_callback,
 							&RoiCounters::write_rois_callback,
 							&attr_coordinates_arrays[i]);
