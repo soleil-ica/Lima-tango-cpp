@@ -110,14 +110,6 @@ void RoiCounters::delete_device()
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	//	Delete device allocated objects
 	DELETE_DEVSTRING_ATTRIBUTE(attr_version_read);
-	
-	// Delete the strings of coordinates
-	for(int i=0; i<nbRoiCounters; i++)
-	{
-		CORBA::string_free(attr_coordinates_arrays[i]);
-		// to be changed for Tango::string_free when Tango will be updated 
-	}
-
 
 	//- remove any dynamic attr or command
 	INFO_STREAM << "remove any dynamic attributes or commands" << endl;
