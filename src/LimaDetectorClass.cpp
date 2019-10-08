@@ -837,6 +837,7 @@ void LimaDetectorClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	fileFormatAttrib	*file_format = new fileFormatAttrib();
 	Tango::UserDefaultAttrProp	file_format_prop;
 	file_format_prop.set_unit(" ");
+	file_format_prop.set_description("File format that will be used for saving.\nAvailable format are:\n- NXS\n- EDF\n- RAW\n- HDF5");
 	file_format->set_default_properties(file_format_prop);
 	file_format->set_disp_level(Tango::EXPERT);
 	file_format->set_memorized();
@@ -875,8 +876,10 @@ void LimaDetectorClass::attribute_factory(vector<Tango::Attr *> &att_list)
 
 	//	Attribute : fileExtension
 	fileExtensionAttrib	*file_extension = new fileExtensionAttrib();
-	file_format_prop.set_unit(" ");
-	file_extension->set_default_properties(file_format_prop);
+	Tango::UserDefaultAttrProp	file_extension_prop;
+	file_extension_prop.set_unit(" ");
+	file_extension_prop.set_description("Display the actual extension that will be used for saving files, according to the chosen file format");
+	file_extension->set_default_properties(file_extension_prop);
 	file_extension->set_disp_level(Tango::EXPERT);
 	att_list.push_back(file_extension);
 
