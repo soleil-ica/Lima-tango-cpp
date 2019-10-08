@@ -220,7 +220,7 @@ void RoiCounters::init_device()
     	write_runLevel(runlevel);
 
 		//Write tango hardware at Init
-		std::stringstream ssName;
+		std::stringstream ss_name;
 		std::string strName;
 
 
@@ -272,9 +272,9 @@ void RoiCounters::init_device()
 				<< ", " << attr_height_arrays[i];
 			attr_coordinates_arrays[i] = Tango::string_dup(ss.str().c_str());
 
-			ssName.str("");
-			ssName << "x" << i;
-			strName = ssName.str();
+			ss_name.str("");
+			ss_name << "x" << i;
+			strName = ss_name.str();
 			INFO_STREAM << "Write tango hardware at Init - " << strName << endl;
 			Tango::WAttribute &x = dev_attr->get_w_attr_by_name(strName.c_str());
 			x.set_write_value(attr_x_arrays[i]);
@@ -282,9 +282,9 @@ void RoiCounters::init_device()
 			cbd_x.tga = &x;
 			write_rois_callback(cbd_x);
 
-			ssName.str("");
-			ssName << "y" << i;
-			strName = ssName.str();
+			ss_name.str("");
+			ss_name << "y" << i;
+			strName = ss_name.str();
 			INFO_STREAM << "Write tango hardware at Init - " << strName << endl;
 			Tango::WAttribute &y = dev_attr->get_w_attr_by_name(strName.c_str());
 			y.set_write_value(attr_y_arrays[i]);
@@ -292,9 +292,9 @@ void RoiCounters::init_device()
 			cbd_y.tga = &y;
 			write_rois_callback(cbd_y);
 
-			ssName.str("");
-			ssName << "width" << i;
-			strName = ssName.str();
+			ss_name.str("");
+			ss_name << "width" << i;
+			strName = ss_name.str();
 			INFO_STREAM << "Write tango hardware at Init - " << strName << endl;
 			Tango::WAttribute &width = dev_attr->get_w_attr_by_name(strName.c_str());
 			width.set_write_value(attr_width_arrays[i]);
@@ -302,9 +302,9 @@ void RoiCounters::init_device()
 			cbd_width.tga = &width;
 			write_rois_callback(cbd_width);
 
-			ssName.str("");
-			ssName << "height" << i;
-			strName = ssName.str();
+			ss_name.str("");
+			ss_name << "height" << i;
+			strName = ss_name.str();
 			INFO_STREAM << "Write tango hardware at Init - " << strName << endl;
 			Tango::WAttribute &height = dev_attr->get_w_attr_by_name(strName.c_str());
 			height.set_write_value(attr_height_arrays[i]);
@@ -312,9 +312,9 @@ void RoiCounters::init_device()
 			cbd_height.tga = &height;
 			write_rois_callback(cbd_height);
 
-			ssName.str("");
-			ssName << "coordinates" << i;
-			strName = ssName.str();
+			ss_name.str("");
+			ss_name << "coordinates" << i;
+			strName = ss_name.str();
 			INFO_STREAM << "Write tango hardware at Init - " << strName << endl;
 			Tango::WAttribute &coordinates = dev_attr->get_w_attr_by_name(strName.c_str());
 			coordinates.set_write_value(attr_coordinates_arrays[i]);
@@ -865,10 +865,10 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 	//- add some dynamic attributes
 	try
 	{
-		std::stringstream ssName;
-		ssName.str("");
-		ssName << "frameNumber";
-		create_attribute(ssName.str(),
+		std::stringstream ss_name;
+		ss_name.str("");
+		ss_name << "frameNumber";
+		create_attribute(ss_name.str(),
 						Tango::DEV_ULONG,
 						Tango::SCALAR,
 						Tango::READ,
@@ -882,9 +882,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 
 		for(size_t i = 0;i < nbRoiCounters;++i)
 		{
-			ssName.str("");
-			ssName << "x" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "x" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_ULONG,
 							Tango::SCALAR,
 							Tango::READ_WRITE,
@@ -896,9 +896,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_rois_callback,
 							&attr_x_arrays[i]);
 
-			ssName.str("");
-			ssName << "y" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "y" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_ULONG,
 							Tango::SCALAR,
 							Tango::READ_WRITE,
@@ -910,9 +910,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_rois_callback,
 							&attr_y_arrays[i]);
 
-			ssName.str("");
-			ssName << "width" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "width" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_ULONG,
 							Tango::SCALAR,
 							Tango::READ_WRITE,
@@ -924,9 +924,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_rois_callback,
 							&attr_width_arrays[i]);
 
-			ssName.str("");
-			ssName << "height" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "height" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_ULONG,
 							Tango::SCALAR,
 							Tango::READ_WRITE,
@@ -938,9 +938,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_rois_callback,
 							&attr_height_arrays[i]);
 
-			ssName.str("");
-			ssName << "coordinates" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "coordinates" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_STRING,
 							Tango::SCALAR,
 							Tango::READ_WRITE,
@@ -954,9 +954,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_rois_callback,
 							&attr_coordinates_arrays[i]);
 
-			ssName.str("");
-			ssName << "sum" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "sum" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_DOUBLE,
 							Tango::SCALAR,
 							Tango::READ,
@@ -968,9 +968,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_sum_arrays[i]);
 
-			ssName.str("");
-			ssName << "average" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "average" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_DOUBLE,
 							Tango::SCALAR,
 							Tango::READ,
@@ -982,9 +982,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_average_arrays[i]);
 
-			ssName.str("");
-			ssName << "std" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "std" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_DOUBLE,
 							Tango::SCALAR,
 							Tango::READ,
@@ -996,9 +996,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_std_arrays[i]);
 
-			ssName.str("");
-			ssName << "minValue" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "minValue" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_DOUBLE,
 							Tango::SCALAR,
 							Tango::READ,
@@ -1010,9 +1010,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_minValue_arrays[i]);
 
-			ssName.str("");
-			ssName << "minX" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "minX" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_LONG,
 							Tango::SCALAR,
 							Tango::READ,
@@ -1024,9 +1024,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_minX_arrays[i]);
 
-			ssName.str("");
-			ssName << "minY" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "minY" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_LONG,
 							Tango::SCALAR,
 							Tango::READ,
@@ -1038,9 +1038,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_minY_arrays[i]);
 			
-			ssName.str("");
-			ssName << "maxValue" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "maxValue" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_DOUBLE,
 							Tango::SCALAR,
 							Tango::READ,
@@ -1052,9 +1052,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_maxValue_arrays[i]);
 			
-			ssName.str("");
-			ssName << "maxX" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "maxX" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_LONG,
 							Tango::SCALAR,
 							Tango::READ,
@@ -1066,9 +1066,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_maxX_arrays[i]);
 
-			ssName.str("");
-			ssName << "maxY" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "maxY" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_LONG,
 							Tango::SCALAR,
 							Tango::READ,
@@ -1143,12 +1143,12 @@ bool RoiCounters::create_image_dynamic_attributes(void)
 	{
 		for(size_t i = 0;i < nbRoiCounters;++i)
 		{
-			std::stringstream ssName;
-			ssName << "image" << i;
-			INFO_STREAM << "\t- Create dynamic attribute [" << ssName.str() << "]" << endl;
+			std::stringstream ss_name;
+			ss_name << "image" << i;
+			INFO_STREAM << "\t- Create dynamic attribute [" << ss_name.str() << "]" << endl;
 			yat4tango::DynamicAttributeInfo dai;
 			dai.dev = this;
-			dai.tai.name = ssName.str();
+			dai.tai.name = ss_name.str();
 			dai.tai.data_format = Tango::IMAGE;
 			dai.tai.max_dim_x = 100000;//- arbitrary big value
 			dai.tai.max_dim_y = 100000;//- arbitrary big value
