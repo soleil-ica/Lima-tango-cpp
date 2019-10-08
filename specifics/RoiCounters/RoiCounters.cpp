@@ -1645,17 +1645,17 @@ void RoiCounters::process_coordinates(Tango::DevString* attr_str, int attrIndex)
 
 	// State used to know what was the previous character
 	bool is_previous_char_numeric = false;
-	bool is_current_number = false;
+	bool is_current_char_numeric = false;
 
     int j=0, i=0;
 
 	// While there are still characters to paste and there are still numbers to find:
     while((j==0 || str[j-1] != '\0') && i<NB_COORDINATES)
     {
-		bool is_current_number = str[j]>='0' && str[j]<='9';
+		bool is_current_char_numeric = str[j]>='0' && str[j]<='9';
 
 		// If current char is not a number and previous one was a number
-        if(!(is_current_number) && is_previous_char_numeric)
+        if(!(is_current_char_numeric) && is_previous_char_numeric)
         {
             ss >> parsed_coordinates[i]; 	// Push the numbers into the tab
             ss.clear(); 		// Init the stringstream used to receive numeral characters
@@ -1663,7 +1663,7 @@ void RoiCounters::process_coordinates(Tango::DevString* attr_str, int attrIndex)
             i++;				// Found one number, can move to next one
         }
 		// If current char is a number
-        if(is_current_number)
+        if(is_current_char_numeric)
         {
             ss << str[j];		// Push numeral character into stringstream
             is_previous_char_numeric = true;		// Current char is a number
