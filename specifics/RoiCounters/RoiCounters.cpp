@@ -1659,7 +1659,7 @@ void RoiCounters::process_coordinates(Tango::DevString* attr_str, int attrIndex)
         {
             ss >> parsed_coordinates[i]; 	// Push the numbers into the tab
             ss.clear(); 		// Init the stringstream used to receive numeral characters
-            is_previous_char_numeric=false;		// Current char is not a number
+            is_previous_char_numeric = false;		// Current char is not a number
             i++;				// Found one number, can move to next one
         }
 		// If current char is a number
