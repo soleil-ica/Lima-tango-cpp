@@ -1644,7 +1644,7 @@ void RoiCounters::process_coordinates(Tango::DevString* attr_str, int attrIndex)
 	Tango::DevULong temp_tab[4];
 
 	// State used to know what was the previous character
-	bool state = false;
+	bool is_previous_char_numeric = false;
 
     int j=0, i=0;
 
@@ -1652,18 +1652,18 @@ void RoiCounters::process_coordinates(Tango::DevString* attr_str, int attrIndex)
     while((j==0 || str[j-1] != '\0') && i<4)
     {
 		// If current char is not a number and previous one was a number
-        if(!(str[j]>='0' && str[j]<='9') && state)
+        if(!(str[j]>='0' && str[j]<='9') && is_previous_char_numeric)
         {
             ss >> temp_tab[i]; 	// Push the numbers into the tab
             ss.clear(); 		// Init the stringstream used to receive numeral characters
-            state=false;		// Current char is not a number
+            is_previous_char_numeric=false;		// Current char is not a number
             i++;				// Found one number, can move to next one
         }
 		// If current char is a number
         if(str[j]>='0' && str[j]<='9')
         {
             ss << str[j];		// Push numeral character into stringstream
-            state = true;		// Current char is a number
+            is_previous_char_numeric = true;		// Current char is a number
         }
         j++;					// Moving to next character
     }
