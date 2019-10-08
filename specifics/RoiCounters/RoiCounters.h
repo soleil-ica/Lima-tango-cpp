@@ -50,6 +50,7 @@
 #include <yat4tango/InnerAppender.h>
 #include <yat/threading/Mutex.h>
 #include <yat/utils/XString.h>
+#include <yat/Version.h>
 
 #include "lima/HwInterface.h"
 #include "lima/CtControl.h"
@@ -65,6 +66,7 @@
 
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
 #define MAX_NB_ROICOUNTERS              32
+#define NB_COORDINATES                  4
 #define CURRENT_VERSION                 "1.2.0"
 
 

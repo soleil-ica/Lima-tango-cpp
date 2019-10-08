@@ -1641,26 +1641,29 @@ void RoiCounters::process_coordinates(Tango::DevString* attr_str, int attrIndex)
 	std::stringstream ss;
 
  	// Will contain parsed values
-	Tango::DevULong temp_tab[4];
+	Tango::DevULong parsed_coordinates[NB_COORDINATES];
 
 	// State used to know what was the previous character
 	bool is_previous_char_numeric = false;
+	bool is_current_number = false;
 
     int j=0, i=0;
 
 	// While there are still characters to paste and there are still numbers to find:
-    while((j==0 || str[j-1] != '\0') && i<4)
+    while((j==0 || str[j-1] != '\0') && i<NB_COORDINATES)
     {
+		bool is_current_number = str[j]>='0' && str[j]<='9';
+
 		// If current char is not a number and previous one was a number
-        if(!(str[j]>='0' && str[j]<='9') && is_previous_char_numeric)
+        if(!(is_current_number) && is_previous_char_numeric)
         {
-            ss >> temp_tab[i]; 	// Push the numbers into the tab
+            ss >> parsed_coordinates[i]; 	// Push the numbers into the tab
             ss.clear(); 		// Init the stringstream used to receive numeral characters
             is_previous_char_numeric=false;		// Current char is not a number
             i++;				// Found one number, can move to next one
         }
 		// If current char is a number
-        if(str[j]>='0' && str[j]<='9')
+        if(is_current_number)
         {
             ss << str[j];		// Push numeral character into stringstream
             is_previous_char_numeric = true;		// Current char is a number
@@ -1668,19 +1671,19 @@ void RoiCounters::process_coordinates(Tango::DevString* attr_str, int attrIndex)
         j++;					// Moving to next character
     }
 	// If didn't find 4 numbers, throw exception
-    if(i<4)
+    if(i<NB_COORDINATES)
 	{
 		Tango::Except::throw_exception(	"INVALID_COORDINATE_ENTRY",
-										"Invalid format: Enter at least 4 numbers", 
+										"Invalid format: Enter at least "YAT_XSTR(NB_COORDINATES)" numbers", 
 										"RoiCounter::process_coordinates");
 	}
 	// Else fill the variable
 	else
 	{
-		attr_x_arrays[attrIndex] = temp_tab[0];
-		attr_y_arrays[attrIndex] = temp_tab[1];
-		attr_width_arrays[attrIndex] = temp_tab[2];
-		attr_height_arrays[attrIndex] = temp_tab[3];
+		attr_x_arrays[attrIndex] = parsed_coordinates[0];
+		attr_y_arrays[attrIndex] = parsed_coordinates[1];
+		attr_width_arrays[attrIndex] = parsed_coordinates[2];
+		attr_height_arrays[attrIndex] = parsed_coordinates[3];
 	}
 }
 
