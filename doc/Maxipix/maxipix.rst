@@ -62,9 +62,9 @@ Commands
 =======================	=============== =======================	===========================================
 Command name		    Arg. in		    Arg. out		        Description
 =======================	=============== =======================	===========================================
-Init			        DevVoid 	    DevVoid			        Do not use
-State			        DevVoid		    DevLong			        Return the device state
-Status			        DevVoid		    DevString		        Return the device state as a string
+Init			        Void 	        Void			        Do not use
+State			        Void		    Long			        Return the device state
+Status			        Void		    String		            Return the device state as a string
 =======================	=============== =======================	===========================================
 
 .. _Maxipix camera plugin: https://lima1.readthedocs.io/en/latest/camera/maxipix/doc/index.html
