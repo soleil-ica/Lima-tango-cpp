@@ -1,27 +1,22 @@
+.. _lima-tango-simulator:
+
 SimulatorCCD C++ Tango device
 =============================
 
-**SimulatorCCD** is a specific device emulating a camera.
+This is the reference documentation of the SimulatorCDD Tango C++ device.
 
-It produces an image based on the parameters chosen.
-
-Both diffraction or Gauss images can be produced, grow factor can be adjusted with the realted attribute.
-
-When in Gauss mode, image can be shifted along the X or Y axis with xOffset and yOffset attributes.
-
-xOffset and yOffset have undefined behavior when in Diffraction mode. It is recommended to keep them null when producing diffraction images.
-
+You can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the `Simulator camera plugin`_ section.
 
 Properties
 ----------
 
-+----------------------------+-------------------------------------+-----------------------------------------------------------------------+
-| Property name              | Default value                       | Description                                                           |
-+============================+=====================================+=======================================================================+
-| MemorizedFillType          | "GAUSS"                             | Memorize the value of the fillType attribute                          |
-+----------------------------+-------------------------------------+-----------------------------------------------------------------------+
-| MemorizedGrowFactor        | 1.0                                 | Memorize the value of the GrowFactor atribute                         |
-+----------------------------+-------------------------------------+-----------------------------------------------------------------------+
++----------------------------+---------------------+-----------------+-----------------------------------------------------------------------+
+| Property name              | Default value       | Type            | Description                                                           |
++============================+=====================+=================+=======================================================================+
+| MemorizedFillType          | "GAUSS"             | String          | Memorize the value of the fillType attribute.                         |
++----------------------------+---------------------+-----------------+-----------------------------------------------------------------------+
+| MemorizedGrowFactor        | 1.0                 | Double          | Memorize the value of the GrowFactor atribute.                        |
++----------------------------+---------------------+-----------------+-----------------------------------------------------------------------+
 
 
 Attributes
@@ -30,13 +25,13 @@ Attributes
 +----------------------------+--------------+---------------------+------------------------------------------------------------------------------+
 | Attribute name             | Read/Write   | Type                | Description                                                                  |
 +============================+==============+=====================+==============================================================================+
-| growFactor                 | R/W          | DevDouble           | Grow factor                                                                  |
+| growFactor                 | R/W          | Double              | Grow factor.                                                                 |
 +----------------------------+--------------+---------------------+------------------------------------------------------------------------------+
-| fillType                   | R/W          | DevString           | Gauss or Diffraction                                                         |
+| fillType                   | R/W          | String              | Gauss or Diffraction.                                                        |
 +----------------------------+--------------+---------------------+------------------------------------------------------------------------------+
-| xOffset                    | R/W          | DevDouble           | Set an offset on image when using GAUSS mode                                 |
+| xOffset                    | R/W          | Double              | Set an offset on image when using GAUSS mode.                                |
 +----------------------------+--------------+---------------------+------------------------------------------------------------------------------+
-| yOffset                    | R/W          | DevDouble           | Set an offset on image when using GAUSS mode                                 |
+| yOffset                    | R/W          | Double              | Set an offset on image when using GAUSS mode.                                |
 +----------------------------+--------------+---------------------+------------------------------------------------------------------------------+
 
 
@@ -46,9 +41,11 @@ Commands
 +----------------------------+--------------+---------------------+------------------------------------------------------------------------+
 | Command name               | Arg. in      | Arg. out            | Description                                                            |
 +============================+==============+=====================+========================================================================+
-| Init                       | DevVoid      | DevVoid             | Do not use                                                             |
+| Init                       | Void         | Void                | Do not use.                                                            |
 +----------------------------+--------------+---------------------+------------------------------------------------------------------------+
-| State                      | DevVoid      | DevLong             | Return the device state                                                |
+| State                      | Void         | Long                | Return the device state.                                               |
 +----------------------------+--------------+---------------------+------------------------------------------------------------------------+
-| Status                     | DevVoid      | DevString           | Return the device state as a string                                    |
+| Status                     | Void         | String              | Return the device state as a string.                                   |
 +----------------------------+--------------+---------------------+------------------------------------------------------------------------+
+
+.. _Simulator camera plugin: https://lima1.readthedocs.io/en/latest/camera/simulator/doc/index.html
