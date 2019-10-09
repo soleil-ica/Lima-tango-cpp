@@ -6,6 +6,11 @@ Uview C++ Tango device
 This is the reference documentation of the UviewCCD Tango C++ device.
 
 
+Properties
+----------
+No Property
+
+
 Attributes
 ----------
 Only four attributes for this device : 
