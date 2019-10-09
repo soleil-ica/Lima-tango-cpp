@@ -7,6 +7,7 @@ This is the reference documentation of the BaslerCCD Tango C++ device.
 
 You can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the `Prosilica camera plugin`_ section.
 
+
 Properties
 ----------
 
@@ -16,9 +17,11 @@ Property name            Default value        Type                  Description
 DetectorIP               127.0.0.1            String                Ip Address of the Detector.
 ======================== ==================== ===================== =====================================
 
+
 Attributes
 ----------
 No Attribute
+
 
 Commands
 --------
