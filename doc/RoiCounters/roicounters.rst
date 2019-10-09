@@ -1,3 +1,5 @@
+.. _lima-tango-roicounters:
+
 RoiCounters C++ Tango device
 ============================
 
