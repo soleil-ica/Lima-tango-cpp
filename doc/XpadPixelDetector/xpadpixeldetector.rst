@@ -73,16 +73,22 @@ Init                    Void                                Void                
 State                   Void                                Long                    Return the device state
 Status                  Void                                String                  Return the device state as a string
 LoadFlatConfig          ULong                               Void                    Load a Flat value to all pixels:
+
                                                                                     IN: Flat value to be loaded
 LoadAllConfigG          VarULongArray                       Void                    Load the config G(lobal) to a module and a chip:
+
                                                                                     IN: modNum(1..8), chipId(0..6), config_values (11 values)
 SaveConfigL             VarULongArray                       Void                    ?
+
                                                                                     IN: modNum(1..8), calibId(0..6), chipId(0..7), curRow (0..119), values (80 values)
 SaveConfigG             VarULongArray                       Void                    ?
+
                                                                                     IN: modNum(1..8), calibId(0..6), reg, values (7 values)
 LoadConfig              VarULongArray                       Void                    ?
+
                                                                                     IN: modNum(1..8), calibId(0..6)
 LoadConfigG             VarULongArray                       Void                    Load a value of a wanted config G register.
+
                                                                                     IN: modNum(1..8), chipId(0..6), register ID, register value
                                                                                     register IDs are: 
 
@@ -102,11 +108,14 @@ CalibrateOTNSlow        Void                                Void                
 CalibrateOTNMedium      Void                                Void                    Start the Over The Noise Medium calibration
 CalibrateOTNFast        Void                                Void                    Start the Over The Noise Fast calibration
 CalibrateBEAM           VarULongArray                       Void                    Start the BEAM calibration
+
                                                                                     IN: Texp, ithl_max, itune, imfp
 CalibrateOTN            VarULongArray                       Void                    Start the Over The Noise calibration
+
                                                                                     IN: itune, imfp
 UploadCalibration       Void                                Void                    Upload a calibration from a directory defined in the property CalibrationPath
 UploadWaitTimes         VarULongArray                       Void                    Upload a trajectory of wait times, instead of having always the same value
+
                                                                                     IN: the wait times
 IncrementITHL           Void                                Void                    Increment the ITHL of 1 unit
 DecrementITHL           Void                                Void                    Decrement  the ITHL of 1 unit                                
