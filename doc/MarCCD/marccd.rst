@@ -5,7 +5,8 @@ MarCCD Tango C++ device
 
 This is the reference documentation of the MarCCD Tango C++ device.
 
-you can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the `MarCCD camera plugin`_ section.
+You can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the `MarCCD camera plugin`_ section.
+
 
 Properties
 ----------
@@ -19,6 +20,7 @@ DetectorTargetPath                  /no/path/defined            String          
 ReaderTimeout                       10000                       UShort                  Time before declaring that is no available image returned by detector. (in ms)
 ===============================     ========================    ==================      ===============================================
 
+
 Attributes
 ----------
 
@@ -28,6 +30,7 @@ Attribute name                      Read/Write                  Type            
 imageName                           R/W                         String                  The image file name
 imageIndex                          R/W                         UShort                  The current image index
 ===============================     ========================    ==================      ===============================================
+
 
 Commands
 --------
@@ -41,4 +44,4 @@ Status                              Void                        String          
 TakeBackground                      Void                        Void                    Force the MarCCD detector to acquire a background frame
 ===============================     ========================    ==================      ===============================================
 
-.. _MarCCD camera plugin: https://lima1.readthedocs.io/en/latest/camera/marccd/doc/index.html                                           
+.. _MarCCD camera plugin: https://lima1.readthedocs.io/en/latest/camera/marccd/doc/index.html
