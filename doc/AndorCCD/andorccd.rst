@@ -25,17 +25,17 @@ Attributes
 =========================== ============= ============================== ===============================================================================================
 Attribute name              Read/Write    Type                           Description
 =========================== ============= ============================== ===============================================================================================
-enabledCooler               R/W           DevBoolean                     Controls the cooler.
-currentCoolingStatus        R             DevString                      Current status of the cooling system.
-temperatureTarget           R/W           DevLong                        Controls the temperature target point.
-temperature                 R             DevLong                        Current temperature.
-adcMode                     R/W           DevULong                       Define the ADC frequency. Available values are :
+enabledCooler               R/W           Boolean                        Controls the cooler.
+currentCoolingStatus        R             String                         Current status of the cooling system.
+temperatureTarget           R/W           Long                           Controls the temperature target point.
+temperature                 R             Long                           Current temperature.
+adcMode                     R/W           ULong                          Define the ADC frequency. Available values are :
 
                                                                          - 0: 5 Mhz                                                                                          
                                                                          - 1: 3 Mhz                                                                                          
                                                                          - 2: 1 Mhz                                                                                          
                                                                          - 3: 0.05 Mhz                                                                                       
-currentRate                 R             DevString                      Current ADC frequency in Mhz.
+currentRate                 R             String                         Current ADC frequency in Mhz.
 =========================== ============= ============================== ===============================================================================================
 
 
