@@ -1,4 +1,4 @@
-.. _lima-tango-maxipix:
+.. _lima-tango-prosilica:
 
 ProsilicaCCD Tango C++ device
 =============================
