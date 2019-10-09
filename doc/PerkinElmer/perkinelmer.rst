@@ -5,7 +5,7 @@ PerkinElmer Tango C++ device
 
 This is the reference documentation of the BaslerCCD Tango C++ device.
 
-you can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the `PerkinElmer camera plugin`_ section.
+You can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the `PerkinElmer camera plugin`_ section.
 
 Properties
 ----------
