@@ -30,24 +30,30 @@ Attribute name              Read/Write       Type             Description
 deviceVersion               R                String           Tango Specific device version.
 energyTreshold              R/W              Double           Energy threshold (KeV)
 fillMode                    R/W              String           Set the fill mode :
+
                                                               - RAW
                                                               - DISPATCH
                                                               - ZERO
                                                               - MEAN
 gate                        R/W              Boolean          Set the gate to Active or Inactive
 gateLevel                   R/W              String           Set gate level :
+
                                                               - LOW
                                                               - HIGH
 readyMode                   R/W              String           Ready mode :
+
                                                               - EXPOSURE
                                                               - READOUT
 readyLevel                  R/W              String           Ready output signal level :
+
                                                               - LOW
                                                               - HIGH
 shutterLevel                R/W              String           Shutter output signal level :
+
                                                               - LOW
                                                               - HIGH
 triggerLevel                R/W              String           Trigger output signal level :
+
                                                               - LOW
                                                               - HIGH
 =========================== ================ ================ =====================================
