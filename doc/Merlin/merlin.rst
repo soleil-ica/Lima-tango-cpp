@@ -3,7 +3,7 @@
 Merlin C++ Tango device
 ========================
 
-This is the reference documentation of the Merlin Tango device.
+This is the reference documentation of the Merlin Tango C++ device.
 
 You can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the `Merlin camera plugin`_ section.
 
