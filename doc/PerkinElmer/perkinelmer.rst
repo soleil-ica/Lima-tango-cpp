@@ -20,9 +20,10 @@ Attributes
 Attribute name              Read/Write       Type             Description
 =========================== ================ ================ =====================================
 correctionMode              R/W              String           Correction mode. Possible values:
-                                                                - NO
-                                                                - OFFSET ONLY
-                                                                - OFFSET AND GAIN
+
+                                                              - NO
+                                                              - OFFSET ONLY
+                                                              - OFFSET AND GAIN
 keepFirstImage              R/W              Boolean          Flag stating if 1st image is kept
 gain                        R/W              Long             Gain value, from 0 to 63
 =========================== ================ ================ =====================================
