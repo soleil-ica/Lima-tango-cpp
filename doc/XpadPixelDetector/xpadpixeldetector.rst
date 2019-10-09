@@ -1,3 +1,5 @@
+.. _lima-tango-xpadpixeldetector:
+
 XpadPixelDetector C++ Tango device
 ==================================
 
