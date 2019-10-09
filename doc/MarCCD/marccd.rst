@@ -14,8 +14,8 @@ Properties
 =============================== ======================== ================== ===============================================
 Property name                   Default value            Type               Description
 =============================== ======================== ================== ===============================================
-DetectorIP                                               String             Detector IP address
-DetectorPort                                             ULong              Detector port number
+DetectorIP                      N/A                      String             Detector IP address
+DetectorPort                    N/A                      ULong              Detector port number
 DetectorTargetPath              /no/path/defined         String             Detector target images path
 ReaderTimeout                   10000                    UShort             Time before declaring that is no available image returned by detector. (in ms)
 ReaderNbRetry                   3                        Long               The number of retry before the Reader declares that there are no images in the directory target path.
