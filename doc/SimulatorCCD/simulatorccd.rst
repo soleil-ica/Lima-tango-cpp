@@ -10,13 +10,7 @@ You can also find some useful information about the camera models/prerequisite/i
 
 Properties
 ----------
-
-============================= ===================== ================= ======================================
-Property name                 Default value         Type              Description
-============================= ===================== ================= ======================================
-MemorizedFillType             GAUSS                 String            Memorize the value of the fillType attribute.
-MemorizedGrowFactor           1.0                   Double            Memorize the value of the GrowFactor atribute.
-============================= ===================== ================= ======================================
+No Property
 
 
 Attributes
