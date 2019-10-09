@@ -50,4 +50,4 @@ State                   Void            Long                    Return the devic
 Status                  Void            String                  Return the device state as a string
 ======================= =============== ======================= ===========================================
 
-.. _Andor camera plugin: https://lima1.readthedocs.io/en/latest/camera/andor3/doc/index.html
+.. _Andor camera plugin: https://lima1.readthedocs.io/en/latest/camera/andor/doc/index.html
