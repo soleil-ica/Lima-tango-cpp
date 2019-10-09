@@ -35,7 +35,7 @@ operationValue              R/W           String               Arithmetic operat
                                                                FLIP operationType : only X, Y, XY value can be used.
 
                                                                ROTATION operationType : only 90, 180, 270 value can be used.
-operationsList              R             StringArray          Enumerate all Layout active 'post processing' operations on the image.
+operationsList              R             String               Enumerate all Layout active 'post processing' operations on the image.
 =========================== ============= ==================== =======================================================================
 
 
