@@ -1,4 +1,4 @@
-.. _lima-tango-maxipix:
+.. _lima-tango-perkinelmer:
 
 PerkinElmer Tango C++ device
 =============================
