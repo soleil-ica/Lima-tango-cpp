@@ -36,14 +36,14 @@ internalAcquisitionMode       R/W              String           Available Intern
                                                                 - MEASURE_FLOOD_FIELD
 initialDelayTime              R/W              Double           Initial Delay Time (ms)
 readoutDelayTime              R/W              Double           Readout Delay Time (ms)
-exposureMultiplier            R/W              Double           
-gapMultiplier                 R/W              Double           
-maskCorrection                R/W              Boolean          
-biasCorrection                R/W              Boolean          
-darkCorrection                R/W              Boolean          
-floodCorrection               R/W              Boolean          
-geomCorrection                R/W              Boolean          
-highSpeed                     R/W              Boolean          
+exposureMultiplier            R/W              Double           Exposure multiplier
+gapMultiplier                 R/W              Double           Gap multiplier
+maskCorrection                R/W              Boolean          Enable/Disable mask correction
+biasCorrection                R/W              Boolean          Enable/Disable bias correction
+darkCorrection                R/W              Boolean          Enable/Disable dark correction
+floodCorrection               R/W              Boolean          Enable/Disable flood correction
+geomCorrection                R/W              Boolean          Enable/Disable geom correction
+highSpeed                     R/W              Boolean          Enable/Disable high speed
 ============================= ================ ================ =====================================
 
 
