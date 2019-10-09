@@ -1,4 +1,4 @@
-.. _lima-tango-roperscientific:
+.. _lima-tango-princetonccd:
 
 PrincetonCCD Tango C++ device
 =============================
