@@ -5,8 +5,6 @@ Ufxc Tango C++ device
 
 This is the reference documentation of the Ufxc Tango C++ device.
 
-You can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the `Ufxc camera plugin`_ section.
-
 
 Properties
 ----------
@@ -76,5 +74,3 @@ State                   Void            Long                    Return the devic
 Status                  Void            String                  Return the device state as a string
 LoadConfigFile          String          Void                    Load  the detector configuration file designed by its alias
 ======================= =============== ======================= ===========================================
-
-.. _Ufxc camera plugin: https://lima1.readthedocs.io/en/latest/camera/ufxc/doc/index.html
