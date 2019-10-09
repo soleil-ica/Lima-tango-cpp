@@ -17,9 +17,6 @@ Property name                Default value    Type                 Description
 DetectorIP                   127.0.0.1        String           IP Address of the Detector
 DetectorTimeout              11000            Long             During acquisition, this is the time before declaring that is no available image returned by detector. (in ms)
 DetectorPacketSize           1500             Long             Define the packet size for the selected steam channel of the Transport Layer. (in bytes)
-MemorizedInterPacketDelay    0                Long             Delay in ticks for the selected steam channel of the Transport Layer.
-MemorizedGain                0                Double           Memorize the attribute gain.
-MemorizedAutoGain            false            Boolean          Memorize the attribute autoGain
 ============================ ================ ================ =====================================
 
 
