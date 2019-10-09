@@ -10,7 +10,7 @@ Properties
 ----------
 ======================= =============== =============== =========================================================================
 Property name           Default value   Type            Description
-======================= =============== =========================================================================
+======================= =============== =============== =========================================================================
 ConfigFileName          N/A             String          Configuration files used during the camera instanciation.
 ExpertReadoutTime       N/A             Double          This is the readout time in seconds of the camera.
 ExpertReceiverFifoDepth N/A             Long            This is the number of frames in the receiver memory.
