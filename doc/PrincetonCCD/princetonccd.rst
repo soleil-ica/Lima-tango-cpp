@@ -17,7 +17,7 @@ Property name                   Default value            Type               Desc
 DetectorNum                                              String             Identifier of the camera 
 
                                                                             (0..nb total cameras declared in the system. It can be retrieved from WinView32)
-TemperatureTargetAtInit         DEFAULT                  String              Define which Temperature must be used at init device
+TemperatureTargetAtInit         DEFAULT                  String             Define which Temperature must be used at init device
 
                                                                             - DEFAULT : use DefaultTemperatureTarget value
                                                                             - MEMORIZED : use MemorizedTemperatureTarget value
