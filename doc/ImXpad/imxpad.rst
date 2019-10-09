@@ -1,21 +1,24 @@
-ImXpad Tango device
+.. _lima-tango-imxpad:
+
+ImXpad C++ Tango device
 =======================
 
 This is the reference documentation of the ImXpad Tango device.
 
-you can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the :ref:`ImXPAD camera plugin <camera-imxpad>` section.
+You can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the `ImXpad camera plugin`_ section.
 
 
 Properties
 ----------
 
-================= =============== =============== =========================================================================
-Property name     Mandatory       Default value   Description
-================= =============== =============== =========================================================================
-HostName          Yes             127.0.0.1       Host name /Adress IP of the XPAD SERVER
-Port              Yes             3456            Host port of the XPAD SERVER
-CalibrationPath   Yes             MUST_BE_DEFINED Path where calibration files are stored
-================= =============== =============== =========================================================================
+================= ================= =============== =========================================================================
+Property name     Default value     Type            Description
+================= ================= =============== =========================================================================
+HostName          127.0.0.1         String          Host name /Adress IP of the XPAD SERVER
+Port              3456              Long            Host port of the XPAD SERVER
+CalibrationPath   MUST_BE_DEFINED   String          Path where calibration files are stored
+================= ================= =============== =========================================================================
+
 
 Attributes
 ----------
@@ -65,6 +68,7 @@ time                      w       DevULong                Define the calbration 
 iTHL                      w       DevULong                Define the limit of the threshold scan during calibration
 ========================= ======= ======================= ======================================================================
 
+
 Commands
 --------
 
@@ -86,5 +90,4 @@ ITHLIncrease            DevVoid         DevVoid                 Increment of one
 ITHLDecrease            DevVoid         DevVoid                 Decrement of one unit in the global ITHL register
 ======================= =============== ======================= ===========================================
 
-
-
+.. _ImXpad camera plugin: https://lima1.readthedocs.io/en/latest/camera/imxpad/doc/index.html
