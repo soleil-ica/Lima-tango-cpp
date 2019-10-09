@@ -18,9 +18,6 @@ BlankOfSyncreadoutTrigger          NORMAL          String          Allows you to
 
                                                                    - STANDARD
                                                                    - MINIMUM
-MemorizedTopViewExposureTime       1000            Double          Memorize/Define the Top View exposure time attribute.
-MemorizedBottomViewExposureTime    1000            Double          Memorize/Define the Bottom View exposure time attribute.
-MemorizedWViewEnabled              false           Boolean         Memorize/Define the W-VIEW mode attribute.
 ================================== =============== =============== =========================================================================
 
 
