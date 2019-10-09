@@ -28,17 +28,17 @@ Property name                Default value        Type              Description
 ============================ ==================== ================= =======================================================================
 NbRoiCounters                2                                      Fix the number of Region Of Interest.
 __x                          0                                      (Origin X) for each Region of Interest.
-                             0
 
+                             0
 __y                          0                                      (Origin Y) for each Region of Interest.
+
                              0
-
 __width                      10                                     (Width) for each Region of Interest.
-                             10
 
+                             10
 __height                     10                                     (Height) for each Region of Interest.
-                             10
 
+                             10
 ============================ ==================== ================= =======================================================================
 
 
