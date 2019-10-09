@@ -1,3 +1,5 @@
+.. _lima-tango-lambda:
+
 LAMBDA Tango C++ device
 ========================
 
