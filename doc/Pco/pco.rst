@@ -3,7 +3,7 @@
 Pco C++ Tango device
 ======================
 
-This is the reference documentation of the PCO Tango C++ device.
+This is the reference documentation of the Pco Tango C++ device.
 
 You can also find some useful information about the camera models/prerequisite/installation/configuration/compilation in the `Pco camera plugin`_ section.
 
