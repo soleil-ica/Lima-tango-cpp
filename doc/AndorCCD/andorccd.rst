@@ -1,9 +1,9 @@
 .. _lima-tango-andorccd:
 
-AndorCCD C++ Tango device
+AndorCCD Tango C++ device
 =========================
 
-This is the reference documentation of the AndorCCD C++ Tango device.
+This is the reference documentation of the AndorCCD Tango C++ device.
 
 You can also find some useful information about prerequisite/installation/configuration/compilation in the `Andor camera plugin`_ section.
 
