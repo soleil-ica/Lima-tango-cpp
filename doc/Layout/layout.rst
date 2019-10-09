@@ -1,5 +1,3 @@
-.. _lima-tango-LAYOUT:
-
 Layout class
 ====================
 
