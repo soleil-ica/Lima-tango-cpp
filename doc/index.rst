@@ -23,7 +23,7 @@ This device server provides several Tango classes:
 --------------------------
 
 .. toctree::
-  :maxdepth: 1
+   :maxdepth: 1
 
    LimaDetector <LimaDetector/limadetector>
   
