@@ -27,16 +27,16 @@ Timeout                                0                         ULong          
 DetectorConfigFiles                    ALIAS;PATH_AND_FILE_NAME  Array of String    Define the list of Detector Configuration files and their associated alias
 GeometricalCorrectionEnabled           true                      Boolean            Enable/Disable the geometrical corrections.
 StackFramesSumEnabled                  true                      Boolean            Enable/Disable the sum of the frames stack.
-MemorizedTresholdLow                   0                         Float              Only the device could modify this property.
+MemorizedTresholdLow                   0                         Float              Only the device should modify this property.
 
                                                                                     The User should never change this property.
-MemorizedTresholdHigh                  0                         Float              Only the device could modify this property.
+MemorizedTresholdHigh                  0                         Float              Only the device should modify this property.
 
                                                                                     The User should never change this property.
-MemorizedConfigAlias                   ALIAS                     String             Only the device could modify this property.
+MemorizedConfigAlias                   ALIAS                     String             Only the device can modify this property.
 
                                                                                     The User should never change this property.
-MemorizedTriggerAcquisitionFrequency   1                         Float              Only the device could modify this property.
+MemorizedTriggerAcquisitionFrequency   1                         Float              Only the device should modify this property.
 
                                                                                     The User should never change this property.
 ====================================== ========================= ================== ===============================================
