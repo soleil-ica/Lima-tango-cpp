@@ -153,7 +153,7 @@ void Xspress3::delete_device()
 	}
 	m_dyn_channel.clear();
 
-	INFO_STREAM << "Remove the inner-appender." << endl;
+    INFO_STREAM << "Remove the inner-appender." << endl;
     yat4tango::InnerAppender::release(this);
 }
 

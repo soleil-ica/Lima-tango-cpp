@@ -47,10 +47,12 @@
 #include "Factory.h"
 #include <tango.h>
 
+// Yat4Tango
 #include <yat4tango/PropertyHelper.h>
 #include <yat4tango/DynamicInterfaceManager.h>
 #include <yat4tango/InnerAppender.h>
 
+// Yat
 #include <yat/memory/SharedPtr.h>
 #include <yat/utils/Callback.h>
 #include <yat/any/Any.h>
