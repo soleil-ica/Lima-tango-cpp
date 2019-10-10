@@ -116,6 +116,9 @@ void Hamamatsu::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_topViewExposureTime_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_bottomViewExposureTime_read);
     DELETE_SCALAR_ATTRIBUTE(attr_Temperature_read);
+
+	INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
 }
 
 //+----------------------------------------------------------------------------
@@ -144,6 +147,9 @@ void Hamamatsu::init_device()
 	m_is_device_initialized = false;
 	set_state(Tango::INIT);
 	m_status_message.str("");
+
+	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
 
 	try
 	{
