@@ -144,7 +144,6 @@ void AndorCCD::init_device()
 
 	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
     yat4tango::InnerAppender::initialize(this, 512);
-	
 
 	try
 	{
