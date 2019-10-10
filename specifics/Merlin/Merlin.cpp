@@ -179,8 +179,9 @@ void Merlin::delete_device()
 	delete[] attr_triggerInLVDSDelay_read;
 	delete[] attr_triggerUseDelay_read;
 
-    INFO_STREAM << "Remove the inner-appender." << endl;
-    yat4tango::InnerAppender::release(this);
+    // Couldn't properly initialized InnerAppender, so device is crashing on the delete:
+    // INFO_STREAM << "Remove the inner-appender." << endl;
+    // yat4tango::InnerAppender::release(this);
 }
 
 //--------------------------------------------------------
@@ -232,8 +233,10 @@ void Merlin::init_device()
 
 	/*----- PROTECTED REGION ID(Merlin::init_device) ENABLED START -----*/
     
-    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
-    yat4tango::InnerAppender::initialize(this, 512);
+    // InnerAppender is not properly created, with these commands, for unknown reason
+    // Device is then crashing on delete() => can't remove because not created
+    // INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    // yat4tango::InnerAppender::initialize(this, 512);
 	
     try
     {
