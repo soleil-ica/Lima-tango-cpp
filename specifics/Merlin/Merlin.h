@@ -48,6 +48,7 @@
 
 // YAT / 4Tango
 #include <yat4tango/PropertyHelper.h>
+#include <yat4tango/InnerAppender.h>
 
 using namespace lima;
 

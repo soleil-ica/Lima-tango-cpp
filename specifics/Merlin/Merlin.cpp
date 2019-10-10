@@ -178,6 +178,9 @@ void Merlin::delete_device()
 	delete[] attr_triggerInTTLDelay_read;
 	delete[] attr_triggerInLVDSDelay_read;
 	delete[] attr_triggerUseDelay_read;
+
+    INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
 }
 
 //--------------------------------------------------------
@@ -228,6 +231,9 @@ void Merlin::init_device()
 	attr_triggerUseDelay_read = new Tango::DevBoolean[1];
 
 	/*----- PROTECTED REGION ID(Merlin::init_device) ENABLED START -----*/
+    
+    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
 	
     try
     {
