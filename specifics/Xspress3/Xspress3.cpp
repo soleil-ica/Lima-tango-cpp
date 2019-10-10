@@ -151,7 +151,10 @@ void Xspress3::delete_device()
 	{
 		delete m_dyn_channel[i];
 	}
-	m_dyn_channel.clear();		
+	m_dyn_channel.clear();
+
+	INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
 }
 
 //+----------------------------------------------------------------------------
@@ -175,6 +178,9 @@ void Xspress3::init_device()
     set_state(Tango::INIT);
     m_is_device_initialized = false;
     m_status_message.str("");
+
+	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
 
     try
     {

@@ -46,11 +46,15 @@
 
 #include "Factory.h"
 #include <tango.h>
+
 #include <yat4tango/PropertyHelper.h>
+#include <yat4tango/DynamicInterfaceManager.h>
+#include <yat4tango/InnerAppender.h>
+
 #include <yat/memory/SharedPtr.h>
 #include <yat/utils/Callback.h>
 #include <yat/any/Any.h>
-#include <yat4tango/DynamicInterfaceManager.h>
+
 #include "UserData.h"
 
 #include "lima/HwInterface.h"
