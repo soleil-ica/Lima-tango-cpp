@@ -110,6 +110,9 @@ void Ufxc::delete_device()
 	DELETE_DEVSTRING_ATTRIBUTE(attr_currentConfigFile_read);
 	//	Delete device allocated objects
 
+	INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
+
 	//!!!! ONLY LimaDetector device can do this !!!!
 	//if(m_ct!=0)
 	//{
@@ -157,6 +160,10 @@ void Ufxc::init_device()
 	m_status_message.str("");
 	strcpy(*attr_currentAlias_read, "Unknown");
 	strcpy(*attr_currentConfigFile_read, "Unknown");
+
+	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
+
 	try
 	{
 		//- get the main object used to pilot the lima framework
