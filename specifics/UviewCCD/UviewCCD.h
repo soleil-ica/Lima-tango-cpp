@@ -36,6 +36,7 @@
 #include <tango.h>
 //using namespace Tango;
 #include <yat4tango/PropertyHelper.h>
+#include <yat4tango/InnerAppender.h>
 
 #include <UviewCamera.h>
 #include <UviewInterface.h>
