@@ -109,6 +109,9 @@ void AndorCCD::delete_device()
 	DELETE_DEVSTRING_ATTRIBUTE(attr_currentRate_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_currentCoolingStatus_read);
 
+	INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
+
 	// Delete device allocated objects
 	// ...
 }
@@ -138,6 +141,9 @@ void AndorCCD::init_device()
 	m_is_device_initialized = false;
 	set_state(Tango::INIT);
 	m_status_message.str("");
+
+	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
 
 	try
 	{

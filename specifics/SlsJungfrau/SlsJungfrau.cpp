@@ -148,6 +148,9 @@ void SlsJungfrau::delete_device()
 	delete[] attr_delayAfterTrigger_read;
 	delete[] attr_detectorFirmwareVersion_read;
 	delete[] attr_detectorSoftwareVersion_read;
+
+    INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
 }
 
 //--------------------------------------------------------
@@ -165,6 +168,9 @@ void SlsJungfrau::init_device()
     m_is_device_initialized = false;
     set_state(Tango::INIT);
     m_status_message.str("");
+
+    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
 
 	try
 	{
@@ -312,7 +318,7 @@ void SlsJungfrau::get_device_property()
 	
 	//	Check device property data members init
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, ""       , "ConfigFileName"         );
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.00004", "ExpertReadoutTime"      ); // 40µs by default
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.00004", "ExpertReadoutTime"      ); // 40Âµs by default
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "2500"   , "ExpertReceiverFifoDepth"); // 2500 frames by default
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "128"    , "ExpertFramePacketNumber"); // 128 packets by default
 	

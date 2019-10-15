@@ -37,6 +37,7 @@
 
 //- YAT/YAT4TANGO
 #include <yat4tango/PropertyHelper.h>
+#include <yat4tango/InnerAppender.h>
 
 /**
  * @author	$Author:  $

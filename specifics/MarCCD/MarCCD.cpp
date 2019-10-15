@@ -104,7 +104,10 @@ void MarCCD::delete_device()
     //	Delete device allocated objects
     DELETE_DEVSTRING_ATTRIBUTE(attr_imageName_read);
     DELETE_SCALAR_ATTRIBUTE(attr_imageIndex_read);
-    DELETE_SCALAR_ATTRIBUTE(attr_waitFileOnDiskTime_read);    
+    DELETE_SCALAR_ATTRIBUTE(attr_waitFileOnDiskTime_read);
+
+    INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
 
     //!!!! ONLY LimaDetector device can do this !!!!
     //if(m_ct!=0)
@@ -139,6 +142,9 @@ void MarCCD::init_device()
     set_state(Tango::INIT);
     m_is_device_initialized = false;
     m_status_message.str("");
+
+    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
 
     try
     {
