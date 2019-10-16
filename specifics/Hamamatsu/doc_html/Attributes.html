@@ -80,8 +80,17 @@ Revision:  - Author: cedric.castel
 <Tr><Td><b>bottomViewExposureTime</b>: <Font Size=-1>Exposure time for W-VIEW n°2.</Font></Td>
 <Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>Temperature</b>: <Font Size=-1>Temperature of the image sensor in Celcius.</Font></Td>
+<Tr><Td><b>temperature</b>: <Font Size=-1>Temperature of the image sensor in Celcius.</Font></Td>
 <Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>coolerMode</b>: <Font Size=-1>Selected cooler mode (OFF/ON/MAX/NOT_SUPPORTED).</Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>coolerStatus</b>: <Font Size=-1>Current cooler status.<br> Possible values can be:<br> - inactive (NOT_SUPPORTED, NONE, OFF)<br> - in error (ERROR1, ERROR2, ERROR3, ERROR4)<br> - running (READY, BUSY, ALWAYS, WARNING)<br></Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>temperatureStatus</b>: <Font Size=-1>Current temperature status (NOT_SUPPORTED, NORMAL, WARNING, PROTECTION). </Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 </Table>
 </Center>
