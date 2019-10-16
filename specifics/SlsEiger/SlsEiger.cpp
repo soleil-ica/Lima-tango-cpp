@@ -245,16 +245,16 @@ void SlsEiger::init_device()
 	}
 	catch(Exception& e)
 	{
-		INFO_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg( ) << endl;
+		INFO_STREAM << m_status_message.str().c_str();
 		m_is_device_initialized = false;
 		set_state(Tango::FAULT);
 		return;
 	}
 	catch(...)
 	{
-		INFO_STREAM << "Initialization Failed : UNKNOWN" << endl;
 		m_status_message << "Initialization Failed : UNKNOWN" << endl;
+		INFO_STREAM << m_status_message.str().c_str();
 		set_state(Tango::FAULT);
 		m_is_device_initialized = false;
 		return;
@@ -466,13 +466,22 @@ void SlsEiger::always_executed_hook()
     {
         m_status_message.str("");
 
+		//- get the main object used to pilot the lima framework		
+		m_ct = ControlFactory::instance().get_control("SlsEiger");
+		
+		//- get interface to specific camera
+		m_hw = dynamic_cast<lima::SlsEiger::Interface*>(m_ct->hwInterface());
+		
+		//- get camera to specific detector
+		m_camera = &(m_hw->getCamera());
+        
         //update state
         dev_state();
     }
     catch (Exception& e)
     {
-        ERROR_STREAM << e.getErrMsg() << endl;
         m_status_message << "always_executed_hook : " << e.getErrMsg() << endl;
+        ERROR_STREAM << m_status_message.str().c_str();
         //- throw exception
         set_state(Tango::FAULT);
         m_is_device_initialized = false;
@@ -480,8 +489,8 @@ void SlsEiger::always_executed_hook()
     }
     catch (...)
     {
-        ERROR_STREAM << "always_executed_hook : UNKNOWN" << endl;
         m_status_message << "always_executed_hook : UNKNOWN" << endl;
+        ERROR_STREAM << m_status_message.str().c_str();
         //- throw exception
         set_state(Tango::FAULT);
         m_is_device_initialized = false;
@@ -797,18 +806,30 @@ void SlsEiger::read_overflowMode(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "SlsEiger::read_overflowMode(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::read_overflowMode) ENABLED START -----*/
-	//	Set the attribute value
-    // if an acquisition is running, the attribute is in alarm because we return the latest cache value.
-    bool attribute_is_in_alarm = (get_state() == Tango::RUNNING);
 
-    // get the camera value
-    bool overflow_mode = m_camera->getOverflowMode();
+    try
+    {
+        // Set the attribute value
+        // if an acquisition is running, the attribute is in alarm because we return the latest cache value.
+        bool attribute_is_in_alarm = (get_state() == Tango::RUNNING);
 
-    // set the attribute value
-    *attr_overflowMode_read = (Tango::DevBoolean)(overflow_mode);
-    attr.set_value(attr_overflowMode_read);
-    attr.set_quality((attribute_is_in_alarm) ? Tango::ATTR_ALARM : Tango::ATTR_VALID);
+        // get the camera value
+        bool overflow_mode = m_camera->getOverflowMode();
 
+        // set the attribute value
+        *attr_overflowMode_read = (Tango::DevBoolean)(overflow_mode);
+        attr.set_value(attr_overflowMode_read);
+        attr.set_quality((attribute_is_in_alarm) ? Tango::ATTR_ALARM : Tango::ATTR_VALID);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsEiger::read_overflowMode");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsEiger::read_overflowMode");
+    }
+    
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_overflowMode
 }
 //--------------------------------------------------------
@@ -964,7 +985,7 @@ void SlsEiger::read_gainMode(Tango::Attribute &attr)
         else
         {
             std::ostringstream MsgErr;
-            MsgErr << "Impossible to found the clock divider mode " << gain_mode << std::endl;
+            MsgErr << "Impossible to found the gain mode " << gain_mode << std::endl;
 
             Tango::Except::throw_exception("LOGIC_ERROR",
                                            MsgErr.str().c_str(),
