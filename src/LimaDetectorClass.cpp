@@ -1566,7 +1566,7 @@ void LimaDetectorClass::write_class_property()
 
 	//	Put title
 	Tango::DbDatum	title("ProjectTitle");
-	string	str_title("Lima Devie Generic");
+	string	str_title("Lima Device Generic");
 	title << str_title;
 	data.push_back(title);
 

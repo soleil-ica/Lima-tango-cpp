@@ -217,7 +217,7 @@ ChannelUserData::~ChannelUserData()
 //----------------------------------------------------------------------------------------------------------------------
 //	
 //----------------------------------------------------------------------------------------------------------------------
-const std::vector<Tango::DevDouble>& ChannelUserData::get_value()
+const std::vector<unsigned int>& ChannelUserData::get_value()
 {
     yat::MutexLock scoped_lock(m_lock);
     return m_data;
@@ -226,7 +226,7 @@ const std::vector<Tango::DevDouble>& ChannelUserData::get_value()
 //----------------------------------------------------------------------------------------------------------------------
 //	
 //----------------------------------------------------------------------------------------------------------------------
-void ChannelUserData::set_value(std::vector<Tango::DevDouble> value)
+void ChannelUserData::set_value(std::vector<unsigned int> value)
 {
     yat::MutexLock scoped_lock(m_lock);
     m_data = value;

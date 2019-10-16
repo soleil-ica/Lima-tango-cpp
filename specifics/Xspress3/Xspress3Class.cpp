@@ -438,21 +438,6 @@ void Xspress3Class::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
-	prop_name = "UseDtc";
-	prop_desc = "Enable or Disable dead time correction";
-	prop_def  = "false";
-	vect_data.clear();
-	vect_data.push_back("false");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
 }
 //+----------------------------------------------------------------------------
 //

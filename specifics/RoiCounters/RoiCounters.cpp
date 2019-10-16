@@ -1086,15 +1086,15 @@ bool RoiCounters::create_image_dynamic_attributes(void)
 			dai.tai.max_dim_x = 100000;//- arbitrary big value
 			dai.tai.max_dim_y = 100000;//- arbitrary big value
 
-			if(pixel_depth == "8")
+			if(pixel_depth == "8" || pixel_depth == "2")
 			{
 				dai.tai.data_type = Tango::DEV_UCHAR;
 			}
-			else if(pixel_depth == "12" || pixel_depth == "16")
+			else if(pixel_depth == "12" || pixel_depth == "16" || pixel_depth == "14")
 			{
 				dai.tai.data_type = Tango::DEV_USHORT;
 			}
-			else if(pixel_depth == "24" || pixel_depth == "32")
+			else if(pixel_depth == "24" || pixel_depth == "32" || pixel_depth == "2A")
 			{
 				dai.tai.data_type = Tango::DEV_ULONG;
 			}

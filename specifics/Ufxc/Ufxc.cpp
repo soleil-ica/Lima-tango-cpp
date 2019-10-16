@@ -103,12 +103,15 @@ void Ufxc::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_thresholdLow_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_thresholdHigh_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_thresholdLow1_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_thresholdHigh1_read);	
+	DELETE_SCALAR_ATTRIBUTE(attr_thresholdHigh1_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_thresholdLow2_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_thresholdHigh2_read);		
+	DELETE_SCALAR_ATTRIBUTE(attr_thresholdHigh2_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_currentAlias_read);
-	DELETE_DEVSTRING_ATTRIBUTE(attr_currentConfigFile_read);		
+	DELETE_DEVSTRING_ATTRIBUTE(attr_currentConfigFile_read);
 	//	Delete device allocated objects
+
+	INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
 
 	//!!!! ONLY LimaDetector device can do this !!!!
 	//if(m_ct!=0)
@@ -116,12 +119,12 @@ void Ufxc::delete_device()
 	//    ControlFactory::instance().reset("Ufxc");
 	//    m_ct = 0;
 	//}    
-	
-// Exit acquisition task
-    INFO_STREAM << "Exit yat::DeviceTask." << endl;
-    m_my_task.reset();
-	
-	m_map_alias_config_files.clear();	
+
+	// Exit acquisition task
+	INFO_STREAM << "Exit yat::DeviceTask." << endl;
+	m_my_task.reset();
+
+	m_map_alias_config_files.clear();
 }
 
 //+----------------------------------------------------------------------------
@@ -142,21 +145,25 @@ void Ufxc::init_device()
 	CREATE_DEVSTRING_ATTRIBUTE(attr_libVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
 	CREATE_DEVSTRING_ATTRIBUTE(attr_firmwareVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
 	CREATE_SCALAR_ATTRIBUTE(attr_triggerAcquisitionFrequency_read);
-	CREATE_SCALAR_ATTRIBUTE(attr_detectorTemperature_read);	
+	CREATE_SCALAR_ATTRIBUTE(attr_detectorTemperature_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_thresholdLow_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_thresholdHigh_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_thresholdLow1_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_thresholdHigh1_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_thresholdLow2_read);
-	CREATE_SCALAR_ATTRIBUTE(attr_thresholdHigh2_read);	
+	CREATE_SCALAR_ATTRIBUTE(attr_thresholdHigh2_read);
 	CREATE_DEVSTRING_ATTRIBUTE(attr_currentAlias_read, 255);
-	CREATE_DEVSTRING_ATTRIBUTE(attr_currentConfigFile_read, 255);		
+	CREATE_DEVSTRING_ATTRIBUTE(attr_currentConfigFile_read, 255);
 
 	m_is_device_initialized = false;
 	set_state(Tango::INIT);
 	m_status_message.str("");
 	strcpy(*attr_currentAlias_read, "Unknown");
 	strcpy(*attr_currentConfigFile_read, "Unknown");
+
+	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
+
 	try
 	{
 		//- get the main object used to pilot the lima framework
@@ -200,10 +207,21 @@ void Ufxc::init_device()
 		m_map_alias_config_files.insert(make_pair(alias, file_name));
 		INFO_STREAM << "  [alias : " << alias << " , file : " << file_name << endl;
 	}
-	
+
 	m_is_device_initialized = true;
 	try
 	{
+		set_state(Tango::DISABLE);
+		//- Create the task in order to load_config_file() with last memorized file
+		m_my_task.reset(new MyTask(this), TaskExiter());
+		m_my_task->go();
+
+		if(autoLoad)
+		{
+			load_config_file(const_cast<Tango::DevString> (memorizedConfigAlias.c_str()));
+		}
+
+		//then write attributes at init with last memorized values
 		INFO_STREAM << "Write tango hardware at Init - thresholdLow." << endl;
 		Tango::WAttribute &thresholdLow = dev_attr->get_w_attr_by_name("thresholdLow");
 		*attr_thresholdLow_read = attr_thresholdLow_write = memorizedThresholdLow;
@@ -214,18 +232,18 @@ void Ufxc::init_device()
 		Tango::WAttribute &thresholdHigh = dev_attr->get_w_attr_by_name("thresholdHigh");
 		*attr_thresholdHigh_read = attr_thresholdHigh_write = memorizedThresholdHigh;
 		thresholdHigh.set_write_value(*attr_thresholdHigh_read);
-		write_thresholdHigh(thresholdHigh);				
-/////////
+		write_thresholdHigh(thresholdHigh);
+		/////////
 		ImageType image_type;
 		m_camera->getImageType(image_type);
-                INFO_STREAM<<"image_type = "<<image_type<<endl;
+		INFO_STREAM << "image_type = " << image_type << endl;
 
 		TrigMode trig_mode;
-                m_ct->acquisition()->getTriggerMode(trig_mode);
-                INFO_STREAM<<"trig_mode = "<<trig_mode<<endl;
+		m_ct->acquisition()->getTriggerMode(trig_mode);
+		INFO_STREAM << "trig_mode = " << trig_mode << endl;
 
 		//available only in mode pump & probe (i.e Trigger Ext Multi and Bpp2)
-		if(trig_mode == ExtTrigMult && image_type == Bpp2)	
+		if(trig_mode == ExtTrigMult && (image_type==Bpp2 ||image_type==Bpp32))
 		{
 			INFO_STREAM << "Write tango hardware at Init - triggerAcquisitionFrequency." << endl;
 			Tango::WAttribute &triggerAcquisitionFrequency = dev_attr->get_w_attr_by_name("triggerAcquisitionFrequency");
@@ -233,7 +251,7 @@ void Ufxc::init_device()
 			triggerAcquisitionFrequency.set_write_value(*attr_triggerAcquisitionFrequency_read);
 			write_triggerAcquisitionFrequency(triggerAcquisitionFrequency);
 		}
-/////////		
+		/////////
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -256,15 +274,7 @@ void Ufxc::init_device()
 		return;
 	}
 
-	
-	//- Create the task
-    m_my_task.reset(new MyTask(this) , TaskExiter());
-	m_my_task->go();
-	set_state(Tango::STANDBY);
-	if(autoLoad)
-	{
-		load_config_file(const_cast<Tango::DevString> (memorizedConfigAlias.c_str()));
-	}
+
 	dev_state();
 }
 
@@ -285,6 +295,7 @@ void Ufxc::get_device_property()
 	//------------------------------------------------------------------
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("AutoLoad"));
+	dev_prop.push_back(Tango::DbDatum("DetectorConfigFiles"));
 	dev_prop.push_back(Tango::DbDatum("ConfigIpAddress"));
 	dev_prop.push_back(Tango::DbDatum("ConfigPort"));
 	dev_prop.push_back(Tango::DbDatum("SFP1IpAddress"));
@@ -294,7 +305,8 @@ void Ufxc::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("SFP3IpAddress"));
 	dev_prop.push_back(Tango::DbDatum("SFP3Port"));
 	dev_prop.push_back(Tango::DbDatum("Timeout"));
-	dev_prop.push_back(Tango::DbDatum("DetectorConfigFiles"));
+	dev_prop.push_back(Tango::DbDatum("GeometricalCorrectionEnabled"));
+	dev_prop.push_back(Tango::DbDatum("StackFramesSumEnabled"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedThresholdLow"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedThresholdHigh"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedConfigAlias"));
@@ -319,6 +331,17 @@ void Ufxc::get_device_property()
 	}
 	//	And try to extract AutoLoad value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  autoLoad;
+
+	//	Try to initialize DetectorConfigFiles from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  detectorConfigFiles;
+	else {
+		//	Try to initialize DetectorConfigFiles from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  detectorConfigFiles;
+	}
+	//	And try to extract DetectorConfigFiles value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  detectorConfigFiles;
 
 	//	Try to initialize ConfigIpAddress from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -419,16 +442,27 @@ void Ufxc::get_device_property()
 	//	And try to extract Timeout value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  timeout;
 
-	//	Try to initialize DetectorConfigFiles from class property
+	//	Try to initialize GeometricalCorrectionEnabled from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  detectorConfigFiles;
+	if (cl_prop.is_empty()==false)	cl_prop  >>  geometricalCorrectionEnabled;
 	else {
-		//	Try to initialize DetectorConfigFiles from default device value
+		//	Try to initialize GeometricalCorrectionEnabled from default device value
 		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if (def_prop.is_empty()==false)	def_prop  >>  detectorConfigFiles;
+		if (def_prop.is_empty()==false)	def_prop  >>  geometricalCorrectionEnabled;
 	}
-	//	And try to extract DetectorConfigFiles value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  detectorConfigFiles;
+	//	And try to extract GeometricalCorrectionEnabled value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  geometricalCorrectionEnabled;
+
+	//	Try to initialize StackFramesSumEnabled from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  stackFramesSumEnabled;
+	else {
+		//	Try to initialize StackFramesSumEnabled from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  stackFramesSumEnabled;
+	}
+	//	And try to extract StackFramesSumEnabled value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  stackFramesSumEnabled;
 
 	//	Try to initialize MemorizedThresholdLow from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -479,20 +513,22 @@ void Ufxc::get_device_property()
 	//	End of Automatic code generation
 	//------------------------------------------------------------------
 	PropertyHelper::create_property_if_empty(this, dev_prop, "False", "AutoLoad");
+	PropertyHelper::create_property_if_empty(this, dev_prop, "ALIAS;PATH_AND_FILE_NAME", "DetectorConfigFiles");	
 	PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "ConfigIpAddress");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "ConfigPort");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "SFP1IpAddress");
-	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "SFP1Port");	
+	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "SFP1Port");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "SFP2IpAddress");
-	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "SFP2Port");		
+	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "SFP2Port");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "SFP3IpAddress");
-	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "SFP3Port");	
-	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "Timeout");	
-	PropertyHelper::create_property_if_empty(this, dev_prop, "ALIAS;PATH_AND_FILE_NAME", "DetectorConfigFiles");
+	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "SFP3Port");
+	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "Timeout");		
+	PropertyHelper::create_property_if_empty(this, dev_prop, "true", "GeometricalCorrectionEnabled");
+	PropertyHelper::create_property_if_empty(this, dev_prop, "true", "StackFramesSumEnabled");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedThresholdLow");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedThresholdHigh");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedTriggerAcquisitionFrequency");
-	
+
 }
 //+----------------------------------------------------------------------------
 //
@@ -559,22 +595,22 @@ void Ufxc::read_attr_hardware(vector<long> &attr_list)
 //-----------------------------------------------------------------------------
 void Ufxc::read_triggerAcquisitionFrequency(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Ufxc::read_triggerAcquisitionFrequency(Tango::Attribute &attr) entering... "<< endl;
+	DEBUG_STREAM << "Ufxc::read_triggerAcquisitionFrequency(Tango::Attribute &attr) entering... " << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
 		*attr_triggerAcquisitionFrequency_read = attr_triggerAcquisitionFrequency_write;
-		attr.set_value(attr_triggerAcquisitionFrequency_read);	
-	}	
+		attr.set_value(attr_triggerAcquisitionFrequency_read);
+	}
 	catch(Tango::DevFailed& df)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::read_triggerAcquisitionFrequency");
-	}		
+		RETHROW_DEVFAILED(df,
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::read_triggerAcquisitionFrequency");
+	}
 }
 
 //+----------------------------------------------------------------------------
@@ -586,27 +622,29 @@ void Ufxc::read_triggerAcquisitionFrequency(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Ufxc::write_triggerAcquisitionFrequency(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Ufxc::write_triggerAcquisitionFrequency(Tango::WAttribute &attr) entering... "<< endl;	
+	DEBUG_STREAM << "Ufxc::write_triggerAcquisitionFrequency(Tango::WAttribute &attr) entering... " << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
 		attr.get_write_value(attr_triggerAcquisitionFrequency_write);
 		ImageType image_type;
 		m_camera->getImageType(image_type);
-        DEBUG_STREAM<<"image_type = "<<image_type<<endl;
+		DEBUG_STREAM << "image_type = " << image_type << endl;
 
 		TrigMode trig_mode;
 		m_ct->acquisition()->getTriggerMode(trig_mode);
-		DEBUG_STREAM<<"trig_mode = "<<trig_mode<<endl;
+		DEBUG_STREAM << "trig_mode = " << trig_mode << endl;
 
 		//available only in mode pump & probe (i.e Trigger Ext Multi and Bpp2)
-		if(trig_mode == ExtTrigMult && image_type == Bpp2)		
+		if(trig_mode == ExtTrigMult && (image_type==Bpp2 ||image_type==Bpp32))
 		{
-			double exposure ;
+			double exposure;
 			m_ct->acquisition()->getAcqExpoTime(exposure);
-			int nb_frames_pump_probe = static_cast<int>(round(exposure*attr_triggerAcquisitionFrequency_write/2)*2);
-            INFO_STREAM<<"nb_frames_pump_probe = "<<nb_frames_pump_probe<<endl;
-			m_ct->acquisition()->setAcqNbFrames(nb_frames_pump_probe);		
+			int nb_frames_pump_probe = static_cast<int> (round(exposure * attr_triggerAcquisitionFrequency_write / 2)*2);
+			INFO_STREAM << "nb_frames_pump_probe = " << nb_frames_pump_probe << endl;
+			m_camera->set_pump_probe_trigger_acquisition_frequency(attr_triggerAcquisitionFrequency_write);
+			m_camera->set_pump_probe_nb_frames(nb_frames_pump_probe);
+			m_ct->acquisition()->setAcqNbFrames(stackFramesSumEnabled?1:nb_frames_pump_probe);
 			PropertyHelper::set_property(this, "MemorizedTriggerAcquisitionFrequency", attr_triggerAcquisitionFrequency_write);
 		}
 		else
@@ -615,7 +653,7 @@ void Ufxc::write_triggerAcquisitionFrequency(Tango::WAttribute &attr)
 			THROW_DEVFAILED("CONFIGURATION_ERROR",
 							"triggerAcquisitionFrequency is used to compute the nbFrames to acquire according to the exposureTime.\n"
 							"This functionnality is available only in 'pump & probe mode' (i.e Trigger External Multi & 2 bits).\n",
-							"Ufxc::write_triggerAcquisitionFrequency");			
+							"Ufxc::write_triggerAcquisitionFrequency");
 		}
 	}
 	catch(Exception& e)
@@ -630,11 +668,11 @@ void Ufxc::write_triggerAcquisitionFrequency(Tango::WAttribute &attr)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::write_triggerAcquisitionFrequency");
-	}		
+		RETHROW_DEVFAILED(df,
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::write_triggerAcquisitionFrequency");
+	}
 }
 
 //+----------------------------------------------------------------------------
@@ -646,7 +684,7 @@ void Ufxc::write_triggerAcquisitionFrequency(Tango::WAttribute &attr)
 //-----------------------------------------------------------------------------
 void Ufxc::read_currentAlias(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Ufxc::read_currentAlias(Tango::Attribute &attr) entering... "<< endl;
+	DEBUG_STREAM << "Ufxc::read_currentAlias(Tango::Attribute &attr) entering... " << endl;
 	try
 	{
 		attr.set_value(attr_currentAlias_read);
@@ -655,11 +693,11 @@ void Ufxc::read_currentAlias(Tango::Attribute &attr)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::read_currentAlias()");
-	}	
+		RETHROW_DEVFAILED(df,
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::read_currentAlias()");
+	}
 }
 
 //+----------------------------------------------------------------------------
@@ -671,7 +709,7 @@ void Ufxc::read_currentAlias(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Ufxc::read_currentConfigFile(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Ufxc::read_currentConfigFile(Tango::Attribute &attr) entering... "<< endl;
+	DEBUG_STREAM << "Ufxc::read_currentConfigFile(Tango::Attribute &attr) entering... " << endl;
 	try
 	{
 		attr.set_value(attr_currentConfigFile_read);
@@ -681,10 +719,10 @@ void Ufxc::read_currentConfigFile(Tango::Attribute &attr)
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
 		RETHROW_DEVFAILED(df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::read_currentConfigFile()");
-	}	
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::read_currentConfigFile()");
+	}
 }
 
 
@@ -697,8 +735,8 @@ void Ufxc::read_currentConfigFile(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Ufxc::read_thresholdLow1(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Ufxc::read_thresholdLow1(Tango::Attribute &attr) entering... "<< endl;
-	
+	DEBUG_STREAM << "Ufxc::read_thresholdLow1(Tango::Attribute &attr) entering... " << endl;
+
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
@@ -706,7 +744,7 @@ void Ufxc::read_thresholdLow1(Tango::Attribute &attr)
 		m_camera->get_threshold_Low1(thr);
 		*attr_thresholdLow1_read = thr;
 		attr.set_value(attr_thresholdLow1_read);
-	}	
+	}
 	catch(Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
@@ -714,16 +752,16 @@ void Ufxc::read_thresholdLow1(Tango::Attribute &attr)
 		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
 						e.getErrMsg().c_str(),
 						"Ufxc::read_thresholdLow1");
-	}	
+	}
 	catch(Tango::DevFailed& df)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::read_thresholdLow1");
-	}	
+		RETHROW_DEVFAILED(df,
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::read_thresholdLow1");
+	}
 }
 
 //+----------------------------------------------------------------------------
@@ -735,7 +773,7 @@ void Ufxc::read_thresholdLow1(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Ufxc::read_thresholdHigh1(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Ufxc::read_thresholdHigh1(Tango::Attribute &attr) entering... "<< endl;
+	DEBUG_STREAM << "Ufxc::read_thresholdHigh1(Tango::Attribute &attr) entering... " << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
@@ -743,7 +781,7 @@ void Ufxc::read_thresholdHigh1(Tango::Attribute &attr)
 		m_camera->get_threshold_High1(thr);
 		*attr_thresholdHigh1_read = thr;
 		attr.set_value(attr_thresholdHigh1_read);
-	}	
+	}
 	catch(Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
@@ -751,16 +789,16 @@ void Ufxc::read_thresholdHigh1(Tango::Attribute &attr)
 		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
 						e.getErrMsg().c_str(),
 						"Ufxc::read_thresholdHigh1");
-	}	
+	}
 	catch(Tango::DevFailed& df)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::read_thresholdHigh1");
-	}	
+		RETHROW_DEVFAILED(df,
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::read_thresholdHigh1");
+	}
 }
 
 //+----------------------------------------------------------------------------
@@ -772,7 +810,7 @@ void Ufxc::read_thresholdHigh1(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Ufxc::read_thresholdLow2(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Ufxc::read_thresholdLow2(Tango::Attribute &attr) entering... "<< endl;
+	DEBUG_STREAM << "Ufxc::read_thresholdLow2(Tango::Attribute &attr) entering... " << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
@@ -780,7 +818,7 @@ void Ufxc::read_thresholdLow2(Tango::Attribute &attr)
 		m_camera->get_threshold_Low2(thr);
 		*attr_thresholdLow2_read = thr;
 		attr.set_value(attr_thresholdLow2_read);
-	}	
+	}
 	catch(Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
@@ -788,16 +826,16 @@ void Ufxc::read_thresholdLow2(Tango::Attribute &attr)
 		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
 						e.getErrMsg().c_str(),
 						"Ufxc::read_thresholdLow2");
-	}	
+	}
 	catch(Tango::DevFailed& df)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::read_thresholdLow2");
-	}	
+		RETHROW_DEVFAILED(df,
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::read_thresholdLow2");
+	}
 }
 
 //+----------------------------------------------------------------------------
@@ -809,7 +847,7 @@ void Ufxc::read_thresholdLow2(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Ufxc::read_thresholdHigh2(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Ufxc::read_thresholdHigh2(Tango::Attribute &attr) entering... "<< endl;
+	DEBUG_STREAM << "Ufxc::read_thresholdHigh2(Tango::Attribute &attr) entering... " << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
@@ -817,7 +855,7 @@ void Ufxc::read_thresholdHigh2(Tango::Attribute &attr)
 		m_camera->get_threshold_High2(thr);
 		*attr_thresholdHigh2_read = thr;
 		attr.set_value(attr_thresholdHigh2_read);
-	}	
+	}
 	catch(Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
@@ -825,16 +863,16 @@ void Ufxc::read_thresholdHigh2(Tango::Attribute &attr)
 		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
 						e.getErrMsg().c_str(),
 						"Ufxc::read_thresholdHigh2");
-	}	
+	}
 	catch(Tango::DevFailed& df)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::read_thresholdHigh2");
-	}	
+		RETHROW_DEVFAILED(df,
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::read_thresholdHigh2");
+	}
 }
 
 //+----------------------------------------------------------------------------
@@ -846,22 +884,22 @@ void Ufxc::read_thresholdHigh2(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Ufxc::read_thresholdLow(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Ufxc::read_thresholdLow(Tango::Attribute &attr) entering... "<< endl;
-	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
+	DEBUG_STREAM << "Ufxc::read_thresholdLow(Tango::Attribute &attr) entering... " << endl;
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
 		*attr_thresholdLow_read = attr_thresholdLow_write;
-		attr.set_value(attr_thresholdLow_read);	
-	}	
+		attr.set_value(attr_thresholdLow_read);
+	}
 	catch(Tango::DevFailed& df)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::read_thresholdLow");
-	}		
+		RETHROW_DEVFAILED(df,
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::read_thresholdLow");
+	}
 }
 
 //+----------------------------------------------------------------------------
@@ -873,14 +911,14 @@ void Ufxc::read_thresholdLow(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Ufxc::write_thresholdLow(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Ufxc::write_thresholdLow(Tango::WAttribute &attr) entering... "<< endl;
+	DEBUG_STREAM << "Ufxc::write_thresholdLow(Tango::WAttribute &attr) entering... " << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
 		attr.get_write_value(attr_thresholdLow_write);
 		m_camera->set_threshold_Low1(attr_thresholdLow_write);
 		m_camera->set_threshold_Low2(attr_thresholdLow_write);
-		PropertyHelper::set_property(this, "MemorizedThresholdLow", attr_thresholdLow_write);			
+		PropertyHelper::set_property(this, "MemorizedThresholdLow", attr_thresholdLow_write);
 	}
 	catch(Exception& e)
 	{
@@ -894,11 +932,11 @@ void Ufxc::write_thresholdLow(Tango::WAttribute &attr)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::write_thresholdLow");
-	}	
+		RETHROW_DEVFAILED(df,
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::write_thresholdLow");
+	}
 }
 
 //+----------------------------------------------------------------------------
@@ -910,22 +948,22 @@ void Ufxc::write_thresholdLow(Tango::WAttribute &attr)
 //-----------------------------------------------------------------------------
 void Ufxc::read_thresholdHigh(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Ufxc::read_thresholdHigh(Tango::Attribute &attr) entering... "<< endl;
+	DEBUG_STREAM << "Ufxc::read_thresholdHigh(Tango::Attribute &attr) entering... " << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
 		*attr_thresholdHigh_read = attr_thresholdHigh_write;
-		attr.set_value(attr_thresholdHigh_read);	
-	}	
+		attr.set_value(attr_thresholdHigh_read);
+	}
 	catch(Tango::DevFailed& df)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::read_thresholdHigh");
-	}		
+		RETHROW_DEVFAILED(df,
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::read_thresholdHigh");
+	}
 }
 
 //+----------------------------------------------------------------------------
@@ -937,14 +975,14 @@ void Ufxc::read_thresholdHigh(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Ufxc::write_thresholdHigh(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Ufxc::write_thresholdHigh(Tango::WAttribute &attr) entering... "<< endl;
+	DEBUG_STREAM << "Ufxc::write_thresholdHigh(Tango::WAttribute &attr) entering... " << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
 		attr.get_write_value(attr_thresholdHigh_write);
 		m_camera->set_threshold_High1(attr_thresholdHigh_write);
 		m_camera->set_threshold_High2(attr_thresholdHigh_write);
-		PropertyHelper::set_property(this, "MemorizedThresholdHigh", attr_thresholdHigh_write);		
+		PropertyHelper::set_property(this, "MemorizedThresholdHigh", attr_thresholdHigh_write);
 	}
 	catch(Exception& e)
 	{
@@ -958,11 +996,11 @@ void Ufxc::write_thresholdHigh(Tango::WAttribute &attr)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::write_thresholdHigh");
-	}	
+		RETHROW_DEVFAILED(df,
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::write_thresholdHigh");
+	}
 }
 
 //+----------------------------------------------------------------------------
@@ -974,7 +1012,7 @@ void Ufxc::write_thresholdHigh(Tango::WAttribute &attr)
 //-----------------------------------------------------------------------------
 void Ufxc::read_detectorTemperature(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Ufxc::read_detectorTemperature(Tango::Attribute &attr) entering... "<< endl;
+	DEBUG_STREAM << "Ufxc::read_detectorTemperature(Tango::Attribute &attr) entering... " << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
@@ -987,10 +1025,10 @@ void Ufxc::read_detectorTemperature(Tango::Attribute &attr)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::read_detectorTemperature");
+		RETHROW_DEVFAILED(df,
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::read_detectorTemperature");
 	}
 	catch(Exception& e)
 	{
@@ -999,7 +1037,7 @@ void Ufxc::read_detectorTemperature(Tango::Attribute &attr)
 		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
 						e.getErrMsg().c_str(),
 						"Ufxc::read_detectorTemperature");
-	}	
+	}
 }
 
 //+----------------------------------------------------------------------------
@@ -1011,7 +1049,7 @@ void Ufxc::read_detectorTemperature(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Ufxc::read_firmwareVersion(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Ufxc::read_firmwareVersion(Tango::Attribute &attr) entering... "<< endl;
+	DEBUG_STREAM << "Ufxc::read_firmwareVersion(Tango::Attribute &attr) entering... " << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
@@ -1025,10 +1063,10 @@ void Ufxc::read_firmwareVersion(Tango::Attribute &attr)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::read_firmwareVersion");
+		RETHROW_DEVFAILED(df,
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::read_firmwareVersion");
 	}
 	catch(Exception& e)
 	{
@@ -1037,7 +1075,7 @@ void Ufxc::read_firmwareVersion(Tango::Attribute &attr)
 		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
 						e.getErrMsg().c_str(),
 						"Ufxc::read_firmwareVersion");
-	}		
+	}
 }
 
 //+----------------------------------------------------------------------------
@@ -1049,7 +1087,7 @@ void Ufxc::read_firmwareVersion(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Ufxc::read_libVersion(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Ufxc::read_libVersion(Tango::Attribute &attr) entering... "<< endl;
+	DEBUG_STREAM << "Ufxc::read_libVersion(Tango::Attribute &attr) entering... " << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
@@ -1063,10 +1101,10 @@ void Ufxc::read_libVersion(Tango::Attribute &attr)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::read_libVersion");
+		RETHROW_DEVFAILED(df,
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::read_libVersion");
 	}
 	catch(Exception& e)
 	{
@@ -1075,7 +1113,7 @@ void Ufxc::read_libVersion(Tango::Attribute &attr)
 		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
 						e.getErrMsg().c_str(),
 						"Ufxc::read_libVersion");
-	}	
+	}
 }
 
 
@@ -1115,6 +1153,7 @@ Tango::DevState Ufxc::dev_state()
 	set_status(DeviceStatus.str());
 
 	argout = DeviceState;
+
 	return argout;
 }
 
@@ -1134,7 +1173,7 @@ void Ufxc::load_config_file(Tango::DevString argin)
 	DEBUG_STREAM << "Ufxc::load_config_file(): entering... !" << endl;
 
 	//	Add your own code to control device here
-	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
 		//  in the property parser "ALIAS;c:\mondossier\monfichier.ini"
@@ -1152,9 +1191,9 @@ void Ufxc::load_config_file(Tango::DevString argin)
 		}
 
 		//ask the camera to load the file on the board
-        //- create an msg to pass it some data (Conf)
-        INFO_STREAM<<"Load the detector config file : "<<m_map_alias_config_files[alias]<<std::endl;
-        m_my_task->load_config_file(m_camera, m_map_alias_config_files[alias]);
+		//- create an msg to pass it some data (Conf)
+		INFO_STREAM << "Load the detector config file : " << m_map_alias_config_files[alias] << std::endl;
+		m_my_task->load_config_file(m_camera, m_map_alias_config_files[alias]);
 
 		//update attributes related to config ini file
 		strcpy(*attr_currentAlias_read, alias.c_str());
@@ -1165,10 +1204,10 @@ void Ufxc::load_config_file(Tango::DevString argin)
 	{
 		ERROR_STREAM << df << endl;
 		//- rethrow exception
-		RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							string(df.errors[0].desc).c_str(),
-							"Ufxc::load_config_file()");
+		RETHROW_DEVFAILED(df,
+						"TANGO_DEVICE_ERROR",
+						string(df.errors[0].desc).c_str(),
+						"Ufxc::load_config_file()");
 	}
 	catch(Exception& e)
 	{
@@ -1177,7 +1216,9 @@ void Ufxc::load_config_file(Tango::DevString argin)
 		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
 						e.getErrMsg().c_str(),
 						"Ufxc::load_config_file");
-	}	
+	}
 }
+
+
 
 }	//	namespace

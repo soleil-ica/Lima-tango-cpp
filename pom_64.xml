@@ -9,7 +9,7 @@
 	
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.9.0</version>
+    <version>1.9.1</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -22,19 +22,19 @@
         <libs-xspress3>../../../camera/xspress3/sdk</libs-xspress3>
         <!--<aol>amd64-Linux-gcc</aol> -->
         <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
-        <PROCESSLIB.version>1.3.8</PROCESSLIB.version>
+        <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
         <CORE.name>Core</CORE.name>
-        <CORE.version>1.7.8</CORE.version>
+        <CORE.version>1.7.9</CORE.version>
         <EIGER.name>Eiger</EIGER.name>
-        <EIGER.version>2.2.1</EIGER.version>
+        <EIGER.version>2.2.2</EIGER.version>
         <SIMULATOR.name>Simulator</SIMULATOR.name>
-        <SIMULATOR.version>1.3.16</SIMULATOR.version>
-        <MERLIN.name>Merlin</MERLIN.name>
-        <MERLIN.version>1.2.0</MERLIN.version>
+        <SIMULATOR.version>1.4.0</SIMULATOR.version>
         <SLSJUNGFRAU.name>SlsJungfrau</SLSJUNGFRAU.name>
-        <SLSJUNGFRAU.version>1.0.1</SLSJUNGFRAU.version>
+        <SLSJUNGFRAU.version>1.1.0</SLSJUNGFRAU.version>
         <LAMBDA.name>Lambda</LAMBDA.name>
-        <LAMBDA.version>1.0.1</LAMBDA.version>    
+        <LAMBDA.version>1.0.2</LAMBDA.version>    
+        <XSPRESS3.name>Xspress3</XSPRESS3.name>
+        <XSPRESS3.version>1.0.1</XSPRESS3.version>   
     </properties>
 
     <scm>
@@ -62,11 +62,6 @@
         </dependency>       
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
-            <artifactId>LimaMerlin-amd64-Linux-gcc-shared-${mode}</artifactId>
-            <version>${MERLIN.version}</version>
-        </dependency>       
-        <dependency>
-            <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaSlsJungfrau-amd64-Linux-gcc-shared-${mode}</artifactId>
             <version>${SLSJUNGFRAU.version}</version>
         </dependency>       
@@ -74,6 +69,11 @@
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaLambda-amd64-Linux-gcc-shared-${mode}</artifactId>
             <version>${LAMBDA.version}</version>
+       </dependency>
+       <dependency>
+            <groupId>fr.soleil.lib.Lima.Camera</groupId>
+            <artifactId>LimaXspress3-amd64-Linux-gcc-shared-${mode}</artifactId>
+            <version>${XSPRESS3.version}</version>
        </dependency>
     </dependencies>
         
@@ -91,9 +91,10 @@
                             <include>specifics/SimulatorCCD/*.cpp</include>							
                             <include>specifics/Eiger/*.cpp</include>
                             <include>specifics/SlsJungfrau/*.cpp</include>
-                            <include>specifics/Merlin/*.cpp</include>
                             <include>specifics/Lambda/*.cpp</include>
-                            <include>specifics/Layout/*.cpp</include>     			
+                            <include>specifics/Xspress3/*.cpp</include>
+                            <include>specifics/Layout/*.cpp</include>     	
+                            <include>specifics/Mask/*.cpp</include>                            
                             <include>specifics/RoiCounters/*.cpp</include>
                         </includes>
 
@@ -102,9 +103,10 @@
                             <includePath>specifics/SimulatorCCD</includePath> 		
                             <includePath>specifics/Eiger</includePath> 
                             <includePath>specifics/SlsJungfrau</includePath>            
-                            <includePath>specifics/Merlin</includePath>                            
-                            <includePath>specifics/Lambda</includePath>                      
+                            <includePath>specifics/Lambda</includePath>        
+                            <includePath>specifics/Xspress3</includePath>     
                             <includePath>specifics/Layout</includePath>         
+                            <includePath>specifics/Mask</includePath>
                             <includePath>specifics/RoiCounters</includePath>
 
                             <includePath>${libs-64bits}/my_breakpad/include</includePath> 		
@@ -137,16 +139,17 @@
                             <define>SLSJUNGFRAU_VERSION=${SLSJUNGFRAU.version}</define>
                             <define>LAMBDA_NAME=${LAMBDA.name}</define>
                             <define>LAMBDA_VERSION_DEVICE=${LAMBDA.version}</define> <!-- name conflict with lambda sdk --> 
-                            <define>MERLIN_NAME=${MERLIN.name}</define>
-                            <define>MERLIN_VERSION=${MERLIN.version}</define>
-
+                            <define>XSPRESS3_NAME=${XSPRESS3.name}</define>
+                            <define>XSPRESS3_VERSION=${XSPRESS3.version}</define>
+                            
                             <!-- define which detector you need to ENABLE -->      
                             <define>SIMULATOR_ENABLED</define> 						
                             <define>EIGER_ENABLED</define> 	
                             <define>SLSJUNGFRAU_ENABLED</define> 
-                            <define>MERLIN_ENABLED</define>
                             <define>LAMBDA_ENABLED</define>
-                            <define>LAYOUT_ENABLED</define>		  
+                            <define>XSPRESS3_ENABLED</define>
+                            <define>LAYOUT_ENABLED</define>	
+                            <define>MASK_ENABLED</define>
                             <define>ROICOUNTERS_ENABLED</define>             
                             <define>SOLEIL_YAT_STREAM</define>
                             <define>UNIX_64_EL6</define>
@@ -276,6 +279,19 @@
                                 <type>shared</type>
                                 <directory>${libs-64bits}/nexuscpp-3.2.2/lib</directory>
                             </lib>   
+                            
+                            <lib>
+                                <!-- gsl (1.11) 64-->
+                                <name>gsl</name>
+                                <type>shared</type>
+                                <directory>${libs-64bits}/gsl-1.11/lib/</directory>
+                            </lib>
+                            <lib>
+                                <!-- gsl (1.11) 64-->
+                                <name>gslcblas</name>
+                                <type>shared</type>
+                                <directory>${libs-64bits}/gsl-1.11/lib/</directory>
+                            </lib>
 
                             <lib>
  				                <!-- liblambda -->
@@ -303,11 +319,11 @@
  				                <directory>${libs-lambda}/</directory>
  			                </lib>
 
-                            <!-- <lib>
+                            <lib>
                                 <name>xspress3</name>
                                 <type>shared</type>
                                 <directory>${libs-xspress3}/bin/</directory>
-                            </lib> -->
+                            </lib>
                                                         
                         </libs>
                     </linker>

@@ -102,6 +102,9 @@ void Dhyana::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_fanSpeed_read);
 	//	Delete device allocated objects
 
+	INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
+
 	//!!!! ONLY LimaDetector device can do this !!!!
 	//if(m_ct!=0)
 	//{
@@ -135,6 +138,10 @@ void Dhyana::init_device()
 	m_is_device_initialized = false;
 	set_state(Tango::INIT);
 	m_status_message.str("");
+	
+	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
+
 	try
 	{
 		//- get the main object used to pilot the lima framework
@@ -232,6 +239,7 @@ void Dhyana::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedTemperatureTarget"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedFanSpeed"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedGlobalGain"));
+	dev_prop.push_back(Tango::DbDatum("__ExpertTimerPeriod"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -275,11 +283,25 @@ void Dhyana::get_device_property()
 	//	And try to extract MemorizedGlobalGain value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedGlobalGain;
 
+	//	Try to initialize __ExpertTimerPeriod from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  __ExpertTimerPeriod;
+	else {
+		//	Try to initialize __ExpertTimerPeriod from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  __ExpertTimerPeriod;
+	}
+	//	And try to extract __ExpertTimerPeriod value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  __ExpertTimerPeriod;
+
 
 
 	//	End of Automatic code generation
 	//------------------------------------------------------------------
-	
+	PropertyHelper::create_property_if_empty(this, dev_prop,"0","MemorizedTemperatureTarget");	
+	PropertyHelper::create_property_if_empty(this, dev_prop,"1","MemorizedFanSpeed");	
+	PropertyHelper::create_property_if_empty(this, dev_prop,"LOW","MemorizedGlobalGain");	
+	PropertyHelper::create_property_if_empty(this, dev_prop,"1","__ExpertTimerPeriod");	
 
 
 }

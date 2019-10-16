@@ -2985,7 +2985,7 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
                 Data last_image;
 				if(cbd.dya->get_name() == "image")
 				{
-                m_ct->ReadImage(last_image, -1);
+					m_ct->ReadImage(last_image, -1);
 				}
 				else //NECESSARY "baseImage"
 				{
@@ -4249,7 +4249,7 @@ void LimaDetector::configure_image_type(void)
 {
     HwDetInfoCtrlObj *hw_det_info;
     m_hw->getHwCtrlObj(hw_det_info);
-    if(detectorPixelDepth == "2")
+    if(detectorPixelDepth == "2" ||detectorPixelDepth == "2A")
     {
         hw_det_info->setCurrImageType(Bpp2);
     }	
@@ -4720,7 +4720,7 @@ void LimaDetector::add_image_dynamic_attribute(const std::string& attr_name)
     {
         dai.tai.data_type = Tango::DEV_USHORT;
     }
-    else if(detectorPixelDepth == "24" || detectorPixelDepth == "32")
+    else if(detectorPixelDepth == "24" || detectorPixelDepth == "32" || detectorPixelDepth == "2A")
     {
         dai.tai.data_type = Tango::DEV_ULONG;
     }

@@ -52,6 +52,9 @@
 #include "lima/CtImage.h"
 #include <PerkinElmerInterface.h>
 
+// Yat4Tango
+#include <yat4tango/InnerAppender.h>
+
 
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
 

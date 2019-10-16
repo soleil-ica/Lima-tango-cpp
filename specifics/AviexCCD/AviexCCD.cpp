@@ -110,6 +110,9 @@ void AviexCCD::delete_device()
     DELETE_DEVSTRING_ATTRIBUTE(attr_mxLibraryVersion_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_internalAcquisitionMode_read);
 
+    INFO_STREAM << "Remove the inner-appender." << endl; 
+    yat4tango::InnerAppender::release(this); 
+
     //    Delete device allocated objects
 
     //!!!! ONLY LimaDetector device can do this !!!!
@@ -152,6 +155,9 @@ void AviexCCD::init_device()
 
     set_state(Tango::INIT);
     m_status_message.str("");
+
+    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
 
     try
     {

@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.9.0</version>
+    <version>1.9.1</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -20,6 +20,15 @@
         <developerConnection>scm:git:git://github.com/soleil-ica/Lima-tango.git</developerConnection>
         <url>https://github.com/soleil-ica/Lima-tango</url>
     </scm>
+    
+    <properties>
+        <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
+        <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
+        <CORE.name>Core</CORE.name>
+        <CORE.version>1.7.9</CORE.version>
+        <SIMULATOR.name>Simulator</SIMULATOR.name>
+        <SIMULATOR.version>1.4.0</SIMULATOR.version>
+    </properties>
 
     <profiles>
         <!-- PROFILE linux_32 -->
@@ -34,35 +43,37 @@
             </activation>
 
             <properties>
-                <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
-                <PROCESSLIB.version>1.3.8</PROCESSLIB.version>
-                <CORE.name>Core</CORE.name>
-                <CORE.version>1.7.8</CORE.version>
                 <AVIEX.name>Aviex</AVIEX.name>
-                <AVIEX.version>1.0.14</AVIEX.version>
+                <AVIEX.version>1.0.15</AVIEX.version>
                 <BASLER.name>Basler</BASLER.name>
-                <BASLER.version>1.5.4</BASLER.version>
+                <BASLER.version>1.6.0</BASLER.version>
                 <EIGER.name>Eiger</EIGER.name>
-                <EIGER.version>2.2.1</EIGER.version>
+                <EIGER.version>2.2.2</EIGER.version>
                 <IMXPAD.name>ImXpad</IMXPAD.name>
-                <IMXPAD.version>1.0.9</IMXPAD.version>
+                <IMXPAD.version>1.0.10</IMXPAD.version>
                 <MARCCD.name>Marccd</MARCCD.name>
-                <MARCCD.version>1.3.16</MARCCD.version>
+                <MARCCD.version>1.3.17</MARCCD.version>
                 <MERLIN.name>Merlin</MERLIN.name>
-                <MERLIN.version>1.2.0</MERLIN.version>
+                <MERLIN.version>1.2.1</MERLIN.version>
                 <PILATUS.name>Pilatus</PILATUS.name>
-                <PILATUS.version>2.1.7</PILATUS.version>
+                <PILATUS.version>2.1.8</PILATUS.version>
                 <PROSILICA.name>Prosilica</PROSILICA.name>
-                <PROSILICA.version>1.4.7</PROSILICA.version>
+                <PROSILICA.version>1.4.8</PROSILICA.version>
                 <UFXC.name>Ufxc</UFXC.name>
-                <UFXC.version>1.0.0</UFXC.version>       
+                <UFXC.version>1.1.1</UFXC.version>       
                 <XPAD.name>Xpad</XPAD.name>
-                <XPAD.version>1.4.15</XPAD.version>
-                <SIMULATOR.name>Simulator</SIMULATOR.name>
-                <SIMULATOR.version>1.3.16</SIMULATOR.version>
+                <XPAD.version>1.4.16</XPAD.version>
+                
             </properties>
            
             <dependencies>
+                <!-- Numero de version pylon force car il faut mettre la BOM a jour -->
+                <dependency>
+                    <groupId>com.basler</groupId>
+                    <artifactId>Pylon-${aol}-shared-${mode}</artifactId>
+                    <version>5.0.5</version>
+                </dependency>
+                
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>YAT4Tango-${aol}-shared-${mode}</artifactId>
@@ -251,304 +262,85 @@
                                     <define>SIMULATOR_ENABLED</define>
                                     
                                     <define>SOLEIL_YAT_STREAM</define>
-                                </defines>               
+                                </defines>                              
+                                
+                                <options>
+                                    <option>-fopenmp</option>
+                                </options>                                                                                                
                             </cpp>
+                            
+                            <linker>                                                                   
+                                <libs>    
+                                    <lib>
+                                        <!-- UFXC -->
+                                        <name>UFXCLib-i386-Linux-gcc-shared-release-1.0.1</name>
+                                        <type>shared</type>
+                                        <directory>../../../camera/ufxc/sdk/linux/lib</directory>
+                                    </lib>
+                                    <lib>
+                                        <!-- openMP -->
+                                        <name>gomp</name>
+                                        <type>shared</type>
+                                        <directory>/usr/lib</directory>
+                                    </lib>   
+                                </libs>
+                            </linker>
                         </configuration>           
                     </plugin>
                 </plugins>
             </build>
         </profile>
         
-        <!-- PROFILE linux_64 -->
+        <!-- PROFILE win_32 compilation -->        
         <profile>
-            <id>linux_64</id>
+            <id>win_32_vc12</id>
             <activation>
                 <activeByDefault>false</activeByDefault>                
                 <property>
                     <name>env</name>
-                    <value>linux_64</value>
-                </property>
-            </activation>
-
-            <properties>
-                <!-- path to the 64 bits libs -->
-                <libs-64bits>/home/informatique/ica/ica/LIB_EL6_64</libs-64bits>
-                <!-- <aol>amd64-Linux-gcc</aol> -->
-                <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
-                <PROCESSLIB.version>1.3.8</PROCESSLIB.version>
-                <CORE.name>Core</CORE.name>
-                <CORE.version>1.7.7</CORE.version>
-                <EIGER.name>Eiger</EIGER.name>
-                <EIGER.version>2.2.0</EIGER.version>
-                <SIMULATOR.name>Simulator</SIMULATOR.name>
-                <SIMULATOR.version>1.3.15</SIMULATOR.version>
-            </properties>
-           
-            <dependencies>
-                <dependency>
-                    <groupId>fr.soleil.lib</groupId>
-                    <artifactId>LimaCore-amd64-Linux-gcc-shared-${mode}</artifactId>
-                    <version>${CORE.version}</version>
-                </dependency>
-                <!-- Lima Camera Plugins -->
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaSimulator-amd64-Linux-gcc-shared-${mode}</artifactId>
-                    <version>${SIMULATOR.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaEiger-amd64-Linux-gcc-shared-${mode}</artifactId>
-                    <version>${EIGER.version}</version>
-                </dependency>  
-            </dependencies>
-            
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.freehep</groupId>
-                        <artifactId>freehep-nar-plugin</artifactId>
-                        <configuration>
-                   
-                            <cpp>
-                                <sourceDirectory>${project.basedir}</sourceDirectory>                        
-                                <includes>
-                                    <include>*.cpp</include>
-                                    <include>specifics/SimulatorCCD/*.cpp</include>							
-                                    <include>specifics/Eiger/*.cpp</include>
-                                    <include>specifics/Layout/*.cpp</include>     			
-                                    <include>specifics/RoiCounters/*.cpp</include>
-                                </includes>
-                                <includePaths>                          
-                                    <includePath>src</includePath>                                   
-                                    <includePath>specifics/SimulatorCCD</includePath> 		
-                                    <includePath>specifics/Eiger</includePath> 		
-                                    <includePath>specifics/Layout</includePath>         
-                                    <includePath>specifics/RoiCounters</includePath>
-                                    <!-- <includePath>${libs-64bits}/my_breakpad/include</includePath> 		 -->
-                                    <includePath>${libs-64bits}/yat-1.13.13/include</includePath>
-                                    <includePath>${libs-64bits}/nexuscpp-3.2.2/include</includePath>     
-                                    <includePath>${libs-64bits}/yat4tango-1.10.4/include</includePath>
-                                </includePaths>
-                                
-                                <defines>
-                                    <define>PROJECT_NAME=${project.name}</define>
-                                    <define>PROJECT_VERSION=${project.version}</define>
-                                    <define>PROCESSLIB_NAME=${PROCESSLIB.name}</define>
-                                    <define>PROCESSLIB_VERSION=${PROCESSLIB.version}</define>
-                                    <define>CORE_NAME=${CORE.name}</define>
-                                    <define>CORE_VERSION=${CORE.version}</define>
-                                    <define>EIGER_NAME=${EIGER.name}</define>
-                                    <define>EIGER_VERSION=${EIGER.version}</define>
-                                    <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
-                                    <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
-
-                                    <!-- <define>UNIX_64_EL5</define> -->	<!-- in order to avoid compilation of BREAKPAD CRASH HANDLER-->
-                                    <!-- define which detector you need to ENABLE -->      
-                                    <define>SIMULATOR_ENABLED</define> 						
-                                    <define>EIGER_ENABLED</define> 	
-                                    <define>LAYOUT_ENABLED</define>		  
-                                    <define>ROICOUNTERS_ENABLED</define>             
-                                    <define>SOLEIL_YAT_STREAM</define>
-                                </defines>                        
-			
-                            </cpp>        
-					
-                            <linker>
-                                <libs>
-                                    <lib>
-                                        <!-- breakpad (??) 64 -->
-                                        <name>breakpad_client</name>
-                                        <type>static</type>
-                                        <directory>${libs-64bits}/my_breakpad/lib</directory>
-                                    </lib>
-                                    <lib>
-                                        <!-- omniORB4 (1.6) 64 -->
-                                        <name>omniORB4</name>
-                                        <type>shared</type>
-                                        <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
-                                    </lib>
-                                    <lib>
-                                        <!-- omniDynamic4 (1.6) 64 -->
-                                        <name>omniDynamic4</name>
-                                        <type>shared</type>
-                                        <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
-                                    </lib>
-                                    <lib>
-                                        <!-- COS4 (1.6) 64 -->
-                                        <name>COS4</name>
-                                        <type>shared</type>
-                                        <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
-                                    </lib>
-                                    <lib>
-                                        <!-- omnithread (3.4) 64 -->
-                                        <name>omnithread</name>
-                                        <type>shared</type>
-                                        <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
-                                    </lib>
-                                    <lib>
-                                        <!-- zmq (3.X.Y) 64 -->
-                                        <name>zmq</name>
-                                        <type>shared</type>
-                                        <directory>${libs-64bits}/zeromq-3.2.5/lib/</directory>
-                                    </lib>
-                                    <lib>
-                                        <!-- tango (8.0.5) 64 -->
-                                        <name>tango</name>
-                                        <type>shared</type>
-                                        <directory>${libs-64bits}/libtango8-8.1.2-16.el6.maxlab.x86_64/usr/lib64</directory>
-                                    </lib>
-                                    <lib>
-                                        <!-- log4tango (4.0.7) 64 -->
-                                        <name>log4tango</name>
-                                        <type>shared</type>
-                                        <directory>${libs-64bits}/liblog4tango5-5.0.0-16.el6.maxlab.x86_64/usr/lib64</directory>
-                                    </lib>
-                                    <lib>
-                                        <!-- hdf5 (1.8.16) 64 -->
-                                        <name>hdf5</name>
-                                        <type>shared</type>
-                                        <directory>${libs-64bits}/hdf5-1.8.16/lib</directory>
-                                    </lib>
-                                    <lib>
-                                        <!-- hdf5 (1.8.16) 64 -->
-                                        <name>hdf5_cpp</name>
-                                        <type>shared</type>
-                                        <directory>${libs-64bits}/hdf5-1.8.16/lib</directory>
-                                    </lib>
-                                    <lib>
-                                        <!-- hdf5 (1.8.16) 64 -->
-                                        <name>hdf5_hl</name>
-                                        <type>shared</type>
-                                        <directory>${libs-64bits}/hdf5-1.8.16/lib</directory>
-                                    </lib>
-                                    <lib>
-                                        <!-- hdf5 (1.8.16) 64 -->
-                                        <name>hdf5_hl_cpp</name>
-                                        <type>shared</type>
-                                        <directory>${libs-64bits}/hdf5-1.8.16/lib</directory>
-                                    </lib>
-                                    <lib>
-                                        <!-- lz4 131 (1.7.1) 64 -->
-                                        <name>lz4</name>
-                                        <type>shared</type>
-                                        <directory>${libs-64bits}/lz4-r131/lib/</directory>
-                                    </lib>
-                                    <lib>
-                                        <!-- YAT (1.13.13) 64 -->
-                                        <name>YAT</name>
-                                        <type>shared</type>
-                                        <directory>${libs-64bits}/yat-1.13.13/lib</directory>
-                                    </lib>
-                                    <lib>
-                                        <!-- NexusCPP (3.2.2) 64 -->
-                                        <name>NexusCPP</name>
-                                        <type>shared</type>
-                                        <directory>${libs-64bits}/nexuscpp-3.2.2/lib</directory>
-                                    </lib>  
-                                    <lib>
-                                        <!-- YAT (1.13.13) 64 -->
-                                        <name>YAT4Tango</name>
-                                        <type>shared</type>
-                                        <directory>${libs-64bits}/yat4tango-1.10.4/lib</directory>
-                                    </lib>                                 
-                                </libs>
-                            </linker>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-                
-        <!-- PROFILE win_32 compilation on vc9 -->        
-        <profile>
-            <id>win_32</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>                
-                <property>
-                    <name>env</name>
-                    <value>win_32</value>
+                    <value>win_32_vc12</value>
                 </property>
             </activation>
             
-            <properties>
-                <TANGO.name>Tango</TANGO.name>
-                <TANGO.version>8.1.2b-vc9</TANGO.version>
-                <OMNIORB.name>omniORB</OMNIORB.name>
-                <OMNIORB.version>4.1.6-vc9</OMNIORB.version>
-                <ZEROMQ.name>zeromq</ZEROMQ.name>
-                <ZEROMQ.version>3.2.4</ZEROMQ.version>
-                <YAT.name>YAT</YAT.name>
-                <YAT.version>1.13.4-vc9</YAT.version>
-                <YAT4TANGO.name>YAT4Tango</YAT4TANGO.name>
-                <YAT4TANGO.version>1.10.0-vc9</YAT4TANGO.version>
-                <NEXUSCPP.name>NexusCPP</NEXUSCPP.name>
-                <NEXUSCPP.version>3.1.5-vc9</NEXUSCPP.version>
-                <HDF5.name>HDF5</HDF5.name>
-                <HDF5.version>1.8.13-vc9</HDF5.version>
-                <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
-                <PROCESSLIB.version>1.3.8</PROCESSLIB.version>
-                <CORE.name>Core</CORE.name>
-                <CORE.version>1.7.8</CORE.version>
+            <properties>  
                 <ANDOR.name>Andor</ANDOR.name>
-                <ANDOR.version>1.3.14</ANDOR.version>
+                <ANDOR.version>1.4.0</ANDOR.version>
                 <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
-                <HAMAMATSU.version>2.1.2</HAMAMATSU.version>
-                <PCO.name>Pco</PCO.name>
-                <PCO.version>1.6.4</PCO.version>
+                <HAMAMATSU.version>2.2.0</HAMAMATSU.version>
                 <PERKINELMER.name>PerkinElmer</PERKINELMER.name>
-                <PERKINELMER.version>1.3.13</PERKINELMER.version>
+                <PERKINELMER.version>1.4.0</PERKINELMER.version>
                 <PRINCETON.name>Princeton</PRINCETON.name>
-                <PRINCETON.version>1.4.0</PRINCETON.version>
+                <PRINCETON.version>1.5.0</PRINCETON.version>
                 <UVIEW.name>Uview</UVIEW.name>
-                <UVIEW.version>1.0.12</UVIEW.version>
-                <DHYANA.name>Dhyana</DHYANA.name>
-                <DHYANA.version>1.1.0</DHYANA.version>
-                <SIMULATOR.name>Simulator</SIMULATOR.name>
-                <SIMULATOR.version>1.3.16</SIMULATOR.version>
+                <UVIEW.version>1.1.0</UVIEW.version>
             </properties>
                 
             <dependencies>
-                <dependency>
-                    <groupId>org.tango</groupId>
-                    <artifactId>tango-cpp-api-${aol}-shared-${mode}</artifactId>
-                    <version>${TANGO.version}</version>
-                </dependency>
-		
-                <dependency>
-                    <groupId>org.omnigroup</groupId>
-                    <artifactId>omniORB-${aol}-shared-${mode}</artifactId>
-                    <version>${OMNIORB.version}</version>
-                </dependency>
-
+                
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
-                    <artifactId>NexusCPP-${aol}-static-${mode}</artifactId>
-                    <version>${NEXUSCPP.version}</version>
+                    <artifactId>NexusCPP-${aol}-shared-${mode}</artifactId>
+                    <!-- Intentionnaly forced as this is currently WIP for shared lib --> 
+                    <version>3.3.4-SNAPSHOT</version>
                 </dependency>
          
                 <dependency>
                     <groupId>ncsa.uiuc.edu</groupId>
                     <artifactId>HDF5-${aol}-shared-release</artifactId>
-                    <version>${HDF5.version}</version>
                 </dependency>        
                 
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
-                    <artifactId>YAT4Tango-${aol}-static-${mode}</artifactId>
-                    <version>${YAT4TANGO.version}</version>
+                    <artifactId>YAT4Tango-${aol}-shared-${mode}</artifactId>
+                    <!-- Intentionnaly forced as this is currently WIP for shared lib --> 
+                    <version>1.11.6-SNAPSHOT</version>
                 </dependency>
         
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
-                    <artifactId>YAT-${aol}-static-${mode}</artifactId>            
-                    <version>${YAT.version}</version>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.zeromq</groupId>
-                    <artifactId>zeromq-${aol}-shared-release</artifactId>
-                    <version>${ZEROMQ.version}</version>
+                    <artifactId>YAT-${aol}-shared-${mode}</artifactId>           
+                    <!-- Intentionnaly forced as this is currently WIP for shared lib --> 
+                    <version>1.15.1-SNAPSHOT</version>
                 </dependency>
 
                 <dependency>
@@ -556,8 +348,6 @@
                     <artifactId>LimaCore-${aol}-shared-${mode}</artifactId>
                     <version>${CORE.version}</version>
                 </dependency>
-
-                <!-- LimaProcesslib -->
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>LimaProcesslib-${aol}-shared-${mode}</artifactId>
@@ -570,22 +360,11 @@
                     <artifactId>LimaAndor-${aol}-shared-${mode}</artifactId>
                     <version>${ANDOR.version}</version>
                 </dependency>
-                
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaDhyana-${aol}-shared-${mode}</artifactId>
-                    <version>${DHYANA.version}</version>
-                </dependency>   
-                
+                            
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaHamamatsu-${aol}-shared-${mode}</artifactId>
                     <version>${HAMAMATSU.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaPco-${aol}-shared-${mode}</artifactId>
-                    <version>${PCO.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
@@ -621,11 +400,9 @@
                                 <includes>
                                     <include>*.cpp</include>
                                     <include>specifics/AndorCCD/*.cpp</include>
-                                    <include>specifics/Dhyana/*.cpp</include>
                                     <include>specifics/Hamamatsu/*.cpp</include>
-                                    <include>specifics/Pco/*.cpp</include>
                                     <include>specifics/PerkinElmer/*.cpp</include>
-                                    <include>specifics/PrincetonCCD/*.cpp</include>
+                                    <include>specifics/PrincetonCCD/*.cpp</include> 
                                     <include>specifics/RoiCounters/*.cpp</include>
                                     <include>specifics/Layout/*.cpp</include>
                                     <include>specifics/Mask/*.cpp</include>
@@ -639,9 +416,7 @@
                                 <includePaths>
                                     <includePath>src</includePath>
                                     <include>specifics/AndorCCD</include>
-                                    <include>specifics/Dhyana</include>
                                     <include>specifics/Hamamatsu</include>
-                                    <include>specifics/Pco</include>
                                     <include>specifics/PerkinElmer</include>
                                     <include>specifics/PrincetonCCD</include>
                                     <include>specifics/RoiCounters</include>
@@ -654,24 +429,14 @@
                                 <defines>
                                     <define>PROJECT_NAME=${project.name}</define>
                                     <define>PROJECT_VERSION=${project.version}</define>
-                                    <define>TANGO_NAME=${TANGO.name}</define>
-                                    <define>TANGO_VERSION=${TANGO.version}</define>
-                                    <define>OMNIORB_NAME=${OMNIORB.name}</define>
-                                    <define>OMNIORB_VERSION=${OMNIORB.version}</define>
-                                    <define>ZEROMQ_NAME=${ZEROMQ.name}</define>
-                                    <define>ZEROMQ_VERSION=${ZEROMQ.version}</define>
                                     <define>PROCESSLIB_NAME=${PROCESSLIB.name}</define>
                                     <define>PROCESSLIB_VERSION=${PROCESSLIB.version}</define>
                                     <define>CORE_NAME=${CORE.name}</define>
                                     <define>CORE_VERSION=${CORE.version}</define>
                                     <define>ANDOR_NAME=${ANDOR.name}</define>
                                     <define>ANDOR_VERSION=${ANDOR.version}</define>
-                                    <define>DHYANA_NAME=${DHYANA.name}</define>
-                                    <define>DHYANA_VERSION=${DHYANA.version}</define>
                                     <define>HAMAMATSU_NAME=${HAMAMATSU.name}</define>
                                     <define>HAMAMATSU_VERSION=${HAMAMATSU.version}</define>
-                                    <define>PCO_NAME=${PCO.name}</define>
-                                    <define>PCO_VERSION=${PCO.version}</define>
                                     <define>PERKINELMER_NAME=${PERKINELMER.name}</define>
                                     <define>PERKINELMER_VERSION=${PERKINELMER.version}</define>
                                     <define>PRINCETON_NAME=${PRINCETON.name}</define>
@@ -683,17 +448,22 @@
 
                                     <!-- define which detector you need to ENABLE -->
                                     <define>ANDOR_ENABLED</define>		
-                                    <define>DHYANA_ENABLED</define>
-                                    <define>HAMAMATSU_ENABLED</define>                            
-                                    <define>PCO_ENABLED</define>
+                                    <define>HAMAMATSU_ENABLED</define>
                                     <define>PERKINELMER_ENABLED</define>
-                                    <define>PRINCETON_ENABLED</define>                                    
+                                    <define>PRINCETON_ENABLED</define>                   
                                     <define>ROICOUNTERS_ENABLED</define>	
                                     <define>LAYOUT_ENABLED</define>
                                     <define>MASK_ENABLED</define>
                                     <define>UVIEW_ENABLED</define>
                                     <define>SIMULATOR_ENABLED</define>
+                                    
                                     <define>SOLEIL_YAT_STREAM</define>
+                                    
+                                    <define>YAT_DLL</define>
+                                    <define>YAT4TANGO_DLL</define>
+                                    <define>NEXUSCPP_DLL</define>
+                                    
+                                    <define>UNIX_64_EL5</define> -->	<!-- in order to avoid compilation of BREAKPAD CRASH HANDLER-->
                                 </defines>                                                                            
                             </cpp> 
                         </configuration>
