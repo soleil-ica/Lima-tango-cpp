@@ -36,7 +36,14 @@ fps                     R          Double     The last computed frame per second
 wViewEnabled            R/W        Boolean    Activation state of the W-VIEW mode.
 topViewExposureTime     R/W        Double     Exposure time for first W-VIEW.
 bottomViewExposureTime  R/W        Double     Exposure time for second W-VIEW.
-Temperature             R          Double     Temperature of the image sensor in Celcius.
+temperature             R          Double     Temperature of the image sensor in Celcius.
+coolerMode              R          String     Selected cooler mode (OFF/ON/MAX/NOT_SUPPORTED).
+coolerStatus            R          String     Current cooler status. Possible values can be:
+
+                                              - inactive (NOT_SUPPORTED, NONE, OFF)
+                                              - in error (ERROR1, ERROR2, ERROR3, ERROR4)
+                                              - running (READY, BUSY, ALWAYS, WARNING)
+temperatureStatus       R          String     Current temperature status (NOT_SUPPORTED, NORMAL, WARNING, PROTECTION). 
 ======================= ========== ========== ==============================================================================================
 
 
