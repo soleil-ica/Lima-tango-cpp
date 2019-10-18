@@ -245,8 +245,8 @@ void SlsEiger::init_device()
 	}
 	catch(Exception& e)
 	{
-		m_status_message << "Initialization Failed : " << e.getErrMsg( ) << endl;
-		INFO_STREAM << m_status_message.str().c_str();
+		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
+		ERROR_STREAM << m_status_message.str();
 		m_is_device_initialized = false;
 		set_state(Tango::FAULT);
 		return;
@@ -254,7 +254,7 @@ void SlsEiger::init_device()
 	catch(...)
 	{
 		m_status_message << "Initialization Failed : UNKNOWN" << endl;
-		INFO_STREAM << m_status_message.str().c_str();
+		ERROR_STREAM << m_status_message.str();
 		set_state(Tango::FAULT);
 		m_is_device_initialized = false;
 		return;
@@ -481,7 +481,7 @@ void SlsEiger::always_executed_hook()
     catch (Exception& e)
     {
         m_status_message << "always_executed_hook : " << e.getErrMsg() << endl;
-        ERROR_STREAM << m_status_message.str().c_str();
+        ERROR_STREAM << m_status_message.str();
         //- throw exception
         set_state(Tango::FAULT);
         m_is_device_initialized = false;
@@ -490,7 +490,7 @@ void SlsEiger::always_executed_hook()
     catch (...)
     {
         m_status_message << "always_executed_hook : UNKNOWN" << endl;
-        ERROR_STREAM << m_status_message.str().c_str();
+        ERROR_STREAM << m_status_message.str();
         //- throw exception
         set_state(Tango::FAULT);
         m_is_device_initialized = false;
