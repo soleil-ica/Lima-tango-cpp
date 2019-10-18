@@ -966,6 +966,8 @@ void Hamamatsu::read_coolerMode(Tango::Attribute &attr)
 		strcpy(*attr_coolerMode_read, label.c_str());
 
 		attr.set_value(attr_coolerMode_read);
+        attr.set_quality((cooler_mode == lima::Hamamatsu::Camera::Cooler_Mode_Not_Supported) ? 
+		                 Tango::ATTR_INVALID : Tango::ATTR_VALID);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -997,6 +999,8 @@ void Hamamatsu::read_coolerStatus(Tango::Attribute &attr)
 		strcpy(*attr_coolerStatus_read, label.c_str());
 
 		attr.set_value(attr_coolerStatus_read);
+        attr.set_quality((cooler_status == lima::Hamamatsu::Camera::Cooler_Status_Not_Supported) ? 
+		                 Tango::ATTR_INVALID : Tango::ATTR_VALID);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -1028,6 +1032,8 @@ void Hamamatsu::read_temperatureStatus(Tango::Attribute &attr)
 		strcpy(*attr_temperatureStatus_read, label.c_str());
 
         attr.set_value(attr_temperatureStatus_read);
+        attr.set_quality((temperature_status == lima::Hamamatsu::Camera::Temperature_Status_Not_Supported) ? 
+		                 Tango::ATTR_INVALID : Tango::ATTR_VALID);
 	}
     catch(Tango::DevFailed & df)
     {
