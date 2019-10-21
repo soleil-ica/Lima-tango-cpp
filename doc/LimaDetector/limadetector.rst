@@ -86,7 +86,6 @@ DebugModules                        Hardware                    Array of String 
                                                                                         
                                                                                         - None                                                                                              
                                                                                         - Hardware                                                                                          
-                                                                                        - Warning                                                                                           
                                                                                         - Control                                                                                           
                                                                                         - Common                                                                                            
                                                                                         - Camera                                                                                            
