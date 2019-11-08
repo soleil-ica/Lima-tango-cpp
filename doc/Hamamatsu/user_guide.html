@@ -108,6 +108,26 @@ Availables values :<br>
 NORMAL<br>
 SLOW<br></Font></Td></Tr>
 
+<Tr><Td><b><a href=#Dev_DefaultValues>BlankOfSyncreadoutTrigger </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>Allows you to select the blank of synreadout:<BR>
+Availables values :<br>
+- STANDARD<BR>
+- MINIMUM<BR>
+</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedTopViewExposureTime </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize/Define the Top View exposure time attribute at Init device<br></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedBottomViewExposureTime </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize/Define the Bottom View exposure time attribute at Init device<br></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedWViewEnabled </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize/Define the W-VIEW mode attribute at Init device<br></Font></Td></Tr>
+
 </Table>
 
 </Center>
@@ -128,6 +148,22 @@ SLOW<br></Font></Td></Tr>
     <Tr>
         <Td>MemorizedReadoutSpeed</Td>
         <td>NORMAL</td>
+    </Tr>
+    <Tr>
+        <Td>BlankOfSyncreadoutTrigger</Td>
+        <td>STANDARD</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedTopViewExposureTime</Td>
+        <td>1000</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedBottomViewExposureTime</Td>
+        <td>1000</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedWViewEnabled</Td>
+        <td>false</td>
     </Tr>
 </Table>
 
@@ -191,8 +227,26 @@ There is no Class properties.<Br><Br>
 <Tr><Td><b>fps</b>: <Font Size=-1>The last computed frame per second (the value is computed every 100 frames only)</Font></Td>
 <Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>WViewEnabled</b>: <Font Size=-1>Mode with several views to manage several exposure times at the same times.</Font></Td>
+<Tr><Td><b>wViewEnabled</b></Td>
 <Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>topViewExposureTime</b>: <Font Size=-1>Exposure time for W-VIEW n°1.</Font></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>bottomViewExposureTime</b>: <Font Size=-1>Exposure time for W-VIEW n°2.</Font></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>temperature</b>: <Font Size=-1>Temperature of the image sensor in Celcius.</Font></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>coolerMode</b>: <Font Size=-1>Selected cooler mode (OFF/ON/MAX/NOT_SUPPORTED).</Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>coolerStatus</b>: <Font Size=-1>Current cooler status.<br> Possible values can be:<br> - inactive (NOT_SUPPORTED, NONE, OFF)<br> - in error (ERROR1, ERROR2, ERROR3, ERROR4)<br> - running (READY, BUSY, ALWAYS, WARNING)<br></Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>temperatureStatus</b>: <Font Size=-1>Current temperature status (NOT_SUPPORTED, NORMAL, WARNING, PROTECTION). </Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 </Table>
 </Center>
