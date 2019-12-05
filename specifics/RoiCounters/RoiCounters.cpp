@@ -111,7 +111,6 @@ void RoiCounters::delete_device()
 	//	Delete device allocated objects
 	DELETE_DEVSTRING_ATTRIBUTE(attr_version_read);
 
-
 	//- remove any dynamic attr or command
 	INFO_STREAM << "remove any dynamic attributes or commands" << endl;
 	m_dim.remove();
@@ -152,6 +151,7 @@ void RoiCounters::init_device()
 	attr_y_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_width_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_height_arrays.resize(MAX_NB_ROICOUNTERS);
+	attr_coordinates_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_sum_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_average_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_std_arrays.resize(MAX_NB_ROICOUNTERS);
@@ -220,8 +220,41 @@ void RoiCounters::init_device()
     	write_runLevel(runlevel);
 
 		//Write tango hardware at Init
-		std::stringstream ssName;
+		std::stringstream ss_name;
 		std::string strName;
+
+
+		// If nbRoiCounters is too high compared to the number of (x, y, width, height) properties,
+		// throw exception
+		if(__x.size() < nbRoiCounters)
+		{
+			Tango::Except::throw_exception(	"INVALID_PROPERTY_SIZE",
+										"Array property __x is smaller than the nb of RoiCounters asked", 
+										"RoiCounter::initDevice");
+		}
+		if(__y.size() < nbRoiCounters)
+		{
+			Tango::Except::throw_exception(	"INVALID_PROPERTY_SIZE",
+										"Array property __y is smaller than the nb of RoiCounters asked", 
+										"RoiCounter::initDevice");
+
+		}
+		if(__width.size() < nbRoiCounters)
+		{
+			Tango::Except::throw_exception(	"INVALID_PROPERTY_SIZE",
+										"Array property __width is smaller than the nb of RoiCounters asked", 
+										"RoiCounter::initDevice");
+
+		}
+		if(__height.size() < nbRoiCounters)
+		{
+			Tango::Except::throw_exception(	"INVALID_PROPERTY_SIZE",
+										"Array property __height is smaller than the nb of RoiCounters asked", 
+										"RoiCounter::initDevice");
+
+		}
+
+
 		for(size_t i = 0;i < nbRoiCounters;i++)
 		{
 			//get memorized from properties
@@ -230,10 +263,18 @@ void RoiCounters::init_device()
 			attr_y_arrays[i] = (Tango::DevULong)(__y.at(i));
 			attr_width_arrays[i] = (Tango::DevULong)(__width.at(i));
 			attr_height_arrays[i] = (Tango::DevULong)(__height.at(i));
+			
+			// Initialize coordinate strings to init values of attributes
+			std::stringstream ss;
+			ss  << attr_x_arrays[i] 
+				<< ", " << attr_y_arrays[i] 
+				<< ", " << attr_width_arrays[i] 
+				<< ", " << attr_height_arrays[i];
+			attr_coordinates_arrays[i] = Tango::string_dup(ss.str().c_str());
 
-			ssName.str("");
-			ssName << "x" << i;
-			strName = ssName.str();
+			ss_name.str("");
+			ss_name << "x" << i;
+			strName = ss_name.str();
 			INFO_STREAM << "Write tango hardware at Init - " << strName << endl;
 			Tango::WAttribute &x = dev_attr->get_w_attr_by_name(strName.c_str());
 			x.set_write_value(attr_x_arrays[i]);
@@ -241,9 +282,9 @@ void RoiCounters::init_device()
 			cbd_x.tga = &x;
 			write_rois_callback(cbd_x);
 
-			ssName.str("");
-			ssName << "y" << i;
-			strName = ssName.str();
+			ss_name.str("");
+			ss_name << "y" << i;
+			strName = ss_name.str();
 			INFO_STREAM << "Write tango hardware at Init - " << strName << endl;
 			Tango::WAttribute &y = dev_attr->get_w_attr_by_name(strName.c_str());
 			y.set_write_value(attr_y_arrays[i]);
@@ -251,9 +292,9 @@ void RoiCounters::init_device()
 			cbd_y.tga = &y;
 			write_rois_callback(cbd_y);
 
-			ssName.str("");
-			ssName << "width" << i;
-			strName = ssName.str();
+			ss_name.str("");
+			ss_name << "width" << i;
+			strName = ss_name.str();
 			INFO_STREAM << "Write tango hardware at Init - " << strName << endl;
 			Tango::WAttribute &width = dev_attr->get_w_attr_by_name(strName.c_str());
 			width.set_write_value(attr_width_arrays[i]);
@@ -261,15 +302,25 @@ void RoiCounters::init_device()
 			cbd_width.tga = &width;
 			write_rois_callback(cbd_width);
 
-			ssName.str("");
-			ssName << "height" << i;
-			strName = ssName.str();
+			ss_name.str("");
+			ss_name << "height" << i;
+			strName = ss_name.str();
 			INFO_STREAM << "Write tango hardware at Init - " << strName << endl;
 			Tango::WAttribute &height = dev_attr->get_w_attr_by_name(strName.c_str());
 			height.set_write_value(attr_height_arrays[i]);
 			yat4tango::DynamicAttributeWriteCallbackData cbd_height;
 			cbd_height.tga = &height;
 			write_rois_callback(cbd_height);
+
+			ss_name.str("");
+			ss_name << "coordinates" << i;
+			strName = ss_name.str();
+			INFO_STREAM << "Write tango hardware at Init - " << strName << endl;
+			Tango::WAttribute &coordinates = dev_attr->get_w_attr_by_name(strName.c_str());
+			coordinates.set_write_value(attr_coordinates_arrays[i]);
+			yat4tango::DynamicAttributeWriteCallbackData cbd_coordinates;
+			cbd_coordinates.tga = &coordinates;
+			write_rois_callback(cbd_coordinates);
 		}
 	}
 	catch(ProcessException& p)
@@ -722,7 +773,7 @@ void RoiCounters::read_roi()
 					iter2++)
 				{
 					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
-					INFO_STREAM << "+++ roi n°: " << roinum << "\t" << endl;
+					INFO_STREAM << "+++ roi nÂ°: " << roinum << "\t" << endl;
 					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
 					attr_frameNumber_value = (*iter2).frameNumber + 1;
 					INFO_STREAM << "frameNumber = " << attr_frameNumber_value << endl;
@@ -814,10 +865,10 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 	//- add some dynamic attributes
 	try
 	{
-		std::stringstream ssName;
-		ssName.str("");
-		ssName << "frameNumber";
-		create_attribute(ssName.str(),
+		std::stringstream ss_name;
+		ss_name.str("");
+		ss_name << "frameNumber";
+		create_attribute(ss_name.str(),
 						Tango::DEV_ULONG,
 						Tango::SCALAR,
 						Tango::READ,
@@ -831,9 +882,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 
 		for(size_t i = 0;i < nbRoiCounters;++i)
 		{
-			ssName.str("");
-			ssName << "x" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "x" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_ULONG,
 							Tango::SCALAR,
 							Tango::READ_WRITE,
@@ -845,9 +896,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_rois_callback,
 							&attr_x_arrays[i]);
 
-			ssName.str("");
-			ssName << "y" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "y" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_ULONG,
 							Tango::SCALAR,
 							Tango::READ_WRITE,
@@ -859,9 +910,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_rois_callback,
 							&attr_y_arrays[i]);
 
-			ssName.str("");
-			ssName << "width" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "width" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_ULONG,
 							Tango::SCALAR,
 							Tango::READ_WRITE,
@@ -873,9 +924,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_rois_callback,
 							&attr_width_arrays[i]);
 
-			ssName.str("");
-			ssName << "height" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "height" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_ULONG,
 							Tango::SCALAR,
 							Tango::READ_WRITE,
@@ -887,9 +938,25 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_rois_callback,
 							&attr_height_arrays[i]);
 
-			ssName.str("");
-			ssName << "sum" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "coordinates" << i;
+			create_attribute(ss_name.str(),
+							Tango::DEV_STRING,
+							Tango::SCALAR,
+							Tango::READ_WRITE,
+							Tango::OPERATOR,
+							" ",
+							"%s",
+							"The full coordinates of the Roi:\n"
+							"take a string of 4 numbers seperated by any other character\n"
+							"and will parse them into x, y, width and height in that exact order.",
+							&RoiCounters::read_rois_callback,
+							&RoiCounters::write_rois_callback,
+							&attr_coordinates_arrays[i]);
+
+			ss_name.str("");
+			ss_name << "sum" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_DOUBLE,
 							Tango::SCALAR,
 							Tango::READ,
@@ -901,9 +968,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_sum_arrays[i]);
 
-			ssName.str("");
-			ssName << "average" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "average" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_DOUBLE,
 							Tango::SCALAR,
 							Tango::READ,
@@ -915,9 +982,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_average_arrays[i]);
 
-			ssName.str("");
-			ssName << "std" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "std" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_DOUBLE,
 							Tango::SCALAR,
 							Tango::READ,
@@ -929,9 +996,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_std_arrays[i]);
 
-			ssName.str("");
-			ssName << "minValue" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "minValue" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_DOUBLE,
 							Tango::SCALAR,
 							Tango::READ,
@@ -943,9 +1010,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_minValue_arrays[i]);
 
-			ssName.str("");
-			ssName << "minX" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "minX" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_LONG,
 							Tango::SCALAR,
 							Tango::READ,
@@ -957,9 +1024,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_minX_arrays[i]);
 
-			ssName.str("");
-			ssName << "minY" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "minY" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_LONG,
 							Tango::SCALAR,
 							Tango::READ,
@@ -971,9 +1038,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_minY_arrays[i]);
 			
-			ssName.str("");
-			ssName << "maxValue" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "maxValue" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_DOUBLE,
 							Tango::SCALAR,
 							Tango::READ,
@@ -985,9 +1052,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_maxValue_arrays[i]);
 			
-			ssName.str("");
-			ssName << "maxX" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "maxX" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_LONG,
 							Tango::SCALAR,
 							Tango::READ,
@@ -999,9 +1066,9 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							&RoiCounters::write_callback_null,
 							&attr_maxX_arrays[i]);
 
-			ssName.str("");
-			ssName << "maxY" << i;
-			create_attribute(ssName.str(),
+			ss_name.str("");
+			ss_name << "maxY" << i;
+			create_attribute(ss_name.str(),
 							Tango::DEV_LONG,
 							Tango::SCALAR,
 							Tango::READ,
@@ -1076,12 +1143,12 @@ bool RoiCounters::create_image_dynamic_attributes(void)
 	{
 		for(size_t i = 0;i < nbRoiCounters;++i)
 		{
-			std::stringstream ssName;
-			ssName << "image" << i;
-			INFO_STREAM << "\t- Create dynamic attribute [" << ssName.str() << "]" << endl;
+			std::stringstream ss_name;
+			ss_name << "image" << i;
+			INFO_STREAM << "\t- Create dynamic attribute [" << ss_name.str() << "]" << endl;
 			yat4tango::DynamicAttributeInfo dai;
 			dai.dev = this;
-			dai.tai.name = ssName.str();
+			dai.tai.name = ss_name.str();
 			dai.tai.data_format = Tango::IMAGE;
 			dai.tai.max_dim_x = 100000;//- arbitrary big value
 			dai.tai.max_dim_y = 100000;//- arbitrary big value
@@ -1269,8 +1336,29 @@ void RoiCounters::read_rois_callback(yat4tango::DynamicAttributeReadCallbackData
 			std::istringstream(strIndex) >> attrIndex;
 			val = (Tango::DevULong *) & attr_height_arrays[attrIndex];
 		}
+		
+		if(std::size_t pos = attrName.find("coordinates") != std::string::npos)
+		{
+			std::string strIndex = attrName.substr(11);
+			int attrIndex;
+			std::stringstream ss;
+			std::istringstream(strIndex) >> attrIndex;
 
-		cbd.tga->set_value((Tango::DevULong *)val);
+			val = (Tango::DevString *) & attr_coordinates_arrays[attrIndex];
+			
+			// Get the currrent coordinate values into the coordinate string
+			ss  << attr_x_arrays[attrIndex] 
+				<< ", " << attr_y_arrays[attrIndex] 
+				<< ", " << attr_width_arrays[attrIndex] 
+				<< ", " << attr_height_arrays[attrIndex];
+			*((Tango::DevString*)val) = Tango::string_dup(ss.str().c_str());
+
+			cbd.tga->set_value((Tango::DevString *)val);			
+		}
+		else
+		{
+			cbd.tga->set_value((Tango::DevULong *)val);
+		}	
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -1324,9 +1412,22 @@ void RoiCounters::write_rois_callback(yat4tango::DynamicAttributeWriteCallbackDa
 			std::istringstream(strIndex) >> attrIndex;
 			val = (Tango::DevULong*)(&attr_height_arrays[attrIndex]);
 		}
-
+		
+		if(attrName.find("coordinates") != std::string::npos)
+		{
+			std::string strIndex = attrName.substr(11);
+			std::istringstream(strIndex) >> attrIndex;
+			val = (std::string*)(&attr_coordinates_arrays[attrIndex]);
+			cbd.tga->get_write_value(*((Tango::DevString*)val));
+			// Parse the coordinates written:
+			process_coordinates((Tango::DevString *)val, attrIndex);
+		}
+		else
+		{
+			cbd.tga->get_write_value(*((Tango::DevULong*)val));
+		}
 		//- get the attribute value
-		cbd.tga->get_write_value(*((Tango::DevULong*)val));
+		
 
 		//- update rois in the processLib  : SoftOpRoiCounter
 		update_roi();
@@ -1522,10 +1623,68 @@ Tango::DevState RoiCounters::dev_state()
 	argout = DeviceState;
 	return argout;
 }
+//+------------------------------------------------------------------
+/**
+ *	method:	RoiCounters::process_coordinates
+ *
+ *	description:	Parse the string written in attr_coordinates into the 4 coordinates of the Roi
+ *					Throw exception if less than 4 numbers are entered in the string	
+ *
+ */
+//+------------------------------------------------------------------
+void RoiCounters::process_coordinates(Tango::DevString* attr_str, int attrIndex)
+{
 
+	// Get a string from the DevString:
+	std::string str = (std::string)(*attr_str); 
 
+	std::stringstream ss;
 
+ 	// Will contain parsed values
+	Tango::DevULong parsed_coordinates[NB_COORDINATES];
 
+	// State used to know what was the previous character
+	bool is_previous_char_numeric = false;
+	bool is_current_char_numeric = false;
 
+    int j=0, i=0;
+
+	// While there are still characters to paste and there are still numbers to find:
+    while((j==0 || str[j-1] != '\0') && i<NB_COORDINATES)
+    {
+		bool is_current_char_numeric = str[j]>='0' && str[j]<='9';
+
+		// If current char is not a number and previous one was a number
+        if(!(is_current_char_numeric) && is_previous_char_numeric)
+        {
+            ss >> parsed_coordinates[i]; 	// Push the numbers into the tab
+            ss.clear(); 		// Init the stringstream used to receive numeral characters
+            is_previous_char_numeric = false;		// Current char is not a number
+            i++;				// Found one number, can move to next one
+        }
+		// If current char is a number
+        if(is_current_char_numeric)
+        {
+            ss << str[j];		// Push numeral character into stringstream
+            is_previous_char_numeric = true;		// Current char is a number
+        }
+        j++;					// Moving to next character
+    }
+	// If didn't find 4 numbers, throw exception
+    if(i<NB_COORDINATES)
+	{
+		Tango::Except::throw_exception(	"INVALID_COORDINATE_ENTRY",
+										"Invalid format: Enter at least "YAT_XSTR(NB_COORDINATES)" numbers", 
+										"RoiCounter::process_coordinates");
+	}
+	// Else fill the variable
+	else
+	{
+		attr_x_arrays[attrIndex] = parsed_coordinates[0];
+		attr_y_arrays[attrIndex] = parsed_coordinates[1];
+		attr_width_arrays[attrIndex] = parsed_coordinates[2];
+		attr_height_arrays[attrIndex] = parsed_coordinates[3];
+	}
+}
 
 }	//	namespace

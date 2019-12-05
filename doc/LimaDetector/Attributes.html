@@ -128,7 +128,7 @@ Revision:  - Author:
 <Tr><Td><b>fileGeneration</b>: <Font Size=-1>Allow to save grabbed frames into a file on disk.<br> Available formats for the file are:  EDF, RAW, NXS<br> The format is fixed in FileFormat property.<br></Font></Td>
 <Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
-<Tr><Td><b>fileFormat</b></Td>
+<Tr><Td><b>fileFormat</b>: <Font Size=-1>File format that will be used for saving. Available format are: - NXS - EDF - RAW - HDF5</Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
 <Tr><Td><b>filePrefix</b></Td>
@@ -139,6 +139,9 @@ Revision:  - Author:
 
 <Tr><Td><b>fileNbFrames</b></Td>
 <Td><Center><Font Size=-1>DEV_LONG</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>fileExtension</b>: <Font Size=-1>Display the actual extension that will be used for saving files, according to the chosen file format</Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
 </Table>
 </Center>

@@ -201,6 +201,7 @@ public:
 		Tango::DevString	attr_fileTargetPath_write;
 		Tango::DevLong	*attr_fileNbFrames_read;
 		Tango::DevLong	attr_fileNbFrames_write;
+		Tango::DevString	*attr_fileExtension_read;
 		Tango::DevString	*attr_operationsList_read;
 //@}
 
@@ -721,6 +722,10 @@ public:
  */
 	virtual void write_fileNbFrames(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for fileExtension acquisition result.
+ */
+	virtual void read_fileExtension(Tango::Attribute &attr);
+/**
  *	Extract real attribute values for operationsList acquisition result.
  */
 	virtual void read_operationsList(Tango::Attribute &attr);
@@ -832,6 +837,10 @@ public:
  *	Read/Write allowed for operationsList attribute.
  */
 	virtual bool is_operationsList_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for fileExtension attribute.
+ */
+	virtual bool is_fileExtension_allowed(Tango::AttReqType type);
 /**
  *	Execution allowed for Prepare command.
  */
