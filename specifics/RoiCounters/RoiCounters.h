@@ -50,6 +50,7 @@
 #include <yat4tango/InnerAppender.h>
 #include <yat/threading/Mutex.h>
 #include <yat/utils/XString.h>
+#include <yat/Version.h>
 
 #include "lima/HwInterface.h"
 #include "lima/CtControl.h"
@@ -65,6 +66,7 @@
 
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
 #define MAX_NB_ROICOUNTERS              32
+#define NB_COORDINATES                  4
 #define CURRENT_VERSION                 "1.2.0"
 
 
@@ -324,6 +326,7 @@ protected:
     std::vector<Tango::DevULong>     attr_y_arrays;
     std::vector<Tango::DevULong>     attr_width_arrays;
     std::vector<Tango::DevULong>     attr_height_arrays;
+    std::vector<Tango::DevString>    attr_coordinates_arrays;
     std::vector<Tango::DevDouble>    attr_sum_arrays;
     std::vector<Tango::DevDouble>    attr_average_arrays;
     std::vector<Tango::DevDouble>    attr_std_arrays;
@@ -333,7 +336,10 @@ protected:
     std::vector<Tango::DevDouble>    attr_maxValue_arrays;    
     std::vector<Tango::DevLong>      attr_maxX_arrays;
     std::vector<Tango::DevLong>      attr_maxY_arrays;    
-    std::vector<std::string >   m_operations_list;
+    std::vector<std::string>         m_operations_list;
+
+    // Parse the string into 4 numbers and push it into current attributes
+    void process_coordinates(Tango::DevString* str,int attrIndex);
 } ;
 
 }	// namespace_ns
