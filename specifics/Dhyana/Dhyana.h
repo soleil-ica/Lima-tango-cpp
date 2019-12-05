@@ -52,6 +52,8 @@
 #include "lima/CtImage.h"
 
 #include <yat4tango/PropertyHelper.h>
+#include <yat4tango/InnerAppender.h>
+
 #include "DhyanaInterface.h"
 #include "DhyanaCamera.h"
 
@@ -121,6 +123,11 @@ public :
  *	Memorize/Define the globalGain  attribute  at Init device<br>
  */
 	string	memorizedGlobalGain;
+/**
+ *	Timer period in ms.<cr>
+ *	useful only for Internal Trigger
+ */
+	Tango::DevUShort	__ExpertTimerPeriod;
 //@}
 
 /**

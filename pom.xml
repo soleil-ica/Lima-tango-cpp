@@ -307,8 +307,6 @@
                 <ANDOR.version>1.4.0</ANDOR.version>
                 <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
                 <HAMAMATSU.version>2.2.0</HAMAMATSU.version>
-                <PCO.name>Pco</PCO.name>
-                <PCO.version>1.7.0</PCO.version>
                 <PERKINELMER.name>PerkinElmer</PERKINELMER.name>
                 <PERKINELMER.version>1.4.0</PERKINELMER.version>
                 <PRINCETON.name>Princeton</PRINCETON.name>
@@ -370,11 +368,6 @@
                 </dependency>
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaPco-${aol}-shared-${mode}</artifactId>
-                    <version>${PCO.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaPerkinElmer-${aol}-shared-${mode}</artifactId>
                     <version>${PERKINELMER.version}</version>
                 </dependency>
@@ -408,7 +401,6 @@
                                     <include>*.cpp</include>
                                     <include>specifics/AndorCCD/*.cpp</include>
                                     <include>specifics/Hamamatsu/*.cpp</include>
-                                    <include>specifics/Pco/*.cpp</include>
                                     <include>specifics/PerkinElmer/*.cpp</include>
                                     <include>specifics/PrincetonCCD/*.cpp</include> 
                                     <include>specifics/RoiCounters/*.cpp</include>
@@ -425,7 +417,6 @@
                                     <includePath>src</includePath>
                                     <include>specifics/AndorCCD</include>
                                     <include>specifics/Hamamatsu</include>
-                                    <include>specifics/Pco</include>
                                     <include>specifics/PerkinElmer</include>
                                     <include>specifics/PrincetonCCD</include>
                                     <include>specifics/RoiCounters</include>
@@ -446,8 +437,6 @@
                                     <define>ANDOR_VERSION=${ANDOR.version}</define>
                                     <define>HAMAMATSU_NAME=${HAMAMATSU.name}</define>
                                     <define>HAMAMATSU_VERSION=${HAMAMATSU.version}</define>
-                                    <define>PCO_NAME=${PCO.name}</define>
-                                    <define>PCO_VERSION=${PCO.version}</define>
                                     <define>PERKINELMER_NAME=${PERKINELMER.name}</define>
                                     <define>PERKINELMER_VERSION=${PERKINELMER.version}</define>
                                     <define>PRINCETON_NAME=${PRINCETON.name}</define>
@@ -460,7 +449,6 @@
                                     <!-- define which detector you need to ENABLE -->
                                     <define>ANDOR_ENABLED</define>		
                                     <define>HAMAMATSU_ENABLED</define>
-                                    <define>PCO_ENABLED</define>
                                     <define>PERKINELMER_ENABLED</define>
                                     <define>PRINCETON_ENABLED</define>                   
                                     <define>ROICOUNTERS_ENABLED</define>	

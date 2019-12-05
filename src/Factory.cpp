@@ -693,7 +693,12 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         {
             if (!ControlFactory::m_is_created)
             {
-                m_camera = static_cast<void*> (new Dhyana::Camera());
+				unsigned short time_period = 1;
+                Tango::DbData db_data;
+				db_data.push_back(Tango::DbDatum("__ExpertTimerPeriod"));							
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                db_data[0] >> time_period   ;				
+                m_camera = static_cast<void*> (new Dhyana::Camera(time_period));
                 m_interface = static_cast<void*> (new Dhyana::Interface(*(static_cast<Dhyana::Camera*> (m_camera))));
                 m_control = new CtControl(static_cast<Dhyana::Interface*> (m_interface));
 

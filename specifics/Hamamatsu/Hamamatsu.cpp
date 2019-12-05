@@ -67,6 +67,27 @@ static const char *RcsId = "$Id:  $";
 #define SYNCREADOUT_BLANKMODE_STANDARD	"STANDARD"
 #define SYNCREADOUT_BLANKMODE_MINIMUM	"MINIMUM"
 
+#define SENSOR_COOLER_NOT_SUPPORTED "NOT_SUPPORTED"
+#define SENSOR_COOLER_OFF           "OFF"
+#define SENSOR_COOLER_ON            "ON"
+#define SENSOR_COOLER_MAX           "MAX"
+
+#define TEMPERATURE_STATUS_NOT_SUPPORTED "NOT_SUPPORTED"
+#define TEMPERATURE_STATUS_NORMAL        "NORMAL"
+#define TEMPERATURE_STATUS_WARNING       "WARNING"
+#define TEMPERATURE_STATUS_PROTECTION    "PROTECTION"
+
+#define COOLER_STATUS_NOT_SUPPORTED "NOT_SUPPORTED"
+#define COOLER_STATUS_ERROR4        "ERROR4"
+#define COOLER_STATUS_ERROR3        "ERROR3"
+#define COOLER_STATUS_ERROR2        "ERROR2"
+#define COOLER_STATUS_ERROR1        "ERROR1"
+#define COOLER_STATUS_NONE          "NONE"
+#define COOLER_STATUS_OFF           "OFF"
+#define COOLER_STATUS_READY         "READY"
+#define COOLER_STATUS_BUSY          "BUSY"
+#define COOLER_STATUS_ALWAYS        "ALWAYS"
+#define COOLER_STATUS_WARNING       "WARNING"
 
 namespace Hamamatsu_ns
 {
@@ -110,12 +131,18 @@ void Hamamatsu::delete_device()
 	//	Delete device allocated objects
 
 	DELETE_DEVSTRING_ATTRIBUTE(attr_readoutSpeed_read);
+	DELETE_DEVSTRING_ATTRIBUTE(attr_coolerMode_read);
+	DELETE_DEVSTRING_ATTRIBUTE(attr_coolerStatus_read);
+	DELETE_DEVSTRING_ATTRIBUTE(attr_temperatureStatus_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_lostFrames_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_fps_read);
     DELETE_SCALAR_ATTRIBUTE(attr_wViewEnabled_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_topViewExposureTime_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_bottomViewExposureTime_read);
-    DELETE_SCALAR_ATTRIBUTE(attr_Temperature_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_temperature_read);
+
+	INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
 }
 
 //+----------------------------------------------------------------------------
@@ -133,17 +160,23 @@ void Hamamatsu::init_device()
 	//--------------------------------------------
 	get_device_property();
 
-	CREATE_DEVSTRING_ATTRIBUTE(attr_readoutSpeed_read, MAX_ATTRIBUTE_STRING_LENGTH);
+	CREATE_DEVSTRING_ATTRIBUTE(attr_readoutSpeed_read     , MAX_ATTRIBUTE_STRING_LENGTH);
+	CREATE_DEVSTRING_ATTRIBUTE(attr_coolerMode_read       , MAX_ATTRIBUTE_STRING_LENGTH);
+	CREATE_DEVSTRING_ATTRIBUTE(attr_coolerStatus_read     , MAX_ATTRIBUTE_STRING_LENGTH);
+	CREATE_DEVSTRING_ATTRIBUTE(attr_temperatureStatus_read, MAX_ATTRIBUTE_STRING_LENGTH);
 	CREATE_SCALAR_ATTRIBUTE(attr_lostFrames_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_fps_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_wViewEnabled_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_topViewExposureTime_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_bottomViewExposureTime_read);
-	CREATE_SCALAR_ATTRIBUTE(attr_Temperature_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_temperature_read);
 
 	m_is_device_initialized = false;
 	set_state(Tango::INIT);
 	m_status_message.str("");
+
+	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
 
 	try
 	{
@@ -514,16 +547,17 @@ void Hamamatsu::read_attr_hardware(vector<long> &attr_list)
 	DEBUG_STREAM << "Hamamatsu::read_attr_hardware(vector<long> &attr_list) entering... "<< endl;
 	//	Add your own code here
 }
+
 //+----------------------------------------------------------------------------
 //
-// method : 		Hamamatsu::read_Temperature
+// method : 		Hamamatsu::read_temperature
 // 
-// description : 	Extract real attribute values for Temperature acquisition result.
+// description : 	Extract real attribute values for temperature acquisition result.
 //
 //-----------------------------------------------------------------------------
-void Hamamatsu::read_Temperature(Tango::Attribute &attr)
+void Hamamatsu::read_temperature(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Hamamatsu::read_Temperature(Tango::Attribute &attr) entering... "<< endl;
+	DEBUG_STREAM << "Hamamatsu::read_temperature(Tango::Attribute &attr) entering... "<< endl;
     
 	try
 	{
@@ -531,27 +565,18 @@ void Hamamatsu::read_Temperature(Tango::Attribute &attr)
         bool   NotSupported;
 
         temperature = m_camera->getSensorTemperature(NotSupported);
-		*attr_Temperature_read = (Tango::DevDouble)temperature;
-		attr.set_value  (attr_Temperature_read);
+		*attr_temperature_read = (Tango::DevDouble)temperature;
+		attr.set_value  (attr_temperature_read);
         attr.set_quality((NotSupported) ? Tango::ATTR_INVALID : Tango::ATTR_VALID);
 	}
-	catch(Tango::DevFailed& df)
-	{
-		ERROR_STREAM << df << endl;
-		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          string(df.errors[0].desc).c_str(),
-                                          "Hamamatsu::read_Temperature");
-	}
-	catch(Exception& e)
-	{
-		ERROR_STREAM << e.getErrMsg() << endl;
-		//- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                                       e.getErrMsg().c_str(),
-                                       "Hamamatsu::read_Temperature");
-	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_temperature");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_temperature");
+    }
 }
 
 //+----------------------------------------------------------------------------
@@ -573,23 +598,14 @@ void Hamamatsu::read_topViewExposureTime(Tango::Attribute &attr)
 		*attr_topViewExposureTime_read = (Tango::DevDouble)(exptime * 1000.0);
 		attr.set_value(attr_topViewExposureTime_read);
 	}
-	catch(Tango::DevFailed& df)
-	{
-		ERROR_STREAM << df << endl;
-		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          string(df.errors[0].desc).c_str(),
-                                          "Hamamatsu::read_topViewExposureTime");
-	}
-	catch(Exception& e)
-	{
-		ERROR_STREAM << e.getErrMsg() << endl;
-		//- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                                       e.getErrMsg().c_str(),
-                                       "Hamamatsu::read_topViewExposureTime");
-	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_topViewExposureTime");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_topViewExposureTime");
+    }
 }
 
 //+----------------------------------------------------------------------------
@@ -611,23 +627,14 @@ void Hamamatsu::write_topViewExposureTime(Tango::WAttribute &attr)
         m_TopViewExposureTime = (double)attr_topViewExposureTime_write;
 		PropertyHelper::set_property(this, "MemorizedTopViewExposureTime", m_TopViewExposureTime);
 	}
-	catch(Tango::DevFailed& df)
-	{
-		ERROR_STREAM << df << endl;
-		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          string(df.errors[0].desc).c_str(),
-                                          "Hamamatsu::write_topViewExposureTime");
-	}
-	catch(Exception& e)
-	{
-		ERROR_STREAM << e.getErrMsg() << endl;
-		//- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                                       e.getErrMsg().c_str(),
-                                       "Hamamatsu::write_topViewExposureTime");
-	}	
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::write_topViewExposureTime");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::write_topViewExposureTime");
+    }
 }
 
 //+----------------------------------------------------------------------------
@@ -649,23 +656,14 @@ void Hamamatsu::read_bottomViewExposureTime(Tango::Attribute &attr)
 		*attr_bottomViewExposureTime_read = (Tango::DevDouble)(exptime * 1000.0);
 		attr.set_value(attr_bottomViewExposureTime_read);
 	}
-	catch(Tango::DevFailed& df)
-	{
-		ERROR_STREAM << df << endl;
-		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          string(df.errors[0].desc).c_str(),
-                                          "Hamamatsu::read_bottomViewExposureTime");
-	}
-	catch(Exception& e)
-	{
-		ERROR_STREAM << e.getErrMsg() << endl;
-		//- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                                       e.getErrMsg().c_str(),
-                                       "Hamamatsu::read_bottomViewExposureTime");
-	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_bottomViewExposureTime");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_bottomViewExposureTime");
+    }
 }
 
 //+----------------------------------------------------------------------------
@@ -687,23 +685,14 @@ void Hamamatsu::write_bottomViewExposureTime(Tango::WAttribute &attr)
         m_BottomViewExposureTime = (double)attr_bottomViewExposureTime_write;
 		PropertyHelper::set_property(this, "MemorizedBottomViewExposureTime", m_BottomViewExposureTime);
 	}
-	catch(Tango::DevFailed& df)
-	{
-		ERROR_STREAM << df << endl;
-		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          string(df.errors[0].desc).c_str(),
-                                          "Hamamatsu::write_bottomViewExposureTime");
-	}
-	catch(Exception& e)
-	{
-		ERROR_STREAM << e.getErrMsg() << endl;
-		//- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                                       e.getErrMsg().c_str(),
-                                       "Hamamatsu::write_bottomViewExposureTime");
-	}	
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::write_bottomViewExposureTime");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::write_bottomViewExposureTime");
+    }
 }
 
 //+----------------------------------------------------------------------------
@@ -725,23 +714,14 @@ void Hamamatsu::read_wViewEnabled(Tango::Attribute &attr)
 		*attr_wViewEnabled_read = enabled;
 		attr.set_value(attr_wViewEnabled_read);
 	}
-	catch(Tango::DevFailed& df)
-	{
-		ERROR_STREAM << df << endl;
-		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          string(df.errors[0].desc).c_str(),
-                                          "Hamamatsu::read_wViewEnabled");
-	}
-	catch(Exception& e)
-	{
-		ERROR_STREAM << e.getErrMsg() << endl;
-		//- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                                       e.getErrMsg().c_str(),
-                                       "Hamamatsu::read_wViewEnabled");
-	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_wViewEnabled");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_wViewEnabled");
+    }
 }
 
 //+----------------------------------------------------------------------------
@@ -809,23 +789,14 @@ void Hamamatsu::write_wViewEnabled(Tango::WAttribute &attr)
             }
         }
 	}
-	catch(Tango::DevFailed& df)
-	{
-		ERROR_STREAM << df << endl;
-		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          string(df.errors[0].desc).c_str(),
-                                          "Hamamatsu::write_wViewEnabled");
-	}
-	catch(Exception& e)
-	{
-		ERROR_STREAM << e.getErrMsg() << endl;
-		//- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                                       e.getErrMsg().c_str(),
-                                       "Hamamatsu::write_wViewEnabled");
-	}	
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::write_wViewEnabled");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::write_wViewEnabled");
+    }
 }
 
 //+----------------------------------------------------------------------------
@@ -846,23 +817,14 @@ void Hamamatsu::read_fps(Tango::Attribute &attr)
 		*attr_fps_read = fps;
 		attr.set_value(attr_fps_read);
 	}
-	catch(Tango::DevFailed& df)
-	{
-		ERROR_STREAM << df << endl;
-		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          string(df.errors[0].desc).c_str(),
-                                          "Hamamatsu::read_fps");
-	}
-	catch(Exception& e)
-	{
-		ERROR_STREAM << e.getErrMsg() << endl;
-		//- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                                       e.getErrMsg().c_str(),
-                                       "Hamamatsu::read_fps");
-	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_fps");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_fps");
+    }
 }
 
 //+----------------------------------------------------------------------------
@@ -883,23 +845,14 @@ void Hamamatsu::read_lostFrames(Tango::Attribute &attr)
 		*attr_lostFrames_read = lostFrames;
 		attr.set_value(attr_lostFrames_read);
 	}
-	catch(Tango::DevFailed& df)
-	{
-		ERROR_STREAM << df << endl;
-		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          string(df.errors[0].desc).c_str(),
-                                          "Hamamatsu::read_lostFrames");
-	}
-	catch(Exception& e)
-	{
-		ERROR_STREAM << e.getErrMsg() << endl;
-		//- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                                       e.getErrMsg().c_str(),
-                                       "Hamamatsu::read_lostFrames");
-	}	
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_lostFrames");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_lostFrames");
+    }
 }
 
 
@@ -933,23 +886,14 @@ void Hamamatsu::read_readoutSpeed(Tango::Attribute &attr)
 		strcpy(*attr_readoutSpeed_read, readoutSpeedName.c_str());
 		attr.set_value(attr_readoutSpeed_read);
 	}
-	catch(Tango::DevFailed& df)
-	{
-		ERROR_STREAM << df << endl;
-		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          string(df.errors[0].desc).c_str(),
-                                          "Hamamatsu::read_readoutSpeed");
-	}
-	catch(Exception& e)
-	{
-		ERROR_STREAM << e.getErrMsg() << endl;
-		//- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                                       e.getErrMsg().c_str(),
-                                       "Hamamatsu::read_readoutSpeed");
-	}	
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_readoutSpeed");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_readoutSpeed");
+    }
 }
 
 //+----------------------------------------------------------------------------
@@ -992,23 +936,113 @@ void Hamamatsu::write_readoutSpeed(Tango::WAttribute &attr)
 		m_camera->setReadoutSpeed(readoutSpeed);
 		PropertyHelper::set_property(this, "MemorizedReadoutSpeed", m_readoutSpeed);
 	}
-	catch(Tango::DevFailed& df)
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::write_readoutSpeed");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::write_readoutSpeed");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_coolerMode
+// 
+// description : 	Extract real attribute values for coolerMode acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_coolerMode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_coolerMode(Tango::Attribute &attr) entering... "<< endl;
+
+	try
 	{
-		ERROR_STREAM << df << endl;
-		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          string(df.errors[0].desc).c_str(),
-                                          "Hamamatsu::write_readoutSpeed");
+		enum lima::Hamamatsu::Camera::Cooler_Mode cooler_mode;
+		cooler_mode = m_camera->getCoolerMode();
+
+		std::string label = get_cooler_mode_label(cooler_mode);
+		strcpy(*attr_coolerMode_read, label.c_str());
+
+		attr.set_value(attr_coolerMode_read);
+        attr.set_quality((cooler_mode == lima::Hamamatsu::Camera::Cooler_Mode_Not_Supported) ? 
+		                 Tango::ATTR_INVALID : Tango::ATTR_VALID);
 	}
-	catch(Exception& e)
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_coolerMode");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_coolerMode");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_coolerStatus
+// 
+// description : 	Extract real attribute values for coolerStatus acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_coolerStatus(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_coolerStatus(Tango::Attribute &attr) entering... "<< endl;
+
+	try
 	{
-		ERROR_STREAM << e.getErrMsg() << endl;
-		//- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                                       e.getErrMsg().c_str(),
-                                       "Hamamatsu::write_readoutSpeed");
-	}	
+		enum lima::Hamamatsu::Camera::Cooler_Status cooler_status;
+		cooler_status = m_camera->getCoolerStatus();
+
+		std::string label = get_cooler_status_label(cooler_status);
+		strcpy(*attr_coolerStatus_read, label.c_str());
+
+		attr.set_value(attr_coolerStatus_read);
+        attr.set_quality((cooler_status == lima::Hamamatsu::Camera::Cooler_Status_Not_Supported) ? 
+		                 Tango::ATTR_INVALID : Tango::ATTR_VALID);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_coolerStatus");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_coolerStatus");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_temperatureStatus
+// 
+// description : 	Extract real attribute values for temperatureStatus acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_temperatureStatus(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_temperatureStatus(Tango::Attribute &attr) entering... "<< endl;
+
+	try
+	{
+		enum lima::Hamamatsu::Camera::Temperature_Status temperature_status;
+		temperature_status = m_camera->getTemperatureStatus();
+
+		std::string label = get_temperature_status_label(temperature_status);
+		strcpy(*attr_temperatureStatus_read, label.c_str());
+
+        attr.set_value(attr_temperatureStatus_read);
+        attr.set_quality((temperature_status == lima::Hamamatsu::Camera::Temperature_Status_Not_Supported) ? 
+		                 Tango::ATTR_INVALID : Tango::ATTR_VALID);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_temperatureStatus");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_temperatureStatus");
+    }
 }
 
 //+------------------------------------------------------------------
@@ -1048,6 +1082,119 @@ Tango::DevState Hamamatsu::dev_state()
 
 	return DeviceState;
 }
+
+//+------------------------------------------------------------------
+/**
+ *	method:	Hamamatsu::manage_devfailed_exception
+ *
+ *	description: method which manages DevFailed exceptions
+ */
+//+------------------------------------------------------------------
+void Hamamatsu::manage_devfailed_exception(Tango::DevFailed & in_exception, const std::string & in_caller_method_name)
+{
+    ERROR_STREAM << in_exception << endl;
+	
+    // rethrow exception
+    Tango::Except::re_throw_exception(in_exception,
+                                      "TANGO_DEVICE_ERROR",
+                                      string(in_exception.errors[0].desc).c_str(),
+                                      in_caller_method_name.c_str());
+}
+
+//+------------------------------------------------------------------
+/**
+ *	method:	Hamamatsu::manage_lima_exception
+ *
+ *	description: method which manages lima exceptions
+ */
+//+------------------------------------------------------------------
+void Hamamatsu::manage_lima_exception(lima::Exception & in_exception, const std::string & in_caller_method_name)
+{
+    ERROR_STREAM << in_exception.getErrMsg() << endl;
+
+    // throw exception
+    Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   in_exception.getErrMsg().c_str(),
+                                   in_caller_method_name.c_str());
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : Hamamatsu::get_cooler_mode_label
+//
+// description : Get a cooler mode label.
+//
+//-----------------------------------------------------------------------------
+std::string Hamamatsu::get_cooler_mode_label(enum lima::Hamamatsu::Camera::Cooler_Mode in_cooler_mode)
+{
+    std::string label = "";
+
+    switch (in_cooler_mode)
+    {
+        case lima::Hamamatsu::Camera::Cooler_Mode_Off          : label = SENSOR_COOLER_OFF          ; break;
+        case lima::Hamamatsu::Camera::Cooler_Mode_On           : label = SENSOR_COOLER_ON           ; break;
+        case lima::Hamamatsu::Camera::Cooler_Mode_Max          : label = SENSOR_COOLER_MAX          ; break;
+        case lima::Hamamatsu::Camera::Cooler_Mode_Not_Supported: label = SENSOR_COOLER_NOT_SUPPORTED; break;
+	    default: break;
+    }
+
+    return label;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : Hamamatsu::get_temperature_status_label
+//
+// description : Get a temperature status label.
+//
+//-----------------------------------------------------------------------------
+std::string Hamamatsu::get_temperature_status_label(enum lima::Hamamatsu::Camera::Temperature_Status in_temperature_status)
+{
+    std::string label = "";
+
+    switch (in_temperature_status)
+    {
+        case lima::Hamamatsu::Camera::Temperature_Status_Not_Supported : label = TEMPERATURE_STATUS_NOT_SUPPORTED; break;
+        case lima::Hamamatsu::Camera::Temperature_Status_Normal        : label = TEMPERATURE_STATUS_NORMAL       ; break;
+        case lima::Hamamatsu::Camera::Temperature_Status_Warning       : label = TEMPERATURE_STATUS_WARNING      ; break;
+        case lima::Hamamatsu::Camera::Temperature_Status_Protection    : label = TEMPERATURE_STATUS_PROTECTION   ; break;
+	    default: break;
+    }
+
+    return label;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : Hamamatsu::get_cooler_status_label
+//
+// description : Get a cooler status label.
+//
+//-----------------------------------------------------------------------------
+std::string Hamamatsu::get_cooler_status_label(enum lima::Hamamatsu::Camera::Cooler_Status in_cooler_status)
+{
+    std::string label = "";
+
+    switch (in_cooler_status)
+    {
+        case lima::Hamamatsu::Camera::Cooler_Status_Not_Supported : label = COOLER_STATUS_NOT_SUPPORTED; break;
+        case lima::Hamamatsu::Camera::Cooler_Status_Error4        : label = COOLER_STATUS_ERROR4       ; break;
+        case lima::Hamamatsu::Camera::Cooler_Status_Error3        : label = COOLER_STATUS_ERROR3       ; break;
+        case lima::Hamamatsu::Camera::Cooler_Status_Error2        : label = COOLER_STATUS_ERROR2       ; break;
+        case lima::Hamamatsu::Camera::Cooler_Status_Error1        : label = COOLER_STATUS_ERROR1       ; break;
+        case lima::Hamamatsu::Camera::Cooler_Status_None          : label = COOLER_STATUS_NONE         ; break;
+        case lima::Hamamatsu::Camera::Cooler_Status_Off           : label = COOLER_STATUS_OFF          ; break;
+        case lima::Hamamatsu::Camera::Cooler_Status_Ready         : label = COOLER_STATUS_READY        ; break;
+        case lima::Hamamatsu::Camera::Cooler_Status_Busy          : label = COOLER_STATUS_BUSY         ; break;
+        case lima::Hamamatsu::Camera::Cooler_Status_Always        : label = COOLER_STATUS_ALWAYS       ; break;
+        case lima::Hamamatsu::Camera::Cooler_Status_Warning       : label = COOLER_STATUS_WARNING      ; break;
+
+	    default: break;
+    }
+
+    return label;
+}
+
 
 
 

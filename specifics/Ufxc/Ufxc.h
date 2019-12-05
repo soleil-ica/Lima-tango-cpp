@@ -52,10 +52,12 @@
 #include "lima/CtImage.h"
 
 #include <yat/memory/SharedPtr.h>
+#include <yat/utils/StringTokenizer.h>
+
 #include <yat4tango/PropertyHelper.h>
 #include <yat4tango/InnerAppender.h>
-#include <yat/utils/StringTokenizer.h>
 #include <yat4tango/DeviceTask.h>
+
 #include "UfxcInterface.h"
 #include "UfxcCamera.h"
 

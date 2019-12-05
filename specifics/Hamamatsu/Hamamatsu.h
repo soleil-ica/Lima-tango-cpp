@@ -37,6 +37,7 @@
 
 //- YAT/YAT4TANGO
 #include <yat4tango/PropertyHelper.h>
+#include <yat4tango/InnerAppender.h>
 
 /**
  * @author	$Author:  $
@@ -98,7 +99,10 @@ public :
 		Tango::DevDouble	attr_topViewExposureTime_write;
 		Tango::DevDouble	*attr_bottomViewExposureTime_read;
 		Tango::DevDouble	attr_bottomViewExposureTime_write;
-		Tango::DevDouble	*attr_Temperature_read;
+		Tango::DevDouble	*attr_temperature_read;
+		Tango::DevString	*attr_coolerMode_read;
+		Tango::DevString	*attr_coolerStatus_read;
+		Tango::DevString	*attr_temperatureStatus_read;
 //@}
 
 /**
@@ -250,9 +254,21 @@ public :
  */
 	virtual void write_bottomViewExposureTime(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for Temperature acquisition result.
+ *	Extract real attribute values for temperature acquisition result.
  */
-	virtual void read_Temperature(Tango::Attribute &attr);
+	virtual void read_temperature(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for coolerMode acquisition result.
+ */
+	virtual void read_coolerMode(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for coolerStatus acquisition result.
+ */
+	virtual void read_coolerStatus(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for temperatureStatus acquisition result.
+ */
+	virtual void read_temperatureStatus(Tango::Attribute &attr);
 /**
  *	Read/Write allowed for readoutSpeed attribute.
  */
@@ -278,9 +294,21 @@ public :
  */
 	virtual bool is_bottomViewExposureTime_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for Temperature attribute.
+ *	Read/Write allowed for temperature attribute.
  */
-	virtual bool is_Temperature_allowed(Tango::AttReqType type);
+	virtual bool is_temperature_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for coolerMode attribute.
+ */
+	virtual bool is_coolerMode_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for coolerStatus attribute.
+ */
+	virtual bool is_coolerStatus_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for temperatureStatus attribute.
+ */
+	virtual bool is_temperatureStatus_allowed(Tango::AttReqType type);
 /**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
@@ -296,8 +324,41 @@ public :
 
 	//	Here is the end of the automatic code generation part
 	//-------------------------------------------------------------	
+private :
+/**
+ *	method:	Hamamatsu::manage_devfailed_exception
+ *
+ *	description: method which manages DevFailed exceptions
+ */
+    void manage_devfailed_exception(Tango::DevFailed & in_exception, const std::string & in_caller_method_name);
 
+/**
+ *	method:	Hamamatsu::manage_lima_exception
+ *
+ *	description: method which manages lima exceptions
+ */
+    void manage_lima_exception(lima::Exception & in_exception, const std::string & in_caller_method_name);
 
+/**
+ *	method:	Hamamatsu::get_cooler_mode_label
+ *
+ *	description: Get a cooler mode label.
+ */
+    std::string get_cooler_mode_label(enum lima::Hamamatsu::Camera::Cooler_Mode in_cooler_mode);
+
+/**
+ *	method:	Hamamatsu::get_temperature_status_label
+ *
+ *	description: Get a temperature status label.
+ */
+    std::string get_temperature_status_label(enum lima::Hamamatsu::Camera::Temperature_Status in_temperature_status);
+
+/**
+ *	method:	Hamamatsu::get_cooler_status_label
+ *
+ *	description: Get a cooler status label.
+ */
+    std::string get_cooler_status_label(enum lima::Hamamatsu::Camera::Cooler_Status in_cooler_status);
 
 protected :	
 	//	Add your own data members here
