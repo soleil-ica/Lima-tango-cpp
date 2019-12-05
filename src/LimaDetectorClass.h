@@ -61,6 +61,18 @@ public:
 	{return (static_cast<LimaDetector *>(dev))->is_operationsList_allowed(ty);}
 };
 
+class fileExtensionAttrib: public Tango::Attr
+{
+public:
+	fileExtensionAttrib():Attr("fileExtension", Tango::DEV_STRING, Tango::READ) {};
+	~fileExtensionAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<LimaDetector *>(dev))->read_fileExtension(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<LimaDetector *>(dev))->is_fileExtension_allowed(ty);}
+};
+
 class fileNbFramesAttrib: public Tango::Attr
 {
 public:
