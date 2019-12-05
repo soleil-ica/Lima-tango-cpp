@@ -14,7 +14,7 @@
     <packaging>nar</packaging>
     <name>LimaDetector</name>
     <description>LimaDetector device</description>
-
+ 
     <properties>
         <!-- path to the 64 bits libs -->
         <libs-64bits>/home/informatique/ica/ica/LIB_EL6_64</libs-64bits>
@@ -30,7 +30,9 @@
         <SIMULATOR.name>Simulator</SIMULATOR.name>
         <SIMULATOR.version>1.4.0</SIMULATOR.version>
         <SLSJUNGFRAU.name>SlsJungfrau</SLSJUNGFRAU.name>
-        <SLSJUNGFRAU.version>1.1.0</SLSJUNGFRAU.version>
+        <SLSJUNGFRAU.version>1.0.0</SLSJUNGFRAU.version>
+        <SLSEIGER.name>SlsEiger</SLSEIGER.name>
+        <SLSEIGER.version>1.0.0</SLSEIGER.version>
         <LAMBDA.name>Lambda</LAMBDA.name>
         <LAMBDA.version>1.0.2</LAMBDA.version>    
         <XSPRESS3.name>Xspress3</XSPRESS3.name>
@@ -59,6 +61,11 @@
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaEiger-amd64-Linux-gcc-shared-${mode}</artifactId>
             <version>${EIGER.version}</version>
+        </dependency>       -->
+        <dependency>
+            <groupId>fr.soleil.lib.Lima.Camera</groupId>
+            <artifactId>LimaSlsEiger-amd64-Linux-gcc-shared-${mode}</artifactId>
+            <version>${SLSEIGER.version}</version>
         </dependency>       
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
@@ -89,20 +96,22 @@
                         <includes>
                             <include>*.cpp</include>
                             <include>specifics/SimulatorCCD/*.cpp</include>							
-                            <include>specifics/Eiger/*.cpp</include>
-                            <include>specifics/SlsJungfrau/*.cpp</include>
-                            <include>specifics/Lambda/*.cpp</include>
-                            <include>specifics/Xspress3/*.cpp</include>
-                            <include>specifics/Layout/*.cpp</include>     	
+                            <include>specifics/SimulatorCCD/*.cpp</include>							
+                            <include>specifics/Eiger/*.cpp</include>-->
+                            <include>specifics/SlsJungfrau/*.cpp</include>-->
+                            <include>specifics/SlsEiger/*.cpp</include>
+                            <include>specifics/Layout/*.cpp</include>     			
                             <include>specifics/Mask/*.cpp</include>                            
                             <include>specifics/RoiCounters/*.cpp</include>
+                            <include>specifics/Lambda/*.cpp</include>-->
                         </includes>
 
                         <includePaths>                          
                             <includePath>src</includePath>                                   
                             <includePath>specifics/SimulatorCCD</includePath> 		
                             <includePath>specifics/Eiger</includePath> 
-                            <includePath>specifics/SlsJungfrau</includePath>            
+                            <includePath>specifics/SlsJungfrau</includePath>
+                            <includePath>specifics/SlsEiger</includePath>
                             <includePath>specifics/Lambda</includePath>        
                             <includePath>specifics/Xspress3</includePath>     
                             <includePath>specifics/Layout</includePath>         
@@ -137,6 +146,8 @@
                             <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
                             <define>SLSJUNGFRAU_NAME=${SLSJUNGFRAU.name}</define>
                             <define>SLSJUNGFRAU_VERSION=${SLSJUNGFRAU.version}</define>
+                            <define>SLSEIGER_NAME=${SLSEIGER.name}</define>
+                            <define>SLSEIGER_VERSION=${SLSEIGER.version}</define>
                             <define>LAMBDA_NAME=${LAMBDA.name}</define>
                             <define>LAMBDA_VERSION_DEVICE=${LAMBDA.version}</define> <!-- name conflict with lambda sdk --> 
                             <define>XSPRESS3_NAME=${XSPRESS3.name}</define>
@@ -146,6 +157,7 @@
                             <define>SIMULATOR_ENABLED</define> 						
                             <define>EIGER_ENABLED</define> 	
                             <define>SLSJUNGFRAU_ENABLED</define> 
+							<define>SLSEIGER_ENABLED</define>
                             <define>LAMBDA_ENABLED</define>
                             <define>XSPRESS3_ENABLED</define>
                             <define>LAYOUT_ENABLED</define>	

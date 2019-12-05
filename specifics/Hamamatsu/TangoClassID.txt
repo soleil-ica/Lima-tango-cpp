@@ -1,0 +1,11 @@
+/**
+ * Device Class Identification:
+ * 
+ * Class Name   :	Hamamatsu
+ * Contact      :	cedric.castel@synchrotron-soleil.fr
+ * Class Family :	Hamamatsu
+ * Platform     :	All Platforms
+ * Bus          :	Not Applicable
+ * Manufacturer :	SOLEIL
+ * Reference    :	
+ */

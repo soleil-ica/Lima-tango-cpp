@@ -131,6 +131,9 @@ static const char *RcsId = "$Id:  $";
 #include <SlsJungfrauClass.h>
 #endif
 
+#ifdef SLSEIGER_ENABLED
+#include <SlsEigerClass.h>
+#endif
 
 #ifdef LAMBDA_ENABLED
 #include <LambdaClass.h>
@@ -250,6 +253,10 @@ void Tango::DServer::class_factory()
 
 #ifdef SLSJUNGFRAU_ENABLED        
     add_class(SlsJungfrau_ns::SlsJungfrauClass::init("SlsJungfrau"));
+#endif	
+
+#ifdef SLSEIGER_ENABLED        
+    add_class(SlsEiger_ns::SlsEigerClass::init("SlsEiger"));
 #endif	
 
 #ifdef LAMBDA_ENABLED        
