@@ -121,29 +121,6 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 
-#ifdef AVIEX_ENABLED
-        if (detector_type == "AviexCCD")
-        {
-            if (!ControlFactory::m_is_created)
-            {
-                Tango::DbData db_data;
-                db_data.push_back(Tango::DbDatum("DetectorID"));
-                db_data.push_back(Tango::DbDatum("MxDatabaseFileFullName"));
-                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
-                std::string detector_id;
-                std::string database_file;
-                db_data[0] >> detector_id;
-                db_data[1] >> database_file;
-                m_camera = static_cast<void*> (new Aviex::Camera(detector_id, database_file));
-
-                m_interface = static_cast<void*> (new Aviex::Interface(*static_cast<Aviex::Camera*> (m_camera)));
-                m_control = new CtControl(static_cast<Aviex::Interface*> (m_interface));
-                ControlFactory::m_is_created = true;
-                return m_control;
-            }
-        }
-#endif
-
 #ifdef BASLER_ENABLED
         if (detector_type == "BaslerCCD")
         {
@@ -987,13 +964,6 @@ void ControlFactory::reset(const std::string& detector_type)
                 if (detector_type == "SimulatorCCD")
                 {
                     delete (static_cast<Simulator::Camera*> (m_camera));
-                }
-#endif
-
-#ifdef AVIEX_ENABLED        
-                if (detector_type == "AviexCCD")
-                {
-                    delete (static_cast<Aviex::Camera*> (m_camera));
                 }
 #endif
 

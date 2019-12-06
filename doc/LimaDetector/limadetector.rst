@@ -23,8 +23,7 @@ DetectorType                        SimulatorCCD                String          
 
                                                                                         Availables types :
 
-                                                                                        - AndorCCD                                                                                          
-                                                                                        - AviexCCD                                                                                          
+                                                                                        - AndorCCD                                                                                                                                                                                
                                                                                         - BaslerCCD                                                                                         
                                                                                         - Eiger                                                                                             
                                                                                         - Hamamatsu                                                                                         

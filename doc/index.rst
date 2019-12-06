@@ -32,7 +32,6 @@ This device server provides several Tango classes:
   :maxdepth: 1
   
   AndorCCD <AndorCCD/andorccd>
-  AviexCCD <AviexCCD/aviexccd>
   BaslerCCD <BaslerCCD/baslerccd>
   Eiger <Eiger/eiger>
   Hamamatsu <Hamamatsu/hamamatsu>

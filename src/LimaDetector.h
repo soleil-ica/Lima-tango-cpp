@@ -229,7 +229,6 @@ public:
  *	Define the type of the connected Detector .<BR>
  *	Availables types :<BR>
  *	- AndorCCD<BR>
- *	- AviexCCD<br>
  *	- BaslerCCD<BR>
  *	- Eiger<br>
  *	- Hamamatsu<br>

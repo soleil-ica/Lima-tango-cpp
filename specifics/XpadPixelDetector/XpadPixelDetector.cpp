@@ -127,7 +127,7 @@ void XpadPixelDetector::delete_device()
     //!!!! ONLY LimaDetector device can do this !!!!
     //if(m_ct!=0)
     //{
-    //    ControlFactory::instance().reset("AviexCCD");
+    //    ControlFactory::instance().reset("XpadPixelDetector");
     //    m_ct = 0;
     //}
 

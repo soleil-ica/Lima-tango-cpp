@@ -28,15 +28,6 @@
 #include <SimulatorInterface.h>
 #endif
 
-#ifdef AVIEX_ENABLED  
-#include <AviexCamera.h>
-#include <AviexDetInfoCtrlObj.h>
-#include <AviexSyncCtrlObj.h>
-#include <AviexRoiCtrlObj.h>
-#include <AviexBinCtrlObj.h>
-#include <AviexInterface.h>
-#endif
-
 #ifdef BASLER_ENABLED  
 #include <BaslerInterface.h>
 #include <BaslerCamera.h>

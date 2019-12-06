@@ -55,10 +55,6 @@ static const char *RcsId = "$Id:  $";
 #include <SimulatorCCDClass.h>
 #endif
 
-#ifdef AVIEX_ENABLED
-#include <AviexCCDClass.h>
-#endif
-
 #ifdef BASLER_ENABLED
 #include <BaslerCCDClass.h>
 #endif
@@ -165,10 +161,6 @@ void Tango::DServer::class_factory()
 
 #ifdef SIMULATOR_ENABLED
     add_class(SimulatorCCD_ns::SimulatorCCDClass::init("SimulatorCCD"));
-#endif
-
-#ifdef AVIEX_ENABLED
-    add_class(AviexCCD_ns::AviexCCDClass::init("AviexCCD"));
 #endif
     
 #ifdef BASLER_ENABLED
