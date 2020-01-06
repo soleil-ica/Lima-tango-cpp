@@ -119,6 +119,7 @@ void LimaDetector::delete_device()
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     //    Delete device allocated objects
     DELETE_SCALAR_ATTRIBUTE(attr_exposureTime_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_fileExtension_read);
     DELETE_SCALAR_ATTRIBUTE(attr_exposureAccTime_read);
     DELETE_SCALAR_ATTRIBUTE(attr_latencyTime_read);
     DELETE_SCALAR_ATTRIBUTE(attr_frameRate_read);
@@ -233,6 +234,7 @@ void LimaDetector::init_device()
     CREATE_SCALAR_ATTRIBUTE(attr_binningV_read);
     CREATE_SCALAR_ATTRIBUTE(attr_fileGeneration_read);
     CREATE_DEVSTRING_ATTRIBUTE(attr_fileFormat_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_fileExtension_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_filePrefix_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_fileTargetPath_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_SCALAR_ATTRIBUTE(attr_fileNbFrames_read);
@@ -1018,6 +1020,41 @@ void LimaDetector::read_attr_hardware(vector<long> &attr_list)
     DEBUG_STREAM << "LimaDetector::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
     //    Add your own code here
 }
+
+//+----------------------------------------------------------------------------
+//
+// method : 		LimaDetector::read_fileExtension
+// 
+// description : 	Extract real attribute values for fileExtension acquisition result.
+//
+//-----------------------------------------------------------------------------
+void LimaDetector::read_fileExtension(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "LimaDetector::read_fileExtension(Tango::Attribute &attr) entering... "<< endl;
+    try
+    {
+        strcpy(*attr_fileExtension_read, m_saving_par.suffix.c_str());
+        attr.set_value(attr_fileExtension_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_fileExtension");
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+                        e.getErrMsg().c_str(),
+                        "LimaDetector::read_fileExtension");
+    }
+}
+
 //+----------------------------------------------------------------------------
 //
 // method : 		LimaDetector::read_operationsList
@@ -1090,7 +1127,7 @@ void LimaDetector::read_fileFormat(Tango::Attribute &attr)
     DEBUG_STREAM << "LimaDetector::read_fileFormat(Tango::Attribute &attr) entering... " << endl;
     try
     {
-        strcpy(*attr_fileFormat_read, m_saving_par.suffix.c_str());
+        strcpy(*attr_fileFormat_read, m_file_format.c_str());
         attr.set_value(attr_fileFormat_read);
     }
     catch(Tango::DevFailed& df)
@@ -1124,13 +1161,14 @@ void LimaDetector::write_fileFormat(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_fileFormat(Tango::WAttribute &attr) entering... " << endl;
     try
     {
-        m_file_format = attr_fileFormat_write;
+        std::string old = attr_fileFormat_write;
         attr.get_write_value(attr_fileFormat_write);
-        string current = attr_fileFormat_write;
+        std::string current = attr_fileFormat_write;
+
         std::transform(current.begin(), current.end(), current.begin(), ::toupper);
         if(current != "NXS" && current != "EDF" && current != "RAW" && current != "HDF5")
         {
-            attr_fileFormat_write = const_cast<Tango::DevString>(m_file_format.c_str());
+            attr_fileFormat_write = const_cast<Tango::DevString>(old.c_str());
             THROW_DEVFAILED("CONFIGURATION_ERROR",
                             std::string("Available File Format are:\n- NXS\n- EDF\n- RAW\n- HDF5\n").c_str(),
                             "LimaDetector::write_fileFormat");
@@ -4518,7 +4556,6 @@ void LimaDetector::create_log_info_attributes(void)
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ANDOR_NAME), YAT_XSTR(ANDOR_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PCO_NAME), YAT_XSTR(PCO_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PRINCETON_NAME), YAT_XSTR(PRINCETON_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UVIEW_NAME), YAT_XSTR(UVIEW_VERSION) );
@@ -4541,12 +4578,12 @@ void LimaDetector::create_log_info_attributes(void)
 		yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSJUNGFRAU_NAME), YAT_XSTR(SLSJUNGFRAU_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION));
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(LAMBDA_NAME), YAT_XSTR(LAMBDA_VERSION_DEVICE));//- name conflict with lambda sdk
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XSPRESS3_NAME), YAT_XSTR(XSPRESS3_VERSION));
 
         #else // UNIX_32
         yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(AVIEX_NAME), YAT_XSTR(AVIEX_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(BASLER_NAME), YAT_XSTR(BASLER_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(IMXPAD_NAME), YAT_XSTR(IMXPAD_VERSION) );
@@ -4555,6 +4592,7 @@ void LimaDetector::create_log_info_attributes(void)
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );        
+        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UFXC_NAME), YAT_XSTR(UFXC_VERSION) ); 
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
         #endif
     #endif

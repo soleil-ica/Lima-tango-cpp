@@ -806,6 +806,25 @@ bool LimaDetector::is_operationsList_allowed(Tango::AttReqType type)
 	return true;
 }
 
+//+----------------------------------------------------------------------------
+//
+// method : 		LimaDetector::is_fileExtension_allowed
+// 
+// description : 	Read/Write allowed for fileExtension attribute.
+//
+//-----------------------------------------------------------------------------
+bool LimaDetector::is_fileExtension_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT)
+	{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+
 //=================================================
 //		Commands Allowed Methods
 //=================================================

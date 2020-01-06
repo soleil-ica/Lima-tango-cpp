@@ -43,8 +43,6 @@
             </activation>
 
             <properties>
-                <AVIEX.name>Aviex</AVIEX.name>
-                <AVIEX.version>1.0.15</AVIEX.version>
                 <BASLER.name>Basler</BASLER.name>
                 <BASLER.version>1.6.0</BASLER.version>
                 <EIGER.name>Eiger</EIGER.name>
@@ -100,11 +98,6 @@
                     <version>${CORE.version}</version>
                 </dependency>
                 <!-- Lima Camera Plugins -->
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaAviex-${aol}-shared-${mode}</artifactId>
-                    <version>${AVIEX.version}</version>
-                </dependency>
 
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
@@ -177,7 +170,6 @@
                                 <sourceDirectory>${project.basedir}</sourceDirectory>                        
                                 <includes>
                                     <include>*.cpp</include>
-                                    <include>specifics/AviexCCD/*.cpp</include>
                                     <include>specifics/BaslerCCD/*.cpp</include>
                                     <include>specifics/Eiger/*.cpp</include> 
                                     <include>specifics/ImXpad/*.cpp</include>
@@ -195,7 +187,6 @@
                                 
                                 <includePaths>                          
                                     <includePath>src</includePath>                            
-                                    <includePath>specifics/AviexCCD</includePath>
                                     <includePath>specifics/BaslerCCD</includePath>                            
                                     <includePath>specifics/ImXpad</includePath>                             
                                     <includePath>specifics/Eiger</includePath>    
@@ -218,8 +209,6 @@
                                     <define>PROCESSLIB_VERSION=${PROCESSLIB.version}</define>
                                     <define>CORE_NAME=${CORE.name}</define>
                                     <define>CORE_VERSION=${CORE.version}</define>
-                                    <define>AVIEX_NAME=${AVIEX.name}</define>
-                                    <define>AVIEX_VERSION=${AVIEX.version}</define>
                                     <define>BASLER_NAME=${BASLER.name}</define>
                                     <define>BASLER_VERSION=${BASLER.version}</define>
                                     <define>EIGER_NAME=${EIGER.name}</define>
@@ -243,10 +232,7 @@
 
                                     <!-- Needed By Basler -->
                                     <define>USE_GIGE</define>
-                                    <!-- Needed By Aviex -->
-                                    <define>OS_UNIX</define>
                                     <!-- define which detector you need to ENABLE -->                            
-                                    <define>AVIEX_ENABLED</define>	
                                     <define>BASLER_ENABLED</define>                               
                                     <define>IMXPAD_ENABLED</define>
                                     <define>EIGER_ENABLED</define>                  

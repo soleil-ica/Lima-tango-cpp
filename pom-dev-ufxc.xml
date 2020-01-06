@@ -125,8 +125,7 @@
                                     <define>UFXC_VERSION=${UFXC.version}</define>
                                     <!-- Needed By Basler -->
                                     <define>USE_GIGE</define>
-                                    <!-- Needed By Aviex -->
-                                    <define>OS_UNIX</define>
+
                                     <!-- define which detector you need to ENABLE -->                                       
 <!--                                    <define>LAYOUT_ENABLED</define>		                                                                                                       								 
                                     <define>MASK_ENABLED</define>
@@ -603,5 +602,8 @@
             </roles>
             <timezone>1</timezone>
         </developer>
+    </developers>
+</project>
+loper>
     </developers>
 </project>

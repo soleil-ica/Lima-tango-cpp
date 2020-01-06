@@ -23,8 +23,7 @@ DetectorType                        SimulatorCCD                String          
 
                                                                                         Availables types :
 
-                                                                                        - AndorCCD                                                                                          
-                                                                                        - AviexCCD                                                                                          
+                                                                                        - AndorCCD                                                                                                                                                                                
                                                                                         - BaslerCCD                                                                                         
                                                                                         - Eiger                                                                                             
                                                                                         - Hamamatsu                                                                                         
@@ -86,7 +85,6 @@ DebugModules                        Hardware                    Array of String 
                                                                                         
                                                                                         - None                                                                                              
                                                                                         - Hardware                                                                                          
-                                                                                        - Warning                                                                                           
                                                                                         - Control                                                                                           
                                                                                         - Common                                                                                            
                                                                                         - Camera                                                                                            
@@ -260,6 +258,8 @@ filePrefix                          W                           String          
 fileTargetPath                      W                           String                  Target path for the saved file                                                                       
                                                                 
 fileNbFrames                        W                           Long                    Number of frame per file
+
+fileExtension                       R                           String                  Actual Extension of the file
                                                                 
 image                               R                           Available types:        Last acquired image possibly modified by active 'post processing' 
                                                                 
@@ -291,7 +291,7 @@ Optionnal attributes (depend on config)
 Attribute name                      Read/Write                  Type                    Description
 ===============================     ========================    ==================      ===============================================
 shutterMode                         R/W                         String                  Shutter modes. Available values:
-                                                                
+
                                                                                         - MANUAL: opened and closed manually by OpenShutter and CloseShutter commands
                                                                                         - AUTO_FRAME: the shutter output signal is activated for each frame of a sequence
                                                                                         - AUTO_SEQUENCE: the shutter output signal is activated for the whole sequence
@@ -301,6 +301,7 @@ shutterState                        R                           String          
 shutterOpenTime                     R/W                         Double                  Delay (ms) between the output shutter trigger and the beginning of the acquisition.
                                                                 
                                                                                         if not null the shutter signal is set on before the acquisition is started.
+
 shutterCloseTime                    R/W                         Double                  Delay (ms)  between the shutter trigger and the end of the acquisition.
                                                                 
                                                                                         if not null the shutter signal is set on before the end of the acquisition.
@@ -323,12 +324,12 @@ State                               Void                        Long            
 Status                              Void                        String                  Return the device state as a string
                         
 Prepare                             Void                        Void                    Prepare the acquisition 
-                                                                
+
                                                                                         Apply parameters like bin/roi/exposure/.. & allocate buffers & ... outside the command 'Snap'
 
                                                                                         Available only if the property ExpertUsePrepareCmd is True
-                                                                                        
-                        
+
+
 Snap                                Void                        Void                    Starts the acquisition of a number of frames equal to 'nbFrames' attribute value.
                         
 Start                               Void                        Void                    Starts a "video/live" acquisition of an infinite number of frames.

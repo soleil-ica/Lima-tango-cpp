@@ -44,7 +44,7 @@
 <Tr><Td><Br>&nbsp;<Br>
 <center>
 <h1>
-LimaDetector <Br>
+Lima Devie Generic <Br>
 User's Guide<Br>&nbsp;<Br> <Br><Br>
 LimaDetector Class<Br>&nbsp;<Br></Td></Tr>
 </h1>
@@ -98,6 +98,17 @@ LimaDetector Class<Br>&nbsp;<Br></Td></Tr>
 <Td><Center><b>Property name</b></td></Center>
 <Td><Center><b>Property type</b></td></Center>
 <Td><Center><b>Description</b></td></Center>
+<Tr><Td><b><a href=#Dev_DefaultValues>AutoStartVideo </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Allows calling automatically the "Start" command when:<br>
+- The device starts.<br>
+- After calling the "Init" command.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>AutoSaveResetRoi </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the "full frame" automatically at the call of "ResetRoi" :<br>
+[default = false]</Font></Td></Tr>
+
 <Tr><Td><b><a href=#Dev_DefaultValues>DetectorDescription </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
 <Td><Font Size=-1>Detector user-defined text to identify the engine.</Font></Td></Tr>
@@ -106,18 +117,21 @@ LimaDetector Class<Br>&nbsp;<Br></Td></Tr>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
 <Td><Font Size=-1>Define the type of the connected Detector .<BR>
 Availables types :<BR>
-- AdscCCD<BR>
-- AviexCCD<br>
+- AndorCCD<BR>
 - BaslerCCD<BR>
 - Eiger<br>
 - Hamamatsu<br>
+- ImXpad<br>
 - MarCCD<BR>
+- Maxipix <BR>
+- Merlin <BR>
 - Pco<BR>
 - PerkinElmer<BR>
 - PilatusPixelDetector<BR>
 - ProsilicaCCD<BR>
 - PrincetonCCD<BR>
 - SimulatorCCD<BR>
+- UviewCCD<BR>
 - XpadPixelDetector<BR>
 
 </Font></Td></Tr>
@@ -127,7 +141,11 @@ Availables types :<BR>
 <Td><Font Size=-1>Define the pixel depth of the detector : <br>
 Availables values : <br>
 - 8 <br>
+- 12<br>
 - 16<br>
+- 16S<br>
+- 24<br>
+- 24S<br>
 - 32<br>
 - 32S<br></Font></Td></Tr>
 
@@ -162,10 +180,18 @@ This property is usefull only for detectors having video capabilities.<BR>
 Otherwise, use only NONE.</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>ImageSource </a></b></Td>
-<Td><Font Size=-1>string</Font></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
 <Td><Font Size=-1>Choose the source of Data given to the image attribute :<br>
-- VIDEO : use ctVideo->LastImage()
+- VIDEO : use ctVideo->LastImage()<br>
 - ACQUISITION : use ctControl->ReadImage()</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>ImageOpMode </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>Define ImageOpMode for Roi/Binning/etc...  :<br>
+Availables values :<br>
+- HardOnly<br>
+- SoftOnly<br>
+- HardAndSoft<br></Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>FileFormat </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
@@ -196,43 +222,32 @@ Nota :<br>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>FileNbFrames </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
-<Td><Font Size=-1></Font></Td></Tr>
+<Td><Font Size=-1>Define the nombre of frames to push in each saving file.</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>FileManagedMode </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
-<Td><Font Size=-1>Define the File manged Mode  :<br>
+<Td><Font Size=-1>Define the File managed Mode :<br>
 - HARDWARE : <br>
-- SOFTWARE :<br></Font></Td></Tr>
+- SOFTWARE  : <br></Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>FileWriteMode </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
-<Td><Font Size=-1>Available only for Nexus format : Fix the SetWriteMode(). <br>
+<Td><Font Size=-1>Available only for Nexus format : set the SetWriteMode(). <br>
 Available values :<br>
-- IMMEDIATE<br>
+- ASYNCHRONOUS<br>
 - SYNCHRONOUS<br>
-- DELAYED<br></Font></Td></Tr>
+- DELAYED</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>FileMemoryMode </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
-<Td><Font Size=-1>Available only for Nexus format : Fix the SetDataItemMemoryMode().<br>
+<Td><Font Size=-1>Available only for Nexus format : set the SetDataItemMemoryMode().<br>
 Available values :<br>
 - COPY<br>
-- NO_COPY<br></Font></Td></Tr>
+- NO_COPY</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>FileTimestampEnabled </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
 <Td><Font Size=-1>Define wether the timestamp is requested in the Nexus file or not<br></Font></Td></Tr>
-
-<Tr><Td><b><a href=#Dev_DefaultValues>BufferMaxMemoryPercent </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_USHORT</Font></Td>
-<Td><Font Size=-1>Define the Percent of Memory reserved to Lima buffer control.<BR>
-BufferMaxMemoryPercent = 70,   allow a Memory of 1.4 Go. (Default)<BR>
-BufferMaxMemoryPercent = 100, allow a Memory of 2 Go.    (Maximum)<BR>
-</Font></Td></Tr>
-
-<Tr><Td><b><a href=#Dev_DefaultValues>UsePrepareCmd </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
-<Td><Font Size=-1>If enabled, a call of 'Prepare' command is necessary before each 'Start' command.</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>DebugModules </a></b></Td>
 <Td><Font Size=-1>Array of string</Font></Td>
@@ -267,6 +282,24 @@ Availables values :<BR>
 - Obj<BR>
 - Funct<BR>
 - FileLine<BR></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>ExpertBufferMaxMemoryPercent </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_USHORT</Font></Td>
+<Td><Font Size=-1>Define the Percent of Memory reserved to Lima buffer control.<br>
+BufferMaxMemoryPercent = 70, allow a Memory of 1.4 Go. (Default)<br>
+BufferMaxMemoryPercent = 100, allow a Memory of 2 Go. (Maximum)</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>ExpertNbPoolThread </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_USHORT</Font></Td>
+<Td><Font Size=-1>Defines the number of threads dedicated to process images in the ProcessLib</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>ExpertUsePrepareCmd </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>If enabled, a call of 'Prepare' command is necessary before each 'Start' command.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>ExpertTimeoutCmd </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_ULONG</Font></Td>
+<Td><Font Size=-1>Define the Timeout (in ms) for some commands (snap/start/stop/prepare).<br></Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>MemorizedRoi </a></b></Td>
 <Td><Font Size=-1>Array of short</Font></Td>
@@ -348,11 +381,9 @@ Availables values :<br>
 <Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
 <Td><Font Size=-1></Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>AutoStartVideo </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
-<Td><Font Size=-1>Allows calling automatically the "Start" command when:<br>
-- The device starts.
-- After calling the "Init" command.</Font></Td></Tr>
+<Tr><Td><b><a href=#Dev_DefaultValues>SpoolID </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1></Font></Td></Tr>
 
 </Table>
 
@@ -366,6 +397,14 @@ Availables values :<br>
     <tr BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
         <Td><b>Property Name</b></td>
         <td><b>Default Values</b></td>
+    </Tr>
+    <Tr>
+        <Td>AutoStartVideo</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>AutoSaveResetRoi</Td>
+        <td>false</td>
     </Tr>
     <Tr>
         <Td>DetectorDescription</Td>
@@ -390,6 +429,10 @@ Availables values :<br>
     <Tr>
         <Td>ImageSource</Td>
         <td>VIDEO</td>
+    </Tr>
+    <Tr>
+        <Td>ImageOpMode</Td>
+        <td>HardAndSoft</td>
     </Tr>
     <Tr>
         <Td>FileFormat</Td>
@@ -417,7 +460,7 @@ Availables values :<br>
     </Tr>
     <Tr>
         <Td>FileWriteMode</Td>
-        <td>IMMEDIATE</td>
+        <td>ASYNCHRONOUS</td>
     </Tr>
     <Tr>
         <Td>FileMemoryMode</Td>
@@ -426,14 +469,6 @@ Availables values :<br>
     <Tr>
         <Td>FileTimestampEnabled</Td>
         <td>true</td>
-    </Tr>
-    <Tr>
-        <Td>BufferMaxMemoryPercent</Td>
-        <td>70</td>
-    </Tr>
-    <Tr>
-        <Td>UsePrepareCmd</Td>
-        <td>false</td>
     </Tr>
     <Tr>
         <Td>DebugModules</Td>
@@ -454,6 +489,22 @@ Availables values :<br>
 	Module<Br>
 	Type<Br>
 	Funct</td>
+    </Tr>
+    <Tr>
+        <Td>ExpertBufferMaxMemoryPercent</Td>
+        <td>70</td>
+    </Tr>
+    <Tr>
+        <Td>ExpertNbPoolThread</Td>
+        <td>4</td>
+    </Tr>
+    <Tr>
+        <Td>ExpertUsePrepareCmd</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>ExpertTimeoutCmd</Td>
+        <td>5000</td>
     </Tr>
     <Tr>
         <Td>MemorizedRoi</Td>
@@ -512,8 +563,8 @@ Availables values :<br>
         <td>No default value</td>
     </Tr>
     <Tr>
-        <Td>AutoStartVideo</Td>
-        <td>false</td>
+        <Td>SpoolID</Td>
+        <td>TO_BE_DEFINED</td>
     </Tr>
 </Table>
 
@@ -598,10 +649,10 @@ The [ SetBinning ] command IS NOT available.<br></Font></Td></Tr>
 <Tr><Td><b>detectorModel</b>: <Font Size=-1>Return the model of the Detector.</Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>detectorWidthMax</b></Td>
+<Tr><Td><b>detectorWidthMax</b>: <Font Size=-1>Maximum width</Font></Td>
 <Td><Center><Font Size=-1>DEV_USHORT</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>detectorHeightMax</b></Td>
+<Tr><Td><b>detectorHeightMax</b>: <Font Size=-1>Maximum height</Font></Td>
 <Td><Center><Font Size=-1>DEV_USHORT</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 <Tr><Td><b>detectorPixelDepth</b>: <Font Size=-1>Pixel resolution in bits:<br> 8<br> 16<br> 32<br></Font></Td>
@@ -624,6 +675,9 @@ The [ SetBinning ] command IS NOT available.<br></Font></Td></Tr>
 
 <Tr><Td><b>latencyTime</b>: <Font Size=-1>Set/Get latency time (in ms).<br></Font></Td>
 <Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>frameRate</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
 <Tr><Td><b>roiX</b>: <Font Size=-1>Region of Interest . (Origin X)</Font></Td>
 <Td><Center><Font Size=-1>DEV_USHORT</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
@@ -652,7 +706,7 @@ The [ SetBinning ] command IS NOT available.<br></Font></Td></Tr>
 <Tr><Td><b>fileGeneration</b>: <Font Size=-1>Allow to save grabbed frames into a file on disk.<br> Available formats for the file are:  EDF, RAW, NXS<br> The format is fixed in FileFormat property.<br></Font></Td>
 <Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
-<Tr><Td><b>fileFormat</b></Td>
+<Tr><Td><b>fileFormat</b>: <Font Size=-1>File format that will be used for saving. Available format are: - NXS - EDF - RAW - HDF5</Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
 <Tr><Td><b>filePrefix</b></Td>
@@ -663,6 +717,23 @@ The [ SetBinning ] command IS NOT available.<br></Font></Td></Tr>
 
 <Tr><Td><b>fileNbFrames</b></Td>
 <Td><Center><Font Size=-1>DEV_LONG</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>fileExtension</b>: <Font Size=-1>Display the actual extension that will be used for saving files, according to the chosen file format</Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+</Table>
+</Center>
+<Br><Br><Br><Br><Br>
+<Table Border=2 Cellpadding=3 CELLSPACING=0 WIDTH="100%">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<Td COLSPAN=4> <Font Size=+2><Center><b>Spectrum Attributes</b></td></Font></Center>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<Td><Center><b>Attribute name</b></td></Center>
+<Td><Center><b>Data Type</b></td></Center>
+<Td><Center><b>X Data Length</b></td></Center>
+<Td><Center><b>Expert</b></td></Center>
+<Tr><Td><b>operationsList</b>: <Font Size=-1>Enumerate all active 'post processing' operations on the image.</Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>1024</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 </Table>
 </Center>
@@ -717,9 +788,15 @@ The [ SetBinning ] command IS NOT available.<br></Font></Td></Tr>
 <Tr><Td><b>ResetROI</b></Td>
 <Td><Font Size=-1>DEV_VOID</Font></Td>
 <Td><Font Size=-1>DEV_VOID</Font></Td>
+<Tr><Td><b>GetAvailableCapabilities</b></Td>
+<Td><Font Size=-1>DEV_VOID</Font></Td>
+<Td><Font Size=-1>DEVVAR_STRINGARRAY</Font></Td>
 <Tr><Td><b>ReloadROI</b></Td>
 <Td><Font Size=-1>DEV_VOID</Font></Td>
 <Td><Font Size=-1>DEV_VOID</Font></Td>
+<Tr><Td><b>GetDataStreams</b></Td>
+<Td><Font Size=-1>DEV_VOID</Font></Td>
+<Td><Font Size=-1>DEVVAR_STRINGARRAY</Font></Td>
 
 
 
@@ -925,9 +1002,29 @@ Roi and Binning are associated.<Br>&nbsp
 <Br>&nbsp
 </ul><Br>
 <Br>
+<A NAME="GetAvailableCapabilities"><!-- --></A>
+<A NAME="GetAvailableCapabilities"><!-- --></A>
+<h2>13 - GetAvailableCapabilities</h2>
+<ul>
+<Li><Strong>Description: </Strong> Return a list of string containing all available capabilitiesof the detector :<br>
+- Roi<br>
+- Binning<br>
+- Trigger<br>
+- Shutter<br>
+- Event Errors<br>
+- ...<br><Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Argout:<Br>DEVVAR_STRINGARRAY</Strong>
+ : The list of available capabilities<Br>&nbsp
+<Li><Strong>Command allowed for: </Strong><Ul>
+<Li>Tango::STANDBY</Ul>
+<Br>&nbsp
+</ul><Br>
+<Br>
 <A NAME="ResetFileIndex"><!-- --></A>
 <A NAME="ResetFileIndex"><!-- --></A>
-<h2>13 - ResetFileIndex (for expert only)</h2>
+<h2>14 - ResetFileIndex (for expert only)</h2>
 <ul>
 <Li><Strong>Description: </Strong> Reset the file index<Br>&nbsp
 <Li><Strong>Argin:<Br>DEV_VOID</Strong>
@@ -941,12 +1038,26 @@ Roi and Binning are associated.<Br>&nbsp
 <Br>
 <A NAME="ReloadROI"><!-- --></A>
 <A NAME="ReloadROI"><!-- --></A>
-<h2>14 - ReloadROI</h2>
+<h2>15 - ReloadROI</h2>
 <ul>
 <Li><Strong>Description: </Strong> This command allows reloading the last ROI values set using the SetROI command.<Br>&nbsp
 <Li><Strong>Argin:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Command allowed for: </Strong><Ul>
+<Li>Tango::STANDBY</Ul>
+<Br>&nbsp
+</ul><Br>
+<Br>
+<A NAME="GetDataStreams"><!-- --></A>
+<A NAME="GetDataStreams"><!-- --></A>
+<h2>16 - GetDataStreams</h2>
+<ul>
+<Li><Strong>Description: </Strong> Returns the flyscan data streams associated with this device.<Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Argout:<Br>DEVVAR_STRINGARRAY</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
 <Li>Tango::STANDBY</Ul>

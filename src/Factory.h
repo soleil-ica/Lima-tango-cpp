@@ -28,15 +28,6 @@
 #include <SimulatorInterface.h>
 #endif
 
-#ifdef AVIEX_ENABLED  
-#include <AviexCamera.h>
-#include <AviexDetInfoCtrlObj.h>
-#include <AviexSyncCtrlObj.h>
-#include <AviexRoiCtrlObj.h>
-#include <AviexBinCtrlObj.h>
-#include <AviexInterface.h>
-#endif
-
 #ifdef BASLER_ENABLED  
 #include <BaslerInterface.h>
 #include <BaslerCamera.h>
@@ -157,6 +148,15 @@
 #include <SlsJungfrauCamera.h>
 #include <SlsJungfrauInterface.h>
 #endif
+
+#ifdef SLSEIGER_ENABLED
+#include <SlsEigerCamera.h>
+#include <SlsEigerInterface.h>
+#endif
+
+//ProcessLib/Data : define dimensions of image
+#define WIDTH_INDEX   0
+#define HEIGHT_INDEX  1
 
 #ifdef LAMBDA_ENABLED
 #include <LambdaCamera.h>
