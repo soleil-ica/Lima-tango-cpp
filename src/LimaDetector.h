@@ -1063,6 +1063,8 @@ public:
         return m_is_device_initialized;
     };
 
+    // Update the pixel depth property from database.
+    void update_pixel_depth();
 
 protected:
     //    Add your own data members here

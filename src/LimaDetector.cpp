@@ -4315,6 +4315,10 @@ void LimaDetector::configure_image_type(void)
     {
         hw_det_info->setCurrImageType(Bpp24);
     }
+    else if(detectorPixelDepth == "28")
+    {
+        hw_det_info->setCurrImageType(Bpp28);
+    }
     else if(detectorPixelDepth == "32")
     {
         hw_det_info->setCurrImageType(Bpp32);
@@ -4395,6 +4399,7 @@ void LimaDetector::configure_saving_parameters(void)
     ImageType image_type;
     HwDetInfoCtrlObj *hw_det_info;
     m_hw->getHwCtrlObj(hw_det_info);
+    
     hw_det_info->getCurrImageType(image_type);
     if(specialDisplayType == "FLOAT")
     {
@@ -4741,6 +4746,10 @@ void LimaDetector::configure_attributes_hardware_at_init(void)
 //-----------------------------------------------------------------------------
 void LimaDetector::add_image_dynamic_attribute(const std::string& attr_name)
 {
+    // read the pixel depth property from the database. 
+    // The value can have been changed. 
+    update_pixel_depth();
+
     //- add image dynamic attribute
     //- create image dyn attr (UChar, UShort or ULong)        
     yat4tango::DynamicAttributeInfo dai;
@@ -4758,7 +4767,7 @@ void LimaDetector::add_image_dynamic_attribute(const std::string& attr_name)
     {
         dai.tai.data_type = Tango::DEV_USHORT;
     }
-    else if(detectorPixelDepth == "24" || detectorPixelDepth == "32" || detectorPixelDepth == "2A")
+    else if(detectorPixelDepth == "24" || detectorPixelDepth == "28" || detectorPixelDepth == "32" || detectorPixelDepth == "2A")
     {
         dai.tai.data_type = Tango::DEV_ULONG;
     }
@@ -4959,9 +4968,39 @@ void LimaDetector::execute_close_shutter_callback(yat4tango::DynamicCommandExecu
     }
 }
 
+//+----------------------------------------------------------------------------
+//
+// method :         LimaDetector::update_pixel_depth()
+//
+// description :     Re-Read the pixel depth property from database.
+//
+//-----------------------------------------------------------------------------
+void LimaDetector::update_pixel_depth()
+{
+	Tango::DbData  dev_prop;
+    Tango::DbDatum def_prop, cl_prop;
 
+	dev_prop.push_back(Tango::DbDatum("DetectorPixelDepth"));
 
+	if (Tango::Util::instance()->_UseDb==true)
+		get_db_device()->get_property(dev_prop);
 
+	LimaDetectorClass *ds_class = (static_cast<LimaDetectorClass *>(get_device_class()));
 
+	//	Try to initialize DetectorPixelDepth from class property
+	cl_prop = ds_class->get_class_property(dev_prop[0].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  detectorPixelDepth;
+	else 
+    {
+		//	Try to initialize DetectorPixelDepth from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[0].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  detectorPixelDepth;
+	}
+
+	//	And try to extract DetectorPixelDepth value from database
+	if (dev_prop[0].is_empty()==false)	dev_prop[0]  >>  detectorPixelDepth;
+
+    transform(detectorPixelDepth.begin(), detectorPixelDepth.end(), detectorPixelDepth.begin(), ::toupper);
+}
 
 }	//	namespace
