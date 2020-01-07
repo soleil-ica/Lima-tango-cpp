@@ -1161,7 +1161,7 @@ bool RoiCounters::create_image_dynamic_attributes(void)
 			{
 				dai.tai.data_type = Tango::DEV_USHORT;
 			}
-			else if(pixel_depth == "24" || pixel_depth == "32" || pixel_depth == "2A")
+			else if(pixel_depth == "24" || pixel_depth == "28" || pixel_depth == "32" || pixel_depth == "2A")
 			{
 				dai.tai.data_type = Tango::DEV_ULONG;
 			}
