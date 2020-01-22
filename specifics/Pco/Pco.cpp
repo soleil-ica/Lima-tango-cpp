@@ -116,8 +116,7 @@ void Pco::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_adcOperation_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_shutterMode_read);
 
-    INFO_STREAM << "Remove the inner-appender." << endl;
-    yat4tango::InnerAppender::release(this);
+    // No Inner Appender
 
     //!!!! ONLY LimaDetector device can do this !!!!
     //if(m_ct!=0)
@@ -169,8 +168,7 @@ void Pco::init_device()
     set_state(Tango::INIT);
     m_status_message.str("");
 
-    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
-    yat4tango::InnerAppender::initialize(this, 512);
+    // No Inner Appender
 
     try
     {

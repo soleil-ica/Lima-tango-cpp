@@ -130,8 +130,7 @@ void Eiger::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_phiIncrement_read);
     DELETE_SCALAR_ATTRIBUTE(attr_phiStart_read);
 
-    INFO_STREAM << "Remove the inner-appender." << endl;
-    yat4tango::InnerAppender::release(this);
+    // No Inner Appender
 }
 
 //+----------------------------------------------------------------------------
@@ -184,8 +183,7 @@ void Eiger::init_device()
     set_state(Tango::INIT);
     m_status_message.str("");
 
-    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
-    yat4tango::InnerAppender::initialize(this, 512);
+    // No Inner Appender
 
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try

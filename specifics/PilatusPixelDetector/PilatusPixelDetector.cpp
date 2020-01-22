@@ -107,8 +107,7 @@ void PilatusPixelDetector::delete_device()
     DELETE_DEVSTRING_ATTRIBUTE(attr_imagePath_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_fileName_read);
 
-    INFO_STREAM << "Remove the inner-appender." << endl;
-    yat4tango::InnerAppender::release(this);
+    // No Inner Appender
 
     //!!!! ONLY LimaDetector device can do this !!!!
     //if(m_ct!=0)
@@ -143,8 +142,7 @@ void PilatusPixelDetector::init_device()
     m_is_device_initialized = false;
     m_status_message.str("");
 
-    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
-    yat4tango::InnerAppender::initialize(this, 512);
+    // No Inner Appender
 
     try
     {

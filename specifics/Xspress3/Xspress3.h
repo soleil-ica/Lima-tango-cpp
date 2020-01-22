@@ -50,7 +50,7 @@
 // Yat4Tango
 #include <yat4tango/PropertyHelper.h>
 #include <yat4tango/DynamicInterfaceManager.h>
-#include <yat4tango/InnerAppender.h>
+// #include <yat4tango/InnerAppender.h> Causing a bug during init
 
 // Yat
 #include <yat/memory/SharedPtr.h>

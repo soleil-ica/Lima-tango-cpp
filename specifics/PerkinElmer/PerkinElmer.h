@@ -53,7 +53,7 @@
 #include <PerkinElmerInterface.h>
 
 // Yat4Tango
-#include <yat4tango/InnerAppender.h>
+// #include <yat4tango/InnerAppender.h> Causing a bug during init
 
 
 #define MAX_ATTRIBUTE_STRING_LENGTH     256

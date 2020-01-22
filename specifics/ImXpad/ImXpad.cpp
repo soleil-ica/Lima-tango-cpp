@@ -132,8 +132,7 @@ void ImXpad::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_flatFieldCorrectionFlag_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_geometricalCorrectionFlag_read);
 
-    INFO_STREAM << "Remove the inner-appender." << endl;
-    yat4tango::InnerAppender::release(this);
+    // No Inner Appender
 
     //	Delete device allocated objects
     
@@ -172,8 +171,7 @@ void ImXpad::init_device()
     set_state(Tango::INIT);
     m_status_message.str("");
 
-    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
-    yat4tango::InnerAppender::initialize(this, 512);
+    // No Inner Appender
 
     try
     {

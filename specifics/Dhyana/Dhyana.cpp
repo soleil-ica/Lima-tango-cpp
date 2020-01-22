@@ -102,8 +102,7 @@ void Dhyana::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_fanSpeed_read);
 	//	Delete device allocated objects
 
-	INFO_STREAM << "Remove the inner-appender." << endl;
-    yat4tango::InnerAppender::release(this);
+	// No Inner Appender
 
 	//!!!! ONLY LimaDetector device can do this !!!!
 	//if(m_ct!=0)
@@ -139,8 +138,7 @@ void Dhyana::init_device()
 	set_state(Tango::INIT);
 	m_status_message.str("");
 	
-	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
-    yat4tango::InnerAppender::initialize(this, 512);
+	// No Inner Appender
 
 	try
 	{

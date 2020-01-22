@@ -110,8 +110,7 @@ void SimulatorCCD::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_growFactor_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_fillType_read);
 	
-	INFO_STREAM << "Remove the inner-appender." << endl;
-	yat4tango::InnerAppender::release(this);	
+	// No Inner Appender	
 }
 
 //+----------------------------------------------------------------------------
@@ -138,8 +137,7 @@ void SimulatorCCD::init_device()
     m_status_message.str("");
 
 	//- instanciate the appender in order to manage logs
-	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;
-	yat4tango::InnerAppender::initialize(this, 512);	
+	// No Inner Appender	
 	
 	
     try

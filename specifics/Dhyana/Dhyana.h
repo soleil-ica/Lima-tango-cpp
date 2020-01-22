@@ -52,7 +52,7 @@
 #include "lima/CtImage.h"
 
 #include <yat4tango/PropertyHelper.h>
-#include <yat4tango/InnerAppender.h>
+// #include <yat4tango/InnerAppender.h> Causing a bug during init
 
 #include "DhyanaInterface.h"
 #include "DhyanaCamera.h"

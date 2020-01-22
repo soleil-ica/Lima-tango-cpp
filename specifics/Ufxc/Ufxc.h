@@ -55,7 +55,7 @@
 #include <yat/utils/StringTokenizer.h>
 
 #include <yat4tango/PropertyHelper.h>
-#include <yat4tango/InnerAppender.h>
+// #include <yat4tango/InnerAppender.h> Causing a bug during init
 #include <yat4tango/DeviceTask.h>
 
 #include "UfxcInterface.h"

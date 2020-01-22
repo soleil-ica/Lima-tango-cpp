@@ -47,7 +47,7 @@
 #include <tango.h>
 #include <yat4tango/DynamicInterfaceManager.h>
 #include <yat4tango/PropertyHelper.h>
-#include <yat4tango/InnerAppender.h>
+// #include <yat4tango/InnerAppender.h> Causing a bug during init
 #include <yat/threading/Mutex.h>
 #include <yat/utils/XString.h>
 #include <yat/Version.h>

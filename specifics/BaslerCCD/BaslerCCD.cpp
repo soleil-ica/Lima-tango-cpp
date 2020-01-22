@@ -109,8 +109,7 @@ void BaslerCCD::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_maxThroughput_read);
     DELETE_SCALAR_ATTRIBUTE(attr_currentThroughput_read);
 
-    INFO_STREAM << "Remove the inner-appender." << endl;
-    yat4tango::InnerAppender::release(this);
+    // No Inner Appender
 }
 
 //+----------------------------------------------------------------------------
@@ -146,8 +145,7 @@ void BaslerCCD::init_device()
     m_is_autogain_available = false;
     m_is_gain_available = false;
 
-    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
-    yat4tango::InnerAppender::initialize(this, 512);
+    // No Inner Appender
 
     try
     {

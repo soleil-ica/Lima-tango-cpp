@@ -106,8 +106,7 @@ void PrincetonCCD::delete_device()
 	DELETE_DEVSTRING_ATTRIBUTE(attr_shutterMode_read);		
 	DELETE_DEVSTRING_ATTRIBUTE(attr_currentRate_read);
 
-    INFO_STREAM << "Remove the inner-appender." << endl;
-    yat4tango::InnerAppender::release(this);
+    // No Inner Appender
 
     //    Delete device allocated objects
 
@@ -143,8 +142,7 @@ void PrincetonCCD::init_device()
     set_state(Tango::INIT);
     m_status_message.str("");
 
-    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
-    yat4tango::InnerAppender::initialize(this, 512);
+    // No Inner Appender
 
     try
     {
