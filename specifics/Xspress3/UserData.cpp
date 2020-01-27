@@ -15,7 +15,7 @@
 //=============================================================================
 
 #include "UserData.h"
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 
 namespace Xspress3_ns
 {

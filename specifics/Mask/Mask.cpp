@@ -55,7 +55,7 @@ static const char *RcsId = "$Id:  $";
 
 #ifdef WIN32
 #include <tango.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 #endif
 
 #include <Mask.h>
@@ -63,7 +63,7 @@ static const char *RcsId = "$Id:  $";
 
 #ifndef WIN32
 #include <tango.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 #endif
 
 
@@ -506,7 +506,7 @@ void Mask::read_version(Tango::Attribute &attr)
 	DEBUG_STREAM << "Mask::read_version(Tango::Attribute &attr) entering... " << endl;
 	try
 	{
-		strcpy(*attr_version_read, CURRENT_VERSION);
+		strcpy(*attr_version_read, MASK_CURRENT_VERSION);
 		attr.set_value(attr_version_read);
 	}
 	catch(Tango::DevFailed& df)
