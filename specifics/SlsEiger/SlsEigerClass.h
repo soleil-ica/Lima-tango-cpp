@@ -424,6 +424,21 @@ public:
 		{return (static_cast<SlsEiger *>(dev))->is_tempFpgafr2_allowed(ty);}
 };
 
+//	Attribute gapPixelsActivation class definition
+class gapPixelsActivationAttrib: public Tango::Attr
+{
+public:
+	gapPixelsActivationAttrib():Attr("gapPixelsActivation",
+			Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~gapPixelsActivationAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsEiger *>(dev))->read_gapPixelsActivation(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<SlsEiger *>(dev))->write_gapPixelsActivation(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsEiger *>(dev))->is_gapPixelsActivation_allowed(ty);}
+};
+
 
 //=========================================
 //	Define classes for commands
