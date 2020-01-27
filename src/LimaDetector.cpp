@@ -65,7 +65,7 @@ static const char *RcsId = "$Id:  $";
 //
 //===================================================================
 #include <tango.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 
 #include <LimaDetector.h>
 #include <LimaDetectorClass.h>
@@ -4545,55 +4545,46 @@ void LimaDetector::create_log_info_attributes(void)
 	//- instanciate the device info attribute
 	INFO_STREAM << "Create the DeviceInfo in order to display dependencies versions." << endl;
 	yat4tango::DeviceInfo::initialize(this, YAT_XSTR(PROJECT_NAME), YAT_XSTR(PROJECT_VERSION) );
-	
+
 	//- fill the device info attribute in order to display dependencies versions
+    //- For all versions : 
+    yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION));
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
+
 #ifdef _WIN32
-        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(TANGO_NAME), YAT_XSTR(TANGO_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(OMNIORB_NAME), YAT_XSTR(OMNIORB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ZEROMQ_NAME), YAT_XSTR(ZEROMQ_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ANDOR_NAME), YAT_XSTR(ANDOR_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PRINCETON_NAME), YAT_XSTR(PRINCETON_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UVIEW_NAME), YAT_XSTR(UVIEW_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ANDOR_NAME), YAT_XSTR(ANDOR_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PRINCETON_NAME), YAT_XSTR(PRINCETON_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UVIEW_NAME), YAT_XSTR(UVIEW_VERSION) );
+#endif
+
+#ifdef _WIN64
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(DHYANA_NAME), YAT_XSTR(DHYANA_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PCO_NAME), YAT_XSTR(PCO_VERSION) );
 #endif
 
 #ifdef Linux
     #ifdef  UNIX_64_EL5
-        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MAXIPIX_NAME), YAT_XSTR(MAXIPIX_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
     #else
         #ifdef UNIX_64_EL6
-        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION));
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION));
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION));
-		yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSJUNGFRAU_NAME), YAT_XSTR(SLSJUNGFRAU_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION));
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(LAMBDA_NAME), YAT_XSTR(LAMBDA_VERSION_DEVICE));//- name conflict with lambda sdk
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XSPRESS3_NAME), YAT_XSTR(XSPRESS3_VERSION));
-
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION));
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSJUNGFRAU_NAME), YAT_XSTR(SLSJUNGFRAU_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSEIGER_NAME), YAT_XSTR(SLSEIGER_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(LAMBDA_NAME), YAT_XSTR(LAMBDA_VERSION_DEVICE));//- name conflict with lambda sdk
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XSPRESS3_NAME), YAT_XSTR(XSPRESS3_VERSION));
         #else // UNIX_32
-        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(BASLER_NAME), YAT_XSTR(BASLER_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(IMXPAD_NAME), YAT_XSTR(IMXPAD_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MARCCD_NAME), YAT_XSTR(MARCCD_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MERLIN_NAME), YAT_XSTR(MERLIN_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );        
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UFXC_NAME), YAT_XSTR(UFXC_VERSION) ); 
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(BASLER_NAME), YAT_XSTR(BASLER_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(IMXPAD_NAME), YAT_XSTR(IMXPAD_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MARCCD_NAME), YAT_XSTR(MARCCD_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MERLIN_NAME), YAT_XSTR(MERLIN_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );        
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UFXC_NAME), YAT_XSTR(UFXC_VERSION) ); 
         #endif
     #endif
 #endif
