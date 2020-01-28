@@ -600,12 +600,12 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         {
             if (!ControlFactory::m_is_created)
             {
-                Tango::DbData db_data            ;
-                std::string   config_file_name   ;
-                double        readout_time       ;
-                long          receiver_fifo_depth;
-                long          frame_packet_number;
-                
+                Tango::DbData db_data             ;
+                std::string   config_file_name    ;
+                double        readout_time        = 0.00004; // 40µs by default
+                long          receiver_fifo_depth = 2500   ; // 2500 frames by default
+                long          frame_packet_number = 128    ; // 128 packets by default
+
                 // configuration complete path
                 db_data.push_back(Tango::DbDatum("ConfigFileName"));
                 
