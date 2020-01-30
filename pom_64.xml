@@ -9,7 +9,7 @@
 	
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.9.1</version>
+    <version>1.9.2</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -30,11 +30,11 @@
         <SIMULATOR.name>Simulator</SIMULATOR.name>
         <SIMULATOR.version>1.4.0</SIMULATOR.version>
         <SLSJUNGFRAU.name>SlsJungfrau</SLSJUNGFRAU.name>
-        <SLSJUNGFRAU.version>1.0.0</SLSJUNGFRAU.version>
+        <SLSJUNGFRAU.version>1.1.0</SLSJUNGFRAU.version>
         <SLSEIGER.name>SlsEiger</SLSEIGER.name>
-        <SLSEIGER.version>1.0.0</SLSEIGER.version>
+        <SLSEIGER.version>1.0.1</SLSEIGER.version>
         <LAMBDA.name>Lambda</LAMBDA.name>
-        <LAMBDA.version>1.0.2</LAMBDA.version>    
+        <LAMBDA.version>1.0.3</LAMBDA.version>    
         <XSPRESS3.name>Xspress3</XSPRESS3.name>
         <XSPRESS3.version>1.0.1</XSPRESS3.version>   
     </properties>
@@ -61,7 +61,7 @@
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaEiger-amd64-Linux-gcc-shared-${mode}</artifactId>
             <version>${EIGER.version}</version>
-        </dependency>       -->
+        </dependency>
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaSlsEiger-amd64-Linux-gcc-shared-${mode}</artifactId>
@@ -97,13 +97,14 @@
                             <include>*.cpp</include>
                             <include>specifics/SimulatorCCD/*.cpp</include>							
                             <include>specifics/SimulatorCCD/*.cpp</include>							
-                            <include>specifics/Eiger/*.cpp</include>-->
-                            <include>specifics/SlsJungfrau/*.cpp</include>-->
+                            <include>specifics/Eiger/*.cpp</include>
+                            <include>specifics/SlsJungfrau/*.cpp</include>
                             <include>specifics/SlsEiger/*.cpp</include>
                             <include>specifics/Layout/*.cpp</include>     			
                             <include>specifics/Mask/*.cpp</include>                            
                             <include>specifics/RoiCounters/*.cpp</include>
-                            <include>specifics/Lambda/*.cpp</include>-->
+                            <include>specifics/Lambda/*.cpp</include>
+                            <include>specifics/Xspress3/*.cpp</include>
                         </includes>
 
                         <includePaths>                          
