@@ -660,6 +660,31 @@ void SlsJungfrauClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Not Memorized
 	att_list.push_back(detectorsoftwareversion);
 
+	//	Attribute : gainMode
+	gainModeAttrib	*gainmode = new gainModeAttrib();
+	Tango::UserDefaultAttrProp	gainmode_prop;
+	gainmode_prop.set_description("Changes the gain mode.<br>\nAvailable gain modes:<br>\nDYNAMIC -> dynamic gain settings<br>\nDYNAMICHG0 -> dynamic high gain 0<br>\nFIXGAIN1 -> fix gain 1<br>\nFIXGAIN2 -> fix gain 2<br>\nFORCESWITCHG1 -> force switch gain 1<br>\nFORCESWITCHG2 -> force switch gain 2<br>");
+	//	label	not set for gainMode
+	//	unit	not set for gainMode
+	//	standard_unit	not set for gainMode
+	//	display_unit	not set for gainMode
+	//	format	not set for gainMode
+	//	max_value	not set for gainMode
+	//	min_value	not set for gainMode
+	//	max_alarm	not set for gainMode
+	//	min_alarm	not set for gainMode
+	//	max_warning	not set for gainMode
+	//	min_warning	not set for gainMode
+	//	delta_t	not set for gainMode
+	//	delta_val	not set for gainMode
+	
+	gainmode->set_default_properties(gainmode_prop);
+	//	Not Polled
+	gainmode->set_disp_level(Tango::OPERATOR);
+	gainmode->set_memorized();
+	gainmode->set_memorized_init(true);
+	att_list.push_back(gainmode);
+
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());
 	/*----- PROTECTED REGION ID(SlsJungfrauClass::attribute_factory_after) ENABLED START -----*/

@@ -216,6 +216,48 @@ bool SlsJungfrau::is_detectorSoftwareVersion_allowed(TANGO_UNUSED(Tango::AttReqT
 	return true;
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_gainMode_allowed()
+ *	Description : Execution allowed for gainMode attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_gainMode_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::gainModeStateAllowed_WRITE) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::gainModeStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::gainModeStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::gainModeStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
 //=================================================
 //		Commands Allowed Methods
 //=================================================

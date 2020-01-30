@@ -75,6 +75,7 @@ static const char *RcsId = "$Id:  $";
 //  delayAfterTrigger        |  Tango::DevDouble	Scalar
 //  detectorFirmwareVersion  |  Tango::DevString	Scalar
 //  detectorSoftwareVersion  |  Tango::DevString	Scalar
+//  gainMode                 |  Tango::DevString	Scalar
 //================================================================
 
 namespace SlsJungfrau_ns
@@ -91,6 +92,21 @@ std::vector<enum lima::SlsJungfrau::Camera::ClockDivider> TANGO_CLOCK_DIVIDER_LA
                                                                                              lima::SlsJungfrau::Camera::ClockDivider::HalfSpeed     ,
                                                                                              lima::SlsJungfrau::Camera::ClockDivider::QuarterSpeed  ,
                                                                                              lima::SlsJungfrau::Camera::ClockDivider::SuperSlowSpeed};
+
+//-------------------------------------------------------------------------
+// GAIN MODE
+//-------------------------------------------------------------------------
+static const std::vector<std::string> TANGO_GAIN_MODE_LABELS{"DYNAMIC", "DYNAMICHG0", "FIXGAIN1", "FIXGAIN2", "FORCESWITCHG1", "FORCESWITCHG2", "UNDEFINED"}; // labels of gain mode
+
+std::vector<enum lima::SlsJungfrau::Camera::GainMode>
+  TANGO_GAIN_MODE_LABELS_TO_TYPE{lima::SlsJungfrau::Camera::GainMode::dynamic      ,
+                                 lima::SlsJungfrau::Camera::GainMode::dynamichg0   ,
+                                 lima::SlsJungfrau::Camera::GainMode::fixgain1     ,
+                                 lima::SlsJungfrau::Camera::GainMode::fixgain2     ,
+                                 lima::SlsJungfrau::Camera::GainMode::forceswitchg1,
+                                 lima::SlsJungfrau::Camera::GainMode::forceswitchg2,
+                                 lima::SlsJungfrau::Camera::GainMode::undefined    };
+
 /*----- PROTECTED REGION END -----*/	//	SlsJungfrau::namespace_starting
 
 //--------------------------------------------------------
@@ -141,6 +157,7 @@ void SlsJungfrau::delete_device()
 	delete[] attr_configFileName_read         [0];
 	delete[] attr_detectorFirmwareVersion_read[0];
 	delete[] attr_detectorSoftwareVersion_read[0];
+	delete[] attr_gainMode_read               [0];
 
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::delete_device
 	delete[] attr_clockDivider_read;
@@ -148,6 +165,7 @@ void SlsJungfrau::delete_device()
 	delete[] attr_delayAfterTrigger_read;
 	delete[] attr_detectorFirmwareVersion_read;
 	delete[] attr_detectorSoftwareVersion_read;
+	delete[] attr_gainMode_read;
 
     INFO_STREAM << "Remove the inner-appender." << endl;
     yat4tango::InnerAppender::release(this);
@@ -213,17 +231,20 @@ void SlsJungfrau::init_device()
 	attr_delayAfterTrigger_read = new Tango::DevDouble[1];
 	attr_detectorFirmwareVersion_read = new Tango::DevString[1];
 	attr_detectorSoftwareVersion_read = new Tango::DevString[1];
+	attr_gainMode_read = new Tango::DevString[1];
 
 	/*----- PROTECTED REGION ID(SlsJungfrau::init_device) ENABLED START -----*/
     attr_clockDivider_read           [0] = new char[ 256];
     attr_configFileName_read         [0] = new char[1024];
     attr_detectorFirmwareVersion_read[0] = new char[ 256];
     attr_detectorSoftwareVersion_read[0] = new char[ 256];
+    attr_gainMode_read               [0] = new char[ 256];
 
     ::strcpy(attr_clockDivider_read           [0], "");
     ::strcpy(attr_configFileName_read         [0], "");
     ::strcpy(attr_detectorFirmwareVersion_read[0], "");
     ::strcpy(attr_detectorSoftwareVersion_read[0], "");
+    ::strcpy(attr_gainMode_read               [0], "");
         
     //	Initialize device
 	m_is_device_initialized = true;
@@ -711,6 +732,137 @@ void SlsJungfrau::read_detectorSoftwareVersion(Tango::Attribute &attr)
     }
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_detectorSoftwareVersion
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute gainMode related method
+ *	Description: Changes the gain mode.<br>
+ *               Available gain modes:<br>
+ *               DYNAMIC -> dynamic gain settings<br>
+ *               DYNAMICHG0 -> dynamic high gain 0<br>
+ *               FIXGAIN1 -> fix gain 1<br>
+ *               FIXGAIN2 -> fix gain 2<br>
+ *               FORCESWITCHG1 -> force switch gain 1<br>
+ *               FORCESWITCHG2 -> force switch gain 2<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsJungfrau::read_gainMode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsJungfrau::read_gainMode(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::read_gainMode) ENABLED START -----*/
+	//	Set the attribute value
+    try
+    {
+        enum lima::SlsJungfrau::Camera::GainMode gain_mode = m_camera->getGainMode();
+
+        const std::vector<enum lima::SlsJungfrau::Camera::GainMode>::const_iterator 
+            iterator = find(TANGO_GAIN_MODE_LABELS_TO_TYPE.begin(), 
+                            TANGO_GAIN_MODE_LABELS_TO_TYPE.end  (),
+                            gain_mode                            );
+        // found it
+        if (iterator != TANGO_GAIN_MODE_LABELS_TO_TYPE.end()) 
+        {
+            // if an acquisition is running, the attribute is in alarm because we return the latest cache value.
+            bool attribute_is_in_alarm = (get_state() == Tango::RUNNING);
+
+            string gain_mode_label = TANGO_GAIN_MODE_LABELS[iterator - TANGO_GAIN_MODE_LABELS_TO_TYPE.begin()]; // calculation gives the index
+
+            //Set the attribute value
+            strcpy(*attr_gainMode_read, gain_mode_label.c_str());
+            attr.set_value(attr_gainMode_read);
+            attr.set_quality((attribute_is_in_alarm) ? Tango::ATTR_ALARM : Tango::ATTR_VALID);
+        }
+        else
+        {
+            std::ostringstream MsgErr;
+            MsgErr << "Impossible to found the gain mode " << gain_mode << std::endl;
+
+            Tango::Except::throw_exception("LOGIC_ERROR",
+                                           MsgErr.str().c_str(),
+                                           "SlsJungfrau::read_gainMode");
+        }
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::read_gainMode");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::read_gainMode");
+    }
+
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_gainMode
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute gainMode related method
+ *	Description: Changes the gain mode.<br>
+ *               Available gain modes:<br>
+ *               DYNAMIC -> dynamic gain settings<br>
+ *               DYNAMICHG0 -> dynamic high gain 0<br>
+ *               FIXGAIN1 -> fix gain 1<br>
+ *               FIXGAIN2 -> fix gain 2<br>
+ *               FORCESWITCHG1 -> force switch gain 1<br>
+ *               FORCESWITCHG2 -> force switch gain 2<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsJungfrau::write_gainMode(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "SlsJungfrau::write_gainMode(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevString	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(SlsJungfrau::write_gainMode) ENABLED START -----*/
+	
+    // we need to convert the gain mode string to the hardware clock divider
+    enum lima::SlsJungfrau::Camera::GainMode gain_mode;
+    const std::vector<string>::const_iterator 
+    iterator = find(TANGO_GAIN_MODE_LABELS.begin(), 
+                    TANGO_GAIN_MODE_LABELS.end  (),
+                    string(w_val)                 );
+    // found it
+    if (iterator != TANGO_GAIN_MODE_LABELS.end()) 
+    {
+        // calculation gives the index
+        gain_mode = TANGO_GAIN_MODE_LABELS_TO_TYPE[iterator - TANGO_GAIN_MODE_LABELS.begin()];
+    }
+    else
+    {
+        std::stringstream message;
+        message.str("");
+        message << "Incorrect gain mode : " << w_val << std::endl;
+        message << "Available gain modes are :" << std::endl;
+
+        for(size_t index = 0 ; index < TANGO_GAIN_MODE_LABELS.size() ; index++)
+        {
+            message << TANGO_GAIN_MODE_LABELS[index] << std::endl;
+        }
+
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       message.str().c_str(), 
+                                       "SlsJungfrau::write_gainMode()");
+    }
+    try
+    {
+        // set the camera value
+        m_camera->setGainMode(gain_mode);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::write_gainMode");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::write_gainMode");
+    }
+
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::write_gainMode
 }
 
 //--------------------------------------------------------

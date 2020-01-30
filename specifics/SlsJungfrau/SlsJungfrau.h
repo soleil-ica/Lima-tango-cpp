@@ -103,6 +103,7 @@ public:
 	Tango::DevDouble	*attr_delayAfterTrigger_read;
 	Tango::DevString	*attr_detectorFirmwareVersion_read;
 	Tango::DevString	*attr_detectorSoftwareVersion_read;
+	Tango::DevString	*attr_gainMode_read;
 
 //	Constructors and destructors
 public:
@@ -223,6 +224,23 @@ public:
  */
 	virtual void read_detectorSoftwareVersion(Tango::Attribute &attr);
 	virtual bool is_detectorSoftwareVersion_allowed(Tango::AttReqType type);
+/**
+ *	Attribute gainMode related methods
+ *	Description: Changes the gain mode.<br>
+ *               Available gain modes:<br>
+ *               DYNAMIC -> dynamic gain settings<br>
+ *               DYNAMICHG0 -> dynamic high gain 0<br>
+ *               FIXGAIN1 -> fix gain 1<br>
+ *               FIXGAIN2 -> fix gain 2<br>
+ *               FORCESWITCHG1 -> force switch gain 1<br>
+ *               FORCESWITCHG2 -> force switch gain 2<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+	virtual void read_gainMode(Tango::Attribute &attr);
+	virtual void write_gainMode(Tango::WAttribute &attr);
+	virtual bool is_gainMode_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------

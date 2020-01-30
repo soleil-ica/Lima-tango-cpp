@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
   <classes name="SlsJungfrau" pogoRevision="8.1">
-    <description description="Device for sls detectors from PSI. " title="Sls dectector TANGO specific device." sourcePath="/media/sf_Partage/DeviceSources/Lima/applications/tango/cpp/specifics/SlsJungfrau" language="Cpp" filestogenerate="XMI   file,Code files,html Pages" license="GPL" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false" descriptionHtmlExists="false">
+    <description description="Device for sls detectors from PSI. " title="Sls dectector TANGO specific device." sourcePath="/media/sf_Partage/DeviceSources-Jungfrau/Lima/applications/tango/cpp/specifics/SlsJungfrau" language="Cpp" filestogenerate="XMI   file,Code files,html Pages" license="GPL" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false" descriptionHtmlExists="false">
       <inheritances classname="Device_Impl" sourcePath=""/>
       <identification contact="at synchrotron-soleil.fr - cedric.castel" author="cedric.castel" emailDomain="synchrotron-soleil.fr" classFamily="Acquisition" siteSpecific="" platform="Unix Like" bus="Ethernet" manufacturer="PSI" reference=""/>
     </description>
@@ -127,6 +127,19 @@
       <properties description="Get detector software version." label="Detector software version" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
       <readExcludedStates>INIT</readExcludedStates>
       <readExcludedStates>FAULT</readExcludedStates>
+    </attributes>
+    <attributes name="gainMode" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" memorized="true" memorizedAtInit="true" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:StringType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Changes the gain mode.&lt;br>&#xA;Available gain modes:&lt;br>&#xA;DYNAMIC -> dynamic gain settings&lt;br>&#xA;DYNAMICHG0 -> dynamic high gain 0&lt;br>&#xA;FIXGAIN1 -> fix gain 1&lt;br>&#xA;FIXGAIN2 -> fix gain 2&lt;br>&#xA;FORCESWITCHG1 -> force switch gain 1&lt;br>&#xA;FORCESWITCHG2 -> force switch gain 2&lt;br>" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <readExcludedStates>INIT</readExcludedStates>
+      <readExcludedStates>FAULT</readExcludedStates>
+      <writeExcludedStates>INIT</writeExcludedStates>
+      <writeExcludedStates>FAULT</writeExcludedStates>
+      <writeExcludedStates>RUNNING</writeExcludedStates>
     </attributes>
     <states name="INIT" description="">
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>

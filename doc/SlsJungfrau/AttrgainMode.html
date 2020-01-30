@@ -1,13 +1,20 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <html>
 <head>
-<title> SlsJungfrau Tango Class Attribute moduleFirmwareVersion </title>
+<title> SlsJungfrau Tango Class Attribute gainMode </title>
 </head>
 <body text="Black" bgcolor="White" link="Blue" vlink="Purple" alink="Red">
 <br><br><br>
-<font size="+1"><u><b> Attribute moduleFirmwareVersion : </b></u></font>
+<font size="+1"><u><b> Attribute gainMode : </b></u></font>
 <ul>
-	Get module firmware version.
+	Changes the gain mode.<br><Br>
+	Available gain modes:<br><Br>
+	DYNAMIC -> dynamic gain settings<br><Br>
+	DYNAMICHG0 -> dynamic high gain 0<br><Br>
+	FIXGAIN1 -> fix gain 1<br><Br>
+	FIXGAIN2 -> fix gain 2<br><Br>
+	FORCESWITCHG1 -> force switch gain 1<br><Br>
+	FORCESWITCHG2 -> force switch gain 2<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -23,7 +30,7 @@
 				</tr>
 				<tr>
 					<td> R/W Type </td>
-					<td> READ </td>
+					<td> READ_WRITE </td>
 				</tr>
 				<tr>
 					<td> Data Type </td>
@@ -31,7 +38,7 @@
 				</tr>
 				<tr>
 					<td> Display Level </td>
-					<td> EXPERT </td>
+					<td> OPERATOR </td>
 				</tr>
 				<tr>
 					<td> Inherited </td>
@@ -47,12 +54,20 @@
 				</tr>
 				<tr>
 					<td> Memorized </td>
-					<td> Not set </td>
+					<td> true </td>
+				</tr>
+				<tr>
+					<td> Write hardware at init. </td>
+					<td> true </td>
 				</tr>
 			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
 				<tr>
-					<td> Read allowed for </td>
-					<td> All states </td>
+					<td> Read NOT allowed for </td>
+					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li> </font> </td>
+				</tr>
+				<tr>
+					<td> Write NOT allowed for </td>
+					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
 				</tr>
 			</table>
 		</td>
@@ -63,7 +78,7 @@
 				</tr>
 				<tr>
 					<td> label </td>
-					<td> Module firmware version </td>
+					<td>  </td>
 				</tr>
 				<tr>
 					<td> unit </td>

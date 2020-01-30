@@ -128,6 +128,21 @@ public:
 		{return (static_cast<SlsJungfrau *>(dev))->is_detectorSoftwareVersion_allowed(ty);}
 };
 
+//	Attribute gainMode class definition
+class gainModeAttrib: public Tango::Attr
+{
+public:
+	gainModeAttrib():Attr("gainMode",
+			Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~gainModeAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->read_gainMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->write_gainMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsJungfrau *>(dev))->is_gainMode_allowed(ty);}
+};
+
 
 //=========================================
 //	Define classes for commands

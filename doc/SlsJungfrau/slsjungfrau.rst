@@ -34,6 +34,20 @@ configFileName          R          String    Configuration files used during the
 delayAfterTrigger       R/W        Double    Set/get delay after trigger in ms.
 detectorFirmwareVersion R          String    Get detector firmware version.
 detectorSoftwareVersion R          String    Get detector software version.
+gainMode                R/W        String    Change the gain mode. Available modes :
+
+                                             - DYNAMIC (dynamic gain settings)
+                                         
+                                             - DYNAMICHG0 (dynamic high gain 0)
+                                         
+                                             - FIXGAIN1 (fix gain 1)
+                                         
+                                             - FIXGAIN2 (fix gain 2)
+                                         
+                                             - FORCESWITCHG1 (force switch gain 1)
+                                         
+                                             - FORCESWITCHG2 (force switch gain 2)
+                                         
 ======================= ========== ========= ==============================================================================================
 
 
