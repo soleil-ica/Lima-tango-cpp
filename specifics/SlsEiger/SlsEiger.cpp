@@ -1028,7 +1028,7 @@ void SlsEiger::write_gainMode(Tango::WAttribute &attr)
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(SlsEiger::write_gainMode) ENABLED START -----*/
 	
-    // we need to convert the clock divider string to the hardware clock divider
+    // we need to convert the gain mode string to the hardware clock divider
     enum lima::SlsEiger::GainMode gain_mode;
     const std::vector<string>::const_iterator 
     iterator = find(TANGO_GAIN_MODE_LABELS.begin(), 
@@ -1053,7 +1053,7 @@ void SlsEiger::write_gainMode(Tango::WAttribute &attr)
 
         Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                                        message.str().c_str(), 
-                                       "Controller::write_gainMode()");
+                                       "SlsEiger::write_gainMode()");
     }
     try
     {
