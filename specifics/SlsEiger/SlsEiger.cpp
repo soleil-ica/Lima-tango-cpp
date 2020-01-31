@@ -47,6 +47,9 @@ static const char *RcsId = "$Id:  $";
 #include <map>
 #include <string>
 
+//- YAT/YAT4TANGO
+#include <yat4tango/InnerAppender.h>
+
 /*----- PROTECTED REGION END -----*/	//	SlsEiger.cpp
 
 /**
@@ -180,12 +183,18 @@ void SlsEiger::delete_device()
 {
 	DEBUG_STREAM << "SlsEiger::delete_device() " << device_name << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::delete_device) ENABLED START -----*/
-	delete[] attr_clockDivider_read           [0];
-	delete[] attr_configFileName_read         [0];
-	delete[] attr_detectorFirmwareVersion_read[0];
-	delete[] attr_detectorSoftwareVersion_read[0];
-    delete[] attr_parallelMode_read           [0];
-	delete[] attr_gainMode_read               [0];
+    if(m_is_device_initialized )
+    {
+	    delete[] attr_clockDivider_read           [0];
+	    delete[] attr_configFileName_read         [0];
+	    delete[] attr_detectorFirmwareVersion_read[0];
+	    delete[] attr_detectorSoftwareVersion_read[0];
+        delete[] attr_parallelMode_read           [0];
+	    delete[] attr_gainMode_read               [0];
+    }
+
+    INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
 
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::delete_device
 	delete[] attr_clockDivider_read;
@@ -234,6 +243,9 @@ void SlsEiger::init_device()
     set_state(Tango::INIT);
     m_status_message.str("");
 
+    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
+
 	try
 	{
 		//- get the main object used to pilot the lima framework		
@@ -247,7 +259,10 @@ void SlsEiger::init_device()
 	}
 	catch(Exception& e)
 	{
-		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
+        // we should create the properties even if there is a problem
+        get_device_property();
+
+        m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
 		ERROR_STREAM << m_status_message.str();
 		m_is_device_initialized = false;
 		set_state(Tango::FAULT);
@@ -255,7 +270,10 @@ void SlsEiger::init_device()
 	}
 	catch(...)
 	{
-		m_status_message << "Initialization Failed : UNKNOWN" << endl;
+        // we should create the properties even if there is a problem
+        get_device_property();
+
+        m_status_message << "Initialization Failed : UNKNOWN" << endl;
 		ERROR_STREAM << m_status_message.str();
 		set_state(Tango::FAULT);
 		m_is_device_initialized = false;

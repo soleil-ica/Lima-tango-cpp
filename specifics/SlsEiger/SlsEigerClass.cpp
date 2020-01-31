@@ -529,14 +529,14 @@ void SlsEigerClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 	}
 
 	//	Manage dynamic attributes if any
-	erase_dynamic_attributes(devlist_ptr, get_class_attr()->get_attr_list());
+	//erase_dynamic_attributes(devlist_ptr, get_class_attr()->get_attr_list());
 
 	//	Export devices to the outside world
 	for (unsigned long i=1 ; i<=devlist_ptr->length() ; i++)
 	{
 		//	Add dynamic attributes if any
 		SlsEiger *dev = static_cast<SlsEiger *>(device_list[device_list.size()-i]);
-		dev->add_dynamic_attributes();
+		//dev->add_dynamic_attributes();
 
 		//	Check before if database used.
 		if ((Tango::Util::_UseDb == true) && (Tango::Util::_FileDb == false))
