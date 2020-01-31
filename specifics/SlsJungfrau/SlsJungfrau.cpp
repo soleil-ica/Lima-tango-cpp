@@ -153,11 +153,17 @@ void SlsJungfrau::delete_device()
 {
 	DEBUG_STREAM << "SlsJungfrau::delete_device() " << device_name << endl;
 	/*----- PROTECTED REGION ID(SlsJungfrau::delete_device) ENABLED START -----*/
-	delete[] attr_clockDivider_read           [0];
-	delete[] attr_configFileName_read         [0];
-	delete[] attr_detectorFirmwareVersion_read[0];
-	delete[] attr_detectorSoftwareVersion_read[0];
-	delete[] attr_gainMode_read               [0];
+    if(m_is_device_initialized )
+    {
+        delete[] attr_clockDivider_read           [0];
+	    delete[] attr_configFileName_read         [0];
+	    delete[] attr_detectorFirmwareVersion_read[0];
+	    delete[] attr_detectorSoftwareVersion_read[0];
+	    delete[] attr_gainMode_read               [0];
+    }
+
+    INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
 
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::delete_device
 	delete[] attr_clockDivider_read;
@@ -166,9 +172,6 @@ void SlsJungfrau::delete_device()
 	delete[] attr_detectorFirmwareVersion_read;
 	delete[] attr_detectorSoftwareVersion_read;
 	delete[] attr_gainMode_read;
-
-    INFO_STREAM << "Remove the inner-appender." << endl;
-    yat4tango::InnerAppender::release(this);
 }
 
 //--------------------------------------------------------
@@ -203,7 +206,10 @@ void SlsJungfrau::init_device()
 	}
 	catch(Exception& e)
 	{
-		INFO_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
+        // we should create the properties even if there is a problem
+        get_device_property();
+        
+        INFO_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg( ) << endl;
 		m_is_device_initialized = false;
 		set_state(Tango::FAULT);
@@ -211,7 +217,10 @@ void SlsJungfrau::init_device()
 	}
 	catch(...)
 	{
-		INFO_STREAM << "Initialization Failed : UNKNOWN" << endl;
+        // we should create the properties even if there is a problem
+        get_device_property();
+
+        INFO_STREAM << "Initialization Failed : UNKNOWN" << endl;
 		m_status_message << "Initialization Failed : UNKNOWN" << endl;
 		set_state(Tango::FAULT);
 		m_is_device_initialized = false;
