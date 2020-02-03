@@ -183,18 +183,19 @@ void SlsEiger::delete_device()
 {
 	DEBUG_STREAM << "SlsEiger::delete_device() " << device_name << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::delete_device) ENABLED START -----*/
-    if(m_is_device_initialized )
-    {
-	    delete[] attr_clockDivider_read           [0];
-	    delete[] attr_configFileName_read         [0];
-	    delete[] attr_detectorFirmwareVersion_read[0];
-	    delete[] attr_detectorSoftwareVersion_read[0];
-        delete[] attr_parallelMode_read           [0];
-	    delete[] attr_gainMode_read               [0];
-    }
 
     INFO_STREAM << "Remove the inner-appender." << endl;
     yat4tango::InnerAppender::release(this);
+
+    if(!m_is_device_initialized )
+        return;
+
+    delete[] attr_clockDivider_read           [0];
+    delete[] attr_configFileName_read         [0];
+    delete[] attr_detectorFirmwareVersion_read[0];
+    delete[] attr_detectorSoftwareVersion_read[0];
+    delete[] attr_parallelMode_read           [0];
+    delete[] attr_gainMode_read               [0];
 
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::delete_device
 	delete[] attr_clockDivider_read;
