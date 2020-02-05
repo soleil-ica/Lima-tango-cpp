@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
   <classes name="SlsEiger" pogoRevision="8.1">
-    <description description="Device for sls detectors from PSI. " title="Sls dectector TANGO specific device." sourcePath="/media/sf_Partage/DeviceSources-2020/Lima/applications/tango/cpp/specifics/SlsEiger" language="Cpp" filestogenerate="XMI   file,Code files" license="GPL" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
+    <description description="Device for sls detectors from PSI. " title="Sls dectector TANGO specific device." sourcePath="/media/sf_Partage/DeviceSources-2020/Lima/applications/tango/cpp/specifics/SlsEiger" language="Cpp" filestogenerate="XMI   file,Code files,html Pages" license="GPL" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false" descriptionHtmlExists="false">
       <inheritances classname="Device_Impl" sourcePath=""/>
       <identification contact="at synchrotron-soleil.fr - cedric.castel" author="cedric.castel" emailDomain="synchrotron-soleil.fr" classFamily="Acquisition" siteSpecific="" platform="Unix Like" bus="Ethernet" manufacturer="PSI" reference=""/>
     </description>
@@ -181,6 +181,43 @@
       <writeExcludedStates>INIT</writeExcludedStates>
       <writeExcludedStates>FAULT</writeExcludedStates>
       <writeExcludedStates>RUNNING</writeExcludedStates>
+    </attributes>
+    <attributes name="gapPixelsActivation" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" memorized="true" memorizedAtInit="true" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:BooleanType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Set/get gap pixels management activation value.&lt;br>" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <readExcludedStates>INIT</readExcludedStates>
+      <readExcludedStates>FAULT</readExcludedStates>
+      <writeExcludedStates>INIT</writeExcludedStates>
+      <writeExcludedStates>FAULT</writeExcludedStates>
+      <writeExcludedStates>RUNNING</writeExcludedStates>
+    </attributes>
+    <attributes name="edgePixelsCorrection" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:DoubleType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Set/get the coefficient used for the correction of edge pixels values.&lt;br>&#xA;Indeed, the physical pixels at the border of the chips in the sensor are double in size.&lt;br>&#xA;The coefficient value will be close to 2.0 but must be tweaked by taking into account&lt;br>&#xA;the threshold energy.&lt;br>&#xA;This attribute is used when the gapPixelsActivation is enabled.&lt;br>" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="1.0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <readExcludedStates>INIT</readExcludedStates>
+      <readExcludedStates>FAULT</readExcludedStates>
+      <writeExcludedStates>INIT</writeExcludedStates>
+      <writeExcludedStates>FAULT</writeExcludedStates>
+    </attributes>
+    <attributes name="cornerPixelsCorrection" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:DoubleType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Set/get the coefficient used for the correction of corner pixels values.&lt;br>&#xA;Indeed, the physical pixels in the corner between chips are four-times the normal size.&lt;br>&#xA;The coefficient value will be close to 4.0 but must be tweaked by taking into account&lt;br>&#xA;the threshold energy.&lt;br>&#xA;This attribute is used when the gapPixelsActivation is enabled.&lt;br>" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="1.0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <readExcludedStates>INIT</readExcludedStates>
+      <readExcludedStates>FAULT</readExcludedStates>
+      <writeExcludedStates>INIT</writeExcludedStates>
+      <writeExcludedStates>FAULT</writeExcludedStates>
     </attributes>
     <attributes name="configFileName" attType="Scalar" rwType="READ" displayLevel="EXPERT" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
       <dataType xsi:type="pogoDsl:StringType"/>
@@ -414,19 +451,6 @@
       <dataReadyEvent fire="false" libCheckCriteria="true"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <properties description="Get temperature of hardware element (right front end board fpga) for second module in millidegree Celsius.&lt;br>" label="" unit="mC" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
-      <readExcludedStates>INIT</readExcludedStates>
-      <readExcludedStates>FAULT</readExcludedStates>
-      <writeExcludedStates>INIT</writeExcludedStates>
-      <writeExcludedStates>FAULT</writeExcludedStates>
-      <writeExcludedStates>RUNNING</writeExcludedStates>
-    </attributes>
-    <attributes name="gapPixelsActivation" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" memorized="true" memorizedAtInit="true" allocReadMember="true" isDynamic="false">
-      <dataType xsi:type="pogoDsl:BooleanType"/>
-      <changeEvent fire="false" libCheckCriteria="false"/>
-      <archiveEvent fire="false" libCheckCriteria="false"/>
-      <dataReadyEvent fire="false" libCheckCriteria="true"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <properties description="Set/get gap pixels management activation value.&lt;br>" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
       <readExcludedStates>INIT</readExcludedStates>
       <readExcludedStates>FAULT</readExcludedStates>
       <writeExcludedStates>INIT</writeExcludedStates>

@@ -376,6 +376,130 @@ bool SlsEiger::is_countRateCorrection_allowed(TANGO_UNUSED(Tango::AttReqType typ
 
 //--------------------------------------------------------
 /**
+ *	Method      : SlsEiger::is_gapPixelsActivation_allowed()
+ *	Description : Execution allowed for gapPixelsActivation attribute
+ */
+//--------------------------------------------------------
+bool SlsEiger::is_gapPixelsActivation_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(SlsEiger::gapPixelsActivationStateAllowed_WRITE) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsEiger::gapPixelsActivationStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsEiger::gapPixelsActivationStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsEiger::gapPixelsActivationStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsEiger::is_edgePixelsCorrection_allowed()
+ *	Description : Execution allowed for edgePixelsCorrection attribute
+ */
+//--------------------------------------------------------
+bool SlsEiger::is_edgePixelsCorrection_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsEiger::edgePixelsCorrectionStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::edgePixelsCorrectionStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsEiger::edgePixelsCorrectionStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::edgePixelsCorrectionStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsEiger::is_cornerPixelsCorrection_allowed()
+ *	Description : Execution allowed for cornerPixelsCorrection attribute
+ */
+//--------------------------------------------------------
+bool SlsEiger::is_cornerPixelsCorrection_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsEiger::cornerPixelsCorrectionStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::cornerPixelsCorrectionStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsEiger::cornerPixelsCorrectionStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::cornerPixelsCorrectionStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
  *	Method      : SlsEiger::is_configFileName_allowed()
  *	Description : Execution allowed for configFileName attribute
  */
@@ -861,48 +985,6 @@ bool SlsEiger::is_tempFpgafr2_allowed(TANGO_UNUSED(Tango::AttReqType type))
 		/*----- PROTECTED REGION ID(SlsEiger::tempFpgafr2StateAllowed_READ) ENABLED START -----*/
 		
 		/*----- PROTECTED REGION END -----*/	//	SlsEiger::tempFpgafr2StateAllowed_READ
-			return false;
-		}
-		return true;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : SlsEiger::is_gapPixelsActivation_allowed()
- *	Description : Execution allowed for gapPixelsActivation attribute
- */
-//--------------------------------------------------------
-bool SlsEiger::is_gapPixelsActivation_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	//	Check access type.
-	if ( type!=Tango::READ_REQ )
-	{
-		//	Compare device state with not allowed states for WRITE 
-		if (get_state()==Tango::INIT ||
-			get_state()==Tango::FAULT ||
-			get_state()==Tango::RUNNING)
-		{
-		/*----- PROTECTED REGION ID(SlsEiger::gapPixelsActivationStateAllowed_WRITE) ENABLED START -----*/
-		
-		/*----- PROTECTED REGION END -----*/	//	SlsEiger::gapPixelsActivationStateAllowed_WRITE
-			return false;
-		}
-		return true;
-	}
-	else
-
-	//	Check access type.
-	if ( type==Tango::READ_REQ )
-	{
-		//	Compare device state with not allowed states for READ 
-		if (get_state()==Tango::INIT ||
-			get_state()==Tango::FAULT)
-		{
-		/*----- PROTECTED REGION ID(SlsEiger::gapPixelsActivationStateAllowed_READ) ENABLED START -----*/
-		
-		/*----- PROTECTED REGION END -----*/	//	SlsEiger::gapPixelsActivationStateAllowed_READ
 			return false;
 		}
 		return true;
