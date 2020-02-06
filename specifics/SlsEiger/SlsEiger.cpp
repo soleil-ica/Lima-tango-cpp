@@ -102,6 +102,7 @@ static const char *RcsId = "$Id:  $";
 //  tempFpgafl2                    |  Tango::DevLong	Scalar
 //  tempFpgafr1                    |  Tango::DevLong	Scalar
 //  tempFpgafr2                    |  Tango::DevLong	Scalar
+//  gapPixelsActivation            |  Tango::DevBoolean	Scalar
 //================================================================
 
 namespace SlsEiger_ns
@@ -230,6 +231,7 @@ void SlsEiger::delete_device()
 	delete[] attr_tempFpgafl2_read;
 	delete[] attr_tempFpgafr1_read;
 	delete[] attr_tempFpgafr2_read;
+	delete[] attr_gapPixelsActivation_read;
 }
 
 //--------------------------------------------------------
@@ -323,6 +325,7 @@ void SlsEiger::init_device()
 	attr_tempFpgafl2_read = new Tango::DevLong[1];
 	attr_tempFpgafr1_read = new Tango::DevLong[1];
 	attr_tempFpgafr2_read = new Tango::DevLong[1];
+	attr_gapPixelsActivation_read = new Tango::DevBoolean[1];
 
 	/*----- PROTECTED REGION ID(SlsEiger::init_device) ENABLED START -----*/
     attr_clockDivider_read           [0] = new char[ 256];
@@ -1880,6 +1883,71 @@ void SlsEiger::read_tempFpgafr2(Tango::Attribute &attr)
     read_temp(attr, attr_tempFpgafr2_read, lima::SlsEiger::Temperature::hw_fpgafr, 1, std::string("SlsEiger::read_tempFpgafr2"));
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_tempFpgafr2
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute gapPixelsActivation related method
+ *	Description: Set/get gap pixels management activation value.<br>
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsEiger::read_gapPixelsActivation(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsEiger::read_gapPixelsActivation(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsEiger::read_gapPixelsActivation) ENABLED START -----*/
+    try
+    {
+        // get the camera value
+        bool enable_gap_pixels = m_camera->getEnableGapPixels();
+        // set the attribute value
+        *attr_gapPixelsActivation_read = (Tango::DevBoolean)(enable_gap_pixels);
+        attr.set_value(attr_gapPixelsActivation_read);
+        attr.set_quality(Tango::ATTR_VALID);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsEiger::read_gapPixelsActivation");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsEiger::read_gapPixelsActivation");
+    }
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_gapPixelsActivation
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute gapPixelsActivation related method
+ *	Description: Set/get gap pixels management activation value.<br>
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsEiger::write_gapPixelsActivation(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "SlsEiger::write_gapPixelsActivation(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevBoolean	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(SlsEiger::write_gapPixelsActivation) ENABLED START -----*/
+	
+    try
+    {
+        // set the camera value
+        m_camera->setEnableGapPixels(static_cast<bool>(w_val));
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsEiger::write_gapPixelsActivation");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsEiger::write_gapPixelsActivation");
+    }	
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::write_gapPixelsActivation
 }
 
 //--------------------------------------------------------

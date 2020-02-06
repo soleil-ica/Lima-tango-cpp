@@ -457,6 +457,19 @@
       <writeExcludedStates>FAULT</writeExcludedStates>
       <writeExcludedStates>RUNNING</writeExcludedStates>
     </attributes>
+    <attributes name="gapPixelsActivation" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" memorized="true" memorizedAtInit="true" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:BooleanType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Set/get gap pixels management activation value.&lt;br>" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <readExcludedStates>INIT</readExcludedStates>
+      <readExcludedStates>FAULT</readExcludedStates>
+      <writeExcludedStates>INIT</writeExcludedStates>
+      <writeExcludedStates>FAULT</writeExcludedStates>
+      <writeExcludedStates>RUNNING</writeExcludedStates>
+    </attributes>
     <states name="INIT" description="">
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </states>

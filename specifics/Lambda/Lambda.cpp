@@ -42,7 +42,7 @@ static const char *RcsId = "$Id:  $";
 
 #include <Lambda.h>
 #include <LambdaClass.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 
 namespace Lambda_ns
 {

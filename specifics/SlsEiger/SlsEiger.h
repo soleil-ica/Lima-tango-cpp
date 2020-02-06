@@ -136,6 +136,7 @@ public:
 	Tango::DevLong	*attr_tempFpgafl2_read;
 	Tango::DevLong	*attr_tempFpgafr1_read;
 	Tango::DevLong	*attr_tempFpgafr2_read;
+	Tango::DevBoolean	*attr_gapPixelsActivation_read;
 
 //	Constructors and destructors
 public:
@@ -508,6 +509,16 @@ public:
  */
 	virtual void read_tempFpgafr2(Tango::Attribute &attr);
 	virtual bool is_tempFpgafr2_allowed(Tango::AttReqType type);
+/**
+ *	Attribute gapPixelsActivation related methods
+ *	Description: Set/get gap pixels management activation value.<br>
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void read_gapPixelsActivation(Tango::Attribute &attr);
+	virtual void write_gapPixelsActivation(Tango::WAttribute &attr);
+	virtual bool is_gapPixelsActivation_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------

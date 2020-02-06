@@ -64,7 +64,7 @@
 
 
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
-#define CURRENT_VERSION                 "1.0.0"
+#define MASK_CURRENT_VERSION                 "1.0.0"
 
 
 namespace Mask_ns

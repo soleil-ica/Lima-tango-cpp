@@ -992,6 +992,48 @@ bool SlsEiger::is_tempFpgafr2_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	return true;
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : SlsEiger::is_gapPixelsActivation_allowed()
+ *	Description : Execution allowed for gapPixelsActivation attribute
+ */
+//--------------------------------------------------------
+bool SlsEiger::is_gapPixelsActivation_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(SlsEiger::gapPixelsActivationStateAllowed_WRITE) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsEiger::gapPixelsActivationStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsEiger::gapPixelsActivationStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsEiger::gapPixelsActivationStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
 //=================================================
 //		Commands Allowed Methods
 //=================================================
