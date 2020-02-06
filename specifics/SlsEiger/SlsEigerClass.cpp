@@ -810,7 +810,8 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	edgepixelscorrection->set_default_properties(edgepixelscorrection_prop);
 	//	Not Polled
 	edgepixelscorrection->set_disp_level(Tango::OPERATOR);
-	//	Not Memorized
+	edgepixelscorrection->set_memorized();
+	edgepixelscorrection->set_memorized_init(true);
 	att_list.push_back(edgepixelscorrection);
 
 	//	Attribute : cornerPixelsCorrection
@@ -834,7 +835,8 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	cornerpixelscorrection->set_default_properties(cornerpixelscorrection_prop);
 	//	Not Polled
 	cornerpixelscorrection->set_disp_level(Tango::OPERATOR);
-	//	Not Memorized
+	cornerpixelscorrection->set_memorized();
+	cornerpixelscorrection->set_memorized_init(true);
 	att_list.push_back(cornerpixelscorrection);
 
 	//	Attribute : configFileName
