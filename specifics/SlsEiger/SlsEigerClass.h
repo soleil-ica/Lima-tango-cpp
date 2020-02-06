@@ -177,6 +177,51 @@ public:
 		{return (static_cast<SlsEiger *>(dev))->is_countRateCorrection_allowed(ty);}
 };
 
+//	Attribute gapPixelsActivation class definition
+class gapPixelsActivationAttrib: public Tango::Attr
+{
+public:
+	gapPixelsActivationAttrib():Attr("gapPixelsActivation",
+			Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~gapPixelsActivationAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsEiger *>(dev))->read_gapPixelsActivation(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<SlsEiger *>(dev))->write_gapPixelsActivation(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsEiger *>(dev))->is_gapPixelsActivation_allowed(ty);}
+};
+
+//	Attribute edgePixelsCorrection class definition
+class edgePixelsCorrectionAttrib: public Tango::Attr
+{
+public:
+	edgePixelsCorrectionAttrib():Attr("edgePixelsCorrection",
+			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~edgePixelsCorrectionAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsEiger *>(dev))->read_edgePixelsCorrection(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<SlsEiger *>(dev))->write_edgePixelsCorrection(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsEiger *>(dev))->is_edgePixelsCorrection_allowed(ty);}
+};
+
+//	Attribute cornerPixelsCorrection class definition
+class cornerPixelsCorrectionAttrib: public Tango::Attr
+{
+public:
+	cornerPixelsCorrectionAttrib():Attr("cornerPixelsCorrection",
+			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~cornerPixelsCorrectionAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsEiger *>(dev))->read_cornerPixelsCorrection(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<SlsEiger *>(dev))->write_cornerPixelsCorrection(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsEiger *>(dev))->is_cornerPixelsCorrection_allowed(ty);}
+};
+
 //	Attribute configFileName class definition
 class configFileNameAttrib: public Tango::Attr
 {

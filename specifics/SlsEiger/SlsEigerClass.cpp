@@ -529,14 +529,14 @@ void SlsEigerClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 	}
 
 	//	Manage dynamic attributes if any
-	erase_dynamic_attributes(devlist_ptr, get_class_attr()->get_attr_list());
+	//erase_dynamic_attributes(devlist_ptr, get_class_attr()->get_attr_list());
 
 	//	Export devices to the outside world
 	for (unsigned long i=1 ; i<=devlist_ptr->length() ; i++)
 	{
 		//	Add dynamic attributes if any
 		SlsEiger *dev = static_cast<SlsEiger *>(device_list[device_list.size()-i]);
-		dev->add_dynamic_attributes();
+		//dev->add_dynamic_attributes();
 
 		//	Check before if database used.
 		if ((Tango::Util::_UseDb == true) && (Tango::Util::_FileDb == false))
@@ -763,6 +763,81 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	countratecorrection->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
 	att_list.push_back(countratecorrection);
+
+	//	Attribute : gapPixelsActivation
+	gapPixelsActivationAttrib	*gappixelsactivation = new gapPixelsActivationAttrib();
+	Tango::UserDefaultAttrProp	gappixelsactivation_prop;
+	gappixelsactivation_prop.set_description("Set/get gap pixels management activation value.<br>");
+	//	label	not set for gapPixelsActivation
+	gappixelsactivation_prop.set_unit(" ");
+	//	standard_unit	not set for gapPixelsActivation
+	gappixelsactivation_prop.set_display_unit(" ");
+	//	format	not set for gapPixelsActivation
+	//	max_value	not set for gapPixelsActivation
+	//	min_value	not set for gapPixelsActivation
+	//	max_alarm	not set for gapPixelsActivation
+	//	min_alarm	not set for gapPixelsActivation
+	//	max_warning	not set for gapPixelsActivation
+	//	min_warning	not set for gapPixelsActivation
+	//	delta_t	not set for gapPixelsActivation
+	//	delta_val	not set for gapPixelsActivation
+	
+	gappixelsactivation->set_default_properties(gappixelsactivation_prop);
+	//	Not Polled
+	gappixelsactivation->set_disp_level(Tango::OPERATOR);
+	gappixelsactivation->set_memorized();
+	gappixelsactivation->set_memorized_init(true);
+	att_list.push_back(gappixelsactivation);
+
+	//	Attribute : edgePixelsCorrection
+	edgePixelsCorrectionAttrib	*edgepixelscorrection = new edgePixelsCorrectionAttrib();
+	Tango::UserDefaultAttrProp	edgepixelscorrection_prop;
+	edgepixelscorrection_prop.set_description("Set/get the coefficient used for the correction of edge pixels values.<br>\nIndeed, the physical pixels at the border of the chips in the sensor are double in size.<br>\nThe coefficient value will be close to 2.0 but must be tweaked by taking into account<br>\nthe threshold energy.<br>\nThis attribute is used when the gapPixelsActivation is enabled.<br>");
+	//	label	not set for edgePixelsCorrection
+	edgepixelscorrection_prop.set_unit(" ");
+	//	standard_unit	not set for edgePixelsCorrection
+	edgepixelscorrection_prop.set_display_unit(" ");
+	//	format	not set for edgePixelsCorrection
+	//	max_value	not set for edgePixelsCorrection
+	edgepixelscorrection_prop.set_min_value("1.0");
+	//	max_alarm	not set for edgePixelsCorrection
+	//	min_alarm	not set for edgePixelsCorrection
+	//	max_warning	not set for edgePixelsCorrection
+	//	min_warning	not set for edgePixelsCorrection
+	//	delta_t	not set for edgePixelsCorrection
+	//	delta_val	not set for edgePixelsCorrection
+	
+	edgepixelscorrection->set_default_properties(edgepixelscorrection_prop);
+	//	Not Polled
+	edgepixelscorrection->set_disp_level(Tango::OPERATOR);
+	edgepixelscorrection->set_memorized();
+	edgepixelscorrection->set_memorized_init(true);
+	att_list.push_back(edgepixelscorrection);
+
+	//	Attribute : cornerPixelsCorrection
+	cornerPixelsCorrectionAttrib	*cornerpixelscorrection = new cornerPixelsCorrectionAttrib();
+	Tango::UserDefaultAttrProp	cornerpixelscorrection_prop;
+	cornerpixelscorrection_prop.set_description("Set/get the coefficient used for the correction of corner pixels values.<br>\nIndeed, the physical pixels in the corner between chips are four-times the normal size.<br>\nThe coefficient value will be close to 4.0 but must be tweaked by taking into account<br>\nthe threshold energy.<br>\nThis attribute is used when the gapPixelsActivation is enabled.<br>");
+	//	label	not set for cornerPixelsCorrection
+	cornerpixelscorrection_prop.set_unit(" ");
+	//	standard_unit	not set for cornerPixelsCorrection
+	cornerpixelscorrection_prop.set_display_unit(" ");
+	//	format	not set for cornerPixelsCorrection
+	//	max_value	not set for cornerPixelsCorrection
+	cornerpixelscorrection_prop.set_min_value("1.0");
+	//	max_alarm	not set for cornerPixelsCorrection
+	//	min_alarm	not set for cornerPixelsCorrection
+	//	max_warning	not set for cornerPixelsCorrection
+	//	min_warning	not set for cornerPixelsCorrection
+	//	delta_t	not set for cornerPixelsCorrection
+	//	delta_val	not set for cornerPixelsCorrection
+	
+	cornerpixelscorrection->set_default_properties(cornerpixelscorrection_prop);
+	//	Not Polled
+	cornerpixelscorrection->set_disp_level(Tango::OPERATOR);
+	cornerpixelscorrection->set_memorized();
+	cornerpixelscorrection->set_memorized_init(true);
+	att_list.push_back(cornerpixelscorrection);
 
 	//	Attribute : configFileName
 	configFileNameAttrib	*configfilename = new configFileNameAttrib();
