@@ -314,6 +314,16 @@ void LimaDetector::init_device()
 			configure_image_op_mode();
             
 			//- reload Roi from property
+			//check validity of MemorizedRoi
+			if (memorizedRoi.size()!=4)
+			{
+				ERROR_STREAM << "Initialization Failed : Invalid number of parameters into MemorizedRoi. Check input parameters (x, y, width, height)"<< endl;
+				m_status_message << "Initialization Failed : Invalid number of parameters into MemorizedRoi. Check input parameters (x, y, width, height)"<< endl;
+				m_is_device_initialized = false;
+				set_state(Tango::FAULT);
+				return;				
+			}			
+			
             INFO_STREAM << "Reload ROI of detector from Roi property (" << memorizedRoi.at(0)<<","<<memorizedRoi.at(1)<<","<<memorizedRoi.at(2)<<","<<memorizedRoi.at(3)<< ")." << endl;
             configure_roi();
 
@@ -1410,9 +1420,12 @@ void LimaDetector::write_exposureAccTime_callback(yat4tango::DynamicAttributeWri
     DEBUG_STREAM << "LimaDetector::write_exposureAccTime_callback()" << endl; //  << cbd.dya->get_name() << endl;
     try
     {
+		Tango::DevDouble previous_memorized = attr_exposureAccTime_write;
         cbd.tga->get_write_value(attr_exposureAccTime_write);
         m_ct->acquisition()->setAccMaxExpoTime((double) (attr_exposureAccTime_write / 1000.0));
-        yat4tango::PropertyHelper::set_property(this, "MemorizedExposureAccTime", attr_exposureAccTime_write);
+		//memorize only if new value is different from previous value
+		if(!yat::fp_is_equal(attr_exposureAccTime_write, previous_memorized, numeric_limits<double>::epsilon()))			
+			yat4tango::PropertyHelper::set_property(this, "MemorizedExposureAccTime", attr_exposureAccTime_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -2146,10 +2159,13 @@ void LimaDetector::write_exposureTime(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_exposureTime(Tango::WAttribute &attr) entering... " << endl;
     try
     {
+		Tango::DevDouble previous_memorized = attr_exposureTime_write;
         attr.get_write_value(attr_exposureTime_write);
         m_ct->acquisition()->setAcqExpoTime((double) (attr_exposureTime_write / 1000.0)); //exposure USER INPUT is in millisec
         m_ct->video()->setExposure((double) (attr_exposureTime_write / 1000.0)); //exposure USER INPUT is in millisec
-        yat4tango::PropertyHelper::set_property(this, "MemorizedExposureTime", attr_exposureTime_write);
+		//memorize only if new value is different from previous value
+		if(!yat::fp_is_equal(attr_exposureTime_write, previous_memorized, numeric_limits<double>::epsilon()))
+			yat4tango::PropertyHelper::set_property(this, "MemorizedExposureTime", attr_exposureTime_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -2219,10 +2235,13 @@ void LimaDetector::write_latencyTime(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_latencyTime(Tango::WAttribute &attr) entering... " << endl;
     try
     {
+		Tango::DevDouble previous_memorized = attr_latencyTime_write;
         attr.get_write_value(attr_latencyTime_write);
         m_ct->acquisition()->setLatencyTime((double) (attr_latencyTime_write / 1000.0)); //latency USER INPUT is in millisec
         m_ct->video()->setExposure((double) (attr_exposureTime_write / 1000.0)); //exposure USER INPUT is in millisec
-        yat4tango::PropertyHelper::set_property(this, "MemorizedLatencyTime", attr_latencyTime_write);
+		//memorize only if new value is different from previous value
+		if(!yat::fp_is_equal(attr_latencyTime_write, previous_memorized, numeric_limits<double>::epsilon()))
+			yat4tango::PropertyHelper::set_property(this, "MemorizedLatencyTime", attr_latencyTime_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -2289,6 +2308,7 @@ void LimaDetector::write_frameRate(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_frameRate(Tango::WAttribute &attr) entering... "<< endl;
     try
     {
+		Tango::DevDouble previous_memorized = attr_latencyTime_write;
         attr.get_write_value(attr_frameRate_write);
         attr_latencyTime_write = (1000.0/attr_frameRate_write)- attr_exposureTime_write;
         //latency can't be <0
@@ -2296,7 +2316,9 @@ void LimaDetector::write_frameRate(Tango::WAttribute &attr)
             attr_latencyTime_write = 0;
         m_ct->acquisition()->setLatencyTime((double) attr_latencyTime_write/ 1000.0); //latency USER INPUT is in millisec
         m_ct->video()->setExposure((double) (attr_exposureTime_write / 1000.0)); //exposure USER INPUT is in millisec
-        yat4tango::PropertyHelper::set_property(this, "MemorizedLatencyTime", attr_latencyTime_write);
+		//memorize only if new value is different from previous value
+		if(!yat::fp_is_equal(attr_latencyTime_write, previous_memorized, numeric_limits<double>::epsilon()))
+			yat4tango::PropertyHelper::set_property(this, "MemorizedLatencyTime", attr_latencyTime_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -2582,9 +2604,12 @@ void LimaDetector::write_nbFrames(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_nbFrames(Tango::WAttribute &attr) entering... " << endl;
     try
     {
-        attr.get_write_value(attr_nbFrames_write);
+        Tango::DevLong previous_memorized = attr_nbFrames_write;
+		attr.get_write_value(attr_nbFrames_write);
         m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
-        yat4tango::PropertyHelper::set_property(this, "MemorizedNbFrames", attr_nbFrames_write);
+		//memorize only if new value is different from previous value
+		if(attr_nbFrames_write != previous_memorized)
+			yat4tango::PropertyHelper::set_property(this, "MemorizedNbFrames", attr_nbFrames_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -3220,14 +3245,17 @@ void LimaDetector::write_fileGeneration(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_fileGeneration(Tango::WAttribute &attr) entering... " << endl;
     try
     {
-        attr.get_write_value(attr_fileGeneration_write);
+		Tango::DevBoolean previous_memorized = attr_fileGeneration_write;
+		attr.get_write_value(attr_fileGeneration_write);
         if(attr_fileGeneration_write == true)
             m_saving_par.savingMode = CtSaving::AutoFrame;
         else
             m_saving_par.savingMode = CtSaving::Manual;
         *attr_fileGeneration_read = attr_fileGeneration_write;
         m_ct->saving()->setParameters(m_saving_par);
-        yat4tango::PropertyHelper::set_property(this, "MemorizedFileGeneration", attr_fileGeneration_write);
+		//memorize only if new value is different from previous value
+		if(attr_fileGeneration_write != previous_memorized)		
+			yat4tango::PropertyHelper::set_property(this, "MemorizedFileGeneration", attr_fileGeneration_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -3980,7 +4008,15 @@ void LimaDetector::reload_roi()
     {
         // Update property value
         memorizedRoi = yat4tango::PropertyHelper::get_property<vector<short> >(this, "MemorizedRoi");
-
+		
+		if (memorizedRoi.size()!=4)
+        {
+            //- throw exception
+            THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+							"Invalid number of parameters into MemorizedRoi. Check input parameters (x, y, width, height)\n",
+							"LimaDetector::reload_roi");
+        }
+		
         // Check if Roi is initialized
         if ((memorizedRoi.at(0) < 0) || (memorizedRoi.at(1) < 0) || (memorizedRoi.at(2) <= 0) || (memorizedRoi.at(3) <= 0))
         {
@@ -4479,7 +4515,17 @@ void LimaDetector::configure_saving_parameters(void)
 void LimaDetector::configure_roi(void)
 {
     Roi roi_values(0, 0, 0, 0);
-
+	
+	//check validity of MemorizedRoi
+	if (memorizedRoi.size()!=4)
+	{
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						"Invalid number of parameters into MemorizedRoi. Check input parameters (x, y, width, height)\n",
+						"LimaDetector::configure_roi");
+	}
+	
+	//configure Roi
     if((memorizedRoi.at(0) < 0) || (memorizedRoi.at(1) < 0) || (memorizedRoi.at(2) <= 0) || (memorizedRoi.at(3) <= 0))
     {
         //Roi not initialized, then we consider full frame as Roi
