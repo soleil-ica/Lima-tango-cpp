@@ -769,9 +769,9 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	gappixelsactivation_prop;
 	gappixelsactivation_prop.set_description("Set/get gap pixels management activation value.<br>");
 	//	label	not set for gapPixelsActivation
-	gappixelsactivation_prop.set_unit(" ");
+	gappixelsactivation_prop.set_unit(" ");
 	//	standard_unit	not set for gapPixelsActivation
-	gappixelsactivation_prop.set_display_unit(" ");
+	gappixelsactivation_prop.set_display_unit(" ");
 	//	format	not set for gapPixelsActivation
 	//	max_value	not set for gapPixelsActivation
 	//	min_value	not set for gapPixelsActivation
@@ -794,9 +794,9 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	edgepixelscorrection_prop;
 	edgepixelscorrection_prop.set_description("Set/get the coefficient used for the correction of edge pixels values.<br>\nIndeed, the physical pixels at the border of the chips in the sensor are double in size.<br>\nThe coefficient value will be close to 2.0 but must be tweaked by taking into account<br>\nthe threshold energy.<br>\nThis attribute is used when the gapPixelsActivation is enabled.<br>");
 	//	label	not set for edgePixelsCorrection
-	edgepixelscorrection_prop.set_unit(" ");
+	edgepixelscorrection_prop.set_unit(" ");
 	//	standard_unit	not set for edgePixelsCorrection
-	edgepixelscorrection_prop.set_display_unit(" ");
+	edgepixelscorrection_prop.set_display_unit(" ");
 	//	format	not set for edgePixelsCorrection
 	//	max_value	not set for edgePixelsCorrection
 	edgepixelscorrection_prop.set_min_value("1.0");
@@ -819,9 +819,9 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	cornerpixelscorrection_prop;
 	cornerpixelscorrection_prop.set_description("Set/get the coefficient used for the correction of corner pixels values.<br>\nIndeed, the physical pixels in the corner between chips are four-times the normal size.<br>\nThe coefficient value will be close to 4.0 but must be tweaked by taking into account<br>\nthe threshold energy.<br>\nThis attribute is used when the gapPixelsActivation is enabled.<br>");
 	//	label	not set for cornerPixelsCorrection
-	cornerpixelscorrection_prop.set_unit(" ");
+	cornerpixelscorrection_prop.set_unit(" ");
 	//	standard_unit	not set for cornerPixelsCorrection
-	cornerpixelscorrection_prop.set_display_unit(" ");
+	cornerpixelscorrection_prop.set_display_unit(" ");
 	//	format	not set for cornerPixelsCorrection
 	//	max_value	not set for cornerPixelsCorrection
 	cornerpixelscorrection_prop.set_min_value("1.0");
@@ -1294,31 +1294,6 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	tempfpgafr2->set_disp_level(Tango::EXPERT);
 	//	Not Memorized
 	att_list.push_back(tempfpgafr2);
-
-	//	Attribute : gapPixelsActivation
-	gapPixelsActivationAttrib	*gappixelsactivation = new gapPixelsActivationAttrib();
-	Tango::UserDefaultAttrProp	gappixelsactivation_prop;
-	gappixelsactivation_prop.set_description("Set/get gap pixels management activation value.<br>");
-	//	label	not set for gapPixelsActivation
-	//	unit	not set for gapPixelsActivation
-	//	standard_unit	not set for gapPixelsActivation
-	//	display_unit	not set for gapPixelsActivation
-	//	format	not set for gapPixelsActivation
-	//	max_value	not set for gapPixelsActivation
-	//	min_value	not set for gapPixelsActivation
-	//	max_alarm	not set for gapPixelsActivation
-	//	min_alarm	not set for gapPixelsActivation
-	//	max_warning	not set for gapPixelsActivation
-	//	min_warning	not set for gapPixelsActivation
-	//	delta_t	not set for gapPixelsActivation
-	//	delta_val	not set for gapPixelsActivation
-	
-	gappixelsactivation->set_default_properties(gappixelsactivation_prop);
-	//	Not Polled
-	gappixelsactivation->set_disp_level(Tango::OPERATOR);
-	gappixelsactivation->set_memorized();
-	gappixelsactivation->set_memorized_init(true);
-	att_list.push_back(gappixelsactivation);
 
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());
