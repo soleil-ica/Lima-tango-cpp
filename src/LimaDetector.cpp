@@ -4595,9 +4595,9 @@ void LimaDetector::create_log_info_attributes(void)
 	//- fill the device info attribute in order to display dependencies versions
     //- For all versions : 
     yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
-    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION));
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION));
 
 #ifdef _WIN32
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ANDOR_NAME), YAT_XSTR(ANDOR_VERSION) );
