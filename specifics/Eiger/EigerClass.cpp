@@ -672,6 +672,21 @@ void EigerClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
+	prop_name = "NbFramesPerTriggerIsMaster";
+	prop_desc = "If True: nbFrames = memorized values of NbTriggers * NbFramesPerTrigger (case on PX1 beamline)\nIf False: nbFrames = memorized nbFrames (case on Swing, Sixs beamlines)";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 	prop_name = "MemorizedCountrateCorrection";
 	prop_desc = "Memorize the value of countrateCorrection attribute.";
 	prop_def  = "false";

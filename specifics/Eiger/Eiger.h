@@ -196,6 +196,11 @@ public:
  */
 	Tango::DevBoolean	downloadDataFile;
 /**
+ *	If True: nbFrames = memorized values of NbTriggers * NbFramesPerTrigger (case on PX1 beamline)
+ *	If False: nbFrames = memorized nbFrames (case on Swing, Sixs beamlines)
+ */
+	Tango::DevBoolean	nbFramesPerTriggerIsMaster;
+/**
  *	Memorize the value of countrateCorrection attribute.
  */
 	Tango::DevBoolean	memorizedCountrateCorrection;

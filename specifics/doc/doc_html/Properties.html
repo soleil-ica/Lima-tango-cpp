@@ -43,9 +43,9 @@
 <Br>
 <center>
 <h1>
-Device specific for Ufxc detector		<Br>
+		<Br>
 Properties Description 		<Br> <Br>
-Ufxc Class	<Br>
+Eiger Class	<Br>
 </h1>
 <b>
 Revision:  - Author: 
@@ -62,41 +62,121 @@ Revision:  - Author:
 <Td><Center><b>Property name</b></td></Center>
 <Td><Center><b>Property type</b></td></Center>
 <Td><Center><b>Description</b></td></Center>
-<Tr><Td><b><a href=#Dev_DefaultValues>ConfigIpAddress </a></b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>DetectorIP </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
-<Td><Font Size=-1>Config Ip Address</Font></Td></Tr>
+<Td><Font Size=-1>Eiger server IP address (ex: 192.168.0.1)</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>ConfigPort </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_ULONG</Font></Td>
-<Td><Font Size=-1>Config Port</Font></Td></Tr>
-
-<Tr><Td><b><a href=#Dev_DefaultValues>SFP1IpAddress </a></b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>TimestampType </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
-<Td><Font Size=-1>SFP1 Ip Address</Font></Td></Tr>
+<Td><Font Size=-1>Define the timestamp type of each frame: <br>
+- RELATIVE : The time difference between the moment of reading the frame and the start acquisition time<br>
+- ABSOLUTE : The time at the moment of reading the frame from detector<br></Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>SFP1Port </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_ULONG</Font></Td>
-<Td><Font Size=-1>SFP1 Port</Font></Td></Tr>
+<Tr><Td><b><a href=#Dev_DefaultValues>DownloadDataFile </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Enable/Disable downloading data files from DCU.
+Do not download data files (master+data) [by default]</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>SFP2IpAddress </a></b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>NbFramesPerTriggerIsMaster </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>If True: nbFrames = memorized values of NbTriggers * NbFramesPerTrigger (case on PX1 beamline)
+If False: nbFrames = memorized nbFrames (case on Swing, Sixs beamlines)</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedCountrateCorrection </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of countrateCorrection attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedFlatfieldCorrection </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of flatfieldCorrection attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedPixelMask </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of pixelMask attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedVirtualPixelCorrection </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of virtualPixelCorrection attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedThresholdEnergy </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of thresholdEnergy attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedPhotonEnergy </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of photonEnergy attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedAutoSummation </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of autoSummation attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedCompression </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of compression attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedCompressionType </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
-<Td><Font Size=-1>SFP2 Ip Address</Font></Td></Tr>
+<Td><Font Size=-1>Memorize the value of compressionType attribute.</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>SFP2Port </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_ULONG</Font></Td>
-<Td><Font Size=-1>SFP2 Port</Font></Td></Tr>
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedWavelength </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of wavelength attribute.</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>SFP3IpAddress </a></b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedRoiMode </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
-<Td><Font Size=-1>SFP3 Ip Address</Font></Td></Tr>
+<Td><Font Size=-1>Memorize the value of roiMode attribute.</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>SFP3Port </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_ULONG</Font></Td>
-<Td><Font Size=-1>SFP3 Port</Font></Td></Tr>
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedBeamCenterX </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of beamCenterX attribute.</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>Timeout </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_ULONG</Font></Td>
-<Td><Font Size=-1>Timeout in ms</Font></Td></Tr>
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedBeamCenterY </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of beamCenterY attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedDetectorDistance </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of detectorDistance attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedChiIncrement </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of chiIncrement attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedChiStart </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of chiStart attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedKappaIncrement </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of kappaIncrement attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedKappaStart </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of kappaStart attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedOmegaIncrement </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of omegaIncrement attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedOmegaStart </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of omegaStart attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedPhiIncrement </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of phiIncrement attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedPhiStart </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of phiStart attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedNbTriggers </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
+<Td><Font Size=-1>Memorize the value of nbTriggers attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedNbFramesPerTrigger </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
+<Td><Font Size=-1>Memorize the value of nbFramesPerTrigger attribute.</Font></Td></Tr>
 
 </Table>
 
@@ -112,40 +192,116 @@ Revision:  - Author:
         <td><b>Default Values</b></td>
     </Tr>
     <Tr>
-        <Td>ConfigIpAddress</Td>
+        <Td>DetectorIP</Td>
         <td>127.0.0.1</td>
     </Tr>
     <Tr>
-        <Td>ConfigPort</Td>
+        <Td>TimestampType</Td>
+        <td>RELATIVE</td>
+    </Tr>
+    <Tr>
+        <Td>DownloadDataFile</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>NbFramesPerTriggerIsMaster</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedCountrateCorrection</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedFlatfieldCorrection</Td>
+        <td>true</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedPixelMask</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedVirtualPixelCorrection</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedThresholdEnergy</Td>
+        <td>4000.0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedPhotonEnergy</Td>
+        <td>8000.0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedAutoSummation</Td>
+        <td>true</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedCompression</Td>
+        <td>true</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedCompressionType</Td>
+        <td>LZ4</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedWavelength</Td>
         <td>0</td>
     </Tr>
     <Tr>
-        <Td>SFP1IpAddress</Td>
-        <td>127.0.0.1</td>
+        <Td>MemorizedRoiMode</Td>
+        <td>DISABLED</td>
     </Tr>
     <Tr>
-        <Td>SFP1Port</Td>
+        <Td>MemorizedBeamCenterX</Td>
         <td>0</td>
     </Tr>
     <Tr>
-        <Td>SFP2IpAddress</Td>
-        <td>127.0.0.1</td>
-    </Tr>
-    <Tr>
-        <Td>SFP2Port</Td>
+        <Td>MemorizedBeamCenterY</Td>
         <td>0</td>
     </Tr>
     <Tr>
-        <Td>SFP3IpAddress</Td>
-        <td>127.0.0.1</td>
-    </Tr>
-    <Tr>
-        <Td>SFP3Port</Td>
+        <Td>MemorizedDetectorDistance</Td>
         <td>0</td>
     </Tr>
     <Tr>
-        <Td>Timeout</Td>
+        <Td>MemorizedChiIncrement</Td>
         <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedChiStart</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedKappaIncrement</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedKappaStart</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedOmegaIncrement</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedOmegaStart</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedPhiIncrement</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedPhiStart</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedNbTriggers</Td>
+        <td>1</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedNbFramesPerTrigger</Td>
+        <td>1</td>
     </Tr>
 </Table>
 
