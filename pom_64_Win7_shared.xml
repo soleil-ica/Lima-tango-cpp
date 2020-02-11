@@ -61,11 +61,11 @@
         <CORE.version>1.7.9</CORE.version>
         <SIMULATOR.name>Simulator</SIMULATOR.name>
         <SIMULATOR.version>1.4.0</SIMULATOR.version>
-        <PCO.name>PCO</PCO.name>
+        <PCO.name>Pco</PCO.name>
         <PCO.version>1.7.0</PCO.version>
-        <HAMAMATSU.name>HAMAMATSU</HAMAMATSU.name>
+        <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
         <HAMAMATSU.version>2.3.0</HAMAMATSU.version>
-        <DHYANA.name>DHYANA</DHYANA.name>
+        <DHYANA.name>Dhyana</DHYANA.name>
         <DHYANA.version>1.2.0</DHYANA.version>
         
 	</properties>
