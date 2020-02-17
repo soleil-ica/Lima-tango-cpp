@@ -114,6 +114,9 @@ public:
 	Tango::DevLong	*attr_thresholdEnergy_read;
 	Tango::DevBoolean	*attr_countRateCorrectionActivation_read;
 	Tango::DevLong	*attr_countRateCorrection_read;
+	Tango::DevBoolean	*attr_gapPixelsActivation_read;
+	Tango::DevDouble	*attr_edgePixelsCorrection_read;
+	Tango::DevDouble	*attr_cornerPixelsCorrection_read;
 	Tango::DevString	*attr_configFileName_read;
 	Tango::DevString	*attr_detectorFirmwareVersion_read;
 	Tango::DevString	*attr_detectorSoftwareVersion_read;
@@ -296,6 +299,44 @@ public:
  */
 	virtual void read_countRateCorrection(Tango::Attribute &attr);
 	virtual bool is_countRateCorrection_allowed(Tango::AttReqType type);
+/**
+ *	Attribute gapPixelsActivation related methods
+ *	Description: Set/get gap pixels management activation value.<br>
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void read_gapPixelsActivation(Tango::Attribute &attr);
+	virtual void write_gapPixelsActivation(Tango::WAttribute &attr);
+	virtual bool is_gapPixelsActivation_allowed(Tango::AttReqType type);
+/**
+ *	Attribute edgePixelsCorrection related methods
+ *	Description: Set/get the coefficient used for the correction of edge pixels values.<br>
+ *               Indeed, the physical pixels at the border of the chips in the sensor are double in size.<br>
+ *               The coefficient value will be close to 2.0 but must be tweaked by taking into account<br>
+ *               the threshold energy.<br>
+ *               This attribute is used when the gapPixelsActivation is enabled.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+	virtual void read_edgePixelsCorrection(Tango::Attribute &attr);
+	virtual void write_edgePixelsCorrection(Tango::WAttribute &attr);
+	virtual bool is_edgePixelsCorrection_allowed(Tango::AttReqType type);
+/**
+ *	Attribute cornerPixelsCorrection related methods
+ *	Description: Set/get the coefficient used for the correction of corner pixels values.<br>
+ *               Indeed, the physical pixels in the corner between chips are four-times the normal size.<br>
+ *               The coefficient value will be close to 4.0 but must be tweaked by taking into account<br>
+ *               the threshold energy.<br>
+ *               This attribute is used when the gapPixelsActivation is enabled.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+	virtual void read_cornerPixelsCorrection(Tango::Attribute &attr);
+	virtual void write_cornerPixelsCorrection(Tango::WAttribute &attr);
+	virtual bool is_cornerPixelsCorrection_allowed(Tango::AttReqType type);
 /**
  *	Attribute configFileName related methods
  *	Description: 

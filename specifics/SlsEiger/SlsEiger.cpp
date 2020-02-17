@@ -47,6 +47,9 @@ static const char *RcsId = "$Id:  $";
 #include <map>
 #include <string>
 
+//- YAT/YAT4TANGO
+#include <yat4tango/InnerAppender.h>
+
 /*----- PROTECTED REGION END -----*/	//	SlsEiger.cpp
 
 /**
@@ -77,6 +80,9 @@ static const char *RcsId = "$Id:  $";
 //  thresholdEnergy                |  Tango::DevLong	Scalar
 //  countRateCorrectionActivation  |  Tango::DevBoolean	Scalar
 //  countRateCorrection            |  Tango::DevLong	Scalar
+//  gapPixelsActivation            |  Tango::DevBoolean	Scalar
+//  edgePixelsCorrection           |  Tango::DevDouble	Scalar
+//  cornerPixelsCorrection         |  Tango::DevDouble	Scalar
 //  configFileName                 |  Tango::DevString	Scalar
 //  detectorFirmwareVersion        |  Tango::DevString	Scalar
 //  detectorSoftwareVersion        |  Tango::DevString	Scalar
@@ -96,6 +102,7 @@ static const char *RcsId = "$Id:  $";
 //  tempFpgafl2                    |  Tango::DevLong	Scalar
 //  tempFpgafr1                    |  Tango::DevLong	Scalar
 //  tempFpgafr2                    |  Tango::DevLong	Scalar
+//  gapPixelsActivation            |  Tango::DevBoolean	Scalar
 //================================================================
 
 namespace SlsEiger_ns
@@ -179,12 +186,19 @@ void SlsEiger::delete_device()
 {
 	DEBUG_STREAM << "SlsEiger::delete_device() " << device_name << endl;
 	/*----- PROTECTED REGION ID(SlsEiger::delete_device) ENABLED START -----*/
-	delete[] attr_clockDivider_read           [0];
-	delete[] attr_configFileName_read         [0];
-	delete[] attr_detectorFirmwareVersion_read[0];
-	delete[] attr_detectorSoftwareVersion_read[0];
+
+    INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
+
+    if(!m_is_device_initialized )
+        return;
+
+    delete[] attr_clockDivider_read           [0];
+    delete[] attr_configFileName_read         [0];
+    delete[] attr_detectorFirmwareVersion_read[0];
+    delete[] attr_detectorSoftwareVersion_read[0];
     delete[] attr_parallelMode_read           [0];
-	delete[] attr_gainMode_read               [0];
+    delete[] attr_gainMode_read               [0];
 
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::delete_device
 	delete[] attr_clockDivider_read;
@@ -195,6 +209,9 @@ void SlsEiger::delete_device()
 	delete[] attr_thresholdEnergy_read;
 	delete[] attr_countRateCorrectionActivation_read;
 	delete[] attr_countRateCorrection_read;
+	delete[] attr_gapPixelsActivation_read;
+	delete[] attr_edgePixelsCorrection_read;
+	delete[] attr_cornerPixelsCorrection_read;
 	delete[] attr_configFileName_read;
 	delete[] attr_detectorFirmwareVersion_read;
 	delete[] attr_detectorSoftwareVersion_read;
@@ -232,6 +249,9 @@ void SlsEiger::init_device()
     set_state(Tango::INIT);
     m_status_message.str("");
 
+    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
+
 	try
 	{
 		//- get the main object used to pilot the lima framework		
@@ -245,7 +265,10 @@ void SlsEiger::init_device()
 	}
 	catch(Exception& e)
 	{
-		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
+        // we should create the properties even if there is a problem
+        get_device_property();
+
+        m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
 		ERROR_STREAM << m_status_message.str();
 		m_is_device_initialized = false;
 		set_state(Tango::FAULT);
@@ -253,7 +276,10 @@ void SlsEiger::init_device()
 	}
 	catch(...)
 	{
-		m_status_message << "Initialization Failed : UNKNOWN" << endl;
+        // we should create the properties even if there is a problem
+        get_device_property();
+
+        m_status_message << "Initialization Failed : UNKNOWN" << endl;
 		ERROR_STREAM << m_status_message.str();
 		set_state(Tango::FAULT);
 		m_is_device_initialized = false;
@@ -276,6 +302,9 @@ void SlsEiger::init_device()
 	attr_thresholdEnergy_read = new Tango::DevLong[1];
 	attr_countRateCorrectionActivation_read = new Tango::DevBoolean[1];
 	attr_countRateCorrection_read = new Tango::DevLong[1];
+	attr_gapPixelsActivation_read = new Tango::DevBoolean[1];
+	attr_edgePixelsCorrection_read = new Tango::DevDouble[1];
+	attr_cornerPixelsCorrection_read = new Tango::DevDouble[1];
 	attr_configFileName_read = new Tango::DevString[1];
 	attr_detectorFirmwareVersion_read = new Tango::DevString[1];
 	attr_detectorSoftwareVersion_read = new Tango::DevString[1];
@@ -440,7 +469,7 @@ void SlsEiger::get_device_property()
 	
 	//	Check device property data members init
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, ""       , "ConfigFileName"                 );
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.00004", "ExpertReadoutTime"              ); // 40µs by default
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.00004", "ExpertReadoutTime"              ); // 40ï¿½s by default
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "8000"   , "ExpertReceiverFifoDepth"        ); // 8000 frames by default
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "32"     , "ExpertFramePacketNumber8"       ); // 32 packets by default for 8bits
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "64"     , "ExpertFramePacketNumber16"      ); // 64 packets by default for 16bits
@@ -1025,7 +1054,7 @@ void SlsEiger::write_gainMode(Tango::WAttribute &attr)
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(SlsEiger::write_gainMode) ENABLED START -----*/
 	
-    // we need to convert the clock divider string to the hardware clock divider
+    // we need to convert the gain mode string to the hardware clock divider
     enum lima::SlsEiger::GainMode gain_mode;
     const std::vector<string>::const_iterator 
     iterator = find(TANGO_GAIN_MODE_LABELS.begin(), 
@@ -1050,7 +1079,7 @@ void SlsEiger::write_gainMode(Tango::WAttribute &attr)
 
         Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                                        message.str().c_str(), 
-                                       "Controller::write_gainMode()");
+                                       "SlsEiger::write_gainMode()");
     }
     try
     {
@@ -1240,6 +1269,223 @@ void SlsEiger::read_countRateCorrection(Tango::Attribute &attr)
     }
 
 	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_countRateCorrection
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute gapPixelsActivation related method
+ *	Description: Set/get gap pixels management activation value.<br>
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsEiger::read_gapPixelsActivation(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsEiger::read_gapPixelsActivation(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsEiger::read_gapPixelsActivation) ENABLED START -----*/
+    try
+    {
+        // get the camera value
+        bool enable_gap_pixels = m_camera->getEnableGapPixels();
+        // set the attribute value
+        *attr_gapPixelsActivation_read = (Tango::DevBoolean)(enable_gap_pixels);
+        attr.set_value(attr_gapPixelsActivation_read);
+        attr.set_quality(Tango::ATTR_VALID);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsEiger::read_gapPixelsActivation");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsEiger::read_gapPixelsActivation");
+    }
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_gapPixelsActivation
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute gapPixelsActivation related method
+ *	Description: Set/get gap pixels management activation value.<br>
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsEiger::write_gapPixelsActivation(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "SlsEiger::write_gapPixelsActivation(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevBoolean	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(SlsEiger::write_gapPixelsActivation) ENABLED START -----*/
+	
+    try
+    {
+        // set the camera value
+        m_camera->setEnableGapPixels(static_cast<bool>(w_val));
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsEiger::write_gapPixelsActivation");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsEiger::write_gapPixelsActivation");
+    }	
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::write_gapPixelsActivation
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute edgePixelsCorrection related method
+ *	Description: Set/get the coefficient used for the correction of edge pixels values.<br>
+ *               Indeed, the physical pixels at the border of the chips in the sensor are double in size.<br>
+ *               The coefficient value will be close to 2.0 but must be tweaked by taking into account<br>
+ *               the threshold energy.<br>
+ *               This attribute is used when the gapPixelsActivation is enabled.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsEiger::read_edgePixelsCorrection(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsEiger::read_edgePixelsCorrection(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsEiger::read_edgePixelsCorrection) ENABLED START -----*/
+
+    try
+    {
+        // get the camera value
+        double edge_pixels_correction = m_camera->getEdgePixelsCorrection();
+
+        // set the attribute value
+        *attr_edgePixelsCorrection_read = (Tango::DevDouble)(edge_pixels_correction);
+        attr.set_value(attr_edgePixelsCorrection_read);
+        attr.set_quality(Tango::ATTR_VALID);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsEiger::read_edgePixelsCorrection");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsEiger::read_edgePixelsCorrection");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_edgePixelsCorrection
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute edgePixelsCorrection related method
+ *	Description: Set/get the coefficient used for the correction of edge pixels values.<br>
+ *               Indeed, the physical pixels at the border of the chips in the sensor are double in size.<br>
+ *               The coefficient value will be close to 2.0 but must be tweaked by taking into account<br>
+ *               the threshold energy.<br>
+ *               This attribute is used when the gapPixelsActivation is enabled.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsEiger::write_edgePixelsCorrection(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "SlsEiger::write_edgePixelsCorrection(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(SlsEiger::write_edgePixelsCorrection) ENABLED START -----*/
+	
+    try
+    {
+        // set the camera value
+        m_camera->setEdgePixelsCorrection(static_cast<double>(w_val));
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsEiger::write_edgePixelsCorrection");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsEiger::write_edgePixelsCorrection");
+    }	
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::write_edgePixelsCorrection
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute cornerPixelsCorrection related method
+ *	Description: Set/get the coefficient used for the correction of corner pixels values.<br>
+ *               Indeed, the physical pixels in the corner between chips are four-times the normal size.<br>
+ *               The coefficient value will be close to 4.0 but must be tweaked by taking into account<br>
+ *               the threshold energy.<br>
+ *               This attribute is used when the gapPixelsActivation is enabled.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsEiger::read_cornerPixelsCorrection(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsEiger::read_cornerPixelsCorrection(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsEiger::read_cornerPixelsCorrection) ENABLED START -----*/
+	
+    try
+    {
+        // get the camera value
+        double corner_pixels_correction = m_camera->getCornerPixelsCorrection();
+
+        // set the attribute value
+        *attr_cornerPixelsCorrection_read = (Tango::DevDouble)(corner_pixels_correction);
+        attr.set_value(attr_cornerPixelsCorrection_read);
+        attr.set_quality(Tango::ATTR_VALID);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsEiger::read_cornerPixelsCorrection");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsEiger::read_cornerPixelsCorrection");
+    }
+
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::read_cornerPixelsCorrection
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute cornerPixelsCorrection related method
+ *	Description: Set/get the coefficient used for the correction of corner pixels values.<br>
+ *               Indeed, the physical pixels in the corner between chips are four-times the normal size.<br>
+ *               The coefficient value will be close to 4.0 but must be tweaked by taking into account<br>
+ *               the threshold energy.<br>
+ *               This attribute is used when the gapPixelsActivation is enabled.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsEiger::write_cornerPixelsCorrection(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "SlsEiger::write_cornerPixelsCorrection(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(SlsEiger::write_cornerPixelsCorrection) ENABLED START -----*/
+	
+    try
+    {
+        // set the camera value
+        m_camera->setCornerPixelsCorrection(static_cast<double>(w_val));
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsEiger::write_cornerPixelsCorrection");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsEiger::write_cornerPixelsCorrection");
+    }	
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsEiger::write_cornerPixelsCorrection
 }
 //--------------------------------------------------------
 /**

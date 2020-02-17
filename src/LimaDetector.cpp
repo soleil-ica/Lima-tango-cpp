@@ -65,7 +65,7 @@ static const char *RcsId = "$Id:  $";
 //
 //===================================================================
 #include <tango.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 
 #include <LimaDetector.h>
 #include <LimaDetectorClass.h>
@@ -314,6 +314,16 @@ void LimaDetector::init_device()
 			configure_image_op_mode();
             
 			//- reload Roi from property
+			//check validity of MemorizedRoi
+			if (memorizedRoi.size()!=4)
+			{
+				ERROR_STREAM << "Initialization Failed : Invalid number of parameters into MemorizedRoi. Check input parameters (x, y, width, height)"<< endl;
+				m_status_message << "Initialization Failed : Invalid number of parameters into MemorizedRoi. Check input parameters (x, y, width, height)"<< endl;
+				m_is_device_initialized = false;
+				set_state(Tango::FAULT);
+				return;				
+			}			
+			
             INFO_STREAM << "Reload ROI of detector from Roi property (" << memorizedRoi.at(0)<<","<<memorizedRoi.at(1)<<","<<memorizedRoi.at(2)<<","<<memorizedRoi.at(3)<< ")." << endl;
             configure_roi();
 
@@ -1410,9 +1420,12 @@ void LimaDetector::write_exposureAccTime_callback(yat4tango::DynamicAttributeWri
     DEBUG_STREAM << "LimaDetector::write_exposureAccTime_callback()" << endl; //  << cbd.dya->get_name() << endl;
     try
     {
+		Tango::DevDouble previous_memorized = attr_exposureAccTime_write;
         cbd.tga->get_write_value(attr_exposureAccTime_write);
         m_ct->acquisition()->setAccMaxExpoTime((double) (attr_exposureAccTime_write / 1000.0));
-        yat4tango::PropertyHelper::set_property(this, "MemorizedExposureAccTime", attr_exposureAccTime_write);
+		//memorize only if new value is different from previous value
+		if(!yat::fp_is_equal(attr_exposureAccTime_write, previous_memorized, numeric_limits<double>::epsilon()))			
+			yat4tango::PropertyHelper::set_property(this, "MemorizedExposureAccTime", attr_exposureAccTime_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -2146,10 +2159,13 @@ void LimaDetector::write_exposureTime(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_exposureTime(Tango::WAttribute &attr) entering... " << endl;
     try
     {
+		Tango::DevDouble previous_memorized = attr_exposureTime_write;
         attr.get_write_value(attr_exposureTime_write);
         m_ct->acquisition()->setAcqExpoTime((double) (attr_exposureTime_write / 1000.0)); //exposure USER INPUT is in millisec
         m_ct->video()->setExposure((double) (attr_exposureTime_write / 1000.0)); //exposure USER INPUT is in millisec
-        yat4tango::PropertyHelper::set_property(this, "MemorizedExposureTime", attr_exposureTime_write);
+		//memorize only if new value is different from previous value
+		if(!yat::fp_is_equal(attr_exposureTime_write, previous_memorized, numeric_limits<double>::epsilon()))
+			yat4tango::PropertyHelper::set_property(this, "MemorizedExposureTime", attr_exposureTime_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -2219,10 +2235,13 @@ void LimaDetector::write_latencyTime(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_latencyTime(Tango::WAttribute &attr) entering... " << endl;
     try
     {
+		Tango::DevDouble previous_memorized = attr_latencyTime_write;
         attr.get_write_value(attr_latencyTime_write);
         m_ct->acquisition()->setLatencyTime((double) (attr_latencyTime_write / 1000.0)); //latency USER INPUT is in millisec
         m_ct->video()->setExposure((double) (attr_exposureTime_write / 1000.0)); //exposure USER INPUT is in millisec
-        yat4tango::PropertyHelper::set_property(this, "MemorizedLatencyTime", attr_latencyTime_write);
+		//memorize only if new value is different from previous value
+		if(!yat::fp_is_equal(attr_latencyTime_write, previous_memorized, numeric_limits<double>::epsilon()))
+			yat4tango::PropertyHelper::set_property(this, "MemorizedLatencyTime", attr_latencyTime_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -2289,6 +2308,7 @@ void LimaDetector::write_frameRate(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_frameRate(Tango::WAttribute &attr) entering... "<< endl;
     try
     {
+		Tango::DevDouble previous_memorized = attr_latencyTime_write;
         attr.get_write_value(attr_frameRate_write);
         attr_latencyTime_write = (1000.0/attr_frameRate_write)- attr_exposureTime_write;
         //latency can't be <0
@@ -2296,7 +2316,9 @@ void LimaDetector::write_frameRate(Tango::WAttribute &attr)
             attr_latencyTime_write = 0;
         m_ct->acquisition()->setLatencyTime((double) attr_latencyTime_write/ 1000.0); //latency USER INPUT is in millisec
         m_ct->video()->setExposure((double) (attr_exposureTime_write / 1000.0)); //exposure USER INPUT is in millisec
-        yat4tango::PropertyHelper::set_property(this, "MemorizedLatencyTime", attr_latencyTime_write);
+		//memorize only if new value is different from previous value
+		if(!yat::fp_is_equal(attr_latencyTime_write, previous_memorized, numeric_limits<double>::epsilon()))
+			yat4tango::PropertyHelper::set_property(this, "MemorizedLatencyTime", attr_latencyTime_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -2582,9 +2604,12 @@ void LimaDetector::write_nbFrames(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_nbFrames(Tango::WAttribute &attr) entering... " << endl;
     try
     {
-        attr.get_write_value(attr_nbFrames_write);
+        Tango::DevLong previous_memorized = attr_nbFrames_write;
+		attr.get_write_value(attr_nbFrames_write);
         m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
-        yat4tango::PropertyHelper::set_property(this, "MemorizedNbFrames", attr_nbFrames_write);
+		//memorize only if new value is different from previous value
+		if(attr_nbFrames_write != previous_memorized)
+			yat4tango::PropertyHelper::set_property(this, "MemorizedNbFrames", attr_nbFrames_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -3220,14 +3245,17 @@ void LimaDetector::write_fileGeneration(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_fileGeneration(Tango::WAttribute &attr) entering... " << endl;
     try
     {
-        attr.get_write_value(attr_fileGeneration_write);
+		Tango::DevBoolean previous_memorized = attr_fileGeneration_write;
+		attr.get_write_value(attr_fileGeneration_write);
         if(attr_fileGeneration_write == true)
             m_saving_par.savingMode = CtSaving::AutoFrame;
         else
             m_saving_par.savingMode = CtSaving::Manual;
         *attr_fileGeneration_read = attr_fileGeneration_write;
         m_ct->saving()->setParameters(m_saving_par);
-        yat4tango::PropertyHelper::set_property(this, "MemorizedFileGeneration", attr_fileGeneration_write);
+		//memorize only if new value is different from previous value
+		if(attr_fileGeneration_write != previous_memorized)		
+			yat4tango::PropertyHelper::set_property(this, "MemorizedFileGeneration", attr_fileGeneration_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -3980,7 +4008,15 @@ void LimaDetector::reload_roi()
     {
         // Update property value
         memorizedRoi = yat4tango::PropertyHelper::get_property<vector<short> >(this, "MemorizedRoi");
-
+		
+		if (memorizedRoi.size()!=4)
+        {
+            //- throw exception
+            THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+							"Invalid number of parameters into MemorizedRoi. Check input parameters (x, y, width, height)\n",
+							"LimaDetector::reload_roi");
+        }
+		
         // Check if Roi is initialized
         if ((memorizedRoi.at(0) < 0) || (memorizedRoi.at(1) < 0) || (memorizedRoi.at(2) <= 0) || (memorizedRoi.at(3) <= 0))
         {
@@ -4479,7 +4515,17 @@ void LimaDetector::configure_saving_parameters(void)
 void LimaDetector::configure_roi(void)
 {
     Roi roi_values(0, 0, 0, 0);
-
+	
+	//check validity of MemorizedRoi
+	if (memorizedRoi.size()!=4)
+	{
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						"Invalid number of parameters into MemorizedRoi. Check input parameters (x, y, width, height)\n",
+						"LimaDetector::configure_roi");
+	}
+	
+	//configure Roi
     if((memorizedRoi.at(0) < 0) || (memorizedRoi.at(1) < 0) || (memorizedRoi.at(2) <= 0) || (memorizedRoi.at(3) <= 0))
     {
         //Roi not initialized, then we consider full frame as Roi
@@ -4545,55 +4591,47 @@ void LimaDetector::create_log_info_attributes(void)
 	//- instanciate the device info attribute
 	INFO_STREAM << "Create the DeviceInfo in order to display dependencies versions." << endl;
 	yat4tango::DeviceInfo::initialize(this, YAT_XSTR(PROJECT_NAME), YAT_XSTR(PROJECT_VERSION) );
-	
+
 	//- fill the device info attribute in order to display dependencies versions
-#ifdef _WIN32
-        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(TANGO_NAME), YAT_XSTR(TANGO_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(OMNIORB_NAME), YAT_XSTR(OMNIORB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ZEROMQ_NAME), YAT_XSTR(ZEROMQ_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
+    //- For all versions : 
+    yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION));
+
+//- Win64
+#ifdef _WIN64
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(DHYANA_NAME), YAT_XSTR(DHYANA_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PCO_NAME), YAT_XSTR(PCO_VERSION) );
+#else //- Win32
+    #ifdef _WIN32
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ANDOR_NAME), YAT_XSTR(ANDOR_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PRINCETON_NAME), YAT_XSTR(PRINCETON_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UVIEW_NAME), YAT_XSTR(UVIEW_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
+    #endif
 #endif
 
 #ifdef Linux
     #ifdef  UNIX_64_EL5
-        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MAXIPIX_NAME), YAT_XSTR(MAXIPIX_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
-    #else
+    #else //- Linux64
         #ifdef UNIX_64_EL6
-        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION));
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION));
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION));
-		yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSJUNGFRAU_NAME), YAT_XSTR(SLSJUNGFRAU_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION));
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(LAMBDA_NAME), YAT_XSTR(LAMBDA_VERSION_DEVICE));//- name conflict with lambda sdk
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XSPRESS3_NAME), YAT_XSTR(XSPRESS3_VERSION));
-
-        #else // UNIX_32
-        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(BASLER_NAME), YAT_XSTR(BASLER_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(IMXPAD_NAME), YAT_XSTR(IMXPAD_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MARCCD_NAME), YAT_XSTR(MARCCD_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MERLIN_NAME), YAT_XSTR(MERLIN_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );        
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UFXC_NAME), YAT_XSTR(UFXC_VERSION) ); 
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION));
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSJUNGFRAU_NAME), YAT_XSTR(SLSJUNGFRAU_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSEIGER_NAME), YAT_XSTR(SLSEIGER_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(LAMBDA_NAME), YAT_XSTR(LAMBDA_VERSION_DEVICE));//- name conflict with lambda sdk
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XSPRESS3_NAME), YAT_XSTR(XSPRESS3_VERSION));
+        #else //- Linux32
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(BASLER_NAME), YAT_XSTR(BASLER_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(IMXPAD_NAME), YAT_XSTR(IMXPAD_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MARCCD_NAME), YAT_XSTR(MARCCD_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MERLIN_NAME), YAT_XSTR(MERLIN_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );        
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UFXC_NAME), YAT_XSTR(UFXC_VERSION) ); 
         #endif
     #endif
 #endif
