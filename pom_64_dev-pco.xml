@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>fr.soleil</groupId>
+        <artifactId>super-pom-C-CPP-device</artifactId>
+		<version>18.1.2</version>
+    </parent>
+	
+    <groupId>fr.soleil.device</groupId>
+    <artifactId>LimaDetector-${aol}-${mode}</artifactId>
+    <version>1.9.1</version>
+	
+    <packaging>nar</packaging>
+    <name>LimaDetector</name>
+    <description>LimaDetector device</description>
+    
+<!--    <profiles>
+        <profile>
+            <id>Windows7_x64</id>
+            <activation>
+            <os>
+                <family>windows</family>
+                <name>windows 7</name>
+            </os>
+            </activation>
+            
+			<properties>
+				<FSOpt.value></FSOpt.value>
+			</properties>
+        </profile>
+    </profiles>-->
+	
+	<properties>
+        <libs-64bits>C:\VC_12_MAVEN\LIB_VC12_64</libs-64bits>
+
+		<tango-lib>${libs-64bits}\tango\win64\lib\vc12_dll\</tango-lib>
+		<tango-include>${libs-64bits}\tango\win64\include\vc12\</tango-include>
+
+		<zeromq-lib>${tango-lib}</zeromq-lib>
+		<zeromq-include>${tango-include}</zeromq-include>
+
+		<omniorb-lib>${tango-lib}</omniorb-lib>
+		<omniorb-include>${tango-include}</omniorb-include>
+		
+		<yat-lib>${libs-64bits}\yat\target\nar\lib\amd64-Windows-msvc\shared\</yat-lib>
+		<yat-include>${libs-64bits}\yat\target\nar\include\</yat-include>
+
+		<log4tango-lib>${tango-lib}</log4tango-lib>
+		<log4tango-include>${tango-include}</log4tango-include>
+		
+		<yat4tango-lib>${libs-64bits}\yat4tango\target\nar\lib\amd64-Windows-msvc\shared\</yat4tango-lib>
+		<yat4tango-include>${libs-64bits}\yat4tango\target\nar\include\</yat4tango-include>
+
+		<nexuscpp-lib>${libs-64bits}\nexuscpp\target\nar\lib\amd64-Windows-msvc\shared</nexuscpp-lib>
+		<nexuscpp-include>${libs-64bits}\nexuscpp\target\nar\include\</nexuscpp-include>
+		
+        <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
+        <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
+
+        <CORE.name>Core</CORE.name>
+        <CORE.version>1.7.9</CORE.version>
+		
+        <SIMULATOR.name>Simulator</SIMULATOR.name>
+        <SIMULATOR.version>1.4.0</SIMULATOR.version>
+
+        <PCO.name>PCO</PCO.name>
+        <PCO.version>1.7.0</PCO.version>
+		
+        <!--<HAMAMATSU.name>HAMAMATSU</HAMAMATSU.name>-->
+        <!--<HAMAMATSU.version>2.2.0</HAMAMATSU.version>-->
+
+        <DHYANA.name>DHYANA</DHYANA.name>
+        <DHYANA.version>1.2.0</DHYANA.version>
+	</properties>
+	
+    <scm>
+        <connection>scm:git:git://github.com/soleil-ica/Lima-tango.git</connection>
+        <developerConnection>scm:git:git://github.com/soleil-ica/Lima-tango.git</developerConnection>
+        <url>https://github.com/soleil-ica/Lima-tango</url>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>fr.soleil.lib</groupId>
+            <artifactId>LimaCore-${aol}-shared-${mode}</artifactId>
+            <version>${CORE.version}</version>
+        </dependency>
+		
+        <!-- LimaProcesslib -->
+        <dependency>
+            <groupId>fr.soleil.lib</groupId>
+			<artifactId>LimaProcesslib-${aol}-shared-${mode}</artifactId>
+            <version>${PROCESSLIB.version}</version>
+        </dependency>
+		
+        <!-- Lima Camera Plugins -->
+        <!-- <dependency> -->
+            <!-- <groupId>fr.soleil.lib.Lima.Camera</groupId> -->
+            <!-- <artifactId>LimaSimulator-${aol}-shared-${mode}</artifactId> -->
+            <!-- <version>${SIMULATOR.version}</version> -->
+        <!-- </dependency> -->
+
+        <dependency>
+            <groupId>fr.soleil.lib.Lima.Camera</groupId>
+            <artifactId>LimaPco-${aol}-shared-${mode}</artifactId>
+            <version>${PCO.version}</version>
+        </dependency>
+<!--
+        <dependency>
+            <groupId>fr.soleil.lib.Lima.Camera</groupId>
+            <artifactId>LimaHamamatsu-${aol}-shared-${mode}</artifactId>
+            <version>${HAMAMATSU.version}</version>
+        </dependency>
+-->
+        <!-- <dependency> -->
+            <!-- <groupId>fr.soleil.lib.Lima.Camera</groupId> -->
+            <!-- <artifactId>LimaDhyana-${aol}-shared-${mode}</artifactId> -->
+            <!-- <version>${DHYANA.version}</version> -->
+        <!-- </dependency> -->
+    </dependencies>
+        
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.freehep</groupId>
+                <artifactId>freehep-nar-plugin</artifactId>
+				<version>2.0-alpha-17-SOLEIL</version>
+                <configuration>
+                   
+                    <cpp>
+                        <sourceDirectory>${project.basedir}</sourceDirectory>                        
+                        <includes>
+                            <include>*.cpp</include>
+                            <include>specifics/Layout/*.cpp</include>     			
+                            <include>specifics/RoiCounters/*.cpp</include>
+							<include>specifics/Mask/*.cpp</include>     			
+                            <!-- <include>specifics/SimulatorCCD/*.cpp</include>							 -->
+                            <!-- <include>specifics/Dhyana/*.cpp</include> -->
+                            <!--<include>specifics/Hamamatsu/*.cpp</include>-->
+                            <include>specifics/Pco/*.cpp</include>
+                        </includes>
+                        <includePaths>                          
+                            <includePath>src</includePath>                                   
+                            <!-- <includePath>specifics/SimulatorCCD</includePath> 		 -->
+                            <!-- <includePath>specifics/Dhyana</includePath>  -->
+                            <!--<includePath>specifics/Hamamatsu</includePath>-->
+                            <includePath>specifics/Pco</includePath>
+                            <includePath>specifics/Layout</includePath>         
+                            <includePath>specifics/RoiCounters</includePath>
+							<includePath>specifics/Mask</includePath>
+							
+							<includePath>${yat4tango-include}</includePath>
+							<includePath>${nexuscpp-include}</includePath>
+							<includePath>${yat-include}</includePath>
+							<includePath>${zeromq-include}</includePath>
+							<includePath>${tango-include}</includePath>
+							<includePath>${omniorb-include}</includePath>
+							<includePath>$(log4tango-include}</includePath>
+                        </includePaths>
+                       
+                        <defines>
+                            <define>PROJECT_NAME=${project.name}</define>
+                            <define>PROJECT_VERSION=${project.version}</define>
+                            <define>PROCESSLIB_NAME=${PROCESSLIB.name}</define>
+                            <define>PROCESSLIB_VERSION=${PROCESSLIB.version}</define>
+                            <define>CORE_NAME=${CORE.name}</define>
+                            <define>CORE_VERSION=${CORE.version}</define>
+                            <!-- <define>SIMULATOR_NAME=${SIMULATOR.name}</define> -->
+                            <!-- <define>SIMULATOR_VERSION=${SIMULATOR.version}</define> -->
+                            <define>PCO_NAME=${PCO.name}</define>
+                            <define>PCO_VERSION=${PCO.version}</define>
+                            <!--<define>HAMAMATSU_NAME=${HAMAMATSU.name}</define>-->
+                            <!--<define>HAMAMATSU_VERSION=${HAMAMATSU.version}</define>-->
+                            <!-- <define>DHYANA_NAME=${DHYANA.name}</define> -->
+                            <!-- <define>DHYANA_VERSION=${DHYANA.version}</define> -->
+
+                            <!-- define which detector you need to ENABLE -->      
+                            <!-- <define>SIMULATOR_ENABLED</define> 						 -->
+                            <define>PCO_ENABLED</define> 						
+                            <!--<define>HAMAMATSU_ENABLED</define>-->
+                            <!-- <define>DHYANA_ENABLED</define> 					 -->
+
+                            <define>LAYOUT_ENABLED</define>		  
+                            <define>ROICOUNTERS_ENABLED</define>             
+							<define>MASK_ENABLED</define>
+                            <define>SOLEIL_YAT_STREAM</define>
+							
+                            <define>WIN32</define> 						
+                            <define>WIN64</define> 						
+                            <define>WIN32_LEAN_AND_MEAN</define> 						
+                            <define>_WIN32_WINNT=_WIN32_WINNT_WIN7</define> 						
+                            <define>_CONSOLE</define> 						
+							<define>TANGO_HAS_DLL</define>
+							<define>LOG4TANGO_HAS_DLL</define>
+							<define>YAT_DLL</define>
+							<define>YAT_BUILD</define>
+							<define>YAT4TANGO_DLL</define>
+							<define>YAT4TANGO_BUILD</define>
+							<define>NEXUSCPP_DLL</define>
+							<define>USE_NX_FINALIZER</define>
+							<define>UNIX_64_EL5</define>
+                        </defines>                        
+                    </cpp>        
+					
+					<linker>
+						<libs>
+							<!-- yat4tango 64 bits -->
+							<lib>
+								<name>YAT4Tango-amd64-Windows-msvc12-shared-release-1.11.2</name>
+								<type>shared</type>
+								<directory>${yat4tango-lib}</directory>
+							</lib>
+
+							<!-- nexuscpp 64 bits -->
+							<lib>
+								<name>NexusCPP-amd64-Windows-msvc12-shared-release-3.3.2</name>
+								<type>shared</type>
+								<directory>${nexuscpp-lib}</directory>
+							</lib>
+							
+							<!-- libtango 64 bits -->
+							<lib>
+								<name>tango</name>
+								<type>shared</type>
+								<directory>${tango-lib}</directory>
+							</lib>
+
+							<!-- log4tango 64 bits -->
+							<lib>
+								<name>log4tango</name>
+								<type>shared</type>
+								<directory>${log4tango-lib}</directory>
+							</lib>
+
+							
+							<!-- yat 64 bits -->
+							<lib>
+								<name>YAT-amd64-Windows-msvc12-shared-release-1.14.4</name>
+								<type>shared</type>
+								<directory>${yat-lib}</directory>
+							</lib>
+							
+							<!-- omniorb 64 bits -->
+							<lib>
+								<name>omnithread_rt</name>
+								<type>shared</type>
+								<directory>${omniorb-lib}</directory>
+							</lib>
+
+							<lib>
+								<name>omniORB4_rt</name>
+								<type>shared</type>
+								<directory>${omniorb-lib}</directory>
+							</lib>
+
+							<lib>
+								<name>omniDynamic4_rt</name>
+								<type>shared</type>
+								<directory>${omniorb-lib}</directory>
+							</lib>
+
+							<lib>
+								<name>COS421_rt</name>
+								<type>shared</type>
+								<directory>${omniorb-lib}</directory>
+							</lib>
+							
+							<!-- zeromq 64 bits -->
+							<lib>
+								<name>zmq</name>
+								<type>shared</type>
+								<directory>${zeromq-lib}</directory>
+							</lib>
+						</libs>
+					</linker>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <developers>
+        <developer>
+            <id>noureddine</id>
+            <name>noureddine</name>
+            <url>http://controle/</url>
+            <organization>Synchrotron Soleil</organization>
+            <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+            <roles>
+                <role>developper</role>
+            </roles>
+            <timezone>1</timezone>
+        </developer>
+
+        <developer>
+            <id>langlois</id>
+            <name>langlois</name>
+            <url>http://controle/</url>
+            <organization>Synchrotron Soleil</organization>
+            <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+            <roles>
+                <role>manager</role>
+            </roles>
+            <timezone>1</timezone>
+        </developer>
+    </developers>
+</project>
