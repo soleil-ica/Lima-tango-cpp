@@ -900,10 +900,7 @@ void Pco::read_frameRate_callback(yat4tango::DynamicAttributeReadCallbackData& c
 
     try
     {
-        if (get_state() == Tango::FAULT   ||
-            get_state() == Tango::RUNNING ||
-            get_state() == Tango::DISABLE)
-            return;
+        if (get_state() == Tango::DISABLE) return;
 
         m_camera->getFrameRate(*attr_frameRate_read);
         cbd.tga->set_value(attr_frameRate_read);
@@ -932,10 +929,7 @@ void Pco::read_coolingSetPoint_callback(yat4tango::DynamicAttributeReadCallbackD
 
     try
     {
-        if (get_state() == Tango::FAULT   ||
-            get_state() == Tango::RUNNING ||
-            get_state() == Tango::DISABLE)
-            return;
+        if (get_state() == Tango::DISABLE) return;
         int temp_cooling_set_point = -1;
         m_camera->getCoolingTemperature(temp_cooling_set_point);
         *attr_coolingSetPoint_read = temp_cooling_set_point;
@@ -1089,10 +1083,7 @@ void Pco::read_shutterMode_callback(yat4tango::DynamicAttributeReadCallbackData&
 
     try
     {
-        if (get_state() == Tango::FAULT   ||
-            get_state() == Tango::RUNNING ||
-            get_state() == Tango::DISABLE)
-            return;
+        if (get_state() == Tango::DISABLE) return;
         int shutter_temp = -1;
         m_camera->getRollingShutter(shutter_temp);
         switch (shutter_temp)
