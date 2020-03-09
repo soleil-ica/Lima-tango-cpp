@@ -207,14 +207,14 @@
 						<libs>
 							<!-- yat4tango 64 bits -->
 							<lib>
-								<name>YAT4Tango-amd64-Windows-msvc12-shared-release-1.11.2</name>
+								<name>YAT4Tango-amd64-Windows-msvc-shared-release-1.11.2</name>
 								<type>shared</type>
 								<directory>${yat4tango-lib}</directory>
 							</lib>
 
 							<!-- nexuscpp 64 bits -->
 							<lib>
-								<name>NexusCPP-amd64-Windows-msvc12-shared-release-3.3.2</name>
+								<name>NexusCPP-amd64-Windows-msvc-shared-release-3.3.2</name>
 								<type>shared</type>
 								<directory>${nexuscpp-lib}</directory>
 							</lib>
@@ -236,7 +236,7 @@
 							
 							<!-- yat 64 bits -->
 							<lib>
-								<name>YAT-amd64-Windows-msvc12-shared-release-1.14.4</name>
+								<name>YAT-amd64-Windows-msvc-shared-release-1.16.4-SNAPSHOT</name>
 								<type>shared</type>
 								<directory>${yat-lib}</directory>
 							</lib>
