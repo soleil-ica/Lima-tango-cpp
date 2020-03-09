@@ -1040,6 +1040,15 @@ void Pco::write_adcOperation_callback(yat4tango::DynamicAttributeWriteCallbackDa
 
     try
     {
+        if (get_state() == Tango::FAULT ||
+            get_state() == Tango::RUNNING)
+        {
+            std::string reason = "It's currently not allowed to write attribute adcOperation. The device state is " + std::string(Tango::DevStateName[get_state()]);
+            Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                            reason.c_str(),
+                                            "Pco::write_adcOperation_callback()");
+        }
+
         std::string previous = *attr_adcOperation_read;
         cbd.tga->get_write_value(attr_adcOperation_write);
         std::string current = attr_adcOperation_write;
