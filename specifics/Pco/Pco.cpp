@@ -900,6 +900,8 @@ void Pco::read_frameRate_callback(yat4tango::DynamicAttributeReadCallbackData& c
 
     try
     {
+        if (get_state() == Tango::DISABLE) return;
+
         m_camera->getFrameRate(*attr_frameRate_read);
         cbd.tga->set_value(attr_frameRate_read);
     }
@@ -927,6 +929,7 @@ void Pco::read_coolingSetPoint_callback(yat4tango::DynamicAttributeReadCallbackD
 
     try
     {
+        if (get_state() == Tango::DISABLE) return;
         int temp_cooling_set_point = -1;
         m_camera->getCoolingTemperature(temp_cooling_set_point);
         *attr_coolingSetPoint_read = temp_cooling_set_point;
@@ -956,8 +959,9 @@ void Pco::write_coolingSetPoint_callback(yat4tango::DynamicAttributeWriteCallbac
 
     try
     {
-        if (get_state() == Tango::FAULT ||
-            get_state() == Tango::RUNNING)
+        if (get_state() == Tango::FAULT   ||
+            get_state() == Tango::RUNNING ||
+            get_state() == Tango::DISABLE)
         {
             std::string reason = "It's currently not allowed to write attribute coolingSetPoint. The device state is " + std::string(Tango::DevStateName[get_state()]);
             Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
@@ -1088,6 +1092,7 @@ void Pco::read_shutterMode_callback(yat4tango::DynamicAttributeReadCallbackData&
 
     try
     {
+        if (get_state() == Tango::DISABLE) return;
         int shutter_temp = -1;
         m_camera->getRollingShutter(shutter_temp);
         switch (shutter_temp)
@@ -1132,6 +1137,15 @@ void Pco::write_shutterMode_callback(yat4tango::DynamicAttributeWriteCallbackDat
 
     try
     {
+        if (get_state() == Tango::FAULT   ||
+            get_state() == Tango::RUNNING ||
+            get_state() == Tango::DISABLE)
+        {
+            std::string reason = "It's currently not allowed to write attribute shutterMode. The device state is " + std::string(Tango::DevStateName[get_state()]);
+            Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                            reason.c_str(),
+                                            "Pco::write_adcOperation_callback()");
+        }
         std::string previous = *attr_shutterMode_read;
         cbd.tga->get_write_value(attr_shutterMode_write);
         std::string current = attr_shutterMode_write;
