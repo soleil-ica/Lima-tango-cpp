@@ -81,7 +81,7 @@ namespace Eiger_ns
  */
 
 
-class Eiger : public Tango::Device_4Impl
+class Eiger : public Tango::TANGO_BASE_CLASS
 {
 public:
     //	Add your own data members here

@@ -67,7 +67,7 @@ namespace Merlin_ns
 
 /*----- PROTECTED REGION END -----*/	//	Merlin::Additional Class Declarations
 
-class Merlin : public Tango::Device_4Impl
+class Merlin : public Tango::TANGO_BASE_CLASS
 {
 
 /*----- PROTECTED REGION ID(Merlin::Data Members) ENABLED START -----*/

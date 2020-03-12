@@ -72,17 +72,17 @@ namespace Maxipix_ns
 //
 //-----------------------------------------------------------------------------
 Maxipix::Maxipix(Tango::DeviceClass *cl, string &s)
-:Tango::Device_4Impl(cl, s.c_str())
+:Tango::TANGO_BASE_CLASS(cl, s.c_str())
 {
     init_device();
 }
 Maxipix::Maxipix(Tango::DeviceClass *cl, const char *s)
-:Tango::Device_4Impl(cl, s)
+:Tango::TANGO_BASE_CLASS(cl, s)
 {
     init_device();
 }
 Maxipix::Maxipix(Tango::DeviceClass *cl, const char *s, const char *d)
-:Tango::Device_4Impl(cl, s, d)
+:Tango::TANGO_BASE_CLASS(cl, s, d)
 {
     init_device();
 }

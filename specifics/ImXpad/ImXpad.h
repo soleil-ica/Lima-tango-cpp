@@ -82,7 +82,7 @@ namespace ImXpad_ns
  */
 
 
-class ImXpad: public Tango::Device_4Impl
+class ImXpad: public Tango::TANGO_BASE_CLASS
 {
 public :
 	//	Add your own data members here

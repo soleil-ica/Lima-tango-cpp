@@ -93,7 +93,7 @@ namespace Xspress3_ns
  */
 
 
-class Xspress3: public Tango::Device_4Impl
+class Xspress3: public Tango::TANGO_BASE_CLASS
 {
 public :
 	//	Add your own data members here

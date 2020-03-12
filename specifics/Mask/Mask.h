@@ -84,7 +84,7 @@ namespace Mask_ns
  */
 
 
-class Mask : public Tango::Device_4Impl
+class Mask : public Tango::TANGO_BASE_CLASS
 {
 public:
     //	Add your own data members here

@@ -80,7 +80,7 @@ namespace MarCCD_ns
  */
 
 
-class MarCCD: public Tango::Device_4Impl
+class MarCCD: public Tango::TANGO_BASE_CLASS
 {
 public :
 	//	Add your own data members here
