@@ -49,6 +49,7 @@ This device server provides several Tango classes:
   SimulatorCCD <SimulatorCCD/simulatorccd>
   SlsEiger <SlsEiger/slseiger>
   SlsJungfrau <SlsJungfrau/slsjungfrau>
+  Ufxc <Ufxc/ufxc>
   Uview <Uview/uview>
   XpadPixelDetector <XpadPixelDetector/xpadpixeldetector>
   Xspress3 <Xspress3/xspress3>
@@ -58,6 +59,6 @@ This device server provides several Tango classes:
 .. toctree::
   :maxdepth: 1
   
-  RoiCounters <RoiCounters/roicounters>
   Layout <Layout/layout>
   Mask <Mask/mask>
+  RoiCounters <RoiCounters/roicounters>
