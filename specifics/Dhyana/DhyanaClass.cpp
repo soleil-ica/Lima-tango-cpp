@@ -274,18 +274,18 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : temperature
 	temperatureAttrib	*temperature = new temperatureAttrib();
 	Tango::UserDefaultAttrProp	temperature_prop;
-	temperature_prop.set_unit("캜");
-	temperature_prop.set_standard_unit("캜");
-	temperature_prop.set_display_unit("캜");
+	temperature_prop.set_unit("째C");
+	temperature_prop.set_standard_unit("째C");
+	temperature_prop.set_display_unit("째C");
 	temperature->set_default_properties(temperature_prop);
 	att_list.push_back(temperature);
 
 	//	Attribute : temperatureTarget
 	temperatureTargetAttrib	*temperature_target = new temperatureTargetAttrib();
 	Tango::UserDefaultAttrProp	temperature_target_prop;
-	temperature_target_prop.set_unit("캜");
-	temperature_target_prop.set_standard_unit("캜");
-	temperature_target_prop.set_display_unit("캜");
+	temperature_target_prop.set_unit("째C");
+	temperature_target_prop.set_standard_unit("째C");
+	temperature_target_prop.set_display_unit("째C");
 	temperature_target->set_default_properties(temperature_target_prop);
 	temperature_target->set_memorized();
 	temperature_target->set_memorized_init(false);
@@ -563,7 +563,7 @@ void DhyanaClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Device_4Impl");
+	inheritance.push_back(XTBS(TANGO_BASE_CLASS));
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

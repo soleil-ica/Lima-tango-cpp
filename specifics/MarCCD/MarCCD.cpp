@@ -75,19 +75,19 @@ namespace MarCCD_ns
 //-----------------------------------------------------------------------------
 
 MarCCD::MarCCD(Tango::DeviceClass *cl, string &s)
-: Tango::Device_4Impl(cl, s.c_str())
+: TANGO_BASE_CLASS(cl, s.c_str())
 {
     init_device();
 }
 
 MarCCD::MarCCD(Tango::DeviceClass *cl, const char *s)
-: Tango::Device_4Impl(cl, s)
+: TANGO_BASE_CLASS(cl, s)
 {
     init_device();
 }
 
 MarCCD::MarCCD(Tango::DeviceClass *cl, const char *s, const char *d)
-: Tango::Device_4Impl(cl, s, d)
+: TANGO_BASE_CLASS(cl, s, d)
 {
     init_device();
 }
