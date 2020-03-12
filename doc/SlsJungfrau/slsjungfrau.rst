@@ -3,7 +3,7 @@
 SlsJungfrau C++ Tango device
 =============================
 
-This is the reference documentation of the SimulatorCDD Tango C++ device.
+This is the reference documentation of the SlsJungfrau Tango C++ device.
 
 
 Properties
