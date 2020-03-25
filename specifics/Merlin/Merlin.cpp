@@ -112,7 +112,7 @@ namespace Merlin_ns
  */
 //--------------------------------------------------------
 Merlin::Merlin(Tango::DeviceClass *cl, string &s)
- : Tango::Device_4Impl(cl, s.c_str())
+ : TANGO_BASE_CLASS(cl, s.c_str())
 {
 	/*----- PROTECTED REGION ID(Merlin::constructor_1) ENABLED START -----*/
 	init_device();
@@ -121,7 +121,7 @@ Merlin::Merlin(Tango::DeviceClass *cl, string &s)
 }
 //--------------------------------------------------------
 Merlin::Merlin(Tango::DeviceClass *cl, const char *s)
- : Tango::Device_4Impl(cl, s)
+ : TANGO_BASE_CLASS(cl, s)
 {
 	/*----- PROTECTED REGION ID(Merlin::constructor_2) ENABLED START -----*/
 	init_device();
@@ -130,7 +130,7 @@ Merlin::Merlin(Tango::DeviceClass *cl, const char *s)
 }
 //--------------------------------------------------------
 Merlin::Merlin(Tango::DeviceClass *cl, const char *s, const char *d)
- : Tango::Device_4Impl(cl, s, d)
+ : TANGO_BASE_CLASS(cl, s, d)
 {
 	/*----- PROTECTED REGION ID(Merlin::constructor_3) ENABLED START -----*/
 	init_device();

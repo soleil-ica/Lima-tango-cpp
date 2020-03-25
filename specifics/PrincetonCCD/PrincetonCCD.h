@@ -80,7 +80,7 @@ namespace PrincetonCCD_ns
  */
 
 
-class PrincetonCCD: public Tango::Device_4Impl
+class PrincetonCCD: public TANGO_BASE_CLASS
 {
 public :
     //    Add your own data members here

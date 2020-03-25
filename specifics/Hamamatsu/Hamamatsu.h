@@ -75,7 +75,7 @@ namespace Hamamatsu_ns
  */
 
 
-class Hamamatsu: public Tango::Device_4Impl
+class Hamamatsu: public TANGO_BASE_CLASS
 {
 public :
 	//	Add your own data members here
