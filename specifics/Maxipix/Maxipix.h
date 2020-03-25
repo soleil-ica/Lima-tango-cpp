@@ -81,7 +81,7 @@ namespace Maxipix_ns
  */
 
 
-class Maxipix: public Tango::Device_4Impl
+class Maxipix: public TANGO_BASE_CLASS
 {
 public :
 	//	Add your own data members here

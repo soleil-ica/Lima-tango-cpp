@@ -82,7 +82,7 @@ namespace Dhyana_ns
  */
 
 
-class Dhyana: public Tango::Device_4Impl
+class Dhyana: public TANGO_BASE_CLASS
 {
 public :
 	//	Add your own data members here

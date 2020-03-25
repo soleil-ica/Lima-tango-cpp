@@ -81,7 +81,7 @@ namespace PilatusPixelDetector_ns
  */
 
 
-class PilatusPixelDetector: public Tango::Device_4Impl
+class PilatusPixelDetector: public TANGO_BASE_CLASS
 {
 public :
     //    Add your own data members here

@@ -70,7 +70,7 @@ namespace UviewCCD_ns
  */
 
 
-class UviewCCD: public Tango::Device_4Impl
+class UviewCCD: public TANGO_BASE_CLASS
 {
 public :
 	//	Add your own data members here

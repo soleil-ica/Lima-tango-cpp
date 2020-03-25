@@ -138,7 +138,7 @@ namespace LimaDetector_ns
  */
 
 
-class LimaDetector : public Tango::Device_4Impl
+class LimaDetector : public TANGO_BASE_CLASS
 {
 public:
     //    Add your own data members here

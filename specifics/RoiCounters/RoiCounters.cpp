@@ -82,17 +82,17 @@ namespace RoiCounters_ns
 //
 //-----------------------------------------------------------------------------
 RoiCounters::RoiCounters(Tango::DeviceClass *cl, string &s)
-:Tango::Device_4Impl(cl, s.c_str()), m_dim(this)
+:TANGO_BASE_CLASS(cl, s.c_str()), m_dim(this)
 {
 	init_device();
 }
 RoiCounters::RoiCounters(Tango::DeviceClass *cl, const char *s)
-:Tango::Device_4Impl(cl, s), m_dim(this)
+:TANGO_BASE_CLASS(cl, s), m_dim(this)
 {
 	init_device();
 }
 RoiCounters::RoiCounters(Tango::DeviceClass *cl, const char *s, const char *d)
-:Tango::Device_4Impl(cl, s, d), m_dim(this)
+:TANGO_BASE_CLASS(cl, s, d), m_dim(this)
 {
 	init_device();
 }
