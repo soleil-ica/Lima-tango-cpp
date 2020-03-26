@@ -65,6 +65,7 @@ static const char *RcsId = "$Id:  $";
 //  SetCmd        |  set_cmd
 //  GetCmd        |  get_cmd
 //  ResetCamera   |  reset_camera
+//  Calibrate     |  calibrate
 //================================================================
 
 //================================================================
@@ -76,6 +77,18 @@ static const char *RcsId = "$Id:  $";
 //  detectorFirmwareVersion  |  Tango::DevString	Scalar
 //  detectorSoftwareVersion  |  Tango::DevString	Scalar
 //  gainMode                 |  Tango::DevString	Scalar
+//  gainCoeffsFileName       |  Tango::DevString	Scalar
+//  pedestalFileName1        |  Tango::DevString	Scalar
+//  pedestalFileName2        |  Tango::DevString	Scalar
+//  pedestalFileName3        |  Tango::DevString	Scalar
+//  gainCoeffsState          |  Tango::DevString	Scalar
+//  calibrationState         |  Tango::DevString	Scalar
+//  gainCoeffs1              |  Tango::DevDouble	Image  ( max = 1024 x 512)
+//  gainCoeffs2              |  Tango::DevDouble	Image  ( max = 1024 x 512)
+//  gainCoeffs3              |  Tango::DevDouble	Image  ( max = 1024 x 512)
+//  pedestal1                |  Tango::DevUShort	Image  ( max = 1024 x 512)
+//  pedestal2                |  Tango::DevUShort	Image  ( max = 1024 x 512)
+//  pedestal3                |  Tango::DevUShort	Image  ( max = 1024 x 512)
 //================================================================
 
 namespace SlsJungfrau_ns
@@ -173,6 +186,18 @@ void SlsJungfrau::delete_device()
 	delete[] attr_detectorFirmwareVersion_read;
 	delete[] attr_detectorSoftwareVersion_read;
 	delete[] attr_gainMode_read;
+	delete[] attr_gainCoeffsFileName_read;
+	delete[] attr_pedestalFileName1_read;
+	delete[] attr_pedestalFileName2_read;
+	delete[] attr_pedestalFileName3_read;
+	delete[] attr_gainCoeffsState_read;
+	delete[] attr_calibrationState_read;
+	delete[] attr_gainCoeffs1_read;
+	delete[] attr_gainCoeffs2_read;
+	delete[] attr_gainCoeffs3_read;
+	delete[] attr_pedestal1_read;
+	delete[] attr_pedestal2_read;
+	delete[] attr_pedestal3_read;
 }
 
 //--------------------------------------------------------
@@ -242,6 +267,18 @@ void SlsJungfrau::init_device()
 	attr_detectorFirmwareVersion_read = new Tango::DevString[1];
 	attr_detectorSoftwareVersion_read = new Tango::DevString[1];
 	attr_gainMode_read = new Tango::DevString[1];
+	attr_gainCoeffsFileName_read = new Tango::DevString[1];
+	attr_pedestalFileName1_read = new Tango::DevString[1];
+	attr_pedestalFileName2_read = new Tango::DevString[1];
+	attr_pedestalFileName3_read = new Tango::DevString[1];
+	attr_gainCoeffsState_read = new Tango::DevString[1];
+	attr_calibrationState_read = new Tango::DevString[1];
+	attr_gainCoeffs1_read = new Tango::DevDouble[1024*512];
+	attr_gainCoeffs2_read = new Tango::DevDouble[1024*512];
+	attr_gainCoeffs3_read = new Tango::DevDouble[1024*512];
+	attr_pedestal1_read = new Tango::DevUShort[1024*512];
+	attr_pedestal2_read = new Tango::DevUShort[1024*512];
+	attr_pedestal3_read = new Tango::DevUShort[1024*512];
 
 	/*----- PROTECTED REGION ID(SlsJungfrau::init_device) ENABLED START -----*/
     attr_clockDivider_read           [0] = new char[ 256];
@@ -285,6 +322,19 @@ void SlsJungfrau::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("ExpertReadoutTime"));
 	dev_prop.push_back(Tango::DbDatum("ExpertReceiverFifoDepth"));
 	dev_prop.push_back(Tango::DbDatum("ExpertFramePacketNumber"));
+	dev_prop.push_back(Tango::DbDatum("ExpertGainsCoeffsFileName"));
+	dev_prop.push_back(Tango::DbDatum("ExpertPedestalFileName1"));
+	dev_prop.push_back(Tango::DbDatum("ExpertPedestalFileName2"));
+	dev_prop.push_back(Tango::DbDatum("ExpertPedestalFileName3"));
+	dev_prop.push_back(Tango::DbDatum("ExpertPedestalNbFrames1"));
+	dev_prop.push_back(Tango::DbDatum("ExpertPedestalExposureSec1"));
+	dev_prop.push_back(Tango::DbDatum("ExpertPedestalPeriodSec1"));
+	dev_prop.push_back(Tango::DbDatum("ExpertPedestalNbFrames2"));
+	dev_prop.push_back(Tango::DbDatum("ExpertPedestalExposureSec2"));
+	dev_prop.push_back(Tango::DbDatum("ExpertPedestalPeriodSec2"));
+	dev_prop.push_back(Tango::DbDatum("ExpertPedestalNbFrames3"));
+	dev_prop.push_back(Tango::DbDatum("ExpertPedestalExposureSec3"));
+	dev_prop.push_back(Tango::DbDatum("ExpertPedestalPeriodSec3"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -343,6 +393,149 @@ void SlsJungfrau::get_device_property()
 		//	And try to extract ExpertFramePacketNumber value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertFramePacketNumber;
 
+		//	Try to initialize ExpertGainsCoeffsFileName from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertGainsCoeffsFileName;
+		else {
+			//	Try to initialize ExpertGainsCoeffsFileName from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertGainsCoeffsFileName;
+		}
+		//	And try to extract ExpertGainsCoeffsFileName value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertGainsCoeffsFileName;
+
+		//	Try to initialize ExpertPedestalFileName1 from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalFileName1;
+		else {
+			//	Try to initialize ExpertPedestalFileName1 from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalFileName1;
+		}
+		//	And try to extract ExpertPedestalFileName1 value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalFileName1;
+
+		//	Try to initialize ExpertPedestalFileName2 from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalFileName2;
+		else {
+			//	Try to initialize ExpertPedestalFileName2 from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalFileName2;
+		}
+		//	And try to extract ExpertPedestalFileName2 value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalFileName2;
+
+		//	Try to initialize ExpertPedestalFileName3 from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalFileName3;
+		else {
+			//	Try to initialize ExpertPedestalFileName3 from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalFileName3;
+		}
+		//	And try to extract ExpertPedestalFileName3 value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalFileName3;
+
+		//	Try to initialize ExpertPedestalNbFrames1 from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalNbFrames1;
+		else {
+			//	Try to initialize ExpertPedestalNbFrames1 from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalNbFrames1;
+		}
+		//	And try to extract ExpertPedestalNbFrames1 value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalNbFrames1;
+
+		//	Try to initialize ExpertPedestalExposureSec1 from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalExposureSec1;
+		else {
+			//	Try to initialize ExpertPedestalExposureSec1 from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalExposureSec1;
+		}
+		//	And try to extract ExpertPedestalExposureSec1 value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalExposureSec1;
+
+		//	Try to initialize ExpertPedestalPeriodSec1 from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalPeriodSec1;
+		else {
+			//	Try to initialize ExpertPedestalPeriodSec1 from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalPeriodSec1;
+		}
+		//	And try to extract ExpertPedestalPeriodSec1 value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalPeriodSec1;
+
+		//	Try to initialize ExpertPedestalNbFrames2 from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalNbFrames2;
+		else {
+			//	Try to initialize ExpertPedestalNbFrames2 from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalNbFrames2;
+		}
+		//	And try to extract ExpertPedestalNbFrames2 value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalNbFrames2;
+
+		//	Try to initialize ExpertPedestalExposureSec2 from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalExposureSec2;
+		else {
+			//	Try to initialize ExpertPedestalExposureSec2 from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalExposureSec2;
+		}
+		//	And try to extract ExpertPedestalExposureSec2 value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalExposureSec2;
+
+		//	Try to initialize ExpertPedestalPeriodSec2 from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalPeriodSec2;
+		else {
+			//	Try to initialize ExpertPedestalPeriodSec2 from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalPeriodSec2;
+		}
+		//	And try to extract ExpertPedestalPeriodSec2 value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalPeriodSec2;
+
+		//	Try to initialize ExpertPedestalNbFrames3 from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalNbFrames3;
+		else {
+			//	Try to initialize ExpertPedestalNbFrames3 from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalNbFrames3;
+		}
+		//	And try to extract ExpertPedestalNbFrames3 value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalNbFrames3;
+
+		//	Try to initialize ExpertPedestalExposureSec3 from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalExposureSec3;
+		else {
+			//	Try to initialize ExpertPedestalExposureSec3 from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalExposureSec3;
+		}
+		//	And try to extract ExpertPedestalExposureSec3 value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalExposureSec3;
+
+		//	Try to initialize ExpertPedestalPeriodSec3 from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalPeriodSec3;
+		else {
+			//	Try to initialize ExpertPedestalPeriodSec3 from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalPeriodSec3;
+		}
+		//	And try to extract ExpertPedestalPeriodSec3 value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalPeriodSec3;
+
 	}
 
 	/*----- PROTECTED REGION ID(SlsJungfrau::get_device_property_after) ENABLED START -----*/
@@ -352,7 +545,25 @@ void SlsJungfrau::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.00004", "ExpertReadoutTime"      ); // 40µs by default
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "2500"   , "ExpertReceiverFifoDepth"); // 2500 frames by default
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "128"    , "ExpertFramePacketNumber"); // 128 packets by default
-	
+
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "to be defined", "ExpertGainsCoeffsFileName");
+
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "to be defined", "ExpertPedestalFileName1");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "to be defined", "ExpertPedestalFileName2");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "to be defined", "ExpertPedestalFileName3");
+
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "5000", "ExpertPedestalNbFrames1");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1000", "ExpertPedestalNbFrames2");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1000", "ExpertPedestalNbFrames3");
+
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0008", "ExpertPedestalExposureSec1");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0019", "ExpertPedestalExposureSec2");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0049", "ExpertPedestalExposureSec3");
+
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.000909", "ExpertPedestalPeriodSec1");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.002"   , "ExpertPedestalPeriodSec2");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.005"   , "ExpertPedestalPeriodSec3");
+
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::get_device_property_after
 }
 
@@ -562,7 +773,7 @@ void SlsJungfrau::write_clockDivider(Tango::WAttribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute configFileName related method
- *	Description: 
+ *	Description: Shows the complete path of the configuration file.<br>
  *
  *	Data type:	Tango::DevString
  *	Attr type:	Scalar
@@ -874,6 +1085,386 @@ void SlsJungfrau::write_gainMode(Tango::WAttribute &attr)
 
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::write_gainMode
 }
+//--------------------------------------------------------
+/**
+ *	Read attribute gainCoeffsFileName related method
+ *	Description: Shows the complete path for the gains'coefficients file.<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsJungfrau::read_gainCoeffsFileName(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsJungfrau::read_gainCoeffsFileName(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::read_gainCoeffsFileName) ENABLED START -----*/
+    try
+    {
+        //Set the attribute value
+        strcpy(*attr_gainCoeffsFileName_read, expertGainsCoeffsFileName.c_str());
+        attr.set_value(attr_gainCoeffsFileName_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::read_gainCoeffsFileName");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::read_gainCoeffsFileName");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_gainCoeffsFileName
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute pedestalFileName1 related method
+ *	Description: Shows the complete path for the pedestal file of the first gain.<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsJungfrau::read_pedestalFileName1(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsJungfrau::read_pedestalFileName1(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::read_pedestalFileName1) ENABLED START -----*/
+    try
+    {
+        //Set the attribute value
+        strcpy(*attr_pedestalFileName1_read, expertPedestalFileName1.c_str());
+        attr.set_value(attr_pedestalFileName1_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::read_pedestalFileName1");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::read_pedestalFileName1");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_pedestalFileName1
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute pedestalFileName2 related method
+ *	Description: Shows the complete path for the pedestal file of the second gain.<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsJungfrau::read_pedestalFileName2(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsJungfrau::read_pedestalFileName2(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::read_pedestalFileName2) ENABLED START -----*/
+	
+    try
+    {
+        //Set the attribute value
+        strcpy(*attr_pedestalFileName2_read, expertPedestalFileName2.c_str());
+        attr.set_value(attr_pedestalFileName2_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::read_pedestalFileName2");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::read_pedestalFileName2");
+    }
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_pedestalFileName2
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute pedestalFileName3 related method
+ *	Description: Shows the complete path for the pedestal file of the third gain.<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsJungfrau::read_pedestalFileName3(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsJungfrau::read_pedestalFileName3(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::read_pedestalFileName3) ENABLED START -----*/
+	
+    try
+    {
+        //Set the attribute value
+        strcpy(*attr_pedestalFileName3_read, expertPedestalFileName3.c_str());
+        attr.set_value(attr_pedestalFileName3_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::read_pedestalFileName3");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::read_pedestalFileName3");
+    }
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_pedestalFileName3
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute gainCoeffsState related method
+ *	Description: Shows the status of the gains coefficients state<br>
+ *               It can be:<br>
+ *               - NONE (not loaded)<br>
+ *               - LOADED<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsJungfrau::read_gainCoeffsState(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsJungfrau::read_gainCoeffsState(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::read_gainCoeffsState) ENABLED START -----*/
+    try
+    {
+        std::string gain_coeffs_state = m_camera->getGainCoeffsState();
+
+        //Set the attribute value
+        strcpy(*attr_gainCoeffsState_read, gain_coeffs_state.c_str());
+        attr.set_value(attr_gainCoeffsState_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::read_gainCoeffsState");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::read_gainCoeffsState");
+    }
+
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_gainCoeffsState
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute calibrationState related method
+ *	Description: Shows the status of the calibration state<br>
+ *               It can be:<br>
+ *               - NONE (no calibration loaded or generated)<br>
+ *               - LOADED (a previous saved calibration was loaded)<br>
+ *               - RUNNING_0_3 (a calibration is running and at the moment no pedestal was generated)<br>
+ *               - RUNNING_1_3 (a calibration is running and the first pedestal was generated)<br>
+ *               - RUNNING_2_3 (a calibration is running and two pedestals were generated)<br>
+ *               - GENERATED (a new calibration was done)<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SlsJungfrau::read_calibrationState(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsJungfrau::read_calibrationState(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::read_calibrationState) ENABLED START -----*/
+	//	Set the attribute value
+    try
+    {
+        std::string calibration_state = m_camera->getCalibrationState();
+
+        //Set the attribute value
+        strcpy(*attr_calibrationState_read, calibration_state.c_str());
+        attr.set_value(attr_calibrationState_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::read_calibrationState");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::read_calibrationState");
+    }
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_calibrationState
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute gainCoeffs1 related method
+ *	Description: Shows the coefficients for the first gain.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Image max = 1024 x 512
+ */
+//--------------------------------------------------------
+void SlsJungfrau::read_gainCoeffs1(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsJungfrau::read_gainCoeffs1(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::read_gainCoeffs1) ENABLED START -----*/
+    try
+    {
+        m_camera->getGainCoeffsState(0, attr_gainCoeffs1_read);
+
+        //Set the attribute value
+    	attr.set_value(attr_gainCoeffs1_read, 1024, 512);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::read_gainCoeffs1");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::read_gainCoeffs1");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_gainCoeffs1
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute gainCoeffs2 related method
+ *	Description: Shows the coefficients for the second gain.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Image max = 1024 x 512
+ */
+//--------------------------------------------------------
+void SlsJungfrau::read_gainCoeffs2(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsJungfrau::read_gainCoeffs2(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::read_gainCoeffs2) ENABLED START -----*/
+    try
+    {
+        m_camera->getGainCoeffsState(1, attr_gainCoeffs2_read);
+
+        //Set the attribute value
+    	attr.set_value(attr_gainCoeffs2_read, 1024, 512);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::read_gainCoeffs2");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::read_gainCoeffs2");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_gainCoeffs2
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute gainCoeffs3 related method
+ *	Description: Shows the coefficients for the third gain.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Image max = 1024 x 512
+ */
+//--------------------------------------------------------
+void SlsJungfrau::read_gainCoeffs3(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsJungfrau::read_gainCoeffs3(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::read_gainCoeffs3) ENABLED START -----*/
+    try
+    {
+        m_camera->getGainCoeffsState(2, attr_gainCoeffs3_read);
+
+        //Set the attribute value
+    	attr.set_value(attr_gainCoeffs3_read, 1024, 512);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::read_gainCoeffs3");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::read_gainCoeffs3");
+    }
+
+    /*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_gainCoeffs3
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute pedestal1 related method
+ *	Description: Shows the pedestal image for the first gain.<br>
+ *
+ *	Data type:	Tango::DevUShort
+ *	Attr type:	Image max = 1024 x 512
+ */
+//--------------------------------------------------------
+void SlsJungfrau::read_pedestal1(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsJungfrau::read_pedestal1(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::read_pedestal1) ENABLED START -----*/
+    try
+    {
+        m_camera->getDarkImage(0, attr_pedestal1_read);
+
+        //Set the attribute value
+    	attr.set_value(attr_pedestal1_read, 1024, 512);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::read_pedestal1");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::read_pedestal1");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_pedestal1
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute pedestal2 related method
+ *	Description: Shows the pedestal image for the second gain.<br>
+ *
+ *	Data type:	Tango::DevUShort
+ *	Attr type:	Image max = 1024 x 512
+ */
+//--------------------------------------------------------
+void SlsJungfrau::read_pedestal2(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsJungfrau::read_pedestal2(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::read_pedestal2) ENABLED START -----*/
+    try
+    {
+        m_camera->getDarkImage(1, attr_pedestal2_read);
+
+        //Set the attribute value
+    	attr.set_value(attr_pedestal2_read, 1024, 512);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::read_pedestal2");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::read_pedestal2");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_pedestal2
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute pedestal3 related method
+ *	Description: Shows the pedestal image for the third gain.<br>
+ *
+ *	Data type:	Tango::DevUShort
+ *	Attr type:	Image max = 1024 x 512
+ */
+//--------------------------------------------------------
+void SlsJungfrau::read_pedestal3(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SlsJungfrau::read_pedestal3(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::read_pedestal3) ENABLED START -----*/
+    try
+    {
+        m_camera->getDarkImage(2, attr_pedestal3_read);
+
+        //Set the attribute value
+    	attr.set_value(attr_pedestal3_read, 1024, 512);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::read_pedestal3");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::read_pedestal3");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::read_pedestal3
+}
 
 //--------------------------------------------------------
 /**
@@ -998,6 +1589,33 @@ void SlsJungfrau::reset_camera()
     }
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::reset_camera
+}
+//--------------------------------------------------------
+/**
+ *	Command Calibrate related method
+ *	Description: Execute a calibration of the camera by creating the three pedestal files..
+ *
+ */
+//--------------------------------------------------------
+void SlsJungfrau::calibrate()
+{
+	DEBUG_STREAM << "SlsJungfrau::Calibrate()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(SlsJungfrau::calibrate) ENABLED START -----*/
+	
+    try
+    {
+        m_camera->startCalibration();
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "SlsJungfrau::calibrate");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "SlsJungfrau::calibrate");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::calibrate
 }
 
 /*----- PROTECTED REGION ID(SlsJungfrau::namespace_ending) ENABLED START -----*/

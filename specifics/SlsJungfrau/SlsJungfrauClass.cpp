@@ -214,6 +214,24 @@ CORBA::Any *ResetCameraClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(co
 	return new CORBA::Any();
 }
 
+//--------------------------------------------------------
+/**
+ * method : 		CalibrateClass::execute()
+ * description : 	method to trigger the execution of the command.
+ *
+ * @param	device	The device on which the command must be executed
+ * @param	in_any	The command input data
+ *
+ *	returns The command output data (packed in the Any object)
+ */
+//--------------------------------------------------------
+CORBA::Any *CalibrateClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
+{
+	cout2 << "CalibrateClass::execute(): arrived" << endl;
+	((static_cast<SlsJungfrau *>(device))->calibrate());
+	return new CORBA::Any();
+}
+
 
 //===================================================================
 //	Properties management
@@ -324,6 +342,175 @@ void SlsJungfrauClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 	prop_name = "ExpertFramePacketNumber";
 	prop_desc = "Only an expert User could change this property.<br>\nThis is the number of packet for each received frame part.<BR>";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertGainsCoeffsFileName";
+	prop_desc = "Only an expert User could change this property.<br>\nIt defines the complete path of the gains coefficients file.<BR>";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertPedestalFileName1";
+	prop_desc = "Only an expert User could change this property.<br>\nIt defines the complete path of a pedestal image (first gain).<BR>";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertPedestalFileName2";
+	prop_desc = "Only an expert User could change this property.<br>\nIt defines the complete path of a pedestal image (second gain).<BR>";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertPedestalFileName3";
+	prop_desc = "Only an expert User could change this property.<br>\nIt defines the complete path of a pedestal image (third gain).<BR>";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertPedestalNbFrames1";
+	prop_desc = "Only an expert User could change this property.<br>\nIt defines the number of frames used to generate a pedestal image (first gain).<BR>";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertPedestalExposureSec1";
+	prop_desc = "Only an expert User could change this property.<br>\nIt defines the exposure time (in seconds) used to generate a pedestal image (first gain).<BR>";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertPedestalPeriodSec1";
+	prop_desc = "Only an expert User could change this property.<br>\nIt defines the exposure period (in seconds) used to generate a pedestal image (first gain).<BR>";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertPedestalNbFrames2";
+	prop_desc = "Only an expert User could change this property.<br>\nIt defines the number of frames used to generate a pedestal image (second gain).<BR>";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertPedestalExposureSec2";
+	prop_desc = "Only an expert User could change this property.<br>\nIt defines the exposure time (in seconds) used to generate a pedestal image (second gain).<BR>";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertPedestalPeriodSec2";
+	prop_desc = "Only an expert User could change this property.<br>\nIt defines the exposure period (in seconds) used to generate a pedestal image (second gain).<BR>";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertPedestalNbFrames3";
+	prop_desc = "Only an expert User could change this property.<br>\nIt defines the number of frames used to generate a pedestal image (third gain).<BR>";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertPedestalExposureSec3";
+	prop_desc = "Only an expert User could change this property.<br>\nIt defines the exposure time (in seconds) used to generate a pedestal image (third gain).<BR>";
+	prop_def  = "";
+	vect_data.clear();
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertPedestalPeriodSec3";
+	prop_desc = "Only an expert User could change this property.<br>\nIt defines the exposure period (in seconds) used to generate a pedestal image (third gain).<BR>";
 	prop_def  = "";
 	vect_data.clear();
 	if (prop_def.length()>0)
@@ -567,7 +754,7 @@ void SlsJungfrauClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : configFileName
 	configFileNameAttrib	*configfilename = new configFileNameAttrib();
 	Tango::UserDefaultAttrProp	configfilename_prop;
-	//	description	not set for configFileName
+	configfilename_prop.set_description("Shows the complete path of the configuration file.<br>");
 	//	label	not set for configFileName
 	//	unit	not set for configFileName
 	//	standard_unit	not set for configFileName
@@ -609,7 +796,8 @@ void SlsJungfrauClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	delayaftertrigger->set_default_properties(delayaftertrigger_prop);
 	//	Not Polled
 	delayaftertrigger->set_disp_level(Tango::OPERATOR);
-	//	Not Memorized
+	delayaftertrigger->set_memorized();
+	delayaftertrigger->set_memorized_init(true);
 	att_list.push_back(delayaftertrigger);
 
 	//	Attribute : detectorFirmwareVersion
@@ -685,6 +873,294 @@ void SlsJungfrauClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	gainmode->set_memorized_init(true);
 	att_list.push_back(gainmode);
 
+	//	Attribute : gainCoeffsFileName
+	gainCoeffsFileNameAttrib	*gaincoeffsfilename = new gainCoeffsFileNameAttrib();
+	Tango::UserDefaultAttrProp	gaincoeffsfilename_prop;
+	gaincoeffsfilename_prop.set_description("Shows the complete path for the gains'coefficients file.<br>");
+	//	label	not set for gainCoeffsFileName
+	//	unit	not set for gainCoeffsFileName
+	//	standard_unit	not set for gainCoeffsFileName
+	//	display_unit	not set for gainCoeffsFileName
+	//	format	not set for gainCoeffsFileName
+	//	max_value	not set for gainCoeffsFileName
+	//	min_value	not set for gainCoeffsFileName
+	//	max_alarm	not set for gainCoeffsFileName
+	//	min_alarm	not set for gainCoeffsFileName
+	//	max_warning	not set for gainCoeffsFileName
+	//	min_warning	not set for gainCoeffsFileName
+	//	delta_t	not set for gainCoeffsFileName
+	//	delta_val	not set for gainCoeffsFileName
+	
+	gaincoeffsfilename->set_default_properties(gaincoeffsfilename_prop);
+	//	Not Polled
+	gaincoeffsfilename->set_disp_level(Tango::EXPERT);
+	//	Not Memorized
+	att_list.push_back(gaincoeffsfilename);
+
+	//	Attribute : pedestalFileName1
+	pedestalFileName1Attrib	*pedestalfilename1 = new pedestalFileName1Attrib();
+	Tango::UserDefaultAttrProp	pedestalfilename1_prop;
+	pedestalfilename1_prop.set_description("Shows the complete path for the pedestal file of the first gain.<br>");
+	//	label	not set for pedestalFileName1
+	//	unit	not set for pedestalFileName1
+	//	standard_unit	not set for pedestalFileName1
+	//	display_unit	not set for pedestalFileName1
+	//	format	not set for pedestalFileName1
+	//	max_value	not set for pedestalFileName1
+	//	min_value	not set for pedestalFileName1
+	//	max_alarm	not set for pedestalFileName1
+	//	min_alarm	not set for pedestalFileName1
+	//	max_warning	not set for pedestalFileName1
+	//	min_warning	not set for pedestalFileName1
+	//	delta_t	not set for pedestalFileName1
+	//	delta_val	not set for pedestalFileName1
+	
+	pedestalfilename1->set_default_properties(pedestalfilename1_prop);
+	//	Not Polled
+	pedestalfilename1->set_disp_level(Tango::EXPERT);
+	//	Not Memorized
+	att_list.push_back(pedestalfilename1);
+
+	//	Attribute : pedestalFileName2
+	pedestalFileName2Attrib	*pedestalfilename2 = new pedestalFileName2Attrib();
+	Tango::UserDefaultAttrProp	pedestalfilename2_prop;
+	pedestalfilename2_prop.set_description("Shows the complete path for the pedestal file of the second gain.<br>");
+	//	label	not set for pedestalFileName2
+	//	unit	not set for pedestalFileName2
+	//	standard_unit	not set for pedestalFileName2
+	//	display_unit	not set for pedestalFileName2
+	//	format	not set for pedestalFileName2
+	//	max_value	not set for pedestalFileName2
+	//	min_value	not set for pedestalFileName2
+	//	max_alarm	not set for pedestalFileName2
+	//	min_alarm	not set for pedestalFileName2
+	//	max_warning	not set for pedestalFileName2
+	//	min_warning	not set for pedestalFileName2
+	//	delta_t	not set for pedestalFileName2
+	//	delta_val	not set for pedestalFileName2
+	
+	pedestalfilename2->set_default_properties(pedestalfilename2_prop);
+	//	Not Polled
+	pedestalfilename2->set_disp_level(Tango::EXPERT);
+	//	Not Memorized
+	att_list.push_back(pedestalfilename2);
+
+	//	Attribute : pedestalFileName3
+	pedestalFileName3Attrib	*pedestalfilename3 = new pedestalFileName3Attrib();
+	Tango::UserDefaultAttrProp	pedestalfilename3_prop;
+	pedestalfilename3_prop.set_description("Shows the complete path for the pedestal file of the third gain.<br>");
+	//	label	not set for pedestalFileName3
+	//	unit	not set for pedestalFileName3
+	//	standard_unit	not set for pedestalFileName3
+	//	display_unit	not set for pedestalFileName3
+	//	format	not set for pedestalFileName3
+	//	max_value	not set for pedestalFileName3
+	//	min_value	not set for pedestalFileName3
+	//	max_alarm	not set for pedestalFileName3
+	//	min_alarm	not set for pedestalFileName3
+	//	max_warning	not set for pedestalFileName3
+	//	min_warning	not set for pedestalFileName3
+	//	delta_t	not set for pedestalFileName3
+	//	delta_val	not set for pedestalFileName3
+	
+	pedestalfilename3->set_default_properties(pedestalfilename3_prop);
+	//	Not Polled
+	pedestalfilename3->set_disp_level(Tango::EXPERT);
+	//	Not Memorized
+	att_list.push_back(pedestalfilename3);
+
+	//	Attribute : gainCoeffsState
+	gainCoeffsStateAttrib	*gaincoeffsstate = new gainCoeffsStateAttrib();
+	Tango::UserDefaultAttrProp	gaincoeffsstate_prop;
+	gaincoeffsstate_prop.set_description("Shows the status of the gains coefficients state<br>\nIt can be:<br>\n- NONE (not loaded)<br>\n- LOADED<br>");
+	//	label	not set for gainCoeffsState
+	//	unit	not set for gainCoeffsState
+	//	standard_unit	not set for gainCoeffsState
+	//	display_unit	not set for gainCoeffsState
+	//	format	not set for gainCoeffsState
+	//	max_value	not set for gainCoeffsState
+	//	min_value	not set for gainCoeffsState
+	//	max_alarm	not set for gainCoeffsState
+	//	min_alarm	not set for gainCoeffsState
+	//	max_warning	not set for gainCoeffsState
+	//	min_warning	not set for gainCoeffsState
+	//	delta_t	not set for gainCoeffsState
+	//	delta_val	not set for gainCoeffsState
+	
+	gaincoeffsstate->set_default_properties(gaincoeffsstate_prop);
+	//	Not Polled
+	gaincoeffsstate->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(gaincoeffsstate);
+
+	//	Attribute : calibrationState
+	calibrationStateAttrib	*calibrationstate = new calibrationStateAttrib();
+	Tango::UserDefaultAttrProp	calibrationstate_prop;
+	calibrationstate_prop.set_description("Shows the status of the calibration state<br>\nIt can be:<br>\n- NONE (no calibration loaded or generated)<br>\n- LOADED (a previous saved calibration was loaded)<br>\n- RUNNING_0_3 (a calibration is running and at the moment no pedestal was generated)<br>\n- RUNNING_1_3 (a calibration is running and the first pedestal was generated)<br>\n- RUNNING_2_3 (a calibration is running and two pedestals were generated)<br>\n- GENERATED (a new calibration was done)<br>");
+	//	label	not set for calibrationState
+	//	unit	not set for calibrationState
+	//	standard_unit	not set for calibrationState
+	//	display_unit	not set for calibrationState
+	//	format	not set for calibrationState
+	//	max_value	not set for calibrationState
+	//	min_value	not set for calibrationState
+	//	max_alarm	not set for calibrationState
+	//	min_alarm	not set for calibrationState
+	//	max_warning	not set for calibrationState
+	//	min_warning	not set for calibrationState
+	//	delta_t	not set for calibrationState
+	//	delta_val	not set for calibrationState
+	
+	calibrationstate->set_default_properties(calibrationstate_prop);
+	//	Not Polled
+	calibrationstate->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(calibrationstate);
+
+	//	Attribute : gainCoeffs1
+	gainCoeffs1Attrib	*gaincoeffs1 = new gainCoeffs1Attrib();
+	Tango::UserDefaultAttrProp	gaincoeffs1_prop;
+	gaincoeffs1_prop.set_description("Shows the coefficients for the first gain.<br>");
+	//	label	not set for gainCoeffs1
+	//	unit	not set for gainCoeffs1
+	//	standard_unit	not set for gainCoeffs1
+	//	display_unit	not set for gainCoeffs1
+	//	format	not set for gainCoeffs1
+	//	max_value	not set for gainCoeffs1
+	//	min_value	not set for gainCoeffs1
+	//	max_alarm	not set for gainCoeffs1
+	//	min_alarm	not set for gainCoeffs1
+	//	max_warning	not set for gainCoeffs1
+	//	min_warning	not set for gainCoeffs1
+	//	delta_t	not set for gainCoeffs1
+	//	delta_val	not set for gainCoeffs1
+	
+	gaincoeffs1->set_default_properties(gaincoeffs1_prop);
+	//	Not Polled
+	gaincoeffs1->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(gaincoeffs1);
+
+	//	Attribute : gainCoeffs2
+	gainCoeffs2Attrib	*gaincoeffs2 = new gainCoeffs2Attrib();
+	Tango::UserDefaultAttrProp	gaincoeffs2_prop;
+	gaincoeffs2_prop.set_description("Shows the coefficients for the second gain.<br>");
+	//	label	not set for gainCoeffs2
+	//	unit	not set for gainCoeffs2
+	//	standard_unit	not set for gainCoeffs2
+	//	display_unit	not set for gainCoeffs2
+	//	format	not set for gainCoeffs2
+	//	max_value	not set for gainCoeffs2
+	//	min_value	not set for gainCoeffs2
+	//	max_alarm	not set for gainCoeffs2
+	//	min_alarm	not set for gainCoeffs2
+	//	max_warning	not set for gainCoeffs2
+	//	min_warning	not set for gainCoeffs2
+	//	delta_t	not set for gainCoeffs2
+	//	delta_val	not set for gainCoeffs2
+	
+	gaincoeffs2->set_default_properties(gaincoeffs2_prop);
+	//	Not Polled
+	gaincoeffs2->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(gaincoeffs2);
+
+	//	Attribute : gainCoeffs3
+	gainCoeffs3Attrib	*gaincoeffs3 = new gainCoeffs3Attrib();
+	Tango::UserDefaultAttrProp	gaincoeffs3_prop;
+	gaincoeffs3_prop.set_description("Shows the coefficients for the third gain.<br>");
+	//	label	not set for gainCoeffs3
+	//	unit	not set for gainCoeffs3
+	//	standard_unit	not set for gainCoeffs3
+	//	display_unit	not set for gainCoeffs3
+	//	format	not set for gainCoeffs3
+	//	max_value	not set for gainCoeffs3
+	//	min_value	not set for gainCoeffs3
+	//	max_alarm	not set for gainCoeffs3
+	//	min_alarm	not set for gainCoeffs3
+	//	max_warning	not set for gainCoeffs3
+	//	min_warning	not set for gainCoeffs3
+	//	delta_t	not set for gainCoeffs3
+	//	delta_val	not set for gainCoeffs3
+	
+	gaincoeffs3->set_default_properties(gaincoeffs3_prop);
+	//	Not Polled
+	gaincoeffs3->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(gaincoeffs3);
+
+	//	Attribute : pedestal1
+	pedestal1Attrib	*pedestal1 = new pedestal1Attrib();
+	Tango::UserDefaultAttrProp	pedestal1_prop;
+	pedestal1_prop.set_description("Shows the pedestal image for the first gain.<br>");
+	//	label	not set for pedestal1
+	//	unit	not set for pedestal1
+	//	standard_unit	not set for pedestal1
+	//	display_unit	not set for pedestal1
+	//	format	not set for pedestal1
+	//	max_value	not set for pedestal1
+	//	min_value	not set for pedestal1
+	//	max_alarm	not set for pedestal1
+	//	min_alarm	not set for pedestal1
+	//	max_warning	not set for pedestal1
+	//	min_warning	not set for pedestal1
+	//	delta_t	not set for pedestal1
+	//	delta_val	not set for pedestal1
+	
+	pedestal1->set_default_properties(pedestal1_prop);
+	//	Not Polled
+	pedestal1->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(pedestal1);
+
+	//	Attribute : pedestal2
+	pedestal2Attrib	*pedestal2 = new pedestal2Attrib();
+	Tango::UserDefaultAttrProp	pedestal2_prop;
+	pedestal2_prop.set_description("Shows the pedestal image for the second gain.<br>");
+	//	label	not set for pedestal2
+	//	unit	not set for pedestal2
+	//	standard_unit	not set for pedestal2
+	//	display_unit	not set for pedestal2
+	//	format	not set for pedestal2
+	//	max_value	not set for pedestal2
+	//	min_value	not set for pedestal2
+	//	max_alarm	not set for pedestal2
+	//	min_alarm	not set for pedestal2
+	//	max_warning	not set for pedestal2
+	//	min_warning	not set for pedestal2
+	//	delta_t	not set for pedestal2
+	//	delta_val	not set for pedestal2
+	
+	pedestal2->set_default_properties(pedestal2_prop);
+	//	Not Polled
+	pedestal2->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(pedestal2);
+
+	//	Attribute : pedestal3
+	pedestal3Attrib	*pedestal3 = new pedestal3Attrib();
+	Tango::UserDefaultAttrProp	pedestal3_prop;
+	pedestal3_prop.set_description("Shows the pedestal image for the third gain.<br>");
+	//	label	not set for pedestal3
+	//	unit	not set for pedestal3
+	//	standard_unit	not set for pedestal3
+	//	display_unit	not set for pedestal3
+	//	format	not set for pedestal3
+	//	max_value	not set for pedestal3
+	//	min_value	not set for pedestal3
+	//	max_alarm	not set for pedestal3
+	//	min_alarm	not set for pedestal3
+	//	max_warning	not set for pedestal3
+	//	min_warning	not set for pedestal3
+	//	delta_t	not set for pedestal3
+	//	delta_val	not set for pedestal3
+	
+	pedestal3->set_default_properties(pedestal3_prop);
+	//	Not Polled
+	pedestal3->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(pedestal3);
+
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());
 	/*----- PROTECTED REGION ID(SlsJungfrauClass::attribute_factory_after) ENABLED START -----*/
@@ -735,6 +1211,15 @@ void SlsJungfrauClass::command_factory()
 			"",
 			Tango::EXPERT);
 	command_list.push_back(pResetCameraCmd);
+
+	//	Command Calibrate
+	CalibrateClass	*pCalibrateCmd =
+		new CalibrateClass("Calibrate",
+			Tango::DEV_VOID, Tango::DEV_VOID,
+			"",
+			"",
+			Tango::OPERATOR);
+	command_list.push_back(pCalibrateCmd);
 
 	/*----- PROTECTED REGION ID(SlsJungfrauClass::command_factory_after) ENABLED START -----*/
 	
