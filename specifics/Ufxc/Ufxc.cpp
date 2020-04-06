@@ -328,6 +328,7 @@ void Ufxc::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedGeometricalCorrection"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedCountingMode"));
 	dev_prop.push_back(Tango::DbDatum("SFPMTU"));
+	dev_prop.push_back(Tango::DbDatum("UfxcModel"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -536,6 +537,17 @@ void Ufxc::get_device_property()
 	//	And try to extract SFPMTU value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  sFPMTU;
 
+	//	Try to initialize UfxcModel from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  ufxcModel;
+	else {
+		//	Try to initialize UfxcModel from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  ufxcModel;
+	}
+	//	And try to extract UfxcModel value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  ufxcModel;
+
 
 
 	//	End of Automatic code generation
@@ -551,7 +563,8 @@ void Ufxc::get_device_property()
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "SFP2Port");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "SFP3IpAddress");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "SFP3Port");
-	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "Timeout");		
+	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "Timeout");
+	PropertyHelper::create_property_if_empty(this, dev_prop, "U2C", "UfxcModel");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedThresholdLow");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedThresholdHigh");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedTriggerAcquisitionFrequency");
@@ -1624,5 +1637,6 @@ void Ufxc::manage_lima_exception(lima::Exception & in_exception, const std::stri
                                    in_exception.getErrMsg().c_str(),
                                    in_caller_method_name.c_str());
 }
+
 
 }	//	namespace

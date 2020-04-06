@@ -205,6 +205,10 @@ public :
  *	MTU value of the SFP ports.
  */
 	Tango::DevULong	sFPMTU;
+/**
+ *	Allows to specify the UFXC model.
+ */
+	string	ufxcModel;
 //@}
 
 /**

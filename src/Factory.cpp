@@ -775,17 +775,18 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 #ifdef UFXC_ENABLED
         if (detector_type == "Ufxc")
         {
+            std::string   ufxc_model        = "U2C";
             unsigned long pixel_depth       = 14;
             std::string   config_ip_address = "127.0.0.1";
-		    unsigned long config_port       = 0;
-		    std::string   SFP1_ip_address   = "127.0.0.1";
-		    unsigned long SFP1_port         = 0;				
-		    std::string   SFP2_ip_address   = "127.0.0.1";
-		    unsigned long SFP2_port         = 0;	
-		    std::string   SFP3_ip_address   = "127.0.0.1";
-		    unsigned long SFP3_port         = 0;	
-		    unsigned long timeout           = 0;
-		    unsigned long SFP_MTU           = 1500;
+            unsigned long config_port       = 0;
+            std::string   SFP1_ip_address   = "127.0.0.1";
+            unsigned long SFP1_port         = 0;
+            std::string   SFP2_ip_address   = "127.0.0.1";
+            unsigned long SFP2_port         = 0;
+            std::string   SFP3_ip_address   = "127.0.0.1";
+            unsigned long SFP3_port         = 0;
+            unsigned long timeout           = 0;
+            unsigned long SFP_MTU           = 1500;
             std::string   counting_mode     = "DEFAULT";
 
             if (!ControlFactory::m_is_created)
@@ -818,38 +819,43 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 {
                     Tango::DbData db_data;
                     db_data.push_back(Tango::DbDatum("ConfigIpAddress"));
-				    db_data.push_back(Tango::DbDatum("ConfigPort"));
-				    db_data.push_back(Tango::DbDatum("SFP1IpAddress"));
-				    db_data.push_back(Tango::DbDatum("SFP1Port"));
-				    db_data.push_back(Tango::DbDatum("SFP2IpAddress"));
-				    db_data.push_back(Tango::DbDatum("SFP2Port"));
-				    db_data.push_back(Tango::DbDatum("SFP3IpAddress"));
-				    db_data.push_back(Tango::DbDatum("SFP3Port"));
-				    db_data.push_back(Tango::DbDatum("Timeout"));
-				    db_data.push_back(Tango::DbDatum("SFPMTU"));
+                    db_data.push_back(Tango::DbDatum("ConfigPort"));
+                    db_data.push_back(Tango::DbDatum("SFP1IpAddress"));
+                    db_data.push_back(Tango::DbDatum("SFP1Port"));
+                    db_data.push_back(Tango::DbDatum("SFP2IpAddress"));
+                    db_data.push_back(Tango::DbDatum("SFP2Port"));
+                    db_data.push_back(Tango::DbDatum("SFP3IpAddress"));
+                    db_data.push_back(Tango::DbDatum("SFP3Port"));
+                    db_data.push_back(Tango::DbDatum("Timeout"));
+                    db_data.push_back(Tango::DbDatum("SFPMTU"));
                     db_data.push_back(Tango::DbDatum("MemorizedCountingMode"));
-    				
+                    db_data.push_back(Tango::DbDatum("UfxcModel"));
+                    
                     (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
-   				
-                    db_data[0]  >> config_ip_address;
-				    db_data[1]  >> config_port;
-                    db_data[2]  >> SFP1_ip_address;
-				    db_data[3]  >> SFP1_port;
-                    db_data[4]  >> SFP2_ip_address;
-				    db_data[5]  >> SFP2_port;
-                    db_data[6]  >> SFP3_ip_address;
-				    db_data[7]  >> SFP3_port;
-				    db_data[8]  >> timeout;
-				    db_data[9]  >> SFP_MTU;
-				    db_data[10] >> counting_mode;
-                }				
+                    
+                    int prop_index = 0;
+                    
+                    db_data[prop_index++] >> config_ip_address;
+                    db_data[prop_index++] >> config_port;
+                    db_data[prop_index++] >> SFP1_ip_address;
+                    db_data[prop_index++] >> SFP1_port;
+                    db_data[prop_index++] >> SFP2_ip_address;
+                    db_data[prop_index++] >> SFP2_port;
+                    db_data[prop_index++] >> SFP3_ip_address;
+                    db_data[prop_index++] >> SFP3_port;
+                    db_data[prop_index++] >> timeout;
+                    db_data[prop_index++] >> SFP_MTU;
+                    db_data[prop_index++] >> counting_mode;
+                    db_data[prop_index++] >> ufxc_model;
+                }
 
-                m_camera = static_cast<void*> (new Ufxc::Camera(config_ip_address, config_port,
-																SFP1_ip_address, SFP1_port,
-																SFP2_ip_address, SFP2_port,
-																SFP3_ip_address, SFP3_port,
+                m_camera = static_cast<void*> (new Ufxc::Camera(ufxc_model,
+                                                                config_ip_address, config_port,
+                                                                SFP1_ip_address, SFP1_port,
+                                                                SFP2_ip_address, SFP2_port,
+                                                                SFP3_ip_address, SFP3_port,
                                                                 SFP_MTU,
-																timeout,
+                                                                timeout,
                                                                 pixel_depth,
                                                                 counting_mode));
                 m_interface = static_cast<void*> (new Ufxc::Interface(*(static_cast<Ufxc::Camera*> (m_camera))));
