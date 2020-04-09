@@ -1123,7 +1123,7 @@ bool RoiCounters::create_image_dynamic_attributes(void)
 		return false;
 	}
 
-	//- create image dyn attr (UChar, UShort or ULong)
+	//- create image dyn attr (UChar, UShort, Short, ULong, Long)
 	std::string class_name = "LimaDetector";
 	std::string device_name_generic;
 	Tango::DbDatum db_datum;
@@ -1161,13 +1161,13 @@ bool RoiCounters::create_image_dynamic_attributes(void)
 			{
 				dai.tai.data_type = Tango::DEV_USHORT;
 			}
+			else if(pixel_depth == "16S")
+			{
+				dai.tai.data_type = Tango::DEV_SHORT;
+			}			
 			else if(pixel_depth == "24" || pixel_depth == "32" || pixel_depth == "2A")
 			{
 				dai.tai.data_type = Tango::DEV_ULONG;
-			}
-			else if(pixel_depth == "16S")
-			{
-				dai.tai.data_type = Tango::DEV_USHORT;
 			}
 			else if(pixel_depth == "32S")
 			{
@@ -1522,6 +1522,18 @@ void RoiCounters::read_image_callback(yat4tango::DynamicAttributeReadCallbackDat
 					}
 						break;
 
+						//signed 16 bits
+					case yat4tango::TangoTraits<Tango::DevShort>::type_id:
+					{
+						DEBUG_STREAM << "image->set_value() : DevShort" << endl;
+						m_image_data_roi = copy_roi_from_image<Tango::DevShort>(image_data, roi_num);
+						cbd.tga->set_value((Tango::DevShort*)(m_image_data_roi.data()),
+										attr_width_arrays[roi_num], //- width
+										attr_height_arrays[roi_num] //- height
+										);
+					}
+						break;
+						
 						//32 bits
 					case yat4tango::TangoTraits<Tango::DevULong>::type_id:
 					{
