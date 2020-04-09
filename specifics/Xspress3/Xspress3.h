@@ -4,7 +4,7 @@
 //
 // description : Include for the Xspress3 class.
 //
-// project :	
+// project :	Lima Xspress3 device Specific
 //
 // $Author:  $
 //
@@ -81,7 +81,7 @@ namespace Xspress3_ns
 
 /**
  * Class Description:
- * 
+ * LIma Xspress3 device Specific
  */
 
 /*
@@ -128,27 +128,27 @@ public :
  */
 	Tango::DevLong	basePort;
 /**
- *	
+ *	Card index [default=0]
  */
 	Tango::DevLong	cardIndex;
 /**
- *	
+ *	The directory containing calibration files
  */
 	string	directoryName;
 /**
- *	
+ *	Each card can handle 8192 frames
  */
 	Tango::DevLong	maxFrames;
 /**
- *	
+ *	Number of cards in the system
  */
 	Tango::DevLong	nbCards;
 /**
- *	
+ *	Each card has 2 channels
  */
 	Tango::DevLong	nbChans;
 /**
- *	
+ *	Use or Not UDP connection (always false!)
  */
 	Tango::DevBoolean	noUDP;
 //@}

@@ -274,18 +274,16 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : temperature
 	temperatureAttrib	*temperature = new temperatureAttrib();
 	Tango::UserDefaultAttrProp	temperature_prop;
-	temperature_prop.set_unit("°C");
-	temperature_prop.set_standard_unit("°C");
-	temperature_prop.set_display_unit("°C");
+	temperature_prop.set_unit("Celsius");
+	temperature_prop.set_description("Get Temperature of the detector (in Celsius)");
 	temperature->set_default_properties(temperature_prop);
 	att_list.push_back(temperature);
 
 	//	Attribute : temperatureTarget
 	temperatureTargetAttrib	*temperature_target = new temperatureTargetAttrib();
 	Tango::UserDefaultAttrProp	temperature_target_prop;
-	temperature_target_prop.set_unit("°C");
-	temperature_target_prop.set_standard_unit("°C");
-	temperature_target_prop.set_display_unit("°C");
+	temperature_target_prop.set_unit("Celsius");
+	temperature_target_prop.set_description("Set the Temperature target of the detector (in Celsius)");
 	temperature_target->set_default_properties(temperature_target_prop);
 	temperature_target->set_memorized();
 	temperature_target->set_memorized_init(false);
@@ -297,6 +295,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	fan_speed_prop.set_unit(" ");
 	fan_speed_prop.set_standard_unit(" ");
 	fan_speed_prop.set_display_unit(" ");
+	fan_speed_prop.set_description("Define the fan speed of the detector [0..5]");
 	fan_speed->set_default_properties(fan_speed_prop);
 	fan_speed->set_memorized();
 	fan_speed->set_memorized_init(false);
@@ -308,6 +307,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	global_gain_prop.set_unit(" ");
 	global_gain_prop.set_standard_unit(" ");
 	global_gain_prop.set_display_unit(" ");
+	global_gain_prop.set_description("Define the gain of the detector [LOW, HIGH, HDR]");
 	global_gain->set_default_properties(global_gain_prop);
 	global_gain->set_memorized();
 	global_gain->set_memorized_init(false);
@@ -455,7 +455,7 @@ void DhyanaClass::write_class_property()
 	//	Put Description
 	Tango::DbDatum	description("Description");
 	vector<string>	str_desc;
-	str_desc.push_back("  ");
+	str_desc.push_back("Interface the camera Dhyana using  the TUCAM Library");
 	description << str_desc;
 	data.push_back(description);
 		

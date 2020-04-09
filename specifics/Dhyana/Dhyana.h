@@ -70,7 +70,7 @@ namespace Dhyana_ns
 
 /**
  * Class Description:
- * 
+ * Interface the camera Dhyana using  the TUCAM Library
  */
 
 /*
