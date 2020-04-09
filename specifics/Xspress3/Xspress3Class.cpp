@@ -244,6 +244,10 @@ void Xspress3Class::attribute_factory(vector<Tango::Attr *> &att_list)
 {
 	//	Attribute : revision
 	revisionAttrib	*revision = new revisionAttrib();
+	Tango::UserDefaultAttrProp	revision_prop;
+	revision_prop.set_unit(" ");
+	revision_prop.set_description("Revision of the xspress3 firmware");
+	revision->set_default_properties(revision_prop);
 	att_list.push_back(revision);
 
 	//	End of Automatic code generation
@@ -349,7 +353,7 @@ void Xspress3Class::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "CardIndex";
-	prop_desc = "";
+	prop_desc = "Card index [default=0]";
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
@@ -364,7 +368,7 @@ void Xspress3Class::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "DirectoryName";
-	prop_desc = "";
+	prop_desc = "The directory containing calibration files";
 	prop_def  = "/home/xspress3/xspress3-autocalib/calibration/initial/settings";
 	vect_data.clear();
 	vect_data.push_back("/home/xspress3/xspress3-autocalib/calibration/initial/settings");
@@ -379,10 +383,10 @@ void Xspress3Class::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MaxFrames";
-	prop_desc = "";
-	prop_def  = "16384";
+	prop_desc = "Each card can handle 8192 frames";
+	prop_def  = "8192";
 	vect_data.clear();
-	vect_data.push_back("16384");
+	vect_data.push_back("8192");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -394,7 +398,22 @@ void Xspress3Class::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "NbCards";
-	prop_desc = "";
+	prop_desc = "Number of cards in the system";
+	prop_def  = "1";
+	vect_data.clear();
+	vect_data.push_back("1");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "NbChans";
+	prop_desc = "Each card has 2 channels";
 	prop_def  = "2";
 	vect_data.clear();
 	vect_data.push_back("2");
@@ -408,23 +427,8 @@ void Xspress3Class::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
-	prop_name = "NbChans";
-	prop_desc = "";
-	prop_def  = "4";
-	vect_data.clear();
-	vect_data.push_back("4");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
 	prop_name = "NoUDP";
-	prop_desc = "";
+	prop_desc = "Use or Not UDP connection (always false!)";
 	prop_def  = "false";
 	vect_data.clear();
 	vect_data.push_back("false");
@@ -460,14 +464,14 @@ void Xspress3Class::write_class_property()
 
 	//	Put title
 	Tango::DbDatum	title("ProjectTitle");
-	string	str_title("");
+	string	str_title("Lima Xspress3 device Specific");
 	title << str_title;
 	data.push_back(title);
 
 	//	Put Description
 	Tango::DbDatum	description("Description");
 	vector<string>	str_desc;
-	str_desc.push_back("  ");
+	str_desc.push_back("LIma Xspress3 device Specific");
 	description << str_desc;
 	data.push_back(description);
 		

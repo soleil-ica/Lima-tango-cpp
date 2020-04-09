@@ -33,6 +33,7 @@ This device server provides several Tango classes:
   
   AndorCCD <AndorCCD/andorccd>
   BaslerCCD <BaslerCCD/baslerccd>
+  Dhyana <Dhyana/dhyana>
   Eiger <Eiger/eiger>
   Hamamatsu <Hamamatsu/hamamatsu>
   ImXpad <ImXpad/imxpad>
@@ -50,6 +51,7 @@ This device server provides several Tango classes:
   SlsJungfrau <SlsJungfrau/slsjungfrau>
   Uview <Uview/uview>
   XpadPixelDetector <XpadPixelDetector/xpadpixeldetector>
+  Xspress3 <Xspress3/xspress3>
   
 --------------------------
 
