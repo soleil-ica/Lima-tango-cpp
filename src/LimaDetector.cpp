@@ -3077,6 +3077,15 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
                                                );
                             break;
 
+                            //signed 16 bits
+                        case yat4tango::TangoTraits<Tango::DevShort>::type_id:
+                            DEBUG_STREAM << "image->set_value() : DevShort" << endl;
+                            cbd.tga->set_value((Tango::DevShort*)last_image.data(),
+                                               last_image.dimensions[WIDTH_INDEX], //- width
+                                               last_image.dimensions[HEIGHT_INDEX] //- height
+                                               );
+                            break;
+                            
                             //32 bits
                         case yat4tango::TangoTraits<Tango::DevULong>::type_id:
                             DEBUG_STREAM << "image->set_value() : DevULong" << endl;
@@ -3144,6 +3153,15 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
                                                );
                             break;
 
+                            //signed 16 bits
+                        case yat4tango::TangoTraits<Tango::DevShort>::type_id:
+                            DEBUG_STREAM << "image->set_value() : DevShort" << endl;
+                            cbd.tga->set_value((Tango::DevShort*)last_image.buffer(),
+                                               last_image.width(), //- width
+                                               last_image.height()//- height
+                                               );
+                            break;
+                            
                             //32 bits
                         case yat4tango::TangoTraits<Tango::DevULong>::type_id:
                             DEBUG_STREAM << "image->set_value() : DevULong" << endl;
@@ -4796,14 +4814,14 @@ void LimaDetector::add_image_dynamic_attribute(const std::string& attr_name)
     {
         dai.tai.data_type = Tango::DEV_USHORT;
     }
+    else if(detectorPixelDepth == "16S")
+    {
+        dai.tai.data_type = Tango::DEV_SHORT;
+    }	    
     else if(detectorPixelDepth == "24" || detectorPixelDepth == "32" || detectorPixelDepth == "2A")
     {
         dai.tai.data_type = Tango::DEV_ULONG;
     }
-    else if(detectorPixelDepth == "16S")
-    {
-        dai.tai.data_type = Tango::DEV_USHORT;
-    }	
     else if(detectorPixelDepth == "32S")
     {
         dai.tai.data_type = Tango::DEV_LONG;
