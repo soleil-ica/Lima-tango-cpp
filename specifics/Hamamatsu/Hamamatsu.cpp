@@ -67,28 +67,6 @@ static const char *RcsId = "$Id:  $";
 #define SYNCREADOUT_BLANKMODE_STANDARD	"STANDARD"
 #define SYNCREADOUT_BLANKMODE_MINIMUM	"MINIMUM"
 
-#define SENSOR_COOLER_NOT_SUPPORTED "NOT_SUPPORTED"
-#define SENSOR_COOLER_OFF           "OFF"
-#define SENSOR_COOLER_ON            "ON"
-#define SENSOR_COOLER_MAX           "MAX"
-
-#define TEMPERATURE_STATUS_NOT_SUPPORTED "NOT_SUPPORTED"
-#define TEMPERATURE_STATUS_NORMAL        "NORMAL"
-#define TEMPERATURE_STATUS_WARNING       "WARNING"
-#define TEMPERATURE_STATUS_PROTECTION    "PROTECTION"
-
-#define COOLER_STATUS_NOT_SUPPORTED "NOT_SUPPORTED"
-#define COOLER_STATUS_ERROR4        "ERROR4"
-#define COOLER_STATUS_ERROR3        "ERROR3"
-#define COOLER_STATUS_ERROR2        "ERROR2"
-#define COOLER_STATUS_ERROR1        "ERROR1"
-#define COOLER_STATUS_NONE          "NONE"
-#define COOLER_STATUS_OFF           "OFF"
-#define COOLER_STATUS_READY         "READY"
-#define COOLER_STATUS_BUSY          "BUSY"
-#define COOLER_STATUS_ALWAYS        "ALWAYS"
-#define COOLER_STATUS_WARNING       "WARNING"
-
 namespace Hamamatsu_ns
 {
 
@@ -103,19 +81,19 @@ namespace Hamamatsu_ns
 //
 //-----------------------------------------------------------------------------
 Hamamatsu::Hamamatsu(Tango::DeviceClass *cl,string &s)
-:Tango::Device_4Impl(cl,s.c_str())
+:Tango::Device_4Impl(cl,s.c_str()), m_dim(this)
 {
 	init_device();
 }
 
 Hamamatsu::Hamamatsu(Tango::DeviceClass *cl,const char *s)
-:Tango::Device_4Impl(cl,s)
+:Tango::Device_4Impl(cl,s), m_dim(this)
 {
 	init_device();
 }
 
 Hamamatsu::Hamamatsu(Tango::DeviceClass *cl,const char *s,const char *d)
-:Tango::Device_4Impl(cl,s,d)
+:Tango::Device_4Impl(cl,s,d), m_dim(this)
 {
 	init_device();
 }
@@ -128,18 +106,23 @@ Hamamatsu::Hamamatsu(Tango::DeviceClass *cl,const char *s,const char *d)
 //-----------------------------------------------------------------------------
 void Hamamatsu::delete_device()
 {
-	//	Delete device allocated objects
-
+	// Release dynamic attributes
+    release_dynamics_attributes();
+    
+    //	Delete device allocated objects
 	DELETE_DEVSTRING_ATTRIBUTE(attr_readoutSpeed_read);
-	DELETE_DEVSTRING_ATTRIBUTE(attr_coolerMode_read);
-	DELETE_DEVSTRING_ATTRIBUTE(attr_coolerStatus_read);
-	DELETE_DEVSTRING_ATTRIBUTE(attr_temperatureStatus_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_lostFrames_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_fps_read);
     DELETE_SCALAR_ATTRIBUTE(attr_wViewEnabled_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_topViewExposureTime_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_bottomViewExposureTime_read);
-    DELETE_SCALAR_ATTRIBUTE(attr_temperature_read);
+
+    DELETE_SCALAR_ATTRIBUTE(attr_dyn_temperature_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_dyn_highDynamicRangeEnabled_read);
+
+	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerMode_read);
+	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerStatus_read);
+	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_temperatureStatus_read);
 
 	INFO_STREAM << "Remove the inner-appender." << endl;
     yat4tango::InnerAppender::release(this);
@@ -161,15 +144,21 @@ void Hamamatsu::init_device()
 	get_device_property();
 
 	CREATE_DEVSTRING_ATTRIBUTE(attr_readoutSpeed_read     , MAX_ATTRIBUTE_STRING_LENGTH);
-	CREATE_DEVSTRING_ATTRIBUTE(attr_coolerMode_read       , MAX_ATTRIBUTE_STRING_LENGTH);
-	CREATE_DEVSTRING_ATTRIBUTE(attr_coolerStatus_read     , MAX_ATTRIBUTE_STRING_LENGTH);
-	CREATE_DEVSTRING_ATTRIBUTE(attr_temperatureStatus_read, MAX_ATTRIBUTE_STRING_LENGTH);
-	CREATE_SCALAR_ATTRIBUTE(attr_lostFrames_read);
+
+    CREATE_SCALAR_ATTRIBUTE(attr_lostFrames_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_fps_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_wViewEnabled_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_topViewExposureTime_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_bottomViewExposureTime_read);
-	CREATE_SCALAR_ATTRIBUTE(attr_temperature_read);
+
+    CREATE_SCALAR_ATTRIBUTE(attr_dyn_temperature_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_dyn_highDynamicRangeEnabled_read);
+
+	CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerMode_read       , MAX_ATTRIBUTE_STRING_LENGTH);
+	CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerStatus_read     , MAX_ATTRIBUTE_STRING_LENGTH);
+	CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_temperatureStatus_read, MAX_ATTRIBUTE_STRING_LENGTH);
+
+    m_device = this; // Device server object used in dynamic attributes templates
 
 	m_is_device_initialized = false;
 	set_state(Tango::INIT);
@@ -189,102 +178,94 @@ void Hamamatsu::init_device()
 		//- get camera to specific detector
 		m_camera = &(m_hw->getCamera());
 
+	    // Create dynamic attributes
+        create_dynamics_attributes();
+
+        // Update the hardware with the properties data
+        write_at_init();
 	}
-	catch(Exception& e)
-	{
-		INFO_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
-		m_status_message << "Initialization Failed : " << e.getErrMsg( ) << endl;
+    catch(lima::Exception& e)
+    {
+        m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
 		m_is_device_initialized = false;
 		set_state(Tango::FAULT);
-		return;
-	}
-	catch(...)
-	{
-		INFO_STREAM << "Initialization Failed : UNKNOWN" << endl;
-		m_status_message << "Initialization Failed : UNKNOWN" << endl;
-		set_state(Tango::FAULT);
+        return;
+    }
+    catch (yat::Exception& ex)
+    {
+        m_status_message << "Initialization Failed : " << ex.errors[0].desc << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
 		m_is_device_initialized = false;
-		return;
-	}
-	
-	// write at init
+		set_state(Tango::FAULT);
+        return;
+    }
+    catch (Tango::DevFailed& df)
+    {
+        m_status_message << "Initialization Failed : " << df.errors[0].desc << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
+		m_is_device_initialized = false;
+		set_state(Tango::FAULT);
+        return;
+    }
+    catch(...)
+    {
+        m_status_message << "Initialization Failed : Unknown error" << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
+		m_is_device_initialized = false;
+		set_state(Tango::FAULT);
+        return;
+    }
+
+	m_is_device_initialized = true;
+	set_state(Tango::STANDBY);
+	dev_state();	
+}
+
+/*****************************************************************************
+ * \brief Update the hardware with the properties data
+ *****************************************************************************/
+void Hamamatsu::write_at_init(void)
+{
+    INFO_STREAM << "- Update the hardware with the properties" << endl;
+
     //------------------------------------------------------------------------------
     // Readout Speed
     //------------------------------------------------------------------------------
-	try
-	{      		
-		//write Readout Speed
-		INFO_STREAM << "Write tango hardware at Init - readoutSpeed." << endl;
-		Tango::WAttribute &readoutSpeed = dev_attr->get_w_attr_by_name("readoutSpeed");
-		m_readoutSpeed = memorizedReadoutSpeed;
-		strcpy(*attr_readoutSpeed_read, memorizedReadoutSpeed.c_str());
-		readoutSpeed.set_write_value(m_readoutSpeed);
-		write_readoutSpeed(readoutSpeed);
-	}
-	catch(Exception& e)
-	{
-		INFO_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
-		m_status_message << "Initialization Failed : " << e.getErrMsg( ) << endl;
-		m_is_device_initialized = false;
-		set_state(Tango::FAULT);
-		return;
-	}
-	catch(...)
-	{
-		INFO_STREAM << "Initialization Failed : UNKNOWN" << endl;
-		m_status_message << "Initialization Failed : UNKNOWN" << endl;
-		set_state(Tango::FAULT);
-		m_is_device_initialized = false;
-		return;
-	}
+	INFO_STREAM << "Write tango hardware at Init - readoutSpeed." << endl;
+	Tango::WAttribute &readoutSpeed = dev_attr->get_w_attr_by_name("readoutSpeed");
+	m_readoutSpeed = memorizedReadoutSpeed;
+	strcpy(*attr_readoutSpeed_read, memorizedReadoutSpeed.c_str());
+	readoutSpeed.set_write_value(m_readoutSpeed);
+	write_readoutSpeed(readoutSpeed);
 
     //------------------------------------------------------------------------------
     // Synchronous readout blank mode
     //------------------------------------------------------------------------------
-	try
-	{      		
-		//Synchronous readout blank mode
-		INFO_STREAM << "Write tango hardware at Init - BlankOfSyncreadoutTrigger." << endl;
+	INFO_STREAM << "Write tango hardware at Init - BlankOfSyncreadoutTrigger." << endl;
 
-		transform(blankOfSyncreadoutTrigger.begin(), blankOfSyncreadoutTrigger.end(), blankOfSyncreadoutTrigger.begin(), ::toupper);
+	transform(blankOfSyncreadoutTrigger.begin(), blankOfSyncreadoutTrigger.end(), blankOfSyncreadoutTrigger.begin(), ::toupper);
 
-        if (blankOfSyncreadoutTrigger != SYNCREADOUT_BLANKMODE_STANDARD &&
-            blankOfSyncreadoutTrigger != SYNCREADOUT_BLANKMODE_MINIMUM)
-		{			
-			string userMsg;
-            userMsg = string("Available Synchronous Readout blank modes are:\n- ") + string(SYNCREADOUT_BLANKMODE_STANDARD) + string("\n- ") + string(SYNCREADOUT_BLANKMODE_MINIMUM);
+    if (blankOfSyncreadoutTrigger != SYNCREADOUT_BLANKMODE_STANDARD &&
+        blankOfSyncreadoutTrigger != SYNCREADOUT_BLANKMODE_MINIMUM)
+	{			
+		string userMsg;
+        userMsg = string("Available Synchronous Readout blank modes are:\n- ") + string(SYNCREADOUT_BLANKMODE_STANDARD) + string("\n- ") + string(SYNCREADOUT_BLANKMODE_MINIMUM);
 
-            Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
-                                            userMsg.c_str(),
-                                            "Hamamatsu::init_device");
-		}
+        Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
+                                        userMsg.c_str(),
+                                        "Hamamatsu::init_device");
+	}
 
+    m_SyncreadoutBlankMode = lima::Hamamatsu::Camera::SyncReadOut_BlankMode_Standard;
+
+    if (blankOfSyncreadoutTrigger == SYNCREADOUT_BLANKMODE_STANDARD)
         m_SyncreadoutBlankMode = lima::Hamamatsu::Camera::SyncReadOut_BlankMode_Standard;
-
-        if (blankOfSyncreadoutTrigger == SYNCREADOUT_BLANKMODE_STANDARD)
-            m_SyncreadoutBlankMode = lima::Hamamatsu::Camera::SyncReadOut_BlankMode_Standard;
-        else
-        if (blankOfSyncreadoutTrigger == SYNCREADOUT_BLANKMODE_MINIMUM)
-            m_SyncreadoutBlankMode = lima::Hamamatsu::Camera::SyncReadOut_BlankMode_Minimum;
-		
-		m_camera->setSyncReadoutBlankMode(m_SyncreadoutBlankMode);
-	}
-	catch(Exception& e)
-	{
-		INFO_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
-		m_status_message << "Initialization Failed : " << e.getErrMsg( ) << endl;
-		m_is_device_initialized = false;
-		set_state(Tango::FAULT);
-		return;
-	}
-	catch(...)
-	{
-		INFO_STREAM << "Initialization Failed : UNKNOWN" << endl;
-		m_status_message << "Initialization Failed : UNKNOWN" << endl;
-		set_state(Tango::FAULT);
-		m_is_device_initialized = false;
-		return;
-	}
+    else
+    if (blankOfSyncreadoutTrigger == SYNCREADOUT_BLANKMODE_MINIMUM)
+        m_SyncreadoutBlankMode = lima::Hamamatsu::Camera::SyncReadOut_BlankMode_Minimum;
+	
+	m_camera->setSyncReadoutBlankMode(m_SyncreadoutBlankMode);
 
     //------------------------------------------------------------------------------
     // Top View & Bottom View Exposure Times
@@ -295,92 +276,136 @@ void Hamamatsu::init_device()
     //------------------------------------------------------------------------------
     // W-View Mode
     //------------------------------------------------------------------------------
-	try
-	{      		
-		INFO_STREAM << "Write tango hardware at Init - wViewEnabled." << endl;
-		Tango::WAttribute &wiewMode = dev_attr->get_w_attr_by_name("wViewEnabled");
-		m_wViewEnabled = memorizedWViewEnabled;
-        *attr_wViewEnabled_read = m_wViewEnabled;
-		wiewMode.set_write_value(m_wViewEnabled);
-		write_wViewEnabled(wiewMode);
-	}
-	catch(Exception& e)
-	{
-		INFO_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
-		m_status_message << "Initialization Failed : " << e.getErrMsg( ) << endl;
-		m_is_device_initialized = false;
-		set_state(Tango::FAULT);
-		return;
-	}
-	catch(...)
-	{
-		INFO_STREAM << "Initialization Failed : UNKNOWN" << endl;
-		m_status_message << "Initialization Failed : UNKNOWN" << endl;
-		set_state(Tango::FAULT);
-		m_is_device_initialized = false;
-    	dev_state();	
-		return;
-	}
+	INFO_STREAM << "Write tango hardware at Init - wViewEnabled." << endl;
+	Tango::WAttribute &wiewMode = dev_attr->get_w_attr_by_name("wViewEnabled");
+	m_wViewEnabled = memorizedWViewEnabled;
+    *attr_wViewEnabled_read = m_wViewEnabled;
+	wiewMode.set_write_value(m_wViewEnabled);
+	write_wViewEnabled(wiewMode);
 
     //------------------------------------------------------------------------------
     // Top View Exposure Time
     //------------------------------------------------------------------------------
-    try
-    {      		
-	    INFO_STREAM << "Write tango hardware at Init - topViewExposureTime." << endl;
-	    Tango::WAttribute &topViewExposure = dev_attr->get_w_attr_by_name("topViewExposureTime");
-        *attr_topViewExposureTime_read = m_TopViewExposureTime;
-	    topViewExposure.set_write_value(m_TopViewExposureTime);
-    }
-    catch(Exception& e)
-    {
-	    INFO_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
-	    m_status_message << "Initialization Failed : " << e.getErrMsg( ) << endl;
-	    m_is_device_initialized = false;
-	    set_state(Tango::FAULT);
-	    return;
-    }
-    catch(...)
-    {
-	    INFO_STREAM << "Initialization Failed : UNKNOWN" << endl;
-	    m_status_message << "Initialization Failed : UNKNOWN" << endl;
-	    set_state(Tango::FAULT);
-	    m_is_device_initialized = false;
-	    return;
-    }
+    INFO_STREAM << "Write tango hardware at Init - topViewExposureTime." << endl;
+    Tango::WAttribute &topViewExposure = dev_attr->get_w_attr_by_name("topViewExposureTime");
+    *attr_topViewExposureTime_read = m_TopViewExposureTime;
+    topViewExposure.set_write_value(m_TopViewExposureTime);
 
     //------------------------------------------------------------------------------
     // Bottom View Exposure Time
     //------------------------------------------------------------------------------
-    try
-    {      		
-	    INFO_STREAM << "Write tango hardware at Init - bottomViewExposureTime." << endl;
-	    Tango::WAttribute &bottomViewExposure = dev_attr->get_w_attr_by_name("bottomViewExposureTime");
-        *attr_bottomViewExposureTime_read = m_BottomViewExposureTime;
-	    bottomViewExposure.set_write_value(m_BottomViewExposureTime);
-    }
-    catch(Exception& e)
-    {
-	    INFO_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
-	    m_status_message << "Initialization Failed : " << e.getErrMsg( ) << endl;
-	    m_is_device_initialized = false;
-	    set_state(Tango::FAULT);
-	    return;
-    }
-    catch(...)
-    {
-	    INFO_STREAM << "Initialization Failed : UNKNOWN" << endl;
-	    m_status_message << "Initialization Failed : UNKNOWN" << endl;
-	    set_state(Tango::FAULT);
-	    m_is_device_initialized = false;
-	    return;
-    }
+    INFO_STREAM << "Write tango hardware at Init - bottomViewExposureTime." << endl;
+    Tango::WAttribute &bottomViewExposure = dev_attr->get_w_attr_by_name("bottomViewExposureTime");
+    *attr_bottomViewExposureTime_read = m_BottomViewExposureTime;
+    bottomViewExposure.set_write_value(m_BottomViewExposureTime);
 
-	m_is_device_initialized = true;
-	set_state(Tango::STANDBY);
-	dev_state();	
+    //------------------------------------------------------------------------------
+    // High dynamic range activation
+    //------------------------------------------------------------------------------
+    if(m_camera->isHighDynamicRangeSupported())
+    {
+        write_property_in_dynamic_attribute<Tango::DevBoolean>("highDynamicRangeEnabled", "MemorizedHighDynamicRangeEnabled", &Hamamatsu::write_highDynamicRangeEnabled_callback);
+    }
 }
 
+/*****************************************************************************
+ * \brief Create all dynamics attributes
+ *****************************************************************************/
+void Hamamatsu::create_dynamics_attributes(void)
+{
+    INFO_STREAM << "- Create the dynamics attributes" << endl;
+
+    if(m_camera->isSensorTemperatureSupported())
+    {
+        create_dynamic_attribute("temperature",
+                                 Tango::DEV_DOUBLE,
+                                 Tango::SCALAR,
+                                 Tango::READ,
+                                 Tango::OPERATOR,
+                                 0, // no polling
+                                 "Celcius",
+                                 "%.2",
+                                 "Temperature of the image sensor in Celcius.",
+                                 &Hamamatsu::read_temperature_callback,
+                                 &Hamamatsu::write_callback_null,
+                                 attr_dyn_temperature_read);
+    }
+
+    if(m_camera->isTemperatureStatusSupported())
+    {
+        create_dynamic_attribute("temperatureStatus",
+                                 Tango::DEV_STRING,
+                                 Tango::SCALAR,
+                                 Tango::READ,
+                                 Tango::OPERATOR,
+                                 0, // no polling
+                                 "",
+                                 "",
+                                 "Current temperature status (NOT_SUPPORTED, NORMAL, WARNING, PROTECTION).",
+                                 &Hamamatsu::read_temperatureStatus_callback,
+                                 &Hamamatsu::write_callback_null,
+                                 attr_dyn_temperatureStatus_read);
+    }
+
+    if(m_camera->isCoolerModeSupported())
+    {
+        create_dynamic_attribute("coolerMode",
+                                 Tango::DEV_STRING,
+                                 Tango::SCALAR,
+                                 Tango::READ,
+                                 Tango::OPERATOR,
+                                 0, // no polling
+                                 "",
+                                 "",
+                                 "Selected cooler mode (OFF/ON/MAX/NOT_SUPPORTED).",
+                                 &Hamamatsu::read_coolerMode_callback,
+                                 &Hamamatsu::write_callback_null,
+                                 attr_dyn_coolerMode_read);
+    }
+
+    if(m_camera->isCoolerStatusSupported())
+    {
+        create_dynamic_attribute("coolerStatus",
+                                 Tango::DEV_STRING,
+                                 Tango::SCALAR,
+                                 Tango::READ,
+                                 Tango::OPERATOR,
+                                 0, // no polling
+                                 "",
+                                 "",
+                                 "Current cooler status.<br>\nPossible values can be:<br>\n- inactive (NOT_SUPPORTED, NONE, OFF)<br>\n- in error (ERROR1, ERROR2, ERROR3, ERROR4)<br>\n- running (READY, BUSY, ALWAYS, WARNING)<br>",
+                                 &Hamamatsu::read_coolerStatus_callback,
+                                 &Hamamatsu::write_callback_null,
+                                 attr_dyn_coolerStatus_read);
+    }
+
+    if(m_camera->isHighDynamicRangeSupported())
+    {
+        create_dynamic_attribute("highDynamicRangeEnabled",
+                                 Tango::DEV_BOOLEAN,
+                                 Tango::SCALAR,
+                                 Tango::READ_WRITE,
+                                 Tango::OPERATOR,
+                                 0, // no polling
+                                 "",
+                                 "",
+                                 "Current high dynamic range activation status.<br>False is for Standard Full Well Capacity mode.<br>True is for High Full Well Capacity mode.<br>",
+                                 &Hamamatsu::read_highDynamicRangeEnabled_callback,
+                                 &Hamamatsu::write_highDynamicRangeEnabled_callback,
+                                 attr_dyn_highDynamicRangeEnabled_read);
+    }
+}
+
+/*****************************************************************************
+ * \brief Release all dynamics attributes
+ *****************************************************************************/
+void Hamamatsu::release_dynamics_attributes(void)
+{
+    INFO_STREAM << "- Remove the dynamics attributes." << endl;
+
+    //	Delete device allocated objects
+    m_dim.remove();
+}
 
 //+----------------------------------------------------------------------------
 //
@@ -403,6 +428,7 @@ void Hamamatsu::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedTopViewExposureTime"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedBottomViewExposureTime"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedWViewEnabled"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedHighDynamicRangeEnabled"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -479,6 +505,17 @@ void Hamamatsu::get_device_property()
 	//	And try to extract MemorizedWViewEnabled value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedWViewEnabled;
 
+	//	Try to initialize MemorizedHighDynamicRangeEnabled from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedHighDynamicRangeEnabled;
+	else {
+		//	Try to initialize MemorizedHighDynamicRangeEnabled from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedHighDynamicRangeEnabled;
+	}
+	//	And try to extract MemorizedHighDynamicRangeEnabled value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedHighDynamicRangeEnabled;
+
 
 
 	//	End of Automatic code generation
@@ -490,6 +527,8 @@ void Hamamatsu::get_device_property()
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "MemorizedWViewEnabled"          );
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1000" , "MemorizedTopViewExposureTime"   );
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1000" , "MemorizedBottomViewExposureTime");
+
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "MemorizedHighDynamicRangeEnabled");
 }
 
 //+----------------------------------------------------------------------------
@@ -546,37 +585,6 @@ void Hamamatsu::read_attr_hardware(vector<long> &attr_list)
 {
 	DEBUG_STREAM << "Hamamatsu::read_attr_hardware(vector<long> &attr_list) entering... "<< endl;
 	//	Add your own code here
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		Hamamatsu::read_temperature
-// 
-// description : 	Extract real attribute values for temperature acquisition result.
-//
-//-----------------------------------------------------------------------------
-void Hamamatsu::read_temperature(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "Hamamatsu::read_temperature(Tango::Attribute &attr) entering... "<< endl;
-    
-	try
-	{
-		double temperature = 0.0;
-        bool   NotSupported;
-
-        temperature = m_camera->getSensorTemperature(NotSupported);
-		*attr_temperature_read = (Tango::DevDouble)temperature;
-		attr.set_value  (attr_temperature_read);
-        attr.set_quality((NotSupported) ? Tango::ATTR_INVALID : Tango::ATTR_VALID);
-	}
-    catch(Tango::DevFailed & df)
-    {
-        manage_devfailed_exception(df, "Hamamatsu::read_temperature");
-    }
-    catch(Exception & e)
-    {
-        manage_lima_exception(e, "Hamamatsu::read_temperature");
-    }
 }
 
 //+----------------------------------------------------------------------------
@@ -913,6 +921,7 @@ void Hamamatsu::write_readoutSpeed(Tango::WAttribute &attr)
 		attr.get_write_value(attr_readoutSpeed_write);
 		string current = attr_readoutSpeed_write;
 		transform(current.begin(), current.end(), current.begin(), ::toupper);
+
         if (current != READOUTSPEED_NORMAL_NAME &&
             current != READOUTSPEED_SLOW_NAME)
 		{			
@@ -948,100 +957,140 @@ void Hamamatsu::write_readoutSpeed(Tango::WAttribute &attr)
 
 //+----------------------------------------------------------------------------
 //
-// method : 		Hamamatsu::read_coolerMode
+// method : 		Hamamatsu::read_temperature_callback
 // 
-// description : 	Extract real attribute values for coolerMode acquisition result.
+// description : 	Extract real attribute values for temperature acquisition result.
 //
 //-----------------------------------------------------------------------------
-void Hamamatsu::read_coolerMode(Tango::Attribute &attr)
+void Hamamatsu::read_temperature_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
 {
-	DEBUG_STREAM << "Hamamatsu::read_coolerMode(Tango::Attribute &attr) entering... "<< endl;
-
 	try
 	{
-		enum lima::Hamamatsu::Camera::Cooler_Mode cooler_mode;
-		cooler_mode = m_camera->getCoolerMode();
-
-		std::string label = get_cooler_mode_label(cooler_mode);
-		strcpy(*attr_coolerMode_read, label.c_str());
-
-		attr.set_value(attr_coolerMode_read);
-        attr.set_quality((cooler_mode == lima::Hamamatsu::Camera::Cooler_Mode_Not_Supported) ? 
-		                 Tango::ATTR_INVALID : Tango::ATTR_VALID);
+//        read_dynamic_attribute<Tango::DevDouble>(cbd, &lima::Hamamatsu::Camera::getSensorTemperature, "Hamamatsu::read_temperature_callback", true);
 	}
     catch(Tango::DevFailed & df)
     {
-        manage_devfailed_exception(df, "Hamamatsu::read_coolerMode");
+        manage_devfailed_exception(df, "Hamamatsu::read_temperature_callback");
     }
     catch(Exception & e)
     {
-        manage_lima_exception(e, "Hamamatsu::read_coolerMode");
+        manage_lima_exception(e, "Hamamatsu::read_temperature_callback");
     }
 }
 
 //+----------------------------------------------------------------------------
 //
-// method : 		Hamamatsu::read_coolerStatus
-// 
-// description : 	Extract real attribute values for coolerStatus acquisition result.
-//
-//-----------------------------------------------------------------------------
-void Hamamatsu::read_coolerStatus(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "Hamamatsu::read_coolerStatus(Tango::Attribute &attr) entering... "<< endl;
-
-	try
-	{
-		enum lima::Hamamatsu::Camera::Cooler_Status cooler_status;
-		cooler_status = m_camera->getCoolerStatus();
-
-		std::string label = get_cooler_status_label(cooler_status);
-		strcpy(*attr_coolerStatus_read, label.c_str());
-
-		attr.set_value(attr_coolerStatus_read);
-        attr.set_quality((cooler_status == lima::Hamamatsu::Camera::Cooler_Status_Not_Supported) ? 
-		                 Tango::ATTR_INVALID : Tango::ATTR_VALID);
-	}
-    catch(Tango::DevFailed & df)
-    {
-        manage_devfailed_exception(df, "Hamamatsu::read_coolerStatus");
-    }
-    catch(Exception & e)
-    {
-        manage_lima_exception(e, "Hamamatsu::read_coolerStatus");
-    }
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		Hamamatsu::read_temperatureStatus
+// method : 		Hamamatsu::read_temperatureStatus_callback
 // 
 // description : 	Extract real attribute values for temperatureStatus acquisition result.
 //
 //-----------------------------------------------------------------------------
-void Hamamatsu::read_temperatureStatus(Tango::Attribute &attr)
+void Hamamatsu::read_temperatureStatus_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
 {
-	DEBUG_STREAM << "Hamamatsu::read_temperatureStatus(Tango::Attribute &attr) entering... "<< endl;
-
 	try
 	{
-		enum lima::Hamamatsu::Camera::Temperature_Status temperature_status;
-		temperature_status = m_camera->getTemperatureStatus();
-
-		std::string label = get_temperature_status_label(temperature_status);
-		strcpy(*attr_temperatureStatus_read, label.c_str());
-
-        attr.set_value(attr_temperatureStatus_read);
-        attr.set_quality((temperature_status == lima::Hamamatsu::Camera::Temperature_Status_Not_Supported) ? 
-		                 Tango::ATTR_INVALID : Tango::ATTR_VALID);
+//        read_dynamic_string_attribute<Tango::DevString>(cbd, &lima::Hamamatsu::Camera::getTemperatureStatusLabel, "Hamamatsu::read_temperatureStatus_callback", true);
 	}
     catch(Tango::DevFailed & df)
     {
-        manage_devfailed_exception(df, "Hamamatsu::read_temperatureStatus");
+        manage_devfailed_exception(df, "Hamamatsu::read_temperatureStatus_callback");
     }
     catch(Exception & e)
     {
-        manage_lima_exception(e, "Hamamatsu::read_temperatureStatus");
+        manage_lima_exception(e, "Hamamatsu::read_temperatureStatus_callback");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_coolerMode_callback
+// 
+// description : 	Extract real attribute values for coolerMode acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_coolerMode_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
+{
+	try
+	{
+        //read_dynamic_string_attribute<Tango::DevString>(cbd, &lima::Hamamatsu::Camera::getCoolerModeLabel, "Hamamatsu::read_coolerMode_callback", true);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_coolerMode_callback");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_coolerMode_callback");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_coolerStatus_callback
+// 
+// description : 	Extract real attribute values for coolerStatus acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_coolerStatus_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
+{
+	try
+	{
+//        read_dynamic_string_attribute<Tango::DevString>(cbd, &lima::Hamamatsu::Camera::getCoolerStatusLabel, "Hamamatsu::read_coolerStatus_callback", true);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_coolerStatus_callback");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_coolerStatus_callback");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_highDynamicRangeEnabled_callback
+// 
+// description : 	Extract real attribute values for high dynamic range enabled acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_highDynamicRangeEnabled_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
+{
+	try
+	{
+        //read_dynamic_attribute<Tango::DevBoolean>(cbd, &lima::Hamamatsu::Camera::getHighDynamicRangeEnabled, "Hamamatsu::read_highDynamicRangeEnabled_callback", true);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_highDynamicRangeEnabled_callback");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_highDynamicRangeEnabled_callback");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_highDynamicRangeEnabled_callback
+// 
+// description : 	Extract real attribute values for high dynamic range enabled acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::write_highDynamicRangeEnabled_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
+{
+	try
+	{
+        write_dynamic_attribute<Tango::DevBoolean>(cbd, &lima::Hamamatsu::Camera::setHighDynamicRangeEnabled, 
+                                                   "MemorizedHighDynamicRangeEnabled", "Hamamatsu::write_highDynamicRangeEnabled_callback");
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::write_highDynamicRangeEnabled_callback");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::write_highDynamicRangeEnabled_callback");
     }
 }
 
@@ -1117,85 +1166,5 @@ void Hamamatsu::manage_lima_exception(lima::Exception & in_exception, const std:
                                    in_exception.getErrMsg().c_str(),
                                    in_caller_method_name.c_str());
 }
-
-//+----------------------------------------------------------------------------
-//
-// method : Hamamatsu::get_cooler_mode_label
-//
-// description : Get a cooler mode label.
-//
-//-----------------------------------------------------------------------------
-std::string Hamamatsu::get_cooler_mode_label(enum lima::Hamamatsu::Camera::Cooler_Mode in_cooler_mode)
-{
-    std::string label = "";
-
-    switch (in_cooler_mode)
-    {
-        case lima::Hamamatsu::Camera::Cooler_Mode_Off          : label = SENSOR_COOLER_OFF          ; break;
-        case lima::Hamamatsu::Camera::Cooler_Mode_On           : label = SENSOR_COOLER_ON           ; break;
-        case lima::Hamamatsu::Camera::Cooler_Mode_Max          : label = SENSOR_COOLER_MAX          ; break;
-        case lima::Hamamatsu::Camera::Cooler_Mode_Not_Supported: label = SENSOR_COOLER_NOT_SUPPORTED; break;
-	    default: break;
-    }
-
-    return label;
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : Hamamatsu::get_temperature_status_label
-//
-// description : Get a temperature status label.
-//
-//-----------------------------------------------------------------------------
-std::string Hamamatsu::get_temperature_status_label(enum lima::Hamamatsu::Camera::Temperature_Status in_temperature_status)
-{
-    std::string label = "";
-
-    switch (in_temperature_status)
-    {
-        case lima::Hamamatsu::Camera::Temperature_Status_Not_Supported : label = TEMPERATURE_STATUS_NOT_SUPPORTED; break;
-        case lima::Hamamatsu::Camera::Temperature_Status_Normal        : label = TEMPERATURE_STATUS_NORMAL       ; break;
-        case lima::Hamamatsu::Camera::Temperature_Status_Warning       : label = TEMPERATURE_STATUS_WARNING      ; break;
-        case lima::Hamamatsu::Camera::Temperature_Status_Protection    : label = TEMPERATURE_STATUS_PROTECTION   ; break;
-	    default: break;
-    }
-
-    return label;
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : Hamamatsu::get_cooler_status_label
-//
-// description : Get a cooler status label.
-//
-//-----------------------------------------------------------------------------
-std::string Hamamatsu::get_cooler_status_label(enum lima::Hamamatsu::Camera::Cooler_Status in_cooler_status)
-{
-    std::string label = "";
-
-    switch (in_cooler_status)
-    {
-        case lima::Hamamatsu::Camera::Cooler_Status_Not_Supported : label = COOLER_STATUS_NOT_SUPPORTED; break;
-        case lima::Hamamatsu::Camera::Cooler_Status_Error4        : label = COOLER_STATUS_ERROR4       ; break;
-        case lima::Hamamatsu::Camera::Cooler_Status_Error3        : label = COOLER_STATUS_ERROR3       ; break;
-        case lima::Hamamatsu::Camera::Cooler_Status_Error2        : label = COOLER_STATUS_ERROR2       ; break;
-        case lima::Hamamatsu::Camera::Cooler_Status_Error1        : label = COOLER_STATUS_ERROR1       ; break;
-        case lima::Hamamatsu::Camera::Cooler_Status_None          : label = COOLER_STATUS_NONE         ; break;
-        case lima::Hamamatsu::Camera::Cooler_Status_Off           : label = COOLER_STATUS_OFF          ; break;
-        case lima::Hamamatsu::Camera::Cooler_Status_Ready         : label = COOLER_STATUS_READY        ; break;
-        case lima::Hamamatsu::Camera::Cooler_Status_Busy          : label = COOLER_STATUS_BUSY         ; break;
-        case lima::Hamamatsu::Camera::Cooler_Status_Always        : label = COOLER_STATUS_ALWAYS       ; break;
-        case lima::Hamamatsu::Camera::Cooler_Status_Warning       : label = COOLER_STATUS_WARNING      ; break;
-
-	    default: break;
-    }
-
-    return label;
-}
-
-
-
 
 }	//	namespace

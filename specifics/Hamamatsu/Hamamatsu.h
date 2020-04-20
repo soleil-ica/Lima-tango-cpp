@@ -38,6 +38,7 @@
 //- YAT/YAT4TANGO
 #include <yat4tango/PropertyHelper.h>
 #include <yat4tango/InnerAppender.h>
+#include <yat4tango/DynamicInterfaceManager.h>
 
 /**
  * @author	$Author:  $
@@ -99,10 +100,6 @@ public :
 		Tango::DevDouble	attr_topViewExposureTime_write;
 		Tango::DevDouble	*attr_bottomViewExposureTime_read;
 		Tango::DevDouble	attr_bottomViewExposureTime_write;
-		Tango::DevDouble	*attr_temperature_read;
-		Tango::DevString	*attr_coolerMode_read;
-		Tango::DevString	*attr_coolerStatus_read;
-		Tango::DevString	*attr_temperatureStatus_read;
 //@}
 
 /**
@@ -141,6 +138,10 @@ public :
  *	Memorize/Define the W-VIEW mode attribute at Init device<br>
  */
 	Tango::DevBoolean	memorizedWViewEnabled;
+/**
+ *	Memorize/Define the HighDynamicRangeEnabled attribute at Init device<br>
+ */
+	Tango::DevBoolean	memorizedHighDynamicRangeEnabled;
 //@}
 
 /**
@@ -254,22 +255,6 @@ public :
  */
 	virtual void write_bottomViewExposureTime(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for temperature acquisition result.
- */
-	virtual void read_temperature(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for coolerMode acquisition result.
- */
-	virtual void read_coolerMode(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for coolerStatus acquisition result.
- */
-	virtual void read_coolerStatus(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for temperatureStatus acquisition result.
- */
-	virtual void read_temperatureStatus(Tango::Attribute &attr);
-/**
  *	Read/Write allowed for readoutSpeed attribute.
  */
 	virtual bool is_readoutSpeed_allowed(Tango::AttReqType type);
@@ -293,22 +278,6 @@ public :
  *	Read/Write allowed for bottomViewExposureTime attribute.
  */
 	virtual bool is_bottomViewExposureTime_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for temperature attribute.
- */
-	virtual bool is_temperature_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for coolerMode attribute.
- */
-	virtual bool is_coolerMode_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for coolerStatus attribute.
- */
-	virtual bool is_coolerStatus_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for temperatureStatus attribute.
- */
-	virtual bool is_temperatureStatus_allowed(Tango::AttReqType type);
 /**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
@@ -340,25 +309,154 @@ private :
     void manage_lima_exception(lima::Exception & in_exception, const std::string & in_caller_method_name);
 
 /**
- *	method:	Hamamatsu::get_cooler_mode_label
+ *	method:	Hamamatsu::create_dynamics_attributes
  *
- *	description: Get a cooler mode label.
+ *	description: Create all dynamics attributes.
  */
-    std::string get_cooler_mode_label(enum lima::Hamamatsu::Camera::Cooler_Mode in_cooler_mode);
+    void create_dynamics_attributes(void);
 
 /**
- *	method:	Hamamatsu::get_temperature_status_label
+ *	method:	Hamamatsu::release_dynamics_attributes
  *
- *	description: Get a temperature status label.
+ *	description: Release all dynamics attributes.
  */
-    std::string get_temperature_status_label(enum lima::Hamamatsu::Camera::Temperature_Status in_temperature_status);
+    void release_dynamics_attributes(void);
 
 /**
- *	method:	Hamamatsu::get_cooler_status_label
+ *	method:	Hamamatsu::write_at_init
  *
- *	description: Get a cooler status label.
+ *	description: Update the hardware with the properties data.
  */
-    std::string get_cooler_status_label(enum lima::Hamamatsu::Camera::Cooler_Status in_cooler_status);
+    void write_at_init(void);
+
+/**
+ *	method:	Hamamatsu::create_attribute
+ *
+ *	description: Create a dynamic attribute
+ */
+	template <class F1, class F2>
+    void create_dynamic_attribute(const std::string &   name                ,
+                                  int                   data_type           ,
+                                  Tango::AttrDataFormat data_format         ,
+                                  Tango::AttrWriteType  access_type         ,
+                                  Tango::DispLevel      disp_level          ,
+                                  size_t                polling_period_in_ms,
+                                  const std::string &   unit                ,
+                                  const std::string &   format              ,
+                                  const std::string &   desc                ,
+                                  F1                    read_callback       ,
+                                  F2                    write_callback      ,
+                                  yat::Any              user_data           );
+
+/**
+ *	method:	Hamamatsu::read_dynamic_attribute
+ *
+ *	description: Fill a dynamic attribute with a information from the plugin
+ */
+    template< typename T1, typename T2>
+    void read_dynamic_attribute(yat4tango::DynamicAttributeReadCallbackData& out_cbd,
+                                T2 (lima::Hamamatsu::Camera::*in_method)(void),
+                                const std::string & in_callerName,
+                                const bool in_is_enabled_during_running = false);
+
+/**
+ *	method:	Hamamatsu::read_dynamic_string_attribute
+ *
+ *	description: Fill the read dynamic attribute (string) with the plugin informations
+ */
+    template< typename T1, typename T2>
+    void read_dynamic_string_attribute(yat4tango::DynamicAttributeReadCallbackData& out_cbd,
+                                       T2 (lima::Hamamatsu::Camera::*in_method)(void),
+                                       const std::string & in_callerName,
+                                       const bool in_is_enabled_during_running = false);
+
+/**
+ *	method:	Hamamatsu::write_dynamic_attribute
+ *
+ *	description: Use the write dynamic attribut to set informations in the plugin
+ */
+    template< typename T1, typename T2>
+    void write_dynamic_attribute(yat4tango::DynamicAttributeWriteCallbackData & in_cbd,
+                                 void (lima::Hamamatsu::Camera::*in_method)(const T2 &),
+                                 const char * in_optionalMemorizedProperty,
+                                 const std::string & in_callerName);
+
+/**
+ *	method:	Hamamatsu::write_dynamic_string_attribute
+ *
+ *	description: Use the write dynamic attribut (string) to set informations in the plugin
+ */
+    template< typename T1, typename T2>
+    void write_dynamic_string_attribute(yat4tango::DynamicAttributeWriteCallbackData & in_cbd,
+                                        void (lima::Hamamatsu::Camera::*in_method)(const T2 &),
+                                        const char * in_optionalMemorizedProperty,
+                                        const std::string & in_callerName);
+
+/**
+ *	method:	Hamamatsu::write_property_in_dynamic_attribute
+ *
+ *	description: Use to update a dynamic attribute and the hardware with a property value
+ */
+    template< typename T1>
+    void write_property_in_dynamic_attribute(const std::string & in_attribute_name,
+                                             const std::string & in_property_name ,
+                                             void (Hamamatsu_ns::Hamamatsu::*in_write_method)(yat4tango::DynamicAttributeWriteCallbackData &));
+
+/**
+ *	method:	Hamamatsu::write_property_in_dynamic_string_attribute
+ *
+ *	description: Use to update a dynamic attribute (string) and the hardware with a property value
+ */
+    template< typename T1>
+    void write_property_in_dynamic_string_attribute(const std::string & in_attribute_name,
+                                                    const std::string & in_property_name ,
+                                                    void (Hamamatsu_ns::Hamamatsu::*in_write_method)(yat4tango::DynamicAttributeWriteCallbackData &));
+
+
+/**
+ *	method:	Hamamatsu::read_temperature_callback
+ *
+ *	description: read temperature callback
+ */
+    void read_temperature_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
+
+/**
+ *	method:	Hamamatsu::read_temperatureStatus_callback
+ *
+ *	description: read temperature status callback
+ */
+    void read_temperatureStatus_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
+
+/**
+ *	method:	Hamamatsu::read_coolerMode_callback
+ *
+ *	description: read cooler mode callback
+ */
+    void read_coolerMode_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
+
+/**
+ *	method:	Hamamatsu::read_coolerMode_callback
+ *
+ *	description: read cooler mode callback
+ */
+    void read_coolerStatus_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
+
+/**
+ *	method:	Hamamatsu::read_highDynamicRangeEnabled_callback
+ *
+ *	description: read high dynamic range enabled callback
+ */
+    void read_highDynamicRangeEnabled_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
+
+/**
+ *	method:	Hamamatsu::write_highDynamicRangeEnabled_callback
+ *
+ *	description: write high dynamic range enabled callback
+ */
+    void write_highDynamicRangeEnabled_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
+
+    // method for tango dyn attributes WHEN no write part is available - NULL
+    void write_callback_null(yat4tango::DynamicAttributeWriteCallbackData& cbd){/*nop*/}
 
 protected :	
 	//	Add your own data members here
@@ -371,12 +469,28 @@ protected :
 	double                                              m_BottomViewExposureTime;
 	bool                                                m_wViewEnabled          ;
 
-    //lima OBJECTS
+    /// Device server object for dynamic attributes templates
+    Tango::DeviceImpl * m_device;
+
+    /// yat4tango Dynamic Interface Manager
+    yat4tango::DynamicInterfaceManager m_dim;
+
+    /// read attributes for dynamic attributes
+    Tango::DevDouble  *attr_dyn_temperature_read  ;
+    Tango::DevString  *attr_dyn_coolerMode_read  ;
+    Tango::DevString  *attr_dyn_coolerStatus_read;
+    Tango::DevString  *attr_dyn_temperatureStatus_read;
+    Tango::DevBoolean *attr_dyn_highDynamicRangeEnabled_read;
+
+    /// lima OBJECTS
     lima::Hamamatsu::Interface * m_hw    ;
     CtControl                  * m_ct    ;
     lima::Hamamatsu::Camera    * m_camera;
 };
 
 }	// namespace_ns
+
+//	Additional Classes Definitions for templates
+#include "Hamamatsu.hpp"
 
 #endif	// _HAMAMATSU_H

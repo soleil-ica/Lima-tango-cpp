@@ -102,7 +102,7 @@ Hamamatsu Class<Br>&nbsp;<Br></Td></Tr>
 <Td><Font Size=-1>id of the camera</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>MemorizedReadoutSpeed </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>string</Font></Td>
 <Td><Font Size=-1>Memorize/Define the readoutSpeed attribute at Init device<br>
 Availables values :<br>
 NORMAL<br>
@@ -127,6 +127,10 @@ Availables values :<br>
 <Tr><Td><b><a href=#Dev_DefaultValues>MemorizedWViewEnabled </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
 <Td><Font Size=-1>Memorize/Define the W-VIEW mode attribute at Init device<br></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedHighDynamicRangeEnabled </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize/Define the HighDynamicRangeEnabled attribute at Init device<br></Font></Td></Tr>
 
 </Table>
 
@@ -163,6 +167,10 @@ Availables values :<br>
     </Tr>
     <Tr>
         <Td>MemorizedWViewEnabled</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedHighDynamicRangeEnabled</Td>
         <td>false</td>
     </Tr>
 </Table>
@@ -235,18 +243,6 @@ There is no Class properties.<Br><Br>
 
 <Tr><Td><b>bottomViewExposureTime</b>: <Font Size=-1>Exposure time for W-VIEW n°2.</Font></Td>
 <Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>temperature</b>: <Font Size=-1>Temperature of the image sensor in Celcius.</Font></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>coolerMode</b>: <Font Size=-1>Selected cooler mode (OFF/ON/MAX/NOT_SUPPORTED).</Font></Td>
-<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>coolerStatus</b>: <Font Size=-1>Current cooler status.<br> Possible values can be:<br> - inactive (NOT_SUPPORTED, NONE, OFF)<br> - in error (ERROR1, ERROR2, ERROR3, ERROR4)<br> - running (READY, BUSY, ALWAYS, WARNING)<br></Font></Td>
-<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>temperatureStatus</b>: <Font Size=-1>Current temperature status (NOT_SUPPORTED, NORMAL, WARNING, PROTECTION). </Font></Td>
-<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 </Table>
 </Center>

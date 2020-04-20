@@ -150,25 +150,6 @@ bool Hamamatsu::is_bottomViewExposureTime_allowed(Tango::AttReqType type)
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		Hamamatsu::is_temperature_allowed
-// 
-// description : 	Read/Write allowed for temperature attribute.
-//
-//-----------------------------------------------------------------------------
-bool Hamamatsu::is_temperature_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT)
-	{
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
 // method : 		Hamamatsu::is_readoutSpeed_allowed
 // 
 // description : 	Read/Write allowed for readoutSpeed attribute.
@@ -179,63 +160,6 @@ bool Hamamatsu::is_readoutSpeed_allowed(Tango::AttReqType type)
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
 		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Hamamatsu::is_coolerMode_allowed
-// 
-// description : 	Read/Write allowed for coolerMode attribute.
-//
-//-----------------------------------------------------------------------------
-bool Hamamatsu::is_coolerMode_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT)
-	{
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Hamamatsu::is_coolerStatus_allowed
-// 
-// description : 	Read/Write allowed for coolerStatus attribute.
-//
-//-----------------------------------------------------------------------------
-bool Hamamatsu::is_coolerStatus_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT)
-	{
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Hamamatsu::is_temperatureStatus_allowed
-// 
-// description : 	Read/Write allowed for temperatureStatus attribute.
-//
-//-----------------------------------------------------------------------------
-bool Hamamatsu::is_temperatureStatus_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT)
 	{
 		//	End of Generated Code
 
