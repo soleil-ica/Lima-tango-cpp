@@ -234,9 +234,9 @@ void Hamamatsu::write_at_init(void)
     //------------------------------------------------------------------------------
 	INFO_STREAM << "Write tango hardware at Init - readoutSpeed." << endl;
 	Tango::WAttribute &readoutSpeed = dev_attr->get_w_attr_by_name("readoutSpeed");
-	m_readoutSpeed = memorizedReadoutSpeed;
+	m_readout_speed = memorizedReadoutSpeed;
 	strcpy(*attr_readoutSpeed_read, memorizedReadoutSpeed.c_str());
-	readoutSpeed.set_write_value(m_readoutSpeed);
+	readoutSpeed.set_write_value(m_readout_speed);
 	write_readoutSpeed(readoutSpeed);
 
     //------------------------------------------------------------------------------
@@ -249,38 +249,38 @@ void Hamamatsu::write_at_init(void)
     if (blankOfSyncreadoutTrigger != SYNCREADOUT_BLANKMODE_STANDARD &&
         blankOfSyncreadoutTrigger != SYNCREADOUT_BLANKMODE_MINIMUM)
 	{			
-		string userMsg;
-        userMsg = string("Available Synchronous Readout blank modes are:\n- ") + string(SYNCREADOUT_BLANKMODE_STANDARD) + string("\n- ") + string(SYNCREADOUT_BLANKMODE_MINIMUM);
+		string user_msg;
+        user_msg = string("Available Synchronous Readout blank modes are:\n- ") + string(SYNCREADOUT_BLANKMODE_STANDARD) + string("\n- ") + string(SYNCREADOUT_BLANKMODE_MINIMUM);
 
         Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
-                                        userMsg.c_str(),
+                                        user_msg.c_str(),
                                         "Hamamatsu::init_device");
 	}
 
-    m_SyncreadoutBlankMode = lima::Hamamatsu::Camera::SyncReadOut_BlankMode_Standard;
+    m_sync_readout_blank_mode = lima::Hamamatsu::Camera::SyncReadOut_BlankMode_Standard;
 
     if (blankOfSyncreadoutTrigger == SYNCREADOUT_BLANKMODE_STANDARD)
-        m_SyncreadoutBlankMode = lima::Hamamatsu::Camera::SyncReadOut_BlankMode_Standard;
+        m_sync_readout_blank_mode = lima::Hamamatsu::Camera::SyncReadOut_BlankMode_Standard;
     else
     if (blankOfSyncreadoutTrigger == SYNCREADOUT_BLANKMODE_MINIMUM)
-        m_SyncreadoutBlankMode = lima::Hamamatsu::Camera::SyncReadOut_BlankMode_Minimum;
+        m_sync_readout_blank_mode = lima::Hamamatsu::Camera::SyncReadOut_BlankMode_Minimum;
 	
-	m_camera->setSyncReadoutBlankMode(m_SyncreadoutBlankMode);
+	m_camera->setSyncReadoutBlankMode(m_sync_readout_blank_mode);
 
     //------------------------------------------------------------------------------
     // Top View & Bottom View Exposure Times
     //------------------------------------------------------------------------------
-    m_TopViewExposureTime    = memorizedTopViewExposureTime   ;
-    m_BottomViewExposureTime = memorizedBottomViewExposureTime;
+    m_top_view_exposure_time    = memorizedTopViewExposureTime   ;
+    m_bottom_view_exposure_time = memorizedBottomViewExposureTime;
 
     //------------------------------------------------------------------------------
     // W-View Mode
     //------------------------------------------------------------------------------
 	INFO_STREAM << "Write tango hardware at Init - wViewEnabled." << endl;
 	Tango::WAttribute &wiewMode = dev_attr->get_w_attr_by_name("wViewEnabled");
-	m_wViewEnabled = memorizedWViewEnabled;
-    *attr_wViewEnabled_read = m_wViewEnabled;
-	wiewMode.set_write_value(m_wViewEnabled);
+	m_wView_enabled = memorizedWViewEnabled;
+    *attr_wViewEnabled_read = m_wView_enabled;
+	wiewMode.set_write_value(m_wView_enabled);
 	write_wViewEnabled(wiewMode);
 
     //------------------------------------------------------------------------------
@@ -288,16 +288,16 @@ void Hamamatsu::write_at_init(void)
     //------------------------------------------------------------------------------
     INFO_STREAM << "Write tango hardware at Init - topViewExposureTime." << endl;
     Tango::WAttribute &topViewExposure = dev_attr->get_w_attr_by_name("topViewExposureTime");
-    *attr_topViewExposureTime_read = m_TopViewExposureTime;
-    topViewExposure.set_write_value(m_TopViewExposureTime);
+    *attr_topViewExposureTime_read = m_top_view_exposure_time;
+    topViewExposure.set_write_value(m_top_view_exposure_time);
 
     //------------------------------------------------------------------------------
     // Bottom View Exposure Time
     //------------------------------------------------------------------------------
     INFO_STREAM << "Write tango hardware at Init - bottomViewExposureTime." << endl;
     Tango::WAttribute &bottomViewExposure = dev_attr->get_w_attr_by_name("bottomViewExposureTime");
-    *attr_bottomViewExposureTime_read = m_BottomViewExposureTime;
-    bottomViewExposure.set_write_value(m_BottomViewExposureTime);
+    *attr_bottomViewExposureTime_read = m_bottom_view_exposure_time;
+    bottomViewExposure.set_write_value(m_bottom_view_exposure_time);
 
     //------------------------------------------------------------------------------
     // High dynamic range activation
@@ -429,6 +429,7 @@ void Hamamatsu::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedBottomViewExposureTime"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedWViewEnabled"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedHighDynamicRangeEnabled"));
+	dev_prop.push_back(Tango::DbDatum("ExpertFrameBufferSize"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -516,6 +517,17 @@ void Hamamatsu::get_device_property()
 	//	And try to extract MemorizedHighDynamicRangeEnabled value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedHighDynamicRangeEnabled;
 
+	//	Try to initialize ExpertFrameBufferSize from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  expertFrameBufferSize;
+	else {
+		//	Try to initialize ExpertFrameBufferSize from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  expertFrameBufferSize;
+	}
+	//	And try to extract ExpertFrameBufferSize value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertFrameBufferSize;
+
 
 
 	//	End of Automatic code generation
@@ -527,8 +539,9 @@ void Hamamatsu::get_device_property()
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "MemorizedWViewEnabled"          );
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1000" , "MemorizedTopViewExposureTime"   );
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1000" , "MemorizedBottomViewExposureTime");
-
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "MemorizedHighDynamicRangeEnabled");
+
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "10", "ExpertFrameBufferSize");
 }
 
 //+----------------------------------------------------------------------------
@@ -600,10 +613,10 @@ void Hamamatsu::read_topViewExposureTime(Tango::Attribute &attr)
 
 	try
 	{
-		double exptime = 0.0;
+		double exp_time = 0.0;
 
-        m_camera->getViewExpTime1(exptime);
-		*attr_topViewExposureTime_read = (Tango::DevDouble)(exptime * 1000.0);
+        m_camera->getViewExpTime1(exp_time);
+		*attr_topViewExposureTime_read = (Tango::DevDouble)(exp_time * 1000.0);
 		attr.set_value(attr_topViewExposureTime_read);
 	}
     catch(Tango::DevFailed & df)
@@ -632,8 +645,8 @@ void Hamamatsu::write_topViewExposureTime(Tango::WAttribute &attr)
         attr.get_write_value(attr_topViewExposureTime_write);
         m_camera->setViewExpTime1((double) (attr_topViewExposureTime_write / 1000.0));
 
-        m_TopViewExposureTime = (double)attr_topViewExposureTime_write;
-		PropertyHelper::set_property(this, "MemorizedTopViewExposureTime", m_TopViewExposureTime);
+        m_top_view_exposure_time = (double)attr_topViewExposureTime_write;
+		PropertyHelper::set_property(this, "MemorizedTopViewExposureTime", m_top_view_exposure_time);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -658,10 +671,10 @@ void Hamamatsu::read_bottomViewExposureTime(Tango::Attribute &attr)
 
 	try
 	{
-		double exptime = 0.0;
+		double exp_time = 0.0;
 
-        m_camera->getViewExpTime2(exptime);
-		*attr_bottomViewExposureTime_read = (Tango::DevDouble)(exptime * 1000.0);
+        m_camera->getViewExpTime2(exp_time);
+		*attr_bottomViewExposureTime_read = (Tango::DevDouble)(exp_time * 1000.0);
 		attr.set_value(attr_bottomViewExposureTime_read);
 	}
     catch(Tango::DevFailed & df)
@@ -690,8 +703,8 @@ void Hamamatsu::write_bottomViewExposureTime(Tango::WAttribute &attr)
         attr.get_write_value(attr_bottomViewExposureTime_write);
         m_camera->setViewExpTime2((double) (attr_bottomViewExposureTime_write / 1000.0));
 
-        m_BottomViewExposureTime = (double)attr_bottomViewExposureTime_write;
-		PropertyHelper::set_property(this, "MemorizedBottomViewExposureTime", m_BottomViewExposureTime);
+        m_bottom_view_exposure_time = (double)attr_bottomViewExposureTime_write;
+		PropertyHelper::set_property(this, "MemorizedBottomViewExposureTime", m_bottom_view_exposure_time);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -751,25 +764,25 @@ void Hamamatsu::write_wViewEnabled(Tango::WAttribute &attr)
         if(attr_wViewEnabled_write)
         {
             // checking if we are in full frame ROI, the only ROI which is allowed.
-            Size FullSize;
-            m_camera->getDetectorMaxImageSize(FullSize);
+            Size Full_size;
+            m_camera->getDetectorMaxImageSize(Full_size);
 
-            Roi CurrentROI;
-            Bin CurrentBin;
+            Roi Current_ROI;
+            Bin Current_bin;
 
-            m_ct->image()->getRoi(CurrentROI);
-            m_ct->image()->getBin(CurrentBin);
-            Roi FullROI(Point(0, 0), Size(FullSize.getWidth() / CurrentBin.getX(), FullSize.getHeight() / CurrentBin.getY()));
+            m_ct->image()->getRoi(Current_ROI);
+            m_ct->image()->getBin(Current_bin);
+            Roi FullROI(Point(0, 0), Size(Full_size.getWidth() / Current_bin.getX(), Full_size.getHeight() / Current_bin.getY()));
 
-            if(CurrentROI != FullROI)
+            if(Current_ROI != FullROI)
             {
                 stringstream ErrorTxt;
 
                 ErrorTxt << "W-VIEW mode does not support the current ROI (";
-                ErrorTxt << CurrentROI.getTopLeft().x        << ", ";
-                ErrorTxt << CurrentROI.getTopLeft().y        << ", ";
-                ErrorTxt << CurrentROI.getSize().getWidth()  << ", ";
-                ErrorTxt << CurrentROI.getSize().getHeight() << ").\n\n";
+                ErrorTxt << Current_ROI.getTopLeft().x        << ", ";
+                ErrorTxt << Current_ROI.getTopLeft().y        << ", ";
+                ErrorTxt << Current_ROI.getSize().getWidth()  << ", ";
+                ErrorTxt << Current_ROI.getSize().getHeight() << ").\n\n";
 
                 ErrorTxt << "Please define a full frame ROI\n";
                 ErrorTxt << "using ResetROI or SetROI (";
@@ -785,15 +798,15 @@ void Hamamatsu::write_wViewEnabled(Tango::WAttribute &attr)
         }
 
         m_camera->setViewMode(attr_wViewEnabled_write);
-        m_wViewEnabled = attr_wViewEnabled_write;
-		PropertyHelper::set_property(this, "MemorizedWViewEnabled", m_wViewEnabled);
+        m_wView_enabled = attr_wViewEnabled_write;
+		PropertyHelper::set_property(this, "MemorizedWViewEnabled", m_wView_enabled);
 
-        if(m_wViewEnabled)
+        if(m_wView_enabled)
         {
             // reseting the views exposures
             {
-                m_camera->setViewExpTime1(m_TopViewExposureTime    / 1000.0);
-                m_camera->setViewExpTime2(m_BottomViewExposureTime / 1000.0); 
+                m_camera->setViewExpTime1(m_top_view_exposure_time    / 1000.0);
+                m_camera->setViewExpTime2(m_bottom_view_exposure_time / 1000.0); 
             }
         }
 	}
@@ -848,9 +861,9 @@ void Hamamatsu::read_lostFrames(Tango::Attribute &attr)
 	
 	try
 	{
-		unsigned long int lostFrames = 0;
-		m_camera->getLostFrames(lostFrames);
-		*attr_lostFrames_read = lostFrames;
+		unsigned long int lost_frames = 0;
+		m_camera->getLostFrames(lost_frames);
+		*attr_lostFrames_read = lost_frames;
 		attr.set_value(attr_lostFrames_read);
 	}
     catch(Tango::DevFailed & df)
@@ -877,21 +890,21 @@ void Hamamatsu::read_readoutSpeed(Tango::Attribute &attr)
 
 	try
 	{
-		short int readoutSpeed = 0;
-		m_camera->getReadoutSpeed(readoutSpeed);
+		short int readout_speed = 0;
+		m_camera->getReadoutSpeed(readout_speed);
 
-		std::string readoutSpeedName = "";
-		switch (readoutSpeed)
+		std::string readout_speed_name = "";
+		switch (readout_speed)
 		{
-            case READOUTSPEED_SLOW_VALUE:	readoutSpeedName = READOUTSPEED_SLOW_NAME;
+            case READOUTSPEED_SLOW_VALUE:	readout_speed_name = READOUTSPEED_SLOW_NAME;
 				break;
-            case READOUTSPEED_NORMAL_VALUE:	readoutSpeedName = READOUTSPEED_NORMAL_NAME;
+            case READOUTSPEED_NORMAL_VALUE:	readout_speed_name = READOUTSPEED_NORMAL_NAME;
 				break;
-			default:	readoutSpeedName = "ERROR";
+			default:	readout_speed_name = "ERROR";
 				break;
 		}
 
-		strcpy(*attr_readoutSpeed_read, readoutSpeedName.c_str());
+		strcpy(*attr_readoutSpeed_read, readout_speed_name.c_str());
 		attr.set_value(attr_readoutSpeed_read);
 	}
     catch(Tango::DevFailed & df)
@@ -917,7 +930,7 @@ void Hamamatsu::write_readoutSpeed(Tango::WAttribute &attr)
 	
 	try
 	{
-		m_readoutSpeed = *attr_readoutSpeed_read;
+		m_readout_speed = *attr_readoutSpeed_read;
 		attr.get_write_value(attr_readoutSpeed_write);
 		string current = attr_readoutSpeed_write;
 		transform(current.begin(), current.end(), current.begin(), ::toupper);
@@ -925,12 +938,12 @@ void Hamamatsu::write_readoutSpeed(Tango::WAttribute &attr)
         if (current != READOUTSPEED_NORMAL_NAME &&
             current != READOUTSPEED_SLOW_NAME)
 		{			
-            attr_readoutSpeed_write = const_cast<Tango::DevString>(m_readoutSpeed.c_str());
-			string userMsg;
-            userMsg = string("Available Readout speeds are:\n- ") + string(READOUTSPEED_NORMAL_NAME) + string("\n- ") + string(READOUTSPEED_SLOW_NAME);
+            attr_readoutSpeed_write = const_cast<Tango::DevString>(m_readout_speed.c_str());
+			string user_msg;
+            user_msg = string("Available Readout speeds are:\n- ") + string(READOUTSPEED_NORMAL_NAME) + string("\n- ") + string(READOUTSPEED_SLOW_NAME);
 
             Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
-                                            userMsg.c_str(),
+                                            user_msg.c_str(),
                                             "Hamamatsu::write_readoutSpeed");
 		}
 
@@ -941,9 +954,9 @@ void Hamamatsu::write_readoutSpeed(Tango::WAttribute &attr)
             readoutSpeed = READOUTSPEED_NORMAL_VALUE;
 		
 		//- THIS IS AN AVAILABLE READOUT SPEED
-		m_readoutSpeed = current;
+		m_readout_speed = current;
 		m_camera->setReadoutSpeed(readoutSpeed);
-		PropertyHelper::set_property(this, "MemorizedReadoutSpeed", m_readoutSpeed);
+		PropertyHelper::set_property(this, "MemorizedReadoutSpeed", m_readout_speed);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -966,7 +979,7 @@ void Hamamatsu::read_temperature_callback(yat4tango::DynamicAttributeReadCallbac
 {
 	try
 	{
-//        read_dynamic_attribute<Tango::DevDouble>(cbd, &lima::Hamamatsu::Camera::getSensorTemperature, "Hamamatsu::read_temperature_callback", true);
+        read_dynamic_attribute<Tango::DevDouble>(cbd, &lima::Hamamatsu::Camera::getSensorTemperature, "Hamamatsu::read_temperature_callback", true);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -989,7 +1002,7 @@ void Hamamatsu::read_temperatureStatus_callback(yat4tango::DynamicAttributeReadC
 {
 	try
 	{
-//        read_dynamic_string_attribute<Tango::DevString>(cbd, &lima::Hamamatsu::Camera::getTemperatureStatusLabel, "Hamamatsu::read_temperatureStatus_callback", true);
+        read_dynamic_string_attribute<Tango::DevString>(cbd, &lima::Hamamatsu::Camera::getTemperatureStatusLabel, "Hamamatsu::read_temperatureStatus_callback", true);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -1012,7 +1025,7 @@ void Hamamatsu::read_coolerMode_callback(yat4tango::DynamicAttributeReadCallback
 {
 	try
 	{
-        //read_dynamic_string_attribute<Tango::DevString>(cbd, &lima::Hamamatsu::Camera::getCoolerModeLabel, "Hamamatsu::read_coolerMode_callback", true);
+        read_dynamic_string_attribute<Tango::DevString>(cbd, &lima::Hamamatsu::Camera::getCoolerModeLabel, "Hamamatsu::read_coolerMode_callback", true);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -1035,7 +1048,7 @@ void Hamamatsu::read_coolerStatus_callback(yat4tango::DynamicAttributeReadCallba
 {
 	try
 	{
-//        read_dynamic_string_attribute<Tango::DevString>(cbd, &lima::Hamamatsu::Camera::getCoolerStatusLabel, "Hamamatsu::read_coolerStatus_callback", true);
+        read_dynamic_string_attribute<Tango::DevString>(cbd, &lima::Hamamatsu::Camera::getCoolerStatusLabel, "Hamamatsu::read_coolerStatus_callback", true);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -1058,7 +1071,7 @@ void Hamamatsu::read_highDynamicRangeEnabled_callback(yat4tango::DynamicAttribut
 {
 	try
 	{
-        //read_dynamic_attribute<Tango::DevBoolean>(cbd, &lima::Hamamatsu::Camera::getHighDynamicRangeEnabled, "Hamamatsu::read_highDynamicRangeEnabled_callback", true);
+        read_dynamic_attribute<Tango::DevBoolean>(cbd, &lima::Hamamatsu::Camera::getHighDynamicRangeEnabled, "Hamamatsu::read_highDynamicRangeEnabled_callback", true);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -1111,25 +1124,25 @@ Tango::DevState Hamamatsu::dev_state()
 	DEBUG_STREAM << "Hamamatsu::dev_state(): entering... !" << endl;
 
 	//	Add your own code to control device here
-	stringstream    DeviceStatus;
-	DeviceStatus     << "";
-	Tango::DevState DeviceState    = Tango::STANDBY;
+	stringstream    Device_status;
+	Device_status     << "";
+	Tango::DevState Device_state = Tango::STANDBY;
 	if(!m_is_device_initialized )
 	{
-		DeviceState            = Tango::FAULT;
-		DeviceStatus        << m_status_message.str();
+		Device_state  = Tango::FAULT;
+		Device_status << m_status_message.str();
 	}
 	else
 	{
 		// state & status are retrieved from Factory, Factory is updated by Generic device
-		DeviceState = ControlFactory::instance().get_state();
-		DeviceStatus << ControlFactory::instance().get_status();
+		Device_state = ControlFactory::instance().get_state();
+		Device_status << ControlFactory::instance().get_status();
 	}
 
-	set_state(DeviceState);
-	set_status(DeviceStatus.str());
+	set_state(Device_state);
+	set_status(Device_status.str());
 
-	return DeviceState;
+	return Device_state;
 }
 
 //+------------------------------------------------------------------
@@ -1166,5 +1179,6 @@ void Hamamatsu::manage_lima_exception(lima::Exception & in_exception, const std:
                                    in_exception.getErrMsg().c_str(),
                                    in_caller_method_name.c_str());
 }
+
 
 }	//	namespace

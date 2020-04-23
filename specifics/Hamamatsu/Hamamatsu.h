@@ -142,6 +142,11 @@ public :
  *	Memorize/Define the HighDynamicRangeEnabled attribute at Init device<br>
  */
 	Tango::DevBoolean	memorizedHighDynamicRangeEnabled;
+/**
+ *	Only an expert User could change this property.<br>
+ *	This is the DCAM frame buffer size used during the acquisition.<BR>
+ */
+	Tango::DevLong	expertFrameBufferSize;
 //@}
 
 /**
@@ -356,7 +361,7 @@ private :
     template< typename T1, typename T2>
     void read_dynamic_attribute(yat4tango::DynamicAttributeReadCallbackData& out_cbd,
                                 T2 (lima::Hamamatsu::Camera::*in_method)(void),
-                                const std::string & in_callerName,
+                                const std::string & in_caller_name,
                                 const bool in_is_enabled_during_running = false);
 
 /**
@@ -367,7 +372,7 @@ private :
     template< typename T1, typename T2>
     void read_dynamic_string_attribute(yat4tango::DynamicAttributeReadCallbackData& out_cbd,
                                        T2 (lima::Hamamatsu::Camera::*in_method)(void),
-                                       const std::string & in_callerName,
+                                       const std::string & in_caller_name,
                                        const bool in_is_enabled_during_running = false);
 
 /**
@@ -378,8 +383,8 @@ private :
     template< typename T1, typename T2>
     void write_dynamic_attribute(yat4tango::DynamicAttributeWriteCallbackData & in_cbd,
                                  void (lima::Hamamatsu::Camera::*in_method)(const T2 &),
-                                 const char * in_optionalMemorizedProperty,
-                                 const std::string & in_callerName);
+                                 const char * in_optional_memorized_property,
+                                 const std::string & in_caller_name);
 
 /**
  *	method:	Hamamatsu::write_dynamic_string_attribute
@@ -389,8 +394,8 @@ private :
     template< typename T1, typename T2>
     void write_dynamic_string_attribute(yat4tango::DynamicAttributeWriteCallbackData & in_cbd,
                                         void (lima::Hamamatsu::Camera::*in_method)(const T2 &),
-                                        const char * in_optionalMemorizedProperty,
-                                        const std::string & in_callerName);
+                                        const char * in_optional_memorized_property,
+                                        const std::string & in_caller_name);
 
 /**
  *	method:	Hamamatsu::write_property_in_dynamic_attribute
@@ -461,13 +466,13 @@ private :
 protected :	
 	//	Add your own data members here
 	//-----------------------------------------
-	bool                                                m_is_device_initialized ;
-    stringstream                                        m_status_message        ;
-	string				                                m_readoutSpeed          ;
-    enum lima::Hamamatsu::Camera::SyncReadOut_BlankMode m_SyncreadoutBlankMode  ;
-	double                                              m_TopViewExposureTime   ;
-	double                                              m_BottomViewExposureTime;
-	bool                                                m_wViewEnabled          ;
+	bool                                                m_is_device_initialized    ;
+    stringstream                                        m_status_message           ;
+	string				                                m_readout_speed            ;
+    enum lima::Hamamatsu::Camera::SyncReadOut_BlankMode m_sync_readout_blank_mode  ;
+	double                                              m_top_view_exposure_time   ;
+	double                                              m_bottom_view_exposure_time;
+	bool                                                m_wView_enabled            ;
 
     /// Device server object for dynamic attributes templates
     Tango::DeviceImpl * m_device;

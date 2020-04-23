@@ -459,6 +459,21 @@ void HamamatsuClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
+	prop_name = "ExpertFrameBufferSize";
+	prop_desc = "Only an expert User could change this property.<br>\nThis is the DCAM frame buffer size used during the acquisition.<BR>";
+	prop_def  = "10";
+	vect_data.clear();
+	vect_data.push_back("10");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 }
 //+----------------------------------------------------------------------------
 //

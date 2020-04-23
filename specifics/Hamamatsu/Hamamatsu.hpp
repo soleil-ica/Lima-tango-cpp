@@ -109,16 +109,16 @@ void Hamamatsu::create_dynamic_attribute(const std::string &   name             
  * \param[in]  T2              data type of the device
  * \param[out] out_cbd         Tango attribute to update with the new value
  * \param[in]  in_method       Pointer to a plugin get method to call
- * \param[in]  in_callerName   Class and method name of the caller (for exception management)
+ * \param[in]  in_caller_name  Class and method name of the caller (for exception management)
  * \param[in]  in_is_enabled_during_running Can we read the attribut during running state ?
 *********************************************************************************************/
 template< typename T1, typename T2>
 void Hamamatsu::read_dynamic_attribute(yat4tango::DynamicAttributeReadCallbackData& out_cbd,
                                        T2 (lima::Hamamatsu::Camera::*in_method)(void),
-                                       const std::string & in_callerName,
+                                       const std::string & in_caller_name,
                                        const bool in_is_enabled_during_running)
 {
-    DEBUG_STREAM << in_callerName << " : " << out_cbd.dya->get_name() << endl;
+    DEBUG_STREAM << in_caller_name << " : " << out_cbd.dya->get_name() << endl;
 
     try
     {
@@ -132,7 +132,7 @@ void Hamamatsu::read_dynamic_attribute(yat4tango::DynamicAttributeReadCallbackDa
 
             Tango::Except::throw_exception("TANGO_DEVICE_ERROR" ,
                                            reason.c_str()       ,
-                                           in_callerName.c_str());
+                                           in_caller_name.c_str());
         }
 
         //- be sure the pointer to the dyn. attr. is valid
@@ -140,7 +140,7 @@ void Hamamatsu::read_dynamic_attribute(yat4tango::DynamicAttributeReadCallbackDa
         {
             THROW_DEVFAILED("INTERNAL_ERROR",
                             "unexpected NULL pointer to dynamic attribute",
-                            in_callerName.c_str());
+                            in_caller_name.c_str());
         }
 
         // set the attribute value
@@ -170,7 +170,7 @@ void Hamamatsu::read_dynamic_attribute(yat4tango::DynamicAttributeReadCallbackDa
         Tango::Except::re_throw_exception(df,
                                           "TANGO_DEVICE_ERROR",
                                           string(df.errors[0].desc).c_str(),
-                                          in_callerName.c_str());
+                                          in_caller_name.c_str());
     }
 }
 
@@ -180,16 +180,16 @@ void Hamamatsu::read_dynamic_attribute(yat4tango::DynamicAttributeReadCallbackDa
  * \param[in]  T2              data type of the device (std::string)
  * \param[out] out_cbd         Tango attribute to update with the new value
  * \param[in]  in_method       Pointer to a plugin get method to call
- * \param[in]  in_callerName   Class and method name of the caller (for exception management)
+ * \param[in]  in_caller_name  Class and method name of the caller (for exception management)
  * \param[in]  in_is_enabled_during_running Can we read the attribut during running state ?
 ******************************************************************************************/
 template< typename T1, typename T2>
 void Hamamatsu::read_dynamic_string_attribute(yat4tango::DynamicAttributeReadCallbackData& out_cbd,
                                               T2 (lima::Hamamatsu::Camera::*in_method)(void),
-                                              const std::string & in_callerName,
+                                              const std::string & in_caller_name,
                                               const bool in_is_enabled_during_running)
 {
-    DEBUG_STREAM << in_callerName << " : " << out_cbd.dya->get_name() << endl;
+    DEBUG_STREAM << in_caller_name << " : " << out_cbd.dya->get_name() << endl;
 
     try
     {
@@ -203,7 +203,7 @@ void Hamamatsu::read_dynamic_string_attribute(yat4tango::DynamicAttributeReadCal
 
             Tango::Except::throw_exception("TANGO_DEVICE_ERROR" ,
                                            reason.c_str()       ,
-                                           in_callerName.c_str());
+                                           in_caller_name.c_str());
         }
 
         //- be sure the pointer to the dyn. attr. is valid
@@ -211,7 +211,7 @@ void Hamamatsu::read_dynamic_string_attribute(yat4tango::DynamicAttributeReadCal
         {
             THROW_DEVFAILED("INTERNAL_ERROR",
                             "unexpected NULL pointer to dynamic attribute",
-                            in_callerName.c_str());
+                            in_caller_name.c_str());
         }
 
         // set the attribute value
@@ -241,27 +241,27 @@ void Hamamatsu::read_dynamic_string_attribute(yat4tango::DynamicAttributeReadCal
         Tango::Except::re_throw_exception(df,
                                           "TANGO_DEVICE_ERROR",
                                           string(df.errors[0].desc).c_str(),
-                                          in_callerName.c_str());
+                                          in_caller_name.c_str());
     }
 }
 
 /********************************************************************************************************
  * \brief Use the write dynamic attribut to set informations in the plugin
- * \param[in]  T1                           TANGO data type (Tango::DevFloat for example)
- * \param[in]  T2                           data type of the device
- * \param[in]  in_cbd                       To get the new Tango value set by the user
- * \param[in]  in_method                    Pointer to a plugin set method to call
- * \param[in]  in_optionalMemorizedProperty Optional memorized property name (NULL if not used)
- *                                          An index will be concatenate. 
- * \param[in]  in_callerName                Class and method name of the caller (for exception management)
+ * \param[in]  T1                             TANGO data type (Tango::DevFloat for example)
+ * \param[in]  T2                             data type of the device
+ * \param[in]  in_cbd                         To get the new Tango value set by the user
+ * \param[in]  in_method                      Pointer to a plugin set method to call
+ * \param[in]  in_optional_memorized_property Optional memorized property name (NULL if not used)
+ *                                            An index will be concatenate. 
+ * \param[in]  in_caller_name                 Class and method name of the caller (for exception management)
 *********************************************************************************************************/
 template< typename T1, typename T2>
 void Hamamatsu::write_dynamic_attribute(yat4tango::DynamicAttributeWriteCallbackData & in_cbd,
                                         void (lima::Hamamatsu::Camera::*in_method)(const T2 &),
-                                        const char * in_optionalMemorizedProperty,
-                                        const std::string & in_callerName)
+                                        const char * in_optional_memorized_property,
+                                        const std::string & in_caller_name)
 {
-    DEBUG_STREAM << in_callerName << " : " << in_cbd.dya->get_name() << endl;
+    DEBUG_STREAM << in_caller_name << " : " << in_cbd.dya->get_name() << endl;
 
     try
     {
@@ -277,7 +277,7 @@ void Hamamatsu::write_dynamic_attribute(yat4tango::DynamicAttributeWriteCallback
 
             Tango::Except::throw_exception("TANGO_DEVICE_ERROR" ,
                                            reason.c_str()       ,
-                                           in_callerName.c_str());
+                                           in_caller_name.c_str());
         }
 
         //- be sure the pointer to the dyn. attr. is valid
@@ -285,7 +285,7 @@ void Hamamatsu::write_dynamic_attribute(yat4tango::DynamicAttributeWriteCallback
         {
             THROW_DEVFAILED("INTERNAL_ERROR",
                             "unexpected NULL pointer to dynamic attribute",
-                            in_callerName.c_str());
+                            in_caller_name.c_str());
         }
 
         // get the write value
@@ -300,13 +300,13 @@ void Hamamatsu::write_dynamic_attribute(yat4tango::DynamicAttributeWriteCallback
         (m_camera->*in_method)(data);
         *temp = data;
 
-        if(in_optionalMemorizedProperty != NULL)
+        if(in_optional_memorized_property != NULL)
         {
             std::stringstream tempValue ; // value to store
             std::stringstream tempStream; // property name
 
             tempValue  << *temp;
-            tempStream << in_optionalMemorizedProperty;
+            tempStream << in_optional_memorized_property;
     
             yat4tango::PropertyHelper::set_property(this, tempStream.str(), tempValue.str());
         }
@@ -318,27 +318,27 @@ void Hamamatsu::write_dynamic_attribute(yat4tango::DynamicAttributeWriteCallback
         Tango::Except::re_throw_exception(df,
                                           "TANGO_DEVICE_ERROR",
                                           string(df.errors[0].desc).c_str(),
-                                          in_callerName.c_str());
+                                          in_caller_name.c_str());
     }
 }
 
 /********************************************************************************************************
  * \brief Use the write dynamic attribut (string) to set informations in the plugin
- * \param[in]  T1                           TANGO data type (Tango::DevString for example)
- * \param[in]  T2                           data type of the device  (std::string)
- * \param[in]  in_cbd                       To get the new Tango value set by the user
- * \param[in]  in_method                    Pointer to a plugin set method to call
- * \param[in]  in_optionalMemorizedProperty Optional memorized property name (NULL if not used)
- *                                          An index will be concatenate. 
- * \param[in]  in_callerName                Class and method name of the caller (for exception management)
+ * \param[in]  T1                             TANGO data type (Tango::DevString for example)
+ * \param[in]  T2                             data type of the device  (std::string)
+ * \param[in]  in_cbd                         To get the new Tango value set by the user
+ * \param[in]  in_method                      Pointer to a plugin set method to call
+ * \param[in]  in_optional_memorized_property Optional memorized property name (NULL if not used)
+ *                                            An index will be concatenate. 
+ * \param[in]  in_caller_name                 Class and method name of the caller (for exception management)
 *********************************************************************************************************/
 template< typename T1, typename T2>
 void Hamamatsu::write_dynamic_string_attribute(yat4tango::DynamicAttributeWriteCallbackData & in_cbd,
                                                void (lima::Hamamatsu::Camera::*in_method)(const T2 &),
-                                               const char * in_optionalMemorizedProperty,
-                                               const std::string & in_callerName)
+                                               const char * in_optional_memorized_property,
+                                               const std::string & in_caller_name)
 {
-    DEBUG_STREAM << in_callerName << " : " << in_cbd.dya->get_name() << endl;
+    DEBUG_STREAM << in_caller_name << " : " << in_cbd.dya->get_name() << endl;
 
     try
     {
@@ -354,7 +354,7 @@ void Hamamatsu::write_dynamic_string_attribute(yat4tango::DynamicAttributeWriteC
 
             Tango::Except::throw_exception("TANGO_DEVICE_ERROR" ,
                                            reason.c_str()       ,
-                                           in_callerName.c_str());
+                                           in_caller_name.c_str());
         }
 
         //- be sure the pointer to the dyn. attr. is valid
@@ -362,7 +362,7 @@ void Hamamatsu::write_dynamic_string_attribute(yat4tango::DynamicAttributeWriteC
         {
             THROW_DEVFAILED("INTERNAL_ERROR",
                             "unexpected NULL pointer to dynamic attribute",
-                            in_callerName.c_str());
+                            in_caller_name.c_str());
         }
 
         // get the write value
@@ -378,13 +378,13 @@ void Hamamatsu::write_dynamic_string_attribute(yat4tango::DynamicAttributeWriteC
         
         strcpy(*temp, data.c_str());
 
-        if(in_optionalMemorizedProperty != NULL)
+        if(in_optional_memorized_property != NULL)
         {
             std::stringstream tempValue ; // value to store
             std::stringstream tempStream; // property name
 
             tempValue  << *temp;
-            tempStream << in_optionalMemorizedProperty;
+            tempStream << in_optional_memorized_property;
     
             yat4tango::PropertyHelper::set_property(this, tempStream.str(), tempValue.str());
         }
@@ -396,7 +396,7 @@ void Hamamatsu::write_dynamic_string_attribute(yat4tango::DynamicAttributeWriteC
         Tango::Except::re_throw_exception(df,
                                           "TANGO_DEVICE_ERROR",
                                           string(df.errors[0].desc).c_str(),
-                                          in_callerName.c_str());
+                                          in_caller_name.c_str());
     }
 }
 
