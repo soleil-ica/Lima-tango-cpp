@@ -106,9 +106,19 @@ Hamamatsu::Hamamatsu(Tango::DeviceClass *cl,const char *s,const char *d)
 //-----------------------------------------------------------------------------
 void Hamamatsu::delete_device()
 {
-	// Release dynamic attributes
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+
+    INFO_STREAM << "==============================================================" << endl;
+    INFO_STREAM << "Starting delete_device." << endl;
+
+    INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
+
+    // Release dynamic attributes
     release_dynamics_attributes();
-    
+
+    INFO_STREAM << "- Delete device allocated objects." << endl;
+
     //	Delete device allocated objects
 	DELETE_DEVSTRING_ATTRIBUTE(attr_readoutSpeed_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_lostFrames_read);
@@ -123,9 +133,6 @@ void Hamamatsu::delete_device()
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerMode_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerStatus_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_temperatureStatus_read);
-
-	INFO_STREAM << "Remove the inner-appender." << endl;
-    yat4tango::InnerAppender::release(this);
 }
 
 //+----------------------------------------------------------------------------
@@ -137,89 +144,92 @@ void Hamamatsu::delete_device()
 //-----------------------------------------------------------------------------
 void Hamamatsu::init_device()
 {
-	INFO_STREAM << "Hamamatsu::Hamamatsu() create device " << device_name << endl;
+    INFO_STREAM << "==============================================================" << endl;
+    INFO_STREAM << "Starting init_device." << endl;
 
-	// Initialise variables to default values
-	//--------------------------------------------
-	get_device_property();
+    INFO_STREAM << "Hamamatsu::Hamamatsu() create device " << device_name << endl;
 
-	CREATE_DEVSTRING_ATTRIBUTE(attr_readoutSpeed_read     , MAX_ATTRIBUTE_STRING_LENGTH);
+    // Initialise variables to default values
+    //--------------------------------------------
+    get_device_property();
+
+    CREATE_DEVSTRING_ATTRIBUTE(attr_readoutSpeed_read, MAX_ATTRIBUTE_STRING_LENGTH);
 
     CREATE_SCALAR_ATTRIBUTE(attr_lostFrames_read);
-	CREATE_SCALAR_ATTRIBUTE(attr_fps_read);
-	CREATE_SCALAR_ATTRIBUTE(attr_wViewEnabled_read);
-	CREATE_SCALAR_ATTRIBUTE(attr_topViewExposureTime_read);
-	CREATE_SCALAR_ATTRIBUTE(attr_bottomViewExposureTime_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_fps_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_wViewEnabled_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_topViewExposureTime_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_bottomViewExposureTime_read);
 
     CREATE_SCALAR_ATTRIBUTE(attr_dyn_temperature_read);
     CREATE_SCALAR_ATTRIBUTE(attr_dyn_highDynamicRangeEnabled_read);
 
-	CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerMode_read       , MAX_ATTRIBUTE_STRING_LENGTH);
-	CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerStatus_read     , MAX_ATTRIBUTE_STRING_LENGTH);
-	CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_temperatureStatus_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerMode_read       , MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerStatus_read     , MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_temperatureStatus_read, MAX_ATTRIBUTE_STRING_LENGTH);
 
-    m_device = this; // Device server object used in dynamic attributes templates
+    m_is_device_initialized = false;
+    set_state(Tango::INIT);
+    m_status_message.str("");
 
-	m_is_device_initialized = false;
-	set_state(Tango::INIT);
-	m_status_message.str("");
-
-	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
     yat4tango::InnerAppender::initialize(this, 512);
 
-	try
-	{
-		//- get the main object used to pilot the lima framework		
-		m_ct = ControlFactory::instance().get_control("Hamamatsu");
-		
-		//- get interface to specific camera
-		m_hw = dynamic_cast<lima::Hamamatsu::Interface*>(m_ct->hwInterface());
-		
-		//- get camera to specific detector
-		m_camera = &(m_hw->getCamera());
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 
-	    // Create dynamic attributes
+    try
+    {
+        //- get the main object used to pilot the lima framework		
+        m_ct = ControlFactory::instance().get_control("Hamamatsu");
+
+        //- get interface to specific camera
+        m_hw = dynamic_cast<lima::Hamamatsu::Interface*>(m_ct->hwInterface());
+
+        //- get camera to specific detector
+        m_camera = &(m_hw->getCamera());
+
+        // Create dynamic attributes
         create_dynamics_attributes();
 
         // Update the hardware with the properties data
         write_at_init();
-	}
+    }
     catch(lima::Exception& e)
     {
         m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
         ERROR_STREAM << m_status_message.str() << endl;
-		m_is_device_initialized = false;
-		set_state(Tango::FAULT);
+        m_is_device_initialized = false;
+        set_state(Tango::FAULT);
         return;
     }
     catch (yat::Exception& ex)
     {
         m_status_message << "Initialization Failed : " << ex.errors[0].desc << endl;
         ERROR_STREAM << m_status_message.str() << endl;
-		m_is_device_initialized = false;
-		set_state(Tango::FAULT);
+        m_is_device_initialized = false;
+        set_state(Tango::FAULT);
         return;
     }
     catch (Tango::DevFailed& df)
     {
         m_status_message << "Initialization Failed : " << df.errors[0].desc << endl;
         ERROR_STREAM << m_status_message.str() << endl;
-		m_is_device_initialized = false;
-		set_state(Tango::FAULT);
+        m_is_device_initialized = false;
+        set_state(Tango::FAULT);
         return;
     }
     catch(...)
     {
         m_status_message << "Initialization Failed : Unknown error" << endl;
         ERROR_STREAM << m_status_message.str() << endl;
-		m_is_device_initialized = false;
-		set_state(Tango::FAULT);
+        m_is_device_initialized = false;
+        set_state(Tango::FAULT);
         return;
     }
 
-	m_is_device_initialized = true;
-	set_state(Tango::STANDBY);
-	dev_state();	
+    m_is_device_initialized = true;
+    set_state(Tango::STANDBY);
+    dev_state();
 }
 
 /*****************************************************************************
@@ -556,22 +566,25 @@ void Hamamatsu::always_executed_hook()
     try
     {
         m_status_message.str("");
+
+        yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+
         //- get the singleton control objet used to pilot the lima framework
 		m_ct = ControlFactory::instance().get_control("Hamamatsu");
 		
-		//- get interface to specific camera
-		m_hw = dynamic_cast<lima::Hamamatsu::Interface*>(m_ct->hwInterface());
+	    //- get interface to specific camera
+	    m_hw = dynamic_cast<lima::Hamamatsu::Interface*>(m_ct->hwInterface());
 		
-		//- get camera to specific detector
-		m_camera = &(m_hw->getCamera());
-		
+	    //- get camera to specific detector
+	    m_camera = &(m_hw->getCamera());
+
 		//update state
         dev_state();
 	}
     catch (Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
-        m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
+        m_status_message << "always_executed_hook Failed : " << e.getErrMsg() << endl;
         //- throw exception
         set_state(Tango::FAULT);
         m_is_device_initialized = false;
@@ -579,8 +592,8 @@ void Hamamatsu::always_executed_hook()
     }
     catch (...)
     {
-        ERROR_STREAM << "Initialization Failed : UNKNOWN" << endl;
-        m_status_message << "Initialization Failed : UNKNOWN" << endl;
+        ERROR_STREAM << "always_executed_hook Failed : UNKNOWN" << endl;
+        m_status_message << "always_executed_hook Failed : UNKNOWN" << endl;
         //- throw exception
         set_state(Tango::FAULT);
         m_is_device_initialized = false;
@@ -890,22 +903,19 @@ void Hamamatsu::read_readoutSpeed(Tango::Attribute &attr)
 
 	try
 	{
-		short int readout_speed = 0;
-		m_camera->getReadoutSpeed(readout_speed);
+        short int readout_speed = 0;
+        m_camera->getReadoutSpeed(readout_speed);
 
-		std::string readout_speed_name = "";
-		switch (readout_speed)
-		{
-            case READOUTSPEED_SLOW_VALUE:	readout_speed_name = READOUTSPEED_SLOW_NAME;
-				break;
-            case READOUTSPEED_NORMAL_VALUE:	readout_speed_name = READOUTSPEED_NORMAL_NAME;
-				break;
-			default:	readout_speed_name = "ERROR";
-				break;
-		}
+        std::string readout_speed_name = "";
+        switch (readout_speed)
+        {
+            case READOUTSPEED_SLOW_VALUE  : readout_speed_name = READOUTSPEED_SLOW_NAME  ; break;
+            case READOUTSPEED_NORMAL_VALUE: readout_speed_name = READOUTSPEED_NORMAL_NAME; break;
+	        default: readout_speed_name = "ERROR"; break;
+        }
 
-		strcpy(*attr_readoutSpeed_read, readout_speed_name.c_str());
-		attr.set_value(attr_readoutSpeed_read);
+        strcpy(*attr_readoutSpeed_read, readout_speed_name.c_str());
+    	attr.set_value(attr_readoutSpeed_read);
 	}
     catch(Tango::DevFailed & df)
     {

@@ -67,11 +67,16 @@ void Hamamatsu::create_dynamic_attribute(const std::string &   name             
 
     ////////////////////////////////////////////////////////////////////////////////////////    
 	yat4tango::DynamicAttributeInfo dai;
-	dai.dev = m_device;
+	dai.dev = this;
 	//- specify the dyn. attr.  name
 	dai.tai.name = name;
-	//- associate the dyn. attr. with its data
-	dai.set_user_data(user_data);
+
+    //- associate the dyn. attr. with its data
+    if(!user_data.empty())
+    {
+    	dai.set_user_data(user_data);
+    }
+    
 	//- describe the dynamic attr we want...
 	dai.tai.data_type        = data_type;
 	dai.tai.data_format      = data_format;
@@ -81,6 +86,7 @@ void Hamamatsu::create_dynamic_attribute(const std::string &   name             
 	dai.tai.format           = format;
 	dai.tai.description      = desc;
     dai.polling_period_in_ms = polling_period_in_ms;
+    dai.cdb                  = false;
 
 	//- cleanup tango db option: cleanup tango db when removing this dyn. attr. (i.e. erase its properties fom db)
 	//	dai.cdb = true;
@@ -98,7 +104,6 @@ void Hamamatsu::create_dynamic_attribute(const std::string &   name             
 	}
 	
 	//- add the dyn. attr. to the device
-	DEBUG_STREAM << "\t- add the dyn. attr. to the device [" << m_device << "]" << endl;
 	m_dim.dynamic_attributes_manager().add_attribute(dai);
 	DEBUG_STREAM << "Hamamatsu::create_dynamic_attribute() - [END]" << endl;
 }

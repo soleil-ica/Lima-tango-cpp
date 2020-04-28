@@ -533,6 +533,11 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         {
             if (!ControlFactory::m_is_created)
             {
+				//- Set Serialisation mode
+				//- this allow dynamic attr in pco specific device
+				YAT_LOG_INFO("Set Serialisation Model : BY_PROCESS");
+				Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_PROCESS);
+
                 Tango::DbData db_data;
                 db_data.push_back(Tango::DbDatum("DetectorNum"));
                 db_data.push_back(Tango::DbDatum("ExpertFrameBufferSize"));

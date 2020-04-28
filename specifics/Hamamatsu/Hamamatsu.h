@@ -474,9 +474,6 @@ protected :
 	double                                              m_bottom_view_exposure_time;
 	bool                                                m_wView_enabled            ;
 
-    /// Device server object for dynamic attributes templates
-    Tango::DeviceImpl * m_device;
-
     /// yat4tango Dynamic Interface Manager
     yat4tango::DynamicInterfaceManager m_dim;
 
