@@ -158,8 +158,7 @@ bool Hamamatsu::is_bottomViewExposureTime_allowed(Tango::AttReqType type)
 bool Hamamatsu::is_readoutSpeed_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
+		get_state() == Tango::FAULT)
 	{
 		//	End of Generated Code
 
