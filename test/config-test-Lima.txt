@@ -1,0 +1,44 @@
+#############################################################
+# fichier de config pour tests du device  LimaDetector
+# date : 2020/04/22
+#############################################################
+#
+@------------------------
+@Init device 
+@------------------------
+CMD;Init;;;;;
+#
+@------------------------
+@Wait (while state is INIT due to Init)
+@------------------------
+WAIT;state;STATE;0.1;DIFF;INIT;
+@------------------------
+@Check State is STANDBY when device is started
+@------------------------
+#READ;state;STATE;;EQUAL;STANDBY
+@------------------------
+@Write exposureTime
+@------------------------
+WRITE;exposureTime;REAL;1000;;;
+@------------------------
+@Write nbFrames
+@------------------------
+WRITE;nbFrames;INT;1;;;
+@------------------------
+@Snap
+@------------------------
+CMD;Snap;;;;;
+@------------------------
+@Wait (while state is RUNNING due to Snap)
+@------------------------
+WAIT;state;STATE;0.1;DIFF;RUNNING;
+#
+@------------------------
+@Check State is STANDBY
+@------------------------
+READ;state;STATE;;EQUAL;STANDBY;
+#
+@------------------------
+@Read image attribute
+@------------------------
+READ_I;image;;;;;
