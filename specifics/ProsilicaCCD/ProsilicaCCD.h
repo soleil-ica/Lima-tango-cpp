@@ -81,7 +81,7 @@ namespace ProsilicaCCD_ns
  */
 
 
-class ProsilicaCCD: public TANGO_BASE_CLASS
+class ProsilicaCCD: public Tango::Device_4Impl
 {
 public :
     //    Add your own data members here

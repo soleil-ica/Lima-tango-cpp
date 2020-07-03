@@ -73,7 +73,7 @@ namespace SlsJungfrau_ns
 
 /*----- PROTECTED REGION END -----*/	//	SlsJungfrau::Additional Class Declarations
 
-class SlsJungfrau : public TANGO_BASE_CLASS
+class SlsJungfrau : public Tango::Device_4Impl
 {
 
 /*----- PROTECTED REGION ID(SlsJungfrau::Data Members) ENABLED START -----*/

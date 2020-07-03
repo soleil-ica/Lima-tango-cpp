@@ -73,19 +73,19 @@ namespace PerkinElmer_ns
 //
 //-----------------------------------------------------------------------------
 PerkinElmer::PerkinElmer(Tango::DeviceClass *cl,string &s)
-:TANGO_BASE_CLASS(cl,s.c_str())
+:Tango::Device_4Impl(cl,s.c_str())
 {
 	init_device();
 }
 
 PerkinElmer::PerkinElmer(Tango::DeviceClass *cl,const char *s)
-:TANGO_BASE_CLASS(cl,s)
+:Tango::Device_4Impl(cl,s)
 {
 	init_device();
 }
 
 PerkinElmer::PerkinElmer(Tango::DeviceClass *cl,const char *s,const char *d)
-:TANGO_BASE_CLASS(cl,s,d)
+:Tango::Device_4Impl(cl,s,d)
 {
 	init_device();
 }

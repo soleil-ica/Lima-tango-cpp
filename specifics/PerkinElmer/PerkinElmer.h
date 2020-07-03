@@ -76,7 +76,7 @@ namespace PerkinElmer_ns
  */
 
 
-class PerkinElmer: public TANGO_BASE_CLASS
+class PerkinElmer: public Tango::Device_4Impl
 {
 public :
 	//	Add your own data members here
