@@ -81,7 +81,7 @@ namespace AndorCCD_ns
  */
 
 
-class AndorCCD: public TANGO_BASE_CLASS
+class AndorCCD: public Tango::Device_4Impl
 {
 public :
     //    Add your own data members here

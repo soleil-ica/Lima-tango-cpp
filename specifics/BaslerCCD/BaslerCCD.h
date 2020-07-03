@@ -82,7 +82,7 @@ namespace BaslerCCD_ns
  */
 
 
-class BaslerCCD: public TANGO_BASE_CLASS
+class BaslerCCD: public Tango::Device_4Impl
 {
 public :
     //    Add your own data members here

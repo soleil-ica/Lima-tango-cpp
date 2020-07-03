@@ -101,7 +101,7 @@ std::vector<enum lima::SlsJungfrau::Camera::ClockDivider> TANGO_CLOCK_DIVIDER_LA
  */
 //--------------------------------------------------------
 SlsJungfrau::SlsJungfrau(Tango::DeviceClass *cl, string &s)
- : TANGO_BASE_CLASS(cl, s.c_str()),m_dim(this)
+ : Tango::Device_4Impl(cl, s.c_str()),m_dim(this)
 {
 	/*----- PROTECTED REGION ID(SlsJungfrau::constructor_1) ENABLED START -----*/
 	init_device();
@@ -110,7 +110,7 @@ SlsJungfrau::SlsJungfrau(Tango::DeviceClass *cl, string &s)
 }
 //--------------------------------------------------------
 SlsJungfrau::SlsJungfrau(Tango::DeviceClass *cl, const char *s)
- : TANGO_BASE_CLASS(cl, s),m_dim(this)
+ : Tango::Device_4Impl(cl, s),m_dim(this)
 {
 	/*----- PROTECTED REGION ID(SlsJungfrau::constructor_2) ENABLED START -----*/
 	init_device();
@@ -119,7 +119,7 @@ SlsJungfrau::SlsJungfrau(Tango::DeviceClass *cl, const char *s)
 }
 //--------------------------------------------------------
 SlsJungfrau::SlsJungfrau(Tango::DeviceClass *cl, const char *s, const char *d)
- : TANGO_BASE_CLASS(cl, s, d),m_dim(this)
+ : Tango::Device_4Impl(cl, s, d),m_dim(this)
 {
 	/*----- PROTECTED REGION ID(SlsJungfrau::constructor_3) ENABLED START -----*/
 	init_device();

@@ -150,7 +150,7 @@ std::vector<enum lima::SlsEiger::GainMode> TANGO_GAIN_MODE_LABELS_TO_TYPE{lima::
  */
 //--------------------------------------------------------
 SlsEiger::SlsEiger(Tango::DeviceClass *cl, string &s)
- : TANGO_BASE_CLASS(cl, s.c_str())
+ : Tango::Device_4Impl(cl, s.c_str())
 {
 	/*----- PROTECTED REGION ID(SlsEiger::constructor_1) ENABLED START -----*/
 	init_device();
@@ -159,7 +159,7 @@ SlsEiger::SlsEiger(Tango::DeviceClass *cl, string &s)
 }
 //--------------------------------------------------------
 SlsEiger::SlsEiger(Tango::DeviceClass *cl, const char *s)
- : TANGO_BASE_CLASS(cl, s)
+ : Tango::Device_4Impl(cl, s)
 {
 	/*----- PROTECTED REGION ID(SlsEiger::constructor_2) ENABLED START -----*/
 	init_device();
@@ -168,7 +168,7 @@ SlsEiger::SlsEiger(Tango::DeviceClass *cl, const char *s)
 }
 //--------------------------------------------------------
 SlsEiger::SlsEiger(Tango::DeviceClass *cl, const char *s, const char *d)
- : TANGO_BASE_CLASS(cl, s, d)
+ : Tango::Device_4Impl(cl, s, d)
 {
 	/*----- PROTECTED REGION ID(SlsEiger::constructor_3) ENABLED START -----*/
 	init_device();

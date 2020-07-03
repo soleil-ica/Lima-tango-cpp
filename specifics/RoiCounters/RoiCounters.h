@@ -87,7 +87,7 @@ namespace RoiCounters_ns
  */
 
 
-class RoiCounters : public TANGO_BASE_CLASS
+class RoiCounters : public Tango::Device_4Impl
 {
 public:
     //	Add your own data members here

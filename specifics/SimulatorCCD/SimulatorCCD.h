@@ -78,7 +78,7 @@ namespace SimulatorCCD_ns
  */
 
 
-class SimulatorCCD: public TANGO_BASE_CLASS
+class SimulatorCCD: public Tango::Device_4Impl
 {
 public :
 	//	Add your own data members here
