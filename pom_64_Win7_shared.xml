@@ -9,7 +9,7 @@
 	
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.9.2</version>
+    <version>1.9.3</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -43,17 +43,23 @@
 		<omniorb-lib>${tango-lib}</omniorb-lib>
 		<omniorb-include>${tango-include}</omniorb-include>
 		
-		<yat-lib>${libs-64bits}\yat\target\nar\lib\amd64-Windows-msvc\shared\</yat-lib>
-		<yat-include>${libs-64bits}\yat\target\nar\include\</yat-include>
+		<!-- <yat-lib>${libs-64bits}\yat\target\nar\lib\amd64-Windows-msvc\shared\</yat-lib>
+		<yat-include>${libs-64bits}\yat\target\nar\include\</yat-include> -->
+		<yat-lib>T:\DEV\flosvn\yat\target\nar\lib\amd64-Windows-msvc\shared\</yat-lib>
+		<yat-include>T:\DEV\flosvn\yat\target\nar\include\</yat-include>
 
 		<log4tango-lib>${tango-lib}</log4tango-lib>
 		<log4tango-include>${tango-include}</log4tango-include>
 		
-		<yat4tango-lib>${libs-64bits}\yat4tango\target\nar\lib\amd64-Windows-msvc\shared\</yat4tango-lib>
-		<yat4tango-include>${libs-64bits}\yat4tango\target\nar\include\</yat4tango-include>
+		<!-- <yat4tango-lib>${libs-64bits}\yat4tango\target\nar\lib\amd64-Windows-msvc\shared\</yat4tango-lib>
+		<yat4tango-include>${libs-64bits}\yat4tango\target\nar\include\</yat4tango-include> -->
+		<yat4tango-lib>T:\DEV\flosvn\yat4tango\target\nar\lib\amd64-Windows-msvc\shared\</yat4tango-lib>
+		<yat4tango-include>T:\DEV\flosvn\yat4tango\target\nar\include\</yat4tango-include>
 
-		<nexuscpp-lib>${libs-64bits}\nexuscpp\target\nar\lib\amd64-Windows-msvc\shared</nexuscpp-lib>
-		<nexuscpp-include>${libs-64bits}\nexuscpp\target\nar\include\</nexuscpp-include>
+		<!-- <nexuscpp-lib>${libs-64bits}\nexuscpp\target\nar\lib\amd64-Windows-msvc\shared</nexuscpp-lib>
+		<nexuscpp-include>${libs-64bits}\nexuscpp\target\nar\include\</nexuscpp-include> -->
+		<nexuscpp-lib>T:\DEV\flosvn\nexuscpp\target\nar\lib\amd64-Windows-msvc\shared</nexuscpp-lib>
+		<nexuscpp-include>T:\DEV\flosvn\nexuscpp\target\nar\include\</nexuscpp-include>
 		
         <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
         <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
@@ -62,7 +68,7 @@
         <SIMULATOR.name>Simulator</SIMULATOR.name>
         <SIMULATOR.version>1.4.0</SIMULATOR.version>
         <PCO.name>Pco</PCO.name>
-        <PCO.version>1.7.0</PCO.version>
+        <PCO.version>1.7.1</PCO.version>
         <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
         <HAMAMATSU.version>2.3.0</HAMAMATSU.version>
         <DHYANA.name>Dhyana</DHYANA.name>
@@ -190,9 +196,9 @@
 							<define>TANGO_HAS_DLL</define>
 							<define>LOG4TANGO_HAS_DLL</define>
 							<define>YAT_DLL</define>
-							<define>YAT_BUILD</define>
+							<!-- <define>YAT_BUILD</define> -->
 							<define>YAT4TANGO_DLL</define>
-							<define>YAT4TANGO_BUILD</define>
+							<!-- <define>YAT4TANGO_BUILD</define> -->
 							<define>NEXUSCPP_DLL</define>
 							<define>USE_NX_FINALIZER</define>
 							<define>UNIX_64_EL5</define>
@@ -203,14 +209,14 @@
 						<libs>
 							<!-- yat4tango 64 bits -->
 							<lib>
-								<name>YAT4Tango-amd64-Windows-msvc12-shared-release-1.11.2</name>
+								<name>YAT4Tango-amd64-Windows-msvc12-shared-release-1.12.1</name>
 								<type>shared</type>
 								<directory>${yat4tango-lib}</directory>
 							</lib>
 
 							<!-- nexuscpp 64 bits -->
 							<lib>
-								<name>NexusCPP-amd64-Windows-msvc12-shared-release-3.3.2</name>
+								<name>NexusCPP-amd64-Windows-msvc12-shared-release-3.3.5</name>
 								<type>shared</type>
 								<directory>${nexuscpp-lib}</directory>
 							</lib>
@@ -232,7 +238,7 @@
 							
 							<!-- yat 64 bits -->
 							<lib>
-								<name>YAT-amd64-Windows-msvc12-shared-release-1.14.4</name>
+								<name>YAT-amd64-Windows-msvc12-shared-release-1.17.2</name>
 								<type>shared</type>
 								<directory>${yat-lib}</directory>
 							</lib>
