@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.9.2</version>
+    <version>1.9.3</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -292,7 +292,7 @@
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>NexusCPP-${aol}-shared-${mode}</artifactId>
                     <!-- Intentionnaly forced as this is currently WIP for shared lib --> 
-                    <version>3.3.4-SNAPSHOT</version>
+                    <version>3.3.5</version>
                 </dependency>
          
                 <dependency>
@@ -304,14 +304,14 @@
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>YAT4Tango-${aol}-shared-${mode}</artifactId>
                     <!-- Intentionnaly forced as this is currently WIP for shared lib --> 
-                    <version>1.11.6-SNAPSHOT</version>
+                    <version>1.12.1</version>
                 </dependency>
         
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>YAT-${aol}-shared-${mode}</artifactId>           
                     <!-- Intentionnaly forced as this is currently WIP for shared lib --> 
-                    <version>1.15.1-SNAPSHOT</version>
+                    <version>1.17.2</version>
                 </dependency>
 
                 <dependency>
