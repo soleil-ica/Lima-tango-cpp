@@ -804,7 +804,7 @@ void SlsJungfrauClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	detectorFirmwareVersionAttrib	*detectorfirmwareversion = new detectorFirmwareVersionAttrib();
 	Tango::UserDefaultAttrProp	detectorfirmwareversion_prop;
 	detectorfirmwareversion_prop.set_description("Get detector firmware version.");
-	detectorfirmwareversion_prop.set_label("Detector firmware version");
+	detectorfirmwareversion_prop.set_label("detectorFirmwareVersion");
 	//	unit	not set for detectorFirmwareVersion
 	//	standard_unit	not set for detectorFirmwareVersion
 	//	display_unit	not set for detectorFirmwareVersion
@@ -828,7 +828,7 @@ void SlsJungfrauClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	detectorSoftwareVersionAttrib	*detectorsoftwareversion = new detectorSoftwareVersionAttrib();
 	Tango::UserDefaultAttrProp	detectorsoftwareversion_prop;
 	detectorsoftwareversion_prop.set_description("Get detector software version.");
-	detectorsoftwareversion_prop.set_label("Detector software version");
+	detectorsoftwareversion_prop.set_label("detectorSoftwareVersion");
 	//	unit	not set for detectorSoftwareVersion
 	//	standard_unit	not set for detectorSoftwareVersion
 	//	display_unit	not set for detectorSoftwareVersion

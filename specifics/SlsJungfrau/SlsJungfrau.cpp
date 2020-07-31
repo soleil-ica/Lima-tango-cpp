@@ -178,6 +178,12 @@ void SlsJungfrau::delete_device()
     delete[] attr_detectorFirmwareVersion_read[0];
     delete[] attr_detectorSoftwareVersion_read[0];
     delete[] attr_gainMode_read               [0];
+    delete[] attr_gainCoeffsFileName_read     [0];
+    delete[] attr_pedestalFileName1_read      [0];
+    delete[] attr_pedestalFileName2_read      [0];
+    delete[] attr_pedestalFileName3_read      [0];
+    delete[] attr_gainCoeffsState_read        [0];
+    delete[] attr_calibrationState_read       [0];
 
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::delete_device
 	delete[] attr_clockDivider_read;
@@ -286,13 +292,25 @@ void SlsJungfrau::init_device()
     attr_detectorFirmwareVersion_read[0] = new char[ 256];
     attr_detectorSoftwareVersion_read[0] = new char[ 256];
     attr_gainMode_read               [0] = new char[ 256];
+	attr_gainCoeffsFileName_read     [0] = new char[1024];
+	attr_pedestalFileName1_read      [0] = new char[1024];
+	attr_pedestalFileName2_read      [0] = new char[1024];
+	attr_pedestalFileName3_read      [0] = new char[1024];
+	attr_gainCoeffsState_read        [0] = new char[ 256];
+	attr_calibrationState_read       [0] = new char[ 256];
 
     ::strcpy(attr_clockDivider_read           [0], "");
     ::strcpy(attr_configFileName_read         [0], "");
     ::strcpy(attr_detectorFirmwareVersion_read[0], "");
     ::strcpy(attr_detectorSoftwareVersion_read[0], "");
     ::strcpy(attr_gainMode_read               [0], "");
-        
+    ::strcpy(attr_gainCoeffsFileName_read     [0], "");
+    ::strcpy(attr_pedestalFileName1_read      [0], "");
+    ::strcpy(attr_pedestalFileName2_read      [0], "");
+    ::strcpy(attr_pedestalFileName3_read      [0], "");
+    ::strcpy(attr_gainCoeffsState_read        [0], "");
+    ::strcpy(attr_calibrationState_read       [0], "");
+
     //	Initialize device
 	m_is_device_initialized = true;
 	set_state(Tango::STANDBY);
