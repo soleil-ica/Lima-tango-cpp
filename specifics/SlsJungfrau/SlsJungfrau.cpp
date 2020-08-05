@@ -235,6 +235,9 @@ void SlsJungfrau::init_device()
 		
 		//- get camera to specific detector
 		m_camera = &(m_hw->getCamera());
+
+        // update the bit depth (if there is gain coefficients loaded the bit depth will be changed to 24 bits)
+        m_camera->updateImageFormat();
 	}
 	catch(Exception& e)
 	{
@@ -315,7 +318,7 @@ void SlsJungfrau::init_device()
 	m_is_device_initialized = true;
 	set_state(Tango::STANDBY);
 	dev_state();	
-	
+
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::init_device
 }
 
@@ -345,14 +348,8 @@ void SlsJungfrau::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("ExpertPedestalFileName2"));
 	dev_prop.push_back(Tango::DbDatum("ExpertPedestalFileName3"));
 	dev_prop.push_back(Tango::DbDatum("ExpertPedestalNbFrames1"));
-	dev_prop.push_back(Tango::DbDatum("ExpertPedestalExposureSec1"));
-	dev_prop.push_back(Tango::DbDatum("ExpertPedestalPeriodSec1"));
 	dev_prop.push_back(Tango::DbDatum("ExpertPedestalNbFrames2"));
-	dev_prop.push_back(Tango::DbDatum("ExpertPedestalExposureSec2"));
-	dev_prop.push_back(Tango::DbDatum("ExpertPedestalPeriodSec2"));
 	dev_prop.push_back(Tango::DbDatum("ExpertPedestalNbFrames3"));
-	dev_prop.push_back(Tango::DbDatum("ExpertPedestalExposureSec3"));
-	dev_prop.push_back(Tango::DbDatum("ExpertPedestalPeriodSec3"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -466,28 +463,6 @@ void SlsJungfrau::get_device_property()
 		//	And try to extract ExpertPedestalNbFrames1 value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalNbFrames1;
 
-		//	Try to initialize ExpertPedestalExposureSec1 from class property
-		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalExposureSec1;
-		else {
-			//	Try to initialize ExpertPedestalExposureSec1 from default device value
-			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalExposureSec1;
-		}
-		//	And try to extract ExpertPedestalExposureSec1 value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalExposureSec1;
-
-		//	Try to initialize ExpertPedestalPeriodSec1 from class property
-		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalPeriodSec1;
-		else {
-			//	Try to initialize ExpertPedestalPeriodSec1 from default device value
-			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalPeriodSec1;
-		}
-		//	And try to extract ExpertPedestalPeriodSec1 value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalPeriodSec1;
-
 		//	Try to initialize ExpertPedestalNbFrames2 from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalNbFrames2;
@@ -499,28 +474,6 @@ void SlsJungfrau::get_device_property()
 		//	And try to extract ExpertPedestalNbFrames2 value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalNbFrames2;
 
-		//	Try to initialize ExpertPedestalExposureSec2 from class property
-		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalExposureSec2;
-		else {
-			//	Try to initialize ExpertPedestalExposureSec2 from default device value
-			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalExposureSec2;
-		}
-		//	And try to extract ExpertPedestalExposureSec2 value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalExposureSec2;
-
-		//	Try to initialize ExpertPedestalPeriodSec2 from class property
-		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalPeriodSec2;
-		else {
-			//	Try to initialize ExpertPedestalPeriodSec2 from default device value
-			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalPeriodSec2;
-		}
-		//	And try to extract ExpertPedestalPeriodSec2 value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalPeriodSec2;
-
 		//	Try to initialize ExpertPedestalNbFrames3 from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalNbFrames3;
@@ -531,28 +484,6 @@ void SlsJungfrau::get_device_property()
 		}
 		//	And try to extract ExpertPedestalNbFrames3 value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalNbFrames3;
-
-		//	Try to initialize ExpertPedestalExposureSec3 from class property
-		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalExposureSec3;
-		else {
-			//	Try to initialize ExpertPedestalExposureSec3 from default device value
-			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalExposureSec3;
-		}
-		//	And try to extract ExpertPedestalExposureSec3 value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalExposureSec3;
-
-		//	Try to initialize ExpertPedestalPeriodSec3 from class property
-		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  expertPedestalPeriodSec3;
-		else {
-			//	Try to initialize ExpertPedestalPeriodSec3 from default device value
-			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  expertPedestalPeriodSec3;
-		}
-		//	And try to extract ExpertPedestalPeriodSec3 value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertPedestalPeriodSec3;
 
 	}
 
@@ -573,14 +504,6 @@ void SlsJungfrau::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "5000", "ExpertPedestalNbFrames1");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1000", "ExpertPedestalNbFrames2");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1000", "ExpertPedestalNbFrames3");
-
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0008", "ExpertPedestalExposureSec1");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0019", "ExpertPedestalExposureSec2");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0049", "ExpertPedestalExposureSec3");
-
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.000909", "ExpertPedestalPeriodSec1");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.002"   , "ExpertPedestalPeriodSec2");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.005"   , "ExpertPedestalPeriodSec3");
 
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::get_device_property_after
 }
@@ -1622,6 +1545,19 @@ void SlsJungfrau::calibrate()
 	
     try
     {
+        // first, we need to set the exposure time and period as new calibration parameters
+        double acq_time;
+        double lat_time;
+        double period  ;
+
+        // the data came from Lima because they are not set till a new acquisition is started
+        m_ct->acquisition()->getAcqExpoTime(acq_time);
+        m_ct->acquisition()->getLatencyTime(lat_time);
+        period = acq_time + lat_time;
+        
+        m_camera->setCalibrationExposureTimeAndPeriod(acq_time, period);
+
+        // then, we can start a new calibration
         m_camera->startCalibration();
 	}
     catch(Tango::DevFailed & df)

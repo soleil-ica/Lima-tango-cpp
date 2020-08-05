@@ -615,12 +615,6 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 // number of frames used to generate the pedestal images
                 std::vector<long>        pedestal_nb_frames{5000LL, 1000LL, 1000LL};
 
-                // exposure time (in seconds) used to generate the pedestal images
-                std::vector<double>      pedestal_exposures_sec{0.0008, 0.0019, 0.0049};
-
-                // exposure period (in seconds) used to generate the pedestal images
-                std::vector<double>      pedestal_periods_sec{0.000909, 0.002, 0.005};
-
                 // configuration complete path
                 db_data.push_back(Tango::DbDatum("ConfigFileName"));
                 
@@ -646,37 +640,21 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data.push_back(Tango::DbDatum("ExpertPedestalNbFrames2"));
                 db_data.push_back(Tango::DbDatum("ExpertPedestalNbFrames3"));
 
-                //  exposure times (in seconds) used to generate the pedestal images.
-                db_data.push_back(Tango::DbDatum("ExpertPedestalExposureSec1"));
-                db_data.push_back(Tango::DbDatum("ExpertPedestalExposureSec2"));
-                db_data.push_back(Tango::DbDatum("ExpertPedestalExposureSec3"));
-
-                //  exposure period (in seconds) used to generate the pedestal images.
-                db_data.push_back(Tango::DbDatum("ExpertPedestalPeriodSec1"));
-                db_data.push_back(Tango::DbDatum("ExpertPedestalPeriodSec2"));
-                db_data.push_back(Tango::DbDatum("ExpertPedestalPeriodSec3"));
-
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
 
                 int data_index = 0;
 
-                db_data[data_index++] >> config_file_name   ;
-                db_data[data_index++] >> readout_time       ;
-                db_data[data_index++] >> receiver_fifo_depth;
-                db_data[data_index++] >> frame_packet_number;
+                db_data[data_index++] >> config_file_name      ;
+                db_data[data_index++] >> readout_time          ;
+                db_data[data_index++] >> receiver_fifo_depth   ;
+                db_data[data_index++] >> frame_packet_number   ;
                 db_data[data_index++] >> gains_coeffs_file_name;
                 db_data[data_index++] >> pedestal_file_names[0];
                 db_data[data_index++] >> pedestal_file_names[1];
                 db_data[data_index++] >> pedestal_file_names[2];
-                db_data[data_index++] >> pedestal_nb_frames[0];
-                db_data[data_index++] >> pedestal_nb_frames[1];
-                db_data[data_index++] >> pedestal_nb_frames[2];
-                db_data[data_index++] >> pedestal_exposures_sec[0];
-                db_data[data_index++] >> pedestal_exposures_sec[1];
-                db_data[data_index++] >> pedestal_exposures_sec[2];
-                db_data[data_index++] >> pedestal_periods_sec[0];
-                db_data[data_index++] >> pedestal_periods_sec[1];
-                db_data[data_index++] >> pedestal_periods_sec[2];
+                db_data[data_index++] >> pedestal_nb_frames[0] ;
+                db_data[data_index++] >> pedestal_nb_frames[1] ;
+                db_data[data_index++] >> pedestal_nb_frames[2] ;
 
                 // create and initialize the camera and create interface and control  
                 m_camera    = static_cast<void*> (new SlsJungfrau::Camera(config_file_name      ,
@@ -685,9 +663,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                                                                           frame_packet_number   ,
                                                                           gains_coeffs_file_name,
                                                                           pedestal_file_names   ,
-                                                                          pedestal_nb_frames    ,
-                                                                          pedestal_exposures_sec,
-                                                                          pedestal_periods_sec  ));
+                                                                          pedestal_nb_frames    ));
 
                 m_interface = static_cast<void*> (new SlsJungfrau::Interface(*(static_cast<SlsJungfrau::Camera*> (m_camera))));
                 m_control   = new CtControl(static_cast<SlsJungfrau::Interface*> (m_interface));

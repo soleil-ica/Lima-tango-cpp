@@ -41,36 +41,12 @@
       <type xsi:type="pogoDsl:IntType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </deviceProperties>
-    <deviceProperties name="ExpertPedestalExposureSec1" description="Only an expert User could change this property.&lt;br>&#xA;It defines the exposure time (in seconds) used to generate a pedestal image (first gain).&lt;BR>">
-      <type xsi:type="pogoDsl:DoubleType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-    </deviceProperties>
-    <deviceProperties name="ExpertPedestalPeriodSec1" description="Only an expert User could change this property.&lt;br>&#xA;It defines the exposure period (in seconds) used to generate a pedestal image (first gain).&lt;BR>">
-      <type xsi:type="pogoDsl:DoubleType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-    </deviceProperties>
     <deviceProperties name="ExpertPedestalNbFrames2" description="Only an expert User could change this property.&lt;br>&#xA;It defines the number of frames used to generate a pedestal image (second gain).&lt;BR>">
       <type xsi:type="pogoDsl:IntType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </deviceProperties>
-    <deviceProperties name="ExpertPedestalExposureSec2" description="Only an expert User could change this property.&lt;br>&#xA;It defines the exposure time (in seconds) used to generate a pedestal image (second gain).&lt;BR>">
-      <type xsi:type="pogoDsl:DoubleType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-    </deviceProperties>
-    <deviceProperties name="ExpertPedestalPeriodSec2" description="Only an expert User could change this property.&lt;br>&#xA;It defines the exposure period (in seconds) used to generate a pedestal image (second gain).&lt;BR>">
-      <type xsi:type="pogoDsl:DoubleType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-    </deviceProperties>
     <deviceProperties name="ExpertPedestalNbFrames3" description="Only an expert User could change this property.&lt;br>&#xA;It defines the number of frames used to generate a pedestal image (third gain).&lt;BR>">
       <type xsi:type="pogoDsl:IntType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-    </deviceProperties>
-    <deviceProperties name="ExpertPedestalExposureSec3" description="Only an expert User could change this property.&lt;br>&#xA;It defines the exposure time (in seconds) used to generate a pedestal image (third gain).&lt;BR>">
-      <type xsi:type="pogoDsl:DoubleType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-    </deviceProperties>
-    <deviceProperties name="ExpertPedestalPeriodSec3" description="Only an expert User could change this property.&lt;br>&#xA;It defines the exposure period (in seconds) used to generate a pedestal image (third gain).&lt;BR>">
-      <type xsi:type="pogoDsl:DoubleType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </deviceProperties>
     <commands name="State" description="This command gets the device state (stored in its device_state data member) and returns it to the caller." execMethod="dev_state" displayLevel="OPERATOR" polledPeriod="0">

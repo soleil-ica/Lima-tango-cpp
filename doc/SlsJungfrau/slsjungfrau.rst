@@ -20,14 +20,8 @@ ExpertPedestalFileName1    N/A             String          Complete path of a pe
 ExpertPedestalFileName2    N/A             String          Complete path of a pedestal image (second gain).
 ExpertPedestalFileName3    N/A             String          Complete path of a pedestal image (third gain).
 ExpertPedestalNbFrames1    5000            Long            Number of frames used to generate a pedestal image (first gain).
-ExpertPedestalExposureSec1 0.0008          Double          Exposure time (in seconds) used to generate a pedestal image (first gain).
-ExpertPedestalPeriodSec1   0.000909        Double          Exposure period (in seconds) used to generate a pedestal image (first gain).
 ExpertPedestalNbFrames2    1000            Long            Number of frames used to generate a pedestal image (second gain).
-ExpertPedestalExposureSec2 0.0019          Double          Exposure time (in seconds) used to generate a pedestal image (second gain).
-ExpertPedestalPeriodSec2   0.002           Double          Exposure period (in seconds) used to generate a pedestal image (second gain).
 ExpertPedestalNbFrames3    1000            Long            Number of frames used to generate a pedestal image (third gain).
-ExpertPedestalExposureSec3 0.0049          Double          Exposure time (in seconds) used to generate a pedestal image (third gain).
-ExpertPedestalPeriodSec3   0.005           Double          Exposure period (in seconds) used to generate a pedestal image (third gain).
 ========================== =============== =============== =============================================================================
 
 

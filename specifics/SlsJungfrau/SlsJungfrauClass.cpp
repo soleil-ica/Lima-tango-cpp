@@ -418,32 +418,6 @@ void SlsJungfrauClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ExpertPedestalExposureSec1";
-	prop_desc = "Only an expert User could change this property.<br>\nIt defines the exposure time (in seconds) used to generate a pedestal image (first gain).<BR>";
-	prop_def  = "";
-	vect_data.clear();
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ExpertPedestalPeriodSec1";
-	prop_desc = "Only an expert User could change this property.<br>\nIt defines the exposure period (in seconds) used to generate a pedestal image (first gain).<BR>";
-	prop_def  = "";
-	vect_data.clear();
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
 	prop_name = "ExpertPedestalNbFrames2";
 	prop_desc = "Only an expert User could change this property.<br>\nIt defines the number of frames used to generate a pedestal image (second gain).<BR>";
 	prop_def  = "";
@@ -457,60 +431,8 @@ void SlsJungfrauClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ExpertPedestalExposureSec2";
-	prop_desc = "Only an expert User could change this property.<br>\nIt defines the exposure time (in seconds) used to generate a pedestal image (second gain).<BR>";
-	prop_def  = "";
-	vect_data.clear();
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ExpertPedestalPeriodSec2";
-	prop_desc = "Only an expert User could change this property.<br>\nIt defines the exposure period (in seconds) used to generate a pedestal image (second gain).<BR>";
-	prop_def  = "";
-	vect_data.clear();
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
 	prop_name = "ExpertPedestalNbFrames3";
 	prop_desc = "Only an expert User could change this property.<br>\nIt defines the number of frames used to generate a pedestal image (third gain).<BR>";
-	prop_def  = "";
-	vect_data.clear();
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ExpertPedestalExposureSec3";
-	prop_desc = "Only an expert User could change this property.<br>\nIt defines the exposure time (in seconds) used to generate a pedestal image (third gain).<BR>";
-	prop_def  = "";
-	vect_data.clear();
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ExpertPedestalPeriodSec3";
-	prop_desc = "Only an expert User could change this property.<br>\nIt defines the exposure period (in seconds) used to generate a pedestal image (third gain).<BR>";
 	prop_def  = "";
 	vect_data.clear();
 	if (prop_def.length()>0)

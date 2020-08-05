@@ -110,30 +110,12 @@ public:
 	//	ExpertPedestalNbFrames1:	Only an expert User could change this property.<br>
 	//  It defines the number of frames used to generate a pedestal image (first gain).<BR>
 	Tango::DevLong	expertPedestalNbFrames1;
-	//	ExpertPedestalExposureSec1:	Only an expert User could change this property.<br>
-	//  It defines the exposure time (in seconds) used to generate a pedestal image (first gain).<BR>
-	Tango::DevDouble	expertPedestalExposureSec1;
-	//	ExpertPedestalPeriodSec1:	Only an expert User could change this property.<br>
-	//  It defines the exposure period (in seconds) used to generate a pedestal image (first gain).<BR>
-	Tango::DevDouble	expertPedestalPeriodSec1;
 	//	ExpertPedestalNbFrames2:	Only an expert User could change this property.<br>
 	//  It defines the number of frames used to generate a pedestal image (second gain).<BR>
 	Tango::DevLong	expertPedestalNbFrames2;
-	//	ExpertPedestalExposureSec2:	Only an expert User could change this property.<br>
-	//  It defines the exposure time (in seconds) used to generate a pedestal image (second gain).<BR>
-	Tango::DevDouble	expertPedestalExposureSec2;
-	//	ExpertPedestalPeriodSec2:	Only an expert User could change this property.<br>
-	//  It defines the exposure period (in seconds) used to generate a pedestal image (second gain).<BR>
-	Tango::DevDouble	expertPedestalPeriodSec2;
 	//	ExpertPedestalNbFrames3:	Only an expert User could change this property.<br>
 	//  It defines the number of frames used to generate a pedestal image (third gain).<BR>
 	Tango::DevLong	expertPedestalNbFrames3;
-	//	ExpertPedestalExposureSec3:	Only an expert User could change this property.<br>
-	//  It defines the exposure time (in seconds) used to generate a pedestal image (third gain).<BR>
-	Tango::DevDouble	expertPedestalExposureSec3;
-	//	ExpertPedestalPeriodSec3:	Only an expert User could change this property.<br>
-	//  It defines the exposure period (in seconds) used to generate a pedestal image (third gain).<BR>
-	Tango::DevDouble	expertPedestalPeriodSec3;
 
 //	Attribute data members
 public:
