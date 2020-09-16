@@ -18,6 +18,7 @@
     <properties>
         <!-- path to the 64 bits libs -->
         <libs-64bits>/home/informatique/ica/ica/LIB_EL6_64</libs-64bits>
+        <!--<libs-64bits>/media/sf_Partage/DeviceSources-ufxc-github/LIB_EL6_64</libs-64bits>-->
         <libs-lambda>../../../camera/lambda/sdk/bin</libs-lambda>
         <libs-xspress3>../../../camera/xspress3/sdk</libs-xspress3>
         <!--<aol>amd64-Linux-gcc</aol> -->
@@ -38,7 +39,7 @@
         <XSPRESS3.name>Xspress3</XSPRESS3.name>
         <XSPRESS3.version>1.0.1</XSPRESS3.version>   
         <UFCX.name>Ufcx</UFCX.name>
-        <UFCX.version>1.1.0</UFCX.version>    
+        <UFCX.version>1.2.0</UFCX.version>    
     </properties>
 
     <scm>
@@ -63,7 +64,7 @@
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaEiger-amd64-Linux-gcc-shared-${mode}</artifactId>
             <version>${EIGER.version}</version>
-        </dependency>       -->
+        </dependency>
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaSlsEiger-amd64-Linux-gcc-shared-${mode}</artifactId>
