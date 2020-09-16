@@ -369,6 +369,9 @@ void LimaDetector::init_device()
             ControlFactory::instance().init_specific_device(detectorType);
         }	
 	
+        //- CCA - save the current image type for the dynamic management of the pixel depth
+        m_ct->image()->getInternalImageType(m_current_image_type);
+
 		// everything seems ok
 		m_is_device_initialized = true;
 		
@@ -1006,6 +1009,9 @@ void LimaDetector::always_executed_hook()
 {
     //- update state
     dev_state();
+
+    // CCA - If the pixel depth dynamically changed, we need to update some attributes before the acquisition
+    manage_pixel_depth_change();
 }
 
 //+----------------------------------------------------------------------------
@@ -4746,10 +4752,6 @@ void LimaDetector::configure_attributes_hardware_at_init(void)
 //-----------------------------------------------------------------------------
 void LimaDetector::add_image_dynamic_attribute(const std::string& attr_name)
 {
-    // read the pixel depth property from the database. 
-    // The value can have been changed. 
-    update_pixel_depth();
-
     //- add image dynamic attribute
     //- create image dyn attr (UChar, UShort or ULong)        
     yat4tango::DynamicAttributeInfo dai;
@@ -4970,37 +4972,104 @@ void LimaDetector::execute_close_shutter_callback(yat4tango::DynamicCommandExecu
 
 //+----------------------------------------------------------------------------
 //
-// method :         LimaDetector::update_pixel_depth()
+// method :         LimaDetector::manage_pixel_depth_change()
 //
-// description :     Re-Read the pixel depth property from database.
+// description :     Check if the pixel depth changed and update some attributes.
 //
 //-----------------------------------------------------------------------------
-void LimaDetector::update_pixel_depth()
+void LimaDetector::manage_pixel_depth_change()
 {
-	Tango::DbData  dev_prop;
-    Tango::DbDatum def_prop, cl_prop;
-
-	dev_prop.push_back(Tango::DbDatum("DetectorPixelDepth"));
-
-	if (Tango::Util::instance()->_UseDb==true)
-		get_db_device()->get_property(dev_prop);
-
-	LimaDetectorClass *ds_class = (static_cast<LimaDetectorClass *>(get_device_class()));
-
-	//	Try to initialize DetectorPixelDepth from class property
-	cl_prop = ds_class->get_class_property(dev_prop[0].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  detectorPixelDepth;
-	else 
+    try
     {
-		//	Try to initialize DetectorPixelDepth from default device value
-		def_prop = ds_class->get_default_device_property(dev_prop[0].name);
-		if (def_prop.is_empty()==false)	def_prop  >>  detectorPixelDepth;
-	}
+        ImageType image_type;
+        m_ct->image()->getInternalImageType(image_type);
 
-	//	And try to extract DetectorPixelDepth value from database
-	if (dev_prop[0].is_empty()==false)	dev_prop[0]  >>  detectorPixelDepth;
+        // do we need to dynamically change the pixel depth ?
+        if(image_type != m_current_image_type)
+        {
+            std::string new_detector_pixel_depth;
 
-    transform(detectorPixelDepth.begin(), detectorPixelDepth.end(), detectorPixelDepth.begin(), ::toupper);
+            m_current_image_type = image_type;
+
+            // compute the new detector pixel depth
+            if(image_type == Bpp2)
+            {
+                new_detector_pixel_depth = "2";
+            }	
+            else if(image_type == Bpp8)
+            {
+                new_detector_pixel_depth = "8";
+            }
+            else if(image_type == Bpp12)
+            {
+                new_detector_pixel_depth = "12";
+            }
+            else if(image_type == Bpp14)
+            {
+                new_detector_pixel_depth = "14";
+            }	
+            else if(image_type == Bpp16)
+            {
+                new_detector_pixel_depth = "16";
+            }
+            else if(image_type == Bpp16S)
+            {
+                new_detector_pixel_depth = "16S";
+            }	
+            else if(image_type == Bpp24)
+            {
+                new_detector_pixel_depth = "24";
+            }
+            else if(image_type == Bpp28)
+            {
+                new_detector_pixel_depth = "28";
+            }
+            else if(image_type == Bpp32)
+            {
+                new_detector_pixel_depth = "32";
+            }
+            else if(image_type == Bpp32S)
+            {
+                new_detector_pixel_depth = "32S";
+            }
+
+            yat4tango::PropertyHelper::set_property(this, "DetectorPixelDepth", new_detector_pixel_depth);
+            detectorPixelDepth = new_detector_pixel_depth;
+
+            INFO_STREAM << "Pixel Depth changed to " << detectorPixelDepth << std::endl;
+
+            //- reset image number (this will disable the refresh of image attribute)
+            m_ct->resetStatus(false);
+
+            //remove attributes from dam
+            INFO_STREAM << "Remove image dynamic attribute." << endl;
+            m_dim.dynamic_attributes_manager().remove_attribute("image");
+
+		    //remove attributes from dam
+		    INFO_STREAM << "Remove baseImage dynamic attribute." << endl;
+		    m_dim.dynamic_attributes_manager().remove_attribute("baseImage");
+
+            //add image dynamic attribute
+            INFO_STREAM << "Add image dynamic attribute." << endl;
+		    add_image_dynamic_attribute("image");
+
+		    //add baseImage dynamic attribute
+		    INFO_STREAM << "Add baseImage dynamic attribute." << endl;
+		    add_image_dynamic_attribute("baseImage");
+
+            // reset image Roi
+            m_ct->image()->resetRoi();
+        }
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"LimaDetector::manage_pixel_depth_change()");
+    }
 }
 
 }	//	namespace

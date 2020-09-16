@@ -1063,8 +1063,8 @@ public:
         return m_is_device_initialized;
     };
 
-    // Update the pixel depth property from database.
-    void update_pixel_depth();
+    // CCA - Check if the pixel depth changed and update some attributes.
+    void manage_pixel_depth_change();
 
 protected:
     //    Add your own data members here
@@ -1102,6 +1102,8 @@ protected:
 	//-
 	std::vector<std::string>			m_trig_mode_list;
 	std::string							m_trig_mode_list_str;
+
+    ImageType                           m_current_image_type; // CCA - used during the management of the pixel depth change behaviour 
 
     //- yat4tango Dynamic attributes & commands
     yat4tango::DynamicInterfaceManager	m_dim;

@@ -783,7 +783,7 @@ void Ufxc::write_countingMode(Tango::WAttribute &attr)
                 Tango::DbDatum db_datum = (Tango::Util::instance()->get_database())->get_device_name(server_name, class_name);
                 db_datum >> device_name;
 
-                // get the detector pixel depth property value in string
+/*              // get the detector pixel depth property value in string
                 {
                     Tango::DbData db_data           ;
                     db_data.push_back(Tango::DbDatum("DetectorPixelDepth"));
@@ -811,7 +811,7 @@ void Ufxc::write_countingMode(Tango::WAttribute &attr)
                         MsgInfo << "Pixel Depth changed from " << old_pixel_depth << " bits to " << new_pixel_depth << " bits." << std::endl;
                     }
                 }
-
+*/
                 // trigger change ?
                 TrigMode old_trigger_mode;
                 TrigMode new_trigger_mode;
@@ -846,12 +846,12 @@ void Ufxc::write_countingMode(Tango::WAttribute &attr)
 
                 // for the dynamic change of size or/and pixel depth
             #ifdef UFXCCAMERA_USE_DYNAMIC_COUNTING_MODE_CHANGE
-                m_camera->setImageType     (m_camera->getImageTypeOfCountingMode(counting_mode));
-                m_camera->setCountingMode  (counting_mode);
+                m_camera->setImageType   (m_camera->getImageTypeOfCountingMode(counting_mode));
+                m_camera->setCountingMode(counting_mode);
 
                 // the trigger mode change will change the counting mode in the detector
                 m_camera->setTrigMode(new_trigger_mode);
-			    m_ct->acquisition()->setTriggerMode(new_trigger_mode);
+                m_ct->acquisition()->setTriggerMode(new_trigger_mode);
                 m_camera->updateImageFormat();
 
                 // update the valid ranges for exposure and latency times
@@ -904,7 +904,7 @@ void Ufxc::write_countingMode(Tango::WAttribute &attr)
 
                 counting_mode_was_changed = true;
 
-                // sorry, do not have at the moment another way to do an update of the image spectrum attribute 
+  /*            // sorry, do not have at the moment another way to do an update of the image spectrum attribute 
                 {
                     Tango::DeviceProxy * device_proxy = new Tango::DeviceProxy(device_name);
 
@@ -926,7 +926,7 @@ void Ufxc::write_countingMode(Tango::WAttribute &attr)
 
                         m_ct->image()->resetRoi();
                     }
-                }
+                }*/
             #else
                 MsgInfo << "The initialization of the device is necessary." << std::endl;
                 MsgInfo << "Please use the init command of your generic device to apply the changes." << std::endl;
