@@ -103,11 +103,11 @@
             <version>${SIMULATOR.version}</version>
         </dependency>
 
-        <dependency>
+        <!-- <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaPco-${aol}-shared-${mode}</artifactId>
             <version>${PCO.version}</version>
-        </dependency>
+        </dependency> -->
 
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
@@ -140,14 +140,14 @@
                             <include>specifics/SimulatorCCD/*.cpp</include>							
                             <include>specifics/Dhyana/*.cpp</include>
                             <include>specifics/Hamamatsu/*.cpp</include>
-                            <include>specifics/Pco/*.cpp</include>
+                            <!-- <include>specifics/Pco/*.cpp</include> -->
                         </includes>
                         <includePaths>                          
                             <includePath>src</includePath>                                   
                             <includePath>specifics/SimulatorCCD</includePath> 		
                             <includePath>specifics/Dhyana</includePath> 
                             <includePath>specifics/Hamamatsu</includePath>
-                            <includePath>specifics/Pco</includePath>
+                            <!-- <includePath>specifics/Pco</includePath> -->
                             <includePath>specifics/Layout</includePath>         
                             <includePath>specifics/RoiCounters</includePath>
 							<includePath>specifics/Mask</includePath>
@@ -179,7 +179,7 @@
 
                             <!-- define which detector you need to ENABLE -->      
                             <define>SIMULATOR_ENABLED</define> 						
-                            <define>PCO_ENABLED</define> 						
+                            <!-- <define>PCO_ENABLED</define> 						 -->
                             <define>HAMAMATSU_ENABLED</define>
                             <define>DHYANA_ENABLED</define> 					
 
