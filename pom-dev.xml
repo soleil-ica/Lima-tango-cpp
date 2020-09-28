@@ -21,6 +21,15 @@
         <url>https://github.com/soleil-ica/Lima-tango</url>
     </scm>
 
+    <properties>
+        <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
+        <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
+        <CORE.name>Core</CORE.name>
+        <CORE.version>1.7.9</CORE.version>
+        <SIMULATOR.name>Simulator</SIMULATOR.name>
+        <SIMULATOR.version>1.4.0</SIMULATOR.version>
+    </properties>
+
     <profiles>
         <!-- PROFILE linux_32 -->
         <profile>
@@ -34,20 +43,10 @@
             </activation>
 
             <properties>
-                <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
-                <PROCESSLIB.version>1.3.8</PROCESSLIB.version>
-                <CORE.name>Core</CORE.name>
-                <CORE.version>1.7.8</CORE.version>
-                <BASLER.name>Basler</BASLER.name>
-                <BASLER.version>2.0.0</BASLER.version>
             </properties>
            
             <dependencies>
-       <dependency>
-            <groupId>com.basler</groupId>
-            <artifactId>Pylon-${aol}-shared-${mode}</artifactId>
-            <version>5.0.5</version>
-        </dependency>
+			
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>YAT4Tango-${aol}-shared-${mode}</artifactId>
@@ -74,12 +73,12 @@
                     <version>${CORE.version}</version>
                 </dependency>
                 <!-- Lima Camera Plugins -->
-
+				
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaBasler-${aol}-shared-${mode}</artifactId>
-                    <version>${BASLER.version}</version>
-                </dependency>
+                    <artifactId>LimaSimulator-${aol}-shared-${mode}</artifactId>
+                    <version>${SIMULATOR.version}</version>
+                </dependency>				
             </dependencies>
             
             <build>
@@ -94,8 +93,8 @@
                                     <include>*.cpp</include>
                                     <include>specifics/Layout/*.cpp</include>                            
                                     <include>specifics/Mask/*.cpp</include>
-                                    <include>specifics/RoiCounters/*.cpp</include>
-                                    <include>specifics/BaslerCCD/*.cpp</include>                                                  
+                                    <include>specifics/RoiCounters/*.cpp</include>      
+									<include>specifics/SimulatorCCD/*.cpp</include>                                    
                                 </includes>
                                 
                                 <includePaths>                          
@@ -103,7 +102,7 @@
                                     <includePath>specifics/Layout</includePath>                                                        
                                     <includePath>specifics/Mask</includePath>
                                     <includePath>specifics/RoiCounters</includePath>
-                                    <includePath>specifics/BaslerCCD</includePath>
+									<includePath>specifics/SimulatorCCD</includePath>
                                 </includePaths>
                                 
                                 <defines>
@@ -113,17 +112,15 @@
                                     <define>PROCESSLIB_VERSION=${PROCESSLIB.version}</define>
                                     <define>CORE_NAME=${CORE.name}</define>
                                     <define>CORE_VERSION=${CORE.version}</define>
-                                    <define>BASLER_NAME=${BASLER.name}</define>
-                                    <define>BASLER_VERSION=${BASLER.version}</define>
-
-                                    <!-- Needed By Basler -->
-                                    <define>USE_GIGE</define>
-
+                                    <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
+                                    <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
+									
                                     <!-- define which detector you need to ENABLE -->                                       
                                     <define>LAYOUT_ENABLED</define>		                                                                                                       								 
                                     <define>MASK_ENABLED</define>
                                     <define>ROICOUNTERS_ENABLED</define>
-                                    <define>BASLER_ENABLED</define>
+									<define>ROICOUNTERS_ENABLED</define>
+									<define>SIMULATOR_ENABLED</define>
                                     <define>SOLEIL_YAT_STREAM</define>
                                 </defines>               
                             </cpp>

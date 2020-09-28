@@ -417,6 +417,21 @@ void RoiCountersClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
+	prop_name = "ExpertSpectrumMaxDataSize";
+	prop_desc = "Define the max number of points of spectrum attributes<br>";
+	prop_def  = "256";
+	vect_data.clear();
+	vect_data.push_back("256");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 	prop_name = "MemorizedRunLevel";
 	prop_desc = "Memorize/Define the runLevel attribute<br>";
 	prop_def  = "0";
@@ -569,7 +584,7 @@ void RoiCountersClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Tango::Device_4Impl");
+	inheritance.push_back("Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

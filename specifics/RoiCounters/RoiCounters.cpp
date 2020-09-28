@@ -161,6 +161,24 @@ void RoiCounters::init_device()
 	attr_maxValue_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_maxX_arrays.resize(MAX_NB_ROICOUNTERS);
 	attr_maxY_arrays.resize(MAX_NB_ROICOUNTERS);
+	////attr_sum_arrays_circular.capacity(MAX_NB_ROICOUNTERS);
+	//clear vectors
+	attr_x_arrays.clear();
+	attr_y_arrays.clear();
+	attr_width_arrays.clear();
+	attr_height_arrays.clear();
+	attr_coordinates_arrays.clear();
+	attr_sum_arrays.clear();
+	attr_average_arrays.clear();
+	attr_std_arrays.clear();
+	attr_minValue_arrays.clear();
+	attr_minX_arrays.clear();
+	attr_minY_arrays.clear();
+	attr_maxValue_arrays.clear();
+	attr_maxX_arrays.clear();
+	attr_maxY_arrays.clear();	
+	////attr_sum_arrays_circular.clear();
+
 	attr_runLevel_write = memorizedRunLevel;
 	try
 	{
@@ -387,6 +405,7 @@ void RoiCounters::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("__y"));
 	dev_prop.push_back(Tango::DbDatum("__width"));
 	dev_prop.push_back(Tango::DbDatum("__height"));
+	dev_prop.push_back(Tango::DbDatum("ExpertSpectrumMaxDataSize"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedRunLevel"));
 
 	//	Call database and extract values
@@ -453,6 +472,17 @@ void RoiCounters::get_device_property()
 	//	And try to extract __height value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  __height;
 
+	//	Try to initialize ExpertSpectrumMaxDataSize from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  expertSpectrumMaxDataSize;
+	else {
+		//	Try to initialize ExpertSpectrumMaxDataSize from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  expertSpectrumMaxDataSize;
+	}
+	//	And try to extract ExpertSpectrumMaxDataSize value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertSpectrumMaxDataSize;
+
 	//	Try to initialize MemorizedRunLevel from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedRunLevel;
@@ -475,6 +505,7 @@ void RoiCounters::get_device_property()
 	vector<string> vecWidthHeight(2, "10");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, vecWidthHeight, "__width");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, vecWidthHeight, "__height");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "256", "ExpertSpectrumMaxDataSize");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedRunLevel");
 }
 
@@ -530,8 +561,10 @@ void RoiCounters::read_attr_hardware(vector<long> &attr_list)
 	//	Add your own code here
 	try
 	{
+		yat::Timer t1;
 		if(is_device_initialized())
 			read_roi();
+		DEBUG_STREAM << "duration  read_roi()  : " << t1.elapsed_msec() << " (ms)" << std::endl;
 	}
 	catch(Exception& e)
 	{
@@ -622,6 +655,8 @@ void RoiCounters::write_runLevel(Tango::WAttribute &attr)
 		m_ct->externalOperation()->addOp(ROICOUNTERS, opId.str(), attr_runLevel_write , m_soft_operation);
 		yat4tango::PropertyHelper::set_property(this, "MemorizedRunLevel", attr_runLevel_write);
 
+		//define the size of circular buffer of softop
+		(reinterpret_cast<SoftOpRoiCounter*> (m_soft_operation.m_opt))->setBufferSize(expertSpectrumMaxDataSize);
 		update_roi();
 	}
 	catch(ProcessException& p)
@@ -753,14 +788,16 @@ void RoiCounters::read_roi()
 	{
 		if((reinterpret_cast<SoftOpRoiCounter*> (m_soft_operation.m_opt)) != 0)
 		{
-			int counter_status = (reinterpret_cast<SoftOpRoiCounter*> (m_soft_operation.m_opt))->getCounterStatus();
-
+			int counter_status = (reinterpret_cast<SoftOpRoiCounter*> (m_soft_operation.m_opt))->getCounterStatus();		
+			DEBUG_STREAM<<"counter_status = "<<counter_status<<std::endl;	
 			if(counter_status < 0)
 				return;
+					
+
 
 			std::list<SoftOpRoiCounter::RoiNameAndResults> roiNameAndResults;
-			(reinterpret_cast<SoftOpRoiCounter*> (m_soft_operation.m_opt))->readCounters(counter_status, roiNameAndResults);
-
+			(reinterpret_cast<SoftOpRoiCounter*> (m_soft_operation.m_opt))->readCounters(0, roiNameAndResults);
+			DEBUG_STREAM<<"roiNameAndResults size = "<<roiNameAndResults.size()<<std::endl;
 			for(std::list<SoftOpRoiCounter::RoiNameAndResults>::iterator iter1 = roiNameAndResults.begin();
 				iter1 != roiNameAndResults.end();
 				iter1++)
@@ -768,34 +805,76 @@ void RoiCounters::read_roi()
 				std::istringstream roiname((*iter1).first);
 				int roinum;
 				roiname>>roinum;
+				//clear spectrums for each roi
+				{
+					DEBUG_STREAM << "Clear spectrums of the Roi : " <<roinum<< endl;
+					attr_sum_arrays[roinum].spectrum.clear();						
+					attr_average_arrays[roinum].spectrum.clear();
+					attr_std_arrays[roinum].spectrum.clear();
+					attr_minValue_arrays[roinum].spectrum.clear();
+					attr_minX_arrays[roinum].spectrum.clear();
+					attr_minY_arrays[roinum].spectrum.clear();
+					attr_maxValue_arrays[roinum].spectrum.clear();
+					attr_maxX_arrays[roinum].spectrum.clear();
+					attr_maxY_arrays[roinum].spectrum.clear();
+					
+					////UserAttribute<Tango::DevDouble> attribute_roinum= attr_sum_arrays_circular.ordered_data()[roinum];
+					////attribute_roinum.spectrum.clear();						
+				}
+
+				int current_frame = 0;
+				DEBUG_STREAM<<"roiCounterResults size = "<<(*iter1).second.size()<<std::endl;
 				for(std::list<Tasks::RoiCounterResult>::iterator iter2 = ((*iter1).second).begin();
 					iter2 != ((*iter1).second).end();
 					iter2++)
 				{
-					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
-					INFO_STREAM << "+++ roi n°: " << roinum << "\t" << endl;
-					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
-					attr_frameNumber_value = (*iter2).frameNumber + 1;
-					INFO_STREAM << "frameNumber = " << attr_frameNumber_value << endl;
-					attr_sum_arrays[roinum] = (*iter2).sum;
-					INFO_STREAM << "sum         = " << attr_sum_arrays[roinum] << endl;
-					attr_average_arrays[roinum] = (*iter2).average;
-					INFO_STREAM << "average     = " << attr_average_arrays[roinum] << endl;
-					attr_std_arrays[roinum] = (*iter2).std;
-					INFO_STREAM << "std         = " << attr_std_arrays[roinum] << endl;
-					attr_minValue_arrays[roinum] = (*iter2).minValue;
-					INFO_STREAM << "minValue    = " << attr_minValue_arrays[roinum] << endl;
-					attr_minX_arrays[roinum] = (*iter2).minX;
-					INFO_STREAM << "minX		= " << attr_minX_arrays[roinum] << endl;
-					attr_minY_arrays[roinum] = (*iter2).minY;
-					INFO_STREAM << "minY		= " << attr_minY_arrays[roinum] << endl;
-					attr_maxValue_arrays[roinum] = (*iter2).maxValue;
-					INFO_STREAM << "maxValue    = " << attr_maxValue_arrays[roinum] << endl;
-					attr_maxX_arrays[roinum] = (*iter2).maxX;
-					INFO_STREAM << "maxX		= " << attr_maxX_arrays[roinum] << endl;
-					attr_maxY_arrays[roinum] = (*iter2).maxY;
-					INFO_STREAM << "maxY		= " << attr_maxY_arrays[roinum] << endl;
-					INFO_STREAM << "++++++++++++++++++++++++++++++++" << endl;
+
+					DEBUG_STREAM << "++++++++++++++++++++++++++++++++" << endl;
+					DEBUG_STREAM << "+++ roi n??: " << roinum << "\t" << endl;
+					DEBUG_STREAM << "++++++++++++++++++++++++++++++++" << endl;
+
+					//fill values 
+					attr_frameNumber_value = (*iter2).frameNumber + 1;		
+					current_frame = attr_frameNumber_value;			
+					DEBUG_STREAM << "frameNumber = " << attr_frameNumber_value << endl;
+
+					attr_sum_arrays[roinum].scalar = (*iter2).sum;
+					attr_sum_arrays[roinum].spectrum.push_back((*iter2).sum);					
+					DEBUG_STREAM << "sum         = " << attr_sum_arrays[roinum].scalar << endl;
+
+					attr_average_arrays[roinum].scalar = (*iter2).average;
+					attr_average_arrays[roinum].spectrum.push_back((*iter2).average);	
+					DEBUG_STREAM << "average     = " << attr_average_arrays[roinum].scalar << endl;
+
+					attr_std_arrays[roinum].scalar = (*iter2).std;
+					attr_std_arrays[roinum].spectrum.push_back((*iter2).std);	
+					DEBUG_STREAM << "std         = " << attr_std_arrays[roinum].scalar << endl;
+
+					attr_minValue_arrays[roinum].scalar = (*iter2).minValue;
+					attr_minValue_arrays[roinum].spectrum.push_back((*iter2).minValue);
+					DEBUG_STREAM << "minValue    = " << attr_minValue_arrays[roinum].scalar << endl;
+
+					attr_minX_arrays[roinum].scalar = (*iter2).minX;
+					attr_minX_arrays[roinum].spectrum.push_back((*iter2).minX);
+					DEBUG_STREAM << "minX		= " << attr_minX_arrays[roinum].scalar << endl;
+
+					attr_minY_arrays[roinum].scalar = (*iter2).minY;
+					attr_minY_arrays[roinum].spectrum.push_back((*iter2).minY);
+					DEBUG_STREAM << "minY		= " << attr_minY_arrays[roinum].scalar << endl;
+
+					attr_maxValue_arrays[roinum].scalar = (*iter2).maxValue;
+					attr_maxValue_arrays[roinum].spectrum.push_back((*iter2).maxValue);
+					DEBUG_STREAM << "maxValue    = " << attr_maxValue_arrays[roinum].scalar << endl;
+
+					attr_maxX_arrays[roinum].scalar = (*iter2).maxX;
+					attr_maxX_arrays[roinum].spectrum.push_back((*iter2).maxX);
+					DEBUG_STREAM << "maxX		= " << attr_maxX_arrays[roinum].scalar << endl;
+
+					attr_maxY_arrays[roinum].scalar = (*iter2).maxY;
+					attr_maxY_arrays[roinum].spectrum.push_back((*iter2).maxY);
+					DEBUG_STREAM << "maxY		= " << attr_maxY_arrays[roinum].scalar << endl;
+
+					DEBUG_STREAM << "++++++++++++++++++++++++++++++++" << endl;
 				}
 			}
 		}
@@ -876,7 +955,7 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 						" ",
 						"%d",
 						"The frameNumber",
-						&RoiCounters::read_stats_callback,
+						&RoiCounters::read_stats_scalar_callback,
 						&RoiCounters::write_callback_null,
 						&attr_frameNumber_value);
 
@@ -963,10 +1042,25 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							Tango::OPERATOR,
 							" ",
 							"%.2f",
-							"The sum of pixels in the Roi",
-							&RoiCounters::read_stats_callback,
+							"The sum of pixels in the Roi (Scalar)",
+							&RoiCounters::read_stats_scalar_callback,
 							&RoiCounters::write_callback_null,
-							&attr_sum_arrays[i]);
+							&attr_sum_arrays[i].scalar);
+
+
+			ss_name.str("");
+			ss_name << "sumSpectrum" << i;
+			create_attribute(ss_name.str(),
+				Tango::DEV_DOUBLE,
+				Tango::SPECTRUM,
+				Tango::READ,
+				Tango::OPERATOR,
+				" ",
+				"%.2f",
+				"The sum of pixels in the Roi (Spectrum)",
+				&RoiCounters::read_stats_spectrum_callback,
+				&RoiCounters::write_callback_null,
+				&attr_sum_arrays[i].spectrum);
 
 			ss_name.str("");
 			ss_name << "average" << i;
@@ -977,10 +1071,24 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							Tango::OPERATOR,
 							" ",
 							"%.2f",
-							"The average of pixels in the Roi",
-							&RoiCounters::read_stats_callback,
+							"The average of pixels in the Roi (scalar)",
+							&RoiCounters::read_stats_scalar_callback,
 							&RoiCounters::write_callback_null,
-							&attr_average_arrays[i]);
+							&attr_average_arrays[i].scalar);
+
+			ss_name.str("");
+			ss_name << "averageSpectrum" << i;
+			create_attribute(ss_name.str(),
+				Tango::DEV_DOUBLE,
+				Tango::SPECTRUM,
+				Tango::READ,
+				Tango::OPERATOR,
+				" ",
+				"%.2f",
+				"The average of pixels in the Roi (Spectrum)",
+				&RoiCounters::read_stats_spectrum_callback,
+				&RoiCounters::write_callback_null,
+				&attr_average_arrays[i].spectrum);
 
 			ss_name.str("");
 			ss_name << "std" << i;
@@ -991,10 +1099,24 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							Tango::OPERATOR,
 							" ",
 							"%.2f",
-							"The std deviation of pixels in the Roi",
-							&RoiCounters::read_stats_callback,
+							"The std deviation of pixels in the Roi (scalar)",
+							&RoiCounters::read_stats_scalar_callback,
 							&RoiCounters::write_callback_null,
-							&attr_std_arrays[i]);
+							&attr_std_arrays[i].scalar);
+
+			ss_name.str("");
+			ss_name << "stdSpectrum" << i;
+			create_attribute(ss_name.str(),
+				Tango::DEV_DOUBLE,
+				Tango::SPECTRUM,
+				Tango::READ,
+				Tango::OPERATOR,
+				" ",
+				"%.2f",
+				"The std deviation of pixels in the Roi (Spectrum)",
+				&RoiCounters::read_stats_spectrum_callback,
+				&RoiCounters::write_callback_null,
+				&attr_std_arrays[i].spectrum);
 
 			ss_name.str("");
 			ss_name << "minValue" << i;
@@ -1005,10 +1127,24 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							Tango::OPERATOR,
 							" ",
 							"%.2f",
-							"The min of pixels in the Roi",
-							&RoiCounters::read_stats_callback,
+							"The min of pixels in the Roi (scalar)",
+							&RoiCounters::read_stats_scalar_callback,
 							&RoiCounters::write_callback_null,
-							&attr_minValue_arrays[i]);
+							&attr_minValue_arrays[i].scalar);
+
+			ss_name.str("");
+			ss_name << "minValueSpectrum" << i;
+			create_attribute(ss_name.str(),
+				Tango::DEV_DOUBLE,
+				Tango::SPECTRUM,
+				Tango::READ,
+				Tango::OPERATOR,
+				" ",
+				"%.2f",
+				"The min of pixels in the Roi (Spectrum)",
+				&RoiCounters::read_stats_spectrum_callback,
+				&RoiCounters::write_callback_null,
+				&attr_minValue_arrays[i].spectrum);
 
 			ss_name.str("");
 			ss_name << "minX" << i;
@@ -1019,10 +1155,24 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							Tango::OPERATOR,
 							" ",
 							"%d",
-							"The coordinate X of the min of pixels in the Roi",
-							&RoiCounters::read_stats_callback,
+							"The coordinate X of the min of pixels in the Roi (scalar)",
+							&RoiCounters::read_stats_scalar_callback,
 							&RoiCounters::write_callback_null,
-							&attr_minX_arrays[i]);
+							&attr_minX_arrays[i].scalar);
+
+			ss_name.str("");
+			ss_name << "minXSpectrum" << i;
+			create_attribute(ss_name.str(),
+				Tango::DEV_LONG,
+				Tango::SPECTRUM,
+				Tango::READ,
+				Tango::OPERATOR,
+				" ",
+				"%.2f",
+				"The coordinate X of the min of pixels in the Roi (Spectrum)",
+				&RoiCounters::read_stats_spectrum_callback,
+				&RoiCounters::write_callback_null,
+				&attr_minX_arrays[i].spectrum);
 
 			ss_name.str("");
 			ss_name << "minY" << i;
@@ -1033,10 +1183,24 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							Tango::OPERATOR,
 							" ",
 							"%d",
-							"The coordinate Y of the min of pixels in the Roi",
-							&RoiCounters::read_stats_callback,
+							"The coordinate Y of the min of pixels in the Roi (scalar)",
+							&RoiCounters::read_stats_scalar_callback,
 							&RoiCounters::write_callback_null,
-							&attr_minY_arrays[i]);
+							&attr_minY_arrays[i].scalar);
+
+			ss_name.str("");
+			ss_name << "minYSpectrum" << i;
+			create_attribute(ss_name.str(),
+				Tango::DEV_LONG,
+				Tango::SPECTRUM,
+				Tango::READ,
+				Tango::OPERATOR,
+				" ",
+				"%.2f",
+				"The coordinate Y of the min of pixels in the Roi (Spectrum)",
+				&RoiCounters::read_stats_spectrum_callback,
+				&RoiCounters::write_callback_null,
+				&attr_minY_arrays[i].spectrum);							
 			
 			ss_name.str("");
 			ss_name << "maxValue" << i;
@@ -1047,11 +1211,25 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							Tango::OPERATOR,
 							" ",
 							"%.2f",
-							"The max of pixels in the Roi",
-							&RoiCounters::read_stats_callback,
+							"The max of pixels in the Roi (scalar)",
+							&RoiCounters::read_stats_scalar_callback,
 							&RoiCounters::write_callback_null,
-							&attr_maxValue_arrays[i]);
+							&attr_maxValue_arrays[i].scalar);
 			
+			ss_name.str("");
+			ss_name << "maxValueSpectrum" << i;
+			create_attribute(ss_name.str(),
+				Tango::DEV_DOUBLE,
+				Tango::SPECTRUM,
+				Tango::READ,
+				Tango::OPERATOR,
+				" ",
+				"%.2f",
+				"The max of pixels in the Roi (Spectrum)",
+				&RoiCounters::read_stats_spectrum_callback,
+				&RoiCounters::write_callback_null,
+				&attr_maxValue_arrays[i].spectrum);		
+
 			ss_name.str("");
 			ss_name << "maxX" << i;
 			create_attribute(ss_name.str(),
@@ -1061,10 +1239,24 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							Tango::OPERATOR,
 							" ",
 							"%d",
-							"The coordinate X of the max of pixels in the Roi",
-							&RoiCounters::read_stats_callback,
+							"The coordinate X of the max of pixels in the Roi (scalar)",
+							&RoiCounters::read_stats_scalar_callback,
 							&RoiCounters::write_callback_null,
-							&attr_maxX_arrays[i]);
+							&attr_maxX_arrays[i].scalar);
+
+			ss_name.str("");
+			ss_name << "maxXSpectrum" << i;
+			create_attribute(ss_name.str(),
+				Tango::DEV_LONG,
+				Tango::SPECTRUM,
+				Tango::READ,
+				Tango::OPERATOR,
+				" ",
+				"%.2f",
+				"The coordinate X of the max of pixels in the Roi (Spectrum)",
+				&RoiCounters::read_stats_spectrum_callback,
+				&RoiCounters::write_callback_null,
+				&attr_maxX_arrays[i].spectrum);	
 
 			ss_name.str("");
 			ss_name << "maxY" << i;
@@ -1075,11 +1267,24 @@ bool RoiCounters::create_scalar_dynamic_attributes(void)
 							Tango::OPERATOR,
 							" ",
 							"%d",
-							"The coordinate Y of the max of pixels in the Roi",
-							&RoiCounters::read_stats_callback,
+							"The coordinate Y of the max of pixels in the Roi (scalar)",
+							&RoiCounters::read_stats_scalar_callback,
 							&RoiCounters::write_callback_null,
-							&attr_maxY_arrays[i]);
-			
+							&attr_maxY_arrays[i].scalar);	
+
+			ss_name.str("");
+			ss_name << "maxYSpectrum" << i;
+			create_attribute(ss_name.str(),
+				Tango::DEV_LONG,
+				Tango::SPECTRUM,
+				Tango::READ,
+				Tango::OPERATOR,
+				" ",
+				"%.2f",
+				"The coordinate Y of the max of pixels in the Roi (Spectrum)",
+				&RoiCounters::read_stats_spectrum_callback,
+				&RoiCounters::write_callback_null,
+				&attr_maxY_arrays[i].spectrum);										
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -1237,14 +1442,14 @@ bool RoiCounters::create_image_dynamic_attributes(void)
 //----------------------------------------------------------------------------------------
 // DYN. ATTRS. READ CALLBACK
 //----------------------------------------------------------------------------------------
-void RoiCounters::read_stats_callback(yat4tango::DynamicAttributeReadCallbackData & cbd)
+void RoiCounters::read_stats_scalar_callback(yat4tango::DynamicAttributeReadCallbackData & cbd)
 {
-	DEBUG_STREAM << "RoiCounters::read_stats_callback(yat4tango::DynamicAttributeReadCallbackData& cbd) - [BEGIN]" << endl;
+	DEBUG_STREAM << "RoiCounters::read_stats_scalar_callback(yat4tango::DynamicAttributeReadCallbackData& cbd) - [BEGIN]" << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	//- be sure the pointer to the dyn. attr. is valid
 	if(!cbd.dya)
 	{
-		THROW_DEVFAILED("INTERNAL_ERROR", "unexpected NULL pointer to dynamic attribute", "DynamicInterface::read_stats_callback");
+		THROW_DEVFAILED("INTERNAL_ERROR", "unexpected NULL pointer to dynamic attribute", "DynamicInterface::read_stats_scalar_callback");
 	}
 
 	try
@@ -1257,7 +1462,7 @@ void RoiCounters::read_stats_callback(yat4tango::DynamicAttributeReadCallbackDat
 		(attributeName.find("average") != std::string::npos) ||
 		(attributeName.find("std") != std::string::npos) ||
 		(attributeName.find("minValue") != std::string::npos) ||
-		(attributeName.find("maxValue") != std::string::npos))
+		(attributeName.find("maxValue") != std::string::npos)) 
 		{
 			val = (Tango::DevDouble*)cbd.dya->get_user_data<Tango::DevDouble>();
 
@@ -1290,10 +1495,64 @@ void RoiCounters::read_stats_callback(yat4tango::DynamicAttributeReadCallbackDat
 		Tango::Except::re_throw_exception(df,
 										"TANGO_DEVICE_ERROR",
 										string(df.errors[0].desc).c_str(),
-										"RoiCounters::read_stats_callback");
+										"RoiCounters::read_stats_scalar_callback");
 	}
-	DEBUG_STREAM << "RoiCounters::read_stats_callback(yat4tango::DynamicAttributeReadCallbackData& cbd) - [END]" << endl;
+	DEBUG_STREAM << "RoiCounters::read_stats_scalar_callback(yat4tango::DynamicAttributeReadCallbackData& cbd) - [END]" << endl;
 }
+
+//----------------------------------------------------------------------------------------
+// DYN. ATTRS. READ CALLBACK
+//----------------------------------------------------------------------------------------
+void RoiCounters::read_stats_spectrum_callback(yat4tango::DynamicAttributeReadCallbackData & cbd)
+{
+	DEBUG_STREAM << "RoiCounters::read_stats_spectrum_callback(yat4tango::DynamicAttributeReadCallbackData& cbd) - [BEGIN]" << endl;
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+	//- be sure the pointer to the dyn. attr. is valid
+	if(!cbd.dya)
+	{
+		THROW_DEVFAILED("INTERNAL_ERROR", "unexpected NULL pointer to dynamic attribute", "DynamicInterface::read_stats_spectrum_callback");
+	}
+
+	try
+	{
+		std::string attributeName = cbd.dya->get_name();
+
+		if(
+		(attributeName.find("sumSpectrum") != std::string::npos) ||
+		(attributeName.find("averageSpectrum") != std::string::npos) ||
+		(attributeName.find("stdSpectrum") != std::string::npos) ||
+		(attributeName.find("minValueSpectrum") != std::string::npos) ||
+		(attributeName.find("maxValueSpectrum") != std::string::npos)) 
+		{
+			//- get user data
+			std::vector<Tango::DevDouble>* spectrum = cbd.dya->get_user_data<std::vector<Tango::DevDouble> >();
+			//- set the attribute value
+			cbd.tga->set_value((Tango::DevDouble*)(&spectrum->at(0)), spectrum->size());
+		}
+		else if(
+		(attributeName.find("minX") != std::string::npos) ||
+		(attributeName.find("minY") != std::string::npos) ||
+		(attributeName.find("maxX") != std::string::npos) ||
+		(attributeName.find("maxY") != std::string::npos))
+		{
+			//- get user data
+			std::vector<Tango::DevLong>* spectrum = cbd.dya->get_user_data<std::vector<Tango::DevLong> >();
+			//- set the attribute value
+			cbd.tga->set_value((Tango::DevLong*)(&spectrum->at(0)), spectrum->size());
+		}
+	}
+	catch(Tango::DevFailed& df)
+	{
+		ERROR_STREAM << df << endl;
+		//- rethrow exception
+		Tango::Except::re_throw_exception(df,
+										"TANGO_DEVICE_ERROR",
+										string(df.errors[0].desc).c_str(),
+										"RoiCounters::read_stats_spectrum_callback");
+	}
+	DEBUG_STREAM << "RoiCounters::read_stats_spectrum_callback(yat4tango::DynamicAttributeReadCallbackData& cbd) - [END]" << endl;
+}
+
 
 //----------------------------------------------------------------------------------------
 // DYN. ATTRS. READ CALLBACK
@@ -1488,9 +1747,6 @@ void RoiCounters::read_image_callback(yat4tango::DynamicAttributeReadCallbackDat
 
 		if(counter > -1)
 		{
-			INFO_STREAM << "counter -> " << counter << endl;
-			INFO_STREAM << "attr_frameNumber_value -> " << attr_frameNumber_value << endl;
-
 			Data image_data;
 			m_ct->ReadImage(image_data, -1);
 
@@ -1648,7 +1904,7 @@ void RoiCounters::process_coordinates(Tango::DevString* attr_str, int attrIndex)
 {
 
 	// Get a string from the DevString:
-	std::string str = (std::string)(*attr_str); 
+	std::string user_coordinates = (std::string)(*attr_str); 
 
 	std::stringstream ss;
 
@@ -1659,12 +1915,13 @@ void RoiCounters::process_coordinates(Tango::DevString* attr_str, int attrIndex)
 	bool is_previous_char_numeric = false;
 	bool is_current_char_numeric = false;
 
-    int j=0, i=0;
+    int j=0;
+	int i=0;
 
 	// While there are still characters to paste and there are still numbers to find:
-    while((j==0 || str[j-1] != '\0') && i<NB_COORDINATES)
+    while((j==0 || user_coordinates[j-1] != '\0') && i<NB_COORDINATES)
     {
-		bool is_current_char_numeric = str[j]>='0' && str[j]<='9';
+		bool is_current_char_numeric = isdigit(user_coordinates[j]);
 
 		// If current char is not a number and previous one was a number
         if(!(is_current_char_numeric) && is_previous_char_numeric)
@@ -1677,7 +1934,7 @@ void RoiCounters::process_coordinates(Tango::DevString* attr_str, int attrIndex)
 		// If current char is a number
         if(is_current_char_numeric)
         {
-            ss << str[j];		// Push numeral character into stringstream
+            ss << user_coordinates[j];		// Push numeral character into stringstream
             is_previous_char_numeric = true;		// Current char is a number
         }
         j++;					// Moving to next character
@@ -1698,5 +1955,9 @@ void RoiCounters::process_coordinates(Tango::DevString* attr_str, int attrIndex)
 		attr_height_arrays[attrIndex] = parsed_coordinates[3];
 	}
 }
+
+
+
+
 
 }	//	namespace
