@@ -242,14 +242,6 @@ void HamamatsuClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 //-----------------------------------------------------------------------------
 void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 {
-	//	Attribute : readoutSpeed
-	readoutSpeedAttrib	*readout_speed = new readoutSpeedAttrib();
-	Tango::UserDefaultAttrProp	readout_speed_prop;
-	readout_speed_prop.set_label("Readout speed");
-	readout_speed_prop.set_description("Possible values are:<br>\nNORMAL<br>\nSLOW<br>");
-	readout_speed->set_default_properties(readout_speed_prop);
-	att_list.push_back(readout_speed);
-
 	//	Attribute : lostFrames
 	lostFramesAttrib	*lost_frames = new lostFramesAttrib();
 	Tango::UserDefaultAttrProp	lost_frames_prop;

@@ -120,7 +120,6 @@ void Hamamatsu::delete_device()
     INFO_STREAM << "- Delete device allocated objects." << endl;
 
     //	Delete device allocated objects
-	DELETE_DEVSTRING_ATTRIBUTE(attr_readoutSpeed_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_lostFrames_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_fps_read);
     DELETE_SCALAR_ATTRIBUTE(attr_wViewEnabled_read);
@@ -133,6 +132,7 @@ void Hamamatsu::delete_device()
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerMode_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerStatus_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_temperatureStatus_read);
+	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_readoutSpeed_read);
 }
 
 //+----------------------------------------------------------------------------
@@ -153,8 +153,6 @@ void Hamamatsu::init_device()
     //--------------------------------------------
     get_device_property();
 
-    CREATE_DEVSTRING_ATTRIBUTE(attr_readoutSpeed_read, MAX_ATTRIBUTE_STRING_LENGTH);
-
     CREATE_SCALAR_ATTRIBUTE(attr_lostFrames_read);
     CREATE_SCALAR_ATTRIBUTE(attr_fps_read);
     CREATE_SCALAR_ATTRIBUTE(attr_wViewEnabled_read);
@@ -167,6 +165,7 @@ void Hamamatsu::init_device()
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerMode_read       , MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerStatus_read     , MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_temperatureStatus_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_readoutSpeed_read     , MAX_ATTRIBUTE_STRING_LENGTH);
 
     m_is_device_initialized = false;
     set_state(Tango::INIT);
@@ -240,14 +239,12 @@ void Hamamatsu::write_at_init(void)
     INFO_STREAM << "- Update the hardware with the properties" << endl;
 
     //------------------------------------------------------------------------------
-    // Readout Speed
+    // Readout Speed (not used for ORCA Lightning)
     //------------------------------------------------------------------------------
-	INFO_STREAM << "Write tango hardware at Init - readoutSpeed." << endl;
-	Tango::WAttribute &readoutSpeed = dev_attr->get_w_attr_by_name("readoutSpeed");
-	m_readout_speed = memorizedReadoutSpeed;
-	strcpy(*attr_readoutSpeed_read, memorizedReadoutSpeed.c_str());
-	readoutSpeed.set_write_value(m_readout_speed);
-	write_readoutSpeed(readoutSpeed);
+    if(m_camera->isReadoutSpeedSupported())
+    {
+        write_property_in_dynamic_string_attribute<Tango::DevString>("readoutSpeed", "MemorizedReadoutSpeed", &Hamamatsu::write_readoutSpeed_callback);
+    }
 
     //------------------------------------------------------------------------------
     // Synchronous readout blank mode
@@ -310,7 +307,7 @@ void Hamamatsu::write_at_init(void)
     bottomViewExposure.set_write_value(m_bottom_view_exposure_time);
 
     //------------------------------------------------------------------------------
-    // High dynamic range activation
+    // High dynamic range activation (used for ORCA Lightning)
     //------------------------------------------------------------------------------
     if(m_camera->isHighDynamicRangeSupported())
     {
@@ -324,6 +321,22 @@ void Hamamatsu::write_at_init(void)
 void Hamamatsu::create_dynamics_attributes(void)
 {
     INFO_STREAM << "- Create the dynamics attributes" << endl;
+
+    if(m_camera->isReadoutSpeedSupported())
+    {
+        create_dynamic_attribute("readoutSpeed",
+                                 Tango::DEV_STRING,
+                                 Tango::SCALAR,
+                                 Tango::READ_WRITE,
+                                 Tango::OPERATOR,
+                                 0, // no polling
+                                 "",
+                                 "",
+                                 "Current readout speed mode (NORMAL, SLOW).",
+                                 &Hamamatsu::read_readoutSpeed_callback,
+                                 &Hamamatsu::write_readoutSpeed_callback,
+                                 attr_dyn_readoutSpeed_read);
+    }
 
     if(m_camera->isSensorTemperatureSupported())
     {
@@ -889,92 +902,50 @@ void Hamamatsu::read_lostFrames(Tango::Attribute &attr)
     }
 }
 
-
 //+----------------------------------------------------------------------------
 //
-// method : 		Hamamatsu::read_readoutSpeed
-//
-// description : 	Extract real attribute values for readoutSpeed acquisition result.
+// method : 		Hamamatsu::read_readoutSpeed_callback
+// 
+// description : 	Extract real attribute values for readoutSpeed.
 //
 //-----------------------------------------------------------------------------
-void Hamamatsu::read_readoutSpeed(Tango::Attribute &attr)
+void Hamamatsu::read_readoutSpeed_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
 {
-	DEBUG_STREAM << "Hamamatsu::read_readoutSpeed(Tango::Attribute &attr) entering... "<< endl;
-
 	try
 	{
-        short int readout_speed = 0;
-        m_camera->getReadoutSpeed(readout_speed);
-
-        std::string readout_speed_name = "";
-        switch (readout_speed)
-        {
-            case READOUTSPEED_SLOW_VALUE  : readout_speed_name = READOUTSPEED_SLOW_NAME  ; break;
-            case READOUTSPEED_NORMAL_VALUE: readout_speed_name = READOUTSPEED_NORMAL_NAME; break;
-	        default: readout_speed_name = "ERROR"; break;
-        }
-
-        strcpy(*attr_readoutSpeed_read, readout_speed_name.c_str());
-    	attr.set_value(attr_readoutSpeed_read);
+        read_dynamic_string_attribute<Tango::DevString>(cbd, &lima::Hamamatsu::Camera::getReadoutSpeedLabel, "Hamamatsu::read_readoutSpeed_callback", true);
 	}
     catch(Tango::DevFailed & df)
     {
-        manage_devfailed_exception(df, "Hamamatsu::read_readoutSpeed");
+        manage_devfailed_exception(df, "Hamamatsu::read_readoutSpeed_callback");
     }
     catch(Exception & e)
     {
-        manage_lima_exception(e, "Hamamatsu::read_readoutSpeed");
+        manage_lima_exception(e, "Hamamatsu::read_readoutSpeed_callback");
     }
 }
 
 //+----------------------------------------------------------------------------
 //
-// method : 		Hamamatsu::write_readoutSpeed
-//
-// description : 	Write readoutSpeed attribute values to hardware.
+// method : 		Hamamatsu::write_readoutSpeed_callback
+// 
+// description : 	Set real attribute values for readoutSpeed.
 //
 //-----------------------------------------------------------------------------
-void Hamamatsu::write_readoutSpeed(Tango::WAttribute &attr)
+void Hamamatsu::write_readoutSpeed_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
 {
-	DEBUG_STREAM << "Hamamatsu::write_readoutSpeed(Tango::WAttribute &attr) entering... "<< endl;
-	
 	try
 	{
-		m_readout_speed = *attr_readoutSpeed_read;
-		attr.get_write_value(attr_readoutSpeed_write);
-		string current = attr_readoutSpeed_write;
-		transform(current.begin(), current.end(), current.begin(), ::toupper);
-
-        if (current != READOUTSPEED_NORMAL_NAME &&
-            current != READOUTSPEED_SLOW_NAME)
-		{			
-            attr_readoutSpeed_write = const_cast<Tango::DevString>(m_readout_speed.c_str());
-			string user_msg;
-            user_msg = string("Available Readout speeds are:\n- ") + string(READOUTSPEED_NORMAL_NAME) + string("\n- ") + string(READOUTSPEED_SLOW_NAME);
-
-            Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
-                                            user_msg.c_str(),
-                                            "Hamamatsu::write_readoutSpeed");
-		}
-
-        short int readoutSpeed = READOUTSPEED_NORMAL_VALUE;
-        if (current == READOUTSPEED_SLOW_NAME)
-            readoutSpeed = READOUTSPEED_SLOW_VALUE;
-        else if (current == READOUTSPEED_NORMAL_NAME)
-            readoutSpeed = READOUTSPEED_NORMAL_VALUE;
-		
-		//- THIS IS AN AVAILABLE READOUT SPEED
-		m_readout_speed = current;
-		m_camera->setReadoutSpeed(readoutSpeed);
-		PropertyHelper::set_property(this, "MemorizedReadoutSpeed", m_readout_speed);
+        write_dynamic_string_attribute<Tango::DevString>(cbd, &lima::Hamamatsu::Camera::setReadoutSpeedLabel,
+                                                         "MemorizedReadoutSpeed", "Hamamatsu::write_readoutSpeed_callback");
 	}
     catch(Tango::DevFailed & df)
     {
-        manage_devfailed_exception(df, "Hamamatsu::write_readoutSpeed");
+        manage_devfailed_exception(df, "Hamamatsu::write_readoutSpeed_callback");
     }
-    catch(Exception & e)
+    catch(lima::Exception & e)
     {
-        manage_lima_exception(e, "Hamamatsu::write_readoutSpeed");
+        manage_lima_exception(e, "Hamamatsu::write_readoutSpeed_callback");
     }
 }
 
@@ -1074,7 +1045,7 @@ void Hamamatsu::read_coolerStatus_callback(yat4tango::DynamicAttributeReadCallba
 //
 // method : 		Hamamatsu::read_highDynamicRangeEnabled_callback
 // 
-// description : 	Extract real attribute values for high dynamic range enabled acquisition result.
+// description : 	Extract real attribute values for high dynamic range enabled result.
 //
 //-----------------------------------------------------------------------------
 void Hamamatsu::read_highDynamicRangeEnabled_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
@@ -1095,9 +1066,9 @@ void Hamamatsu::read_highDynamicRangeEnabled_callback(yat4tango::DynamicAttribut
 
 //+----------------------------------------------------------------------------
 //
-// method : 		Hamamatsu::read_highDynamicRangeEnabled_callback
+// method : 		Hamamatsu::write_highDynamicRangeEnabled_callback
 // 
-// description : 	Extract real attribute values for high dynamic range enabled acquisition result.
+// description : 	Set real attribute values for high dynamic range enabled result.
 //
 //-----------------------------------------------------------------------------
 void Hamamatsu::write_highDynamicRangeEnabled_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
@@ -1189,6 +1160,7 @@ void Hamamatsu::manage_lima_exception(lima::Exception & in_exception, const std:
                                    in_exception.getErrMsg().c_str(),
                                    in_caller_method_name.c_str());
 }
+
 
 
 }	//	namespace

@@ -90,8 +90,6 @@ public :
  *	Attribute member data.
  */
 //@{
-		Tango::DevString	*attr_readoutSpeed_read;
-		Tango::DevString	attr_readoutSpeed_write;
 		Tango::DevLong	*attr_lostFrames_read;
 		Tango::DevDouble	*attr_fps_read;
 		Tango::DevBoolean	*attr_wViewEnabled_read;
@@ -220,14 +218,6 @@ public :
  */
 	virtual void read_attr_hardware(vector<long> &attr_list);
 /**
- *	Extract real attribute values for readoutSpeed acquisition result.
- */
-	virtual void read_readoutSpeed(Tango::Attribute &attr);
-/**
- *	Write readoutSpeed attribute values to hardware.
- */
-	virtual void write_readoutSpeed(Tango::WAttribute &attr);
-/**
  *	Extract real attribute values for lostFrames acquisition result.
  */
 	virtual void read_lostFrames(Tango::Attribute &attr);
@@ -259,10 +249,6 @@ public :
  *	Write bottomViewExposureTime attribute values to hardware.
  */
 	virtual void write_bottomViewExposureTime(Tango::WAttribute &attr);
-/**
- *	Read/Write allowed for readoutSpeed attribute.
- */
-	virtual bool is_readoutSpeed_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for lostFrames attribute.
  */
@@ -460,6 +446,20 @@ private :
  */
     void write_highDynamicRangeEnabled_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
 
+/**
+ *	method:	Hamamatsu::read_readoutSpeed_callback
+ *
+ *	description: Extract real attribute values for readoutSpeed.
+ */
+    void read_readoutSpeed_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
+
+/**
+ *	method:	Hamamatsu::write_readoutSpeed_callback
+ *
+ *	description: Set real attribute values for readoutSpeed.
+ */
+    void write_readoutSpeed_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
+
     // method for tango dyn attributes WHEN no write part is available - NULL
     void write_callback_null(yat4tango::DynamicAttributeWriteCallbackData& cbd){/*nop*/}
 
@@ -468,7 +468,6 @@ protected :
 	//-----------------------------------------
 	bool                                                m_is_device_initialized    ;
     stringstream                                        m_status_message           ;
-	string				                                m_readout_speed            ;
     enum lima::Hamamatsu::Camera::SyncReadOut_BlankMode m_sync_readout_blank_mode  ;
 	double                                              m_top_view_exposure_time   ;
 	double                                              m_bottom_view_exposure_time;
@@ -483,6 +482,7 @@ protected :
     Tango::DevString  *attr_dyn_coolerStatus_read;
     Tango::DevString  *attr_dyn_temperatureStatus_read;
     Tango::DevBoolean *attr_dyn_highDynamicRangeEnabled_read;
+    Tango::DevString  *attr_dyn_readoutSpeed_read;
 
     /// lima OBJECTS
     lima::Hamamatsu::Interface * m_hw    ;

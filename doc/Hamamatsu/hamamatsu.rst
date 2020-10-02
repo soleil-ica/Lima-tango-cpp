@@ -27,10 +27,6 @@ Static attributes
 ======================= ========== ========== ==============================================================================================
 Attribute name          Read/Write Type       Description
 ======================= ========== ========== ==============================================================================================
-readoutSpeed            R/W        String     Readout speed . Possible values are:
-
-                                              - NORMAL
-                                              - SLOW
 lostFrames              R          Long       Number of frames lost during the current or last acquisition.
 fps                     R          Double     The last computed frame per second (the value is computed every 100 frames only).
 wViewEnabled            R/W        Boolean    Activation state of the W-VIEW mode.
@@ -57,6 +53,10 @@ highDynamicRangeEnabled R/W        Boolean    Current high dynamic range activat
 
                                               - False is for Standard Full Well Capacity mode
                                               - True is for High Full Well Capacity mode
+readoutSpeed            R/W        String     Readout speed . Possible values are:
+
+                                              - NORMAL
+                                              - SLOW
 ======================= ========== ========== ==============================================================================================
 
 

@@ -111,20 +111,6 @@ public:
 	{return (static_cast<Hamamatsu *>(dev))->is_lostFrames_allowed(ty);}
 };
 
-class readoutSpeedAttrib: public Tango::Attr
-{
-public:
-	readoutSpeedAttrib():Attr("readoutSpeed", Tango::DEV_STRING, Tango::READ_WRITE) {};
-	~readoutSpeedAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Hamamatsu *>(dev))->read_readoutSpeed(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Hamamatsu *>(dev))->write_readoutSpeed(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Hamamatsu *>(dev))->is_readoutSpeed_allowed(ty);}
-};
-
 //=========================================
 //	Define classes for commands
 //=========================================
