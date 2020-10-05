@@ -273,9 +273,7 @@ void Hamamatsu::write_dynamic_attribute(yat4tango::DynamicAttributeWriteCallback
         const bool      device_was_initialized = m_is_device_initialized;
         Tango::DevState state                  = get_state();
 
-        if ((state == Tango::FAULT && device_was_initialized) || 
-            (state == Tango::INIT) ||
-            (state == Tango::RUNNING))
+        if ((state == Tango::FAULT && device_was_initialized) || (state == Tango::RUNNING))
         {
             std::string reason = "It's currently not allowed to write attribute ";
             reason += in_cbd.dya->get_name();
@@ -350,9 +348,7 @@ void Hamamatsu::write_dynamic_string_attribute(yat4tango::DynamicAttributeWriteC
         const bool      device_was_initialized = m_is_device_initialized;
         Tango::DevState state                  = get_state();
 
-        if ((state == Tango::FAULT && device_was_initialized) || 
-            (state == Tango::INIT) ||
-            (state == Tango::RUNNING))
+        if ((state == Tango::FAULT && device_was_initialized) || (state == Tango::RUNNING))
         {
             std::string reason = "It's currently not allowed to write attribute ";
             reason += in_cbd.dya->get_name();

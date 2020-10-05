@@ -190,6 +190,9 @@ void Hamamatsu::init_device()
         // Create dynamic attributes
         create_dynamics_attributes();
 
+        // flag needs to be activated to be able to initialize the dynamic attributes
+        m_is_device_initialized = true;
+
         // Update the hardware with the properties data
         write_at_init();
     }
@@ -226,7 +229,6 @@ void Hamamatsu::init_device()
         return;
     }
 
-    m_is_device_initialized = true;
     set_state(Tango::STANDBY);
     dev_state();
 }
