@@ -6,11 +6,11 @@
         <artifactId>super-pom-C-CPP-device</artifactId>
         <version>RELEASE</version>
     </parent>
-	
+    
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
     <version>1.9.2</version>
-	
+    
     <packaging>nar</packaging>
     <name>LimaDetector</name>
     <description>LimaDetector device</description>
@@ -37,6 +37,8 @@
         <LAMBDA.version>1.0.3</LAMBDA.version>    
         <XSPRESS3.name>Xspress3</XSPRESS3.name>
         <XSPRESS3.version>1.0.1</XSPRESS3.version>   
+        <SPECTRAL.name>Spectral</XSPRESS3.name>
+        <SPECTRAL.version>0.0.1</XSPRESS3.version>   
     </properties>
 
     <scm>
@@ -82,6 +84,11 @@
             <artifactId>LimaXspress3-amd64-Linux-gcc-shared-${mode}</artifactId>
             <version>${XSPRESS3.version}</version>
        </dependency>
+       <dependency>
+            <groupId>fr.soleil.lib.Lima.Camera</groupId>
+            <artifactId>LimaSpectral-amd64-Linux-gcc-shared-${mode}</artifactId>
+            <version>${SPECTRAL.version}</version>
+       </dependency>
     </dependencies>
         
     <build>
@@ -95,31 +102,33 @@
                         <sourceDirectory>${project.basedir}</sourceDirectory>                        
                         <includes>
                             <include>*.cpp</include>
-                            <include>specifics/SimulatorCCD/*.cpp</include>							
-                            <include>specifics/SimulatorCCD/*.cpp</include>							
+                            <include>specifics/SimulatorCCD/*.cpp</include>                            
+                            <include>specifics/SimulatorCCD/*.cpp</include>                            
                             <include>specifics/Eiger/*.cpp</include>
                             <include>specifics/SlsJungfrau/*.cpp</include>
                             <include>specifics/SlsEiger/*.cpp</include>
-                            <include>specifics/Layout/*.cpp</include>     			
+                            <include>specifics/Layout/*.cpp</include>                
                             <include>specifics/Mask/*.cpp</include>                            
                             <include>specifics/RoiCounters/*.cpp</include>
                             <include>specifics/Lambda/*.cpp</include>
                             <include>specifics/Xspress3/*.cpp</include>
+                            <include>specifics/Spectral/*.cpp</include>
                         </includes>
 
                         <includePaths>                          
                             <includePath>src</includePath>                                   
-                            <includePath>specifics/SimulatorCCD</includePath> 		
+                            <includePath>specifics/SimulatorCCD</includePath>         
                             <includePath>specifics/Eiger</includePath> 
                             <includePath>specifics/SlsJungfrau</includePath>
                             <includePath>specifics/SlsEiger</includePath>
                             <includePath>specifics/Lambda</includePath>        
                             <includePath>specifics/Xspress3</includePath>     
+                            <includePath>specifics/Spectral</includePath>     
                             <includePath>specifics/Layout</includePath>         
                             <includePath>specifics/Mask</includePath>
                             <includePath>specifics/RoiCounters</includePath>
 
-                            <includePath>${libs-64bits}/my_breakpad/include</includePath> 		
+                            <includePath>${libs-64bits}/my_breakpad/include</includePath>         
                             <includePath>${libs-64bits}/gsl-1.11/include</includePath>       
                             <includePath>${libs-64bits}/lz4-r131/lib</includePath>       
                             <includePath>${libs-64bits}/libtango8-devel-8.1.2-16.el6.maxlab.x86_64/usr/include</includePath>       
@@ -131,7 +140,7 @@
                             <includePath>${libs-64bits}/yat-1.13.16/include</includePath>
                             <includePath>${libs-64bits}/yat4tango-1.10.6/include</includePath>
                             <includePath>${libs-64bits}/nexuscpp-3.2.2/include</includePath>                 
-							<includePath>${libs-xspress3}/include/</includePath>
+                            <includePath>${libs-xspress3}/include/</includePath>
                         </includePaths>
                        
                         <defines>
@@ -153,15 +162,18 @@
                             <define>LAMBDA_VERSION_DEVICE=${LAMBDA.version}</define> <!-- name conflict with lambda sdk --> 
                             <define>XSPRESS3_NAME=${XSPRESS3.name}</define>
                             <define>XSPRESS3_VERSION=${XSPRESS3.version}</define>
+                            <define>SPECTRAL_NAME=${SPECTRAL.name}</define>
+                            <define>SPECTRAL_VERSION=${SPECTRAL.version}</define>
                             
                             <!-- define which detector you need to ENABLE -->      
-                            <define>SIMULATOR_ENABLED</define> 						
-                            <define>EIGER_ENABLED</define> 	
+                            <define>SIMULATOR_ENABLED</define>                       
+                            <define>EIGER_ENABLED</define>     
                             <define>SLSJUNGFRAU_ENABLED</define> 
-							<define>SLSEIGER_ENABLED</define>
+                            <define>SLSEIGER_ENABLED</define>
                             <define>LAMBDA_ENABLED</define>
                             <define>XSPRESS3_ENABLED</define>
-                            <define>LAYOUT_ENABLED</define>	
+                            <define>SPECTRAL_ENABLED</define>
+                            <define>LAYOUT_ENABLED</define>    
                             <define>MASK_ENABLED</define>
                             <define>ROICOUNTERS_ENABLED</define>             
                             <define>SOLEIL_YAT_STREAM</define>
@@ -169,9 +181,9 @@
                             <define>__LINUX__</define>
                             <define>linux</define>                            
                         </defines>                        
-			
+            
                     </cpp>        
-					
+                    
                     <linker>
                         <libs>
                             <lib>
@@ -307,30 +319,30 @@
                             </lib>
 
                             <lib>
- 				                <!-- liblambda -->
- 				                <name>lambda</name>
- 				                <type>shared</type>
- 				                <directory>${libs-lambda}/</directory>
- 			                </lib>
+                               <!-- liblambda -->
+                               <name>lambda</name>
+                               <type>shared</type>
+                               <directory>${libs-lambda}/</directory>
+                            </lib>
 
- 			                <lib>
- 				                <!-- libfsdetcore -->
- 				                <name>fsdetcore</name>
- 				                <type>shared</type>
- 				                <directory>${libs-lambda}/</directory>
- 			                </lib>
+                            <lib>
+                               <!-- libfsdetcore -->
+                               <name>fsdetcore</name>
+                               <type>shared</type>
+                               <directory>${libs-lambda}/</directory>
+                            </lib>
 
- 			                <lib>
- 				                <name>boost_thread</name>
- 				                <type>shared</type>
- 				                <directory>${libs-lambda}/</directory>
- 			                </lib>
+                            <lib>
+                               <name>boost_thread</name>
+                               <type>shared</type>
+                               <directory>${libs-lambda}/</directory>
+                            </lib>
 
- 			                <lib>
- 				                <name>boost_system</name>
- 				                <type>shared</type>
- 				                <directory>${libs-lambda}/</directory>
- 			                </lib>
+                            <lib>
+                               <name>boost_system</name>
+                               <type>shared</type>
+                               <directory>${libs-lambda}/</directory>
+                            </lib>
 
                             <lib>
                                 <name>xspress3</name>
