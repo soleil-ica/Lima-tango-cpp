@@ -904,6 +904,43 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 		
+#ifdef SPECTRAL_ENABLED
+        if (detector_type == "Spectral")
+        {
+            if (!ControlFactory::m_is_created)
+            {
+                Tango::DbData db_data;
+                db_data.push_back(Tango::DbDatum("ExpertConnectionAddress"));
+                db_data.push_back(Tango::DbDatum("ExpertConnectionPort"));
+                db_data.push_back(Tango::DbDatum("ExpertImagePacketPixelsNb"));
+                db_data.push_back(Tango::DbDatum("ExpertImagePacketDelayMicroSec"));
+                
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                std::string   connection_address           = "127.0.0.1";
+                unsigned long connection_port              = 0  ;
+                unsigned long image_packet_pixels_nb       = 512;
+                unsigned long image_packet_delay_micro_sec = 300;
+                int           prop_index                   = 0  ;
+
+                db_data[prop_index++] >> connection_address    ;
+                db_data[prop_index++] >> connection_port       ;
+                db_data[prop_index++] >> image_packet_pixels_nb;
+                db_data[prop_index++] >> image_packet_delay_micro_sec;
+                
+                m_camera = static_cast<void*> (new Spectral::Camera(connection_address          ,   // server name or IP address of the SI Image SGL II software
+                                                                    connection_port             ,   // TCP/IP port of the SI Image SGL II software
+                                                                    image_packet_pixels_nb      ,   // number of pixels sent into a image part TCP/IP packet
+                                                                    image_packet_delay_micro_sec)); // delay between the sending of two image part TCP/IP packets (in micro-seconds)
+                                                                
+                m_interface = static_cast<void*> (new Spectral::Interface(*(static_cast<Spectral::Camera*> (m_camera))));
+                m_control = new CtControl(static_cast<Spectral::Interface*> (m_interface));
+
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
+#endif
+        
         if (!ControlFactory::m_is_created)
         {
             string strMsg = "Unable to create the lima control object : Unknown Detector Type : ";
@@ -1127,6 +1164,13 @@ void ControlFactory::reset(const std::string& detector_type)
                     delete (static_cast<Xspress3::Camera*> (m_camera));
                 }
 #endif  
+
+#ifdef SPECTRAL_ENABLED        
+                if (detector_type == "Spectral")
+                {
+                    delete (static_cast<Spectral::Camera*> (m_camera));
+                }
+#endif
 
 				
                 m_camera = 0;
