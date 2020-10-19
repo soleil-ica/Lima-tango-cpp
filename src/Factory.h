@@ -155,8 +155,8 @@
 #endif
 
 #ifdef SPECTRAL_ENABLED  
-#include <SpectralInterface.h>
 #include <SpectralCamera.h>
+#include <SpectralInterface.h>
 #endif
 
 //ProcessLib/Data : define dimensions of image
