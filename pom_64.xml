@@ -26,7 +26,7 @@
         <CORE.name>Core</CORE.name>
         <CORE.version>1.7.9</CORE.version>
         <EIGER.name>Eiger</EIGER.name>
-        <EIGER.version>2.2.2</EIGER.version>
+        <EIGER.version>2.3.0</EIGER.version>
         <SIMULATOR.name>Simulator</SIMULATOR.name>
         <SIMULATOR.version>1.4.0</SIMULATOR.version>
         <SLSJUNGFRAU.name>SlsJungfrau</SLSJUNGFRAU.name>
@@ -94,17 +94,17 @@
                     <cpp>
                         <sourceDirectory>${project.basedir}</sourceDirectory>                        
                         <includes>
-                            <include>*.cpp</include>
-                            <include>specifics/SimulatorCCD/*.cpp</include>							
+                            <include>*.cpp</include>						
                             <include>specifics/SimulatorCCD/*.cpp</include>							
                             <include>specifics/Eiger/*.cpp</include>
                             <include>specifics/SlsJungfrau/*.cpp</include>
                             <include>specifics/SlsEiger/*.cpp</include>
+                            <include>specifics/Lambda/*.cpp</include>
+                            <include>specifics/Xspress3/*.cpp</include>
+                            
                             <include>specifics/Layout/*.cpp</include>     			
                             <include>specifics/Mask/*.cpp</include>                            
                             <include>specifics/RoiCounters/*.cpp</include>
-                            <include>specifics/Lambda/*.cpp</include>
-                            <include>specifics/Xspress3/*.cpp</include>
                         </includes>
 
                         <includePaths>                          
@@ -114,7 +114,8 @@
                             <includePath>specifics/SlsJungfrau</includePath>
                             <includePath>specifics/SlsEiger</includePath>
                             <includePath>specifics/Lambda</includePath>        
-                            <includePath>specifics/Xspress3</includePath>     
+                            <includePath>specifics/Xspress3</includePath> 
+                            
                             <includePath>specifics/Layout</includePath>         
                             <includePath>specifics/Mask</includePath>
                             <includePath>specifics/RoiCounters</includePath>

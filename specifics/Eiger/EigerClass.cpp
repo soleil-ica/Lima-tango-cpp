@@ -635,6 +635,21 @@ void EigerClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
+	prop_name = "CurlDelayMs";
+	prop_desc = "Curl delay in ms. this is used as a sleep delay for waiting the curl responses";
+	prop_def  = "50";
+	vect_data.clear();
+	vect_data.push_back("50");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 	prop_name = "DownloadDataFile";
 	prop_desc = "Enable/Disable downloading data files from DCU.\nDo not download data files (master+data) [by default]";
 	prop_def  = "false";
@@ -1117,7 +1132,7 @@ void EigerClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Tango::Device_4Impl");
+	inheritance.push_back("Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 
