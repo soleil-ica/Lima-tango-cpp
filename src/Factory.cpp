@@ -564,22 +564,30 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             {
                 Tango::DbData db_data;
                 db_data.push_back(Tango::DbDatum("DetectorIP"));
-				db_data.push_back(Tango::DbDatum("TimestampType"));
+				db_data.push_back(Tango::DbDatum("TimestampType")); 
 				db_data.push_back(Tango::DbDatum("DownloadDataFile"));
+                db_data.push_back(Tango::DbDatum("CurlDelayMs"));
 				
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                // default values:
                 std::string camera_ip = "127.0.0.1";
 				std::string timestamp_type = "RELATIVE";
 				bool must_download = false;
+                double curl_delay_ms = 50; 
+
                 db_data[0] >> camera_ip;
 				db_data[1] >> timestamp_type;
 				db_data[2] >> must_download;
+                db_data[3] >> curl_delay_ms;
+
 				transform(timestamp_type.begin(), timestamp_type.end(), timestamp_type.begin(), ::toupper);
                 m_camera = static_cast<void*> (new Eiger::Camera(camera_ip));
 				static_cast<Eiger::Camera*> (m_camera)->setTimestampType(timestamp_type);
+                static_cast<Eiger::Camera*> (m_camera)->setCurlDelayMs(curl_delay_ms);
                 m_interface = static_cast<void*> (new Eiger::Interface(*(static_cast<Eiger::Camera*> (m_camera))));
                 if (m_interface)
 				{
+                    //- this one needs Interface as it uses the saving object
                     static_cast<Eiger::Interface*> (m_interface)->setDownloadDataFile(must_download);				
 				}				
                 m_control = new CtControl(static_cast<Eiger::Interface*> (m_interface));

@@ -272,6 +272,7 @@ void Eiger::get_device_property()
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("DetectorIP"));
 	dev_prop.push_back(Tango::DbDatum("TimestampType"));
+	dev_prop.push_back(Tango::DbDatum("CurlDelayMs"));
 	dev_prop.push_back(Tango::DbDatum("DownloadDataFile"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedCountrateCorrection"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedFlatfieldCorrection"));
@@ -326,6 +327,17 @@ void Eiger::get_device_property()
 	}
 	//	And try to extract TimestampType value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  timestampType;
+
+	//	Try to initialize CurlDelayMs from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  curlDelayMs;
+	else {
+		//	Try to initialize CurlDelayMs from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  curlDelayMs;
+	}
+	//	And try to extract CurlDelayMs value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  curlDelayMs;
 
 	//	Try to initialize DownloadDataFile from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -586,6 +598,7 @@ void Eiger::get_device_property()
     //------------------------------------------------------------------
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "DetectorIP");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "RELATIVE",  "TimestampType");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "50",        "CurlDelayMs");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false",     "DownloadDataFile");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", 	 "MemorizedCountrateCorrection");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	 "MemorizedFlatfieldCorrection");

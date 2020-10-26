@@ -188,6 +188,10 @@ public:
  */
 	string	timestampType;
 /**
+ *	Curl delay in ms. this is used as a sleep delay for waiting the curl responses
+ */
+	Tango::DevDouble	curlDelayMs;
+/**
  *	Enable/Disable downloading data files from DCU.
  *	Do not download data files (master+data) [by default]
  */

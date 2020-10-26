@@ -102,9 +102,9 @@ The language device desctructor automatically calls the <i> delete_device() </i>
 <Br>&nbsp
 </ul><Br>
 <Br>
-<A NAME="Abort"><!-- --></A>
-<A NAME="Abort"><!-- --></A>
-<h2>4 - Abort</h2>
+<A NAME="Initialize"><!-- --></A>
+<A NAME="Initialize"><!-- --></A>
+<h2>4 - Initialize</h2>
 <ul>
 <Li><Strong>Description: </Strong> <Br>&nbsp
 <Li><Strong>Argin:<Br>DEV_VOID</Strong>
@@ -112,13 +112,13 @@ The language device desctructor automatically calls the <i> delete_device() </i>
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::STANDBY<Li>Tango::FAULT<Li>Tango::RUNNING</Ul>
+<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
-<A NAME="Initialize"><!-- --></A>
-<A NAME="Initialize"><!-- --></A>
-<h2>5 - Initialize</h2>
+<A NAME="Disarm"><!-- --></A>
+<A NAME="Disarm"><!-- --></A>
+<h2>5 - Disarm</h2>
 <ul>
 <Li><Strong>Description: </Strong> <Br>&nbsp
 <Li><Strong>Argin:<Br>DEV_VOID</Strong>
@@ -126,7 +126,21 @@ The language device desctructor automatically calls the <i> delete_device() </i>
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::INIT<Li>Tango::STANDBY<Li>Tango::FAULT</Ul>
+<Li>Tango::RUNNING</Ul>
+<Br>&nbsp
+</ul><Br>
+<Br>
+<A NAME="UpdateTH"><!-- --></A>
+<A NAME="UpdateTH"><!-- --></A>
+<h2>6 - UpdateTH</h2>
+<ul>
+<Li><Strong>Description: </Strong> <Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Argout:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Command allowed for: </Strong><Ul>
+<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
