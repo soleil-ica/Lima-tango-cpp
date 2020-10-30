@@ -52,10 +52,12 @@
 #include "lima/CtImage.h"
 
 #include <yat/memory/SharedPtr.h>
+#include <yat/utils/StringTokenizer.h>
+
 #include <yat4tango/PropertyHelper.h>
 #include <yat4tango/InnerAppender.h>
-#include <yat/utils/StringTokenizer.h>
 #include <yat4tango/DeviceTask.h>
+
 #include "UfxcInterface.h"
 #include "UfxcCamera.h"
 
@@ -104,14 +106,16 @@ public :
 		Tango::DevString	*attr_currentAlias_read;
 		Tango::DevString	*attr_currentConfigFile_read;
 		Tango::DevULong	*attr_detectorTemperature_read;
-		Tango::DevULong	*attr_thresholdLow_read;
-		Tango::DevULong	attr_thresholdLow_write;
-		Tango::DevULong	*attr_thresholdHigh_read;
-		Tango::DevULong	attr_thresholdHigh_write;
+		Tango::DevFloat	*attr_thresholdLow_read;
+		Tango::DevFloat	attr_thresholdLow_write;
+		Tango::DevFloat	*attr_thresholdHigh_read;
+		Tango::DevFloat	attr_thresholdHigh_write;
 		Tango::DevULong	*attr_thresholdLow1_read;
 		Tango::DevULong	*attr_thresholdHigh1_read;
 		Tango::DevULong	*attr_thresholdLow2_read;
 		Tango::DevULong	*attr_thresholdHigh2_read;
+		Tango::DevFloat	*attr_triggerAcquisitionFrequency_read;
+		Tango::DevFloat	attr_triggerAcquisitionFrequency_write;
 //@}
 
 /**
@@ -120,9 +124,13 @@ public :
  */
 //@{
 /**
- *	Allow to Reload the last used configuration file at each init of the device.
+ *	Allow to Reload the last used Detector Configuration file at each init of the device.
  */
 	Tango::DevBoolean	autoLoad;
+/**
+ *	Define the list of Detector Configuration files and their associated alias.
+ */
+	vector<string>	detectorConfigFiles;
 /**
  *	Config Ip Address
  */
@@ -160,21 +168,33 @@ public :
  */
 	Tango::DevULong	timeout;
 /**
- *	
+ *	Enable/Disable the geometrical corrections
  */
-	vector<string>	detectorConfigFiles;
+	Tango::DevBoolean	geometricalCorrectionEnabled;
 /**
- *	
+ *	Enable/Disable the sum of the frames stack
  */
-	Tango::DevULong	memorizedThresholdLow;
+	Tango::DevBoolean	stackFramesSumEnabled;
 /**
- *	
+ *	Only the device could modify this property <br>
+ *	The User should never change this property<br>
  */
-	Tango::DevULong	memorizedThresholdHigh;
+	Tango::DevFloat	memorizedThresholdLow;
 /**
- *	
+ *	Only the device could modify this property <br>
+ *	The User should never change this property<br>
+ */
+	Tango::DevFloat	memorizedThresholdHigh;
+/**
+ *	Only the device could modify this property <br>
+ *	The User should never change this property<br>
  */
 	string	memorizedConfigAlias;
+/**
+ *	Only the device could modify this property <br>
+ *	The User should never change this property<br>
+ */
+	Tango::DevFloat	memorizedTriggerAcquisitionFrequency;
 //@}
 
 /**
@@ -300,6 +320,14 @@ public :
  */
 	virtual void read_thresholdHigh2(Tango::Attribute &attr);
 /**
+ *	Extract real attribute values for triggerAcquisitionFrequency acquisition result.
+ */
+	virtual void read_triggerAcquisitionFrequency(Tango::Attribute &attr);
+/**
+ *	Write triggerAcquisitionFrequency attribute values to hardware.
+ */
+	virtual void write_triggerAcquisitionFrequency(Tango::WAttribute &attr);
+/**
  *	Read/Write allowed for libVersion attribute.
  */
 	virtual bool is_libVersion_allowed(Tango::AttReqType type);
@@ -343,6 +371,10 @@ public :
  *	Read/Write allowed for thresholdHigh2 attribute.
  */
 	virtual bool is_thresholdHigh2_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for triggerAcquisitionFrequency attribute.
+ */
+	virtual bool is_triggerAcquisitionFrequency_allowed(Tango::AttReqType type);
 /**
  *	Execution allowed for LoadConfigFile command.
  */

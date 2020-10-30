@@ -43,6 +43,7 @@
 //- YAT/YAT4TANGO
 #include <yat4tango/PropertyHelper.h>
 #include <yat4tango/DynamicInterfaceManager.h>
+#include <yat4tango/InnerAppender.h>
 
 #include "Factory.h"
 
@@ -71,7 +72,7 @@ namespace Lambda_ns
 
 /*----- PROTECTED REGION END -----*/	//	Lambda::Additional Class Declarations
 
-class Lambda : public TANGO_BASE_CLASS
+class Lambda : public Tango::Device_4Impl
 {
 
 /*----- PROTECTED REGION ID(Lambda::Data Members) ENABLED START -----*/

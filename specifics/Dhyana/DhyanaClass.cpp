@@ -274,18 +274,16 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : temperature
 	temperatureAttrib	*temperature = new temperatureAttrib();
 	Tango::UserDefaultAttrProp	temperature_prop;
-	temperature_prop.set_unit("°C");
-	temperature_prop.set_standard_unit("°C");
-	temperature_prop.set_display_unit("°C");
+	temperature_prop.set_unit("Celsius");
+	temperature_prop.set_description("Get Temperature of the detector (in Celsius)");
 	temperature->set_default_properties(temperature_prop);
 	att_list.push_back(temperature);
 
 	//	Attribute : temperatureTarget
 	temperatureTargetAttrib	*temperature_target = new temperatureTargetAttrib();
 	Tango::UserDefaultAttrProp	temperature_target_prop;
-	temperature_target_prop.set_unit("°C");
-	temperature_target_prop.set_standard_unit("°C");
-	temperature_target_prop.set_display_unit("°C");
+	temperature_target_prop.set_unit("Celsius");
+	temperature_target_prop.set_description("Set the Temperature target of the detector (in Celsius)");
 	temperature_target->set_default_properties(temperature_target_prop);
 	temperature_target->set_memorized();
 	temperature_target->set_memorized_init(false);
@@ -297,6 +295,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	fan_speed_prop.set_unit(" ");
 	fan_speed_prop.set_standard_unit(" ");
 	fan_speed_prop.set_display_unit(" ");
+	fan_speed_prop.set_description("Define the fan speed of the detector [0..5]");
 	fan_speed->set_default_properties(fan_speed_prop);
 	fan_speed->set_memorized();
 	fan_speed->set_memorized_init(false);
@@ -308,6 +307,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	global_gain_prop.set_unit(" ");
 	global_gain_prop.set_standard_unit(" ");
 	global_gain_prop.set_display_unit(" ");
+	global_gain_prop.set_description("Define the gain of the detector [LOW, HIGH, HDR]");
 	global_gain->set_default_properties(global_gain_prop);
 	global_gain->set_memorized();
 	global_gain->set_memorized_init(false);
@@ -411,6 +411,21 @@ void DhyanaClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
+	prop_name = "__ExpertTimerPeriod";
+	prop_desc = "Timer period in ms.<cr>\nuseful only for Internal Trigger";
+	prop_def  = "1";
+	vect_data.clear();
+	vect_data.push_back("1");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 }
 //+----------------------------------------------------------------------------
 //
@@ -440,7 +455,7 @@ void DhyanaClass::write_class_property()
 	//	Put Description
 	Tango::DbDatum	description("Description");
 	vector<string>	str_desc;
-	str_desc.push_back("  ");
+	str_desc.push_back("Interface the camera Dhyana using  the TUCAM Library");
 	description << str_desc;
 	data.push_back(description);
 		
@@ -548,7 +563,7 @@ void DhyanaClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Device_4Impl");
+	inheritance.push_back("Tango::Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

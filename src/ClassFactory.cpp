@@ -55,10 +55,6 @@ static const char *RcsId = "$Id:  $";
 #include <SimulatorCCDClass.h>
 #endif
 
-#ifdef AVIEX_ENABLED
-#include <AviexCCDClass.h>
-#endif
-
 #ifdef BASLER_ENABLED
 #include <BaslerCCDClass.h>
 #endif
@@ -131,6 +127,9 @@ static const char *RcsId = "$Id:  $";
 #include <SlsJungfrauClass.h>
 #endif
 
+#ifdef SLSEIGER_ENABLED
+#include <SlsEigerClass.h>
+#endif
 
 #ifdef LAMBDA_ENABLED
 #include <LambdaClass.h>
@@ -142,6 +141,10 @@ static const char *RcsId = "$Id:  $";
 
 #ifdef UFXC_ENABLED
 #include <UfxcClass.h>
+#endif
+
+#ifdef XSPRESS3_ENABLED
+#include <Xspress3Class.h>
 #endif
 
 #ifndef WIN32
@@ -158,10 +161,6 @@ void Tango::DServer::class_factory()
 
 #ifdef SIMULATOR_ENABLED
     add_class(SimulatorCCD_ns::SimulatorCCDClass::init("SimulatorCCD"));
-#endif
-
-#ifdef AVIEX_ENABLED
-    add_class(AviexCCD_ns::AviexCCDClass::init("AviexCCD"));
 #endif
     
 #ifdef BASLER_ENABLED
@@ -248,6 +247,10 @@ void Tango::DServer::class_factory()
     add_class(SlsJungfrau_ns::SlsJungfrauClass::init("SlsJungfrau"));
 #endif	
 
+#ifdef SLSEIGER_ENABLED        
+    add_class(SlsEiger_ns::SlsEigerClass::init("SlsEiger"));
+#endif	
+
 #ifdef LAMBDA_ENABLED        
     add_class(Lambda_ns::LambdaClass::init("Lambda"));
 #endif	
@@ -261,5 +264,9 @@ void Tango::DServer::class_factory()
     add_class(Ufxc_ns::UfxcClass::init("Ufxc"));
 #endif	
 
+#ifdef XSPRESS3_ENABLED        
+    add_class(Xspress3_ns::Xspress3Class::init("Xspress3"));
+#endif	
+	
 }
 

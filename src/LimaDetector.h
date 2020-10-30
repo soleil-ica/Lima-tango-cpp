@@ -4,7 +4,7 @@
 //
 // description : Include for the LimaDetector class.
 //
-// project :	LimaDetector
+// project :	Lima Devie Generic
 //
 // $Author:  $
 //
@@ -49,6 +49,7 @@
 #undef LOG_DEBUG
 
 //- YAT/YAT4TANGO
+#include <yat/CommonHeader.h>
 #include <yat/memory/SharedPtr.h>
 #include <yat4tango/PropertyHelper.h>
 #include <yat4tango/InnerAppender.h>
@@ -201,6 +202,7 @@ public:
 		Tango::DevString	attr_fileTargetPath_write;
 		Tango::DevLong	*attr_fileNbFrames_read;
 		Tango::DevLong	attr_fileNbFrames_write;
+		Tango::DevString	*attr_fileExtension_read;
 		Tango::DevString	*attr_operationsList_read;
 //@}
 
@@ -228,7 +230,6 @@ public:
  *	Define the type of the connected Detector .<BR>
  *	Availables types :<BR>
  *	- AndorCCD<BR>
- *	- AviexCCD<br>
  *	- BaslerCCD<BR>
  *	- Eiger<br>
  *	- Hamamatsu<br>
@@ -721,6 +722,10 @@ public:
  */
 	virtual void write_fileNbFrames(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for fileExtension acquisition result.
+ */
+	virtual void read_fileExtension(Tango::Attribute &attr);
+/**
  *	Extract real attribute values for operationsList acquisition result.
  */
 	virtual void read_operationsList(Tango::Attribute &attr);
@@ -832,6 +837,10 @@ public:
  *	Read/Write allowed for operationsList attribute.
  */
 	virtual bool is_operationsList_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for fileExtension attribute.
+ */
+	virtual bool is_fileExtension_allowed(Tango::AttReqType type);
 /**
  *	Execution allowed for Prepare command.
  */
@@ -1013,8 +1022,9 @@ public:
     }
 
     //image dynamic attribute management
-    void    add_image_dynamic_attribute(void);
+    void    add_image_dynamic_attribute(const std::string& attr_name);
     void    read_image_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
+    void    read_baseImage_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
 
     //sutter dynamic attributes management
     void    add_shutter_dynamic_attributes(void);

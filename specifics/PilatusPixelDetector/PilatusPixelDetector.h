@@ -46,6 +46,7 @@
 
 //- YAT/YAT4TANGO
 #include <yat4tango/PropertyHelper.h>
+#include <yat4tango/InnerAppender.h>
 
 #include "lima/HwInterface.h"
 #include "lima/CtControl.h"
@@ -112,11 +113,11 @@ public :
  */
 //@{
 /**
- *	Detector port number
+ *	Detector port number of CamServer
  */
 	Tango::DevLong	detectorPort;
 /**
- *	Detector IP address
+ *	Detector IP address of CamServer
  */
 	string	detectorIP;
 /**
@@ -124,12 +125,12 @@ public :
  */
 	string	detectorCameraDefFileName;
 /**
- *	Enable/Disable monitoring of directory receiving image files.
+ *	Enable/Disable monitoring of the directory receiving image files in order to read images provided by CamServer & to display image in the attribut image<br>
  *	[default = enable reading directory]
  */
 	Tango::DevBoolean	useReader;
 /**
- *	During acquisition, this is the elapsed time before declaring that is no available image returned by detector. (in ms)
+ *	This is the elapsed time before declaring that is no available image returned by CamServer during the Acquisition. 
  */
 	Tango::DevULong	readerTimeout;
 /**
@@ -345,7 +346,7 @@ public :
  */
 	void	send_any_command(Tango::DevString);
 /**
- * 
+ * Read temperature (of nb sensors) and humidity (of nb sensors) of the detector
  *	@return	
  *	@exception DevFailed
  */

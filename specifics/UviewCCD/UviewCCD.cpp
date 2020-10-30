@@ -57,7 +57,7 @@ static const char *RcsId = "$Id:  $";
 #include <tango.h>
 #include <UviewCCD.h>
 #include <UviewCCDClass.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 
 const short ROIid1 = 1;
 const short ROIid2 = 2;
@@ -112,6 +112,9 @@ void UviewCCD::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_ivsTRoi2_read);
     DELETE_SCALAR_ATTRIBUTE(attr_ivsTRoi3_read);
     DELETE_SCALAR_ATTRIBUTE(attr_ivsTRoi4_read);
+
+    INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
 }
 
 //+----------------------------------------------------------------------------
@@ -140,6 +143,9 @@ void UviewCCD::init_device()
   m_ivs_roi_data_2 = yat::IEEE_NAN;
   m_ivs_roi_data_3 = yat::IEEE_NAN;
   m_ivs_roi_data_4 = yat::IEEE_NAN;
+
+  INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+  yat4tango::InnerAppender::initialize(this, 512);
 
   try
   {

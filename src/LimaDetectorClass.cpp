@@ -837,6 +837,7 @@ void LimaDetectorClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	fileFormatAttrib	*file_format = new fileFormatAttrib();
 	Tango::UserDefaultAttrProp	file_format_prop;
 	file_format_prop.set_unit(" ");
+	file_format_prop.set_description("File format that will be used for saving.\nAvailable format are:\n- NXS\n- EDF\n- RAW\n- HDF5");
 	file_format->set_default_properties(file_format_prop);
 	file_format->set_disp_level(Tango::EXPERT);
 	file_format->set_memorized();
@@ -872,6 +873,15 @@ void LimaDetectorClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	file_nb_frames->set_memorized();
 	file_nb_frames->set_memorized_init(false);
 	att_list.push_back(file_nb_frames);
+
+	//	Attribute : fileExtension
+	fileExtensionAttrib	*file_extension = new fileExtensionAttrib();
+	Tango::UserDefaultAttrProp	file_extension_prop;
+	file_extension_prop.set_unit(" ");
+	file_extension_prop.set_description("Display the actual extension that will be used for saving files, according to the chosen file format");
+	file_extension->set_default_properties(file_extension_prop);
+	file_extension->set_disp_level(Tango::EXPERT);
+	att_list.push_back(file_extension);
 
 	//	Attribute : operationsList
 	operationsListAttrib	*operations_list = new operationsListAttrib();
@@ -980,7 +990,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "DetectorType";
-	prop_desc = "Define the type of the connected Detector .<BR>\nAvailables types :<BR>\n- AndorCCD<BR>\n- AviexCCD<br>\n- BaslerCCD<BR>\n- Eiger<br>\n- Hamamatsu<br>\n- ImXpad<br>\n- MarCCD<BR>\n- Maxipix <BR>\n- Merlin <BR>\n- Pco<BR>\n- PerkinElmer<BR>\n- PilatusPixelDetector<BR>\n- ProsilicaCCD<BR>\n- PrincetonCCD<BR>\n- SimulatorCCD<BR>\n- UviewCCD<BR>\n- XpadPixelDetector<BR>\n\n";
+	prop_desc = "Define the type of the connected Detector .<BR>\nAvailables types :<BR>\n- AndorCCD<BR>\n- BaslerCCD<BR>\n- Eiger<br>\n- Hamamatsu<br>\n- ImXpad<br>\n- MarCCD<BR>\n- Maxipix <BR>\n- Merlin <BR>\n- Pco<BR>\n- PerkinElmer<BR>\n- PilatusPixelDetector<BR>\n- ProsilicaCCD<BR>\n- PrincetonCCD<BR>\n- SimulatorCCD<BR>\n- UviewCCD<BR>\n- XpadPixelDetector<BR>\n\n";
 	prop_def  = "SimulatorCCD";
 	vect_data.clear();
 	vect_data.push_back("SimulatorCCD");
@@ -1566,7 +1576,7 @@ void LimaDetectorClass::write_class_property()
 
 	//	Put title
 	Tango::DbDatum	title("ProjectTitle");
-	string	str_title("LimaDetector");
+	string	str_title("Lima Device Generic");
 	title << str_title;
 	data.push_back(title);
 
@@ -1681,7 +1691,7 @@ void LimaDetectorClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Device_4Impl");
+	inheritance.push_back("Tango::Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

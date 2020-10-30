@@ -52,6 +52,8 @@
 #include "lima/CtImage.h"
 
 #include <yat4tango/PropertyHelper.h>
+#include <yat4tango/InnerAppender.h>
+
 #include <MaxipixInterface.h>
 #include <MaxipixCamera.h>
 #include <MaxipixReconstruction.h>

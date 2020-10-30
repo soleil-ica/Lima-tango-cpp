@@ -40,8 +40,7 @@ void RoiCounters::create_attribute(std::string name,
     //- associate the dyn. attr. with its data
 
     if(!user_data.empty())
-    {
-        std::cout << "set_user_data...." << std::endl;
+    {        
         dai.set_user_data(user_data);
     }
     //- describe the dynamic attr we want...

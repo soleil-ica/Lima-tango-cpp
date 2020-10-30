@@ -42,7 +42,7 @@ static const char *RcsId = "$Id:  $";
 
 #include <Lambda.h>
 #include <LambdaClass.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 
 namespace Lambda_ns
 {
@@ -97,7 +97,7 @@ namespace Lambda_ns
  */
 //--------------------------------------------------------
 Lambda::Lambda(Tango::DeviceClass *cl, string &s)
- : TANGO_BASE_CLASS(cl, s.c_str()),m_dim(this)
+ : Tango::Device_4Impl(cl, s.c_str()),m_dim(this)
 {
 	/*----- PROTECTED REGION ID(Lambda::constructor_1) ENABLED START -----*/
 	init_device();
@@ -105,7 +105,7 @@ Lambda::Lambda(Tango::DeviceClass *cl, string &s)
 }
 //--------------------------------------------------------
 Lambda::Lambda(Tango::DeviceClass *cl, const char *s)
- : TANGO_BASE_CLASS(cl, s),m_dim(this)
+ : Tango::Device_4Impl(cl, s),m_dim(this)
 {
 	/*----- PROTECTED REGION ID(Lambda::constructor_2) ENABLED START -----*/
 	init_device();
@@ -113,7 +113,7 @@ Lambda::Lambda(Tango::DeviceClass *cl, const char *s)
 }
 //--------------------------------------------------------
 Lambda::Lambda(Tango::DeviceClass *cl, const char *s, const char *d)
- : TANGO_BASE_CLASS(cl, s, d),m_dim(this)
+ : Tango::Device_4Impl(cl, s, d),m_dim(this)
 {
 	/*----- PROTECTED REGION ID(Lambda::constructor_3) ENABLED START -----*/
 	init_device();
@@ -135,6 +135,9 @@ void Lambda::delete_device()
     {
 	    // Release static attributes
         release_static_attributes();
+
+        INFO_STREAM << "Remove the inner-appender." << endl;
+        yat4tango::InnerAppender::release(this);
 
         m_is_device_initialized = false;
     }
@@ -181,6 +184,9 @@ void Lambda::init_device()
     m_is_device_initialized = false;
     set_state(Tango::INIT);
     m_status_message.str("");
+
+    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
 
 	try
 	{

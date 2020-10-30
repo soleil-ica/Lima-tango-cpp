@@ -830,7 +830,7 @@ void XpadPixelDetectorClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : ovf
 	ovfAttrib	*ovf = new ovfAttrib();
 	Tango::UserDefaultAttrProp	ovf_prop;
-	ovf_prop.set_unit("µs");
+	ovf_prop.set_unit("Âµs");
 	ovf_prop.set_format("%6d");
 	ovf_prop.set_description("ovf time");
 	ovf->set_default_properties(ovf_prop);
@@ -1202,7 +1202,7 @@ void XpadPixelDetectorClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Device_4Impl");
+	inheritance.push_back("Tango::Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

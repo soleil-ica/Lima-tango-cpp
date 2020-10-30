@@ -121,29 +121,6 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 
-#ifdef AVIEX_ENABLED
-        if (detector_type == "AviexCCD")
-        {
-            if (!ControlFactory::m_is_created)
-            {
-                Tango::DbData db_data;
-                db_data.push_back(Tango::DbDatum("DetectorID"));
-                db_data.push_back(Tango::DbDatum("MxDatabaseFileFullName"));
-                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
-                std::string detector_id;
-                std::string database_file;
-                db_data[0] >> detector_id;
-                db_data[1] >> database_file;
-                m_camera = static_cast<void*> (new Aviex::Camera(detector_id, database_file));
-
-                m_interface = static_cast<void*> (new Aviex::Interface(*static_cast<Aviex::Camera*> (m_camera)));
-                m_control = new CtControl(static_cast<Aviex::Interface*> (m_interface));
-                ControlFactory::m_is_created = true;
-                return m_control;
-            }
-        }
-#endif
-
 #ifdef BASLER_ENABLED
         if (detector_type == "BaslerCCD")
         {
@@ -578,22 +555,30 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             {
                 Tango::DbData db_data;
                 db_data.push_back(Tango::DbDatum("DetectorIP"));
-				db_data.push_back(Tango::DbDatum("TimestampType"));
+				db_data.push_back(Tango::DbDatum("TimestampType")); 
 				db_data.push_back(Tango::DbDatum("DownloadDataFile"));
+                db_data.push_back(Tango::DbDatum("CurlDelayMs"));
 				
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                // default values:
                 std::string camera_ip = "127.0.0.1";
 				std::string timestamp_type = "RELATIVE";
 				bool must_download = false;
+                double curl_delay_ms = 50; 
+
                 db_data[0] >> camera_ip;
 				db_data[1] >> timestamp_type;
 				db_data[2] >> must_download;
+                db_data[3] >> curl_delay_ms;
+
 				transform(timestamp_type.begin(), timestamp_type.end(), timestamp_type.begin(), ::toupper);
                 m_camera = static_cast<void*> (new Eiger::Camera(camera_ip));
 				static_cast<Eiger::Camera*> (m_camera)->setTimestampType(timestamp_type);
+                static_cast<Eiger::Camera*> (m_camera)->setCurlDelayMs(curl_delay_ms);
                 m_interface = static_cast<void*> (new Eiger::Interface(*(static_cast<Eiger::Camera*> (m_camera))));
                 if (m_interface)
 				{
+                    //- this one needs Interface as it uses the saving object
                     static_cast<Eiger::Interface*> (m_interface)->setDownloadDataFile(must_download);				
 				}				
                 m_control = new CtControl(static_cast<Eiger::Interface*> (m_interface));
@@ -658,6 +643,93 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif           
 
+#ifdef SLSEIGER_ENABLED
+        if (detector_type == "SlsEiger")
+        {
+            if (!ControlFactory::m_is_created)
+            {
+                std::string   config_file_name   ;
+                double        readout_time       ;
+                long          receiver_fifo_depth;
+                long          pixel_depth        ;
+                long          frame_packet_number_8          = 32 ;
+                long          frame_packet_number_16         = 64 ;
+                long          frame_packet_number_32         = 128;
+                double        live_mode_min_frame_period_sec = 1.0;
+
+                // generic device properties
+                {
+                    // get the generic device name
+                    Tango::DbDatum db_datum    ;
+                    std::string    device_name ;
+                    std::string    class_name  = "LimaDetector";
+                    std::string    server_name = Tango::Util::instance()->get_ds_name();
+
+                    db_datum = (Tango::Util::instance()->get_database())->get_device_name(server_name, class_name);
+                    db_datum >> device_name;
+
+                    // get the detector pixel depth property value in string
+                    Tango::DbData db_data           ;
+                    std::string   pixel_depth_string;
+
+                    db_data.push_back(Tango::DbDatum("DetectorPixelDepth"));
+                    (Tango::Util::instance()->get_database())->get_device_property(device_name, db_data);
+                    db_data[0] >> pixel_depth_string;
+
+                    // convert the string value to an integer value and manage conversion errors
+                    std::istringstream iss(pixel_depth_string);
+                    iss >> pixel_depth;
+                }
+
+                // specific device properties
+                {
+                    Tango::DbData db_data;
+
+                    // configuration complete path
+                    db_data.push_back(Tango::DbDatum("ConfigFileName"));
+                    
+                    // readout time of the camera
+                    db_data.push_back(Tango::DbDatum("ExpertReadoutTime"));
+                    
+                    // Number of frames in the receiver memory
+                    db_data.push_back(Tango::DbDatum("ExpertReceiverFifoDepth"));
+
+                    // Number of packets we should get in each receiver frame
+                    db_data.push_back(Tango::DbDatum("ExpertFramePacketNumber8"));
+                    db_data.push_back(Tango::DbDatum("ExpertFramePacketNumber16"));
+                    db_data.push_back(Tango::DbDatum("ExpertFramePacketNumber32"));
+
+                    // Minimum period between frames for live mode
+                    db_data.push_back(Tango::DbDatum("ExpertLiveModeMinFramePeriodSec"));
+
+                    (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                    db_data[0] >> config_file_name              ;
+                    db_data[1] >> readout_time                  ;
+                    db_data[2] >> receiver_fifo_depth           ;
+                    db_data[3] >> frame_packet_number_8         ;
+                    db_data[4] >> frame_packet_number_16        ;
+                    db_data[5] >> frame_packet_number_32        ;
+                    db_data[6] >> live_mode_min_frame_period_sec;
+                }
+
+                // create and initialize the camera and create interface and control  
+                m_camera    = static_cast<void*> (new SlsEiger::Camera(config_file_name              , 
+                                                                       readout_time                  ,
+                                                                       receiver_fifo_depth           ,
+                                                                       pixel_depth                   ,
+                                                                       frame_packet_number_8         ,
+                                                                       frame_packet_number_16        ,
+                                                                       frame_packet_number_32        ,
+                                                                       live_mode_min_frame_period_sec));
+
+                m_interface = static_cast<void*> (new SlsEiger::Interface(*(static_cast<SlsEiger::Camera*> (m_camera))));
+                m_control   = new CtControl(static_cast<SlsEiger::Interface*> (m_interface));
+               
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
+#endif           
 
 #ifdef LAMBDA_ENABLED
         if (detector_type == "Lambda")
@@ -693,7 +765,12 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         {
             if (!ControlFactory::m_is_created)
             {
-                m_camera = static_cast<void*> (new Dhyana::Camera());
+				unsigned short time_period = 1;
+                Tango::DbData db_data;
+				db_data.push_back(Tango::DbDatum("__ExpertTimerPeriod"));							
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                db_data[0] >> time_period   ;				
+                m_camera = static_cast<void*> (new Dhyana::Camera(time_period));
                 m_interface = static_cast<void*> (new Dhyana::Interface(*(static_cast<Dhyana::Camera*> (m_camera))));
                 m_control = new CtControl(static_cast<Dhyana::Interface*> (m_interface));
 
@@ -718,6 +795,8 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 				db_data.push_back(Tango::DbDatum("SFP3IpAddress"));
 				db_data.push_back(Tango::DbDatum("SFP3Port"));
 				db_data.push_back(Tango::DbDatum("Timeout"));
+				db_data.push_back(Tango::DbDatum("GeometricalCorrectionEnabled"));
+				db_data.push_back(Tango::DbDatum("StackFramesSumEnabled"));
 				
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
                 std::string config_ip_address = "127.0.0.1";
@@ -729,6 +808,9 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 				std::string SFP3_ip_address = "127.0.0.1";
 				unsigned long SFP3_port = 0;	
 				unsigned long timeout = 0;
+				bool geometrical_correction_enabled = true ;
+				bool stack_frames_sum_enabled = true ;
+				
                 db_data[0] >> config_ip_address;
 				db_data[1] >> config_port;
                 db_data[2] >> SFP1_ip_address;
@@ -738,12 +820,16 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data[6] >> SFP3_ip_address;
 				db_data[7] >> SFP3_port;
 				db_data[8] >> timeout;
+				db_data[9] >> geometrical_correction_enabled;
+				db_data[10]>> stack_frames_sum_enabled;
 				
                 m_camera = static_cast<void*> (new Ufxc::Camera(config_ip_address, config_port,
 																SFP1_ip_address, SFP1_port,
 																SFP2_ip_address, SFP2_port,
 																SFP3_ip_address, SFP3_port,
-																timeout
+																timeout,
+																geometrical_correction_enabled,
+																stack_frames_sum_enabled
 																));
                 m_interface = static_cast<void*> (new Ufxc::Interface(*(static_cast<Ufxc::Camera*> (m_camera))));
                 m_control = new CtControl(static_cast<Ufxc::Interface*> (m_interface));
@@ -754,6 +840,78 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 				
+#ifdef XSPRESS3_ENABLED
+        if (detector_type == "Xspress3")
+        {
+            if (!ControlFactory::m_is_created)
+            {
+                Tango::DbData db_data;
+                std::string   base_ip_adress = "192.168.0.1";
+                std::string   base_mac_address = "02.00.00.00.00.00";				
+                long		  base_port = 30123;				 
+                long		  card_index = 0;
+                std::string   directory_name = "/etc/xspress3/calibration/me4_mar_2018/settings/";
+                long          max_frames = 16384;
+                long          nb_cards = 2;
+                long          nb_chans = 4;
+		bool          no_udp = false;
+                
+                // configuration complete path
+                db_data.push_back(Tango::DbDatum("BaseIPAdress"));
+                db_data.push_back(Tango::DbDatum("BaseMacAddress"));
+                db_data.push_back(Tango::DbDatum("BasePort"));
+                db_data.push_back(Tango::DbDatum("CardIndex"));
+                db_data.push_back(Tango::DbDatum("DirectoryName"));
+                db_data.push_back(Tango::DbDatum("MaxFrames"));				
+                db_data.push_back(Tango::DbDatum("NbCards"));				
+                db_data.push_back(Tango::DbDatum("NbChans"));				
+		db_data.push_back(Tango::DbDatum("NoUDP"));
+
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+
+                db_data[0] >> base_ip_adress;
+                db_data[1] >> base_mac_address;
+                db_data[2] >> base_port;
+                db_data[3] >> card_index;
+                db_data[4] >> directory_name;
+                db_data[5] >> max_frames;
+                db_data[6] >> nb_cards;
+                db_data[7] >> nb_chans;
+		db_data[8] >> no_udp;
+				
+				std::cout<<"- base_ip_adress = "<<base_ip_adress<<std::endl;
+				std::cout<<"- base_mac_address = "<<base_mac_address<<std::endl;
+				std::cout<<"- base_port = "<<base_port<<std::endl;
+				std::cout<<"- card_index = "<<card_index<<std::endl;
+				std::cout<<"- directory_name = "<<directory_name<<std::endl;
+				std::cout<<"- max_frames = "<<max_frames<<std::endl;
+				std::cout<<"- nb_cards = "<<nb_cards<<std::endl;
+				std::cout<<"- nb_chans = "<<nb_chans<<std::endl;
+				std::cout<<"- no_udp = "<<no_udp<<std::endl;
+				
+                // create and initialize the camera and create interface and control  
+                m_camera    = static_cast<void*> (new Xspress3::Camera(nb_cards,
+																	   max_frames,
+																	   base_ip_adress,
+																	   base_port,
+																	   base_mac_address,
+																	   nb_chans,
+																	   false,//create scope module
+																	   "NULL",//scope module name
+																	   0,//debug
+																	   card_index,
+																	   no_udp,
+																	   directory_name));
+
+		static_cast<Xspress3::Camera*> (m_camera)->setUseDtc(false);
+                m_interface = static_cast<void*> (new Xspress3::Interface(*(static_cast<Xspress3::Camera*> (m_camera))));
+                m_control   = new CtControl(static_cast<Xspress3::Interface*> (m_interface));
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
+#endif
+		
         if (!ControlFactory::m_is_created)
         {
             string strMsg = "Unable to create the lima control object : Unknown Detector Type : ";
@@ -814,13 +972,6 @@ void ControlFactory::reset(const std::string& detector_type)
                 if (detector_type == "SimulatorCCD")
                 {
                     delete (static_cast<Simulator::Camera*> (m_camera));
-                }
-#endif
-
-#ifdef AVIEX_ENABLED        
-                if (detector_type == "AviexCCD")
-                {
-                    delete (static_cast<Aviex::Camera*> (m_camera));
                 }
 #endif
 
@@ -950,6 +1101,12 @@ void ControlFactory::reset(const std::string& detector_type)
                 }
 #endif     
 
+#ifdef SLSEIGER_ENABLED        
+                if (detector_type == "SlsEiger")
+                {
+                    delete (static_cast<SlsEiger::Camera*> (m_camera));
+                }
+#endif     
 
 #ifdef LAMBDA_ENABLED        
                 if (detector_type == "Lambda")
@@ -971,6 +1128,15 @@ void ControlFactory::reset(const std::string& detector_type)
 					delete (static_cast<Ufxc::Camera*> (m_camera));				
                 }
 #endif
+				
+#ifdef XSPRESS3_ENABLED        
+                if (detector_type == "Xspress3")
+                {
+                    delete (static_cast<Xspress3::Camera*> (m_camera));
+                }
+#endif  
+
+				
                 m_camera = 0;
             }
 
@@ -1052,6 +1218,9 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
         //@@@TODO and if not exist ?? get the tango device/instance for roicounters
         if (!ControlFactory::m_is_created)
         {
+			YAT_LOG_INFO("Set Serialisation Model : BY_PROCESS");
+			Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_PROCESS);            
+            
             std::string roicounters = "RoiCounters";
             Tango::DbDatum db_datum;
             m_device_name_generic = Tango::Util::instance()->get_ds_name();

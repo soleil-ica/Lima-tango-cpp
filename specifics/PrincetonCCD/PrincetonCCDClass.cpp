@@ -280,6 +280,9 @@ void PrincetonCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : internalAcquisitionMode
 	internalAcquisitionModeAttrib	*internal_acquisition_mode = new internalAcquisitionModeAttrib();
 	Tango::UserDefaultAttrProp	internal_acquisition_mode_prop;
+	internal_acquisition_mode_prop.set_unit(" ");
+	internal_acquisition_mode_prop.set_standard_unit(" ");
+	internal_acquisition_mode_prop.set_display_unit(" ");
 	internal_acquisition_mode_prop.set_description("Available Internal Acquisition Modes are :<br>\nSTANDARD<br>\nFOCUS<br>");
 	internal_acquisition_mode->set_default_properties(internal_acquisition_mode_prop);
 	att_list.push_back(internal_acquisition_mode);
@@ -287,6 +290,9 @@ void PrincetonCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : shutterMode
 	shutterModeAttrib	*shutter_mode = new shutterModeAttrib();
 	Tango::UserDefaultAttrProp	shutter_mode_prop;
+	shutter_mode_prop.set_unit(" ");
+	shutter_mode_prop.set_standard_unit(" ");
+	shutter_mode_prop.set_display_unit(" ");
 	shutter_mode_prop.set_description("Available Shutter Modes are :<br>\nOPEN_NEVER<br>\nOPEN_PRE_EXPOSURE<br>\nOPEN_NO_CHANGE<br>");
 	shutter_mode->set_default_properties(shutter_mode_prop);
 	att_list.push_back(shutter_mode);
@@ -294,22 +300,27 @@ void PrincetonCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : temperature
 	temperatureAttrib	*temperature = new temperatureAttrib();
 	Tango::UserDefaultAttrProp	temperature_prop;
-	temperature_prop.set_unit("?C");
+	temperature_prop.set_unit("°C");
 	temperature_prop.set_format("%6.2f");
+	temperature_prop.set_description("The current temperature  (Degree Celsius)");
 	temperature->set_default_properties(temperature_prop);
 	att_list.push_back(temperature);
 
 	//	Attribute : temperatureTarget
 	temperatureTargetAttrib	*temperature_target = new temperatureTargetAttrib();
 	Tango::UserDefaultAttrProp	temperature_target_prop;
-	temperature_target_prop.set_unit("?C");
+	temperature_target_prop.set_unit("°C");
 	temperature_target_prop.set_format("%6.2f");
+	temperature_target_prop.set_description("Define the target temperature (Degree Celsius)");
 	temperature_target->set_default_properties(temperature_target_prop);
 	att_list.push_back(temperature_target);
 
 	//	Attribute : gain
 	gainAttrib	*gain = new gainAttrib();
 	Tango::UserDefaultAttrProp	gain_prop;
+	gain_prop.set_unit(" ");
+	gain_prop.set_standard_unit(" ");
+	gain_prop.set_display_unit(" ");
 	gain_prop.set_description("Define the currect gain.\n");
 	gain->set_default_properties(gain_prop);
 	att_list.push_back(gain);
@@ -317,6 +328,9 @@ void PrincetonCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : currentRate
 	currentRateAttrib	*current_rate = new currentRateAttrib();
 	Tango::UserDefaultAttrProp	current_rate_prop;
+	current_rate_prop.set_unit(" ");
+	current_rate_prop.set_standard_unit(" ");
+	current_rate_prop.set_display_unit(" ");
 	current_rate_prop.set_description("Display the current ADC frequency in Mhz");
 	current_rate->set_default_properties(current_rate_prop);
 	att_list.push_back(current_rate);
@@ -643,7 +657,7 @@ void PrincetonCCDClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Device_4Impl");
+	inheritance.push_back("Tango::Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

@@ -53,7 +53,7 @@ static const char *RcsId = "$Id:  $";
 //===================================================================
 #ifdef WIN32
 #include <tango.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 #endif
 
 #include <SimulatorCCD.h>
@@ -61,7 +61,7 @@ static const char *RcsId = "$Id:  $";
 
 #ifndef WIN32
 #include <tango.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 #endif
 
 
@@ -109,6 +109,9 @@ void SimulatorCCD::delete_device()
     //    Delete device allocated objects
     DELETE_SCALAR_ATTRIBUTE(attr_growFactor_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_fillType_read);
+	
+	INFO_STREAM << "Remove the inner-appender." << endl;
+	yat4tango::InnerAppender::release(this);	
 }
 
 //+----------------------------------------------------------------------------
@@ -134,6 +137,11 @@ void SimulatorCCD::init_device()
     m_is_device_initialized = false;
     m_status_message.str("");
 
+	//- instanciate the appender in order to manage logs
+	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;
+	yat4tango::InnerAppender::initialize(this, 512);	
+	
+	
     try
     {
         //- get the main object used to pilot the lima framework

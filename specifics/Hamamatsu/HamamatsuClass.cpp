@@ -302,8 +302,8 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	bottom_view_exposure_time->set_memorized_init(false);
 	att_list.push_back(bottom_view_exposure_time);
 
-	//	Attribute : Temperature
-	TemperatureAttrib	*temperature = new TemperatureAttrib();
+	//	Attribute : temperature
+	temperatureAttrib	*temperature = new temperatureAttrib();
 	Tango::UserDefaultAttrProp	temperature_prop;
 	temperature_prop.set_unit("Celcius");
 	temperature_prop.set_standard_unit("Celcius");
@@ -312,6 +312,30 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	temperature_prop.set_description("Temperature of the image sensor in Celcius.");
 	temperature->set_default_properties(temperature_prop);
 	att_list.push_back(temperature);
+
+	//	Attribute : coolerMode
+	coolerModeAttrib	*cooler_mode = new coolerModeAttrib();
+	Tango::UserDefaultAttrProp	cooler_mode_prop;
+	cooler_mode_prop.set_label("Cooler Mode");
+	cooler_mode_prop.set_description("Selected cooler mode (OFF/ON/MAX/NOT_SUPPORTED).");
+	cooler_mode->set_default_properties(cooler_mode_prop);
+	att_list.push_back(cooler_mode);
+
+	//	Attribute : coolerStatus
+	coolerStatusAttrib	*cooler_status = new coolerStatusAttrib();
+	Tango::UserDefaultAttrProp	cooler_status_prop;
+	cooler_status_prop.set_label("Cooler Status");
+	cooler_status_prop.set_description("Current cooler status.<br>\nPossible values can be:<br>\n- inactive (NOT_SUPPORTED, NONE, OFF)<br>\n- in error (ERROR1, ERROR2, ERROR3, ERROR4)<br>\n- running (READY, BUSY, ALWAYS, WARNING)<br>");
+	cooler_status->set_default_properties(cooler_status_prop);
+	att_list.push_back(cooler_status);
+
+	//	Attribute : temperatureStatus
+	temperatureStatusAttrib	*temperature_status = new temperatureStatusAttrib();
+	Tango::UserDefaultAttrProp	temperature_status_prop;
+	temperature_status_prop.set_label("Temperature Status");
+	temperature_status_prop.set_description("Current temperature status (NOT_SUPPORTED, NORMAL, WARNING, PROTECTION).\n");
+	temperature_status->set_default_properties(temperature_status_prop);
+	att_list.push_back(temperature_status);
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
@@ -592,7 +616,7 @@ void HamamatsuClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Device_4Impl");
+	inheritance.push_back("Tango::Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

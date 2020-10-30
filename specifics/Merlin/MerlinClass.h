@@ -92,7 +92,7 @@ class colourModeAttrib: public Tango::Attr
 {
 public:
 	colourModeAttrib():Attr("colourMode",
-			Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+			Tango::DEV_LONG, Tango::READ_WRITE) {};
 	~colourModeAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
 		{(static_cast<Merlin *>(dev))->read_colourMode(att);}

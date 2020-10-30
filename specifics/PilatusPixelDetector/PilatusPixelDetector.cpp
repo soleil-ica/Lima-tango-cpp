@@ -57,7 +57,7 @@ static const char *RcsId = "$Id:  $";
 //
 //===================================================================
 #include "tango.h"
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 
 #include <PilatusPixelDetector.h>
 #include <PilatusPixelDetectorClass.h>
@@ -107,6 +107,9 @@ void PilatusPixelDetector::delete_device()
     DELETE_DEVSTRING_ATTRIBUTE(attr_imagePath_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_fileName_read);
 
+    INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
+
     //!!!! ONLY LimaDetector device can do this !!!!
     //if(m_ct!=0)
     //{
@@ -139,6 +142,9 @@ void PilatusPixelDetector::init_device()
     set_state(Tango::INIT);
     m_is_device_initialized = false;
     m_status_message.str("");
+
+    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
 
     try
     {
@@ -1100,6 +1106,7 @@ void PilatusPixelDetector::set_energy(Tango::DevDouble argin)
  *	method:	PilatusPixelDetector::get_th
  *
  *	description:	method to execute "GetTH"
+ *	Read temperature (of nb sensors) and humidity (of nb sensors) of the detector
  *
  * @return	
  *
@@ -1146,5 +1153,7 @@ Tango::DevVarDoubleArray *PilatusPixelDetector::get_th()
     }
 	return argout;
 }
+
+
 
 }	//	namespace

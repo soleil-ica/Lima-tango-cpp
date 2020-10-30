@@ -64,7 +64,7 @@ static const char *RcsId = "$Id:  $";
 
 
 #include <tango.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 #include <ImXpad.h>
 #include <ImXpadClass.h>
 
@@ -131,6 +131,10 @@ void ImXpad::delete_device()
 
 	DELETE_SCALAR_ATTRIBUTE(attr_flatFieldCorrectionFlag_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_geometricalCorrectionFlag_read);
+
+    INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
+
     //	Delete device allocated objects
     
     //!!!! ONLY LimaDetector device can do this !!!!
@@ -167,6 +171,10 @@ void ImXpad::init_device()
 	attr_calibrationMode_write ="OTN_PULSE";	
     set_state(Tango::INIT);
     m_status_message.str("");
+
+    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
+
     try
     {
         //- get the main object used to pilot the lima framework

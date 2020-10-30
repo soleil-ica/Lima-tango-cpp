@@ -53,7 +53,7 @@ static const char *RcsId = "$Id:  $";
 //
 //===================================================================
 #include "tango.h"
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 
 #include <PrincetonCCD.h>
 #include <PrincetonCCDClass.h>
@@ -104,7 +104,10 @@ void PrincetonCCD::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_gain_read);    
 	DELETE_DEVSTRING_ATTRIBUTE(attr_internalAcquisitionMode_read);	
 	DELETE_DEVSTRING_ATTRIBUTE(attr_shutterMode_read);		
-	DELETE_DEVSTRING_ATTRIBUTE(attr_currentRate_read);		
+	DELETE_DEVSTRING_ATTRIBUTE(attr_currentRate_read);
+
+    INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
 
     //    Delete device allocated objects
 
@@ -139,6 +142,9 @@ void PrincetonCCD::init_device()
     m_is_device_initialized = false;
     set_state(Tango::INIT);
     m_status_message.str("");
+
+    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
 
     try
     {

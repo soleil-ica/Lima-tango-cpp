@@ -43,7 +43,7 @@
 <Br>
 <center>
 <h1>
-LimaDetector		<Br>
+Lima Devie Generic		<Br>
 Device Commands Description 		<Br> <Br>
 LimaDetector Class	<Br>
 </h1>
@@ -231,9 +231,29 @@ Roi and Binning are associated.<Br>&nbsp
 <Br>&nbsp
 </ul><Br>
 <Br>
+<A NAME="GetAvailableCapabilities"><!-- --></A>
+<A NAME="GetAvailableCapabilities"><!-- --></A>
+<h2>13 - GetAvailableCapabilities</h2>
+<ul>
+<Li><Strong>Description: </Strong> Return a list of string containing all available capabilitiesof the detector :<br>
+- Roi<br>
+- Binning<br>
+- Trigger<br>
+- Shutter<br>
+- Event Errors<br>
+- ...<br><Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Argout:<Br>DEVVAR_STRINGARRAY</Strong>
+ : The list of available capabilities<Br>&nbsp
+<Li><Strong>Command allowed for: </Strong><Ul>
+<Li>Tango::STANDBY</Ul>
+<Br>&nbsp
+</ul><Br>
+<Br>
 <A NAME="ResetFileIndex"><!-- --></A>
 <A NAME="ResetFileIndex"><!-- --></A>
-<h2>13 - ResetFileIndex (for expert only)</h2>
+<h2>14 - ResetFileIndex (for expert only)</h2>
 <ul>
 <Li><Strong>Description: </Strong> Reset the file index<Br>&nbsp
 <Li><Strong>Argin:<Br>DEV_VOID</Strong>
@@ -247,12 +267,26 @@ Roi and Binning are associated.<Br>&nbsp
 <Br>
 <A NAME="ReloadROI"><!-- --></A>
 <A NAME="ReloadROI"><!-- --></A>
-<h2>14 - ReloadROI</h2>
+<h2>15 - ReloadROI</h2>
 <ul>
 <Li><Strong>Description: </Strong> This command allows reloading the last ROI values set using the SetROI command.<Br>&nbsp
 <Li><Strong>Argin:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Command allowed for: </Strong><Ul>
+<Li>Tango::STANDBY</Ul>
+<Br>&nbsp
+</ul><Br>
+<Br>
+<A NAME="GetDataStreams"><!-- --></A>
+<A NAME="GetDataStreams"><!-- --></A>
+<h2>16 - GetDataStreams</h2>
+<ul>
+<Li><Strong>Description: </Strong> Returns the flyscan data streams associated with this device.<Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Argout:<Br>DEVVAR_STRINGARRAY</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
 <Li>Tango::STANDBY</Ul>

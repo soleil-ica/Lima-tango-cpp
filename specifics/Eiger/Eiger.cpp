@@ -56,8 +56,8 @@ static const char *RcsId = "$Id:  $";
 //===================================================================
 
 
-#include <tango.h>
-#include <PogoHelper.h>
+#include "tango.h"
+#include <helpers/PogoHelper.h>
 #include <Eiger.h>
 #include <EigerClass.h>
 
@@ -130,7 +130,10 @@ void Eiger::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_phiIncrement_read);
     DELETE_SCALAR_ATTRIBUTE(attr_phiStart_read);
     DELETE_SCALAR_ATTRIBUTE(attr_nbTriggers_read);
-    DELETE_SCALAR_ATTRIBUTE(attr_nbFramesPerTrigger_read);	
+    DELETE_SCALAR_ATTRIBUTE(attr_nbFramesPerTrigger_read);
+
+    INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
 }
 
 //+----------------------------------------------------------------------------
@@ -178,12 +181,16 @@ void Eiger::init_device()
     CREATE_SCALAR_ATTRIBUTE(attr_omegaStart_read);
     CREATE_SCALAR_ATTRIBUTE(attr_phiIncrement_read);
     CREATE_SCALAR_ATTRIBUTE(attr_phiStart_read);
-    CREATE_SCALAR_ATTRIBUTE(attr_nbTriggers_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_nbTriggers_read);
     CREATE_SCALAR_ATTRIBUTE(attr_nbFramesPerTrigger_read);
-	
+
     m_is_device_initialized = false;
     set_state(Tango::INIT);
     m_status_message.str("");
+
+    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
+
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
@@ -284,6 +291,7 @@ void Eiger::get_device_property()
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("DetectorIP"));
 	dev_prop.push_back(Tango::DbDatum("TimestampType"));
+	dev_prop.push_back(Tango::DbDatum("CurlDelayMs"));
 	dev_prop.push_back(Tango::DbDatum("DownloadDataFile"));
 	dev_prop.push_back(Tango::DbDatum("NbFramesPerTriggerIsMaster"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedCountrateCorrection"));
@@ -341,6 +349,17 @@ void Eiger::get_device_property()
 	}
 	//	And try to extract TimestampType value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  timestampType;
+
+	//	Try to initialize CurlDelayMs from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  curlDelayMs;
+	else {
+		//	Try to initialize CurlDelayMs from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  curlDelayMs;
+	}
+	//	And try to extract CurlDelayMs value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  curlDelayMs;
 
 	//	Try to initialize DownloadDataFile from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -634,6 +653,7 @@ void Eiger::get_device_property()
     //------------------------------------------------------------------
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "DetectorIP");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "RELATIVE",  "TimestampType");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "50",        "CurlDelayMs");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false",     "DownloadDataFile");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", 	 "MemorizedCountrateCorrection");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	 "MemorizedFlatfieldCorrection");
@@ -3124,9 +3144,5 @@ void Eiger::update_th()
                                        "Eiger::update_th" );
     }		 
 }
-
-
-
-
 
 }	//	namespace

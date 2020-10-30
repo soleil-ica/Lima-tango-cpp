@@ -309,7 +309,7 @@ void PcoClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	pixel_rate_prop.set_description("Set / Get the Pixel Rate in Hz");
 	pixel_rate->set_default_properties(pixel_rate_prop);
 	pixel_rate->set_memorized();
-	pixel_rate->set_memorized_init(true);
+	//pixel_rate->set_memorized_init(true);
 	att_list.push_back(pixel_rate);
 
 	//	Attribute : doubleImage
@@ -319,7 +319,7 @@ void PcoClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	double_image_prop.set_description("Set / Get the double image mode");
 	double_image->set_default_properties(double_image_prop);
 	double_image->set_memorized();
-	double_image->set_memorized_init(true);
+	//double_image->set_memorized_init(true);
 	att_list.push_back(double_image);
 
 	//	Attribute : currentRecordedFrame
@@ -356,7 +356,7 @@ void PcoClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	forced_fifomode_prop.set_description("Forced FIFO Mode");
 	forced_fifomode->set_default_properties(forced_fifomode_prop);
 	forced_fifomode->set_memorized();
-	forced_fifomode->set_memorized_init(true);
+	//forced_fifomode->set_memorized_init(true);
 	att_list.push_back(forced_fifomode);
 
 	//	Attribute : dllVersion
@@ -571,7 +571,7 @@ void PcoClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Device_4Impl");
+	inheritance.push_back("Tango::Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

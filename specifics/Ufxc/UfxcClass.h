@@ -50,6 +50,20 @@ namespace Ufxc_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class triggerAcquisitionFrequencyAttrib: public Tango::Attr
+{
+public:
+	triggerAcquisitionFrequencyAttrib():Attr("triggerAcquisitionFrequency", Tango::DEV_FLOAT, Tango::READ_WRITE) {};
+	~triggerAcquisitionFrequencyAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Ufxc *>(dev))->read_triggerAcquisitionFrequency(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Ufxc *>(dev))->write_triggerAcquisitionFrequency(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Ufxc *>(dev))->is_triggerAcquisitionFrequency_allowed(ty);}
+};
+
 class thresholdHigh2Attrib: public Tango::Attr
 {
 public:
@@ -101,7 +115,7 @@ public:
 class thresholdHighAttrib: public Tango::Attr
 {
 public:
-	thresholdHighAttrib():Attr("thresholdHigh", Tango::DEV_ULONG, Tango::READ_WRITE) {};
+	thresholdHighAttrib():Attr("thresholdHigh", Tango::DEV_FLOAT, Tango::READ_WRITE) {};
 	~thresholdHighAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
@@ -115,7 +129,7 @@ public:
 class thresholdLowAttrib: public Tango::Attr
 {
 public:
-	thresholdLowAttrib():Attr("thresholdLow", Tango::DEV_ULONG, Tango::READ_WRITE) {};
+	thresholdLowAttrib():Attr("thresholdLow", Tango::DEV_FLOAT, Tango::READ_WRITE) {};
 	~thresholdLowAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)

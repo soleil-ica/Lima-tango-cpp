@@ -48,6 +48,7 @@
 
 // YAT / 4Tango
 #include <yat4tango/PropertyHelper.h>
+// #include <yat4tango/InnerAppender.h>
 
 using namespace lima;
 
@@ -104,7 +105,7 @@ public:
 public:
 	Tango::DevFloat	*attr_softwareVersion_read;
 	Tango::DevBoolean	*attr_chargeSumming_read;
-	Tango::DevBoolean	*attr_colourMode_read;
+	Tango::DevLong	*attr_colourMode_read;
 	Tango::DevBoolean	*attr_continuousRW_read;
 	Tango::DevLong	*attr_counter_read;
 	Tango::DevLong	*attr_gain_read;

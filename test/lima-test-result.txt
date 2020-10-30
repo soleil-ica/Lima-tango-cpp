@@ -1,0 +1,67 @@
+---------------------------------------------------------------------
+device name: flo/ca/lima-simu.1
+action file: Lima/applications/tango/cpp/test/config-test-Lima.txt
+options    : verbose: True timeout: not set, use default [10] stop on fail: not set, use default [False]
+---------------------------------------------------------------------
+-------------- BEGINNING OF TEST --------------------------
+------------------------
+Init device 
+------------------------
+Action: CMD Init - No check
+  raw result: OK
+
+------------------------
+Wait (while state is INIT due to Init)
+------------------------
+Action: WAIT state param: ['0.1'] - Check: DIFF value: INIT delta:  
+  last raw result: STANDBY
+  last check result: True
+
+------------------------
+Check State is STANDBY when device is started
+------------------------
+------------------------
+Write exposureTime
+------------------------
+Action: WRITE exposureTime param: ['1000'] - No check
+  raw result: OK
+
+------------------------
+Write nbFrames
+------------------------
+Action: WRITE nbFrames param: ['1'] - No check
+  raw result: OK
+
+------------------------
+Snap
+------------------------
+Action: CMD Snap - No check
+  raw result: OK
+
+------------------------
+Wait (while state is RUNNING due to Snap)
+------------------------
+Action: WAIT state param: ['0.1'] - Check: DIFF value: RUNNING delta:  
+  last raw result: STANDBY
+  last check result: True
+
+------------------------
+Check State is STANDBY
+------------------------
+Action: READ state param: [''] - Check: EQUAL value: STANDBY delta:  
+  raw result: STANDBY
+  check result: True
+
+------------------------
+Read image attribute
+------------------------
+Action: READ_I image - No check
+  raw result: [[0 0 0 ..., 0 0 0]
+ [0 0 0 ..., 0 0 0]
+ [0 0 0 ..., 0 0 0]
+ ..., 
+ [0 0 0 ..., 0 0 0]
+ [0 0 0 ..., 0 0 0]
+ [0 0 0 ..., 0 0 0]]
+
+-------------- END OF TEST --------------------------

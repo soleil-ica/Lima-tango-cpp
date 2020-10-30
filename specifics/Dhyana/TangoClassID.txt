@@ -4,8 +4,8 @@
  * Class Name   :	Dhyana
  * Contact      :	arafat.noureddine@synchrotron-soleil.fr
  * Class Family :	Acquisition
- * Platform     :	Win Like
- * Bus          :	Not Applicable
- * Manufacturer :	SOLEIL
+ * Platform     :	Windows
+ * Bus          :	USB
+ * Manufacturer :	
  * Reference    :	
  */

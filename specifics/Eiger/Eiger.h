@@ -37,6 +37,7 @@
 
 //- YAT/YAT4TANGO
 #include <yat4tango/PropertyHelper.h>
+#include <yat4tango/InnerAppender.h>
 
 /**
  * @author	$Author:  $
@@ -190,6 +191,10 @@ public:
  *	- ABSOLUTE : The time at the moment of reading the frame from detector<br>
  */
 	string	timestampType;
+/**
+ *	Curl delay in ms. this is used as a sleep delay for waiting the curl responses
+ */
+	Tango::DevDouble	curlDelayMs;
 /**
  *	Enable/Disable downloading data files from DCU.
  *	Do not download data files (master+data) [by default]

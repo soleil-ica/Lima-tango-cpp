@@ -4,7 +4,7 @@
 //
 // description : Include for the Layout class.
 //
-// project :	Lima
+// project :	Lima Layout Device Specific
 //
 // $Author:  $
 //
@@ -44,6 +44,7 @@
 #include "Factory.h"
 #include <tango.h>
 #include <yat4tango/PropertyHelper.h>
+#include <yat4tango/InnerAppender.h>
 #include <yat/threading/Mutex.h>
 #include <yat/utils/XString.h>
 
@@ -112,8 +113,12 @@ namespace Layout_ns
                     break;
                 case Data::UINT16: _compute<unsigned short>(aData, aNewData);
                     break;
+                case Data::INT16: _compute<short>(aData, aNewData);
+                    break;                    
                 case Data::UINT32: _compute<unsigned int>(aData, aNewData);
                     break;
+                case Data::INT32: _compute<int>(aData, aNewData);
+                    break;                    
             }
             return aNewData;
         }
@@ -149,7 +154,7 @@ namespace Layout_ns
 
     /**
      * Class Description:
-     * 
+     * Lima Device Specific for post process image
  */
 
 /*
@@ -326,7 +331,7 @@ namespace Layout_ns
 	virtual bool is_RemoveOperation_allowed(const CORBA::Any &any);
 /**
  * Add Lima external operation in order to transform the image acquired from the detector.<br>
- *	User must first define the operationType, operationValue<br>
+ *	User must first define the operationType, operationValue attributes<br>
  *	argin will define the level of operation.
  *	@param	argin	
  *	@exception DevFailed

@@ -55,7 +55,7 @@ static const char *RcsId = "$Id:  $";
 
 #ifdef WIN32
 #include <tango.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 #endif
 
 #include <Mask.h>
@@ -63,7 +63,7 @@ static const char *RcsId = "$Id:  $";
 
 #ifndef WIN32
 #include <tango.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 #endif
 
 
@@ -116,6 +116,9 @@ void Mask::delete_device()
 		delete[] attr_maskImage_read;
 		attr_maskImage_read = 0;
 	}
+	
+	INFO_STREAM << "Remove the inner-appender." << endl;
+	yat4tango::InnerAppender::release(this);		
 }
 
 //+----------------------------------------------------------------------------
@@ -142,7 +145,10 @@ void Mask::init_device()
 	m_is_device_initialized = false;
 	m_status_message.str("");
 	attr_runLevel_write = memorizedRunLevel;
-
+	
+	//- instanciate the appender in order to manage logs
+	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;
+	yat4tango::InnerAppender::initialize(this, 512);	
 	try
 	{
 		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
@@ -500,7 +506,7 @@ void Mask::read_version(Tango::Attribute &attr)
 	DEBUG_STREAM << "Mask::read_version(Tango::Attribute &attr) entering... " << endl;
 	try
 	{
-		strcpy(*attr_version_read, CURRENT_VERSION);
+		strcpy(*attr_version_read, MASK_CURRENT_VERSION);
 		attr.set_value(attr_version_read);
 	}
 	catch(Tango::DevFailed& df)
@@ -561,13 +567,13 @@ void Mask::set_mask_image(void)
 		{
 			data = create_data_from_mask<Tango::DevUShort>(attr_maskImage_read, m_dim_x, m_dim_y, Data::UINT16, 2);
 		}
-		else if(pixel_depth == "24" || pixel_depth == "32")
-		{
-			data = create_data_from_mask<Tango::DevULong>(attr_maskImage_read, m_dim_x, m_dim_y, Data::UINT32, 4);
-		}
 		else if(pixel_depth == "16S")
 		{
 			data = create_data_from_mask<Tango::DevShort>(attr_maskImage_read, m_dim_x, m_dim_y, Data::INT16, 2);
+		}		
+		else if(pixel_depth == "24" || pixel_depth == "32")
+		{
+			data = create_data_from_mask<Tango::DevULong>(attr_maskImage_read, m_dim_x, m_dim_y, Data::UINT32, 4);
 		}
 		else if(pixel_depth == "32S")
 		{

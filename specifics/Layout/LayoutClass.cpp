@@ -330,7 +330,7 @@ void LayoutClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	operation_type_prop.set_unit(" ");
 	operation_type_prop.set_standard_unit(" ");
 	operation_type_prop.set_display_unit(" ");
-	operation_type_prop.set_description("Arithmetic available types :<br>\n+ <br>\n- <br>\n* <br>\n/ <br>\n>> <br>\n<< <br>\nFLIP<br>\nNONE <br>");
+	operation_type_prop.set_description("Arithmetic available types :<br>\n+ <br>\n- <br>\n* <br>\n/ <br>\n>> <br>\n<< <br>\nFLIP<br>\nROTATION<br>\nNONE <br>");
 	operation_type->set_default_properties(operation_type_prop);
 	att_list.push_back(operation_type);
 
@@ -340,7 +340,7 @@ void LayoutClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	operation_value_prop.set_unit(" ");
 	operation_value_prop.set_display_unit(" ");
 	operation_value_prop.set_format("%s");
-	operation_value_prop.set_description("Arithmetic available values :<br>\nany numeric value\n\nFlip available values :<br>\nX<br>\nY<br>\nXY<br>\n\n");
+	operation_value_prop.set_description("Arithmetic available values :<br>\nany numeric value\n\nFlip available values :<br>\nX<br>\nY<br>\nXY<br>\n\nRotation available values :<br>\n90<br>\n180<br>\n270<br>\n");
 	operation_value->set_default_properties(operation_value_prop);
 	att_list.push_back(operation_value);
 
@@ -479,14 +479,14 @@ void LayoutClass::write_class_property()
 
 	//	Put title
 	Tango::DbDatum	title("ProjectTitle");
-	string	str_title("Lima");
+	string	str_title("Lima Layout Device Specific");
 	title << str_title;
 	data.push_back(title);
 
 	//	Put Description
 	Tango::DbDatum	description("Description");
 	vector<string>	str_desc;
-	str_desc.push_back("  ");
+	str_desc.push_back("Lima Device Specific for post process image");
 	description << str_desc;
 	data.push_back(description);
 		
@@ -594,7 +594,7 @@ void LayoutClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Device_4Impl");
+	inheritance.push_back("Tango::Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

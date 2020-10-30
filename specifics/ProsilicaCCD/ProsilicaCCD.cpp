@@ -51,7 +51,7 @@ static const char *RcsId = "$Id:  $";
 //
 //===================================================================
 #include "tango.h"
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 
 #include <ProsilicaCCD.h>
 #include <ProsilicaCCDClass.h>
@@ -99,6 +99,9 @@ void ProsilicaCCD::delete_device()
     INFO_STREAM << "ProsilicaCCD::ProsilicaCCD() delete device " << device_name << endl;	
     //    Delete device allocated objects
 
+    INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
+
     //!!!! ONLY LimaDetector device can do this !!!!
     //if(m_ct!=0)
     //{
@@ -125,6 +128,9 @@ void ProsilicaCCD::init_device()
     //By default INIT, need to ensure that all objets are OK before set the device to STANDBY
     set_state(Tango::INIT);
     m_status_message.str("");
+
+    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
 
     try
     {

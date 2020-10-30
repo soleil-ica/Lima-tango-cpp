@@ -65,7 +65,7 @@ static const char *RcsId = "$Id:  $";
 //
 //===================================================================
 #include <tango.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 
 #include <LimaDetector.h>
 #include <LimaDetectorClass.h>
@@ -119,6 +119,7 @@ void LimaDetector::delete_device()
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     //    Delete device allocated objects
     DELETE_SCALAR_ATTRIBUTE(attr_exposureTime_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_fileExtension_read);
     DELETE_SCALAR_ATTRIBUTE(attr_exposureAccTime_read);
     DELETE_SCALAR_ATTRIBUTE(attr_latencyTime_read);
     DELETE_SCALAR_ATTRIBUTE(attr_frameRate_read);
@@ -233,6 +234,7 @@ void LimaDetector::init_device()
     CREATE_SCALAR_ATTRIBUTE(attr_binningV_read);
     CREATE_SCALAR_ATTRIBUTE(attr_fileGeneration_read);
     CREATE_DEVSTRING_ATTRIBUTE(attr_fileFormat_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_fileExtension_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_filePrefix_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_fileTargetPath_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_SCALAR_ATTRIBUTE(attr_fileNbFrames_read);
@@ -250,7 +252,11 @@ void LimaDetector::init_device()
         LimaDetector::m_init_count++;
         //add image dynamic attribute
         INFO_STREAM << "Add \'image\' dynamic attribute." << endl;
-        add_image_dynamic_attribute();
+		add_image_dynamic_attribute("image");
+
+		//add image dynamic attribute
+		INFO_STREAM << "Add \'baseImage\' dynamic attribute." << endl;
+		add_image_dynamic_attribute("baseImage");
 
         //- Manage LIMA logs verbose
         INFO_STREAM << "Define Lima Traces levels." << endl;
@@ -296,23 +302,34 @@ void LimaDetector::init_device()
         INFO_STREAM << "Set amount percent of memory for the lima ring buffer following the ExpertBufferMaxMemoryPercent property (" << expertBufferMaxMemoryPercent << ")." << endl;
         m_ct->buffer()->setMaxMemory((short) expertBufferMaxMemoryPercent);
 		
-        //- reset image, allow to redefine type image according to  CurrentImageType of the HwDetInfoCtrlObj
+        //- reset image, allow to redefine type image according to  CurrentImageType of the HwDetInfoCtrlObj		
+		INFO_STREAM << "Reset image, allow to redefine type image according to  CurrentImageType." << endl;		
         m_ct->image()->reset();		
 	
         //DO NOT ENABLE ROI/VIDEO IN HARDWARE MODE
         if(fileManagedMode != "HARDWARE")
         {
-            //- reload Roi from property
+			//- Define ImageOpMode for Roi/Binning/etc...  (HardOnly, SoftOnly or HardAndSoft)
+			INFO_STREAM<<"Define ImageOpMode for Roi/Binning  following the ImageOpMode property (" << imageOpMode << ")." << endl;
+			configure_image_op_mode();
+            
+			//- reload Roi from property
+			//check validity of MemorizedRoi
+			if (memorizedRoi.size()!=4)
+			{
+				ERROR_STREAM << "Initialization Failed : Invalid number of parameters into MemorizedRoi. Check input parameters (x, y, width, height)"<< endl;
+				m_status_message << "Initialization Failed : Invalid number of parameters into MemorizedRoi. Check input parameters (x, y, width, height)"<< endl;
+				m_is_device_initialized = false;
+				set_state(Tango::FAULT);
+				return;				
+			}			
+			
             INFO_STREAM << "Reload ROI of detector from Roi property (" << memorizedRoi.at(0)<<","<<memorizedRoi.at(1)<<","<<memorizedRoi.at(2)<<","<<memorizedRoi.at(3)<< ")." << endl;
             configure_roi();
 
             //- reload Binning from property
             INFO_STREAM << "Reload BIN of detector from Binning property (" << memorizedBinningH<< "," << memorizedBinningV << ")." << endl;
             configure_binning();
-
-			//- Define ImageOpMode for Roi/Binning/etc...  (HardOnly, SoftOnly or HardAndSoft)
-			INFO_STREAM<<"Define ImageOpMode for Roi/Binning  following the ImageOpMode property (" << imageOpMode << ")." << endl;
-			configure_image_op_mode();
 		
             //- Activate video mode in order to get notification associated to image acquisition
             INFO_STREAM << "Activate video mode in order to get notification for each acquired image." << endl;
@@ -1013,6 +1030,41 @@ void LimaDetector::read_attr_hardware(vector<long> &attr_list)
     DEBUG_STREAM << "LimaDetector::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
     //    Add your own code here
 }
+
+//+----------------------------------------------------------------------------
+//
+// method : 		LimaDetector::read_fileExtension
+// 
+// description : 	Extract real attribute values for fileExtension acquisition result.
+//
+//-----------------------------------------------------------------------------
+void LimaDetector::read_fileExtension(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "LimaDetector::read_fileExtension(Tango::Attribute &attr) entering... "<< endl;
+    try
+    {
+        strcpy(*attr_fileExtension_read, m_saving_par.suffix.c_str());
+        attr.set_value(attr_fileExtension_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_fileExtension");
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+                        e.getErrMsg().c_str(),
+                        "LimaDetector::read_fileExtension");
+    }
+}
+
 //+----------------------------------------------------------------------------
 //
 // method : 		LimaDetector::read_operationsList
@@ -1085,7 +1137,7 @@ void LimaDetector::read_fileFormat(Tango::Attribute &attr)
     DEBUG_STREAM << "LimaDetector::read_fileFormat(Tango::Attribute &attr) entering... " << endl;
     try
     {
-        strcpy(*attr_fileFormat_read, m_saving_par.suffix.c_str());
+        strcpy(*attr_fileFormat_read, m_file_format.c_str());
         attr.set_value(attr_fileFormat_read);
     }
     catch(Tango::DevFailed& df)
@@ -1119,13 +1171,14 @@ void LimaDetector::write_fileFormat(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_fileFormat(Tango::WAttribute &attr) entering... " << endl;
     try
     {
-        m_file_format = attr_fileFormat_write;
+        std::string old = attr_fileFormat_write;
         attr.get_write_value(attr_fileFormat_write);
-        string current = attr_fileFormat_write;
+        std::string current = attr_fileFormat_write;
+
         std::transform(current.begin(), current.end(), current.begin(), ::toupper);
         if(current != "NXS" && current != "EDF" && current != "RAW" && current != "HDF5")
         {
-            attr_fileFormat_write = const_cast<Tango::DevString>(m_file_format.c_str());
+            attr_fileFormat_write = const_cast<Tango::DevString>(old.c_str());
             THROW_DEVFAILED("CONFIGURATION_ERROR",
                             std::string("Available File Format are:\n- NXS\n- EDF\n- RAW\n- HDF5\n").c_str(),
                             "LimaDetector::write_fileFormat");
@@ -1367,9 +1420,12 @@ void LimaDetector::write_exposureAccTime_callback(yat4tango::DynamicAttributeWri
     DEBUG_STREAM << "LimaDetector::write_exposureAccTime_callback()" << endl; //  << cbd.dya->get_name() << endl;
     try
     {
+		Tango::DevDouble previous_memorized = attr_exposureAccTime_write;
         cbd.tga->get_write_value(attr_exposureAccTime_write);
         m_ct->acquisition()->setAccMaxExpoTime((double) (attr_exposureAccTime_write / 1000.0));
-        yat4tango::PropertyHelper::set_property(this, "MemorizedExposureAccTime", attr_exposureAccTime_write);
+		//memorize only if new value is different from previous value
+		if(!yat::fp_is_equal(attr_exposureAccTime_write, previous_memorized, numeric_limits<double>::epsilon()))			
+			yat4tango::PropertyHelper::set_property(this, "MemorizedExposureAccTime", attr_exposureAccTime_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -2032,9 +2088,17 @@ void LimaDetector::write_acquisitionMode(Tango::WAttribute &attr)
         INFO_STREAM << "Remove image dynamic attribute." << endl;
         m_dim.dynamic_attributes_manager().remove_attribute("image");
 
+		//remove attributes from dam
+		INFO_STREAM << "Remove baseImage dynamic attribute." << endl;
+		m_dim.dynamic_attributes_manager().remove_attribute("baseImage");
+
         //add image dynamic attribute
         INFO_STREAM << "Add image dynamic attribute." << endl;
-        add_image_dynamic_attribute();
+		add_image_dynamic_attribute("image");
+
+		//add baseImage dynamic attribute
+		INFO_STREAM << "Add baseImage dynamic attribute." << endl;
+		add_image_dynamic_attribute("baseImage");
         //////*******************************************************************************************//////
     }
     catch(Exception& e)
@@ -2095,10 +2159,13 @@ void LimaDetector::write_exposureTime(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_exposureTime(Tango::WAttribute &attr) entering... " << endl;
     try
     {
+		Tango::DevDouble previous_memorized = attr_exposureTime_write;
         attr.get_write_value(attr_exposureTime_write);
         m_ct->acquisition()->setAcqExpoTime((double) (attr_exposureTime_write / 1000.0)); //exposure USER INPUT is in millisec
         m_ct->video()->setExposure((double) (attr_exposureTime_write / 1000.0)); //exposure USER INPUT is in millisec
-        yat4tango::PropertyHelper::set_property(this, "MemorizedExposureTime", attr_exposureTime_write);
+		//memorize only if new value is different from previous value
+		if(!yat::fp_is_equal(attr_exposureTime_write, previous_memorized, numeric_limits<double>::epsilon()))
+			yat4tango::PropertyHelper::set_property(this, "MemorizedExposureTime", attr_exposureTime_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -2168,10 +2235,13 @@ void LimaDetector::write_latencyTime(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_latencyTime(Tango::WAttribute &attr) entering... " << endl;
     try
     {
+		Tango::DevDouble previous_memorized = attr_latencyTime_write;
         attr.get_write_value(attr_latencyTime_write);
         m_ct->acquisition()->setLatencyTime((double) (attr_latencyTime_write / 1000.0)); //latency USER INPUT is in millisec
         m_ct->video()->setExposure((double) (attr_exposureTime_write / 1000.0)); //exposure USER INPUT is in millisec
-        yat4tango::PropertyHelper::set_property(this, "MemorizedLatencyTime", attr_latencyTime_write);
+		//memorize only if new value is different from previous value
+		if(!yat::fp_is_equal(attr_latencyTime_write, previous_memorized, numeric_limits<double>::epsilon()))
+			yat4tango::PropertyHelper::set_property(this, "MemorizedLatencyTime", attr_latencyTime_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -2238,6 +2308,7 @@ void LimaDetector::write_frameRate(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_frameRate(Tango::WAttribute &attr) entering... "<< endl;
     try
     {
+		Tango::DevDouble previous_memorized = attr_latencyTime_write;
         attr.get_write_value(attr_frameRate_write);
         attr_latencyTime_write = (1000.0/attr_frameRate_write)- attr_exposureTime_write;
         //latency can't be <0
@@ -2245,7 +2316,9 @@ void LimaDetector::write_frameRate(Tango::WAttribute &attr)
             attr_latencyTime_write = 0;
         m_ct->acquisition()->setLatencyTime((double) attr_latencyTime_write/ 1000.0); //latency USER INPUT is in millisec
         m_ct->video()->setExposure((double) (attr_exposureTime_write / 1000.0)); //exposure USER INPUT is in millisec
-        yat4tango::PropertyHelper::set_property(this, "MemorizedLatencyTime", attr_latencyTime_write);
+		//memorize only if new value is different from previous value
+		if(!yat::fp_is_equal(attr_latencyTime_write, previous_memorized, numeric_limits<double>::epsilon()))
+			yat4tango::PropertyHelper::set_property(this, "MemorizedLatencyTime", attr_latencyTime_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -2531,9 +2604,12 @@ void LimaDetector::write_nbFrames(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_nbFrames(Tango::WAttribute &attr) entering... " << endl;
     try
     {
-        attr.get_write_value(attr_nbFrames_write);
+        Tango::DevLong previous_memorized = attr_nbFrames_write;
+		attr.get_write_value(attr_nbFrames_write);
         m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
-        yat4tango::PropertyHelper::set_property(this, "MemorizedNbFrames", attr_nbFrames_write);
+		//memorize only if new value is different from previous value
+		if(attr_nbFrames_write != previous_memorized)
+			yat4tango::PropertyHelper::set_property(this, "MemorizedNbFrames", attr_nbFrames_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -2970,7 +3046,14 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
                 DEBUG_STREAM << "last_image_counter -> " << counter << endl;
 
                 Data last_image;
-                m_ct->ReadImage(last_image, -1);
+				if(cbd.dya->get_name() == "image")
+				{
+					m_ct->ReadImage(last_image, -1);
+				}
+				else //NECESSARY "baseImage"
+				{
+					m_ct->ReadBaseImage(last_image, -1);
+				}
 
                 if(last_image.data() != 0)
                 {
@@ -2994,6 +3077,15 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
                                                );
                             break;
 
+                            //signed 16 bits
+                        case yat4tango::TangoTraits<Tango::DevShort>::type_id:
+                            DEBUG_STREAM << "image->set_value() : DevShort" << endl;
+                            cbd.tga->set_value((Tango::DevShort*)last_image.data(),
+                                               last_image.dimensions[WIDTH_INDEX], //- width
+                                               last_image.dimensions[HEIGHT_INDEX] //- height
+                                               );
+                            break;
+                            
                             //32 bits
                         case yat4tango::TangoTraits<Tango::DevULong>::type_id:
                             DEBUG_STREAM << "image->set_value() : DevULong" << endl;
@@ -3037,6 +3129,7 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
             {
                 DEBUG_STREAM << "last_image_counter -> " << counter << endl;
                 CtVideo::Image last_image; //never put this variable in the class data member, refrence is locked in ctVideo (mantis 0021083)
+				//NB : it s always the base image  no processLib operations are applied in video mode
                 m_ct->video()->getLastImage(last_image); //last image acquired
                 if(last_image.buffer() != 0)
                 {
@@ -3060,6 +3153,15 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
                                                );
                             break;
 
+                            //signed 16 bits
+                        case yat4tango::TangoTraits<Tango::DevShort>::type_id:
+                            DEBUG_STREAM << "image->set_value() : DevShort" << endl;
+                            cbd.tga->set_value((Tango::DevShort*)last_image.buffer(),
+                                               last_image.width(), //- width
+                                               last_image.height()//- height
+                                               );
+                            break;
+                            
                             //32 bits
                         case yat4tango::TangoTraits<Tango::DevULong>::type_id:
                             DEBUG_STREAM << "image->set_value() : DevULong" << endl;
@@ -3161,14 +3263,17 @@ void LimaDetector::write_fileGeneration(Tango::WAttribute &attr)
     DEBUG_STREAM << "LimaDetector::write_fileGeneration(Tango::WAttribute &attr) entering... " << endl;
     try
     {
-        attr.get_write_value(attr_fileGeneration_write);
+		Tango::DevBoolean previous_memorized = attr_fileGeneration_write;
+		attr.get_write_value(attr_fileGeneration_write);
         if(attr_fileGeneration_write == true)
             m_saving_par.savingMode = CtSaving::AutoFrame;
         else
             m_saving_par.savingMode = CtSaving::Manual;
         *attr_fileGeneration_read = attr_fileGeneration_write;
         m_ct->saving()->setParameters(m_saving_par);
-        yat4tango::PropertyHelper::set_property(this, "MemorizedFileGeneration", attr_fileGeneration_write);
+		//memorize only if new value is different from previous value
+		if(attr_fileGeneration_write != previous_memorized)		
+			yat4tango::PropertyHelper::set_property(this, "MemorizedFileGeneration", attr_fileGeneration_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -3214,8 +3319,12 @@ void LimaDetector::prepare()
             *attr_fileGeneration_read = attr_fileGeneration_write;
             m_ct->saving()->setParameters(m_saving_par);
 
-            //- in SNAP mode, we request attr_nbFrames_write frames
-            m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
+			//TODO : check later if it is possible to remove completly setAcqNbFrames from here !
+			if(detectorType != "Ufxc")			
+			{
+				//- in SNAP mode, we request attr_nbFrames_write frames
+				m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
+			}
 
             ////////////////////////////////////////////////////////
 
@@ -3295,6 +3404,13 @@ void LimaDetector::snap()
             *attr_fileGeneration_read = attr_fileGeneration_write;
             m_ct->saving()->setParameters(m_saving_par);
 
+			//TODO : check later if it is possible to remove completly setAcqNbFrames from here !
+			if(detectorType != "Ufxc")
+			{
+				//- in SNAP mode, we request attr_nbFrames_write frames
+				m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
+			}
+			
 			//reset event list
 			m_ct->event()->resetEventList();
 			ControlFactory::instance().set_event_status("");
@@ -3910,7 +4026,15 @@ void LimaDetector::reload_roi()
     {
         // Update property value
         memorizedRoi = yat4tango::PropertyHelper::get_property<vector<short> >(this, "MemorizedRoi");
-
+		
+		if (memorizedRoi.size()!=4)
+        {
+            //- throw exception
+            THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+							"Invalid number of parameters into MemorizedRoi. Check input parameters (x, y, width, height)\n",
+							"LimaDetector::reload_roi");
+        }
+		
         // Check if Roi is initialized
         if ((memorizedRoi.at(0) < 0) || (memorizedRoi.at(1) < 0) || (memorizedRoi.at(2) <= 0) || (memorizedRoi.at(3) <= 0))
         {
@@ -4217,7 +4341,7 @@ void LimaDetector::configure_image_type(void)
 {
     HwDetInfoCtrlObj *hw_det_info;
     m_hw->getHwCtrlObj(hw_det_info);
-    if(detectorPixelDepth == "2")
+    if(detectorPixelDepth == "2" ||detectorPixelDepth == "2A")
     {
         hw_det_info->setCurrImageType(Bpp2);
     }	
@@ -4409,7 +4533,17 @@ void LimaDetector::configure_saving_parameters(void)
 void LimaDetector::configure_roi(void)
 {
     Roi roi_values(0, 0, 0, 0);
-
+	
+	//check validity of MemorizedRoi
+	if (memorizedRoi.size()!=4)
+	{
+		//- throw exception
+		THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+						"Invalid number of parameters into MemorizedRoi. Check input parameters (x, y, width, height)\n",
+						"LimaDetector::configure_roi");
+	}
+	
+	//configure Roi
     if((memorizedRoi.at(0) < 0) || (memorizedRoi.at(1) < 0) || (memorizedRoi.at(2) <= 0) || (memorizedRoi.at(3) <= 0))
     {
         //Roi not initialized, then we consider full frame as Roi
@@ -4475,55 +4609,47 @@ void LimaDetector::create_log_info_attributes(void)
 	//- instanciate the device info attribute
 	INFO_STREAM << "Create the DeviceInfo in order to display dependencies versions." << endl;
 	yat4tango::DeviceInfo::initialize(this, YAT_XSTR(PROJECT_NAME), YAT_XSTR(PROJECT_VERSION) );
-	
+
 	//- fill the device info attribute in order to display dependencies versions
-#ifdef _WIN32
-        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(TANGO_NAME), YAT_XSTR(TANGO_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(OMNIORB_NAME), YAT_XSTR(OMNIORB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ZEROMQ_NAME), YAT_XSTR(ZEROMQ_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
+    //- For all versions : 
+    yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION));
+
+//- Win64
+#ifdef _WIN64
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(DHYANA_NAME), YAT_XSTR(DHYANA_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PCO_NAME), YAT_XSTR(PCO_VERSION) );
+#else //- Win32
+    #ifdef _WIN32
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ANDOR_NAME), YAT_XSTR(ANDOR_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PCO_NAME), YAT_XSTR(PCO_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PRINCETON_NAME), YAT_XSTR(PRINCETON_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UVIEW_NAME), YAT_XSTR(UVIEW_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
+    #endif
 #endif
 
 #ifdef Linux
     #ifdef  UNIX_64_EL5
-        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MAXIPIX_NAME), YAT_XSTR(MAXIPIX_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
-    #else
+    #else //- Linux64
         #ifdef UNIX_64_EL6
-        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION));
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION));
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION));
-		yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSJUNGFRAU_NAME), YAT_XSTR(SLSJUNGFRAU_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION));
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(LAMBDA_NAME), YAT_XSTR(LAMBDA_VERSION_DEVICE));//- name conflict with lambda sdk
-
-        #else // UNIX_32
-        yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(AVIEX_NAME), YAT_XSTR(AVIEX_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(BASLER_NAME), YAT_XSTR(BASLER_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(IMXPAD_NAME), YAT_XSTR(IMXPAD_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MARCCD_NAME), YAT_XSTR(MARCCD_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MERLIN_NAME), YAT_XSTR(MERLIN_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );        
-        yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION));
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSJUNGFRAU_NAME), YAT_XSTR(SLSJUNGFRAU_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSEIGER_NAME), YAT_XSTR(SLSEIGER_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(LAMBDA_NAME), YAT_XSTR(LAMBDA_VERSION_DEVICE));//- name conflict with lambda sdk
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XSPRESS3_NAME), YAT_XSTR(XSPRESS3_VERSION));
+        #else //- Linux32
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(BASLER_NAME), YAT_XSTR(BASLER_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(IMXPAD_NAME), YAT_XSTR(IMXPAD_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MARCCD_NAME), YAT_XSTR(MARCCD_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MERLIN_NAME), YAT_XSTR(MERLIN_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );        
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UFXC_NAME), YAT_XSTR(UFXC_VERSION) ); 
         #endif
     #endif
 #endif
@@ -4669,13 +4795,13 @@ void LimaDetector::configure_attributes_hardware_at_init(void)
 // method :         LimaDetector::add_image_dynamic_attribute
 //
 //-----------------------------------------------------------------------------
-void LimaDetector::add_image_dynamic_attribute(void)
+void LimaDetector::add_image_dynamic_attribute(const std::string& attr_name)
 {
     //- add image dynamic attribute
     //- create image dyn attr (UChar, UShort or ULong)        
     yat4tango::DynamicAttributeInfo dai;
     dai.dev = this;
-    dai.tai.name = "image";
+	dai.tai.name = attr_name;
     dai.tai.data_format = Tango::IMAGE;
     dai.tai.max_dim_x = 100000; //- arbitrary big value
     dai.tai.max_dim_y = 100000; //- arbitrary big value
@@ -4688,27 +4814,27 @@ void LimaDetector::add_image_dynamic_attribute(void)
     {
         dai.tai.data_type = Tango::DEV_USHORT;
     }
-    else if(detectorPixelDepth == "24" || detectorPixelDepth == "32")
+    else if(detectorPixelDepth == "16S")
+    {
+        dai.tai.data_type = Tango::DEV_SHORT;
+    }	    
+    else if(detectorPixelDepth == "24" || detectorPixelDepth == "32" || detectorPixelDepth == "2A")
     {
         dai.tai.data_type = Tango::DEV_ULONG;
     }
-    else if(detectorPixelDepth == "16S")
-    {
-        dai.tai.data_type = Tango::DEV_USHORT;
-    }	
     else if(detectorPixelDepth == "32S")
     {
         dai.tai.data_type = Tango::DEV_LONG;
     }
-    else
-    {
-        stringstream ss;
-        ss << "DetectorPixelDepth " << "(" << detectorPixelDepth << ") is not supported!" << endl;
-        THROW_DEVFAILED("INTERNAL_ERROR", 
-						(ss.str()).c_str(), 
+	else
+	{
+		stringstream ss;
+		ss << "DetectorPixelDepth " << "(" << detectorPixelDepth << ") is not supported!" << endl;
+		THROW_DEVFAILED("INTERNAL_ERROR",
+						(ss.str()).c_str(),
 						"LimaDetector::add_image_dynamic_attribute");
-        return;
-    }
+		return;
+	}
 
     //- Check if specialDisplayType is set (FLOAT for example)
     transform(specialDisplayType.begin(), specialDisplayType.end(), specialDisplayType.begin(), ::toupper);
@@ -4888,6 +5014,7 @@ void LimaDetector::execute_close_shutter_callback(yat4tango::DynamicCommandExecu
                         "LimaDetector::execute_close_shutter_callback");
     }
 }
+
 
 
 

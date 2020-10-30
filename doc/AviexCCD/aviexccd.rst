@@ -1,2 +1,0 @@
-AviexCCD C++ Tango device
-=========================

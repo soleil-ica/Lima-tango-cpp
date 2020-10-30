@@ -64,24 +64,24 @@ Revision:  - Author:
 <Td><Center><b>Description</b></td></Center>
 <Tr><Td><b><a href=#Dev_DefaultValues>DetectorPort </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
-<Td><Font Size=-1>Detector port number</Font></Td></Tr>
+<Td><Font Size=-1>Detector port number of CamServer</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>DetectorIP </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
-<Td><Font Size=-1>Detector IP address</Font></Td></Tr>
+<Td><Font Size=-1>Detector IP address of CamServer</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>DetectorCameraDefFileName </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>string</Font></Td>
 <Td><Font Size=-1>Detector file containing informations about (model, size, pixeldepth, ...).</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>UseReader </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
-<Td><Font Size=-1>Enable/Disable monitoring of directory receiving image files.
+<Td><Font Size=-1>Enable/Disable monitoring of the directory receiving image files in order to read images provided by CamServer & to display image in the attribut image<br>
 [default = enable reading directory]</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>ReaderTimeout </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
-<Td><Font Size=-1>During acquisition, this is the elapsed time before declaring that is no available image returned by detector. (in ms)</Font></Td></Tr>
+<Td><Font Size=-1>Tango::DEV_ULONG</Font></Td>
+<Td><Font Size=-1>This is the elapsed time before declaring that is no available image returned by CamServer during the Acquisition. </Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>MemorizedEnergy </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>

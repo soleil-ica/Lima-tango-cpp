@@ -70,7 +70,7 @@ static const char *RcsId = "$Id:  $";
 //
 //===================================================================
 #include "tango.h"
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 
 #include <XpadPixelDetector.h>
 #include <XpadPixelDetectorClass.h>
@@ -121,10 +121,13 @@ void XpadPixelDetector::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_enableDoublePixelCorrection_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_normalizationFactor_read);
 
+	INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
+
     //!!!! ONLY LimaDetector device can do this !!!!
     //if(m_ct!=0)
     //{
-    //    ControlFactory::instance().reset("AviexCCD");
+    //    ControlFactory::instance().reset("XpadPixelDetector");
     //    m_ct = 0;
     //}
 
@@ -153,6 +156,9 @@ void XpadPixelDetector::init_device()
     m_is_device_initialized = false;
     set_state(Tango::INIT);
 	m_status_message.str("");
+	
+	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
 
 	m_xpad_model = "";
 	m_from_init_device = true;
@@ -221,7 +227,8 @@ void XpadPixelDetector::init_device()
 		string acqtype_mem_value = acqtype_attr.get_mem_value();
 		if (acqtype_mem_value == "Not used yet")
 		{
-			acqtype_attr.set_write_value("SYNC");
+            std::string str = "SYNC";
+			acqtype_attr.set_write_value(str);
 			write_acquisitionType(acqtype_attr);
 		}
 
