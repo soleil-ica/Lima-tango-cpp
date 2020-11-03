@@ -750,6 +750,10 @@ void Eiger::read_attr_hardware(vector<long> &attr_list)
 void Eiger::read_nbTriggers(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "Eiger::read_nbTriggers(Tango::Attribute &attr) entering... "<< endl;
+
+	if(!nbFramesPerTriggerIsMaster) //- ie: If Swing : not applicable
+		return;
+		
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     int nb_triggers = 0;
     try
@@ -792,6 +796,10 @@ void Eiger::read_nbTriggers(Tango::Attribute &attr)
 void Eiger::write_nbTriggers(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Eiger::write_nbTriggers(Tango::WAttribute &attr) entering... "<< endl;
+
+	if(!nbFramesPerTriggerIsMaster) //- ie: If Swing : not applicable
+		return;
+
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
@@ -836,6 +844,10 @@ void Eiger::write_nbTriggers(Tango::WAttribute &attr)
 void Eiger::read_nbFramesPerTrigger(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "Eiger::read_nbFramesPerTrigger(Tango::Attribute &attr) entering... "<< endl;
+
+	if(!nbFramesPerTriggerIsMaster) //- ie: If Swing : not applicable
+		return;
+
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     int nb_frames_per_trigger = 0;
     try
@@ -878,6 +890,9 @@ void Eiger::read_nbFramesPerTrigger(Tango::Attribute &attr)
 void Eiger::write_nbFramesPerTrigger(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Eiger::write_nbFramesPerTrigger(Tango::WAttribute &attr) entering... "<< endl;
+
+	if(!nbFramesPerTriggerIsMaster) //- ie: If Swing : not applicable
+		return;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
