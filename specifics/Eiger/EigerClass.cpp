@@ -658,10 +658,10 @@ void EigerClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "CurlDelayMs";
-	prop_desc = "Curl delay in ms. this is used as a sleep delay for waiting the curl responses";
-	prop_def  = "50";
+	prop_desc = "Curl delay in ms. this is used as a sleep delay for waiting the curl responses (default = 100)";
+	prop_def  = "100";
 	vect_data.clear();
-	vect_data.push_back("50");
+	vect_data.push_back("100");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
