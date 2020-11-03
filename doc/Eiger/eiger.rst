@@ -11,18 +11,21 @@ You can also find some useful information about the camera models/prerequisite/i
 Properties
 ----------
 
-======================== ================================= =====================================
-Property name            Default value                     Description
-======================== ================================= =====================================
-DetectorIP               127.0.0.1                         Eiger server IP address (ex: 192.168.0.1)
-DownloadDataFile         False                             Enable/Disable downloading data files from DCU.
-TimestampType            RELATIVE                          Define the timestamp type of each frame.
+==========================  ================================= =====================================
+Property name               Default value                     Description
+==========================  ================================= =====================================
+DetectorIP                  127.0.0.1                         Eiger server IP address (ex: 192.168.0.1)
+DownloadDataFile            False                             Enable/Disable downloading data files from DCU.
+TimestampType               RELATIVE                          Define the timestamp type of each frame.
 
-                                                           Available values:
+                                                              Available values:
 
-                                                           - RELATIVE : The time difference between the moment of reading the frame and  the start acquisition time
-                                                           - ABSOLUTE : The time at the moment of reading the frame from detector
-======================== ================================= =====================================
+                                                              - RELATIVE : The time difference between the moment of reading the frame and  the start acquisition time
+                                                              - ABSOLUTE : The time at the moment of reading the frame from detector
+CurlDelayMs                 100                               Curl delay in ms. this is used as a sleep delay for waiting the curl responses
+NbFramesPerTriggerIsMaster  False                             - True: nbFrames = memorized values of NbTriggers * NbFramesPerTrigger (case on PX1 beamline)
+                                                              - False: nbFrames = memorized nbFrames (case on Swing, Sixs beamlines)
+==========================  ================================= =====================================
 
 
 Attributes
