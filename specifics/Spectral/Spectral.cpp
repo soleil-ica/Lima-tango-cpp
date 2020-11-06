@@ -39,9 +39,12 @@ static const char *RcsId = "$Id:  $";
 //        (Program Obviously used to Generate tango Object)
 //=============================================================================
 
-
+// PROJECT
 #include <Spectral.h>
 #include <SpectralClass.h>
+
+//- YAT/YAT4TANGO
+#include <yat4tango/InnerAppender.h>
 
 /*----- PROTECTED REGION END -----*/	//	Spectral.cpp
 
@@ -118,8 +121,12 @@ void Spectral::delete_device()
 	DEBUG_STREAM << "Spectral::delete_device() " << device_name << endl;
 	/*----- PROTECTED REGION ID(Spectral::delete_device) ENABLED START -----*/
 	
-	//	Delete device allocated objects
-	
+    INFO_STREAM << "Remove the inner-appender." << endl;
+    yat4tango::InnerAppender::release(this);
+
+    if(!m_is_device_initialized )
+        return;
+
 	/*----- PROTECTED REGION END -----*/	//	Spectral::delete_device
 }
 
@@ -133,11 +140,14 @@ void Spectral::init_device()
 {
 	DEBUG_STREAM << "Spectral::init_device() create device " << device_name << endl;
 	/*----- PROTECTED REGION ID(Spectral::init_device_before) ENABLED START -----*/
-	INFO_STREAM << "SlsEiger::init_device() create device " << device_name << endl;
+	INFO_STREAM << "Spectral::init_device() create device " << device_name << endl;
 
     m_is_device_initialized = false;
     set_state(Tango::INIT);
     m_status_message.str("");
+
+    INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+    yat4tango::InnerAppender::initialize(this, 512);
 
 	try
 	{
@@ -152,7 +162,10 @@ void Spectral::init_device()
 	}
 	catch(Exception& e)
 	{
-		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
+        // we should create the properties even if there is a problem
+        get_device_property();
+
+        m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
 		ERROR_STREAM << m_status_message.str();
 		m_is_device_initialized = false;
 		set_state(Tango::FAULT);
@@ -160,7 +173,10 @@ void Spectral::init_device()
 	}
 	catch(...)
 	{
-		m_status_message << "Initialization Failed : UNKNOWN" << endl;
+        // we should create the properties even if there is a problem
+        get_device_property();
+
+        m_status_message << "Initialization Failed : UNKNOWN" << endl;
 		ERROR_STREAM << m_status_message.str();
 		set_state(Tango::FAULT);
 		m_is_device_initialized = false;
@@ -365,7 +381,7 @@ void Spectral::add_dynamic_attributes()
 //	Additional Methods
 //+------------------------------------------------------------------
 /**
- *	method:	SlsEiger::dev_state
+ *	method:	Spectral::dev_state
  *
  *	description:	method to execute "State"
  *	This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
@@ -377,7 +393,7 @@ void Spectral::add_dynamic_attributes()
 Tango::DevState Spectral::dev_state()
 {
     Tango::DevState	argout = DeviceImpl::dev_state();
-    DEBUG_STREAM << "SlsEiger::dev_state(): entering... !" << endl;
+    DEBUG_STREAM << "Spectral::dev_state(): entering... !" << endl;
 
     // Add your own code to control device here
     stringstream    DeviceStatus;
@@ -404,7 +420,7 @@ Tango::DevState Spectral::dev_state()
 
 //+------------------------------------------------------------------
 /**
- *	method:	SlsEiger::manage_devfailed_exception
+ *	method:	Spectral::manage_devfailed_exception
  *
  *	description: method which manages DevFailed exceptions
  */
@@ -422,7 +438,7 @@ void Spectral::manage_devfailed_exception(Tango::DevFailed & in_exception, const
 
 //+------------------------------------------------------------------
 /**
- *	method:	SlsEiger::manage_lima_exception
+ *	method:	Spectral::manage_lima_exception
  *
  *	description: method which manages lima exceptions
  */
