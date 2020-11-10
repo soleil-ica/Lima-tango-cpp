@@ -63,6 +63,14 @@
 #include <ProsilicaSyncCtrlObj.h>   
 #endif
 
+#ifdef SPECTRUMONE_ENABLED
+#include <SpectrumOneInterface.h>
+#include <SpectrumOneCamera.h>
+#include <SpectrumOneDetInfoCtrlObj.h>
+#include <SpectrumOneBufferCtrlObj.h>
+#include <SpectrumOneSyncCtrlObj.h>
+#endif
+
 #ifdef ANDOR_ENABLED
 #include <AndorInterface.h>
 #endif

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>fr.soleil</groupId>
+        <artifactId>super-pom-C-CPP-device</artifactId>
+        <version>RELEASE</version>
+    </parent>
+
+    <groupId>fr.soleil.device</groupId>
+    <artifactId>LimaDetector-${aol}-${mode}</artifactId>
+    <version>1.9.2</version>
+    
+    <packaging>nar</packaging>
+    <name>LimaDetector</name>
+    <description>LimaDetector device</description>
+
+    <scm>
+        <connection>scm:git:git://github.com/soleil-ica/Lima-tango.git</connection>
+        <developerConnection>scm:git:git://github.com/soleil-ica/Lima-tango.git</developerConnection>
+        <url>https://github.com/soleil-ica/Lima-tango</url>
+    </scm>
+
+    <properties>
+        <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
+        <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
+        <CORE.name>Core</CORE.name>
+        <CORE.version>1.7.9</CORE.version>
+        <SIMULATOR.name>Simulator</SIMULATOR.name>
+        <SIMULATOR.version>1.4.0</SIMULATOR.version>
+    </properties>
+
+    <profiles>
+        <!-- PROFILE linux_32 -->
+        <profile>
+            <id>linux_32</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>                
+                <property>
+                    <name>env</name>
+                    <value>linux_32</value>
+                </property>
+            </activation>
+
+            <properties>
+                <SPECTRUMONE.name>SpectrumOne</SPECTRUMONE.name>
+                <SPECTRUMONE.version>1.0.1-SNAPSHOT</SPECTRUMONE.version>                
+            </properties>
+           
+            <dependencies>
+                <dependency>
+                    <groupId>fr.soleil.lib</groupId>
+                    <artifactId>YAT4Tango-${aol}-shared-${mode}</artifactId>
+                </dependency>
+        
+                <dependency>
+                    <groupId>fr.soleil.lib</groupId>
+                    <artifactId>YAT-${aol}-shared-${mode}</artifactId>
+                </dependency>          
+                 
+                <dependency>
+                    <groupId>fr.soleil.lib</groupId>
+                    <artifactId>NexusCPP-${aol}-shared-${mode}</artifactId>
+                </dependency>          
+        
+                <dependency>
+                    <groupId>ncsa.uiuc.edu</groupId>
+                    <artifactId>HDF5-${aol}-shared-release</artifactId>
+                </dependency>
+        
+                <dependency>
+                    <groupId>fr.soleil.lib</groupId>
+                    <artifactId>LimaCore-${aol}-shared-${mode}</artifactId>
+                    <version>${CORE.version}</version>
+                </dependency>                
+                <dependency>
+                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
+                    <artifactId>LimaSpectrumOne-${aol}-shared-${mode}</artifactId>
+                    <version>${SPECTRUMONE.version}</version>
+                </dependency>
+                                
+            </dependencies>
+            
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.freehep</groupId>
+                        <artifactId>freehep-nar-plugin</artifactId>
+                        <configuration>
+                            <cpp>
+                                <sourceDirectory>${project.basedir}</sourceDirectory>                        
+                                <includes>
+                                    <include>*.cpp</include>
+<!--                                    <include>specifics/Layout/*.cpp</include>                            
+                                    <include>specifics/Mask/*.cpp</include>
+                                    <include>specifics/RoiCounters/*.cpp</include>-->
+                                    <!-- <include>specifics/SimulatorCCD/*.cpp</include> -->
+                                    <include>specifics/SpectrumOneCCD/*.cpp</include>
+                                </includes>
+                                
+                                <includePaths>                          
+                                    <includePath>src</includePath>                            
+<!--                                    <includePath>specifics/Layout</includePath>                                                        
+                                    <includePath>specifics/Mask</includePath>
+                                    <includePath>specifics/RoiCounters</includePath>-->
+                                    <!-- <includePath>specifics/SimulatorCCD</includePath> -->
+                                    <includePath>specifics/SpectrumOneCCD</includePath>
+                                </includePaths>
+                                
+                                <defines>
+                                    <define>PROJECT_NAME=${project.name}</define>
+                                    <define>PROJECT_VERSION=${project.version}</define>
+                                    <define>PROCESSLIB_NAME=${PROCESSLIB.name}</define>
+                                    <define>PROCESSLIB_VERSION=${PROCESSLIB.version}</define>
+                                    <define>CORE_NAME=${CORE.name}</define>
+                                    <define>CORE_VERSION=${CORE.version}</define>
+                                    <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
+                                    <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
+                                    <define>SPECTRUMONE_NAME=${UFXC.name}</define>
+                                    <define>SPECTRUMONE_VERSION=${UFXC.version}</define>
+                                    <!-- Needed By Basler -->
+                                    <!-- <define>USE_GIGE</define> -->
+
+                                    <!-- define which detector you need to ENABLE -->                                       
+<!--                                    <define>LAYOUT_ENABLED</define>                                                                                                                                                
+                                    <define>MASK_ENABLED</define>
+                                    <define>ROICOUNTERS_ENABLED</define>-->
+                                    <!-- <define>SIMULATOR_ENABLED</define> -->
+                                    <define>SPECTRUMONE_ENABLED</define>
+                                    <define>SOLEIL_YAT_STREAM</define>
+                                </defines>               
+                            </cpp>
+                        </configuration>           
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+        
+    <developers>
+        <developer>
+            <id>hottois</id>
+            <name>hottois</name>
+            <url>http://controle/</url>
+            <organization>Synchrotron Soleil</organization>
+            <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+            <roles>
+                <role>developper</role>
+            </roles>
+            <timezone>1</timezone>
+        </developer>
+
+        <developer>
+            <id>langlois</id>
+            <name>langlois</name>
+            <url>http://controle/</url>
+            <organization>Synchrotron Soleil</organization>
+            <organizationUrl>http://www.synchrotron-soleil.fr</organizationUrl>
+            <roles>
+                <role>manager</role>
+            </roles>
+            <timezone>1</timezone>
+        </developer>
+    </developers>
+</project>

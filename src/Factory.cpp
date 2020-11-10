@@ -349,6 +349,39 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 
+#ifdef SPECTRUMONE_ENABLED
+        if (detector_type == "SpectrumOneCCD")
+        {
+
+            if (!ControlFactory::m_is_created)
+            {
+                Tango::DbData db_data;
+                db_data.push_back(Tango::DbDatum("Host"));
+                db_data.push_back(Tango::DbDatum("Port"));
+                db_data.push_back(Tango::DbDatum("GpibAddress"));
+                db_data.push_back(Tango::DbDatum("ReadTimeout"));
+                db_data.push_back(Tango::DbDatum("TablesPath"));
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+
+                SpectrumOne::GpibConfig config;
+                std::string tables_path;
+
+                db_data[0] >> config.host;
+                db_data[1] >> config.port;
+                db_data[2] >> config.gpib_address;
+                db_data[3] >> config.timeout;
+                db_data[4] >> tables_path;
+
+                m_camera = static_cast<void*> (new SpectrumOne::Camera(config, tables_path));
+                m_interface = static_cast<void*> (new SpectrumOne::Interface(static_cast<SpectrumOne::Camera*> (m_camera)));
+                m_control = new CtControl(static_cast<SpectrumOne::Interface*> (m_interface));
+
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
+#endif
+
 #ifdef ANDOR_ENABLED
         if (detector_type == "AndorCCD")
         {
@@ -1111,6 +1144,13 @@ void ControlFactory::reset(const std::string& detector_type)
                 if (detector_type == "Dhyana")
                 {
 					delete (static_cast<Dhyana::Camera*> (m_camera));				
+                }
+#endif
+
+#ifdef SPECTRUMONE_ENABLED        
+                if (detector_type == "SpectrumOne")
+                {
+					delete (static_cast<SpectrumOne::Camera*> (m_camera));				
                 }
 #endif
 

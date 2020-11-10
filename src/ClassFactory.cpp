@@ -87,6 +87,10 @@ static const char *RcsId = "$Id:  $";
 #include <ProsilicaCCDClass.h>
 #endif
 
+#ifdef SPECTRUMONE_ENABLED
+#include <SpectrumOneCCDClass.h>
+#endif
+
 #ifdef PRINCETON_ENABLED
 #include <PrincetonCCDClass.h>
 #endif
@@ -193,6 +197,10 @@ void Tango::DServer::class_factory()
 
 #ifdef PROSILICA_ENABLED
     add_class(ProsilicaCCD_ns::ProsilicaCCDClass::init("ProsilicaCCD"));
+#endif
+
+#ifdef SPECTRUMONE_ENABLED
+    add_class(SpectrumOneCCD_ns::SpectrumOneCCDClass::init("SpectrumOneCCD"));
 #endif
 
 #ifdef PRINCETON_ENABLED
