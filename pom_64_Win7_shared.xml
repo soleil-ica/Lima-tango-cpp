@@ -69,6 +69,8 @@
         <SIMULATOR.version>1.4.0</SIMULATOR.version>
         <PCO.name>Pco</PCO.name>
         <PCO.version>1.7.1</PCO.version>
+        <PERKIN.name>PerkinElmer</PERKIN.name>
+        <PERKIN.version>1.5.0</PERKIN.version>
         <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
         <HAMAMATSU.version>2.3.0</HAMAMATSU.version>
         <DHYANA.name>Dhyana</DHYANA.name>
@@ -103,11 +105,17 @@
             <version>${SIMULATOR.version}</version>
         </dependency>
 
-        <!-- <dependency>
+        <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaPco-${aol}-shared-${mode}</artifactId>
             <version>${PCO.version}</version>
-        </dependency> -->
+        </dependency>
+        
+        <dependency>
+            <groupId>fr.soleil.lib.Lima.Camera</groupId>
+            <artifactId>LimaPerkinElmer-${aol}-shared-${mode}</artifactId>
+            <version>${PERKIN.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
@@ -134,20 +142,24 @@
                         <sourceDirectory>${project.basedir}</sourceDirectory>                        
                         <includes>
                             <include>*.cpp</include>
-                            <include>specifics/Layout/*.cpp</include>     			
-                            <include>specifics/RoiCounters/*.cpp</include>
-							<include>specifics/Mask/*.cpp</include>     			
                             <include>specifics/SimulatorCCD/*.cpp</include>							
                             <include>specifics/Dhyana/*.cpp</include>
                             <include>specifics/Hamamatsu/*.cpp</include>
-                            <!-- <include>specifics/Pco/*.cpp</include> -->
+                            <include>specifics/Pco/*.cpp</include>
+                            <include>specifics/PerkinElmer/*.cpp</include>
+                            
+                            <include>specifics/Layout/*.cpp</include>     			
+                            <include>specifics/RoiCounters/*.cpp</include>
+							<include>specifics/Mask/*.cpp</include>     		
                         </includes>
                         <includePaths>                          
                             <includePath>src</includePath>                                   
                             <includePath>specifics/SimulatorCCD</includePath> 		
                             <includePath>specifics/Dhyana</includePath> 
                             <includePath>specifics/Hamamatsu</includePath>
-                            <!-- <includePath>specifics/Pco</includePath> -->
+                            <includePath>specifics/Pco</includePath>
+                            <includePath>specifics/PerkinElmer</includePath>
+                            
                             <includePath>specifics/Layout</includePath>         
                             <includePath>specifics/RoiCounters</includePath>
 							<includePath>specifics/Mask</includePath>
@@ -172,6 +184,8 @@
                             <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
                             <define>PCO_NAME=${PCO.name}</define>
                             <define>PCO_VERSION=${PCO.version}</define>
+                            <define>PERKIN_NAME=${PERKIN.name}</define>
+                            <define>PERKIN_VERSION=${PERKIN.version}</define>
                             <define>HAMAMATSU_NAME=${HAMAMATSU.name}</define>
                             <define>HAMAMATSU_VERSION=${HAMAMATSU.version}</define>
                             <define>DHYANA_NAME=${DHYANA.name}</define>
@@ -179,9 +193,10 @@
 
                             <!-- define which detector you need to ENABLE -->      
                             <define>SIMULATOR_ENABLED</define> 						
-                            <!-- <define>PCO_ENABLED</define> 						 -->
+                            <define>PCO_ENABLED</define> 		
+                            <define>PERKIN_ENABLED</define> 						
                             <define>HAMAMATSU_ENABLED</define>
-                            <define>DHYANA_ENABLED</define> 					
+                            <define>DHYANA_ENABLED</define> 
 
                             <define>LAYOUT_ENABLED</define>		  
                             <define>ROICOUNTERS_ENABLED</define>             
@@ -196,9 +211,7 @@
 							<define>TANGO_HAS_DLL</define>
 							<define>LOG4TANGO_HAS_DLL</define>
 							<define>YAT_DLL</define>
-							<!-- <define>YAT_BUILD</define> -->
 							<define>YAT4TANGO_DLL</define>
-							<!-- <define>YAT4TANGO_BUILD</define> -->
 							<define>NEXUSCPP_DLL</define>
 							<define>USE_NX_FINALIZER</define>
 							<define>UNIX_64_EL5</define>
