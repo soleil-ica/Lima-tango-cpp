@@ -242,14 +242,6 @@ void HamamatsuClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 //-----------------------------------------------------------------------------
 void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 {
-	//	Attribute : readoutSpeed
-	readoutSpeedAttrib	*readout_speed = new readoutSpeedAttrib();
-	Tango::UserDefaultAttrProp	readout_speed_prop;
-	readout_speed_prop.set_label("Readout speed");
-	readout_speed_prop.set_description("Possible values are:<br>\nNORMAL<br>\nSLOW<br>");
-	readout_speed->set_default_properties(readout_speed_prop);
-	att_list.push_back(readout_speed);
-
 	//	Attribute : lostFrames
 	lostFramesAttrib	*lost_frames = new lostFramesAttrib();
 	Tango::UserDefaultAttrProp	lost_frames_prop;
@@ -301,41 +293,6 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	bottom_view_exposure_time->set_memorized();
 	bottom_view_exposure_time->set_memorized_init(false);
 	att_list.push_back(bottom_view_exposure_time);
-
-	//	Attribute : temperature
-	temperatureAttrib	*temperature = new temperatureAttrib();
-	Tango::UserDefaultAttrProp	temperature_prop;
-	temperature_prop.set_unit("Celcius");
-	temperature_prop.set_standard_unit("Celcius");
-	temperature_prop.set_display_unit("Celcius");
-	temperature_prop.set_format("%.2");
-	temperature_prop.set_description("Temperature of the image sensor in Celcius.");
-	temperature->set_default_properties(temperature_prop);
-	att_list.push_back(temperature);
-
-	//	Attribute : coolerMode
-	coolerModeAttrib	*cooler_mode = new coolerModeAttrib();
-	Tango::UserDefaultAttrProp	cooler_mode_prop;
-	cooler_mode_prop.set_label("Cooler Mode");
-	cooler_mode_prop.set_description("Selected cooler mode (OFF/ON/MAX/NOT_SUPPORTED).");
-	cooler_mode->set_default_properties(cooler_mode_prop);
-	att_list.push_back(cooler_mode);
-
-	//	Attribute : coolerStatus
-	coolerStatusAttrib	*cooler_status = new coolerStatusAttrib();
-	Tango::UserDefaultAttrProp	cooler_status_prop;
-	cooler_status_prop.set_label("Cooler Status");
-	cooler_status_prop.set_description("Current cooler status.<br>\nPossible values can be:<br>\n- inactive (NOT_SUPPORTED, NONE, OFF)<br>\n- in error (ERROR1, ERROR2, ERROR3, ERROR4)<br>\n- running (READY, BUSY, ALWAYS, WARNING)<br>");
-	cooler_status->set_default_properties(cooler_status_prop);
-	att_list.push_back(cooler_status);
-
-	//	Attribute : temperatureStatus
-	temperatureStatusAttrib	*temperature_status = new temperatureStatusAttrib();
-	Tango::UserDefaultAttrProp	temperature_status_prop;
-	temperature_status_prop.set_label("Temperature Status");
-	temperature_status_prop.set_description("Current temperature status (NOT_SUPPORTED, NORMAL, WARNING, PROTECTION).\n");
-	temperature_status->set_default_properties(temperature_status_prop);
-	att_list.push_back(temperature_status);
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
@@ -469,6 +426,36 @@ void HamamatsuClass::set_default_property()
 	prop_def  = "false";
 	vect_data.clear();
 	vect_data.push_back("false");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedHighDynamicRangeEnabled";
+	prop_desc = "Memorize/Define the HighDynamicRangeEnabled attribute at Init device<br>";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "ExpertFrameBufferSize";
+	prop_desc = "Only an expert User could change this property.<br>\nThis is the DCAM frame buffer size used during the acquisition.<BR>";
+	prop_def  = "10";
+	vect_data.clear();
+	vect_data.push_back("10");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

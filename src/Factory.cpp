@@ -533,13 +533,22 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         {
             if (!ControlFactory::m_is_created)
             {
+				//- Set Serialisation mode
+				//- this allow dynamic attr in pco specific device
+				YAT_LOG_INFO("Set Serialisation Model : BY_PROCESS");
+				Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_PROCESS);
+
                 Tango::DbData db_data;
                 db_data.push_back(Tango::DbDatum("DetectorNum"));
-                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
-                long camera_num;
-                db_data[0] >> camera_num;
+                db_data.push_back(Tango::DbDatum("ExpertFrameBufferSize"));
 
-                m_camera = static_cast<void*> (new Hamamatsu::Camera("Not config path", camera_num));
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                long camera_num = 0;
+                long frame_buffer_size = 10;
+                db_data[0] >> camera_num;
+                db_data[1] >> frame_buffer_size;
+
+                m_camera = static_cast<void*> (new Hamamatsu::Camera("Not config path", camera_num, frame_buffer_size));
                 m_interface = static_cast<void*> (new Hamamatsu::Interface(*(static_cast<Hamamatsu::Camera*> (m_camera))));
                 m_control = new CtControl(static_cast<Hamamatsu::Interface*> (m_interface));
                 ControlFactory::m_is_created = true;
