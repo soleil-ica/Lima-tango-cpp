@@ -49,7 +49,7 @@ User's Guide<Br>&nbsp;<Br> <Br><Br>
 LimaDetector Class<Br>&nbsp;<Br></Td></Tr>
 </h1>
 <Tr><Td>
-<b><Center>Revision:  - Author:  <Br>
+<b><Center>Revision:  - Author: arafat.noureddine <Br>
  Implemented in C++
 </Center></b>
 </Td></Tr>
@@ -819,6 +819,9 @@ The [ SetBinning ] command IS NOT available.<br></Font></Td></Tr>
 <Tr><Td><b>ResetFileIndex</b></Td>
 <Td><Font Size=-1>DEV_VOID</Font></Td>
 <Td><Font Size=-1>DEV_VOID</Font></Td>
+<Tr><Td><b>InitInterface</b></Td>
+<Td><Font Size=-1>DEV_VOID</Font></Td>
+<Td><Font Size=-1>DEV_VOID</Font></Td>
 
 
 
@@ -1061,6 +1064,20 @@ Roi and Binning are associated.<Br>&nbsp
 <Li><Strong>Argin:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Argout:<Br>DEVVAR_STRINGARRAY</Strong>
+ : <Br>&nbsp
+<Li><Strong>Command allowed for: </Strong><Ul>
+<Li>Tango::STANDBY</Ul>
+<Br>&nbsp
+</ul><Br>
+<Br>
+<A NAME="InitInterface"><!-- --></A>
+<A NAME="InitInterface"><!-- --></A>
+<h2>17 - InitInterface (for expert only)</h2>
+<ul>
+<Li><Strong>Description: </Strong> Re-inits the LimaDetector interface. Allows to recreate some dynamics attributes.<Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
 <Li>Tango::STANDBY</Ul>
