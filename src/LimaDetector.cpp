@@ -62,6 +62,7 @@ static const char *RcsId = "$Id:  $";
 //  ResetFileIndex               |  reset_file_index()
 //  ReloadROI                    |  reload_roi()
 //  GetDataStreams               |  get_data_streams()
+//  InitInterface                |  init_interface()
 //
 //===================================================================
 #include <tango.h>
@@ -369,9 +370,6 @@ void LimaDetector::init_device()
             ControlFactory::instance().init_specific_device(detectorType);
         }	
 	
-        //- CCA - save the current image type for the dynamic management of the pixel depth
-        m_ct->image()->getInternalImageType(m_current_image_type);
-
 		// everything seems ok
 		m_is_device_initialized = true;
 		
@@ -1009,9 +1007,6 @@ void LimaDetector::always_executed_hook()
 {
     //- update state
     dev_state();
-
-    // CCA - If the pixel depth dynamically changed, we need to update some attributes before the acquisition
-    manage_pixel_depth_change();
 }
 
 //+----------------------------------------------------------------------------
@@ -4293,7 +4288,7 @@ void LimaDetector::configure_image_type(void)
 {
     HwDetInfoCtrlObj *hw_det_info;
     m_hw->getHwCtrlObj(hw_det_info);
-    if(detectorPixelDepth == "2" ||detectorPixelDepth == "2A")
+    if(detectorPixelDepth == "2")
     {
         hw_det_info->setCurrImageType(Bpp2);
     }	
@@ -4769,7 +4764,7 @@ void LimaDetector::add_image_dynamic_attribute(const std::string& attr_name)
     {
         dai.tai.data_type = Tango::DEV_USHORT;
     }
-    else if(detectorPixelDepth == "24" || detectorPixelDepth == "28" || detectorPixelDepth == "32" || detectorPixelDepth == "2A")
+    else if(detectorPixelDepth == "24" || detectorPixelDepth == "28" || detectorPixelDepth == "32")
     {
         dai.tai.data_type = Tango::DEV_ULONG;
     }
@@ -4970,69 +4965,65 @@ void LimaDetector::execute_close_shutter_callback(yat4tango::DynamicCommandExecu
     }
 }
 
-//+----------------------------------------------------------------------------
-//
-// method :         LimaDetector::manage_pixel_depth_change()
-//
-// description :     Check if the pixel depth changed and update some attributes.
-//
-//-----------------------------------------------------------------------------
-void LimaDetector::manage_pixel_depth_change()
+//+------------------------------------------------------------------
+/**
+ *	method:	LimaDetector::init_interface
+ *
+ *	description:	method to execute "InitInterface"
+ *	Re-inits the LimaDetector interface. Allows to recreate some dynamics attributes.
+ *
+ *
+ */
+//+------------------------------------------------------------------
+void LimaDetector::init_interface()
 {
+	DEBUG_STREAM << "LimaDetector::init_interface(): entering... !" << endl;
+
+	//	Add your own code to control device here
     try
     {
+        std::string new_detector_pixel_depth;
+        
+        // we need to generate the new pixel depth string
+        HwDetInfoCtrlObj * hw_det_info;
+        m_hw->getHwCtrlObj(hw_det_info);
+
+        // first, get the current image type from the plugin
         ImageType image_type;
-        m_ct->image()->getInternalImageType(image_type);
+        hw_det_info->getCurrImageType(image_type);
+
+        // convert the image type to a number of bits
+        FrameDim frame_dim;
+        int image_type_bpp = frame_dim.getImageTypeBpp(image_type);
+
+        // convert the number of bits to a string
+        std::stringstream ss("");
+        ss << image_type_bpp;
+        new_detector_pixel_depth = ss.str();
+
+        // manage special cases (S, F)
+	    switch (image_type) 
+        {
+	        case Bpp8S:
+	        case Bpp10S:
+	        case Bpp12S:
+	        case Bpp14S:
+	        case Bpp16S:
+	        case Bpp24S:
+	        case Bpp32S:
+                new_detector_pixel_depth += std::string("S");
+                break;
+            case Bpp32F:
+                new_detector_pixel_depth += std::string("F");
+                break;
+	        default:
+                break;
+        }
 
         // do we need to dynamically change the pixel depth ?
-        if(image_type != m_current_image_type)
+        if(detectorPixelDepth != new_detector_pixel_depth)
         {
-            std::string new_detector_pixel_depth;
-
-            m_current_image_type = image_type;
-
-            // compute the new detector pixel depth
-            if(image_type == Bpp2)
-            {
-                new_detector_pixel_depth = "2";
-            }	
-            else if(image_type == Bpp8)
-            {
-                new_detector_pixel_depth = "8";
-            }
-            else if(image_type == Bpp12)
-            {
-                new_detector_pixel_depth = "12";
-            }
-            else if(image_type == Bpp14)
-            {
-                new_detector_pixel_depth = "14";
-            }	
-            else if(image_type == Bpp16)
-            {
-                new_detector_pixel_depth = "16";
-            }
-            else if(image_type == Bpp16S)
-            {
-                new_detector_pixel_depth = "16S";
-            }	
-            else if(image_type == Bpp24)
-            {
-                new_detector_pixel_depth = "24";
-            }
-            else if(image_type == Bpp28)
-            {
-                new_detector_pixel_depth = "28";
-            }
-            else if(image_type == Bpp32)
-            {
-                new_detector_pixel_depth = "32";
-            }
-            else if(image_type == Bpp32S)
-            {
-                new_detector_pixel_depth = "32S";
-            }
-
+            // save the property
             yat4tango::PropertyHelper::set_property(this, "DetectorPixelDepth", new_detector_pixel_depth);
             detectorPixelDepth = new_detector_pixel_depth;
 
@@ -5070,6 +5061,6 @@ void LimaDetector::manage_pixel_depth_change()
 							string(df.errors[0].desc).c_str(),
 							"LimaDetector::manage_pixel_depth_change()");
     }
-}
+}   
 
 }	//	namespace

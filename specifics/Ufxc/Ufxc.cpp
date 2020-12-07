@@ -783,35 +783,6 @@ void Ufxc::write_countingMode(Tango::WAttribute &attr)
                 Tango::DbDatum db_datum = (Tango::Util::instance()->get_database())->get_device_name(server_name, class_name);
                 db_datum >> device_name;
 
-/*              // get the detector pixel depth property value in string
-                {
-                    Tango::DbData db_data           ;
-                    db_data.push_back(Tango::DbDatum("DetectorPixelDepth"));
-
-                    // get the previous pixel depth value
-                    {
-                        std::string pixel_depth_string;
-
-                        (Tango::Util::instance()->get_database())->get_device_property(device_name, db_data);
-                        db_data[0] >> pixel_depth_string;
-
-                        std::istringstream iss(pixel_depth_string);
-                        iss >> old_pixel_depth;
-                    }
-
-                    // change it if needed
-                    if(old_pixel_depth != new_pixel_depth)
-                    {
-                        std::stringstream temp_stream;
-                        temp_stream << new_pixel_depth;
-                        db_data[0] << temp_stream.str().c_str();
-
-                        (Tango::Util::instance()->get_database())->put_device_property(device_name, db_data);
-
-                        MsgInfo << "Pixel Depth changed from " << old_pixel_depth << " bits to " << new_pixel_depth << " bits." << std::endl;
-                    }
-                }
-*/
                 // trigger change ?
                 TrigMode old_trigger_mode;
                 TrigMode new_trigger_mode;
@@ -904,29 +875,17 @@ void Ufxc::write_countingMode(Tango::WAttribute &attr)
 
                 counting_mode_was_changed = true;
 
-  /*            // sorry, do not have at the moment another way to do an update of the image spectrum attribute 
+                // call the init interface command of LimaDetector to re-create the image and baseimage attributes
+                Tango::DeviceProxy * device_proxy = new Tango::DeviceProxy(device_name);
+
+                if(device_proxy != NULL)
                 {
-                    Tango::DeviceProxy * device_proxy = new Tango::DeviceProxy(device_name);
+                    INFO_STREAM << "calling the InitInterface method of LimaDetector..." << endl; 
 
-                    if(device_proxy != NULL)
-                    {
-                        {
-                            std::string write_acc = "ACCUMULATION";
-                            Tango::DeviceAttribute da( "acquisitionMode",write_acc); 
-                            device_proxy->write_attribute(da);
-                        }
-
-                        {
-                            std::string write_single = "SINGLE";
-                            Tango::DeviceAttribute da( "acquisitionMode",write_single); 
-                            device_proxy->write_attribute(da);
-                        }
-
-                        delete device_proxy;
-
-                        m_ct->image()->resetRoi();
-                    }
-                }*/
+                    Tango::DeviceData dout; 
+                    dout = device_proxy->command_inout("InitInterface");
+                    delete device_proxy;
+                }
             #else
                 MsgInfo << "The initialization of the device is necessary." << std::endl;
                 MsgInfo << "Please use the init command of your generic device to apply the changes." << std::endl;
