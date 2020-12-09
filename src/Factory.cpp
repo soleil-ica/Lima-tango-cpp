@@ -617,12 +617,21 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         {
             if (!ControlFactory::m_is_created)
             {
-                Tango::DbData db_data            ;
-                std::string   config_file_name   ;
-                double        readout_time       ;
-                long          receiver_fifo_depth;
-                long          frame_packet_number;
-                
+                Tango::DbData db_data             ;
+                std::string   config_file_name    ;
+                double        readout_time        = 0.00004; // 40µs by default
+                long          receiver_fifo_depth = 2500   ; // 2500 frames by default
+                long          frame_packet_number = 128    ; // 128 packets by default
+
+                // complete path of the gains coefficients file
+                std::string gains_coeffs_file_name = "to be defined";
+
+                // complete path of the pedestal images
+                std::vector<std::string> pedestal_file_names{"to be defined", "to be defined", "to be defined"};
+
+                // number of frames used to generate the pedestal images
+                std::vector<long>        pedestal_nb_frames{5000LL, 1000LL, 1000LL};
+
                 // configuration complete path
                 db_data.push_back(Tango::DbDatum("ConfigFileName"));
                 
@@ -635,14 +644,44 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 // Number of packets we should get in each receiver frame
                 db_data.push_back(Tango::DbDatum("ExpertFramePacketNumber"));
 
+	            //  complete path of the gains coefficients file.
+                db_data.push_back(Tango::DbDatum("ExpertGainsCoeffsFileName"));
+
+                //  complete paths of a pedestal images.
+                db_data.push_back(Tango::DbDatum("ExpertPedestalFileName1"));
+                db_data.push_back(Tango::DbDatum("ExpertPedestalFileName2"));
+                db_data.push_back(Tango::DbDatum("ExpertPedestalFileName3"));
+
+                //  numbers of frames used to generate the pedestal images.
+                db_data.push_back(Tango::DbDatum("ExpertPedestalNbFrames1"));
+                db_data.push_back(Tango::DbDatum("ExpertPedestalNbFrames2"));
+                db_data.push_back(Tango::DbDatum("ExpertPedestalNbFrames3"));
+
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
-                db_data[0] >> config_file_name   ;
-                db_data[1] >> readout_time       ;
-                db_data[2] >> receiver_fifo_depth;
-                db_data[3] >> frame_packet_number;
+
+                int data_index = 0;
+
+                db_data[data_index++] >> config_file_name      ;
+                db_data[data_index++] >> readout_time          ;
+                db_data[data_index++] >> receiver_fifo_depth   ;
+                db_data[data_index++] >> frame_packet_number   ;
+                db_data[data_index++] >> gains_coeffs_file_name;
+                db_data[data_index++] >> pedestal_file_names[0];
+                db_data[data_index++] >> pedestal_file_names[1];
+                db_data[data_index++] >> pedestal_file_names[2];
+                db_data[data_index++] >> pedestal_nb_frames[0] ;
+                db_data[data_index++] >> pedestal_nb_frames[1] ;
+                db_data[data_index++] >> pedestal_nb_frames[2] ;
 
                 // create and initialize the camera and create interface and control  
-                m_camera    = static_cast<void*> (new SlsJungfrau::Camera(config_file_name, readout_time, receiver_fifo_depth, frame_packet_number));
+                m_camera    = static_cast<void*> (new SlsJungfrau::Camera(config_file_name      ,
+                                                                          readout_time          ,
+                                                                          receiver_fifo_depth   ,
+                                                                          frame_packet_number   ,
+                                                                          gains_coeffs_file_name,
+                                                                          pedestal_file_names   ,
+                                                                          pedestal_nb_frames    ));
+
                 m_interface = static_cast<void*> (new SlsJungfrau::Interface(*(static_cast<SlsJungfrau::Camera*> (m_camera))));
                 m_control   = new CtControl(static_cast<SlsJungfrau::Interface*> (m_interface));
                

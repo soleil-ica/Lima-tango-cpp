@@ -216,6 +216,366 @@ bool SlsJungfrau::is_detectorSoftwareVersion_allowed(TANGO_UNUSED(Tango::AttReqT
 	return true;
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_gainMode_allowed()
+ *	Description : Execution allowed for gainMode attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_gainMode_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::gainModeStateAllowed_WRITE) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::gainModeStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::gainModeStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::gainModeStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_gainCoeffsFileName_allowed()
+ *	Description : Execution allowed for gainCoeffsFileName attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_gainCoeffsFileName_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::gainCoeffsFileNameStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::gainCoeffsFileNameStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_pedestalFileName1_allowed()
+ *	Description : Execution allowed for pedestalFileName1 attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_pedestalFileName1_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::pedestalFileName1StateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::pedestalFileName1StateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_pedestalFileName2_allowed()
+ *	Description : Execution allowed for pedestalFileName2 attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_pedestalFileName2_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::pedestalFileName2StateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::pedestalFileName2StateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_pedestalFileName3_allowed()
+ *	Description : Execution allowed for pedestalFileName3 attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_pedestalFileName3_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::pedestalFileName3StateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::pedestalFileName3StateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_gainCoeffsState_allowed()
+ *	Description : Execution allowed for gainCoeffsState attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_gainCoeffsState_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::gainCoeffsStateStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::gainCoeffsStateStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_calibrationState_allowed()
+ *	Description : Execution allowed for calibrationState attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_calibrationState_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::calibrationStateStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::calibrationStateStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_gainCoeffs1_allowed()
+ *	Description : Execution allowed for gainCoeffs1 attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_gainCoeffs1_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::gainCoeffs1StateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::gainCoeffs1StateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_gainCoeffs2_allowed()
+ *	Description : Execution allowed for gainCoeffs2 attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_gainCoeffs2_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::gainCoeffs2StateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::gainCoeffs2StateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_gainCoeffs3_allowed()
+ *	Description : Execution allowed for gainCoeffs3 attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_gainCoeffs3_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::gainCoeffs3StateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::gainCoeffs3StateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_pedestal1_allowed()
+ *	Description : Execution allowed for pedestal1 attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_pedestal1_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::pedestal1StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::pedestal1StateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_pedestal2_allowed()
+ *	Description : Execution allowed for pedestal2 attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_pedestal2_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::pedestal2StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::pedestal2StateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_pedestal3_allowed()
+ *	Description : Execution allowed for pedestal3 attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_pedestal3_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(SlsJungfrau::pedestal3StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::pedestal3StateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
 //=================================================
 //		Commands Allowed Methods
 //=================================================
@@ -275,6 +635,27 @@ bool SlsJungfrau::is_ResetCamera_allowed(TANGO_UNUSED(const CORBA::Any &any))
 	/*----- PROTECTED REGION ID(SlsJungfrau::ResetCameraStateAllowed) ENABLED START -----*/
 	
 	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::ResetCameraStateAllowed
+		return false;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SlsJungfrau::is_Calibrate_allowed()
+ *	Description : Execution allowed for Calibrate attribute
+ */
+//--------------------------------------------------------
+bool SlsJungfrau::is_Calibrate_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+	//	Compare device state with not allowed states.
+	if (get_state()==Tango::INIT ||
+		get_state()==Tango::FAULT ||
+		get_state()==Tango::RUNNING)
+	{
+	/*----- PROTECTED REGION ID(SlsJungfrau::CalibrateStateAllowed) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SlsJungfrau::CalibrateStateAllowed
 		return false;
 	}
 	return true;

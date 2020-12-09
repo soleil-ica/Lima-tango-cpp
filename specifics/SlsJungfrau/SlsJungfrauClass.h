@@ -128,6 +128,177 @@ public:
 		{return (static_cast<SlsJungfrau *>(dev))->is_detectorSoftwareVersion_allowed(ty);}
 };
 
+//	Attribute gainMode class definition
+class gainModeAttrib: public Tango::Attr
+{
+public:
+	gainModeAttrib():Attr("gainMode",
+			Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~gainModeAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->read_gainMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->write_gainMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsJungfrau *>(dev))->is_gainMode_allowed(ty);}
+};
+
+//	Attribute gainCoeffsFileName class definition
+class gainCoeffsFileNameAttrib: public Tango::Attr
+{
+public:
+	gainCoeffsFileNameAttrib():Attr("gainCoeffsFileName",
+			Tango::DEV_STRING, Tango::READ) {};
+	~gainCoeffsFileNameAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->read_gainCoeffsFileName(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsJungfrau *>(dev))->is_gainCoeffsFileName_allowed(ty);}
+};
+
+//	Attribute pedestalFileName1 class definition
+class pedestalFileName1Attrib: public Tango::Attr
+{
+public:
+	pedestalFileName1Attrib():Attr("pedestalFileName1",
+			Tango::DEV_STRING, Tango::READ) {};
+	~pedestalFileName1Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->read_pedestalFileName1(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsJungfrau *>(dev))->is_pedestalFileName1_allowed(ty);}
+};
+
+//	Attribute pedestalFileName2 class definition
+class pedestalFileName2Attrib: public Tango::Attr
+{
+public:
+	pedestalFileName2Attrib():Attr("pedestalFileName2",
+			Tango::DEV_STRING, Tango::READ) {};
+	~pedestalFileName2Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->read_pedestalFileName2(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsJungfrau *>(dev))->is_pedestalFileName2_allowed(ty);}
+};
+
+//	Attribute pedestalFileName3 class definition
+class pedestalFileName3Attrib: public Tango::Attr
+{
+public:
+	pedestalFileName3Attrib():Attr("pedestalFileName3",
+			Tango::DEV_STRING, Tango::READ) {};
+	~pedestalFileName3Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->read_pedestalFileName3(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsJungfrau *>(dev))->is_pedestalFileName3_allowed(ty);}
+};
+
+//	Attribute gainCoeffsState class definition
+class gainCoeffsStateAttrib: public Tango::Attr
+{
+public:
+	gainCoeffsStateAttrib():Attr("gainCoeffsState",
+			Tango::DEV_STRING, Tango::READ) {};
+	~gainCoeffsStateAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->read_gainCoeffsState(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsJungfrau *>(dev))->is_gainCoeffsState_allowed(ty);}
+};
+
+//	Attribute calibrationState class definition
+class calibrationStateAttrib: public Tango::Attr
+{
+public:
+	calibrationStateAttrib():Attr("calibrationState",
+			Tango::DEV_STRING, Tango::READ) {};
+	~calibrationStateAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->read_calibrationState(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsJungfrau *>(dev))->is_calibrationState_allowed(ty);}
+};
+
+//	Attribute gainCoeffs1 class definition
+class gainCoeffs1Attrib: public Tango::ImageAttr
+{
+public:
+	gainCoeffs1Attrib():ImageAttr("gainCoeffs1",
+			Tango::DEV_DOUBLE, Tango::READ, 1024, 512) {};
+	~gainCoeffs1Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->read_gainCoeffs1(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsJungfrau *>(dev))->is_gainCoeffs1_allowed(ty);}
+};
+
+//	Attribute gainCoeffs2 class definition
+class gainCoeffs2Attrib: public Tango::ImageAttr
+{
+public:
+	gainCoeffs2Attrib():ImageAttr("gainCoeffs2",
+			Tango::DEV_DOUBLE, Tango::READ, 1024, 512) {};
+	~gainCoeffs2Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->read_gainCoeffs2(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsJungfrau *>(dev))->is_gainCoeffs2_allowed(ty);}
+};
+
+//	Attribute gainCoeffs3 class definition
+class gainCoeffs3Attrib: public Tango::ImageAttr
+{
+public:
+	gainCoeffs3Attrib():ImageAttr("gainCoeffs3",
+			Tango::DEV_DOUBLE, Tango::READ, 1024, 512) {};
+	~gainCoeffs3Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->read_gainCoeffs3(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsJungfrau *>(dev))->is_gainCoeffs3_allowed(ty);}
+};
+
+//	Attribute pedestal1 class definition
+class pedestal1Attrib: public Tango::ImageAttr
+{
+public:
+	pedestal1Attrib():ImageAttr("pedestal1",
+			Tango::DEV_USHORT, Tango::READ, 1024, 512) {};
+	~pedestal1Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->read_pedestal1(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsJungfrau *>(dev))->is_pedestal1_allowed(ty);}
+};
+
+//	Attribute pedestal2 class definition
+class pedestal2Attrib: public Tango::ImageAttr
+{
+public:
+	pedestal2Attrib():ImageAttr("pedestal2",
+			Tango::DEV_USHORT, Tango::READ, 1024, 512) {};
+	~pedestal2Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->read_pedestal2(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsJungfrau *>(dev))->is_pedestal2_allowed(ty);}
+};
+
+//	Attribute pedestal3 class definition
+class pedestal3Attrib: public Tango::ImageAttr
+{
+public:
+	pedestal3Attrib():ImageAttr("pedestal3",
+			Tango::DEV_USHORT, Tango::READ, 1024, 512) {};
+	~pedestal3Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SlsJungfrau *>(dev))->read_pedestal3(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SlsJungfrau *>(dev))->is_pedestal3_allowed(ty);}
+};
+
 
 //=========================================
 //	Define classes for commands
@@ -199,6 +370,29 @@ public:
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
 	{return (static_cast<SlsJungfrau *>(dev))->is_ResetCamera_allowed(any);}
+};
+
+//	Command Calibrate class definition
+class CalibrateClass : public Tango::Command
+{
+public:
+	CalibrateClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	CalibrateClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~CalibrateClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<SlsJungfrau *>(dev))->is_Calibrate_allowed(any);}
 };
 
 

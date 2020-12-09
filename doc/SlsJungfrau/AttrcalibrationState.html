@@ -1,13 +1,20 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <html>
 <head>
-<title> SlsJungfrau Tango Class Attribute tresholdEnergy </title>
+<title> SlsJungfrau Tango Class Attribute calibrationState </title>
 </head>
 <body text="Black" bgcolor="White" link="Blue" vlink="Purple" alink="Red">
 <br><br><br>
-<font size="+1"><u><b> Attribute tresholdEnergy : </b></u></font>
+<font size="+1"><u><b> Attribute calibrationState : </b></u></font>
 <ul>
-	set/get Threshold energy in eV.
+	Shows the status of the calibration state<br><Br>
+	It can be:<br><Br>
+	- NONE (no calibration loaded or generated)<br><Br>
+	- LOADED (a previous saved calibration was loaded)<br><Br>
+	- RUNNING_0_3 (a calibration is running and at the moment no pedestal was generated)<br><Br>
+	- RUNNING_1_3 (a calibration is running and the first pedestal was generated)<br><Br>
+	- RUNNING_2_3 (a calibration is running and two pedestals were generated)<br><Br>
+	- GENERATED (a new calibration was done)<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -23,11 +30,11 @@
 				</tr>
 				<tr>
 					<td> R/W Type </td>
-					<td> READ_WRITE </td>
+					<td> READ </td>
 				</tr>
 				<tr>
 					<td> Data Type </td>
-					<td> Tango::DEV_LONG </td>
+					<td> Tango::DEV_STRING </td>
 				</tr>
 				<tr>
 					<td> Display Level </td>
@@ -47,20 +54,12 @@
 				</tr>
 				<tr>
 					<td> Memorized </td>
-					<td> true </td>
-				</tr>
-				<tr>
-					<td> Write hardware at init. </td>
 					<td> Not set </td>
 				</tr>
 			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
 				<tr>
 					<td> Read NOT allowed for </td>
 					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li> </font> </td>
-				</tr>
-				<tr>
-					<td> Write NOT allowed for </td>
-					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
 				</tr>
 			</table>
 		</td>
@@ -75,19 +74,19 @@
 				</tr>
 				<tr>
 					<td> unit </td>
-					<td> eV </td>
+					<td>  </td>
 				</tr>
 				<tr>
 					<td> standard unit </td>
-					<td> eV </td>
+					<td>  </td>
 				</tr>
 				<tr>
 					<td> display unit </td>
-					<td> eV </td>
+					<td>  </td>
 				</tr>
 				<tr>
 					<td> format </td>
-					<td> %7.4f </td>
+					<td>  </td>
 				</tr>
 				<tr>
 					<td> max_value </td>
