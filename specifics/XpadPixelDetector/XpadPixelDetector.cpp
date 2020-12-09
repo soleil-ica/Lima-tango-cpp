@@ -227,8 +227,7 @@ void XpadPixelDetector::init_device()
 		string acqtype_mem_value = acqtype_attr.get_mem_value();
 		if (acqtype_mem_value == "Not used yet")
 		{
-            std::string str = "SYNC";
-			acqtype_attr.set_write_value(str);
+			acqtype_attr.set_write_value("SYNC");
 			write_acquisitionType(acqtype_attr);
 		}
 

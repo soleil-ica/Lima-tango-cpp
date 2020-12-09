@@ -1220,31 +1220,6 @@ void SlsEigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Not Memorized
 	att_list.push_back(tempfpgafr2);
 
-	//	Attribute : gapPixelsActivation
-	gapPixelsActivationAttrib	*gappixelsactivation = new gapPixelsActivationAttrib();
-	Tango::UserDefaultAttrProp	gappixelsactivation_prop;
-	gappixelsactivation_prop.set_description("Set/get gap pixels management activation value.<br>");
-	//	label	not set for gapPixelsActivation
-	//	unit	not set for gapPixelsActivation
-	//	standard_unit	not set for gapPixelsActivation
-	//	display_unit	not set for gapPixelsActivation
-	//	format	not set for gapPixelsActivation
-	//	max_value	not set for gapPixelsActivation
-	//	min_value	not set for gapPixelsActivation
-	//	max_alarm	not set for gapPixelsActivation
-	//	min_alarm	not set for gapPixelsActivation
-	//	max_warning	not set for gapPixelsActivation
-	//	min_warning	not set for gapPixelsActivation
-	//	delta_t	not set for gapPixelsActivation
-	//	delta_val	not set for gapPixelsActivation
-	
-	gappixelsactivation->set_default_properties(gappixelsactivation_prop);
-	//	Not Polled
-	gappixelsactivation->set_disp_level(Tango::OPERATOR);
-	gappixelsactivation->set_memorized();
-	gappixelsactivation->set_memorized_init(true);
-	att_list.push_back(gappixelsactivation);
-
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());
 	/*----- PROTECTED REGION ID(SlsEigerClass::attribute_factory_after) ENABLED START -----*/
