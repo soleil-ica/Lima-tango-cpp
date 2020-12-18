@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.9.3</version>
+    <version>1.10.0</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -28,6 +28,11 @@
         <CORE.version>1.7.9</CORE.version>
         <SIMULATOR.name>Simulator</SIMULATOR.name>
         <SIMULATOR.version>1.4.0</SIMULATOR.version>
+        
+        <YAT.version>1.17.5</YAT.version> 
+        <YAT4Tango.version>1.12.3</YAT4Tango.version> 
+        <NexusCPP.version>3.3.6</NexusCPP.version> 
+        
     </properties>
 
     <profiles>
@@ -73,16 +78,19 @@
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>YAT4Tango-${aol}-shared-${mode}</artifactId>
+                    <version>${YAT4Tango.version}</version>
                 </dependency>
         
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>YAT-${aol}-shared-${mode}</artifactId>
+                    <version>${YAT.version}</version>
                 </dependency>          
                  
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>NexusCPP-${aol}-shared-${mode}</artifactId>
+                    <version>${NexusCPP.version}</version>
                 </dependency>          
         
                 <dependency>
@@ -292,7 +300,7 @@
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>NexusCPP-${aol}-shared-${mode}</artifactId>
                     <!-- Intentionnaly forced as this is currently WIP for shared lib --> 
-                    <version>3.3.5</version>
+                    <version>${NexusCPP.version}</version>
                 </dependency>
          
                 <dependency>
@@ -304,14 +312,14 @@
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>YAT4Tango-${aol}-shared-${mode}</artifactId>
                     <!-- Intentionnaly forced as this is currently WIP for shared lib --> 
-                    <version>1.12.1</version>
+                    <version>${YAT4Tango.version}</version>
                 </dependency>
         
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>YAT-${aol}-shared-${mode}</artifactId>           
                     <!-- Intentionnaly forced as this is currently WIP for shared lib --> 
-                    <version>1.17.2</version>
+                    <version>${YAT.version}</version>
                 </dependency>
 
                 <dependency>
