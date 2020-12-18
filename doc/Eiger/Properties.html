@@ -81,6 +81,11 @@ Revision:  - Author:
 <Td><Font Size=-1>Enable/Disable downloading data files from DCU.
 Do not download data files (master+data) [by default]</Font></Td></Tr>
 
+<Tr><Td><b><a href=#Dev_DefaultValues>NbFramesPerTriggerIsMaster </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>If True: nbFrames = memorized values of NbTriggers * NbFramesPerTrigger (case on PX1 beamline)
+If False: nbFrames = memorized nbFrames (case on Swing, Sixs beamlines)</Font></Td></Tr>
+
 <Tr><Td><b><a href=#Dev_DefaultValues>MemorizedCountrateCorrection </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
 <Td><Font Size=-1>Memorize the value of countrateCorrection attribute.</Font></Td></Tr>
@@ -169,6 +174,14 @@ Do not download data files (master+data) [by default]</Font></Td></Tr>
 <Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
 <Td><Font Size=-1>Memorize the value of phiStart attribute.</Font></Td></Tr>
 
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedNbTriggers </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
+<Td><Font Size=-1>Memorize the value of nbTriggers attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedNbFramesPerTrigger </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
+<Td><Font Size=-1>Memorize the value of nbFramesPerTrigger attribute.</Font></Td></Tr>
+
 </Table>
 
 </Center>
@@ -192,10 +205,14 @@ Do not download data files (master+data) [by default]</Font></Td></Tr>
     </Tr>
     <Tr>
         <Td>CurlDelayMs</Td>
-        <td>50</td>
+        <td>100</td>
     </Tr>
     <Tr>
         <Td>DownloadDataFile</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>NbFramesPerTriggerIsMaster</Td>
         <td>false</td>
     </Tr>
     <Tr>
@@ -285,6 +302,14 @@ Do not download data files (master+data) [by default]</Font></Td></Tr>
     <Tr>
         <Td>MemorizedPhiStart</Td>
         <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedNbTriggers</Td>
+        <td>1</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedNbFramesPerTrigger</Td>
+        <td>1</td>
     </Tr>
 </Table>
 

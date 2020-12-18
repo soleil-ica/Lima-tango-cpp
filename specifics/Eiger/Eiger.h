@@ -170,6 +170,10 @@ public:
 		Tango::DevString	*attr_compressionType_read;
 		Tango::DevString	attr_compressionType_write;
 		Tango::DevString	*attr_softwareVersion_read;
+		Tango::DevLong	*attr_nbTriggers_read;
+		Tango::DevLong	attr_nbTriggers_write;
+		Tango::DevLong	*attr_nbFramesPerTrigger_read;
+		Tango::DevLong	attr_nbFramesPerTrigger_write;
 //@}
 
     /**
@@ -196,6 +200,11 @@ public:
  *	Do not download data files (master+data) [by default]
  */
 	Tango::DevBoolean	downloadDataFile;
+/**
+ *	If True: nbFrames = memorized values of NbTriggers * NbFramesPerTrigger (case on PX1 beamline)
+ *	If False: nbFrames = memorized nbFrames (case on Swing, Sixs beamlines)
+ */
+	Tango::DevBoolean	nbFramesPerTriggerIsMaster;
 /**
  *	Memorize the value of countrateCorrection attribute.
  */
@@ -284,6 +293,14 @@ public:
  *	Memorize the value of phiStart attribute.
  */
 	Tango::DevDouble	memorizedPhiStart;
+/**
+ *	Memorize the value of nbTriggers attribute.
+ */
+	Tango::DevLong	memorizedNbTriggers;
+/**
+ *	Memorize the value of nbFramesPerTrigger attribute.
+ */
+	Tango::DevLong	memorizedNbFramesPerTrigger;
 //@}
 
     /**
@@ -560,6 +577,22 @@ public:
  */
 	virtual void read_softwareVersion(Tango::Attribute &attr);
 /**
+ *	Extract real attribute values for nbTriggers acquisition result.
+ */
+	virtual void read_nbTriggers(Tango::Attribute &attr);
+/**
+ *	Write nbTriggers attribute values to hardware.
+ */
+	virtual void write_nbTriggers(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for nbFramesPerTrigger acquisition result.
+ */
+	virtual void read_nbFramesPerTrigger(Tango::Attribute &attr);
+/**
+ *	Write nbFramesPerTrigger attribute values to hardware.
+ */
+	virtual void write_nbFramesPerTrigger(Tango::WAttribute &attr);
+/**
  *	Read/Write allowed for countrateCorrection attribute.
  */
 	virtual bool is_countrateCorrection_allowed(Tango::AttReqType type);
@@ -671,6 +704,14 @@ public:
  *	Read/Write allowed for softwareVersion attribute.
  */
 	virtual bool is_softwareVersion_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for nbTriggers attribute.
+ */
+	virtual bool is_nbTriggers_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for nbFramesPerTrigger attribute.
+ */
+	virtual bool is_nbFramesPerTrigger_allowed(Tango::AttReqType type);
 /**
  *	Execution allowed for Initialize command.
  */
