@@ -361,18 +361,25 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data.push_back(Tango::DbDatum("GpibAddress"));
                 db_data.push_back(Tango::DbDatum("ReadTimeout"));
                 db_data.push_back(Tango::DbDatum("TablesPath"));
+                db_data.push_back(Tango::DbDatum("ExpertConfig"));
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
 
                 SpectrumOne::GpibConfig config;
                 std::string tables_path;
+                std::vector<std::string> expert_config_vect;
+                unsigned long temp;
 
                 db_data[0] >> config.host;
-                db_data[1] >> config.port;
-                db_data[2] >> config.gpib_address;
-                db_data[3] >> config.timeout;
+                db_data[1] >> temp;
+                config.port = static_cast<size_t>(temp);
+                db_data[2] >> temp;
+                config.gpib_address = static_cast<size_t>(temp);
+                db_data[3] >> temp;
+                config.timeout = static_cast<size_t>(temp);
                 db_data[4] >> tables_path;
+                db_data[5] >> expert_config_vect;
 
-                m_camera = static_cast<void*> (new SpectrumOne::Camera(config, tables_path));
+                m_camera = static_cast<void*> (new SpectrumOne::Camera(config, tables_path, yat::StringUtil::join(expert_config_vect, '\n')));
                 m_interface = static_cast<void*> (new SpectrumOne::Interface(static_cast<SpectrumOne::Camera*> (m_camera)));
                 m_control = new CtControl(static_cast<SpectrumOne::Interface*> (m_interface));
 
@@ -1148,7 +1155,7 @@ void ControlFactory::reset(const std::string& detector_type)
 #endif
 
 #ifdef SPECTRUMONE_ENABLED        
-                if (detector_type == "SpectrumOne")
+                if (detector_type == "SpectrumOneCCD")
                 {
 					delete (static_cast<SpectrumOne::Camera*> (m_camera));				
                 }

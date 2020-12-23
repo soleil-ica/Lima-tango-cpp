@@ -88,10 +88,12 @@ public:
 	Tango::DevULong	port;
 	//	Host:	Name or IP adress
 	string	host;
-	//	ReadTimeout:	Read Timeout in millisecond, from 1 to 4000
-	Tango::DevULong	readTimeout;
+	//	Timeout:	Timeout in millisecond
+	Tango::DevULong	timeout;
 	//	TablesPath:	Path of the tables to be loaded in the CCD for its initialization
 	string	tablesPath;
+	//	ExpertConfig:	Advanced config for the camera
+	vector<string>	expertConfig;
 
 
 //	Constructors and destructors
@@ -183,36 +185,12 @@ public:
 	 */
 	virtual Tango::ConstDevString dev_status();
 	/**
-	 *	Command Write related method
-	 *	Description: 
-	 *
-	 *	@param argin 
-	 */
-	virtual void write(Tango::DevString argin);
-	virtual bool is_Write_allowed(const CORBA::Any &any);
-	/**
-	 *	Command Read related method
-	 *	Description: 
-	 *
-	 *	@returns 
-	 */
-	virtual Tango::DevString read();
-	virtual bool is_Read_allowed(const CORBA::Any &any);
-	/**
-	 *	Command Reboot related method
-	 *	Description: 
+	 *	Command ForceReConfig related method
+	 *	Description: Force the injection of the tables and the reconfiguration of the camera
 	 *
 	 */
-	virtual void reboot();
-	virtual bool is_Reboot_allowed(const CORBA::Any &any);
-	/**
-	 *	Command WhereAmI related method
-	 *	Description: 
-	 *
-	 *	@returns 
-	 */
-	virtual Tango::DevString where_am_i();
-	virtual bool is_WhereAmI_allowed(const CORBA::Any &any);
+	virtual void force_re_config();
+	virtual bool is_ForceReConfig_allowed(const CORBA::Any &any);
 
 
 	//--------------------------------------------------------

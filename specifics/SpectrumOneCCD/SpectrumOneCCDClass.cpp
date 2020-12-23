@@ -150,7 +150,7 @@ SpectrumOneCCDClass *SpectrumOneCCDClass::instance()
 //===================================================================
 //--------------------------------------------------------
 /**
- * method : 		WriteClass::execute()
+ * method : 		ForceReConfigClass::execute()
  * description : 	method to trigger the execution of the command.
  *
  * @param	device	The device on which the command must be executed
@@ -159,65 +159,11 @@ SpectrumOneCCDClass *SpectrumOneCCDClass::instance()
  *	returns The command output data (packed in the Any object)
  */
 //--------------------------------------------------------
-CORBA::Any *WriteClass::execute(Tango::DeviceImpl *device, const CORBA::Any &in_any)
+CORBA::Any *ForceReConfigClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
 {
-	cout2 << "WriteClass::execute(): arrived" << endl;
-	Tango::DevString argin;
-	extract(in_any, argin);
-	((static_cast<SpectrumOneCCD *>(device))->write(argin));
+	cout2 << "ForceReConfigClass::execute(): arrived" << endl;
+	((static_cast<SpectrumOneCCD *>(device))->force_re_config());
 	return new CORBA::Any();
-}
-
-//--------------------------------------------------------
-/**
- * method : 		ReadClass::execute()
- * description : 	method to trigger the execution of the command.
- *
- * @param	device	The device on which the command must be executed
- * @param	in_any	The command input data
- *
- *	returns The command output data (packed in the Any object)
- */
-//--------------------------------------------------------
-CORBA::Any *ReadClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
-{
-	cout2 << "ReadClass::execute(): arrived" << endl;
-	return insert((static_cast<SpectrumOneCCD *>(device))->read());
-}
-
-//--------------------------------------------------------
-/**
- * method : 		RebootClass::execute()
- * description : 	method to trigger the execution of the command.
- *
- * @param	device	The device on which the command must be executed
- * @param	in_any	The command input data
- *
- *	returns The command output data (packed in the Any object)
- */
-//--------------------------------------------------------
-CORBA::Any *RebootClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
-{
-	cout2 << "RebootClass::execute(): arrived" << endl;
-	((static_cast<SpectrumOneCCD *>(device))->reboot());
-	return new CORBA::Any();
-}
-
-//--------------------------------------------------------
-/**
- * method : 		WhereAmIClass::execute()
- * description : 	method to trigger the execution of the command.
- *
- * @param	device	The device on which the command must be executed
- * @param	in_any	The command input data
- *
- *	returns The command output data (packed in the Any object)
- */
-//--------------------------------------------------------
-CORBA::Any *WhereAmIClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
-{
-	cout2 << "WhereAmIClass::execute(): arrived" << endl;
-	return insert((static_cast<SpectrumOneCCD *>(device))->where_am_i());
 }
 
 
@@ -331,8 +277,8 @@ void SpectrumOneCCDClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ReadTimeout";
-	prop_desc = "Read Timeout in millisecond, from 1 to 4000";
+	prop_name = "Timeout";
+	prop_desc = "Timeout in millisecond";
 	prop_def  = "100";
 	vect_data.clear();
 	vect_data.push_back("100");
@@ -350,6 +296,38 @@ void SpectrumOneCCDClass::set_default_property()
 	prop_def  = "/usr/Local/configFiles/SpectrumOne";
 	vect_data.clear();
 	vect_data.push_back("/usr/Local/configFiles/SpectrumOne");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertConfig";
+	prop_desc = "Advanced config for the camera";
+	prop_def  = "[CCD_config]\nport=\ntotal_active_x_pixels=\ntotal_active_y_pixels=\nnum_serial_pixels_before_active=\nnum_serial_pixels_after_active=\nnum_parallel_rows_before_active=\nnum_parallel_rows_after_active=\nregister_loc_and_direction=\nmin_temperature=\nmax_temperature=\nmin_shutter_time=\nmax_shutter_time=\nmin_gain=\nmax_gain=\nh_pixel_spacing=\nv_pixel_spacing=\ntotal_parallel_pixels=\ntotal_serial_pixels=";
+	vect_data.clear();
+	vect_data.push_back("[CCD_config]");
+	vect_data.push_back("port=");
+	vect_data.push_back("total_active_x_pixels=");
+	vect_data.push_back("total_active_y_pixels=");
+	vect_data.push_back("num_serial_pixels_before_active=");
+	vect_data.push_back("num_serial_pixels_after_active=");
+	vect_data.push_back("num_parallel_rows_before_active=");
+	vect_data.push_back("num_parallel_rows_after_active=");
+	vect_data.push_back("register_loc_and_direction=");
+	vect_data.push_back("min_temperature=");
+	vect_data.push_back("max_temperature=");
+	vect_data.push_back("min_shutter_time=");
+	vect_data.push_back("max_shutter_time=");
+	vect_data.push_back("min_gain=");
+	vect_data.push_back("max_gain=");
+	vect_data.push_back("h_pixel_spacing=");
+	vect_data.push_back("v_pixel_spacing=");
+	vect_data.push_back("total_parallel_pixels=");
+	vect_data.push_back("total_serial_pixels=");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -536,41 +514,14 @@ void SpectrumOneCCDClass::command_factory()
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCDClass::command_factory_before
 
 
-	//	Command Write
-	WriteClass	*pWriteCmd =
-		new WriteClass("Write",
-			Tango::DEV_STRING, Tango::DEV_VOID,
-			"",
-			"",
-			Tango::OPERATOR);
-	command_list.push_back(pWriteCmd);
-
-	//	Command Read
-	ReadClass	*pReadCmd =
-		new ReadClass("Read",
-			Tango::DEV_VOID, Tango::DEV_STRING,
-			"",
-			"",
-			Tango::OPERATOR);
-	command_list.push_back(pReadCmd);
-
-	//	Command Reboot
-	RebootClass	*pRebootCmd =
-		new RebootClass("Reboot",
+	//	Command ForceReConfig
+	ForceReConfigClass	*pForceReConfigCmd =
+		new ForceReConfigClass("ForceReConfig",
 			Tango::DEV_VOID, Tango::DEV_VOID,
 			"",
 			"",
 			Tango::OPERATOR);
-	command_list.push_back(pRebootCmd);
-
-	//	Command WhereAmI
-	WhereAmIClass	*pWhereAmICmd =
-		new WhereAmIClass("WhereAmI",
-			Tango::DEV_VOID, Tango::DEV_STRING,
-			"",
-			"",
-			Tango::OPERATOR);
-	command_list.push_back(pWhereAmICmd);
+	command_list.push_back(pForceReConfigCmd);
 
 	/*----- PROTECTED REGION ID(SpectrumOneCCDClass::command_factory_after) ENABLED START -----*/
 	

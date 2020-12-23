@@ -54,11 +54,11 @@ namespace SpectrumOneCCD_ns
 //=========================================
 //	Define classes for commands
 //=========================================
-//	Command Write class definition
-class WriteClass : public Tango::Command
+//	Command ForceReConfig class definition
+class ForceReConfigClass : public Tango::Command
 {
 public:
-	WriteClass(const char   *name,
+	ForceReConfigClass(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -66,84 +66,15 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	WriteClass(const char   *name,
+	ForceReConfigClass(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~WriteClass() {};
+	~ForceReConfigClass() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<SpectrumOneCCD *>(dev))->is_Write_allowed(any);}
-};
-
-//	Command Read class definition
-class ReadClass : public Tango::Command
-{
-public:
-	ReadClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	ReadClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~ReadClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<SpectrumOneCCD *>(dev))->is_Read_allowed(any);}
-};
-
-//	Command Reboot class definition
-class RebootClass : public Tango::Command
-{
-public:
-	RebootClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	RebootClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~RebootClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<SpectrumOneCCD *>(dev))->is_Reboot_allowed(any);}
-};
-
-//	Command WhereAmI class definition
-class WhereAmIClass : public Tango::Command
-{
-public:
-	WhereAmIClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	WhereAmIClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~WhereAmIClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<SpectrumOneCCD *>(dev))->is_WhereAmI_allowed(any);}
+	{return (static_cast<SpectrumOneCCD *>(dev))->is_ForceReConfig_allowed(any);}
 };
 
 

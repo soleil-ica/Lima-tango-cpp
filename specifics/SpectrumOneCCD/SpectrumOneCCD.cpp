@@ -48,14 +48,11 @@
 //  The following table gives the correspondence
 //  between command and method names.
 //
-//  Command name  |  Method name
+//  Command name   |  Method name
 //================================================================
-//  State         |  dev_state
-//  Status        |  dev_status
-//  Write         |  write
-//  Read          |  read
-//  Reboot        |  reboot
-//  WhereAmI      |  where_am_i
+//  State          |  dev_state
+//  Status         |  dev_status
+//  ForceReConfig  |  force_re_config
 //================================================================
 
 //================================================================
@@ -215,8 +212,9 @@ void SpectrumOneCCD::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("GpibAddress"));
 	dev_prop.push_back(Tango::DbDatum("Port"));
 	dev_prop.push_back(Tango::DbDatum("Host"));
-	dev_prop.push_back(Tango::DbDatum("ReadTimeout"));
+	dev_prop.push_back(Tango::DbDatum("Timeout"));
 	dev_prop.push_back(Tango::DbDatum("TablesPath"));
+	dev_prop.push_back(Tango::DbDatum("ExpertConfig"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -264,16 +262,16 @@ void SpectrumOneCCD::get_device_property()
 		//	And try to extract Host value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  host;
 
-		//	Try to initialize ReadTimeout from class property
+		//	Try to initialize Timeout from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  readTimeout;
+		if (cl_prop.is_empty()==false)	cl_prop  >>  timeout;
 		else {
-			//	Try to initialize ReadTimeout from default device value
+			//	Try to initialize Timeout from default device value
 			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  readTimeout;
+			if (def_prop.is_empty()==false)	def_prop  >>  timeout;
 		}
-		//	And try to extract ReadTimeout value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  readTimeout;
+		//	And try to extract Timeout value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  timeout;
 
 		//	Try to initialize TablesPath from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -286,16 +284,49 @@ void SpectrumOneCCD::get_device_property()
 		//	And try to extract TablesPath value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  tablesPath;
 
+		//	Try to initialize ExpertConfig from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertConfig;
+		else {
+			//	Try to initialize ExpertConfig from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertConfig;
+		}
+		//	And try to extract ExpertConfig value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertConfig;
+
 	}
 
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::get_device_property_after) ENABLED START -----*/
 	
 	//	Check device property data members init
+
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", "GpibAddress");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1234", "Port");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "Host");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "100", "ReadTimeout");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "/usr/Local/configFiles/SpectrumOne", "TablesPath");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, 
+        "[CCD_config]\n"
+        "port=\n"
+        "total_active_x_pixels=\n"
+        "total_active_y_pixels=\n"
+        "num_serial_pixels_before_active=\n"
+        "num_serial_pixels_after_active=\n"
+        "num_parallel_rows_before_active=\n"
+        "num_parallel_rows_after_active=\n"
+        "register_loc_and_direction=\n"
+        "min_temperature=\n"
+        "max_temperature=\n"
+        "min_shutter_time=\n"
+        "max_shutter_time=\n"
+        "min_gain=\n"
+        "max_gain=\n"
+        "h_pixel_spacing=\n"
+        "v_pixel_spacing=\n"
+        "total_parallel_pixels=\n"
+        "total_serial_pixels=",
+        "ExpertConfig");
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::get_device_property_after
 }
@@ -410,83 +441,20 @@ Tango::ConstDevString SpectrumOneCCD::dev_status()
 }
 //--------------------------------------------------------
 /**
- *	Command Write related method
- *	Description: 
- *
- *	@param argin 
- */
-//--------------------------------------------------------
-void SpectrumOneCCD::write(Tango::DevString argin)
-{
-	DEBUG_STREAM << "SpectrumOneCCD::Write()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::write) ENABLED START -----*/
-	
-	//	Add your own code
-    std::string cmd(argin);
-    m_camera->write(cmd);
-	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::write
-}
-//--------------------------------------------------------
-/**
- *	Command Read related method
- *	Description: 
- *
- *	@returns 
- */
-//--------------------------------------------------------
-Tango::DevString SpectrumOneCCD::read()
-{
-	Tango::DevString argout;
-	DEBUG_STREAM << "SpectrumOneCCD::Read()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::read) ENABLED START -----*/
-	
-	//	Add your own code
-    std::string answer(m_camera->read());
-    argout = new char[answer.size()+1];
-    strcpy(argout, answer.c_str());
-
-	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::read
-	return argout;
-}
-//--------------------------------------------------------
-/**
- *	Command Reboot related method
- *	Description: 
+ *	Command ForceReConfig related method
+ *	Description: Force the injection of the tables and the reconfiguration of the camera
  *
  */
 //--------------------------------------------------------
-void SpectrumOneCCD::reboot()
+void SpectrumOneCCD::force_re_config()
 {
-	DEBUG_STREAM << "SpectrumOneCCD::Reboot()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::reboot) ENABLED START -----*/
+	DEBUG_STREAM << "SpectrumOneCCD::ForceReConfig()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::force_re_config) ENABLED START -----*/
 	
 	//	Add your own code
-    m_camera->rebootIfHung();
+    m_camera->forceConfig();
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::reboot
-}
-//--------------------------------------------------------
-/**
- *	Command WhereAmI related method
- *	Description: 
- *
- *	@returns 
- */
-//--------------------------------------------------------
-Tango::DevString SpectrumOneCCD::where_am_i()
-{
-	Tango::DevString argout;
-	DEBUG_STREAM << "SpectrumOneCCD::WhereAmI()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::where_am_i) ENABLED START -----*/
-	
-	//	Add your own code
-    argout = new char[1];
-    argout[0] = m_camera->whereAmI();
-	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::where_am_i
-	return argout;
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::force_re_config
 }
 //--------------------------------------------------------
 /**
@@ -507,6 +475,81 @@ void SpectrumOneCCD::add_dynamic_commands()
 /*----- PROTECTED REGION ID(SpectrumOneCCD::namespace_ending) ENABLED START -----*/
 
 //	Additional Methods
+// //--------------------------------------------------------
+// /**
+//  *	Command Write related method
+//  *	Description: 
+//  *
+//  *	@param argin 
+//  */
+// //--------------------------------------------------------
+// void SpectrumOneCCD::write(Tango::DevString argin)
+// {
+// 	DEBUG_STREAM << "SpectrumOneCCD::Write()  - " << device_name << endl;
+// 	
+// 	//	Add your own code
+//     std::string cmd(argin);
+//     m_camera->write(cmd);
+// 	
+// }
+
+// //--------------------------------------------------------
+// /**
+//  *	Command Read related method
+//  *	Description: 
+//  *
+//  *	@returns 
+//  */
+// //--------------------------------------------------------
+// Tango::DevString SpectrumOneCCD::read()
+// {
+// 	Tango::DevString argout;
+// 	DEBUG_STREAM << "SpectrumOneCCD::Read()  - " << device_name << endl;
+// 	
+// 	//	Add your own code
+//     std::string answer(m_camera->read());
+//     argout = new char[answer.size()+1];
+//     strcpy(argout, answer.c_str());
+// 	
+// 	return argout;
+// }
+
+// //--------------------------------------------------------
+// /**
+//  *	Command WhereAmI related method
+//  *	Description: 
+//  *
+//  *	@returns 
+//  */
+// //--------------------------------------------------------
+// Tango::DevString SpectrumOneCCD::where_am_i()
+// {
+// 	Tango::DevString argout;
+// 	DEBUG_STREAM << "SpectrumOneCCD::WhereAmI()  - " << device_name << endl;
+// 	
+// 	//	Add your own code
+//     argout = new char[1];
+//     argout[0] = m_camera->whereAmI();
+// 	
+// 	return argout;
+// }
+
+// //--------------------------------------------------------
+// /**
+//  *	Command Reboot related method
+//  *	Description: 
+//  *
+//  */
+// //--------------------------------------------------------
+// void SpectrumOneCCD::reboot()
+// {
+// 	DEBUG_STREAM << "SpectrumOneCCD::Reboot()  - " << device_name << endl;
+// 	
+// 	//	Add your own code
+//     m_camera->rebootIfHung();
+// 	
+// }
+
 
 /*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::namespace_ending
 } //	namespace

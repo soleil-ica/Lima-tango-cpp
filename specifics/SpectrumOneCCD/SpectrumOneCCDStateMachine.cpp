@@ -40,6 +40,7 @@
 //  RUNNING  |  
 //  FAULT    |  
 //  ALARM    |  
+//  DISABLE  |  
 
 
 namespace SpectrumOneCCD_ns
@@ -55,61 +56,26 @@ namespace SpectrumOneCCD_ns
 
 //--------------------------------------------------------
 /**
- *	Method      : SpectrumOneCCD::is_Write_allowed()
- *	Description : Execution allowed for Write attribute
+ *	Method      : SpectrumOneCCD::is_ForceReConfig_allowed()
+ *	Description : Execution allowed for ForceReConfig attribute
  */
 //--------------------------------------------------------
-bool SpectrumOneCCD::is_Write_allowed(TANGO_UNUSED(const CORBA::Any &any))
+bool SpectrumOneCCD::is_ForceReConfig_allowed(TANGO_UNUSED(const CORBA::Any &any))
 {
-	//	Not any excluded states for Write command.
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::WriteStateAllowed) ENABLED START -----*/
+	//	Compare device state with not allowed states.
+	if (get_state()==Tango::RUNNING ||
+		get_state()==Tango::FAULT ||
+		get_state()==Tango::ALARM ||
+		get_state()==Tango::DISABLE)
+	{
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::ForceReConfigStateAllowed) ENABLED START -----*/
+    }
+    if(get_state()!=Tango::STANDBY)
+    {
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::WriteStateAllowed
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : SpectrumOneCCD::is_Read_allowed()
- *	Description : Execution allowed for Read attribute
- */
-//--------------------------------------------------------
-bool SpectrumOneCCD::is_Read_allowed(TANGO_UNUSED(const CORBA::Any &any))
-{
-	//	Not any excluded states for Read command.
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::ReadStateAllowed) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::ReadStateAllowed
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : SpectrumOneCCD::is_Reboot_allowed()
- *	Description : Execution allowed for Reboot attribute
- */
-//--------------------------------------------------------
-bool SpectrumOneCCD::is_Reboot_allowed(TANGO_UNUSED(const CORBA::Any &any))
-{
-	//	Not any excluded states for Reboot command.
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::RebootStateAllowed) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::RebootStateAllowed
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : SpectrumOneCCD::is_WhereAmI_allowed()
- *	Description : Execution allowed for WhereAmI attribute
- */
-//--------------------------------------------------------
-bool SpectrumOneCCD::is_WhereAmI_allowed(TANGO_UNUSED(const CORBA::Any &any))
-{
-	//	Not any excluded states for WhereAmI command.
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::WhereAmIStateAllowed) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::WhereAmIStateAllowed
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::ForceReConfigStateAllowed
+		return false;
+	}
 	return true;
 }
 
