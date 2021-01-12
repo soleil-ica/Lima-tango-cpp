@@ -880,6 +880,9 @@ void Ufxc::write_countingMode(Tango::WAttribute &attr)
 
                 if(device_proxy != NULL)
                 {
+				    // Ping the device
+				    device_proxy->ping();
+
                     INFO_STREAM << "calling the InitInterface method of LimaDetector..." << endl; 
 
                     Tango::DeviceData dout; 
