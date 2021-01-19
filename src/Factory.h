@@ -154,6 +154,11 @@
 #include <SlsEigerInterface.h>
 #endif
 
+#ifdef SPECTRAL_ENABLED  
+#include <SpectralCamera.h>
+#include <SpectralInterface.h>
+#endif
+
 //ProcessLib/Data : define dimensions of image
 #define WIDTH_INDEX   0
 #define HEIGHT_INDEX  1
