@@ -739,6 +739,52 @@ bool Eiger::is_managedMode_allowed(Tango::AttReqType type)
 	}
 	return true;
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::is_nbTriggers_allowed
+// 
+// description : 	Read/Write allowed for nbTriggers attribute.
+//
+//-----------------------------------------------------------------------------
+bool Eiger::is_nbTriggers_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::is_nbFramesPerTrigger_allowed
+// 
+// description : 	Read/Write allowed for nbFramesPerTrigger attribute.
+//
+//-----------------------------------------------------------------------------
+bool Eiger::is_nbFramesPerTrigger_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
 
 //=================================================
 //		Commands Allowed Methods
@@ -762,7 +808,7 @@ bool Eiger::is_Initialize_allowed(const CORBA::Any &any)
 		{
            return true;
 		}
-		//	Re-Start of Generated Code	
+		//	Re-Start of Generated Code
 		return false;
 	}
 	return true;

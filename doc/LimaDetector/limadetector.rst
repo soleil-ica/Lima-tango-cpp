@@ -24,10 +24,12 @@ DetectorType                        SimulatorCCD                String          
                                                                                         Availables types :
 
                                                                                         - AndorCCD                                                                                                                                                                                
-                                                                                        - BaslerCCD                                                                                         
+                                                                                        - BaslerCCD
+                                                                                        - Dhyana
                                                                                         - Eiger                                                                                             
                                                                                         - Hamamatsu                                                                                         
-                                                                                        - ImXpad                                                                                            
+                                                                                        - ImXpad      
+                                                                                        - Lambda
                                                                                         - MarCCD                                                                                            
                                                                                         - Maxipix                                                                                           
                                                                                         - Merlin                                                                                            
@@ -36,7 +38,9 @@ DetectorType                        SimulatorCCD                String          
                                                                                         - PilatusPixelDetector                                                                              
                                                                                         - PrincetonCCD                                                                                      
                                                                                         - ProsilicaCCD                                                                                      
-                                                                                        - SimulatorCCD                                                                                      
+                                                                                        - SimulatorCCD    
+                                                                                        - SlsEiger
+                                                                                        - SlsJungfrau
                                                                                         - Ufxc
                                                                                         - UviewCCD                                                                                          
                                                                                         - XpadPixelDetector                                                                                 

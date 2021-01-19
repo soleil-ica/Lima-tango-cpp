@@ -899,4 +899,9 @@ void Xspress3::read_channel_callback(yat4tango::DynamicAttributeReadCallbackData
 
 
 
+
+
+
+
+
 }	//	namespace

@@ -599,7 +599,7 @@ void MaxipixClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Device_4Impl");
+	inheritance.push_back("Tango::Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

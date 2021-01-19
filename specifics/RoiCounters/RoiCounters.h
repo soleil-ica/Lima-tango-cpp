@@ -50,7 +50,12 @@
 #include <yat4tango/InnerAppender.h>
 #include <yat/threading/Mutex.h>
 #include <yat/utils/XString.h>
+#include <yat/time/Timer.h>
 #include <yat/Version.h>
+/*
+#include <yat/memory/DataBuffer.h>
+*/
+#include <cctype>
 
 #include "lima/HwInterface.h"
 #include "lima/CtControl.h"
@@ -67,11 +72,19 @@
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
 #define MAX_NB_ROICOUNTERS              32
 #define NB_COORDINATES                  4
-#define CURRENT_VERSION                 "1.2.0"
+#define CURRENT_VERSION                 "2.0.0"
 
 
 namespace RoiCounters_ns
 {
+
+template <typename T>
+class UserAttribute 
+{
+public:
+	T scalar;
+	std::vector<T> spectrum;
+};
 
 /**
  * Class Description:
@@ -132,6 +145,10 @@ public:
  *	For each Region of Interest . (Height)
  */
 	vector<long>	__height;
+/**
+ *	Define the max number of points of spectrum attributes<br>
+ */
+	Tango::DevULong	expertSpectrumMaxDataSize;
 /**
  *	Memorize/Define the runLevel attribute<br>
  */
@@ -284,7 +301,10 @@ public:
     };
 
     //- the dyn. attrs. read callback
-    void read_stats_callback (yat4tango::DynamicAttributeReadCallbackData& cbd);
+    void read_stats_scalar_callback (yat4tango::DynamicAttributeReadCallbackData& cbd);
+
+    //- the dyn. attrs. read callback
+    void read_stats_spectrum_callback (yat4tango::DynamicAttributeReadCallbackData& cbd);
 
     //- the dyn. attrs. read callback    
     void read_rois_callback (yat4tango::DynamicAttributeReadCallbackData& cbd);
@@ -321,21 +341,26 @@ protected:
     yat4tango::DynamicInterfaceManager m_dim;
     Tango::DevULong     attr_frameNumber_value;
     Data                m_image_data_roi;
-    //at maximum 32 rois counters can be managed    
+    //MAX_NB_ROICOUNTERS rois counters can be managed    
+	//each element of vector is related to a roi
     std::vector<Tango::DevULong>     attr_x_arrays;
     std::vector<Tango::DevULong>     attr_y_arrays;
     std::vector<Tango::DevULong>     attr_width_arrays;
     std::vector<Tango::DevULong>     attr_height_arrays;
     std::vector<Tango::DevString>    attr_coordinates_arrays;
-    std::vector<Tango::DevDouble>    attr_sum_arrays;
-    std::vector<Tango::DevDouble>    attr_average_arrays;
-    std::vector<Tango::DevDouble>    attr_std_arrays;
-    std::vector<Tango::DevDouble>    attr_minValue_arrays;
-    std::vector<Tango::DevLong>      attr_minX_arrays;
-    std::vector<Tango::DevLong>      attr_minY_arrays;
-    std::vector<Tango::DevDouble>    attr_maxValue_arrays;    
-    std::vector<Tango::DevLong>      attr_maxX_arrays;
-    std::vector<Tango::DevLong>      attr_maxY_arrays;    
+	//foreach roi, we will have a scalar attribute and a spectrum attribute, this why we use UserAttribute as type
+    std::vector<UserAttribute<Tango::DevDouble> > 	attr_sum_arrays;
+    std::vector<UserAttribute<Tango::DevDouble> > 	attr_average_arrays;
+    std::vector<UserAttribute<Tango::DevDouble> > 	attr_std_arrays;
+    std::vector<UserAttribute<Tango::DevDouble> > 	attr_minValue_arrays;
+    std::vector<UserAttribute<Tango::DevLong> > 	attr_minX_arrays;
+    std::vector<UserAttribute<Tango::DevLong> > 	attr_minY_arrays;
+    std::vector<UserAttribute<Tango::DevDouble> > 	attr_maxValue_arrays;    
+    std::vector<UserAttribute<Tango::DevLong> > 	attr_maxX_arrays;
+    std::vector<UserAttribute<Tango::DevLong> > 	attr_maxY_arrays;    
+/*
+    yat::CircularBuffer<UserAttribute<Tango::DevDouble> > attr_sum_arrays_circular;
+*/
     std::vector<std::string>         m_operations_list;
 
     // Parse the string into 4 numbers and push it into current attributes

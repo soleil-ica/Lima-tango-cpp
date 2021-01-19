@@ -33,6 +33,7 @@ This device server provides several Tango classes:
   
   AndorCCD <AndorCCD/andorccd>
   BaslerCCD <BaslerCCD/baslerccd>
+  Dhyana <Dhyana/dhyana>
   Eiger <Eiger/eiger>
   Hamamatsu <Hamamatsu/hamamatsu>
   ImXpad <ImXpad/imxpad>
@@ -48,14 +49,16 @@ This device server provides several Tango classes:
   SimulatorCCD <SimulatorCCD/simulatorccd>
   SlsEiger <SlsEiger/slseiger>
   SlsJungfrau <SlsJungfrau/slsjungfrau>
+  Ufxc <Ufxc/ufxc>
   Uview <Uview/uview>
   XpadPixelDetector <XpadPixelDetector/xpadpixeldetector>
+  Xspress3 <Xspress3/xspress3>
   
 --------------------------
 
 .. toctree::
   :maxdepth: 1
   
-  RoiCounters <RoiCounters/roicounters>
   Layout <Layout/layout>
   Mask <Mask/mask>
+  RoiCounters <RoiCounters/roicounters>

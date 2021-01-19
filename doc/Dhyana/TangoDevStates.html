@@ -43,65 +43,41 @@
 <Br>
 <center>
 <h1>
-		<Br>
-Device Commands Description 		<Br> <Br>
-Hamamatsu Class	<Br>
+Device specific for Dhyana detector		<Br>
+Device States Description 		<Br> <Br>
+Dhyana Class	<Br>
 </h1>
 <b>
-Revision:  - Author: cedric.castel
+Revision:  - Author: 
 </b>
 </center>
 
 
-<Br>
-<Br>
-<Br>
-<A NAME="Init"><!-- --></A>
-<A NAME="Init"><!-- --></A>
-<h2>1 - Init</h2>
-<ul>
-<Li><Strong>Description: </Strong> This commands re-initialise a device keeping the same network connection.<Br>
-After an Init command executed on a device, it is not necessary for client to re-connect to the device.<Br>
-This command first calls the device <i> delete_device() </i>method and then execute its <i> init_device()</i> method.<Br>
-For C++ device server, all the memory allocated in the <i> nit_device() </i> method must be freed in the <i> delete_device() </i> method.<Br>
-The language device desctructor automatically calls the <i> delete_device() </i> method.<Br>&nbsp
-<Li><Strong>Argin:<Br>DEV_VOID</Strong>
- : none.<Br>&nbsp
-<Li><Strong>Argout:<Br>DEV_VOID</Strong>
- : none.<Br>&nbsp
-<Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::INIT<Li>Tango::STANDBY<Li>Tango::FAULT<Li>Tango::RUNNING</Ul>
-<Br>&nbsp
-</ul><Br>
-<Br>
-<A NAME="State"><!-- --></A>
-<A NAME="State"><!-- --></A>
-<h2>2 - State</h2>
-<ul>
-<Li><Strong>Description: </Strong> This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.<Br>&nbsp
-<Li><Strong>Argin:<Br>DEV_VOID</Strong>
- : none.<Br>&nbsp
-<Li><Strong>Argout:<Br>DEV_STATE</Strong>
- : State Code<Br>&nbsp
-<Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::INIT<Li>Tango::STANDBY<Li>Tango::FAULT<Li>Tango::RUNNING</Ul>
-<Br>&nbsp
-</ul><Br>
-<Br>
-<A NAME="Status"><!-- --></A>
-<A NAME="Status"><!-- --></A>
-<h2>3 - Status</h2>
-<ul>
-<Li><Strong>Description: </Strong> This command gets the device status (stored in its <i>device_status</i> data member) and returns it to the caller.<Br>&nbsp
-<Li><Strong>Argin:<Br>DEV_VOID</Strong>
- : none.<Br>&nbsp
-<Li><Strong>Argout:<Br>CONST_DEV_STRING</Strong>
- : Status description<Br>&nbsp
-<Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::INIT<Li>Tango::STANDBY<Li>Tango::FAULT<Li>Tango::RUNNING</Ul>
-<Br>&nbsp
-</ul><Br>
-<Br>
+<Center>
+<Br> <Br> <Br> 
+<Table Border=2 Cellpadding=3 CELLSPACING=0 WIDTH="100%">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<Td COLSPAN=2> <Font Size=+2><Center><b>States</b></td></Font></Center>
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<Td><Center><b>Names</b></td></Center>
+<Td><Center><b>Descriptions</b></td></Center>
+<Tr><Td><b>FAULT</b></Td>
+<Td><Font Size=-1></Font></Td></Tr>
+
+<Tr><Td><b>INIT</b></Td>
+<Td><Font Size=-1></Font></Td></Tr>
+
+<Tr><Td><b>RUNNING</b></Td>
+<Td><Font Size=-1></Font></Td></Tr>
+
+<Tr><Td><b>STANDBY</b></Td>
+<Td><Font Size=-1></Font></Td></Tr>
+
+
+
+
+</Table>
+</Center>
 
 <!--- html Footer --->
 
