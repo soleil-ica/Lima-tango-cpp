@@ -62,6 +62,7 @@ static const char *RcsId = "$Id:  $";
 //  ResetFileIndex               |  reset_file_index()
 //  ReloadROI                    |  reload_roi()
 //  GetDataStreams               |  get_data_streams()
+//  InitInterface                |  init_interface()
 //
 //===================================================================
 #include <tango.h>
@@ -4341,7 +4342,7 @@ void LimaDetector::configure_image_type(void)
 {
     HwDetInfoCtrlObj *hw_det_info;
     m_hw->getHwCtrlObj(hw_det_info);
-    if(detectorPixelDepth == "2" ||detectorPixelDepth == "2A")
+    if(detectorPixelDepth == "2")
     {
         hw_det_info->setCurrImageType(Bpp2);
     }	
@@ -4368,6 +4369,10 @@ void LimaDetector::configure_image_type(void)
     else if(detectorPixelDepth == "24")
     {
         hw_det_info->setCurrImageType(Bpp24);
+    }
+    else if(detectorPixelDepth == "28")
+    {
+        hw_det_info->setCurrImageType(Bpp28);
     }
     else if(detectorPixelDepth == "32")
     {
@@ -4449,6 +4454,7 @@ void LimaDetector::configure_saving_parameters(void)
     ImageType image_type;
     HwDetInfoCtrlObj *hw_det_info;
     m_hw->getHwCtrlObj(hw_det_info);
+    
     hw_det_info->getCurrImageType(image_type);
     if(specialDisplayType == "FLOAT")
     {
@@ -4819,7 +4825,7 @@ void LimaDetector::add_image_dynamic_attribute(const std::string& attr_name)
     {
         dai.tai.data_type = Tango::DEV_SHORT;
     }	    
-    else if(detectorPixelDepth == "24" || detectorPixelDepth == "32" || detectorPixelDepth == "2A")
+    else if(detectorPixelDepth == "24" || detectorPixelDepth == "28" || detectorPixelDepth == "32")
     {
         dai.tai.data_type = Tango::DEV_ULONG;
     }
@@ -5016,9 +5022,102 @@ void LimaDetector::execute_close_shutter_callback(yat4tango::DynamicCommandExecu
     }
 }
 
+//+------------------------------------------------------------------
+/**
+ *	method:	LimaDetector::init_interface
+ *
+ *	description:	method to execute "InitInterface"
+ *	Re-inits the LimaDetector interface. Allows to recreate some dynamics attributes.
+ *
+ *
+ */
+//+------------------------------------------------------------------
+void LimaDetector::init_interface()
+{
+	DEBUG_STREAM << "LimaDetector::init_interface(): entering... !" << endl;
 
+	//	Add your own code to control device here
+    try
+    {
+        std::string new_detector_pixel_depth;
+        
+        // we need to generate the new pixel depth string
+        HwDetInfoCtrlObj * hw_det_info;
+        m_hw->getHwCtrlObj(hw_det_info);
 
+        // first, get the current image type from the plugin
+        ImageType image_type;
+        hw_det_info->getCurrImageType(image_type);
 
+        // convert the image type to a number of bits
+        FrameDim frame_dim;
+        int image_type_bpp = frame_dim.getImageTypeBpp(image_type);
 
+        // convert the number of bits to a string
+        std::stringstream ss("");
+        ss << image_type_bpp;
+        new_detector_pixel_depth = ss.str();
+
+        // manage special cases (S, F)
+	    switch (image_type) 
+        {
+	        case Bpp8S:
+	        case Bpp10S:
+	        case Bpp12S:
+	        case Bpp14S:
+	        case Bpp16S:
+	        case Bpp24S:
+	        case Bpp32S:
+                new_detector_pixel_depth += std::string("S");
+                break;
+            case Bpp32F:
+                new_detector_pixel_depth += std::string("F");
+                break;
+	        default:
+                break;
+        }
+
+        // do we need to dynamically change the pixel depth ?
+        if(detectorPixelDepth != new_detector_pixel_depth)
+        {
+            // save the property
+            yat4tango::PropertyHelper::set_property(this, "DetectorPixelDepth", new_detector_pixel_depth);
+            detectorPixelDepth = new_detector_pixel_depth;
+
+            INFO_STREAM << "Pixel Depth changed to " << detectorPixelDepth << std::endl;
+
+            //- reset image number (this will disable the refresh of image attribute)
+            m_ct->resetStatus(false);
+
+            //remove attributes from dam
+            INFO_STREAM << "Remove image dynamic attribute." << endl;
+            m_dim.dynamic_attributes_manager().remove_attribute("image");
+
+		    //remove attributes from dam
+		    INFO_STREAM << "Remove baseImage dynamic attribute." << endl;
+		    m_dim.dynamic_attributes_manager().remove_attribute("baseImage");
+
+            //add image dynamic attribute
+            INFO_STREAM << "Add image dynamic attribute." << endl;
+		    add_image_dynamic_attribute("image");
+
+		    //add baseImage dynamic attribute
+		    INFO_STREAM << "Add baseImage dynamic attribute." << endl;
+		    add_image_dynamic_attribute("baseImage");
+
+            // reset image Roi
+            m_ct->image()->resetRoi();
+        }
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							string(df.errors[0].desc).c_str(),
+							"LimaDetector::manage_pixel_depth_change()");
+    }
+}   
 
 }	//	namespace

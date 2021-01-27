@@ -12,7 +12,7 @@ Properties
 ====================================== ========================= ================== ===============================================
 Property name                          Default value             Type               Description
 ====================================== ========================= ================== ===============================================
-AutoLoad                               False                     Boolean            Allow to Reload the last used Detector Configuration file at each init of the device
+AutoLoad                               False                     Boolean            Allows to Reload the last used Detector Configuration file at each init of the device.
 ConfigIpAddress                        127.0.0.1                 String             Config Ip Address
 ConfigPort                             0                         String             Config Port
 SFP1IpAddress                          127.0.0.1                 String             SFP1 Ip Address
@@ -25,6 +25,7 @@ Timeout                                0                         ULong          
 DetectorConfigFiles                    ALIAS;PATH_AND_FILE_NAME  Array of String    Define the list of Detector Configuration files and their associated alias
 GeometricalCorrectionEnabled           true                      Boolean            Enable/Disable the geometrical corrections.
 StackFramesSumEnabled                  true                      Boolean            Enable/Disable the sum of the frames stack.
+UfxcModel                              U2C                       String             Allows to specify the UFXC model.
 ====================================== ========================= ================== ===============================================
 
 

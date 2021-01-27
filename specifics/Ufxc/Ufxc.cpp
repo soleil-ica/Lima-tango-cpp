@@ -55,13 +55,12 @@ static const char *RcsId = "$Id:  $";
 
 
 #include <tango.h>
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 #include <Ufxc.h>
 #include <UfxcClass.h>
 
 namespace Ufxc_ns
 {
-
 //+----------------------------------------------------------------------------
 //
 // method : 		Ufxc::Ufxc(string &s)
@@ -106,8 +105,11 @@ void Ufxc::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_thresholdHigh1_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_thresholdLow2_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_thresholdHigh2_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_geometricalCorrection_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_currentAlias_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_currentConfigFile_read);
+	DELETE_DEVSTRING_ATTRIBUTE(attr_countingMode_read);
+    
 	//	Delete device allocated objects
 
 	INFO_STREAM << "Remove the inner-appender." << endl;
@@ -152,14 +154,17 @@ void Ufxc::init_device()
 	CREATE_SCALAR_ATTRIBUTE(attr_thresholdHigh1_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_thresholdLow2_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_thresholdHigh2_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_geometricalCorrection_read);
 	CREATE_DEVSTRING_ATTRIBUTE(attr_currentAlias_read, 255);
 	CREATE_DEVSTRING_ATTRIBUTE(attr_currentConfigFile_read, 255);
+	CREATE_DEVSTRING_ATTRIBUTE(attr_countingMode_read, 255);
 
 	m_is_device_initialized = false;
 	set_state(Tango::INIT);
 	m_status_message.str("");
-	strcpy(*attr_currentAlias_read, "Unknown");
+	strcpy(*attr_currentAlias_read     , "Unknown");
 	strcpy(*attr_currentConfigFile_read, "Unknown");
+	strcpy(*attr_countingMode_read     , "Unknown");
 
 	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
     yat4tango::InnerAppender::initialize(this, 512);
@@ -228,28 +233,39 @@ void Ufxc::init_device()
 		thresholdLow.set_write_value(*attr_thresholdLow_read);
 		write_thresholdLow(thresholdLow);
 
-		INFO_STREAM << "Write tango hardware at Init - threshold." << endl;
+		INFO_STREAM << "Write tango hardware at Init - thresholdHigh." << endl;
 		Tango::WAttribute &thresholdHigh = dev_attr->get_w_attr_by_name("thresholdHigh");
 		*attr_thresholdHigh_read = attr_thresholdHigh_write = memorizedThresholdHigh;
 		thresholdHigh.set_write_value(*attr_thresholdHigh_read);
 		write_thresholdHigh(thresholdHigh);
-		/////////
-		ImageType image_type;
-		m_camera->getImageType(image_type);
-		INFO_STREAM << "image_type = " << image_type << endl;
 
-		TrigMode trig_mode;
-		m_ct->acquisition()->getTriggerMode(trig_mode);
-		INFO_STREAM << "trig_mode = " << trig_mode << endl;
+		INFO_STREAM << "Write tango hardware at Init - geometricalCorrection." << endl;
+		Tango::WAttribute &geometricalCorrection = dev_attr->get_w_attr_by_name("geometricalCorrection");
+		*attr_geometricalCorrection_read = attr_geometricalCorrection_write = memorizedGeometricalCorrection;
+		geometricalCorrection.set_write_value(*attr_geometricalCorrection_read);
+		write_geometricalCorrection(geometricalCorrection);
+
+        INFO_STREAM << "Write tango hardware at Init - countingMode." << endl;
+        m_is_CountingMode_init = true;
+        Tango::WAttribute & countingMode = dev_attr->get_w_attr_by_name("countingMode");
+        strcpy(*attr_countingMode_read, memorizedCountingMode.c_str());
+        countingMode.set_write_value(*attr_countingMode_read);
+        write_countingMode(countingMode);
+        m_is_CountingMode_init = false;
+
+		/////////
+        lima::Ufxc::Camera::CountingModes acq_mode;
+		m_camera->getCountingMode(acq_mode);
+		DEBUG_STREAM << "acq_mode = " << acq_mode << endl;
 
 		//available only in mode pump & probe (i.e Trigger Ext Multi and Bpp2)
-		if(trig_mode == ExtTrigMult && (image_type==Bpp2 ||image_type==Bpp32))
+		if(acq_mode == lima::Ufxc::Camera::CountingModes::PumpProbeProbe_32)
 		{
-			INFO_STREAM << "Write tango hardware at Init - triggerAcquisitionFrequency." << endl;
-			Tango::WAttribute &triggerAcquisitionFrequency = dev_attr->get_w_attr_by_name("triggerAcquisitionFrequency");
-			*attr_triggerAcquisitionFrequency_read = attr_triggerAcquisitionFrequency_write = memorizedTriggerAcquisitionFrequency;
-			triggerAcquisitionFrequency.set_write_value(*attr_triggerAcquisitionFrequency_read);
-			write_triggerAcquisitionFrequency(triggerAcquisitionFrequency);
+            INFO_STREAM << "Write tango hardware at Init - triggerAcquisitionFrequency." << endl;
+            update_triggerAcquisitionFrequency();
+
+            // update the valid ranges for exposure and latency times
+            m_hw->getSyncCtrl().updateValidRanges();
 		}
 		/////////
 	}
@@ -305,12 +321,14 @@ void Ufxc::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("SFP3IpAddress"));
 	dev_prop.push_back(Tango::DbDatum("SFP3Port"));
 	dev_prop.push_back(Tango::DbDatum("Timeout"));
-	dev_prop.push_back(Tango::DbDatum("GeometricalCorrectionEnabled"));
-	dev_prop.push_back(Tango::DbDatum("StackFramesSumEnabled"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedThresholdLow"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedThresholdHigh"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedConfigAlias"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedTriggerAcquisitionFrequency"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedGeometricalCorrection"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedCountingMode"));
+	dev_prop.push_back(Tango::DbDatum("SFPMTU"));
+	dev_prop.push_back(Tango::DbDatum("UfxcModel"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -442,28 +460,6 @@ void Ufxc::get_device_property()
 	//	And try to extract Timeout value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  timeout;
 
-	//	Try to initialize GeometricalCorrectionEnabled from class property
-	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  geometricalCorrectionEnabled;
-	else {
-		//	Try to initialize GeometricalCorrectionEnabled from default device value
-		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if (def_prop.is_empty()==false)	def_prop  >>  geometricalCorrectionEnabled;
-	}
-	//	And try to extract GeometricalCorrectionEnabled value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  geometricalCorrectionEnabled;
-
-	//	Try to initialize StackFramesSumEnabled from class property
-	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  stackFramesSumEnabled;
-	else {
-		//	Try to initialize StackFramesSumEnabled from default device value
-		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if (def_prop.is_empty()==false)	def_prop  >>  stackFramesSumEnabled;
-	}
-	//	And try to extract StackFramesSumEnabled value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  stackFramesSumEnabled;
-
 	//	Try to initialize MemorizedThresholdLow from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedThresholdLow;
@@ -508,12 +504,57 @@ void Ufxc::get_device_property()
 	//	And try to extract MemorizedTriggerAcquisitionFrequency value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedTriggerAcquisitionFrequency;
 
+	//	Try to initialize MemorizedGeometricalCorrection from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedGeometricalCorrection;
+	else {
+		//	Try to initialize MemorizedGeometricalCorrection from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedGeometricalCorrection;
+	}
+	//	And try to extract MemorizedGeometricalCorrection value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedGeometricalCorrection;
+
+	//	Try to initialize MemorizedCountingMode from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedCountingMode;
+	else {
+		//	Try to initialize MemorizedCountingMode from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedCountingMode;
+	}
+	//	And try to extract MemorizedCountingMode value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedCountingMode;
+
+	//	Try to initialize SFPMTU from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  sFPMTU;
+	else {
+		//	Try to initialize SFPMTU from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  sFPMTU;
+	}
+	//	And try to extract SFPMTU value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  sFPMTU;
+
+	//	Try to initialize UfxcModel from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  ufxcModel;
+	else {
+		//	Try to initialize UfxcModel from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  ufxcModel;
+	}
+	//	And try to extract UfxcModel value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  ufxcModel;
+
 
 
 	//	End of Automatic code generation
 	//------------------------------------------------------------------
 	PropertyHelper::create_property_if_empty(this, dev_prop, "False", "AutoLoad");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "ALIAS;PATH_AND_FILE_NAME", "DetectorConfigFiles");	
+	PropertyHelper::create_property_if_empty(this, dev_prop, "1500", "SFPMTU");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "ConfigIpAddress");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "ConfigPort");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "SFP1IpAddress");
@@ -522,13 +563,13 @@ void Ufxc::get_device_property()
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "SFP2Port");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "SFP3IpAddress");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "SFP3Port");
-	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "Timeout");		
-	PropertyHelper::create_property_if_empty(this, dev_prop, "true", "GeometricalCorrectionEnabled");
-	PropertyHelper::create_property_if_empty(this, dev_prop, "true", "StackFramesSumEnabled");
+	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "Timeout");
+	PropertyHelper::create_property_if_empty(this, dev_prop, "U2C", "UfxcModel");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedThresholdLow");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedThresholdHigh");
 	PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedTriggerAcquisitionFrequency");
-
+	PropertyHelper::create_property_if_empty(this, dev_prop, "False", "MemorizedGeometricalCorrection");
+	PropertyHelper::create_property_if_empty(this, dev_prop, "STANDARD", "MemorizedCountingMode");
 }
 //+----------------------------------------------------------------------------
 //
@@ -586,6 +627,299 @@ void Ufxc::read_attr_hardware(vector<long> &attr_list)
 	DEBUG_STREAM << "Ufxc::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	//	Add your own code here
 }
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Ufxc::read_geometricalCorrection
+// 
+// description : 	Extract real attribute values for geometricalCorrection acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Ufxc::read_geometricalCorrection(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Ufxc::read_geometricalCorrection(Tango::Attribute &attr) entering... "<< endl;
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        bool enabled;
+        m_camera->getGeometricalCorrection(enabled);
+		*attr_geometricalCorrection_read = enabled;
+		attr.set_value(attr_geometricalCorrection_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "Ufxc::read_geometricalCorrection");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "Ufxc::read_geometricalCorrection");
+    }	
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Ufxc::write_geometricalCorrection
+// 
+// description : 	Write geometricalCorrection attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Ufxc::write_geometricalCorrection(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Ufxc::write_geometricalCorrection(Tango::WAttribute &attr) entering... "<< endl;
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+		attr.get_write_value(attr_geometricalCorrection_write);
+		m_camera->setGeometricalCorrection(attr_geometricalCorrection_write);
+		PropertyHelper::set_property(this, "MemorizedGeometricalCorrection", attr_geometricalCorrection_write);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "Ufxc::write_geometricalCorrection");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "Ufxc::write_geometricalCorrection");
+    }	
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Ufxc::read_countingMode
+// 
+// description : 	Extract real attribute values for countingMode acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Ufxc::read_countingMode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Ufxc::read_countingMode(Tango::Attribute &attr) entering... "<< endl;
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        enum lima::Ufxc::Camera::CountingModes counting_mode;
+        std::string acq_mode_label;
+        std::string error_message;
+
+        m_camera->getCountingMode(counting_mode);
+
+        if(m_camera->convertCountingModeEnum(counting_mode, acq_mode_label, error_message))
+        {
+            //Set the attribute value
+            strcpy(*attr_countingMode_read, acq_mode_label.c_str());
+            attr.set_value(attr_countingMode_read);
+        }
+        else
+        {
+            Tango::Except::throw_exception("LOGIC_ERROR",
+                                           error_message.c_str(),
+                                           "Ufxc::read_countingMode");
+        }
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "Ufxc::read_countingMode");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "Ufxc::read_countingMode");
+    }	
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Ufxc::write_countingMode
+// 
+// description : 	Write countingMode attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Ufxc::write_countingMode(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Ufxc::write_countingMode(Tango::WAttribute &attr) entering... "<< endl;
+    
+    bool counting_mode_was_changed = false;
+    enum lima::Ufxc::Camera::CountingModes counting_mode;
+
+    {
+	    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+
+        if(m_is_CountingMode_init)
+            return;
+
+        try
+        {
+	        attr.get_write_value(attr_countingMode_write);
+
+            // we need to convert the acquisition mode string to the enum acquisition mode
+            std::string error_message;
+            std::string mode_label = std::string(attr_countingMode_write);
+
+            if(!m_camera->convertCountingModeLabel(mode_label, counting_mode, error_message))
+            {
+                Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                               error_message.c_str(), 
+                                               "Controller::write_countingMode()");
+            }
+
+            enum lima::Ufxc::Camera::CountingModes old_counting_mode;
+            m_camera->getCountingMode(old_counting_mode);
+
+            if(counting_mode != old_counting_mode)
+            {
+                std::string   old_mode_label;
+                unsigned long old_pixel_depth;
+                unsigned long new_pixel_depth = m_camera->getCountingModePixelDepth(counting_mode);
+                std::ostringstream MsgInfo;
+
+                m_camera->convertCountingModeEnum(old_counting_mode, old_mode_label, error_message);
+
+                // update the memorized value to prepare the init command
+                PropertyHelper::set_property(this, "MemorizedCountingMode", mode_label.c_str());
+                MsgInfo << "Counting Mode changed from " << old_mode_label << " to " << mode_label << "." << std::endl;
+
+                // get the generic device name
+                std::string    device_name ;
+                std::string    class_name  = "LimaDetector";
+                std::string    server_name = Tango::Util::instance()->get_ds_name();
+                Tango::DbDatum db_datum = (Tango::Util::instance()->get_database())->get_device_name(server_name, class_name);
+                db_datum >> device_name;
+
+                // trigger change ?
+                TrigMode old_trigger_mode;
+                TrigMode new_trigger_mode;
+
+			    m_ct->acquisition()->getTriggerMode(old_trigger_mode);
+
+                // the trigger mode change will change the counting mode in the detector
+                if(!m_camera->checkTrigModeOfCountingMode(old_trigger_mode, counting_mode))
+                {
+                    // we are using the default trigger mode to set the counting mode
+                    new_trigger_mode = m_camera->getDefaultTrigModeOfCountingMode(counting_mode);
+                    
+                    std::string old_trigger_label = m_camera->getTrigLabel(old_trigger_mode);
+                    std::string new_trigger_label = m_camera->getTrigLabel(new_trigger_mode);
+
+                    Tango::DbData db_data;
+                    db_data.push_back(Tango::DbDatum("MemorizedTriggerMode"));
+                    (Tango::Util::instance()->get_database())->get_device_property(device_name, db_data);
+
+                    db_data[0] << new_trigger_label.c_str();
+
+                    // forcing the saving of new trigger in tango database
+                    (Tango::Util::instance()->get_database())->put_device_property(device_name, db_data);
+
+                    MsgInfo << "Trigger changed from " << old_trigger_label << " to " << new_trigger_label << std::endl;
+                }
+                else
+                {
+                    new_trigger_mode = old_trigger_mode;
+                    MsgInfo << "Trigger stays to " << new_trigger_mode << std::endl;
+                }
+
+                // for the dynamic change of size or/and pixel depth
+            #ifdef UFXCCAMERA_USE_DYNAMIC_COUNTING_MODE_CHANGE
+                m_camera->setImageType   (m_camera->getImageTypeOfCountingMode(counting_mode));
+                m_camera->setCountingMode(counting_mode);
+
+                // the trigger mode change will change the counting mode in the detector
+                m_camera->setTrigMode(new_trigger_mode);
+                m_ct->acquisition()->setTriggerMode(new_trigger_mode);
+                m_camera->updateImageFormat();
+
+                // update the valid ranges for exposure and latency times
+                m_hw->getSyncCtrl().updateValidRanges();
+
+                // update the exposure and latency times
+                double acq_time;
+                m_ct->acquisition()->getAcqExpoTime(acq_time);
+                m_camera->getCorrectExposureTime   (acq_time);
+                m_ct->acquisition()->setAcqExpoTime(acq_time);
+
+                double lat_time;
+                m_ct->acquisition()->getLatencyTime(lat_time);
+                m_camera->getCorrectLatTime        (lat_time);
+                m_ct->acquisition()->setLatencyTime(lat_time);
+
+                // manage the exposure time property value change
+                {
+                    Tango::DbData db_data           ;
+                    db_data.push_back(Tango::DbDatum("MemorizedExposureTime"));
+
+                    (Tango::Util::instance()->get_database())->get_device_property(device_name, db_data);
+
+                    std::stringstream temp_stream;
+                    temp_stream << (acq_time * 1000.0);
+                    db_data[0] << temp_stream.str().c_str();
+
+                    (Tango::Util::instance()->get_database())->put_device_property(device_name, db_data);
+
+                    MsgInfo << "Exposure time changed to " << temp_stream.str() << std::endl;
+                }
+
+                // manage the latency time property value change
+                {
+                    Tango::DbData db_data           ;
+                    db_data.push_back(Tango::DbDatum("MemorizedLatencyTime"));
+
+                    (Tango::Util::instance()->get_database())->get_device_property(device_name, db_data);
+
+                    std::stringstream temp_stream;
+                    temp_stream << (lat_time * 1000.0);
+                    db_data[0] << temp_stream.str().c_str();
+
+                    (Tango::Util::instance()->get_database())->put_device_property(device_name, db_data);
+
+                    MsgInfo << "Latency time changed to " << temp_stream.str() << std::endl;
+                }
+
+                INFO_STREAM << MsgInfo.str() << endl;
+
+                counting_mode_was_changed = true;
+
+                // call the init interface command of LimaDetector to re-create the image and baseimage attributes
+                Tango::DeviceProxy * device_proxy = new Tango::DeviceProxy(device_name);
+
+                if(device_proxy != NULL)
+                {
+				    // Ping the device
+				    device_proxy->ping();
+
+                    INFO_STREAM << "calling the InitInterface method of LimaDetector..." << endl; 
+
+                    Tango::DeviceData dout; 
+                    dout = device_proxy->command_inout("InitInterface");
+                    delete device_proxy;
+                }
+            #else
+                MsgInfo << "The initialization of the device is necessary." << std::endl;
+                MsgInfo << "Please use the init command of your generic device to apply the changes." << std::endl;
+
+                INFO_STREAM << "MsgInfo.str()" << endl;
+
+                Tango::Except::throw_exception("CONFIGURATION_CHANGE", MsgInfo.str().c_str(), "SimulatorCCD::write_fillType", Tango::WARN);
+            #endif
+            }
+        }
+        catch(Tango::DevFailed& df)
+        {
+            manage_devfailed_exception(df, "Ufxc::write_countingMode");
+        }
+        catch(Exception& e)
+        {
+            manage_lima_exception(e, "Ufxc::write_countingMode");
+        }	
+    }
+
+    // not recursive lock problem
+    if(counting_mode_was_changed)
+    {
+        //available only in mode pump & probe (i.e Trigger Ext Multi and Bpp2)
+        if(counting_mode == lima::Ufxc::Camera::CountingModes::PumpProbeProbe_32)
+        {
+            update_triggerAcquisitionFrequency();
+        }
+    }
+}
+
 //+----------------------------------------------------------------------------
 //
 // method : 		Ufxc::read_triggerAcquisitionFrequency
@@ -627,25 +961,24 @@ void Ufxc::write_triggerAcquisitionFrequency(Tango::WAttribute &attr)
 	try
 	{
 		attr.get_write_value(attr_triggerAcquisitionFrequency_write);
-		ImageType image_type;
-		m_camera->getImageType(image_type);
-		DEBUG_STREAM << "image_type = " << image_type << endl;
 
-		TrigMode trig_mode;
-		m_ct->acquisition()->getTriggerMode(trig_mode);
-		DEBUG_STREAM << "trig_mode = " << trig_mode << endl;
+        lima::Ufxc::Camera::CountingModes acq_mode;
+		m_camera->getCountingMode(acq_mode);
 
 		//available only in mode pump & probe (i.e Trigger Ext Multi and Bpp2)
-		if(trig_mode == ExtTrigMult && (image_type==Bpp2 ||image_type==Bpp32))
+		if(acq_mode == lima::Ufxc::Camera::CountingModes::PumpProbeProbe_32)
 		{
-			double exposure;
-			m_ct->acquisition()->getAcqExpoTime(exposure);
-			int nb_frames_pump_probe = static_cast<int> (round(exposure * attr_triggerAcquisitionFrequency_write / 2)*2);
-			INFO_STREAM << "nb_frames_pump_probe = " << nb_frames_pump_probe << endl;
 			m_camera->set_pump_probe_trigger_acquisition_frequency(attr_triggerAcquisitionFrequency_write);
-			m_camera->set_pump_probe_nb_frames(nb_frames_pump_probe);
-			m_ct->acquisition()->setAcqNbFrames(stackFramesSumEnabled?1:nb_frames_pump_probe);
+
+            double exposure;
+	        m_ct->acquisition()->getAcqExpoTime(exposure);
+            m_camera->computePumpProbeNbFrames(exposure);
+
+			m_ct->acquisition()->setAcqNbFrames(1);
 			PropertyHelper::set_property(this, "MemorizedTriggerAcquisitionFrequency", attr_triggerAcquisitionFrequency_write);
+
+            // update the valid ranges for exposure and latency times
+            m_hw->getSyncCtrl().updateValidRanges();
 		}
 		else
 		{
@@ -673,6 +1006,19 @@ void Ufxc::write_triggerAcquisitionFrequency(Tango::WAttribute &attr)
 						string(df.errors[0].desc).c_str(),
 						"Ufxc::write_triggerAcquisitionFrequency");
 	}
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Ufxc::update_triggerAcquisitionFrequency
+// 
+//-----------------------------------------------------------------------------
+void Ufxc::update_triggerAcquisitionFrequency()
+{
+    Tango::WAttribute &triggerAcquisitionFrequency = dev_attr->get_w_attr_by_name("triggerAcquisitionFrequency");
+    *attr_triggerAcquisitionFrequency_read = attr_triggerAcquisitionFrequency_write = memorizedTriggerAcquisitionFrequency;
+    triggerAcquisitionFrequency.set_write_value(*attr_triggerAcquisitionFrequency_read);
+    write_triggerAcquisitionFrequency(triggerAcquisitionFrequency);
 }
 
 //+----------------------------------------------------------------------------
@@ -1219,6 +1565,40 @@ void Ufxc::load_config_file(Tango::DevString argin)
 	}
 }
 
+//+------------------------------------------------------------------
+/**
+ *	method:	Ufxc::manage_devfailed_exception
+ *
+ *	description: method which manages DevFailed exceptions
+ */
+//+------------------------------------------------------------------
+void Ufxc::manage_devfailed_exception(Tango::DevFailed & in_exception, const std::string & in_caller_method_name)
+{
+    ERROR_STREAM << in_exception << endl;
+	
+    // rethrow exception
+    Tango::Except::re_throw_exception(in_exception,
+                                      "TANGO_DEVICE_ERROR",
+                                      string(in_exception.errors[0].desc).c_str(),
+                                      in_caller_method_name.c_str());
+}
+
+//+------------------------------------------------------------------
+/**
+ *	method:	Ufxc::manage_lima_exception
+ *
+ *	description: method which manages lima exceptions
+ */
+//+------------------------------------------------------------------
+void Ufxc::manage_lima_exception(lima::Exception & in_exception, const std::string & in_caller_method_name)
+{
+    ERROR_STREAM << in_exception.getErrMsg() << endl;
+
+    // throw exception
+    Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                   in_exception.getErrMsg().c_str(),
+                                   in_caller_method_name.c_str());
+}
 
 
 }	//	namespace

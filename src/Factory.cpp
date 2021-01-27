@@ -835,54 +835,89 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 #ifdef UFXC_ENABLED
         if (detector_type == "Ufxc")
         {
+            std::string   ufxc_model        = "U2C";
+            unsigned long pixel_depth       = 14;
+            std::string   config_ip_address = "127.0.0.1";
+            unsigned long config_port       = 0;
+            std::string   SFP1_ip_address   = "127.0.0.1";
+            unsigned long SFP1_port         = 0;
+            std::string   SFP2_ip_address   = "127.0.0.1";
+            unsigned long SFP2_port         = 0;
+            std::string   SFP3_ip_address   = "127.0.0.1";
+            unsigned long SFP3_port         = 0;
+            unsigned long timeout           = 0;
+            unsigned long SFP_MTU           = 1500;
+            std::string   counting_mode     = "DEFAULT";
+
             if (!ControlFactory::m_is_created)
             {
-                Tango::DbData db_data;
-                db_data.push_back(Tango::DbDatum("ConfigIpAddress"));
-				db_data.push_back(Tango::DbDatum("ConfigPort"));
-				db_data.push_back(Tango::DbDatum("SFP1IpAddress"));
-				db_data.push_back(Tango::DbDatum("SFP1Port"));
-				db_data.push_back(Tango::DbDatum("SFP2IpAddress"));
-				db_data.push_back(Tango::DbDatum("SFP2Port"));
-				db_data.push_back(Tango::DbDatum("SFP3IpAddress"));
-				db_data.push_back(Tango::DbDatum("SFP3Port"));
-				db_data.push_back(Tango::DbDatum("Timeout"));
-				db_data.push_back(Tango::DbDatum("GeometricalCorrectionEnabled"));
-				db_data.push_back(Tango::DbDatum("StackFramesSumEnabled"));
-				
-                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
-                std::string config_ip_address = "127.0.0.1";
-				unsigned long config_port = 0;
-				std::string SFP1_ip_address = "127.0.0.1";
-				unsigned long SFP1_port = 0;				
-				std::string SFP2_ip_address = "127.0.0.1";
-				unsigned long SFP2_port = 0;	
-				std::string SFP3_ip_address = "127.0.0.1";
-				unsigned long SFP3_port = 0;	
-				unsigned long timeout = 0;
-				bool geometrical_correction_enabled = true ;
-				bool stack_frames_sum_enabled = true ;
-				
-                db_data[0] >> config_ip_address;
-				db_data[1] >> config_port;
-                db_data[2] >> SFP1_ip_address;
-				db_data[3] >> SFP1_port;
-                db_data[4] >> SFP2_ip_address;
-				db_data[5] >> SFP2_port;
-                db_data[6] >> SFP3_ip_address;
-				db_data[7] >> SFP3_port;
-				db_data[8] >> timeout;
-				db_data[9] >> geometrical_correction_enabled;
-				db_data[10]>> stack_frames_sum_enabled;
-				
-                m_camera = static_cast<void*> (new Ufxc::Camera(config_ip_address, config_port,
-																SFP1_ip_address, SFP1_port,
-																SFP2_ip_address, SFP2_port,
-																SFP3_ip_address, SFP3_port,
-																timeout,
-																geometrical_correction_enabled,
-																stack_frames_sum_enabled
-																));
+                // generic device properties
+                {
+                    // get the generic device name
+                    Tango::DbDatum db_datum    ;
+                    std::string    device_name ;
+                    std::string    class_name  = "LimaDetector";
+                    std::string    server_name = Tango::Util::instance()->get_ds_name();
+
+                    db_datum = (Tango::Util::instance()->get_database())->get_device_name(server_name, class_name);
+                    db_datum >> device_name;
+
+                    // get the detector pixel depth property value in string
+                    Tango::DbData db_data           ;
+                    std::string   pixel_depth_string;
+
+                    db_data.push_back(Tango::DbDatum("DetectorPixelDepth"));
+                    (Tango::Util::instance()->get_database())->get_device_property(device_name, db_data);
+                    db_data[0] >> pixel_depth_string;
+
+                    // convert the string value to an integer value and manage conversion errors
+                    std::istringstream iss(pixel_depth_string);
+                    iss >> pixel_depth;
+                }
+
+                // specific device properties
+                {
+                    Tango::DbData db_data;
+                    db_data.push_back(Tango::DbDatum("ConfigIpAddress"));
+                    db_data.push_back(Tango::DbDatum("ConfigPort"));
+                    db_data.push_back(Tango::DbDatum("SFP1IpAddress"));
+                    db_data.push_back(Tango::DbDatum("SFP1Port"));
+                    db_data.push_back(Tango::DbDatum("SFP2IpAddress"));
+                    db_data.push_back(Tango::DbDatum("SFP2Port"));
+                    db_data.push_back(Tango::DbDatum("SFP3IpAddress"));
+                    db_data.push_back(Tango::DbDatum("SFP3Port"));
+                    db_data.push_back(Tango::DbDatum("Timeout"));
+                    db_data.push_back(Tango::DbDatum("SFPMTU"));
+                    db_data.push_back(Tango::DbDatum("MemorizedCountingMode"));
+                    db_data.push_back(Tango::DbDatum("UfxcModel"));
+                    
+                    (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                    
+                    int prop_index = 0;
+                    
+                    db_data[prop_index++] >> config_ip_address;
+                    db_data[prop_index++] >> config_port;
+                    db_data[prop_index++] >> SFP1_ip_address;
+                    db_data[prop_index++] >> SFP1_port;
+                    db_data[prop_index++] >> SFP2_ip_address;
+                    db_data[prop_index++] >> SFP2_port;
+                    db_data[prop_index++] >> SFP3_ip_address;
+                    db_data[prop_index++] >> SFP3_port;
+                    db_data[prop_index++] >> timeout;
+                    db_data[prop_index++] >> SFP_MTU;
+                    db_data[prop_index++] >> counting_mode;
+                    db_data[prop_index++] >> ufxc_model;
+                }
+
+                m_camera = static_cast<void*> (new Ufxc::Camera(ufxc_model,
+                                                                config_ip_address, config_port,
+                                                                SFP1_ip_address, SFP1_port,
+                                                                SFP2_ip_address, SFP2_port,
+                                                                SFP3_ip_address, SFP3_port,
+                                                                SFP_MTU,
+                                                                timeout,
+                                                                pixel_depth,
+                                                                counting_mode));
                 m_interface = static_cast<void*> (new Ufxc::Interface(*(static_cast<Ufxc::Camera*> (m_camera))));
                 m_control = new CtControl(static_cast<Ufxc::Interface*> (m_interface));
 
@@ -906,7 +941,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 long          max_frames = 16384;
                 long          nb_cards = 2;
                 long          nb_chans = 4;
-		bool          no_udp = false;
+		        bool          no_udp = false;
                 
                 // configuration complete path
                 db_data.push_back(Tango::DbDatum("BaseIPAdress"));
@@ -917,7 +952,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data.push_back(Tango::DbDatum("MaxFrames"));				
                 db_data.push_back(Tango::DbDatum("NbCards"));				
                 db_data.push_back(Tango::DbDatum("NbChans"));				
-		db_data.push_back(Tango::DbDatum("NoUDP"));
+                db_data.push_back(Tango::DbDatum("NoUDP"));
 
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
 
@@ -929,7 +964,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data[5] >> max_frames;
                 db_data[6] >> nb_cards;
                 db_data[7] >> nb_chans;
-		db_data[8] >> no_udp;
+                db_data[8] >> no_udp;
 				
 				std::cout<<"- base_ip_adress = "<<base_ip_adress<<std::endl;
 				std::cout<<"- base_mac_address = "<<base_mac_address<<std::endl;

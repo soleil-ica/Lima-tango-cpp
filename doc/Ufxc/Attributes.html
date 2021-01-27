@@ -43,12 +43,12 @@
 <Br>
 <center>
 <h1>
-Lima Device specific for Ufxc detector		<Br>
+Device specific for Ufxc detector		<Br>
 Device Attributes Description 		<Br> <Br>
 Ufxc Class	<Br>
 </h1>
 <b>
-Revision:  - Author: 
+Revision:  - Author: arafat.noureddine
 </b>
 </center>
 
@@ -72,7 +72,7 @@ Revision:  - Author:
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 <Tr><Td><b>currentConfigFile</b>: <Font Size=-1>Display the path+name of current configuration file.</Font></Td>
-<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
 <Tr><Td><b>detectorTemperature</b>: <Font Size=-1>Display the detector temperature in degree Celsius </Font></Td>
 <Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
@@ -84,16 +84,25 @@ Revision:  - Author:
 <Td><Center><Font Size=-1>DEV_FLOAT</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 <Tr><Td><b>thresholdLow1</b>: <Font Size=-1>Get threshold Low  for the chip A</Font></Td>
-<Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+<Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
 <Tr><Td><b>thresholdHigh1</b>: <Font Size=-1>Get threshold High for the chip A</Font></Td>
-<Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+<Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
 <Tr><Td><b>thresholdLow2</b>: <Font Size=-1>Get threshold Low for the chip B</Font></Td>
-<Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+<Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
 <Tr><Td><b>thresholdHigh2</b>: <Font Size=-1>Get threshold High for the chip B</Font></Td>
-<Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+<Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>triggerAcquisitionFrequency</b>: <Font Size=-1>Define the trigger acquisition frequency in the pump & probe mode. <BR> pump_probe_nb_frames = (round(exposureTime*triggerAcquisitionFrequency/2))*2 <br> </Font></Td>
+<Td><Center><Font Size=-1>DEV_FLOAT</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>geometricalCorrection</b>: <Font Size=-1>Define if the enable or disable state of geometrical correction.<br> Acquired images will always have the same size but if the correction is enabled<br> the gaps between the chips will be filled with interpolated data,<br> computed from adjacent pixels<br></Font></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>countingMode</b>: <Font Size=-1>Define the acquisition mode which can be:<br> - CONTINUOUS_2<br> - CONTINUOUS_4<br> - CONTINUOUS_8<br> - CONTINUOUS_14<br> - STANDARD_14<br> - LONG_COUNTER_28<br> - PUMP_PROBE_PROBE_32<br></Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 </Table>
 </Center>

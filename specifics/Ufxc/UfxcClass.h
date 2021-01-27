@@ -50,6 +50,34 @@ namespace Ufxc_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class countingModeAttrib: public Tango::Attr
+{
+public:
+	countingModeAttrib():Attr("countingMode", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~countingModeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Ufxc *>(dev))->read_countingMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Ufxc *>(dev))->write_countingMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Ufxc *>(dev))->is_countingMode_allowed(ty);}
+};
+
+class geometricalCorrectionAttrib: public Tango::Attr
+{
+public:
+	geometricalCorrectionAttrib():Attr("geometricalCorrection", Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~geometricalCorrectionAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Ufxc *>(dev))->read_geometricalCorrection(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Ufxc *>(dev))->write_geometricalCorrection(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Ufxc *>(dev))->is_geometricalCorrection_allowed(ty);}
+};
+
 class triggerAcquisitionFrequencyAttrib: public Tango::Attr
 {
 public:
@@ -232,7 +260,7 @@ public:
 //
 
 class
-#ifdef WIN32
+#ifdef _TG_WINDOWS_
 	__declspec(dllexport)
 #endif
 	UfxcClass : public Tango::DeviceClass

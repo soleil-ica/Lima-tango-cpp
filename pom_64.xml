@@ -18,6 +18,7 @@
     <properties>
         <!-- path to the 64 bits libs -->
         <libs-64bits>/home/informatique/ica/ica/LIB_EL6_64</libs-64bits>
+        <!--<libs-64bits>/media/sf_Partage/DeviceSources-ufxc-github/LIB_EL6_64</libs-64bits>-->
         <libs-lambda>../../../camera/lambda/sdk/bin</libs-lambda>
         <libs-xspress3>../../../camera/xspress3/sdk</libs-xspress3>
 
@@ -37,7 +38,10 @@
         <LAMBDA.name>Lambda</LAMBDA.name>
         <LAMBDA.version>1.0.3</LAMBDA.version>    
         <XSPRESS3.name>Xspress3</XSPRESS3.name>
-        <XSPRESS3.version>1.0.2</XSPRESS3.version>   
+        <XSPRESS3.version>1.0.2</XSPRESS3.version>  
+        <UFCX.name>Ufcx</UFCX.name>
+        <UFCX.version>1.2.0</UFCX.version>    
+ 
         <SPECTRAL.name>Spectral</XSPRESS3.name>
         <SPECTRAL.version>0.0.1</XSPRESS3.version>   
 
@@ -88,6 +92,10 @@
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaXspress3-amd64-Linux-gcc-shared-${mode}</artifactId>
             <version>${XSPRESS3.version}</version>
+       <dependency>
+            <groupId>fr.soleil.lib.Lima.Camera</groupId>
+            <artifactId>LimaUfxc-amd64-Linux-gcc-shared-${mode}</artifactId>
+            <version>${UFCX.version}</version>
        </dependency>
        <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
@@ -114,7 +122,7 @@
                             <include>specifics/Lambda/*.cpp</include>
                             <include>specifics/Xspress3/*.cpp</include>
                             <include>specifics/Spectral/*.cpp</include>
-                            
+                            <include>specifics/Ufxc/*.cpp</include>                            
                             <include>specifics/Layout/*.cpp</include>     			
                             <include>specifics/Mask/*.cpp</include>                            
                             <include>specifics/RoiCounters/*.cpp</include>
@@ -169,9 +177,10 @@
                             <define>LAMBDA_VERSION_DEVICE=${LAMBDA.version}</define> <!-- name conflict with lambda sdk --> 
                             <define>XSPRESS3_NAME=${XSPRESS3.name}</define>
                             <define>XSPRESS3_VERSION=${XSPRESS3.version}</define>
+                            <define>UFXC_NAME=${UFXC.name}</define>
+                            <define>UFXC_VERSION=${UFXC.version}</define>
                             <define>SPECTRAL_NAME=${SPECTRAL.name}</define>
                             <define>SPECTRAL_VERSION=${SPECTRAL.version}</define>
-                            
                             <!-- define which detector you need to ENABLE -->      
                             <define>SIMULATOR_ENABLED</define>                       
                             <define>EIGER_ENABLED</define>     
@@ -179,6 +188,7 @@
                             <define>SLSEIGER_ENABLED</define>
                             <define>LAMBDA_ENABLED</define>
                             <define>XSPRESS3_ENABLED</define>
+                            <define>UFXC_ENABLED</define>
                             <define>SPECTRAL_ENABLED</define>
                             <define>LAYOUT_ENABLED</define>    
                             <define>MASK_ENABLED</define>

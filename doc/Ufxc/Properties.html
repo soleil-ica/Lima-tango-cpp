@@ -43,12 +43,12 @@
 <Br>
 <center>
 <h1>
-Lima Device specific for Ufxc detector		<Br>
+Device specific for Ufxc detector		<Br>
 Properties Description 		<Br> <Br>
 Ufxc Class	<Br>
 </h1>
 <b>
-Revision:  - Author: 
+Revision:  - Author: arafat.noureddine
 </b>
 </center>
 
@@ -66,8 +66,12 @@ Revision:  - Author:
 <Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
 <Td><Font Size=-1>Allow to Reload the last used Detector Configuration file at each init of the device.</Font></Td></Tr>
 
+<Tr><Td><b><a href=#Dev_DefaultValues>DetectorConfigFiles </a></b></Td>
+<Td><Font Size=-1>Array of string</Font></Td>
+<Td><Font Size=-1>Define the list of Detector Configuration files and their associated alias.</Font></Td></Tr>
+
 <Tr><Td><b><a href=#Dev_DefaultValues>ConfigIpAddress </a></b></Td>
-<Td><Font Size=-1>string</Font></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
 <Td><Font Size=-1>Config Ip Address</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>ConfigPort </a></b></Td>
@@ -75,7 +79,7 @@ Revision:  - Author:
 <Td><Font Size=-1>Config Port</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>SFP1IpAddress </a></b></Td>
-<Td><Font Size=-1>string</Font></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
 <Td><Font Size=-1>SFP1 Ip Address</Font></Td></Tr>
 
 <Tr><Td><b><a href=#Dev_DefaultValues>SFP1Port </a></b></Td>
@@ -102,10 +106,6 @@ Revision:  - Author:
 <Td><Font Size=-1>Tango::DEV_ULONG</Font></Td>
 <Td><Font Size=-1>Timeout in ms</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>DetectorConfigFiles </a></b></Td>
-<Td><Font Size=-1>Array of string</Font></Td>
-<Td><Font Size=-1>Define the list of Detector Configuration files files and their associated alias.</Font></Td></Tr>
-
 <Tr><Td><b><a href=#Dev_DefaultValues>MemorizedThresholdLow </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_FLOAT</Font></Td>
 <Td><Font Size=-1>Only the device could modify this property <br>
@@ -120,6 +120,29 @@ The User should never change this property<br></Font></Td></Tr>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
 <Td><Font Size=-1>Only the device could modify this property <br>
 The User should never change this property<br></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedTriggerAcquisitionFrequency </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_FLOAT</Font></Td>
+<Td><Font Size=-1>Only the device could modify this property <br>
+The User should never change this property<br></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedGeometricalCorrection </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Only the device could modify this property <br>
+The User should never change this property<br></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedCountingMode </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>Only the device could modify this property <br>
+The User should never change this property<br></Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>SFPMTU </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_ULONG</Font></Td>
+<Td><Font Size=-1>MTU value of the SFP ports.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>UfxcModel </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>Allows to specify the UFXC model.</Font></Td></Tr>
 
 </Table>
 
@@ -137,6 +160,10 @@ The User should never change this property<br></Font></Td></Tr>
     <Tr>
         <Td>AutoLoad</Td>
         <td>False</td>
+    </Tr>
+    <Tr>
+        <Td>DetectorConfigFiles</Td>
+        <td>	ALIAS;PATH_AND_FILE_NAME</td>
     </Tr>
     <Tr>
         <Td>ConfigIpAddress</Td>
@@ -175,10 +202,6 @@ The User should never change this property<br></Font></Td></Tr>
         <td>0</td>
     </Tr>
     <Tr>
-        <Td>DetectorConfigFiles</Td>
-        <td>	ALIAS;PATH_AND_FILE_NAME</td>
-    </Tr>
-    <Tr>
         <Td>MemorizedThresholdLow</Td>
         <td>0</td>
     </Tr>
@@ -189,6 +212,26 @@ The User should never change this property<br></Font></Td></Tr>
     <Tr>
         <Td>MemorizedConfigAlias</Td>
         <td>ALIAS</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedTriggerAcquisitionFrequency</Td>
+        <td>1</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedGeometricalCorrection</Td>
+        <td>False</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedCountingMode</Td>
+        <td>DEFAULT</td>
+    </Tr>
+    <Tr>
+        <Td>SFPMTU</Td>
+        <td>1500</td>
+    </Tr>
+    <Tr>
+        <Td>UfxcModel</Td>
+        <td>U2C</td>
     </Tr>
 </Table>
 

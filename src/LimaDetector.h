@@ -4,7 +4,7 @@
 //
 // description : Include for the LimaDetector class.
 //
-// project :	Lima Devie Generic
+// project :	Lima Device Generic
 //
 // $Author:  $
 //
@@ -834,13 +834,13 @@ public:
  */
 	virtual bool is_fileNbFrames_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for operationsList attribute.
- */
-	virtual bool is_operationsList_allowed(Tango::AttReqType type);
-/**
  *	Read/Write allowed for fileExtension attribute.
  */
 	virtual bool is_fileExtension_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for operationsList attribute.
+ */
+	virtual bool is_operationsList_allowed(Tango::AttReqType type);
 /**
  *	Execution allowed for Prepare command.
  */
@@ -893,6 +893,10 @@ public:
  *	Execution allowed for GetDataStreams command.
  */
 	virtual bool is_GetDataStreams_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for InitInterface command.
+ */
+	virtual bool is_InitInterface_allowed(const CORBA::Any &any);
 /**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
@@ -979,6 +983,11 @@ public:
  *	@exception DevFailed
  */
 	Tango::DevVarStringArray	*get_data_streams();
+/**
+ * Re-inits the LimaDetector interface. Allows to recreate some dynamics attributes.
+ *	@exception DevFailed
+ */
+	void	init_interface();
 
 /**
  *	Read the device properties from database
@@ -1063,7 +1072,6 @@ public:
     {
         return m_is_device_initialized;
     };
-
 
 protected:
     //    Add your own data members here
