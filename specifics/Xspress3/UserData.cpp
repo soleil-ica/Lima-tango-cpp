@@ -15,7 +15,7 @@
 //=============================================================================
 
 #include "UserData.h"
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 
 namespace Xspress3_ns
 {
@@ -217,7 +217,7 @@ ChannelUserData::~ChannelUserData()
 //----------------------------------------------------------------------------------------------------------------------
 //	
 //----------------------------------------------------------------------------------------------------------------------
-const std::vector<unsigned int>& ChannelUserData::get_value()
+const std::vector<Tango::DevULong>& ChannelUserData::get_value()
 {
     yat::MutexLock scoped_lock(m_lock);
     return m_data;
@@ -226,7 +226,7 @@ const std::vector<unsigned int>& ChannelUserData::get_value()
 //----------------------------------------------------------------------------------------------------------------------
 //	
 //----------------------------------------------------------------------------------------------------------------------
-void ChannelUserData::set_value(std::vector<unsigned int> value)
+void ChannelUserData::set_value(std::vector<Tango::DevULong> value)
 {
     yat::MutexLock scoped_lock(m_lock);
     m_data = value;

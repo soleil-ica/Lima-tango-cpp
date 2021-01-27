@@ -64,7 +64,8 @@ namespace Pco_ns
 bool Pco::is_cameraModel_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
+		get_state() == Tango::FAULT ||
+        get_state() == Tango::DISABLE ||
 		get_state() == Tango::ON)
 	{
 		//	End of Generated Code
@@ -85,6 +86,7 @@ bool Pco::is_dllVersion_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
+        get_state() == Tango::DISABLE ||
 		get_state() == Tango::ON)
 	{
 		//	End of Generated Code
@@ -105,6 +107,7 @@ bool Pco::is_pixelRate_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
+        get_state() == Tango::DISABLE ||
 		get_state() == Tango::RUNNING)
 	{
 		//	End of Generated Code
@@ -129,6 +132,7 @@ bool Pco::is_doubleImage_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
+        get_state() == Tango::DISABLE ||
 		get_state() == Tango::RUNNING)
 	{
 		//	End of Generated Code
@@ -152,6 +156,7 @@ bool Pco::is_doubleImage_allowed(Tango::AttReqType type)
 bool Pco::is_sensorTemperature_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
+        get_state() == Tango::DISABLE ||
 		get_state() == Tango::FAULT)
 	{
 		//	End of Generated Code
@@ -171,6 +176,7 @@ bool Pco::is_sensorTemperature_allowed(Tango::AttReqType type)
 bool Pco::is_currentRecordedFrame_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
+        get_state() == Tango::DISABLE ||
 		get_state() == Tango::FAULT)
 	{
 		//	End of Generated Code
@@ -191,6 +197,7 @@ bool Pco::is_forcedFIFOMode_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
+        get_state() == Tango::DISABLE ||
 		get_state() == Tango::RUNNING)
 	{
 		//	End of Generated Code
@@ -216,6 +223,7 @@ bool Pco::is_Talk_allowed(const CORBA::Any &any)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
+        get_state() == Tango::DISABLE ||
 		get_state() == Tango::RUNNING)
 	{
 		//	End of Generated Code
@@ -236,6 +244,7 @@ bool Pco::is_GetCamInfo_allowed(const CORBA::Any &any)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
+        get_state() == Tango::DISABLE ||
 		get_state() == Tango::RUNNING)
 	{
 		//	End of Generated Code

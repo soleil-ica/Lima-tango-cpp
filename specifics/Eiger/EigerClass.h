@@ -45,6 +45,34 @@ namespace Eiger_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class nbFramesPerTriggerAttrib: public Tango::Attr
+{
+public:
+	nbFramesPerTriggerAttrib():Attr("nbFramesPerTrigger", Tango::DEV_LONG, Tango::READ_WRITE) {};
+	~nbFramesPerTriggerAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_nbFramesPerTrigger(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_nbFramesPerTrigger(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_nbFramesPerTrigger_allowed(ty);}
+};
+
+class nbTriggersAttrib: public Tango::Attr
+{
+public:
+	nbTriggersAttrib():Attr("nbTriggers", Tango::DEV_LONG, Tango::READ_WRITE) {};
+	~nbTriggersAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Eiger *>(dev))->read_nbTriggers(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Eiger *>(dev))->write_nbTriggers(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Eiger *>(dev))->is_nbTriggers_allowed(ty);}
+};
+
 class softwareVersionAttrib: public Tango::Attr
 {
 public:

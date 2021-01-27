@@ -54,7 +54,7 @@ static const char *RcsId = "$Id:  $";
 
 
 #include <tango.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 #include <iomanip>      
 #include <Xspress3.h>
 #include <Xspress3Class.h>
@@ -896,6 +896,11 @@ void Xspress3::read_channel_callback(yat4tango::DynamicAttributeReadCallbackData
 	}
 	DEBUG_STREAM << "Xspress3::read_channel_callback() - [END]" << endl;
 }
+
+
+
+
+
 
 
 

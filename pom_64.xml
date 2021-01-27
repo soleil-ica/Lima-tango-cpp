@@ -4,12 +4,12 @@
     <parent>
         <groupId>fr.soleil</groupId>
         <artifactId>super-pom-C-CPP-device</artifactId>
-        <version>RELEASE</version>
+        <version>20.2.0-64</version>
     </parent>
-	
+    
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.9.1</version>
+    <version>1.10.0</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -21,25 +21,33 @@
         <!--<libs-64bits>/media/sf_Partage/DeviceSources-ufxc-github/LIB_EL6_64</libs-64bits>-->
         <libs-lambda>../../../camera/lambda/sdk/bin</libs-lambda>
         <libs-xspress3>../../../camera/xspress3/sdk</libs-xspress3>
-        <!--<aol>amd64-Linux-gcc</aol> -->
+
         <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
         <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
         <CORE.name>Core</CORE.name>
         <CORE.version>1.7.9</CORE.version>
+      
         <EIGER.name>Eiger</EIGER.name>
-        <EIGER.version>2.2.2</EIGER.version>
+        <EIGER.version>2.3.0</EIGER.version>
         <SIMULATOR.name>Simulator</SIMULATOR.name>
         <SIMULATOR.version>1.4.0</SIMULATOR.version>
         <SLSJUNGFRAU.name>SlsJungfrau</SLSJUNGFRAU.name>
-        <SLSJUNGFRAU.version>1.0.0</SLSJUNGFRAU.version>
+        <SLSJUNGFRAU.version>1.2.0</SLSJUNGFRAU.version>
         <SLSEIGER.name>SlsEiger</SLSEIGER.name>
-        <SLSEIGER.version>1.0.0</SLSEIGER.version>
+        <SLSEIGER.version>1.0.1</SLSEIGER.version>
         <LAMBDA.name>Lambda</LAMBDA.name>
-        <LAMBDA.version>1.0.2</LAMBDA.version>    
+        <LAMBDA.version>1.0.3</LAMBDA.version>    
         <XSPRESS3.name>Xspress3</XSPRESS3.name>
-        <XSPRESS3.version>1.0.1</XSPRESS3.version>   
+        <XSPRESS3.version>1.0.2</XSPRESS3.version>  
         <UFCX.name>Ufcx</UFCX.name>
         <UFCX.version>1.2.0</UFCX.version>    
+ 
+        <SPECTRAL.name>Spectral</XSPRESS3.name>
+        <SPECTRAL.version>0.0.1</XSPRESS3.version>   
+
+        <YAT.version>1.17.5</YAT.version> 
+        <YAT4Tango.version>1.12.3</YAT4Tango.version> 
+        <NexusCPP.version>3.3.6</NexusCPP.version> 
     </properties>
 
     <scm>
@@ -89,6 +97,11 @@
             <artifactId>LimaUfxc-amd64-Linux-gcc-shared-${mode}</artifactId>
             <version>${UFCX.version}</version>
        </dependency>
+       <dependency>
+            <groupId>fr.soleil.lib.Lima.Camera</groupId>
+            <artifactId>LimaSpectral-amd64-Linux-gcc-shared-${mode}</artifactId>
+            <version>${SPECTRAL.version}</version>
+       </dependency>
     </dependencies>
         
     <build>
@@ -101,44 +114,48 @@
                     <cpp>
                         <sourceDirectory>${project.basedir}</sourceDirectory>                        
                         <includes>
-                            <include>*.cpp</include>
+                            <include>*.cpp</include>						
                             <include>specifics/SimulatorCCD/*.cpp</include>							
-                            <include>specifics/SimulatorCCD/*.cpp</include>							
-                            <include>specifics/Eiger/*.cpp</include>-->
-                            <include>specifics/SlsJungfrau/*.cpp</include>-->
+                            <include>specifics/Eiger/*.cpp</include>
+                            <include>specifics/SlsJungfrau/*.cpp</include>
                             <include>specifics/SlsEiger/*.cpp</include>
+                            <include>specifics/Lambda/*.cpp</include>
+                            <include>specifics/Xspress3/*.cpp</include>
+                            <include>specifics/Spectral/*.cpp</include>
+                            <include>specifics/Ufxc/*.cpp</include>                            
                             <include>specifics/Layout/*.cpp</include>     			
                             <include>specifics/Mask/*.cpp</include>                            
                             <include>specifics/RoiCounters/*.cpp</include>
-                            <include>specifics/Lambda/*.cpp</include>-->
-                            <include>specifics/Ufxc/*.cpp</include>
                         </includes>
 
                         <includePaths>                          
                             <includePath>src</includePath>                                   
-                            <includePath>specifics/SimulatorCCD</includePath> 		
+                            <includePath>specifics/SimulatorCCD</includePath>         
                             <includePath>specifics/Eiger</includePath> 
                             <includePath>specifics/SlsJungfrau</includePath>
                             <includePath>specifics/SlsEiger</includePath>
                             <includePath>specifics/Lambda</includePath>        
                             <includePath>specifics/Xspress3</includePath>     
+                            <includePath>specifics/Spectral</includePath>     
+
                             <includePath>specifics/Layout</includePath>         
                             <includePath>specifics/Mask</includePath>
                             <includePath>specifics/RoiCounters</includePath>
 
-                            <includePath>${libs-64bits}/my_breakpad/include</includePath> 		
+                            <includePath>${libs-64bits}/my_breakpad/include</includePath>         
                             <includePath>${libs-64bits}/gsl-1.11/include</includePath>       
                             <includePath>${libs-64bits}/lz4-r131/lib</includePath>       
-                            <includePath>${libs-64bits}/libtango8-devel-8.1.2-16.el6.maxlab.x86_64/usr/include</includePath>       
-                            <includePath>${libs-64bits}/liblog4tango5-devel-5.0.0-16.el6.maxlab.x86_64/usr/include</includePath>    
+                            <includePath>${libs-64bits}/libtango8-devel-8.1.2-16.el6.maxlab.x86_64/usr/include/tango</includePath> 
+                            <includePath>${libs-64bits}/libtango8-devel-8.1.2-16.el6.maxlab.x86_64/usr/include/</includePath>                             
+                            <includePath>${libs-64bits}/liblog4tango5-devel-5.0.0-16.el6.maxlab.x86_64/usr/include/tango</includePath>    
                             <includePath>${libs-64bits}/omniORB-devel-4.1.7-1.el6.x86_64/usr/include</includePath>  
                             <includePath>${libs-64bits}/zeromq-3.2.5/include</includePath>   
 
                             <includePath>${libs-64bits}/hdf5-1.8.16/include</includePath>
-                            <includePath>${libs-64bits}/yat-1.13.16/include</includePath>
-                            <includePath>${libs-64bits}/yat4tango-1.10.6/include</includePath>
-                            <includePath>${libs-64bits}/nexuscpp-3.2.2/include</includePath>                 
-							<includePath>${libs-xspress3}/include/</includePath>
+                            <includePath>${libs-64bits}/yat-${YAT.version}/include</includePath>
+                            <includePath>${libs-64bits}/yat4tango-${YAT4Tango.version}/include</includePath>
+                            <includePath>${libs-64bits}/nexuscpp-${NexusCPP.version}/include</includePath>                 
+							              <includePath>${libs-xspress3}/include/</includePath>
                         </includePaths>
                        
                         <defines>
@@ -162,26 +179,29 @@
                             <define>XSPRESS3_VERSION=${XSPRESS3.version}</define>
                             <define>UFXC_NAME=${UFXC.name}</define>
                             <define>UFXC_VERSION=${UFXC.version}</define>
-                            
+                            <define>SPECTRAL_NAME=${SPECTRAL.name}</define>
+                            <define>SPECTRAL_VERSION=${SPECTRAL.version}</define>
                             <!-- define which detector you need to ENABLE -->      
-                            <define>SIMULATOR_ENABLED</define> 						
-                            <define>EIGER_ENABLED</define> 	
+                            <define>SIMULATOR_ENABLED</define>                       
+                            <define>EIGER_ENABLED</define>     
                             <define>SLSJUNGFRAU_ENABLED</define> 
-							<define>SLSEIGER_ENABLED</define>
+                            <define>SLSEIGER_ENABLED</define>
                             <define>LAMBDA_ENABLED</define>
                             <define>XSPRESS3_ENABLED</define>
                             <define>UFXC_ENABLED</define>
-                            <define>LAYOUT_ENABLED</define>	
+                            <define>SPECTRAL_ENABLED</define>
+                            <define>LAYOUT_ENABLED</define>    
                             <define>MASK_ENABLED</define>
-                            <define>ROICOUNTERS_ENABLED</define>             
+                            <define>ROICOUNTERS_ENABLED</define>
+							
                             <define>SOLEIL_YAT_STREAM</define>
                             <define>UNIX_64_EL6</define>
                             <define>__LINUX__</define>
                             <define>linux</define>                            
                         </defines>                        
-			
+            
                     </cpp>        
-					
+                    
                     <linker>
                         <libs>
                             <lib>
@@ -283,24 +303,24 @@
                             </lib>
 
                             <lib>
-                                <!-- YAT (1.13.16) 64 -->
-                                <name>YAT-amd64-Linux-gcc-shared-release-1.13.16</name>
+                                <!-- YAT 64 -->
+                                <name>YAT-amd64-Linux-gcc-shared-release-${YAT.version}</name>
                                 <type>shared</type>
-                                <directory>${libs-64bits}/yat-1.13.16/lib</directory>
+                                <directory>${libs-64bits}/yat-${YAT.version}/lib</directory>
                             </lib>
 
                             <lib>
-                                <!-- YAT (1.10.4) 64 -->
-                                <name>YAT4Tango-amd64-Linux-gcc-shared-release-1.10.6</name>
+                                <!-- YAT4Tango 64 -->
+                                <name>YAT4Tango-amd64-Linux-gcc-shared-release-${YAT4Tango.version}</name>
                                 <type>shared</type>
-                                <directory>${libs-64bits}/yat4tango-1.10.6/lib</directory>
+                                <directory>${libs-64bits}/yat4tango-${YAT4Tango.version}/lib</directory>
                             </lib>      
 
                             <lib>
-                                <!-- NexusCPP (3.2.2) 64 -->
-                                <name>NexusCPP-amd64-Linux-gcc-shared-release-3.2.2</name>
+                                <!-- NexusCPP 64 -->
+                                <name>NexusCPP-amd64-Linux-gcc-shared-release-${NexusCPP.version}</name>
                                 <type>shared</type>
-                                <directory>${libs-64bits}/nexuscpp-3.2.2/lib</directory>
+                                <directory>${libs-64bits}/nexuscpp-${NexusCPP.version}/lib</directory>
                             </lib>   
                             
                             <lib>
@@ -317,30 +337,30 @@
                             </lib>
 
                             <lib>
- 				                <!-- liblambda -->
- 				                <name>lambda</name>
- 				                <type>shared</type>
- 				                <directory>${libs-lambda}/</directory>
- 			                </lib>
+                               <!-- liblambda -->
+                               <name>lambda</name>
+                               <type>shared</type>
+                               <directory>${libs-lambda}/</directory>
+                            </lib>
 
- 			                <lib>
- 				                <!-- libfsdetcore -->
- 				                <name>fsdetcore</name>
- 				                <type>shared</type>
- 				                <directory>${libs-lambda}/</directory>
- 			                </lib>
+                            <lib>
+                               <!-- libfsdetcore -->
+                               <name>fsdetcore</name>
+                               <type>shared</type>
+                               <directory>${libs-lambda}/</directory>
+                            </lib>
 
- 			                <lib>
- 				                <name>boost_thread</name>
- 				                <type>shared</type>
- 				                <directory>${libs-lambda}/</directory>
- 			                </lib>
+                            <lib>
+                               <name>boost_thread</name>
+                               <type>shared</type>
+                               <directory>${libs-lambda}/</directory>
+                            </lib>
 
- 			                <lib>
- 				                <name>boost_system</name>
- 				                <type>shared</type>
- 				                <directory>${libs-lambda}/</directory>
- 			                </lib>
+                            <lib>
+                               <name>boost_system</name>
+                               <type>shared</type>
+                               <directory>${libs-lambda}/</directory>
+                            </lib>
 
                             <lib>
                                 <name>xspress3</name>

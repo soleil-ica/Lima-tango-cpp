@@ -113,8 +113,12 @@ namespace Layout_ns
                     break;
                 case Data::UINT16: _compute<unsigned short>(aData, aNewData);
                     break;
+                case Data::INT16: _compute<short>(aData, aNewData);
+                    break;                    
                 case Data::UINT32: _compute<unsigned int>(aData, aNewData);
                     break;
+                case Data::INT32: _compute<int>(aData, aNewData);
+                    break;                    
             }
             return aNewData;
         }

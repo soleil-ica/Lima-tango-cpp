@@ -49,6 +49,7 @@
 #undef LOG_DEBUG
 
 //- YAT/YAT4TANGO
+#include <yat/CommonHeader.h>
 #include <yat/memory/SharedPtr.h>
 #include <yat4tango/PropertyHelper.h>
 #include <yat4tango/InnerAppender.h>

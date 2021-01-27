@@ -115,6 +115,44 @@
 			When the count rate correction is disabled, the value will be 0.<br> </td>
 	</tr>
 	<tr>
+		<td> <a href="AttrgapPixelsActivation.html"> gapPixelsActivation </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_BOOLEAN </td>
+		<td> OPERATOR </td>
+		<td> Set/get gap pixels management activation value.<br> </td>
+	</tr>
+	<tr>
+		<td> <a href="AttredgePixelsCorrection.html"> edgePixelsCorrection </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_DOUBLE </td>
+		<td> OPERATOR </td>
+		<td> Set/get the coefficient used for the correction of edge pixels values.<br><Br>
+			Indeed, the physical pixels at the border of the chips in the sensor are double in size.<br><Br>
+			The coefficient value will be close to 2.0 but must be tweaked by taking into account<br><Br>
+			the threshold energy.<br><Br>
+			This attribute is used when the gapPixelsActivation is enabled.<br> </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrcornerPixelsCorrection.html"> cornerPixelsCorrection </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_DOUBLE </td>
+		<td> OPERATOR </td>
+		<td> Set/get the coefficient used for the correction of corner pixels values.<br><Br>
+			Indeed, the physical pixels in the corner between chips are four-times the normal size.<br><Br>
+			The coefficient value will be close to 4.0 but must be tweaked by taking into account<br><Br>
+			the threshold energy.<br><Br>
+			This attribute is used when the gapPixelsActivation is enabled.<br> </td>
+	</tr>
+	<tr>
 		<td> <a href="AttrconfigFileName.html"> configFileName </a> </td>
 		<td> false </td>
 		<td> false </td>
@@ -303,6 +341,16 @@
 		<td> Tango::DEV_LONG </td>
 		<td> EXPERT </td>
 		<td> Get temperature of hardware element (right front end board fpga) for second module in millidegree Celsius.<br> </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrgapPixelsActivation.html"> gapPixelsActivation </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_BOOLEAN </td>
+		<td> OPERATOR </td>
+		<td> Set/get gap pixels management activation value.<br> </td>
 	</tr>
 </table>
 <br><br>

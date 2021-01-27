@@ -64,6 +64,9 @@ thresholdEnergy               R/W        Long    Set/Get threshold energy for mo
 countRateCorrectionActivation R/W        Boolean Set/Get count rate correction activation value.
 countRateCorrection           R          Long    Get count rate correction in ns.
                                                     When the count rate correction is disabled, the value will be 0.
+gapPixelsActivation           R/W        Boolean Set/Get gap pixels management activation value.
+edgePixelsCorrection          R/W        Double  Set/Get correction value for edge pixels (double in size).
+cornerPixelsCorrection        R/W        Double  Set/Get correction value for corner pixels (four-times the normal size).
 configFileName                R          String  Configuration files used during the camera instanciation.
 detectorFirmwareVersion       R          String  Get detector firmware version.
 detectorSoftwareVersion       R          String  Get detector software version.

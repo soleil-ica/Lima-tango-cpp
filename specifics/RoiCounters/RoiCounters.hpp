@@ -40,13 +40,13 @@ void RoiCounters::create_attribute(std::string name,
     //- associate the dyn. attr. with its data
 
     if(!user_data.empty())
-    {
-        std::cout << "set_user_data...." << std::endl;
+    {        
         dai.set_user_data(user_data);
     }
     //- describe the dynamic attr we want...
     dai.tai.data_type = data_type;
     dai.tai.data_format = data_format;
+    if(data_format == Tango::SPECTRUM) dai.tai.max_dim_x = 1000000; //- arbitrary big value
     dai.tai.writable = access_type;
     dai.tai.disp_level = disp_level;
     dai.tai.unit = unit;

@@ -57,7 +57,7 @@ static const char *RcsId = "$Id:  $";
 
 
 #include "tango.h"
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 #include <Eiger.h>
 #include <EigerClass.h>
 
@@ -129,6 +129,8 @@ void Eiger::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_omegaStart_read);
     DELETE_SCALAR_ATTRIBUTE(attr_phiIncrement_read);
     DELETE_SCALAR_ATTRIBUTE(attr_phiStart_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_nbTriggers_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_nbFramesPerTrigger_read);
 
     INFO_STREAM << "Remove the inner-appender." << endl;
     yat4tango::InnerAppender::release(this);
@@ -179,6 +181,8 @@ void Eiger::init_device()
     CREATE_SCALAR_ATTRIBUTE(attr_omegaStart_read);
     CREATE_SCALAR_ATTRIBUTE(attr_phiIncrement_read);
     CREATE_SCALAR_ATTRIBUTE(attr_phiStart_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_nbTriggers_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_nbFramesPerTrigger_read);
 
     m_is_device_initialized = false;
     set_state(Tango::INIT);
@@ -239,6 +243,21 @@ void Eiger::init_device()
         roi_mode.set_write_value(attr_roiMode_write);
         write_roiMode(roi_mode);
 		
+        if (nbFramesPerTriggerIsMaster)
+        {
+            INFO_STREAM << "- Write tango hardware at Init - nbTriggers" << endl;
+            Tango::WAttribute &nb_triggers = dev_attr->get_w_attr_by_name("nbTriggers");
+            attr_nbTriggers_write = memorizedNbTriggers;
+            nb_triggers.set_write_value(attr_nbTriggers_write);
+            write_nbTriggers(nb_triggers);
+
+            INFO_STREAM << "- Write tango hardware at Init - nbFramesPerTrigger" << endl;
+            Tango::WAttribute &nb_frames_per_triggers = dev_attr->get_w_attr_by_name("nbFramesPerTrigger");
+            attr_nbFramesPerTrigger_write = memorizedNbFramesPerTrigger;
+            nb_frames_per_triggers.set_write_value(attr_nbFramesPerTrigger_write);
+            write_nbFramesPerTrigger(nb_frames_per_triggers);	
+        }
+		
     }
     catch (Tango::DevFailed& df)
     {
@@ -272,7 +291,9 @@ void Eiger::get_device_property()
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("DetectorIP"));
 	dev_prop.push_back(Tango::DbDatum("TimestampType"));
+	dev_prop.push_back(Tango::DbDatum("CurlDelayMs"));
 	dev_prop.push_back(Tango::DbDatum("DownloadDataFile"));
+	dev_prop.push_back(Tango::DbDatum("NbFramesPerTriggerIsMaster"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedCountrateCorrection"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedFlatfieldCorrection"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedPixelMask"));
@@ -295,6 +316,8 @@ void Eiger::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedOmegaStart"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedPhiIncrement"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedPhiStart"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedNbTriggers"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedNbFramesPerTrigger"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -327,6 +350,17 @@ void Eiger::get_device_property()
 	//	And try to extract TimestampType value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  timestampType;
 
+	//	Try to initialize CurlDelayMs from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  curlDelayMs;
+	else {
+		//	Try to initialize CurlDelayMs from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  curlDelayMs;
+	}
+	//	And try to extract CurlDelayMs value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  curlDelayMs;
+
 	//	Try to initialize DownloadDataFile from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  downloadDataFile;
@@ -337,6 +371,17 @@ void Eiger::get_device_property()
 	}
 	//	And try to extract DownloadDataFile value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  downloadDataFile;
+
+	//	Try to initialize NbFramesPerTriggerIsMaster from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  nbFramesPerTriggerIsMaster;
+	else {
+		//	Try to initialize NbFramesPerTriggerIsMaster from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  nbFramesPerTriggerIsMaster;
+	}
+	//	And try to extract NbFramesPerTriggerIsMaster value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  nbFramesPerTriggerIsMaster;
 
 	//	Try to initialize MemorizedCountrateCorrection from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -580,12 +625,35 @@ void Eiger::get_device_property()
 	//	And try to extract MemorizedPhiStart value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedPhiStart;
 
+	//	Try to initialize MemorizedNbTriggers from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedNbTriggers;
+	else {
+		//	Try to initialize MemorizedNbTriggers from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedNbTriggers;
+	}
+	//	And try to extract MemorizedNbTriggers value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedNbTriggers;
+
+	//	Try to initialize MemorizedNbFramesPerTrigger from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedNbFramesPerTrigger;
+	else {
+		//	Try to initialize MemorizedNbFramesPerTrigger from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedNbFramesPerTrigger;
+	}
+	//	And try to extract MemorizedNbFramesPerTrigger value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedNbFramesPerTrigger;
+
 
 
     //	End of Automatic code generation
     //------------------------------------------------------------------
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "DetectorIP");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "RELATIVE",  "TimestampType");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "50",        "CurlDelayMs");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false",     "DownloadDataFile");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", 	 "MemorizedCountrateCorrection");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	 "MemorizedFlatfieldCorrection");
@@ -608,6 +676,11 @@ void Eiger::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedOmegaStart");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedPhiIncrement");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedPhiStart");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1",		 "MemorizedNbTriggers");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1",         "MemorizedNbFramesPerTrigger");	
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false",     "NbFramesPerTriggerIsMaster");	
+    
+
 }
 //+----------------------------------------------------------------------------
 //
@@ -666,6 +739,194 @@ void Eiger::read_attr_hardware(vector<long> &attr_list)
     DEBUG_STREAM << "Eiger::read_attr_hardware(vector<long> &attr_list) entering... "<< endl;
     //	Add your own code here
 }
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::read_nbTriggers
+// 
+// description : 	Extract real attribute values for nbTriggers acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Eiger::read_nbTriggers(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Eiger::read_nbTriggers(Tango::Attribute &attr) entering... "<< endl;
+
+	if(!nbFramesPerTriggerIsMaster) //- ie: If Swing : not applicable
+		return;
+		
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    int nb_triggers = 0;
+    try
+    {
+		TrigMode trig_mode;
+		m_camera->getTrigMode(trig_mode);
+		//if(trig_mode == IntTrig || trig_mode == ExtTrigSingle)
+		{		
+			m_camera->getNbTriggers(nb_triggers);
+			*attr_nbTriggers_read = nb_triggers;
+			attr.set_value(attr_nbTriggers_read);
+		}
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"Eiger::read_nbTriggers");
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                        e.getErrMsg().c_str(),
+                        "Eiger::read_nbTriggers");
+    }		
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::write_nbTriggers
+// 
+// description : 	Write nbTriggers attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Eiger::write_nbTriggers(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Eiger::write_nbTriggers(Tango::WAttribute &attr) entering... "<< endl;
+
+	if(!nbFramesPerTriggerIsMaster) //- ie: If Swing : not applicable
+		return;
+
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+		TrigMode trig_mode;
+		m_camera->getTrigMode(trig_mode);
+		//if(trig_mode == IntTrig || trig_mode == ExtTrigSingle)
+		{		
+			attr.get_write_value(attr_nbTriggers_write);
+			m_camera->setNbTriggers(attr_nbTriggers_write);
+			//fix nbFrames to nbTriggers*nbFramesPerTrigger
+			//if(trig_mode == IntTrig || trig_mode == ExtTrigSingle)
+			m_ct->acquisition()->setAcqNbFrames(attr_nbTriggers_write*attr_nbFramesPerTrigger_write);
+			yat4tango::PropertyHelper::set_property(this, "MemorizedNbTriggers", attr_nbTriggers_write);
+		}
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"Eiger::write_nbTriggers");
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                        e.getErrMsg().c_str(),
+                        "Eiger::write_nbTriggers");
+    }	
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::read_nbFramesPerTrigger
+// 
+// description : 	Extract real attribute values for nbFramesPerTrigger acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Eiger::read_nbFramesPerTrigger(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Eiger::read_nbFramesPerTrigger(Tango::Attribute &attr) entering... "<< endl;
+
+	if(!nbFramesPerTriggerIsMaster) //- ie: If Swing : not applicable
+		return;
+
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    int nb_frames_per_trigger = 0;
+    try
+    {
+		TrigMode trig_mode;
+		m_camera->getTrigMode(trig_mode);
+		//if(trig_mode == IntTrig || trig_mode == ExtTrigSingle)
+		{		
+			m_camera->getNbFramesPerTrigger(nb_frames_per_trigger);
+			*attr_nbFramesPerTrigger_read = nb_frames_per_trigger;
+			attr.set_value(attr_nbFramesPerTrigger_read);
+		}
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"LimaDetector::read_nbFrames");
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                        e.getErrMsg().c_str(),
+                        "LimaDetector::read_nbFrames");
+    }	
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Eiger::write_nbFramesPerTrigger
+// 
+// description : 	Write nbFramesPerTrigger attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Eiger::write_nbFramesPerTrigger(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Eiger::write_nbFramesPerTrigger(Tango::WAttribute &attr) entering... "<< endl;
+
+	if(!nbFramesPerTriggerIsMaster) //- ie: If Swing : not applicable
+		return;
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+		TrigMode trig_mode;
+		m_camera->getTrigMode(trig_mode);
+		//if(trig_mode == IntTrig || trig_mode == ExtTrigSingle)
+		{
+			attr.get_write_value(attr_nbFramesPerTrigger_write);
+			m_camera->setNbFramesPerTrigger(attr_nbFramesPerTrigger_write);
+			//fix nbFrames to nbTriggers*nbFramesPerTrigger
+			//if(trig_mode == IntTrig || trig_mode == ExtTrigSingle)
+			m_ct->acquisition()->setAcqNbFrames(attr_nbTriggers_write*attr_nbFramesPerTrigger_write);			
+			yat4tango::PropertyHelper::set_property(this, "MemorizedNbFramesPerTrigger", attr_nbFramesPerTrigger_write);
+		}
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"Eiger::write_nbFramesPerTrigger");
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                        e.getErrMsg().c_str(),
+                        "Eiger::write_nbFramesPerTrigger");
+    }		
+}
+
 //+----------------------------------------------------------------------------
 //
 // method : 		Eiger::read_managedMode

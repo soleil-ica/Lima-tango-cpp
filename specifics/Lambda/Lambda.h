@@ -72,7 +72,7 @@ namespace Lambda_ns
 
 /*----- PROTECTED REGION END -----*/	//	Lambda::Additional Class Declarations
 
-class Lambda : public TANGO_BASE_CLASS
+class Lambda : public Tango::Device_4Impl
 {
 
 /*----- PROTECTED REGION ID(Lambda::Data Members) ENABLED START -----*/

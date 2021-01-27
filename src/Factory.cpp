@@ -533,13 +533,22 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         {
             if (!ControlFactory::m_is_created)
             {
+				//- Set Serialisation mode
+				//- this allow dynamic attr in pco specific device
+				YAT_LOG_INFO("Set Serialisation Model : BY_PROCESS");
+				Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_PROCESS);
+
                 Tango::DbData db_data;
                 db_data.push_back(Tango::DbDatum("DetectorNum"));
-                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
-                long camera_num;
-                db_data[0] >> camera_num;
+                db_data.push_back(Tango::DbDatum("ExpertFrameBufferSize"));
 
-                m_camera = static_cast<void*> (new Hamamatsu::Camera("Not config path", camera_num));
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                long camera_num = 0;
+                long frame_buffer_size = 10;
+                db_data[0] >> camera_num;
+                db_data[1] >> frame_buffer_size;
+
+                m_camera = static_cast<void*> (new Hamamatsu::Camera("Not config path", camera_num, frame_buffer_size));
                 m_interface = static_cast<void*> (new Hamamatsu::Interface(*(static_cast<Hamamatsu::Camera*> (m_camera))));
                 m_control = new CtControl(static_cast<Hamamatsu::Interface*> (m_interface));
                 ControlFactory::m_is_created = true;
@@ -555,22 +564,34 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             {
                 Tango::DbData db_data;
                 db_data.push_back(Tango::DbDatum("DetectorIP"));
-				db_data.push_back(Tango::DbDatum("TimestampType"));
+				db_data.push_back(Tango::DbDatum("TimestampType")); 
 				db_data.push_back(Tango::DbDatum("DownloadDataFile"));
+                db_data.push_back(Tango::DbDatum("CurlDelayMs"));
+				db_data.push_back(Tango::DbDatum("NbFramesPerTriggerIsMaster"));
 				
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                // default values:
                 std::string camera_ip = "127.0.0.1";
 				std::string timestamp_type = "RELATIVE";
 				bool must_download = false;
+                double curl_delay_ms = 50; 
+				bool nb_frames_per_trigger_is_master = false;
+
                 db_data[0] >> camera_ip;
 				db_data[1] >> timestamp_type;
 				db_data[2] >> must_download;
+                db_data[3] >> curl_delay_ms;
+				db_data[4] >> nb_frames_per_trigger_is_master;
+
 				transform(timestamp_type.begin(), timestamp_type.end(), timestamp_type.begin(), ::toupper);
                 m_camera = static_cast<void*> (new Eiger::Camera(camera_ip));
 				static_cast<Eiger::Camera*> (m_camera)->setTimestampType(timestamp_type);
+                static_cast<Eiger::Camera*> (m_camera)->setCurlDelayMs(curl_delay_ms);
+				static_cast<Eiger::Camera*> (m_camera)->setNbFramesPerTriggerIsMaster(nb_frames_per_trigger_is_master);
                 m_interface = static_cast<void*> (new Eiger::Interface(*(static_cast<Eiger::Camera*> (m_camera))));
                 if (m_interface)
 				{
+                    //- this one needs Interface as it uses the saving object
                     static_cast<Eiger::Interface*> (m_interface)->setDownloadDataFile(must_download);				
 				}				
                 m_control = new CtControl(static_cast<Eiger::Interface*> (m_interface));
@@ -600,12 +621,21 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         {
             if (!ControlFactory::m_is_created)
             {
-                Tango::DbData db_data            ;
-                std::string   config_file_name   ;
-                double        readout_time       ;
-                long          receiver_fifo_depth;
-                long          frame_packet_number;
-                
+                Tango::DbData db_data             ;
+                std::string   config_file_name    ;
+                double        readout_time        = 0.00004; // 40µs by default
+                long          receiver_fifo_depth = 2500   ; // 2500 frames by default
+                long          frame_packet_number = 128    ; // 128 packets by default
+
+                // complete path of the gains coefficients file
+                std::string gains_coeffs_file_name = "to be defined";
+
+                // complete path of the pedestal images
+                std::vector<std::string> pedestal_file_names{"to be defined", "to be defined", "to be defined"};
+
+                // number of frames used to generate the pedestal images
+                std::vector<long>        pedestal_nb_frames{5000LL, 1000LL, 1000LL};
+
                 // configuration complete path
                 db_data.push_back(Tango::DbDatum("ConfigFileName"));
                 
@@ -618,14 +648,44 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 // Number of packets we should get in each receiver frame
                 db_data.push_back(Tango::DbDatum("ExpertFramePacketNumber"));
 
+	            //  complete path of the gains coefficients file.
+                db_data.push_back(Tango::DbDatum("ExpertGainsCoeffsFileName"));
+
+                //  complete paths of a pedestal images.
+                db_data.push_back(Tango::DbDatum("ExpertPedestalFileName1"));
+                db_data.push_back(Tango::DbDatum("ExpertPedestalFileName2"));
+                db_data.push_back(Tango::DbDatum("ExpertPedestalFileName3"));
+
+                //  numbers of frames used to generate the pedestal images.
+                db_data.push_back(Tango::DbDatum("ExpertPedestalNbFrames1"));
+                db_data.push_back(Tango::DbDatum("ExpertPedestalNbFrames2"));
+                db_data.push_back(Tango::DbDatum("ExpertPedestalNbFrames3"));
+
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
-                db_data[0] >> config_file_name   ;
-                db_data[1] >> readout_time       ;
-                db_data[2] >> receiver_fifo_depth;
-                db_data[3] >> frame_packet_number;
+
+                int data_index = 0;
+
+                db_data[data_index++] >> config_file_name      ;
+                db_data[data_index++] >> readout_time          ;
+                db_data[data_index++] >> receiver_fifo_depth   ;
+                db_data[data_index++] >> frame_packet_number   ;
+                db_data[data_index++] >> gains_coeffs_file_name;
+                db_data[data_index++] >> pedestal_file_names[0];
+                db_data[data_index++] >> pedestal_file_names[1];
+                db_data[data_index++] >> pedestal_file_names[2];
+                db_data[data_index++] >> pedestal_nb_frames[0] ;
+                db_data[data_index++] >> pedestal_nb_frames[1] ;
+                db_data[data_index++] >> pedestal_nb_frames[2] ;
 
                 // create and initialize the camera and create interface and control  
-                m_camera    = static_cast<void*> (new SlsJungfrau::Camera(config_file_name, readout_time, receiver_fifo_depth, frame_packet_number));
+                m_camera    = static_cast<void*> (new SlsJungfrau::Camera(config_file_name      ,
+                                                                          readout_time          ,
+                                                                          receiver_fifo_depth   ,
+                                                                          frame_packet_number   ,
+                                                                          gains_coeffs_file_name,
+                                                                          pedestal_file_names   ,
+                                                                          pedestal_nb_frames    ));
+
                 m_interface = static_cast<void*> (new SlsJungfrau::Interface(*(static_cast<SlsJungfrau::Camera*> (m_camera))));
                 m_control   = new CtControl(static_cast<SlsJungfrau::Interface*> (m_interface));
                
@@ -939,6 +999,43 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 		
+#ifdef SPECTRAL_ENABLED
+        if (detector_type == "Spectral")
+        {
+            if (!ControlFactory::m_is_created)
+            {
+                Tango::DbData db_data;
+                db_data.push_back(Tango::DbDatum("ExpertConnectionAddress"));
+                db_data.push_back(Tango::DbDatum("ExpertConnectionPort"));
+                db_data.push_back(Tango::DbDatum("ExpertImagePacketPixelsNb"));
+                db_data.push_back(Tango::DbDatum("ExpertImagePacketDelayMicroSec"));
+                
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                std::string   connection_address           = "127.0.0.1";
+                unsigned long connection_port              = 0  ;
+                unsigned long image_packet_pixels_nb       = 512;
+                unsigned long image_packet_delay_micro_sec = 300;
+                int           prop_index                   = 0  ;
+
+                db_data[prop_index++] >> connection_address    ;
+                db_data[prop_index++] >> connection_port       ;
+                db_data[prop_index++] >> image_packet_pixels_nb;
+                db_data[prop_index++] >> image_packet_delay_micro_sec;
+                
+                m_camera = static_cast<void*> (new Spectral::Camera(connection_address          ,   // server name or IP address of the SI Image SGL II software
+                                                                    connection_port             ,   // TCP/IP port of the SI Image SGL II software
+                                                                    image_packet_pixels_nb      ,   // number of pixels sent into a image part TCP/IP packet
+                                                                    image_packet_delay_micro_sec)); // delay between the sending of two image part TCP/IP packets (in micro-seconds)
+                                                                
+                m_interface = static_cast<void*> (new Spectral::Interface(*(static_cast<Spectral::Camera*> (m_camera))));
+                m_control = new CtControl(static_cast<Spectral::Interface*> (m_interface));
+
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
+#endif
+        
         if (!ControlFactory::m_is_created)
         {
             string strMsg = "Unable to create the lima control object : Unknown Detector Type : ";
@@ -1163,6 +1260,13 @@ void ControlFactory::reset(const std::string& detector_type)
                 }
 #endif  
 
+#ifdef SPECTRAL_ENABLED        
+                if (detector_type == "Spectral")
+                {
+                    delete (static_cast<Spectral::Camera*> (m_camera));
+                }
+#endif
+
 				
                 m_camera = 0;
             }
@@ -1245,6 +1349,9 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
         //@@@TODO and if not exist ?? get the tango device/instance for roicounters
         if (!ControlFactory::m_is_created)
         {
+			YAT_LOG_INFO("Set Serialisation Model : BY_PROCESS");
+			Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_PROCESS);            
+            
             std::string roicounters = "RoiCounters";
             Tango::DbDatum db_datum;
             m_device_name_generic = Tango::Util::instance()->get_ds_name();

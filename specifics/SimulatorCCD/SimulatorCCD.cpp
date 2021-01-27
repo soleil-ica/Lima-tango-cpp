@@ -53,7 +53,7 @@ static const char *RcsId = "$Id:  $";
 //===================================================================
 #ifdef WIN32
 #include <tango.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 #endif
 
 #include <SimulatorCCD.h>
@@ -61,7 +61,7 @@ static const char *RcsId = "$Id:  $";
 
 #ifndef WIN32
 #include <tango.h>
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 #endif
 
 
