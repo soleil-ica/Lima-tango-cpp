@@ -24,8 +24,8 @@
 
         <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
         <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
-        <CORE.name>Core</CORE.name>
-        <CORE.version>1.7.9</CORE.version>
+        <LIMACORE.name>LimaCore</LIMACORE.name>
+        <LIMACORE.version>1.7.9</LIMACORE.version>
       
         <EIGER.name>Eiger</EIGER.name>
         <EIGER.version>2.3.0</EIGER.version>
@@ -41,9 +41,8 @@
         <XSPRESS3.version>1.0.2</XSPRESS3.version>  
         <UFCX.name>Ufcx</UFCX.name>
         <UFCX.version>1.2.0</UFCX.version>    
- 
-        <SPECTRAL.name>Spectral</XSPRESS3.name>
-        <SPECTRAL.version>0.0.1</XSPRESS3.version>   
+        <SPECTRAL.name>Spectral</SPECTRAL.name>
+        <SPECTRAL.version>0.0.1</SPECTRAL.version>   
 
         <YAT.version>1.17.5</YAT.version> 
         <YAT4Tango.version>1.12.3</YAT4Tango.version> 
@@ -60,7 +59,7 @@
         <dependency>
             <groupId>fr.soleil.lib</groupId>
             <artifactId>LimaCore-amd64-Linux-gcc-shared-${mode}</artifactId>
-            <version>${CORE.version}</version>
+            <version>${LIMACORE.version}</version>
         </dependency>
         <!-- Lima Camera Plugins -->
         <dependency>
@@ -92,6 +91,7 @@
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaXspress3-amd64-Linux-gcc-shared-${mode}</artifactId>
             <version>${XSPRESS3.version}</version>
+       </dependency>
        <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaUfxc-amd64-Linux-gcc-shared-${mode}</artifactId>
@@ -136,7 +136,8 @@
                             <includePath>specifics/SlsEiger</includePath>
                             <includePath>specifics/Lambda</includePath>        
                             <includePath>specifics/Xspress3</includePath>     
-                            <includePath>specifics/Spectral</includePath>     
+                            <includePath>specifics/Spectral</includePath>   
+                            <includePath>specifics/Ufxc</includePath>   
 
                             <includePath>specifics/Layout</includePath>         
                             <includePath>specifics/Mask</includePath>
@@ -155,7 +156,7 @@
                             <includePath>${libs-64bits}/yat-${YAT.version}/include</includePath>
                             <includePath>${libs-64bits}/yat4tango-${YAT4Tango.version}/include</includePath>
                             <includePath>${libs-64bits}/nexuscpp-${NexusCPP.version}/include</includePath>                 
-							              <includePath>${libs-xspress3}/include/</includePath>
+							<includePath>${libs-xspress3}/include/</includePath>
                         </includePaths>
                        
                         <defines>
@@ -163,8 +164,8 @@
                             <define>PROJECT_VERSION=${project.version}</define>
                             <define>PROCESSLIB_NAME=${PROCESSLIB.name}</define>
                             <define>PROCESSLIB_VERSION=${PROCESSLIB.version}</define>
-                            <define>CORE_NAME=${CORE.name}</define>
-                            <define>CORE_VERSION=${CORE.version}</define>
+                            <define>LIMACORE_NAME=${LIMACORE.name}</define>
+                            <define>LIMACORE_VERSION=${LIMACORE.version}</define>
                             <define>EIGER_NAME=${EIGER.name}</define>
                             <define>EIGER_VERSION=${EIGER.version}</define>
                             <define>SIMULATOR_NAME=${SIMULATOR.name}</define>

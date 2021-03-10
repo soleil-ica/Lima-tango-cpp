@@ -4620,7 +4620,7 @@ void LimaDetector::create_log_info_attributes(void)
     //- For all versions : 
     yat4tango::DeviceInfo::add_dependency(this, nxcpp::get_name(), nxcpp::get_version());
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROCESSLIB_NAME), YAT_XSTR(PROCESSLIB_VERSION) );
-    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(CORE_NAME), YAT_XSTR(CORE_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(LIMACORE_NAME), YAT_XSTR(LIMACORE_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION));
 
 //- Win64
@@ -4648,6 +4648,7 @@ void LimaDetector::create_log_info_attributes(void)
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(LAMBDA_NAME), YAT_XSTR(LAMBDA_VERSION_DEVICE));//- name conflict with lambda sdk
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XSPRESS3_NAME), YAT_XSTR(XSPRESS3_VERSION));
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SPECTRAL_NAME), YAT_XSTR(SPECTRAL_VERSION));
+            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UFXC_NAME), YAT_XSTR(UFXC_VERSION) ); 
         #else //- Linux32
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(BASLER_NAME), YAT_XSTR(BASLER_VERSION) );
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(IMXPAD_NAME), YAT_XSTR(IMXPAD_VERSION) );
@@ -4656,7 +4657,7 @@ void LimaDetector::create_log_info_attributes(void)
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );        
-            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UFXC_NAME), YAT_XSTR(UFXC_VERSION) ); 
+            
         #endif
     #endif
 #endif
