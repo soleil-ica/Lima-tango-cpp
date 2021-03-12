@@ -553,6 +553,28 @@ void EigerClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	software_version->set_disp_level(Tango::EXPERT);
 	att_list.push_back(software_version);
 
+	//	Attribute : nbTriggers
+	nbTriggersAttrib	*nb_triggers = new nbTriggersAttrib();
+	Tango::UserDefaultAttrProp	nb_triggers_prop;
+	nb_triggers_prop.set_unit(" ");
+	nb_triggers_prop.set_standard_unit(" ");
+	nb_triggers_prop.set_display_unit(" ");
+	nb_triggers_prop.set_description("Define the number of triggers expected by the detector to terminate the acquisition.<br>\nThe detector stays armed until nbTriggers are received.<br>\nAvailable only for the triggers modes :<br>\nINTERNAL_SINGLE (ints).<br>\nEXTERNAL_SINGLE (exts)  triggers modes.<br>");
+	nb_triggers->set_default_properties(nb_triggers_prop);
+	nb_triggers->set_disp_level(Tango::EXPERT);
+	att_list.push_back(nb_triggers);
+
+	//	Attribute : nbFramesPerTrigger
+	nbFramesPerTriggerAttrib	*nb_frames_per_trigger = new nbFramesPerTriggerAttrib();
+	Tango::UserDefaultAttrProp	nb_frames_per_trigger_prop;
+	nb_frames_per_trigger_prop.set_unit(" ");
+	nb_frames_per_trigger_prop.set_standard_unit(" ");
+	nb_frames_per_trigger_prop.set_display_unit(" ");
+	nb_frames_per_trigger_prop.set_description("Define the number of frames acquired by the detector for each received trigger.\nAvailable only for the triggers modes :<br>\nINTERNAL_SINGLE (ints).<br>\nEXTERNAL_SINGLE (exts)  triggers modes.<br>\n");
+	nb_frames_per_trigger->set_default_properties(nb_frames_per_trigger_prop);
+	nb_frames_per_trigger->set_disp_level(Tango::EXPERT);
+	att_list.push_back(nb_frames_per_trigger);
+
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
 }
@@ -635,8 +657,38 @@ void EigerClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
+	prop_name = "CurlDelayMs";
+	prop_desc = "Curl delay in ms. this is used as a sleep delay for waiting the curl responses (default = 100)";
+	prop_def  = "100";
+	vect_data.clear();
+	vect_data.push_back("100");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 	prop_name = "DownloadDataFile";
 	prop_desc = "Enable/Disable downloading data files from DCU.\nDo not download data files (master+data) [by default]";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "NbFramesPerTriggerIsMaster";
+	prop_desc = "If True: nbFrames = memorized values of NbTriggers * NbFramesPerTrigger (case on PX1 beamline)\nIf False: nbFrames = memorized nbFrames (case on Swing, Sixs beamlines)";
 	prop_def  = "false";
 	vect_data.clear();
 	vect_data.push_back("false");
@@ -980,6 +1032,36 @@ void EigerClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
+	prop_name = "MemorizedNbTriggers";
+	prop_desc = "Memorize the value of nbTriggers attribute.";
+	prop_def  = "1";
+	vect_data.clear();
+	vect_data.push_back("1");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedNbFramesPerTrigger";
+	prop_desc = "Memorize the value of nbFramesPerTrigger attribute.";
+	prop_def  = "1";
+	vect_data.clear();
+	vect_data.push_back("1");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 }
 //+----------------------------------------------------------------------------
 //
@@ -1117,7 +1199,7 @@ void EigerClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back(XTBS(TANGO_BASE_CLASS));
+	inheritance.push_back("Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

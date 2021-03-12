@@ -84,7 +84,7 @@ namespace Pco_ns
  */
 
 
-    class Pco : public TANGO_BASE_CLASS
+    class Pco : public Tango::Device_4Impl
     {
     public:
         //	Add your own data members here

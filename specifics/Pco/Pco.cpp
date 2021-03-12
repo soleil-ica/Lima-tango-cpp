@@ -74,17 +74,17 @@ namespace Pco_ns
 //
 //-----------------------------------------------------------------------------
 Pco::Pco(Tango::DeviceClass *cl, string &s)
-    :TANGO_BASE_CLASS(cl, s.c_str()), m_dim(this)
+    :Tango::Device_4Impl(cl, s.c_str()), m_dim(this)
 {
     init_device();
 }
 Pco::Pco(Tango::DeviceClass *cl, const char *s)
-    : TANGO_BASE_CLASS(cl, s), m_dim(this)
+    : Tango::Device_4Impl(cl, s), m_dim(this)
 {
     init_device();
 }
 Pco::Pco(Tango::DeviceClass *cl, const char *s, const char *d)
-    : TANGO_BASE_CLASS(cl, s, d), m_dim(this)
+    : Tango::Device_4Impl(cl, s, d), m_dim(this)
 {
     init_device();
 }

@@ -82,17 +82,17 @@ namespace Mask_ns
 //
 //-----------------------------------------------------------------------------
 Mask::Mask(Tango::DeviceClass *cl, string &s)
-:TANGO_BASE_CLASS(cl, s.c_str())
+:Tango::Device_4Impl(cl, s.c_str())
 {
 	init_device();
 }
 Mask::Mask(Tango::DeviceClass *cl, const char *s)
-:TANGO_BASE_CLASS(cl, s)
+:Tango::Device_4Impl(cl, s)
 {
 	init_device();
 }
 Mask::Mask(Tango::DeviceClass *cl, const char *s, const char *d)
-:TANGO_BASE_CLASS(cl, s, d)
+:Tango::Device_4Impl(cl, s, d)
 {
 	init_device();
 }
@@ -567,14 +567,14 @@ void Mask::set_mask_image(void)
 		{
 			data = create_data_from_mask<Tango::DevUShort>(attr_maskImage_read, m_dim_x, m_dim_y, Data::UINT16, 2);
 		}
+		else if(pixel_depth == "24" || pixel_depth == "28" || pixel_depth == "32")
+		{
+			data = create_data_from_mask<Tango::DevULong>(attr_maskImage_read, m_dim_x, m_dim_y, Data::UINT32, 4);
+		}
 		else if(pixel_depth == "16S")
 		{
 			data = create_data_from_mask<Tango::DevShort>(attr_maskImage_read, m_dim_x, m_dim_y, Data::INT16, 2);
 		}		
-		else if(pixel_depth == "24" || pixel_depth == "32")
-		{
-			data = create_data_from_mask<Tango::DevULong>(attr_maskImage_read, m_dim_x, m_dim_y, Data::UINT32, 4);
-		}
 		else if(pixel_depth == "32S")
 		{
 			data = create_data_from_mask<Tango::DevLong>(attr_maskImage_read, m_dim_x, m_dim_y, Data::INT32, 4);

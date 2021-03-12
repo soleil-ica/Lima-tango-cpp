@@ -75,7 +75,7 @@ namespace XpadPixelDetector_ns
  */
 
 
-    class XpadPixelDetector : public TANGO_BASE_CLASS
+    class XpadPixelDetector : public Tango::Device_4Impl
     {
     public:
         //	Add your own data members here

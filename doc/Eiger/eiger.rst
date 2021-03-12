@@ -11,18 +11,21 @@ You can also find some useful information about the camera models/prerequisite/i
 Properties
 ----------
 
-======================== ================================= =====================================
-Property name            Default value                     Description
-======================== ================================= =====================================
-DetectorIP               127.0.0.1                         Eiger server IP address (ex: 192.168.0.1)
-DownloadDataFile         False                             Enable/Disable downloading data files from DCU.
-TimestampType            RELATIVE                          Define the timestamp type of each frame.
+==========================  ================================= =====================================
+Property name               Default value                     Description
+==========================  ================================= =====================================
+DetectorIP                  127.0.0.1                         Eiger server IP address (ex: 192.168.0.1)
+DownloadDataFile            False                             Enable/Disable downloading data files from DCU.
+TimestampType               RELATIVE                          Define the timestamp type of each frame. Available values:
 
-                                                           Available values:
+                                                              - RELATIVE : The time difference between the moment of reading the frame and  the start acquisition time
+                                                              - ABSOLUTE : The time at the moment of reading the frame from detector
+CurlDelayMs                 100                               Curl delay in ms. this is used as a sleep delay for waiting the curl responses
+NbFramesPerTriggerIsMaster  False                             Enable the NbFramesPerTrigger mode:
 
-                                                           - RELATIVE : The time difference between the moment of reading the frame and  the start acquisition time
-                                                           - ABSOLUTE : The time at the moment of reading the frame from detector
-======================== ================================= =====================================
+                                                              - True: nbFrames = memorized values of NbTriggers * NbFramesPerTrigger (case on PX1 beamline)
+                                                              - False: nbFrames = memorized nbFrames (case on Swing, Sixs beamlines)
+==========================  ================================= =====================================
 
 
 Attributes
@@ -93,7 +96,17 @@ roiMode                     R/W              String           Enable/Disable the
 
                                                               - 4M
                                                               - DISABLED
-DetectorReadoutTime         R                Double           Readout Time
+detectorReadoutTime         R                Double           Readout Time
+nbTriggers                  R/W              Long             Define the number of triggers expected by the detector to terminate the acquisition. The detector stays armed until nbTriggers are received.
+                                                              Available only for the triggers modes (and if NbFramesPerTriggerIsMaster property is true):
+                                                              
+                                                              - INTERNAL_SINGLE (ints)
+                                                              - EXTERNAL_SINGLE (exts)
+nbFramesPerTrigger          R/W              Long             Define the number of frames acquired by the detector for each received trigger.
+                                                              Available only for the triggers modes (and if NbFramesPerTriggerIsMaster property is true):
+
+                                                              - INTERNAL_SINGLE (ints)
+                                                              - EXTERNAL_SINGLE (exts)
 =========================== ================ ================ =====================================
 
 

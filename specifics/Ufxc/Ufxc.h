@@ -87,7 +87,7 @@ namespace Ufxc_ns
  */
 
 
-class Ufxc: public TANGO_BASE_CLASS
+class Ufxc: public Tango::Device_4Impl
 {
 public :
 	//	Add your own data members here
@@ -116,6 +116,10 @@ public :
 		Tango::DevULong	*attr_thresholdHigh2_read;
 		Tango::DevFloat	*attr_triggerAcquisitionFrequency_read;
 		Tango::DevFloat	attr_triggerAcquisitionFrequency_write;
+		Tango::DevBoolean	*attr_geometricalCorrection_read;
+		Tango::DevBoolean	attr_geometricalCorrection_write;
+		Tango::DevString	*attr_countingMode_read;
+		Tango::DevString	attr_countingMode_write;
 //@}
 
 /**
@@ -168,14 +172,6 @@ public :
  */
 	Tango::DevULong	timeout;
 /**
- *	Enable/Disable the geometrical corrections
- */
-	Tango::DevBoolean	geometricalCorrectionEnabled;
-/**
- *	Enable/Disable the sum of the frames stack
- */
-	Tango::DevBoolean	stackFramesSumEnabled;
-/**
  *	Only the device could modify this property <br>
  *	The User should never change this property<br>
  */
@@ -195,6 +191,24 @@ public :
  *	The User should never change this property<br>
  */
 	Tango::DevFloat	memorizedTriggerAcquisitionFrequency;
+/**
+ *	Only the device could modify this property <br>
+ *	The User should never change this property<br>
+ */
+	Tango::DevBoolean	memorizedGeometricalCorrection;
+/**
+ *	Only the device could modify this property <br>
+ *	The User should never change this property<br>
+ */
+	string	memorizedCountingMode;
+/**
+ *	MTU value of the SFP ports.
+ */
+	Tango::DevULong	sFPMTU;
+/**
+ *	Allows to specify the UFXC model.
+ */
+	string	ufxcModel;
 //@}
 
 /**
@@ -328,6 +342,22 @@ public :
  */
 	virtual void write_triggerAcquisitionFrequency(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for geometricalCorrection acquisition result.
+ */
+	virtual void read_geometricalCorrection(Tango::Attribute &attr);
+/**
+ *	Write geometricalCorrection attribute values to hardware.
+ */
+	virtual void write_geometricalCorrection(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for countingMode acquisition result.
+ */
+	virtual void read_countingMode(Tango::Attribute &attr);
+/**
+ *	Write countingMode attribute values to hardware.
+ */
+	virtual void write_countingMode(Tango::WAttribute &attr);
+/**
  *	Read/Write allowed for libVersion attribute.
  */
 	virtual bool is_libVersion_allowed(Tango::AttReqType type);
@@ -376,6 +406,14 @@ public :
  */
 	virtual bool is_triggerAcquisitionFrequency_allowed(Tango::AttReqType type);
 /**
+ *	Read/Write allowed for geometricalCorrection attribute.
+ */
+	virtual bool is_geometricalCorrection_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for countingMode attribute.
+ */
+	virtual bool is_countingMode_allowed(Tango::AttReqType type);
+/**
  *	Execution allowed for LoadConfigFile command.
  */
 	virtual bool is_LoadConfigFile_allowed(const CORBA::Any &any);
@@ -404,6 +442,25 @@ public :
 	// return true if the device is correctly initialized in init_device
 	bool is_device_initialized(){return m_is_device_initialized;};
 
+/**
+ *	method:	Ufxc::manage_devfailed_exception
+ *
+ *	description: method which manages DevFailed exceptions
+ */
+    void manage_devfailed_exception(Tango::DevFailed & in_exception, const std::string & in_caller_method_name);
+
+/**
+ *	method:	Ufxc::manage_lima_exception
+ *
+ *	description: method which manages lima exceptions
+ */
+    void manage_lima_exception(lima::Exception & in_exception, const std::string & in_caller_method_name);
+
+/**
+ *	method:	Ufxc::update_triggerAcquisitionFrequency
+ */
+    void update_triggerAcquisitionFrequency();
+
 protected :	
 	//	Add your own data members here
 	//-----------------------------------------
@@ -420,6 +477,7 @@ protected :
     lima::CtControl*            m_ct;
     lima::Ufxc::Camera*         m_camera;	    
 	std::map<std::string, std::string>  m_map_alias_config_files;
+    bool                        m_is_CountingMode_init; // to deal with a problem during the init process
 };
 
 }	// namespace_ns

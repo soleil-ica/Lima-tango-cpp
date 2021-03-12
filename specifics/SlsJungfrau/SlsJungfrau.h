@@ -73,7 +73,7 @@ namespace SlsJungfrau_ns
 
 /*----- PROTECTED REGION END -----*/	//	SlsJungfrau::Additional Class Declarations
 
-class SlsJungfrau : public TANGO_BASE_CLASS
+class SlsJungfrau : public Tango::Device_4Impl
 {
 
 /*----- PROTECTED REGION ID(SlsJungfrau::Data Members) ENABLED START -----*/
@@ -95,6 +95,27 @@ public:
 	//	ExpertFramePacketNumber:	Only an expert User could change this property.<br>
 	//  This is the number of packet for each received frame part.<BR>
 	Tango::DevLong	expertFramePacketNumber;
+	//	ExpertGainsCoeffsFileName:	Only an expert User could change this property.<br>
+	//  It defines the complete path of the gains coefficients file.<BR>
+	string	expertGainsCoeffsFileName;
+	//	ExpertPedestalFileName1:	Only an expert User could change this property.<br>
+	//  It defines the complete path of a pedestal image (first gain).<BR>
+	string	expertPedestalFileName1;
+	//	ExpertPedestalFileName2:	Only an expert User could change this property.<br>
+	//  It defines the complete path of a pedestal image (second gain).<BR>
+	string	expertPedestalFileName2;
+	//	ExpertPedestalFileName3:	Only an expert User could change this property.<br>
+	//  It defines the complete path of a pedestal image (third gain).<BR>
+	string	expertPedestalFileName3;
+	//	ExpertPedestalNbFrames1:	Only an expert User could change this property.<br>
+	//  It defines the number of frames used to generate a pedestal image (first gain).<BR>
+	Tango::DevLong	expertPedestalNbFrames1;
+	//	ExpertPedestalNbFrames2:	Only an expert User could change this property.<br>
+	//  It defines the number of frames used to generate a pedestal image (second gain).<BR>
+	Tango::DevLong	expertPedestalNbFrames2;
+	//	ExpertPedestalNbFrames3:	Only an expert User could change this property.<br>
+	//  It defines the number of frames used to generate a pedestal image (third gain).<BR>
+	Tango::DevLong	expertPedestalNbFrames3;
 
 //	Attribute data members
 public:
@@ -103,6 +124,19 @@ public:
 	Tango::DevDouble	*attr_delayAfterTrigger_read;
 	Tango::DevString	*attr_detectorFirmwareVersion_read;
 	Tango::DevString	*attr_detectorSoftwareVersion_read;
+	Tango::DevString	*attr_gainMode_read;
+	Tango::DevString	*attr_gainCoeffsFileName_read;
+	Tango::DevString	*attr_pedestalFileName1_read;
+	Tango::DevString	*attr_pedestalFileName2_read;
+	Tango::DevString	*attr_pedestalFileName3_read;
+	Tango::DevString	*attr_gainCoeffsState_read;
+	Tango::DevString	*attr_calibrationState_read;
+	Tango::DevDouble	*attr_gainCoeffs1_read;
+	Tango::DevDouble	*attr_gainCoeffs2_read;
+	Tango::DevDouble	*attr_gainCoeffs3_read;
+	Tango::DevUShort	*attr_pedestal1_read;
+	Tango::DevUShort	*attr_pedestal2_read;
+	Tango::DevUShort	*attr_pedestal3_read;
 
 //	Constructors and destructors
 public:
@@ -188,7 +222,7 @@ public:
 	virtual bool is_clockDivider_allowed(Tango::AttReqType type);
 /**
  *	Attribute configFileName related methods
- *	Description: 
+ *	Description: Shows the complete path of the configuration file.<br>
  *
  *	Data type:	Tango::DevString
  *	Attr type:	Scalar
@@ -223,6 +257,141 @@ public:
  */
 	virtual void read_detectorSoftwareVersion(Tango::Attribute &attr);
 	virtual bool is_detectorSoftwareVersion_allowed(Tango::AttReqType type);
+/**
+ *	Attribute gainMode related methods
+ *	Description: Changes the gain mode.<br>
+ *               Available gain modes:<br>
+ *               DYNAMIC -> dynamic gain settings<br>
+ *               DYNAMICHG0 -> dynamic high gain 0<br>
+ *               FIXGAIN1 -> fix gain 1<br>
+ *               FIXGAIN2 -> fix gain 2<br>
+ *               FORCESWITCHG1 -> force switch gain 1<br>
+ *               FORCESWITCHG2 -> force switch gain 2<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+	virtual void read_gainMode(Tango::Attribute &attr);
+	virtual void write_gainMode(Tango::WAttribute &attr);
+	virtual bool is_gainMode_allowed(Tango::AttReqType type);
+/**
+ *	Attribute gainCoeffsFileName related methods
+ *	Description: Shows the complete path for the gains'coefficients file.<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+	virtual void read_gainCoeffsFileName(Tango::Attribute &attr);
+	virtual bool is_gainCoeffsFileName_allowed(Tango::AttReqType type);
+/**
+ *	Attribute pedestalFileName1 related methods
+ *	Description: Shows the complete path for the pedestal file of the first gain.<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+	virtual void read_pedestalFileName1(Tango::Attribute &attr);
+	virtual bool is_pedestalFileName1_allowed(Tango::AttReqType type);
+/**
+ *	Attribute pedestalFileName2 related methods
+ *	Description: Shows the complete path for the pedestal file of the second gain.<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+	virtual void read_pedestalFileName2(Tango::Attribute &attr);
+	virtual bool is_pedestalFileName2_allowed(Tango::AttReqType type);
+/**
+ *	Attribute pedestalFileName3 related methods
+ *	Description: Shows the complete path for the pedestal file of the third gain.<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+	virtual void read_pedestalFileName3(Tango::Attribute &attr);
+	virtual bool is_pedestalFileName3_allowed(Tango::AttReqType type);
+/**
+ *	Attribute gainCoeffsState related methods
+ *	Description: Shows the status of the gains coefficients state<br>
+ *               It can be:<br>
+ *               - NONE (not loaded)<br>
+ *               - LOADED<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+	virtual void read_gainCoeffsState(Tango::Attribute &attr);
+	virtual bool is_gainCoeffsState_allowed(Tango::AttReqType type);
+/**
+ *	Attribute calibrationState related methods
+ *	Description: Shows the status of the calibration state<br>
+ *               It can be:<br>
+ *               - NONE (no calibration loaded or generated)<br>
+ *               - LOADED (a previous saved calibration was loaded)<br>
+ *               - RUNNING_0_3 (a calibration is running and at the moment no pedestal was generated)<br>
+ *               - RUNNING_1_3 (a calibration is running and the first pedestal was generated)<br>
+ *               - RUNNING_2_3 (a calibration is running and two pedestals were generated)<br>
+ *               - GENERATED (a new calibration was done)<br>
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+	virtual void read_calibrationState(Tango::Attribute &attr);
+	virtual bool is_calibrationState_allowed(Tango::AttReqType type);
+/**
+ *	Attribute gainCoeffs1 related methods
+ *	Description: Shows the coefficients for the first gain.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Image max = 1024 x 512
+ */
+	virtual void read_gainCoeffs1(Tango::Attribute &attr);
+	virtual bool is_gainCoeffs1_allowed(Tango::AttReqType type);
+/**
+ *	Attribute gainCoeffs2 related methods
+ *	Description: Shows the coefficients for the second gain.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Image max = 1024 x 512
+ */
+	virtual void read_gainCoeffs2(Tango::Attribute &attr);
+	virtual bool is_gainCoeffs2_allowed(Tango::AttReqType type);
+/**
+ *	Attribute gainCoeffs3 related methods
+ *	Description: Shows the coefficients for the third gain.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Image max = 1024 x 512
+ */
+	virtual void read_gainCoeffs3(Tango::Attribute &attr);
+	virtual bool is_gainCoeffs3_allowed(Tango::AttReqType type);
+/**
+ *	Attribute pedestal1 related methods
+ *	Description: Shows the pedestal image for the first gain.<br>
+ *
+ *	Data type:	Tango::DevUShort
+ *	Attr type:	Image max = 1024 x 512
+ */
+	virtual void read_pedestal1(Tango::Attribute &attr);
+	virtual bool is_pedestal1_allowed(Tango::AttReqType type);
+/**
+ *	Attribute pedestal2 related methods
+ *	Description: Shows the pedestal image for the second gain.<br>
+ *
+ *	Data type:	Tango::DevUShort
+ *	Attr type:	Image max = 1024 x 512
+ */
+	virtual void read_pedestal2(Tango::Attribute &attr);
+	virtual bool is_pedestal2_allowed(Tango::AttReqType type);
+/**
+ *	Attribute pedestal3 related methods
+ *	Description: Shows the pedestal image for the third gain.<br>
+ *
+ *	Data type:	Tango::DevUShort
+ *	Attr type:	Image max = 1024 x 512
+ */
+	virtual void read_pedestal3(Tango::Attribute &attr);
+	virtual bool is_pedestal3_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------
@@ -262,6 +431,13 @@ public:
 	 */
 	virtual void reset_camera();
 	virtual bool is_ResetCamera_allowed(const CORBA::Any &any);
+	/**
+	 *	Command Calibrate related method
+	 *	Description: Execute a calibration of the camera by creating the three pedestal files..
+	 *
+	 */
+	virtual void calibrate();
+	virtual bool is_Calibrate_allowed(const CORBA::Any &any);
 
 
 /*----- PROTECTED REGION ID(SlsJungfrau::Additional Method prototypes) ENABLED START -----*/

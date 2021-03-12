@@ -73,21 +73,21 @@ namespace Xspress3_ns
 //
 //-----------------------------------------------------------------------------
 Xspress3::Xspress3(Tango::DeviceClass *cl,string &s)
-:TANGO_BASE_CLASS(cl,s.c_str()),
+:Tango::Device_4Impl(cl,s.c_str()),
 m_dim(this)
 {
 	init_device();
 }
 
 Xspress3::Xspress3(Tango::DeviceClass *cl,const char *s)
-:TANGO_BASE_CLASS(cl,s),
+:Tango::Device_4Impl(cl,s),
 m_dim(this) 
 {
 	init_device();
 }
 
 Xspress3::Xspress3(Tango::DeviceClass *cl,const char *s,const char *d)
-:TANGO_BASE_CLASS(cl,s,d),
+:Tango::Device_4Impl(cl,s,d),
  m_dim(this)
 {
 	init_device();

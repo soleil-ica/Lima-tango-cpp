@@ -333,6 +333,7 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	current_config_file_prop.set_format("%s");
 	current_config_file_prop.set_description("Display the path+name of current configuration file.");
 	current_config_file->set_default_properties(current_config_file_prop);
+	current_config_file->set_disp_level(Tango::EXPERT);
 	att_list.push_back(current_config_file);
 
 	//	Attribute : detectorTemperature
@@ -368,41 +369,45 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : thresholdLow1
 	thresholdLow1Attrib	*threshold_low1 = new thresholdLow1Attrib();
 	Tango::UserDefaultAttrProp	threshold_low1_prop;
-	threshold_low1_prop.set_unit("mV");
-	threshold_low1_prop.set_standard_unit("mV");
-	threshold_low1_prop.set_display_unit("mV");
+	threshold_low1_prop.set_unit("DAC");
+	threshold_low1_prop.set_standard_unit("DAC");
+	threshold_low1_prop.set_display_unit("DAC");
 	threshold_low1_prop.set_description("Get threshold Low  for the chip A");
 	threshold_low1->set_default_properties(threshold_low1_prop);
+	threshold_low1->set_disp_level(Tango::EXPERT);
 	att_list.push_back(threshold_low1);
 
 	//	Attribute : thresholdHigh1
 	thresholdHigh1Attrib	*threshold_high1 = new thresholdHigh1Attrib();
 	Tango::UserDefaultAttrProp	threshold_high1_prop;
-	threshold_high1_prop.set_unit("mV");
-	threshold_high1_prop.set_standard_unit("mV");
-	threshold_high1_prop.set_display_unit("mV");
+	threshold_high1_prop.set_unit("DAC");
+	threshold_high1_prop.set_standard_unit("DAC");
+	threshold_high1_prop.set_display_unit("DAC");
 	threshold_high1_prop.set_description("Get threshold High for the chip A");
 	threshold_high1->set_default_properties(threshold_high1_prop);
+	threshold_high1->set_disp_level(Tango::EXPERT);
 	att_list.push_back(threshold_high1);
 
 	//	Attribute : thresholdLow2
 	thresholdLow2Attrib	*threshold_low2 = new thresholdLow2Attrib();
 	Tango::UserDefaultAttrProp	threshold_low2_prop;
-	threshold_low2_prop.set_unit("mV");
-	threshold_low2_prop.set_standard_unit("mV");
-	threshold_low2_prop.set_display_unit("mV");
+	threshold_low2_prop.set_unit("DAC");
+	threshold_low2_prop.set_standard_unit("DAC");
+	threshold_low2_prop.set_display_unit("DAC");
 	threshold_low2_prop.set_description("Get threshold Low for the chip B");
 	threshold_low2->set_default_properties(threshold_low2_prop);
+	threshold_low2->set_disp_level(Tango::EXPERT);
 	att_list.push_back(threshold_low2);
 
 	//	Attribute : thresholdHigh2
 	thresholdHigh2Attrib	*threshold_high2 = new thresholdHigh2Attrib();
 	Tango::UserDefaultAttrProp	threshold_high2_prop;
-	threshold_high2_prop.set_unit("mV");
-	threshold_high2_prop.set_standard_unit("mV");
-	threshold_high2_prop.set_display_unit("mV");
+	threshold_high2_prop.set_unit("DAC");
+	threshold_high2_prop.set_standard_unit("DAC");
+	threshold_high2_prop.set_display_unit("DAC");
 	threshold_high2_prop.set_description("Get threshold High for the chip B");
 	threshold_high2->set_default_properties(threshold_high2_prop);
+	threshold_high2->set_disp_level(Tango::EXPERT);
 	att_list.push_back(threshold_high2);
 
 	//	Attribute : triggerAcquisitionFrequency
@@ -414,6 +419,20 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	trigger_acquisition_frequency_prop.set_description("Define the trigger acquisition frequency in the pump & probe mode. <BR>\npump_probe_nb_frames = (round(exposureTime*triggerAcquisitionFrequency/2))*2 <br>\n");
 	trigger_acquisition_frequency->set_default_properties(trigger_acquisition_frequency_prop);
 	att_list.push_back(trigger_acquisition_frequency);
+
+	//	Attribute : geometricalCorrection
+	geometricalCorrectionAttrib	*geometrical_correction = new geometricalCorrectionAttrib();
+	Tango::UserDefaultAttrProp	geometrical_correction_prop;
+	geometrical_correction_prop.set_description("Define if the enable or disable state of geometrical correction.<br>\nAcquired images will always have the same size but if the correction is enabled<br>\nthe gaps between the chips will be filled with interpolated data,<br>\ncomputed from adjacent pixels<br>");
+	geometrical_correction->set_default_properties(geometrical_correction_prop);
+	att_list.push_back(geometrical_correction);
+
+	//	Attribute : countingMode
+	countingModeAttrib	*counting_mode = new countingModeAttrib();
+	Tango::UserDefaultAttrProp	counting_mode_prop;
+	counting_mode_prop.set_description("Define the acquisition mode which can be:<br>\n- CONTINUOUS_2<br>\n- CONTINUOUS_4<br>\n- CONTINUOUS_8<br>\n- CONTINUOUS_14<br>\n- STANDARD_14<br>\n- LONG_COUNTER_28<br>\n- PUMP_PROBE_PROBE_32<br>");
+	counting_mode->set_default_properties(counting_mode_prop);
+	att_list.push_back(counting_mode);
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
@@ -633,36 +652,6 @@ void UfxcClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
-	prop_name = "GeometricalCorrectionEnabled";
-	prop_desc = "Enable/Disable the geometrical corrections";
-	prop_def  = "true";
-	vect_data.clear();
-	vect_data.push_back("true");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "StackFramesSumEnabled";
-	prop_desc = "Enable/Disable the sum of the frames stack";
-	prop_def  = "true";
-	vect_data.clear();
-	vect_data.push_back("true");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
 	prop_name = "MemorizedThresholdLow";
 	prop_desc = "Only the device could modify this property <br>\nThe User should never change this property<br>";
 	prop_def  = "0";
@@ -713,6 +702,66 @@ void UfxcClass::set_default_property()
 	prop_def  = "1";
 	vect_data.clear();
 	vect_data.push_back("1");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedGeometricalCorrection";
+	prop_desc = "Only the device could modify this property <br>\nThe User should never change this property<br>";
+	prop_def  = "False";
+	vect_data.clear();
+	vect_data.push_back("False");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedCountingMode";
+	prop_desc = "Only the device could modify this property <br>\nThe User should never change this property<br>";
+	prop_def  = "DEFAULT";
+	vect_data.clear();
+	vect_data.push_back("DEFAULT");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "SFPMTU";
+	prop_desc = "MTU value of the SFP ports.";
+	prop_def  = "1500";
+	vect_data.clear();
+	vect_data.push_back("1500");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "UfxcModel";
+	prop_desc = "Allows to specify the UFXC model.";
+	prop_def  = "U2C";
+	vect_data.clear();
+	vect_data.push_back("U2C");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -860,7 +909,7 @@ void UfxcClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back(XTBS(TANGO_BASE_CLASS));
+	inheritance.push_back("Tango::Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

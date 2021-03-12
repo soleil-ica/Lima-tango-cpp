@@ -72,7 +72,7 @@ namespace SlsEiger_ns
 
 /*----- PROTECTED REGION END -----*/	//	SlsEiger::Additional Class Declarations
 
-class SlsEiger : public TANGO_BASE_CLASS
+class SlsEiger : public Tango::Device_4Impl
 {
 
 /*----- PROTECTED REGION ID(SlsEiger::Data Members) ENABLED START -----*/
