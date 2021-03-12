@@ -150,7 +150,7 @@ SpectrumOneCCDClass *SpectrumOneCCDClass::instance()
 //===================================================================
 //--------------------------------------------------------
 /**
- * method : 		ForceReConfigClass::execute()
+ * method : 		ForcedInitClass::execute()
  * description : 	method to trigger the execution of the command.
  *
  * @param	device	The device on which the command must be executed
@@ -159,10 +159,84 @@ SpectrumOneCCDClass *SpectrumOneCCDClass::instance()
  *	returns The command output data (packed in the Any object)
  */
 //--------------------------------------------------------
-CORBA::Any *ForceReConfigClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
+CORBA::Any *ForcedInitClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
 {
-	cout2 << "ForceReConfigClass::execute(): arrived" << endl;
-	((static_cast<SpectrumOneCCD *>(device))->force_re_config());
+	cout2 << "ForcedInitClass::execute(): arrived" << endl;
+	((static_cast<SpectrumOneCCD *>(device))->forced_init());
+	return new CORBA::Any();
+}
+
+//--------------------------------------------------------
+/**
+ * method : 		GetTemperatureClass::execute()
+ * description : 	method to trigger the execution of the command.
+ *
+ * @param	device	The device on which the command must be executed
+ * @param	in_any	The command input data
+ *
+ *	returns The command output data (packed in the Any object)
+ */
+//--------------------------------------------------------
+CORBA::Any *GetTemperatureClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
+{
+	cout2 << "GetTemperatureClass::execute(): arrived" << endl;
+	((static_cast<SpectrumOneCCD *>(device))->get_temperature());
+	return new CORBA::Any();
+}
+
+//--------------------------------------------------------
+/**
+ * method : 		ReConfigClass::execute()
+ * description : 	method to trigger the execution of the command.
+ *
+ * @param	device	The device on which the command must be executed
+ * @param	in_any	The command input data
+ *
+ *	returns The command output data (packed in the Any object)
+ */
+//--------------------------------------------------------
+CORBA::Any *ReConfigClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
+{
+	cout2 << "ReConfigClass::execute(): arrived" << endl;
+	((static_cast<SpectrumOneCCD *>(device))->re_config());
+	return new CORBA::Any();
+}
+
+//--------------------------------------------------------
+/**
+ * method : 		SetNumFlushesClass::execute()
+ * description : 	method to trigger the execution of the command.
+ *
+ * @param	device	The device on which the command must be executed
+ * @param	in_any	The command input data
+ *
+ *	returns The command output data (packed in the Any object)
+ */
+//--------------------------------------------------------
+CORBA::Any *SetNumFlushesClass::execute(Tango::DeviceImpl *device, const CORBA::Any &in_any)
+{
+	cout2 << "SetNumFlushesClass::execute(): arrived" << endl;
+	Tango::DevLong argin;
+	extract(in_any, argin);
+	((static_cast<SpectrumOneCCD *>(device))->set_num_flushes(argin));
+	return new CORBA::Any();
+}
+
+//--------------------------------------------------------
+/**
+ * method : 		GetGainClass::execute()
+ * description : 	method to trigger the execution of the command.
+ *
+ * @param	device	The device on which the command must be executed
+ * @param	in_any	The command input data
+ *
+ *	returns The command output data (packed in the Any object)
+ */
+//--------------------------------------------------------
+CORBA::Any *GetGainClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
+{
+	cout2 << "GetGainClass::execute(): arrived" << endl;
+	((static_cast<SpectrumOneCCD *>(device))->get_gain());
 	return new CORBA::Any();
 }
 
@@ -236,7 +310,7 @@ void SpectrumOneCCDClass::set_default_property()
 
 	//	Set Default device Properties
 	prop_name = "GpibAddress";
-	prop_desc = "Gpib Address (from 0 to 30)";
+	prop_desc = "Gpib Address of the controller (from 0 to 30)";
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
@@ -250,7 +324,7 @@ void SpectrumOneCCDClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 	prop_name = "Port";
-	prop_desc = "IP port";
+	prop_desc = "IP port of the controller";
 	prop_def  = "1234";
 	vect_data.clear();
 	vect_data.push_back("1234");
@@ -264,7 +338,7 @@ void SpectrumOneCCDClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 	prop_name = "Host";
-	prop_desc = "Name or IP adress";
+	prop_desc = "Host name or IP adress of the controller";
 	prop_def  = "127.0.0.1";
 	vect_data.clear();
 	vect_data.push_back("127.0.0.1");
@@ -277,22 +351,8 @@ void SpectrumOneCCDClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "Timeout";
-	prop_desc = "Timeout in millisecond";
-	prop_def  = "100";
-	vect_data.clear();
-	vect_data.push_back("100");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
 	prop_name = "TablesPath";
-	prop_desc = "Path of the tables to be loaded in the CCD for its initialization";
+	prop_desc = "Path of the tables to be loaded in the camera for its initialization";
 	prop_def  = "/usr/Local/configFiles/SpectrumOne";
 	vect_data.clear();
 	vect_data.push_back("/usr/Local/configFiles/SpectrumOne");
@@ -328,6 +388,34 @@ void SpectrumOneCCDClass::set_default_property()
 	vect_data.push_back("v_pixel_spacing=");
 	vect_data.push_back("total_parallel_pixels=");
 	vect_data.push_back("total_serial_pixels=");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "InvertX";
+	prop_desc = "Used to invert the X axis of the images";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "TablesMode";
+	prop_desc = "Mode of the tables to send to the camera for its initialization.\nIs contained in the file names of the tables.\nFor example the mode of XXXX1401.TAB is 1401.";
+	prop_def  = "1401";
+	vect_data.clear();
+	vect_data.push_back("1401");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -469,6 +557,54 @@ void SpectrumOneCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Add your own code
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCDClass::attribute_factory_before
+	//	Attribute : lastTemperature
+	lastTemperatureAttrib	*lasttemperature = new lastTemperatureAttrib();
+	Tango::UserDefaultAttrProp	lasttemperature_prop;
+	lasttemperature_prop.set_description("Last temperature of the CCD");
+	//	label	not set for lastTemperature
+	lasttemperature_prop.set_unit("K");
+	//	standard_unit	not set for lastTemperature
+	//	display_unit	not set for lastTemperature
+	//	format	not set for lastTemperature
+	//	max_value	not set for lastTemperature
+	//	min_value	not set for lastTemperature
+	//	max_alarm	not set for lastTemperature
+	//	min_alarm	not set for lastTemperature
+	//	max_warning	not set for lastTemperature
+	//	min_warning	not set for lastTemperature
+	//	delta_t	not set for lastTemperature
+	//	delta_val	not set for lastTemperature
+	
+	lasttemperature->set_default_properties(lasttemperature_prop);
+	//	Not Polled
+	lasttemperature->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(lasttemperature);
+
+	//	Attribute : gain
+	gainAttrib	*gain = new gainAttrib();
+	Tango::UserDefaultAttrProp	gain_prop;
+	gain_prop.set_description("Define CCD gain of the camera.");
+	//	label	not set for gain
+	//	unit	not set for gain
+	//	standard_unit	not set for gain
+	//	display_unit	not set for gain
+	//	format	not set for gain
+	//	max_value	not set for gain
+	//	min_value	not set for gain
+	//	max_alarm	not set for gain
+	//	min_alarm	not set for gain
+	//	max_warning	not set for gain
+	//	min_warning	not set for gain
+	//	delta_t	not set for gain
+	//	delta_val	not set for gain
+	
+	gain->set_default_properties(gain_prop);
+	//	Not Polled
+	gain->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(gain);
+
 
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());
@@ -514,14 +650,50 @@ void SpectrumOneCCDClass::command_factory()
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCDClass::command_factory_before
 
 
-	//	Command ForceReConfig
-	ForceReConfigClass	*pForceReConfigCmd =
-		new ForceReConfigClass("ForceReConfig",
+	//	Command ForcedInit
+	ForcedInitClass	*pForcedInitCmd =
+		new ForcedInitClass("ForcedInit",
 			Tango::DEV_VOID, Tango::DEV_VOID,
 			"",
 			"",
 			Tango::OPERATOR);
-	command_list.push_back(pForceReConfigCmd);
+	command_list.push_back(pForcedInitCmd);
+
+	//	Command GetTemperature
+	GetTemperatureClass	*pGetTemperatureCmd =
+		new GetTemperatureClass("GetTemperature",
+			Tango::DEV_VOID, Tango::DEV_VOID,
+			"",
+			"",
+			Tango::OPERATOR);
+	command_list.push_back(pGetTemperatureCmd);
+
+	//	Command ReConfig
+	ReConfigClass	*pReConfigCmd =
+		new ReConfigClass("ReConfig",
+			Tango::DEV_VOID, Tango::DEV_VOID,
+			"",
+			"",
+			Tango::OPERATOR);
+	command_list.push_back(pReConfigCmd);
+
+	//	Command SetNumFlushes
+	SetNumFlushesClass	*pSetNumFlushesCmd =
+		new SetNumFlushesClass("SetNumFlushes",
+			Tango::DEV_LONG, Tango::DEV_VOID,
+			"Number of flushes",
+			"",
+			Tango::OPERATOR);
+	command_list.push_back(pSetNumFlushesCmd);
+
+	//	Command GetGain
+	GetGainClass	*pGetGainCmd =
+		new GetGainClass("GetGain",
+			Tango::DEV_VOID, Tango::DEV_VOID,
+			"",
+			"",
+			Tango::OPERATOR);
+	command_list.push_back(pGetGainCmd);
 
 	/*----- PROTECTED REGION ID(SpectrumOneCCDClass::command_factory_after) ENABLED START -----*/
 	

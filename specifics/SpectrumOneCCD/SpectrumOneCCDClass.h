@@ -52,13 +52,45 @@ namespace SpectrumOneCCD_ns
 /*----- PROTECTED REGION END -----*/	//	SpectrumOneCCDClass::classes for dynamic creation
 
 //=========================================
-//	Define classes for commands
+//	Define classes for attributes
 //=========================================
-//	Command ForceReConfig class definition
-class ForceReConfigClass : public Tango::Command
+//	Attribute lastTemperature class definition
+class lastTemperatureAttrib: public Tango::Attr
 {
 public:
-	ForceReConfigClass(const char   *name,
+	lastTemperatureAttrib():Attr("lastTemperature",
+			Tango::DEV_DOUBLE, Tango::READ) {};
+	~lastTemperatureAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SpectrumOneCCD *>(dev))->read_lastTemperature(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SpectrumOneCCD *>(dev))->is_lastTemperature_allowed(ty);}
+};
+
+//	Attribute gain class definition
+class gainAttrib: public Tango::Attr
+{
+public:
+	gainAttrib():Attr("gain",
+			Tango::DEV_LONG, Tango::READ_WRITE) {};
+	~gainAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SpectrumOneCCD *>(dev))->read_gain(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<SpectrumOneCCD *>(dev))->write_gain(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SpectrumOneCCD *>(dev))->is_gain_allowed(ty);}
+};
+
+
+//=========================================
+//	Define classes for commands
+//=========================================
+//	Command ForcedInit class definition
+class ForcedInitClass : public Tango::Command
+{
+public:
+	ForcedInitClass(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -66,15 +98,107 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	ForceReConfigClass(const char   *name,
+	ForcedInitClass(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~ForceReConfigClass() {};
+	~ForcedInitClass() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<SpectrumOneCCD *>(dev))->is_ForceReConfig_allowed(any);}
+	{return (static_cast<SpectrumOneCCD *>(dev))->is_ForcedInit_allowed(any);}
+};
+
+//	Command GetTemperature class definition
+class GetTemperatureClass : public Tango::Command
+{
+public:
+	GetTemperatureClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	GetTemperatureClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~GetTemperatureClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<SpectrumOneCCD *>(dev))->is_GetTemperature_allowed(any);}
+};
+
+//	Command ReConfig class definition
+class ReConfigClass : public Tango::Command
+{
+public:
+	ReConfigClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	ReConfigClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~ReConfigClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<SpectrumOneCCD *>(dev))->is_ReConfig_allowed(any);}
+};
+
+//	Command SetNumFlushes class definition
+class SetNumFlushesClass : public Tango::Command
+{
+public:
+	SetNumFlushesClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	SetNumFlushesClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~SetNumFlushesClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<SpectrumOneCCD *>(dev))->is_SetNumFlushes_allowed(any);}
+};
+
+//	Command GetGain class definition
+class GetGainClass : public Tango::Command
+{
+public:
+	GetGainClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	GetGainClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~GetGainClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<SpectrumOneCCD *>(dev))->is_GetGain_allowed(any);}
 };
 
 

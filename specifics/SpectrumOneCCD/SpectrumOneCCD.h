@@ -75,26 +75,34 @@ private:
 
     lima::SpectrumOne::Interface*   m_hw;
     lima::SpectrumOne::Camera*      m_camera;
-    lima::CtControl*        m_ct;
+    lima::CtControl*                m_ct;
 
 
 /*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::Data Members
 
 //	Device property data members
 public:
-	//	GpibAddress:	Gpib Address (from 0 to 30)
+	//	GpibAddress:	Gpib Address of the controller (from 0 to 30)
 	Tango::DevULong	gpibAddress;
-	//	Port:	IP port
+	//	Port:	IP port of the controller
 	Tango::DevULong	port;
-	//	Host:	Name or IP adress
+	//	Host:	Host name or IP adress of the controller
 	string	host;
-	//	Timeout:	Timeout in millisecond
-	Tango::DevULong	timeout;
-	//	TablesPath:	Path of the tables to be loaded in the CCD for its initialization
+	//	TablesPath:	Path of the tables to be loaded in the camera for its initialization
 	string	tablesPath;
 	//	ExpertConfig:	Advanced config for the camera
 	vector<string>	expertConfig;
+	//	InvertX:	Used to invert the X axis of the images
+	Tango::DevBoolean	invertX;
+	//	TablesMode:	Mode of the tables to send to the camera for its initialization.
+	//  Is contained in the file names of the tables.
+	//  For example the mode of XXXX1401.TAB is 1401.
+	string	tablesMode;
 
+//	Attribute data members
+public:
+	Tango::DevDouble	*attr_lastTemperature_read;
+	Tango::DevLong	*attr_gain_read;
 
 //	Constructors and destructors
 public:
@@ -155,6 +163,33 @@ public:
 	 */
 	//--------------------------------------------------------
 	virtual void read_attr_hardware(vector<long> &attr_list);
+	//--------------------------------------------------------
+	/*
+	 *	Method      : SpectrumOneCCD::write_attr_hardware()
+	 *	Description : Hardware writing for attributes.
+	 */
+	//--------------------------------------------------------
+	virtual void write_attr_hardware(vector<long> &attr_list);
+
+/**
+ *	Attribute lastTemperature related methods
+ *	Description: Last temperature of the CCD
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+	virtual void read_lastTemperature(Tango::Attribute &attr);
+	virtual bool is_lastTemperature_allowed(Tango::AttReqType type);
+/**
+ *	Attribute gain related methods
+ *	Description: Define CCD gain of the camera.
+ *
+ *	Data type:	Tango::DevLong
+ *	Attr type:	Scalar
+ */
+	virtual void read_gain(Tango::Attribute &attr);
+	virtual void write_gain(Tango::WAttribute &attr);
+	virtual bool is_gain_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------
@@ -185,12 +220,43 @@ public:
 	 */
 	virtual Tango::ConstDevString dev_status();
 	/**
-	 *	Command ForceReConfig related method
-	 *	Description: Force the injection of the tables and the reconfiguration of the camera
+	 *	Command ForcedInit related method
+	 *	Description: Force the initialization, injection of the tables and the reconfiguration of the camera
 	 *
 	 */
-	virtual void force_re_config();
-	virtual bool is_ForceReConfig_allowed(const CORBA::Any &any);
+	virtual void forced_init();
+	virtual bool is_ForcedInit_allowed(const CORBA::Any &any);
+	/**
+	 *	Command GetTemperature related method
+	 *	Description: Get the temperature of the CCD sensor.
+	 *               The temperature will be updated in the lastTemperature attribute.
+	 *
+	 */
+	virtual void get_temperature();
+	virtual bool is_GetTemperature_allowed(const CORBA::Any &any);
+	/**
+	 *	Command ReConfig related method
+	 *	Description: Force the re-configuration of the camera.
+	 *
+	 */
+	virtual void re_config();
+	virtual bool is_ReConfig_allowed(const CORBA::Any &any);
+	/**
+	 *	Command SetNumFlushes related method
+	 *	Description: Set the number of flushes for the acquisition
+	 *
+	 *	@param argin Number of flushes
+	 */
+	virtual void set_num_flushes(Tango::DevLong argin);
+	virtual bool is_SetNumFlushes_allowed(const CORBA::Any &any);
+	/**
+	 *	Command GetGain related method
+	 *	Description: Get the temperature of the camera.
+	 *               The gain will be updated in the gain attribute.
+	 *
+	 */
+	virtual void get_gain();
+	virtual bool is_GetGain_allowed(const CORBA::Any &any);
 
 
 	//--------------------------------------------------------

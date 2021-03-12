@@ -49,6 +49,42 @@ namespace SpectrumOneCCD_ns
 //		Attributes Allowed Methods
 //=================================================
 
+//--------------------------------------------------------
+/**
+ *	Method      : SpectrumOneCCD::is_lastTemperature_allowed()
+ *	Description : Execution allowed for lastTemperature attribute
+ */
+//--------------------------------------------------------
+bool SpectrumOneCCD::is_lastTemperature_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Not any excluded states for lastTemperature attribute in read access.
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::lastTemperatureStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::lastTemperatureStateAllowed_READ
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SpectrumOneCCD::is_gain_allowed()
+ *	Description : Execution allowed for gain attribute
+ */
+//--------------------------------------------------------
+bool SpectrumOneCCD::is_gain_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Not any excluded states for gain attribute in Write access.
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::gainStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::gainStateAllowed_WRITE
+
+	//	Not any excluded states for gain attribute in read access.
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::gainStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::gainStateAllowed_READ
+	return true;
+}
+
 
 //=================================================
 //		Commands Allowed Methods
@@ -56,11 +92,11 @@ namespace SpectrumOneCCD_ns
 
 //--------------------------------------------------------
 /**
- *	Method      : SpectrumOneCCD::is_ForceReConfig_allowed()
- *	Description : Execution allowed for ForceReConfig attribute
+ *	Method      : SpectrumOneCCD::is_ForcedInit_allowed()
+ *	Description : Execution allowed for ForcedInit attribute
  */
 //--------------------------------------------------------
-bool SpectrumOneCCD::is_ForceReConfig_allowed(TANGO_UNUSED(const CORBA::Any &any))
+bool SpectrumOneCCD::is_ForcedInit_allowed(TANGO_UNUSED(const CORBA::Any &any))
 {
 	//	Compare device state with not allowed states.
 	if (get_state()==Tango::RUNNING ||
@@ -68,12 +104,97 @@ bool SpectrumOneCCD::is_ForceReConfig_allowed(TANGO_UNUSED(const CORBA::Any &any
 		get_state()==Tango::ALARM ||
 		get_state()==Tango::DISABLE)
 	{
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::ForceReConfigStateAllowed) ENABLED START -----*/
-    }
-    if(get_state()!=Tango::STANDBY)
-    {
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::ForcedInitStateAllowed) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::ForceReConfigStateAllowed
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::ForcedInitStateAllowed
+		return false;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SpectrumOneCCD::is_GetTemperature_allowed()
+ *	Description : Execution allowed for GetTemperature attribute
+ */
+//--------------------------------------------------------
+bool SpectrumOneCCD::is_GetTemperature_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+	//	Compare device state with not allowed states.
+	if (get_state()==Tango::RUNNING ||
+		get_state()==Tango::FAULT ||
+		get_state()==Tango::ALARM ||
+		get_state()==Tango::DISABLE)
+	{
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::GetTemperatureStateAllowed) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::GetTemperatureStateAllowed
+		return false;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SpectrumOneCCD::is_ReConfig_allowed()
+ *	Description : Execution allowed for ReConfig attribute
+ */
+//--------------------------------------------------------
+bool SpectrumOneCCD::is_ReConfig_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+	//	Compare device state with not allowed states.
+	if (get_state()==Tango::RUNNING ||
+		get_state()==Tango::FAULT ||
+		get_state()==Tango::ALARM ||
+		get_state()==Tango::DISABLE)
+	{
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::ReConfigStateAllowed) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::ReConfigStateAllowed
+		return false;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SpectrumOneCCD::is_SetNumFlushes_allowed()
+ *	Description : Execution allowed for SetNumFlushes attribute
+ */
+//--------------------------------------------------------
+bool SpectrumOneCCD::is_SetNumFlushes_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+	//	Compare device state with not allowed states.
+	if (get_state()==Tango::RUNNING ||
+		get_state()==Tango::FAULT ||
+		get_state()==Tango::ALARM ||
+		get_state()==Tango::DISABLE)
+	{
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::SetNumFlushesStateAllowed) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::SetNumFlushesStateAllowed
+		return false;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : SpectrumOneCCD::is_GetGain_allowed()
+ *	Description : Execution allowed for GetGain attribute
+ */
+//--------------------------------------------------------
+bool SpectrumOneCCD::is_GetGain_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+	//	Compare device state with not allowed states.
+	if (get_state()==Tango::RUNNING ||
+		get_state()==Tango::FAULT ||
+		get_state()==Tango::ALARM ||
+		get_state()==Tango::DISABLE)
+	{
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::GetGainStateAllowed) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::GetGainStateAllowed
 		return false;
 	}
 	return true;

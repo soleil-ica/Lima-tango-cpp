@@ -48,16 +48,22 @@
 //  The following table gives the correspondence
 //  between command and method names.
 //
-//  Command name   |  Method name
+//  Command name    |  Method name
 //================================================================
-//  State          |  dev_state
-//  Status         |  dev_status
-//  ForceReConfig  |  force_re_config
+//  State           |  dev_state
+//  Status          |  dev_status
+//  ForcedInit      |  forced_init
+//  GetTemperature  |  get_temperature
+//  ReConfig        |  re_config
+//  SetNumFlushes   |  set_num_flushes
+//  GetGain         |  get_gain
 //================================================================
 
 //================================================================
-//  Attributes managed is:
+//  Attributes managed are:
 //================================================================
+//  lastTemperature  |  Tango::DevDouble	Scalar
+//  gain             |  Tango::DevLong	Scalar
 //================================================================
 
 namespace SpectrumOneCCD_ns
@@ -115,6 +121,10 @@ void SpectrumOneCCD::delete_device()
 	
 	//	Delete device allocated objects
     m_is_device_initialized = false;
+    DELETE_SCALAR_ATTRIBUTE(attr_lastTemperature_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_gain_read);
+
+    // Inner Appenders in specific devices are the cause of a bug in Lima
     // INFO_STREAM << "Remove the inner-appender." << std::endl;
     // yat4tango::InnerAppender::release(this);
 
@@ -138,6 +148,12 @@ void SpectrumOneCCD::init_device()
     m_is_device_initialized = false;
     m_status_message.str("");
 
+    CREATE_SCALAR_ATTRIBUTE(attr_lastTemperature_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_gain_read);
+    *attr_lastTemperature_read = 0;
+    *attr_gain_read = 0;
+
+    // Inner Appenders in specific devices are the cause of a bug in Lima
     // try
     // {
     //     INFO_STREAM << "Create the inner-appender in order to manage logs." << std::endl;  
@@ -167,8 +183,10 @@ void SpectrumOneCCD::init_device()
         // Get interface to the camera
         m_hw = dynamic_cast<SpectrumOne::Interface*>(m_ct->hwInterface());
 
+        // Get the camera object
         m_camera = m_hw->getCamera();
 
+        // We now have the proper objects, initialization successful
         m_is_device_initialized = true;
     }
     catch (Tango::DevFailed& df)
@@ -212,9 +230,10 @@ void SpectrumOneCCD::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("GpibAddress"));
 	dev_prop.push_back(Tango::DbDatum("Port"));
 	dev_prop.push_back(Tango::DbDatum("Host"));
-	dev_prop.push_back(Tango::DbDatum("Timeout"));
 	dev_prop.push_back(Tango::DbDatum("TablesPath"));
 	dev_prop.push_back(Tango::DbDatum("ExpertConfig"));
+	dev_prop.push_back(Tango::DbDatum("InvertX"));
+	dev_prop.push_back(Tango::DbDatum("TablesMode"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -262,17 +281,6 @@ void SpectrumOneCCD::get_device_property()
 		//	And try to extract Host value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  host;
 
-		//	Try to initialize Timeout from class property
-		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  timeout;
-		else {
-			//	Try to initialize Timeout from default device value
-			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  timeout;
-		}
-		//	And try to extract Timeout value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  timeout;
-
 		//	Try to initialize TablesPath from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 		if (cl_prop.is_empty()==false)	cl_prop  >>  tablesPath;
@@ -295,16 +303,40 @@ void SpectrumOneCCD::get_device_property()
 		//	And try to extract ExpertConfig value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertConfig;
 
+		//	Try to initialize InvertX from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  invertX;
+		else {
+			//	Try to initialize InvertX from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  invertX;
+		}
+		//	And try to extract InvertX value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  invertX;
+
+		//	Try to initialize TablesMode from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  tablesMode;
+		else {
+			//	Try to initialize TablesMode from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  tablesMode;
+		}
+		//	And try to extract TablesMode value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  tablesMode;
+
 	}
 
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::get_device_property_after) ENABLED START -----*/
 	
 	//	Check device property data members init
 
+    // Create all properties if empty
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "InvertX");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", "GpibAddress");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1234", "Port");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "Host");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "100", "ReadTimeout");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1401", "TablesMode");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "/usr/Local/configFiles/SpectrumOne", "TablesPath");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, 
         "[CCD_config]\n"
@@ -362,7 +394,86 @@ void SpectrumOneCCD::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::read_attr_hardware
 }
+//--------------------------------------------------------
+/**
+ *	Method      : SpectrumOneCCD::write_attr_hardware()
+ *	Description : Hardware writing for attributes
+ */
+//--------------------------------------------------------
+void SpectrumOneCCD::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
+{
+	DEBUG_STREAM << "SpectrumOneCCD::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::write_attr_hardware) ENABLED START -----*/
+	
+	//	Add your own code
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::write_attr_hardware
+}
 
+//--------------------------------------------------------
+/**
+ *	Read attribute lastTemperature related method
+ *	Description: Last temperature of the CCD
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SpectrumOneCCD::read_lastTemperature(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SpectrumOneCCD::read_lastTemperature(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::read_lastTemperature) ENABLED START -----*/
+	//	Set the attribute value
+    // Get last reported temperature from camera
+    m_camera->getTemperature(*attr_lastTemperature_read);
+    attr.set_value(attr_lastTemperature_read);
+	
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::read_lastTemperature
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute gain related method
+ *	Description: Define CCD gain of the camera.
+ *
+ *	Data type:	Tango::DevLong
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SpectrumOneCCD::read_gain(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SpectrumOneCCD::read_gain(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::read_gain) ENABLED START -----*/
+	//	Set the attribute value
+    // Get last reported gain from camera
+    m_camera->getGain(*attr_gain_read);
+    attr.set_value(attr_gain_read);
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::read_gain
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute gain related method
+ *	Description: Define CCD gain of the camera.
+ *
+ *	Data type:	Tango::DevLong
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SpectrumOneCCD::write_gain(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "SpectrumOneCCD::write_gain(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevLong	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::write_gain) ENABLED START -----*/
+    // Set gain and query the new gain from camera
+    m_camera->setGain(static_cast<int>(w_val));
+    m_camera->pollGain();
+	
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::write_gain
+}
 
 //--------------------------------------------------------
 /**
@@ -393,8 +504,9 @@ Tango::DevState SpectrumOneCCD::dev_state()
 	DEBUG_STREAM << "SpectrumOneCCD::State()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::dev_state) ENABLED START -----*/
 	
-	Tango::DevState	argout = Tango::UNKNOWN; // replace by your own algorithm
-	//	Add your own code
+	Tango::DevState	argout = Tango::UNKNOWN;
+
+    // If initialized, get device state from LIMA
     if(!m_is_device_initialized)
     {
         argout = Tango::FAULT;
@@ -426,6 +538,7 @@ Tango::ConstDevString SpectrumOneCCD::dev_status()
 	string	status = "Device is OK";
 	//	Add your own code
 
+    // If initialized, get device status from LIMA
     if(!m_is_device_initialized)
     {
         status = m_status_message.str();
@@ -441,20 +554,95 @@ Tango::ConstDevString SpectrumOneCCD::dev_status()
 }
 //--------------------------------------------------------
 /**
- *	Command ForceReConfig related method
- *	Description: Force the injection of the tables and the reconfiguration of the camera
+ *	Command ForcedInit related method
+ *	Description: Force the initialization, injection of the tables and the reconfiguration of the camera
  *
  */
 //--------------------------------------------------------
-void SpectrumOneCCD::force_re_config()
+void SpectrumOneCCD::forced_init()
 {
-	DEBUG_STREAM << "SpectrumOneCCD::ForceReConfig()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::force_re_config) ENABLED START -----*/
+	DEBUG_STREAM << "SpectrumOneCCD::ForcedInit()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::forced_init) ENABLED START -----*/
 	
 	//	Add your own code
-    m_camera->forceConfig();
+    // Force init and table upload to camera
+    m_camera->forceTables();
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::force_re_config
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::forced_init
+}
+//--------------------------------------------------------
+/**
+ *	Command GetTemperature related method
+ *	Description: Get the temperature of the CCD sensor.
+ *               The temperature will be updated in the lastTemperature attribute.
+ *
+ */
+//--------------------------------------------------------
+void SpectrumOneCCD::get_temperature()
+{
+	DEBUG_STREAM << "SpectrumOneCCD::GetTemperature()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::get_temperature) ENABLED START -----*/
+	
+	//	Add your own code
+    // Query camera temperature
+    m_camera->pollTemperature();
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::get_temperature
+}
+//--------------------------------------------------------
+/**
+ *	Command ReConfig related method
+ *	Description: Force the re-configuration of the camera.
+ *
+ */
+//--------------------------------------------------------
+void SpectrumOneCCD::re_config()
+{
+	DEBUG_STREAM << "SpectrumOneCCD::ReConfig()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::re_config) ENABLED START -----*/
+	
+	//	Add your own code
+    // Force re-configuration of camera
+    m_camera->reConfig();
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::re_config
+}
+//--------------------------------------------------------
+/**
+ *	Command SetNumFlushes related method
+ *	Description: Set the number of flushes for the acquisition
+ *
+ *	@param argin Number of flushes
+ */
+//--------------------------------------------------------
+void SpectrumOneCCD::set_num_flushes(Tango::DevLong argin)
+{
+	DEBUG_STREAM << "SpectrumOneCCD::SetNumFlushes()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::set_num_flushes) ENABLED START -----*/
+	
+	//	Add your own code
+    // Set num of flushes
+    m_camera->setNumFlushes(static_cast<int>(argin));
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::set_num_flushes
+}
+//--------------------------------------------------------
+/**
+ *	Command GetGain related method
+ *	Description: Get the temperature of the camera.
+ *               The gain will be updated in the gain attribute.
+ *
+ */
+//--------------------------------------------------------
+void SpectrumOneCCD::get_gain()
+{
+	DEBUG_STREAM << "SpectrumOneCCD::GetGain()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::get_gain) ENABLED START -----*/
+	
+	//	Add your own code
+    // Query gain from camera
+    m_camera->pollGain();
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::get_gain
 }
 //--------------------------------------------------------
 /**
@@ -475,81 +663,6 @@ void SpectrumOneCCD::add_dynamic_commands()
 /*----- PROTECTED REGION ID(SpectrumOneCCD::namespace_ending) ENABLED START -----*/
 
 //	Additional Methods
-// //--------------------------------------------------------
-// /**
-//  *	Command Write related method
-//  *	Description: 
-//  *
-//  *	@param argin 
-//  */
-// //--------------------------------------------------------
-// void SpectrumOneCCD::write(Tango::DevString argin)
-// {
-// 	DEBUG_STREAM << "SpectrumOneCCD::Write()  - " << device_name << endl;
-// 	
-// 	//	Add your own code
-//     std::string cmd(argin);
-//     m_camera->write(cmd);
-// 	
-// }
-
-// //--------------------------------------------------------
-// /**
-//  *	Command Read related method
-//  *	Description: 
-//  *
-//  *	@returns 
-//  */
-// //--------------------------------------------------------
-// Tango::DevString SpectrumOneCCD::read()
-// {
-// 	Tango::DevString argout;
-// 	DEBUG_STREAM << "SpectrumOneCCD::Read()  - " << device_name << endl;
-// 	
-// 	//	Add your own code
-//     std::string answer(m_camera->read());
-//     argout = new char[answer.size()+1];
-//     strcpy(argout, answer.c_str());
-// 	
-// 	return argout;
-// }
-
-// //--------------------------------------------------------
-// /**
-//  *	Command WhereAmI related method
-//  *	Description: 
-//  *
-//  *	@returns 
-//  */
-// //--------------------------------------------------------
-// Tango::DevString SpectrumOneCCD::where_am_i()
-// {
-// 	Tango::DevString argout;
-// 	DEBUG_STREAM << "SpectrumOneCCD::WhereAmI()  - " << device_name << endl;
-// 	
-// 	//	Add your own code
-//     argout = new char[1];
-//     argout[0] = m_camera->whereAmI();
-// 	
-// 	return argout;
-// }
-
-// //--------------------------------------------------------
-// /**
-//  *	Command Reboot related method
-//  *	Description: 
-//  *
-//  */
-// //--------------------------------------------------------
-// void SpectrumOneCCD::reboot()
-// {
-// 	DEBUG_STREAM << "SpectrumOneCCD::Reboot()  - " << device_name << endl;
-// 	
-// 	//	Add your own code
-//     m_camera->rebootIfHung();
-// 	
-// }
-
 
 /*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::namespace_ending
 } //	namespace

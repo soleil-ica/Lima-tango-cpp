@@ -359,27 +359,39 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data.push_back(Tango::DbDatum("Host"));
                 db_data.push_back(Tango::DbDatum("Port"));
                 db_data.push_back(Tango::DbDatum("GpibAddress"));
-                db_data.push_back(Tango::DbDatum("ReadTimeout"));
                 db_data.push_back(Tango::DbDatum("TablesPath"));
+                db_data.push_back(Tango::DbDatum("TablesMode"));
                 db_data.push_back(Tango::DbDatum("ExpertConfig"));
+                db_data.push_back(Tango::DbDatum("InvertX"));
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
 
-                SpectrumOne::GpibConfig config;
-                std::string tables_path;
+                SpectrumOne::GpibConfig gpib_config;
+                SpectrumOne::CommandConfig command_config;
+
                 std::vector<std::string> expert_config_vect;
+
                 unsigned long temp;
 
-                db_data[0] >> config.host;
+                // Host
+                db_data[0] >> gpib_config.host;
+                // Port
                 db_data[1] >> temp;
-                config.port = static_cast<size_t>(temp);
+                gpib_config.port = static_cast<size_t>(temp);
+                // GpibAddress
                 db_data[2] >> temp;
-                config.gpib_address = static_cast<size_t>(temp);
-                db_data[3] >> temp;
-                config.timeout = static_cast<size_t>(temp);
-                db_data[4] >> tables_path;
+                gpib_config.gpib_address = static_cast<size_t>(temp);
+                // TablesPath
+                db_data[3] >> command_config.tables_path;
+                // TablesMode
+                db_data[4] >> command_config.tables_mode;
+                // ExpertConfig
                 db_data[5] >> expert_config_vect;
+                command_config.expert_config = yat::StringUtil::join(expert_config_vect, '\n');
+                // InvertX
+                db_data[6] >> command_config.invert_x;
 
-                m_camera = static_cast<void*> (new SpectrumOne::Camera(config, tables_path, yat::StringUtil::join(expert_config_vect, '\n')));
+
+                m_camera = static_cast<void*> (new SpectrumOne::Camera(gpib_config, command_config));
                 m_interface = static_cast<void*> (new SpectrumOne::Interface(static_cast<SpectrumOne::Camera*> (m_camera)));
                 m_control = new CtControl(static_cast<SpectrumOne::Interface*> (m_interface));
 

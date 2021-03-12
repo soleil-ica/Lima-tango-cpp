@@ -91,19 +91,17 @@
                                 <sourceDirectory>${project.basedir}</sourceDirectory>                        
                                 <includes>
                                     <include>*.cpp</include>
-<!--                                    <include>specifics/Layout/*.cpp</include>                            
+                                    <!-- <include>specifics/Layout/*.cpp</include>                            
                                     <include>specifics/Mask/*.cpp</include>
-                                    <include>specifics/RoiCounters/*.cpp</include>-->
-                                    <!-- <include>specifics/SimulatorCCD/*.cpp</include> -->
+                                    <include>specifics/RoiCounters/*.cpp</include> -->
                                     <include>specifics/SpectrumOneCCD/*.cpp</include>
                                 </includes>
                                 
                                 <includePaths>                          
                                     <includePath>src</includePath>                            
-<!--                                    <includePath>specifics/Layout</includePath>                                                        
+                                    <!-- <includePath>specifics/Layout</includePath>                                                        
                                     <includePath>specifics/Mask</includePath>
-                                    <includePath>specifics/RoiCounters</includePath>-->
-                                    <!-- <includePath>specifics/SimulatorCCD</includePath> -->
+                                    <includePath>specifics/RoiCounters</includePath> -->
                                     <includePath>specifics/SpectrumOneCCD</includePath>
                                 </includePaths>
                                 
@@ -118,14 +116,10 @@
                                     <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
                                     <define>SPECTRUMONE_NAME=${UFXC.name}</define>
                                     <define>SPECTRUMONE_VERSION=${UFXC.version}</define>
-                                    <!-- Needed By Basler -->
-                                    <!-- <define>USE_GIGE</define> -->
-
                                     <!-- define which detector you need to ENABLE -->                                       
-<!--                                    <define>LAYOUT_ENABLED</define>                                                                                                                                                
+                                    <!-- <define>LAYOUT_ENABLED</define>                                                                                                                                                
                                     <define>MASK_ENABLED</define>
-                                    <define>ROICOUNTERS_ENABLED</define>-->
-                                    <!-- <define>SIMULATOR_ENABLED</define> -->
+                                    <define>ROICOUNTERS_ENABLED</define> -->
                                     <define>SPECTRUMONE_ENABLED</define>
                                     <define>SOLEIL_YAT_STREAM</define>
                                 </defines> 
