@@ -41,7 +41,7 @@
 
 /**
  *  SpectrumOneCCD class description:
- *    
+ *    Specific TANGO device for the LIMA plugin SpectrumOne.
  */
 
 //================================================================

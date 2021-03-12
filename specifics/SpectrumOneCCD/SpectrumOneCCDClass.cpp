@@ -446,14 +446,14 @@ void SpectrumOneCCDClass::write_class_property()
 
 	//	Put title
 	Tango::DbDatum	title("ProjectTitle");
-	string	str_title("");
+	string	str_title("SpectrumOne");
 	title << str_title;
 	data.push_back(title);
 
 	//	Put Description
 	Tango::DbDatum	description("Description");
 	vector<string>	str_desc;
-	str_desc.push_back("");
+	str_desc.push_back("Specific TANGO device for the LIMA plugin SpectrumOne.");
 	description << str_desc;
 	data.push_back(description);
 
