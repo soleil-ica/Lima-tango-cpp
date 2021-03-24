@@ -157,7 +157,7 @@ void Dhyana::init_device()
 	}
 	catch(Exception& e)
 	{
-		INFO_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
+		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_is_device_initialized = false;
 		set_state(Tango::FAULT);
@@ -165,7 +165,7 @@ void Dhyana::init_device()
 	}
 	catch(...)
 	{
-		INFO_STREAM << "Initialization Failed : UNKNOWN" << endl;
+		ERROR_STREAM << "Initialization Failed : UNKNOWN" << endl;
 		m_status_message << "Initialization Failed : UNKNOWN" << endl;
 		set_state(Tango::FAULT);
 		m_is_device_initialized = false;
