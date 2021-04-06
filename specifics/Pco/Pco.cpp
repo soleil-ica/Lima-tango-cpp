@@ -191,15 +191,22 @@ void Pco::init_device()
         m_camera->getSdkRelease(m_dll_version);
         INFO_STREAM << "DLL version : " << m_dll_version << endl;
 
-        INFO_STREAM << "Write tango hardware at Init - pixelRate." << endl;
-        Tango::WAttribute &pixelRate = dev_attr->get_w_attr_by_name("pixelRate");
-        std::string pixel_rate_str = yat4tango::PropertyHelper::get_memorized_attribute<std::string>(this, "pixelRate");
-        attr_pixelRate_write = const_cast<Tango::DevString>(pixel_rate_str.c_str());
-        pixelRate.set_write_value(attr_pixelRate_write);
-        write_pixelRate(pixelRate);
-
         //- Create dynamic interface
         create_dynamic_interface();
+
+        try{
+            INFO_STREAM << "Write tango hardware at Init - pixelRate." << endl;
+            Tango::WAttribute &pixelRate = dev_attr->get_w_attr_by_name("pixelRate");
+            std::string pixel_rate_str = yat4tango::PropertyHelper::get_memorized_attribute<std::string>(this, "pixelRate");
+            attr_pixelRate_write = const_cast<Tango::DevString>(pixel_rate_str.c_str());
+            pixelRate.set_write_value(attr_pixelRate_write);
+            write_pixelRate(pixelRate);
+        }
+        catch(Tango::DevFailed& df)
+        {
+            ERROR_STREAM << "Write pixelRate at init failed:" << df.errors[0].desc << endl;
+        }
+
     }
     catch(lima::Exception& e)
     {
@@ -632,42 +639,42 @@ void Pco::always_executed_hook()
 {
     DEBUG_STREAM << "Pco::always_executed_hook() entering... "<< endl;
 
-    try
-    {
-        m_is_device_initialized = false;
+    // try
+    // {
+    //     m_is_device_initialized = false;
 
-        yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-        m_status_message.str("");
-        //- get the singleton control objet used to pilot the lima framework
-        m_ct = ControlFactory::instance().get_control("Pco");
+    //     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    //     m_status_message.str("");
+    //     //- get the singleton control objet used to pilot the lima framework
+    //     m_ct = ControlFactory::instance().get_control("Pco");
 
-        //- get interface to specific camera
-        m_hw = dynamic_cast<lima::Pco::Interface*>(m_ct->hwInterface());
+    //     //- get interface to specific camera
+    //     m_hw = dynamic_cast<lima::Pco::Interface*>(m_ct->hwInterface());
 
-        //- get camera to specific detector
-        m_camera = (m_hw->getCamera());
+    //     //- get camera to specific detector
+    //     m_camera = (m_hw->getCamera());
 
-    }
-    catch(lima::Exception& e)
-    {
-        m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
-        ERROR_STREAM << m_status_message.str() << endl;
-        return;
-    }
-    catch(Tango::DevFailed& df)
-    {
-        m_status_message << "Initialization Failed : " << string(df.errors[0].desc) << endl;
-        ERROR_STREAM << m_status_message.str() << endl;
-        return;
-    }
-    catch(...)
-    {
-        m_status_message << "Initialization Failed : Unknown error" << endl;
-        ERROR_STREAM << m_status_message.str() << endl;
-        return;
-    }
+    // }
+    // catch(lima::Exception& e)
+    // {
+    //     m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
+    //     ERROR_STREAM << m_status_message.str() << endl;
+    //     return;
+    // }
+    // catch(Tango::DevFailed& df)
+    // {
+    //     m_status_message << "Initialization Failed : " << string(df.errors[0].desc) << endl;
+    //     ERROR_STREAM << m_status_message.str() << endl;
+    //     return;
+    // }
+    // catch(...)
+    // {
+    //     m_status_message << "Initialization Failed : Unknown error" << endl;
+    //     ERROR_STREAM << m_status_message.str() << endl;
+    //     return;
+    // }
 
-    m_is_device_initialized = true;
+    // m_is_device_initialized = true;
     //- update state
     dev_state();
 }
@@ -1284,9 +1291,8 @@ void Pco::write_doubleImage_callback(yat4tango::DynamicAttributeWriteCallbackDat
 
     try
     {
-        int dummy_err = -10;
         cbd.tga->get_write_value(attr_doubleImage_write);
-        m_camera->_pco_SetDoubleImageMode((WORD)attr_doubleImage_write, dummy_err);
+        m_camera->setDoubleImageMode(attr_doubleImage_write);
 
         //- Memorize the value
         yat4tango::PropertyHelper::set_property(this, "__MemorizedDoubleImage", attr_doubleImage_write);
