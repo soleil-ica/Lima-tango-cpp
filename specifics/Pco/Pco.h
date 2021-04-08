@@ -94,12 +94,17 @@ namespace Pco_ns
         Tango::DevBoolean   *attr_cdiMode_read;
         Tango::DevBoolean   attr_cdiMode_write;
         Tango::DevDouble    *attr_frameRate_read;
-        Tango::DevShort    *attr_coolingSetPoint_read;
-        Tango::DevShort    attr_coolingSetPoint_write;
+        Tango::DevShort     *attr_coolingSetPoint_read;
+        Tango::DevShort     attr_coolingSetPoint_write;
         Tango::DevString    *attr_adcOperation_read;
         Tango::DevString    attr_adcOperation_write;
         Tango::DevString    *attr_shutterMode_read;
         Tango::DevString    attr_shutterMode_write;
+        Tango::DevBoolean   *attr_doubleImage_read;
+        Tango::DevBoolean   attr_doubleImage_write;
+        Tango::DevULong     *attr_currentRecordedFrame_read;
+        Tango::DevBoolean   *attr_forcedFIFOMode_read;
+        Tango::DevBoolean   attr_forcedFIFOMode_write;
 
         //	Here is the Start of the automatic code generation part
         //-------------------------------------------------------------	
@@ -110,13 +115,8 @@ namespace Pco_ns
         //@{
 		Tango::DevString	*attr_pixelRate_read;
 		Tango::DevString	attr_pixelRate_write;
-		Tango::DevBoolean	*attr_doubleImage_read;
-		Tango::DevBoolean	attr_doubleImage_write;
-		Tango::DevULong	*attr_currentRecordedFrame_read;
 		Tango::DevString	*attr_cameraModel_read;
 		Tango::DevFloat	*attr_sensorTemperature_read;
-		Tango::DevBoolean	*attr_forcedFIFOMode_read;
-		Tango::DevBoolean	attr_forcedFIFOMode_write;
 		Tango::DevString	*attr_dllVersion_read;
 //@}
 
@@ -214,18 +214,6 @@ namespace Pco_ns
  */
 	virtual void write_pixelRate(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for doubleImage acquisition result.
- */
-	virtual void read_doubleImage(Tango::Attribute &attr);
-/**
- *	Write doubleImage attribute values to hardware.
- */
-	virtual void write_doubleImage(Tango::WAttribute &attr);
-/**
- *	Extract real attribute values for currentRecordedFrame acquisition result.
- */
-	virtual void read_currentRecordedFrame(Tango::Attribute &attr);
-/**
  *	Extract real attribute values for cameraModel acquisition result.
  */
 	virtual void read_cameraModel(Tango::Attribute &attr);
@@ -233,14 +221,6 @@ namespace Pco_ns
  *	Extract real attribute values for sensorTemperature acquisition result.
  */
 	virtual void read_sensorTemperature(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for forcedFIFOMode acquisition result.
- */
-	virtual void read_forcedFIFOMode(Tango::Attribute &attr);
-/**
- *	Write forcedFIFOMode attribute values to hardware.
- */
-	virtual void write_forcedFIFOMode(Tango::WAttribute &attr);
 /**
  *	Extract real attribute values for dllVersion acquisition result.
  */
@@ -250,14 +230,6 @@ namespace Pco_ns
  */
 	virtual bool is_pixelRate_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for doubleImage attribute.
- */
-	virtual bool is_doubleImage_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for currentRecordedFrame attribute.
- */
-	virtual bool is_currentRecordedFrame_allowed(Tango::AttReqType type);
-/**
  *	Read/Write allowed for cameraModel attribute.
  */
 	virtual bool is_cameraModel_allowed(Tango::AttReqType type);
@@ -265,10 +237,6 @@ namespace Pco_ns
  *	Read/Write allowed for sensorTemperature attribute.
  */
 	virtual bool is_sensorTemperature_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for forcedFIFOMode attribute.
- */
-	virtual bool is_forcedFIFOMode_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for dllVersion attribute.
  */
@@ -328,6 +296,10 @@ namespace Pco_ns
 
         ///generic method to create a tango dynamic attribute
         void create_dynamic_interface();
+        void create_pco_with_ram_dynamic_interface();
+        void create_pco_edge_dynamic_interface();
+        void create_pco_dimax_dynamic_interface();
+        void create_pco_xxxx_dynamic_interface();
         template <class F1, class F2>
         void create_attribute(std::string name,
             int data_type,
@@ -362,6 +334,14 @@ namespace Pco_ns
         void write_shutterMode_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);        
         // method for tango dyn attributes WHEN no write part is available - NULL
         void write_callback_null(yat4tango::DynamicAttributeWriteCallbackData& cbd){/*nop*/}
+        //- doubleImage
+        void read_doubleImage_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
+        void write_doubleImage_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
+        //- currentRecordedFrame
+        void read_currentRecordedFrame_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
+        //- forcedFIFOMode
+        void read_forcedFIFOMode_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
+        void write_forcedFIFOMode_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
         
         //state & status stuff
         // return true if the device is correctly initialized in init_device

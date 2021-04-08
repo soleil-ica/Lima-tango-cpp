@@ -58,20 +58,6 @@ public:
 	{return (static_cast<Pco *>(dev))->is_dllVersion_allowed(ty);}
 };
 
-class forcedFIFOModeAttrib: public Tango::Attr
-{
-public:
-	forcedFIFOModeAttrib():Attr("forcedFIFOMode", Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
-	~forcedFIFOModeAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Pco *>(dev))->read_forcedFIFOMode(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Pco *>(dev))->write_forcedFIFOMode(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Pco *>(dev))->is_forcedFIFOMode_allowed(ty);}
-};
-
 class sensorTemperatureAttrib: public Tango::Attr
 {
 public:
@@ -94,32 +80,6 @@ public:
 	{(static_cast<Pco *>(dev))->read_cameraModel(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 	{return (static_cast<Pco *>(dev))->is_cameraModel_allowed(ty);}
-};
-
-class currentRecordedFrameAttrib: public Tango::Attr
-{
-public:
-	currentRecordedFrameAttrib():Attr("currentRecordedFrame", Tango::DEV_ULONG, Tango::READ) {};
-	~currentRecordedFrameAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Pco *>(dev))->read_currentRecordedFrame(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Pco *>(dev))->is_currentRecordedFrame_allowed(ty);}
-};
-
-class doubleImageAttrib: public Tango::Attr
-{
-public:
-	doubleImageAttrib():Attr("doubleImage", Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
-	~doubleImageAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Pco *>(dev))->read_doubleImage(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Pco *>(dev))->write_doubleImage(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Pco *>(dev))->is_doubleImage_allowed(ty);}
 };
 
 class pixelRateAttrib: public Tango::Attr
