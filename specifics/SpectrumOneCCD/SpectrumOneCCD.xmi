@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="ASCII"?>
+<pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
+  <classes name="SpectrumOneCCD" pogoRevision="9.6">
+    <description description="Specific TANGO device for the LIMA plugin SpectrumOne." title="SpectrumOne" sourcePath="/home/informatique/ica/hottois/Lima/applications/tango/cpp/specifics/SpectrumOneCCD" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions,html Pages" license="GPL" copyright="" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false" descriptionHtmlExists="false">
+      <inheritances classname="Device_Impl" sourcePath=""/>
+      <identification contact="at synchrotron-soleil.fr - hottois" author="hottois" emailDomain="synchrotron-soleil.fr" classFamily="Acquisition" siteSpecific="" platform="All Platforms" bus="Not Applicable" manufacturer="none" reference=""/>
+    </description>
+    <deviceProperties name="CameraGpibAddress" description="Address of the camera on the GPIB bus (from 0 to 30)">
+      <type xsi:type="pogoDsl:UIntType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>0</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="GpibControllerPort" description="IP port of the GPIB controller">
+      <type xsi:type="pogoDsl:UIntType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>1234</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="GpibControllerHost" description="Host name or IP adress of the GPIB controller">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>127.0.0.1</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="TablesPath" description="Path of the tables to be loaded in the camera for its initialization">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>/usr/Local/configFiles/SpectrumOne</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="ExpertConfig" description="Advanced config for the camera">
+      <type xsi:type="pogoDsl:StringVectorType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>[CCD_config]</DefaultPropValue>
+      <DefaultPropValue>port=</DefaultPropValue>
+      <DefaultPropValue>total_active_x_pixels=</DefaultPropValue>
+      <DefaultPropValue>total_active_y_pixels=</DefaultPropValue>
+      <DefaultPropValue>num_serial_pixels_before_active=</DefaultPropValue>
+      <DefaultPropValue>num_serial_pixels_after_active=</DefaultPropValue>
+      <DefaultPropValue>num_parallel_rows_before_active=</DefaultPropValue>
+      <DefaultPropValue>num_parallel_rows_after_active=</DefaultPropValue>
+      <DefaultPropValue>register_loc_and_direction=</DefaultPropValue>
+      <DefaultPropValue>min_temperature=</DefaultPropValue>
+      <DefaultPropValue>max_temperature=</DefaultPropValue>
+      <DefaultPropValue>min_shutter_time=</DefaultPropValue>
+      <DefaultPropValue>max_shutter_time=</DefaultPropValue>
+      <DefaultPropValue>min_gain=</DefaultPropValue>
+      <DefaultPropValue>max_gain=</DefaultPropValue>
+      <DefaultPropValue>h_pixel_spacing=</DefaultPropValue>
+      <DefaultPropValue>v_pixel_spacing=</DefaultPropValue>
+      <DefaultPropValue>total_parallel_pixels=</DefaultPropValue>
+      <DefaultPropValue>total_serial_pixels=</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="InvertX" description="Used to invert the X axis of the images">
+      <type xsi:type="pogoDsl:BooleanType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>false</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="TablesMode" description="Mode of the tables to send to the camera for its initialization.&#xA;Is contained in the file names of the tables.&#xA;For example the mode of XXXX1401.TAB is 1401.">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>1401</DefaultPropValue>
+    </deviceProperties>
+    <commands name="State" description="This command gets the device state (stored in its device_state data member) and returns it to the caller." execMethod="dev_state" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="none">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="Device state">
+        <type xsi:type="pogoDsl:StateType"/>
+      </argout>
+      <status abstract="true" inherited="true" concrete="true" concreteHere="true"/>
+    </commands>
+    <commands name="Status" description="This command gets the device status (stored in its device_status data member) and returns it to the caller." execMethod="dev_status" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="none">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="Device status">
+        <type xsi:type="pogoDsl:ConstStringType"/>
+      </argout>
+      <status abstract="true" inherited="true" concrete="true" concreteHere="true"/>
+    </commands>
+    <commands name="GetTemperature" description="Get the temperature of the CCD sensor.&#xA;The temperature will be updated in the lastTemperature attribute." execMethod="get_temperature" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>RUNNING</excludedStates>
+      <excludedStates>FAULT</excludedStates>
+      <excludedStates>ALARM</excludedStates>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <commands name="ForceConfig" description="Force the re-configuration of the camera." execMethod="force_config" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>RUNNING</excludedStates>
+      <excludedStates>FAULT</excludedStates>
+      <excludedStates>ALARM</excludedStates>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <commands name="GetGain" description="Get the temperature of the camera.&#xA;The gain will be updated in the gain attribute." execMethod="get_gain" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>RUNNING</excludedStates>
+      <excludedStates>FAULT</excludedStates>
+      <excludedStates>ALARM</excludedStates>
+      <excludedStates>DISABLE</excludedStates>
+    </commands>
+    <attributes name="lastTemperature" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="false" isDynamic="false">
+      <dataType xsi:type="pogoDsl:DoubleType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Last temperature of the CCD" label="" unit="K" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+    </attributes>
+    <attributes name="gain" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="false" isDynamic="false">
+      <dataType xsi:type="pogoDsl:IntType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Define CCD gain of the camera." label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <writeExcludedStates>RUNNING</writeExcludedStates>
+      <writeExcludedStates>FAULT</writeExcludedStates>
+      <writeExcludedStates>DISABLE</writeExcludedStates>
+    </attributes>
+    <attributes name="numFlushes" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="false" isDynamic="false">
+      <dataType xsi:type="pogoDsl:IntType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Set number of flushes on the camera" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <writeExcludedStates>RUNNING</writeExcludedStates>
+      <writeExcludedStates>FAULT</writeExcludedStates>
+      <writeExcludedStates>ALARM</writeExcludedStates>
+      <writeExcludedStates>DISABLE</writeExcludedStates>
+    </attributes>
+    <states name="STANDBY" description="">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <states name="RUNNING" description="">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <states name="FAULT" description="">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <states name="ALARM" description="">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <states name="DISABLE" description="">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <preferences docHome="./doc_html" makefileHome="$(TANGO_HOME)"/>
+  </classes>
+</pogoDsl:PogoSystem>

@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title> SpectrumOneCCD Tango Class Properties </title>
+</head>
+<body text="Black" bgcolor="White" link="Blue" vlink="Purple" alink="Red">
+<br><br><br>
+<font size="+1"><u><b> SpectrumOneCCD  Properties : </b></u></font>
+<br><br><br>
+<font size="+1"><u><b> There is no class properties </b></u></font>
+<br><br><br>
+<Table Border=2 Cellpadding=3 CELLSPACING=0>
+	<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+	<td colspan=4> <font size=+1> <center><b> Device Properties </b></font></center></td>
+	<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+		<td> <center><b> Name </b></center> </td>
+		<td> <center><b> Description </b></center> </td>
+		<td> <center><b> Type </b></center> </td>
+		<td> <center><b> Default Value </b></center> </td>
+	</tr>
+	<tr>
+		<td> CameraGpibAddress </td>
+		<td> Address of the camera on the GPIB bus (from 0 to 30) </td>
+		<td> int </td>
+		<td> 0 <br> </td>
+	</tr>
+	<tr>
+		<td> GpibControllerPort </td>
+		<td> IP port of the GPIB controller </td>
+		<td> int </td>
+		<td> 1234 <br> </td>
+	</tr>
+	<tr>
+		<td> GpibControllerHost </td>
+		<td> Host name or IP adress of the GPIB controller </td>
+		<td> String </td>
+		<td> 127.0.0.1 <br> </td>
+	</tr>
+	<tr>
+		<td> TablesPath </td>
+		<td> Path of the tables to be loaded in the camera for its initialization </td>
+		<td> String </td>
+		<td> /usr/Local/configFiles/SpectrumOne <br> </td>
+	</tr>
+	<tr>
+		<td> ExpertConfig </td>
+		<td> Advanced config for the camera </td>
+		<td> String[] </td>
+		<td> [CCD_config], port=, total_active_x_pixels=, total_active_y_pixels=, num_serial_pixels_before_active=, num_serial_pixels_after_active=, num_parallel_rows_before_active=, num_parallel_rows_after_active=, register_loc_and_direction=, min_temperature=, max_temperature=, min_shutter_time=, max_shutter_time=, min_gain=, max_gain=, h_pixel_spacing=, v_pixel_spacing=, total_parallel_pixels=, total_serial_pixels= </td>
+	</tr>
+	<tr>
+		<td> InvertX </td>
+		<td> Used to invert the X axis of the images </td>
+		<td> boolean </td>
+		<td> false <br> </td>
+	</tr>
+	<tr>
+		<td> TablesMode </td>
+		<td> Mode of the tables to send to the camera for its initialization.<Br>
+			Is contained in the file names of the tables.<Br>
+			For example the mode of XXXX1401.TAB is 1401. </td>
+		<td> String </td>
+		<td> 1401 <br> </td>
+	</tr>
+</table>
+</body>
+</html>
