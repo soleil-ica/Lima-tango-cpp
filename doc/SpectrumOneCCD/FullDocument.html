@@ -16,16 +16,15 @@
 			<ul>
 				<li> <a href="FullDocument.html#cmdState"> State </a>
 				<li> <a href="FullDocument.html#cmdStatus"> Status </a>
-				<li> <a href="FullDocument.html#cmdForcedInit"> ForcedInit </a>
 				<li> <a href="FullDocument.html#cmdGetTemperature"> GetTemperature </a>
-				<li> <a href="FullDocument.html#cmdReConfig"> ReConfig </a>
-				<li> <a href="FullDocument.html#cmdSetNumFlushes"> SetNumFlushes </a>
+				<li> <a href="FullDocument.html#cmdForceConfig"> ForceConfig </a>
 				<li> <a href="FullDocument.html#cmdGetGain"> GetGain </a>
 			</ul>
 			<li> <a href="FullDocument.html#attributes">   Attributes   </a>
 			<ul>
 				<li> <a href="FullDocument.html#attrlastTemperature"> lastTemperature </a>
 				<li> <a href="FullDocument.html#attrgain"> gain </a>
+				<li> <a href="FullDocument.html#attrnumFlushes"> numFlushes </a>
 			</ul>
 			<li> <a href="FullDocument.html#states">       States       </a>
 		</ul>
@@ -103,20 +102,20 @@
 		<td> <center><b> Default Value </b></center> </td>
 	</tr>
 	<tr>
-		<td> GpibAddress </td>
-		<td> Gpib Address of the controller (from 0 to 30) </td>
+		<td> CameraGpibAddress </td>
+		<td> Address of the camera on the GPIB bus (from 0 to 30) </td>
 		<td> int </td>
 		<td> 0 <br> </td>
 	</tr>
 	<tr>
-		<td> Port </td>
-		<td> IP port of the controller </td>
+		<td> GpibControllerPort </td>
+		<td> IP port of the GPIB controller </td>
 		<td> int </td>
 		<td> 1234 <br> </td>
 	</tr>
 	<tr>
-		<td> Host </td>
-		<td> Host name or IP adress of the controller </td>
+		<td> GpibControllerHost </td>
+		<td> Host name or IP adress of the GPIB controller </td>
 		<td> String </td>
 		<td> 127.0.0.1 <br> </td>
 	</tr>
@@ -176,13 +175,6 @@
 		<td> This command gets the device status (stored in its device_status data member) and returns it to the caller. </td>
 	</tr>
 	<tr>
-		<td> <a href="CmdForcedInit.html"> ForcedInit </a> </td>
-		<td> DEV_VOID </td>
-		<td> DEV_VOID </td>
-		<td> OPERATOR </td>
-		<td> Force the initialization, injection of the tables and the reconfiguration of the camera </td>
-	</tr>
-	<tr>
 		<td> <a href="CmdGetTemperature.html"> GetTemperature </a> </td>
 		<td> DEV_VOID </td>
 		<td> DEV_VOID </td>
@@ -191,18 +183,11 @@
 			The temperature will be updated in the lastTemperature attribute. </td>
 	</tr>
 	<tr>
-		<td> <a href="CmdReConfig.html"> ReConfig </a> </td>
+		<td> <a href="CmdForceConfig.html"> ForceConfig </a> </td>
 		<td> DEV_VOID </td>
 		<td> DEV_VOID </td>
 		<td> OPERATOR </td>
 		<td> Force the re-configuration of the camera. </td>
-	</tr>
-	<tr>
-		<td> <a href="CmdSetNumFlushes.html"> SetNumFlushes </a> </td>
-		<td> DEV_LONG </td>
-		<td> DEV_VOID </td>
-		<td> OPERATOR </td>
-		<td> Set the number of flushes for the acquisition </td>
 	</tr>
 	<tr>
 		<td> <a href="CmdGetGain.html"> GetGain </a> </td>
@@ -312,55 +297,6 @@
 	</tr>
 </table>
 <br><br><hr>
-<a name="cmdForcedInit"> </a>
-<br><br><br>
-<font size="+1"><u><b> Command ForcedInit : </b></u></font>
-<ul>
-	Force the initialization, injection of the tables and the reconfiguration of the camera
-</ul>
-<br><br><br>
-<Table Border=2 Cellpadding=3 CELLSPACING=0>
-	<tr bgcolor="#CCCCFF" class="TableHeadingColor">
-	<td colspan=0> <font size=+1> <center><b> ForcedInit Definition </b></font></center></td>
-	</tr>
-	<tr>
-		<td> Input Argument </td>
-		<td> Tango::DEV_VOID </td>
-		<td>  </td>
-	</tr>
-	<tr>
-		<td> Output Argument </td>
-		<td> Tango::DEV_VOID </td>
-		<td>  </td>
-	</tr>
-	<tr>
-		<td> DisplayLevel </td>
-		<td> OPERATOR </td>
-		<td> .. </td>
-	</tr>
-	<tr>
-		<td> Inherited </td>
-		<td> false </td>
-		<td> .. </td>
-	</tr>
-	<tr>
-		<td> Abstract </td>
-		<td> false </td>
-		<td> .. </td>
-	</tr>
-	<tr>
-		<td> Polling Period </td>
-		<td> Not polled </td>
-		<td> .. </td>
-	</tr>
-<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td><Td><Hr></Td></Tr>
-	<tr>
-		<td> Command NOT allowed for </td>
-		<td> <font size="-1">  <li> RUNNING </li>  <li> FAULT </li>  <li> ALARM </li>  <li> DISABLE </li> </font> </td>
-		<td> .. </td>
-	</tr>
-</table>
-<br><br><hr>
 <a name="cmdGetTemperature"> </a>
 <br><br><br>
 <font size="+1"><u><b> Command GetTemperature : </b></u></font>
@@ -411,70 +347,21 @@
 	</tr>
 </table>
 <br><br><hr>
-<a name="cmdReConfig"> </a>
+<a name="cmdForceConfig"> </a>
 <br><br><br>
-<font size="+1"><u><b> Command ReConfig : </b></u></font>
+<font size="+1"><u><b> Command ForceConfig : </b></u></font>
 <ul>
 	Force the re-configuration of the camera.
 </ul>
 <br><br><br>
 <Table Border=2 Cellpadding=3 CELLSPACING=0>
 	<tr bgcolor="#CCCCFF" class="TableHeadingColor">
-	<td colspan=0> <font size=+1> <center><b> ReConfig Definition </b></font></center></td>
+	<td colspan=0> <font size=+1> <center><b> ForceConfig Definition </b></font></center></td>
 	</tr>
 	<tr>
 		<td> Input Argument </td>
 		<td> Tango::DEV_VOID </td>
 		<td>  </td>
-	</tr>
-	<tr>
-		<td> Output Argument </td>
-		<td> Tango::DEV_VOID </td>
-		<td>  </td>
-	</tr>
-	<tr>
-		<td> DisplayLevel </td>
-		<td> OPERATOR </td>
-		<td> .. </td>
-	</tr>
-	<tr>
-		<td> Inherited </td>
-		<td> false </td>
-		<td> .. </td>
-	</tr>
-	<tr>
-		<td> Abstract </td>
-		<td> false </td>
-		<td> .. </td>
-	</tr>
-	<tr>
-		<td> Polling Period </td>
-		<td> Not polled </td>
-		<td> .. </td>
-	</tr>
-<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td><Td><Hr></Td></Tr>
-	<tr>
-		<td> Command NOT allowed for </td>
-		<td> <font size="-1">  <li> RUNNING </li>  <li> FAULT </li>  <li> ALARM </li>  <li> DISABLE </li> </font> </td>
-		<td> .. </td>
-	</tr>
-</table>
-<br><br><hr>
-<a name="cmdSetNumFlushes"> </a>
-<br><br><br>
-<font size="+1"><u><b> Command SetNumFlushes : </b></u></font>
-<ul>
-	Set the number of flushes for the acquisition
-</ul>
-<br><br><br>
-<Table Border=2 Cellpadding=3 CELLSPACING=0>
-	<tr bgcolor="#CCCCFF" class="TableHeadingColor">
-	<td colspan=0> <font size=+1> <center><b> SetNumFlushes Definition </b></font></center></td>
-	</tr>
-	<tr>
-		<td> Input Argument </td>
-		<td> Tango::DEV_LONG </td>
-		<td> Number of flushes </td>
 	</tr>
 	<tr>
 		<td> Output Argument </td>
@@ -594,6 +481,16 @@
 		<td> Tango::DEV_LONG </td>
 		<td> OPERATOR </td>
 		<td> Define CCD gain of the camera. </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrnumFlushes.html"> numFlushes </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_LONG </td>
+		<td> OPERATOR </td>
+		<td> Set number of flushes on the camera </td>
 	</tr>
 </table>
 <br><br>
@@ -817,8 +714,175 @@
 					<td> All states </td>
 				</tr>
 				<tr>
-					<td> Write allowed for </td>
+					<td> Write NOT allowed for </td>
+					<td> <font size="-1">  <li> RUNNING </li>  <li> FAULT </li>  <li> DISABLE </li> </font> </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Center" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Properties </b></font></center></td>
+				</tr>
+				<tr>
+					<td> label </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> standard unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> display unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> format </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_time </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_val </td>
+					<td>  </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Right" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Event Criteria </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Archive Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Push Change event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push Archive event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push DataReady event by user code </td>
+					<td> false </td>
+				</tr>
+			</table>
+		</td>
+	</TR>
+</table>
+<br><br>
+<hr>
+<a name="attrnumFlushes"> </a>
+<br><br><br>
+<font size="+1"><u><b> Attribute numFlushes : </b></u></font>
+<ul>
+	Set number of flushes on the camera
+</ul>
+<br><br><br>
+<Table Border=0 Cellpadding=0 CELLSPACING=20>
+	<TR>
+		<TD ALIGN="left" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Definition </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Attribute Type </td>
+					<td> Scalar </td>
+				</tr>
+				<tr>
+					<td> R/W Type </td>
+					<td> READ_WRITE </td>
+				</tr>
+				<tr>
+					<td> Data Type </td>
+					<td> Tango::DEV_LONG </td>
+				</tr>
+				<tr>
+					<td> Display Level </td>
+					<td> OPERATOR </td>
+				</tr>
+				<tr>
+					<td> Inherited </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Abstract </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Polling Period </td>
+					<td> Not polled </td>
+				</tr>
+				<tr>
+					<td> Memorized </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Read allowed for </td>
 					<td> All states </td>
+				</tr>
+				<tr>
+					<td> Write NOT allowed for </td>
+					<td> <font size="-1">  <li> RUNNING </li>  <li> FAULT </li>  <li> ALARM </li>  <li> DISABLE </li> </font> </td>
 				</tr>
 			</table>
 		</td>

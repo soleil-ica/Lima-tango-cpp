@@ -5,7 +5,7 @@
 //
 // description : State machine file for the SpectrumOneCCD class
 //
-// project :     
+// project :     SpectrumOne
 //
 // This file is part of Tango device class.
 // 
@@ -73,10 +73,22 @@ bool SpectrumOneCCD::is_lastTemperature_allowed(TANGO_UNUSED(Tango::AttReqType t
 //--------------------------------------------------------
 bool SpectrumOneCCD::is_gain_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	//	Not any excluded states for gain attribute in Write access.
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::gainStateAllowed_WRITE) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::gainStateAllowed_WRITE
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::RUNNING ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::DISABLE)
+		{
+		/*----- PROTECTED REGION ID(SpectrumOneCCD::gainStateAllowed_WRITE) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::gainStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
 
 	//	Not any excluded states for gain attribute in read access.
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::gainStateAllowed_READ) ENABLED START -----*/
@@ -85,32 +97,43 @@ bool SpectrumOneCCD::is_gain_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	return true;
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : SpectrumOneCCD::is_numFlushes_allowed()
+ *	Description : Execution allowed for numFlushes attribute
+ */
+//--------------------------------------------------------
+bool SpectrumOneCCD::is_numFlushes_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::RUNNING ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::ALARM ||
+			get_state()==Tango::DISABLE)
+		{
+		/*----- PROTECTED REGION ID(SpectrumOneCCD::numFlushesStateAllowed_WRITE) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::numFlushesStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Not any excluded states for numFlushes attribute in read access.
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::numFlushesStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::numFlushesStateAllowed_READ
+	return true;
+}
+
 
 //=================================================
 //		Commands Allowed Methods
 //=================================================
-
-//--------------------------------------------------------
-/**
- *	Method      : SpectrumOneCCD::is_ForcedInit_allowed()
- *	Description : Execution allowed for ForcedInit attribute
- */
-//--------------------------------------------------------
-bool SpectrumOneCCD::is_ForcedInit_allowed(TANGO_UNUSED(const CORBA::Any &any))
-{
-	//	Compare device state with not allowed states.
-	if (get_state()==Tango::RUNNING ||
-		get_state()==Tango::FAULT ||
-		get_state()==Tango::ALARM ||
-		get_state()==Tango::DISABLE)
-	{
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::ForcedInitStateAllowed) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::ForcedInitStateAllowed
-		return false;
-	}
-	return true;
-}
 
 //--------------------------------------------------------
 /**
@@ -136,11 +159,11 @@ bool SpectrumOneCCD::is_GetTemperature_allowed(TANGO_UNUSED(const CORBA::Any &an
 
 //--------------------------------------------------------
 /**
- *	Method      : SpectrumOneCCD::is_ReConfig_allowed()
- *	Description : Execution allowed for ReConfig attribute
+ *	Method      : SpectrumOneCCD::is_ForceConfig_allowed()
+ *	Description : Execution allowed for ForceConfig attribute
  */
 //--------------------------------------------------------
-bool SpectrumOneCCD::is_ReConfig_allowed(TANGO_UNUSED(const CORBA::Any &any))
+bool SpectrumOneCCD::is_ForceConfig_allowed(TANGO_UNUSED(const CORBA::Any &any))
 {
 	//	Compare device state with not allowed states.
 	if (get_state()==Tango::RUNNING ||
@@ -148,31 +171,9 @@ bool SpectrumOneCCD::is_ReConfig_allowed(TANGO_UNUSED(const CORBA::Any &any))
 		get_state()==Tango::ALARM ||
 		get_state()==Tango::DISABLE)
 	{
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::ReConfigStateAllowed) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::ForceConfigStateAllowed) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::ReConfigStateAllowed
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : SpectrumOneCCD::is_SetNumFlushes_allowed()
- *	Description : Execution allowed for SetNumFlushes attribute
- */
-//--------------------------------------------------------
-bool SpectrumOneCCD::is_SetNumFlushes_allowed(TANGO_UNUSED(const CORBA::Any &any))
-{
-	//	Compare device state with not allowed states.
-	if (get_state()==Tango::RUNNING ||
-		get_state()==Tango::FAULT ||
-		get_state()==Tango::ALARM ||
-		get_state()==Tango::DISABLE)
-	{
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::SetNumFlushesStateAllowed) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::SetNumFlushesStateAllowed
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::ForceConfigStateAllowed
 		return false;
 	}
 	return true;

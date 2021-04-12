@@ -82,12 +82,12 @@ private:
 
 //	Device property data members
 public:
-	//	GpibAddress:	Gpib Address of the controller (from 0 to 30)
-	Tango::DevULong	gpibAddress;
-	//	Port:	IP port of the controller
-	Tango::DevULong	port;
-	//	Host:	Host name or IP adress of the controller
-	string	host;
+	//	CameraGpibAddress:	Address of the camera on the GPIB bus (from 0 to 30)
+	Tango::DevULong	cameraGpibAddress;
+	//	GpibControllerPort:	IP port of the GPIB controller
+	Tango::DevULong	gpibControllerPort;
+	//	GpibControllerHost:	Host name or IP adress of the GPIB controller
+	string	gpibControllerHost;
 	//	TablesPath:	Path of the tables to be loaded in the camera for its initialization
 	string	tablesPath;
 	//	ExpertConfig:	Advanced config for the camera
@@ -103,6 +103,7 @@ public:
 public:
 	Tango::DevDouble	*attr_lastTemperature_read;
 	Tango::DevLong	*attr_gain_read;
+	Tango::DevLong	*attr_numFlushes_read;
 
 //	Constructors and destructors
 public:
@@ -190,6 +191,16 @@ public:
 	virtual void read_gain(Tango::Attribute &attr);
 	virtual void write_gain(Tango::WAttribute &attr);
 	virtual bool is_gain_allowed(Tango::AttReqType type);
+/**
+ *	Attribute numFlushes related methods
+ *	Description: Set number of flushes on the camera
+ *
+ *	Data type:	Tango::DevLong
+ *	Attr type:	Scalar
+ */
+	virtual void read_numFlushes(Tango::Attribute &attr);
+	virtual void write_numFlushes(Tango::WAttribute &attr);
+	virtual bool is_numFlushes_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------
@@ -220,13 +231,6 @@ public:
 	 */
 	virtual Tango::ConstDevString dev_status();
 	/**
-	 *	Command ForcedInit related method
-	 *	Description: Force the initialization, injection of the tables and the reconfiguration of the camera
-	 *
-	 */
-	virtual void forced_init();
-	virtual bool is_ForcedInit_allowed(const CORBA::Any &any);
-	/**
 	 *	Command GetTemperature related method
 	 *	Description: Get the temperature of the CCD sensor.
 	 *               The temperature will be updated in the lastTemperature attribute.
@@ -235,20 +239,12 @@ public:
 	virtual void get_temperature();
 	virtual bool is_GetTemperature_allowed(const CORBA::Any &any);
 	/**
-	 *	Command ReConfig related method
+	 *	Command ForceConfig related method
 	 *	Description: Force the re-configuration of the camera.
 	 *
 	 */
-	virtual void re_config();
-	virtual bool is_ReConfig_allowed(const CORBA::Any &any);
-	/**
-	 *	Command SetNumFlushes related method
-	 *	Description: Set the number of flushes for the acquisition
-	 *
-	 *	@param argin Number of flushes
-	 */
-	virtual void set_num_flushes(Tango::DevLong argin);
-	virtual bool is_SetNumFlushes_allowed(const CORBA::Any &any);
+	virtual void force_config();
+	virtual bool is_ForceConfig_allowed(const CORBA::Any &any);
 	/**
 	 *	Command GetGain related method
 	 *	Description: Get the temperature of the camera.

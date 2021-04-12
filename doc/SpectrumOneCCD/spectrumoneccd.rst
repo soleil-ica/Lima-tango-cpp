@@ -11,9 +11,9 @@ Properties
 ======================= ======================================= =============== =========================================================================
 Property name           Default value                           Type            Description
 ======================= ======================================= =============== =========================================================================
-GpibAddress             0                                       Long            Gpib Address of the controller (from 0 to 30).
-Port                    1234                                    Long            IP port of the controller.
-Host                    127.0.0.1                               String          Host name or IP adress of the controller.
+CameraGpibAddress       0                                       Long            Gpib Address of the controller (from 0 to 30).
+GpibControllerPort      1234                                    Long            IP port of the controller.
+GpibControllerHost      127.0.0.1                               String          Host name or IP adress of the controller.
 TablesPath              /usr/Local/configFiles/SpectrumOne      String          Path of the tables to be loaded in the camera for its initialization.
 ExpertConfig            [CCD_config]                            String[]        Advanced config for the camera.
                         port=
@@ -49,6 +49,7 @@ Attribute name          Read/Write      Type            Description
 ======================= =============== =============== ======================================
 lastTemperature         Read            Double          Last temperature of the CCD.
 gain                    Read/Write      Long            CCD gain of the camera.
+numFlushes              Read/Write      Long            Set number of flushes on the camera
 ======================= =============== =============== ======================================
 
 
@@ -61,11 +62,9 @@ Attribute name          Arg. in         Arg. out        Description
 Init                    Void            Void            Do not use.
 State                   Void            State           Return the device state.
 Status                  Void            String          Return the device status as string.
-ForcedInit              Void            Void            Force the initialization, injection of the tables and the re-configuration of the camera.
 GetTemperature          Void            Void            Get the temperature of the CCD sensor.
                                                         The temperature will be updated in the lastTemperature attribute. 
-ReConfig                Void            Void            Force the re-configuration of the camera.
-SetNumFlushes           Long            Void            Set the number of flushes for the acquisition.
-GetGain                 Void            Void            Get the temperature of the camera.
+ForceConfig             Void            Void            Force the re-configuration of the camera.
+GetGain                 Void            Void            Get the gain of the CCD camera.
                                                         The gain will be updated in the gain attribute.
 ======================= =============== =============== ===============================================================================================

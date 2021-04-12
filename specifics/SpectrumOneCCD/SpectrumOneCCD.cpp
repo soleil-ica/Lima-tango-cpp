@@ -52,10 +52,8 @@
 //================================================================
 //  State           |  dev_state
 //  Status          |  dev_status
-//  ForcedInit      |  forced_init
 //  GetTemperature  |  get_temperature
-//  ReConfig        |  re_config
-//  SetNumFlushes   |  set_num_flushes
+//  ForceConfig     |  force_config
 //  GetGain         |  get_gain
 //================================================================
 
@@ -64,6 +62,7 @@
 //================================================================
 //  lastTemperature  |  Tango::DevDouble	Scalar
 //  gain             |  Tango::DevLong	Scalar
+//  numFlushes       |  Tango::DevLong	Scalar
 //================================================================
 
 namespace SpectrumOneCCD_ns
@@ -123,6 +122,7 @@ void SpectrumOneCCD::delete_device()
     m_is_device_initialized = false;
     DELETE_SCALAR_ATTRIBUTE(attr_lastTemperature_read);
     DELETE_SCALAR_ATTRIBUTE(attr_gain_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_numFlushes_read);
 
     // Inner Appenders in specific devices are the cause of a bug in Lima
     // INFO_STREAM << "Remove the inner-appender." << std::endl;
@@ -148,10 +148,9 @@ void SpectrumOneCCD::init_device()
     m_is_device_initialized = false;
     m_status_message.str("");
 
-    CREATE_SCALAR_ATTRIBUTE(attr_lastTemperature_read);
-    CREATE_SCALAR_ATTRIBUTE(attr_gain_read);
-    *attr_lastTemperature_read = 0;
-    *attr_gain_read = 0;
+    CREATE_SCALAR_ATTRIBUTE(attr_lastTemperature_read, 0.0);
+    CREATE_SCALAR_ATTRIBUTE(attr_gain_read,  0L);
+    CREATE_SCALAR_ATTRIBUTE(attr_numFlushes_read,  0L);
 
     // Inner Appenders in specific devices are the cause of a bug in Lima
     // try
@@ -227,9 +226,9 @@ void SpectrumOneCCD::get_device_property()
 
 	//	Read device properties from database.
 	Tango::DbData	dev_prop;
-	dev_prop.push_back(Tango::DbDatum("GpibAddress"));
-	dev_prop.push_back(Tango::DbDatum("Port"));
-	dev_prop.push_back(Tango::DbDatum("Host"));
+	dev_prop.push_back(Tango::DbDatum("CameraGpibAddress"));
+	dev_prop.push_back(Tango::DbDatum("GpibControllerPort"));
+	dev_prop.push_back(Tango::DbDatum("GpibControllerHost"));
 	dev_prop.push_back(Tango::DbDatum("TablesPath"));
 	dev_prop.push_back(Tango::DbDatum("ExpertConfig"));
 	dev_prop.push_back(Tango::DbDatum("InvertX"));
@@ -248,38 +247,38 @@ void SpectrumOneCCD::get_device_property()
 			(static_cast<SpectrumOneCCDClass *>(get_device_class()));
 		int	i = -1;
 
-		//	Try to initialize GpibAddress from class property
+		//	Try to initialize CameraGpibAddress from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  gpibAddress;
+		if (cl_prop.is_empty()==false)	cl_prop  >>  cameraGpibAddress;
 		else {
-			//	Try to initialize GpibAddress from default device value
+			//	Try to initialize CameraGpibAddress from default device value
 			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  gpibAddress;
+			if (def_prop.is_empty()==false)	def_prop  >>  cameraGpibAddress;
 		}
-		//	And try to extract GpibAddress value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  gpibAddress;
+		//	And try to extract CameraGpibAddress value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  cameraGpibAddress;
 
-		//	Try to initialize Port from class property
+		//	Try to initialize GpibControllerPort from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  port;
+		if (cl_prop.is_empty()==false)	cl_prop  >>  gpibControllerPort;
 		else {
-			//	Try to initialize Port from default device value
+			//	Try to initialize GpibControllerPort from default device value
 			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  port;
+			if (def_prop.is_empty()==false)	def_prop  >>  gpibControllerPort;
 		}
-		//	And try to extract Port value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  port;
+		//	And try to extract GpibControllerPort value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  gpibControllerPort;
 
-		//	Try to initialize Host from class property
+		//	Try to initialize GpibControllerHost from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  host;
+		if (cl_prop.is_empty()==false)	cl_prop  >>  gpibControllerHost;
 		else {
-			//	Try to initialize Host from default device value
+			//	Try to initialize GpibControllerHost from default device value
 			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  host;
+			if (def_prop.is_empty()==false)	def_prop  >>  gpibControllerHost;
 		}
-		//	And try to extract Host value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  host;
+		//	And try to extract GpibControllerHost value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  gpibControllerHost;
 
 		//	Try to initialize TablesPath from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -375,6 +374,7 @@ void SpectrumOneCCD::always_executed_hook()
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
+    dev_state();
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::always_executed_hook
 }
@@ -425,7 +425,7 @@ void SpectrumOneCCD::read_lastTemperature(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::read_lastTemperature) ENABLED START -----*/
 	//	Set the attribute value
     // Get last reported temperature from camera
-    m_camera->getTemperature(*attr_lastTemperature_read);
+    if(m_camera) m_camera->getTemperature(*attr_lastTemperature_read);
     attr.set_value(attr_lastTemperature_read);
 	
 	
@@ -446,7 +446,7 @@ void SpectrumOneCCD::read_gain(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::read_gain) ENABLED START -----*/
 	//	Set the attribute value
     // Get last reported gain from camera
-    m_camera->getGain(*attr_gain_read);
+    if(m_camera) m_camera->getGain(*attr_gain_read);
     attr.set_value(attr_gain_read);
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::read_gain
@@ -468,11 +468,51 @@ void SpectrumOneCCD::write_gain(Tango::WAttribute &attr)
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::write_gain) ENABLED START -----*/
     // Set gain and query the new gain from camera
-    m_camera->setGain(static_cast<int>(w_val));
-    m_camera->pollGain();
+    if(m_camera) m_camera->setGain(static_cast<int>(w_val));
+    if(m_camera) m_camera->pollGain();
 	
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::write_gain
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute numFlushes related method
+ *	Description: Set number of flushes on the camera
+ *
+ *	Data type:	Tango::DevLong
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SpectrumOneCCD::read_numFlushes(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SpectrumOneCCD::read_numFlushes(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::read_numFlushes) ENABLED START -----*/
+	//	Set the attribute value
+	attr.set_value(attr_numFlushes_read);
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::read_numFlushes
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute numFlushes related method
+ *	Description: Set number of flushes on the camera
+ *
+ *	Data type:	Tango::DevLong
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SpectrumOneCCD::write_numFlushes(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "SpectrumOneCCD::write_numFlushes(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevLong	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::write_numFlushes) ENABLED START -----*/
+	
+    if(m_camera) m_camera->setNumFlushes(static_cast<int>(w_val));
+    *attr_numFlushes_read = w_val;
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::write_numFlushes
 }
 
 //--------------------------------------------------------
@@ -505,6 +545,8 @@ Tango::DevState SpectrumOneCCD::dev_state()
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::dev_state) ENABLED START -----*/
 	
 	Tango::DevState	argout = Tango::UNKNOWN;
+
+    std::cout << "DEV_STATE_CALLED" << std::endl;
 
     // If initialized, get device state from LIMA
     if(!m_is_device_initialized)
@@ -554,24 +596,6 @@ Tango::ConstDevString SpectrumOneCCD::dev_status()
 }
 //--------------------------------------------------------
 /**
- *	Command ForcedInit related method
- *	Description: Force the initialization, injection of the tables and the reconfiguration of the camera
- *
- */
-//--------------------------------------------------------
-void SpectrumOneCCD::forced_init()
-{
-	DEBUG_STREAM << "SpectrumOneCCD::ForcedInit()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::forced_init) ENABLED START -----*/
-	
-	//	Add your own code
-    // Force init and table upload to camera
-    m_camera->forceTables();
-	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::forced_init
-}
-//--------------------------------------------------------
-/**
  *	Command GetTemperature related method
  *	Description: Get the temperature of the CCD sensor.
  *               The temperature will be updated in the lastTemperature attribute.
@@ -585,45 +609,26 @@ void SpectrumOneCCD::get_temperature()
 	
 	//	Add your own code
     // Query camera temperature
-    m_camera->pollTemperature();
+    if(m_camera) m_camera->pollTemperature();
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::get_temperature
 }
 //--------------------------------------------------------
 /**
- *	Command ReConfig related method
+ *	Command ForceConfig related method
  *	Description: Force the re-configuration of the camera.
  *
  */
 //--------------------------------------------------------
-void SpectrumOneCCD::re_config()
+void SpectrumOneCCD::force_config()
 {
-	DEBUG_STREAM << "SpectrumOneCCD::ReConfig()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::re_config) ENABLED START -----*/
+	DEBUG_STREAM << "SpectrumOneCCD::ForceConfig()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::force_config) ENABLED START -----*/
 	
 	//	Add your own code
     // Force re-configuration of camera
-    m_camera->reConfig();
+    if(m_camera) m_camera->forceTables();
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::re_config
-}
-//--------------------------------------------------------
-/**
- *	Command SetNumFlushes related method
- *	Description: Set the number of flushes for the acquisition
- *
- *	@param argin Number of flushes
- */
-//--------------------------------------------------------
-void SpectrumOneCCD::set_num_flushes(Tango::DevLong argin)
-{
-	DEBUG_STREAM << "SpectrumOneCCD::SetNumFlushes()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::set_num_flushes) ENABLED START -----*/
-	
-	//	Add your own code
-    // Set num of flushes
-    m_camera->setNumFlushes(static_cast<int>(argin));
-	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::set_num_flushes
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::force_config
 }
 //--------------------------------------------------------
 /**
@@ -640,7 +645,7 @@ void SpectrumOneCCD::get_gain()
 	
 	//	Add your own code
     // Query gain from camera
-    m_camera->pollGain();
+    if(m_camera) m_camera->pollGain();
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::get_gain
 }
@@ -661,8 +666,6 @@ void SpectrumOneCCD::add_dynamic_commands()
 }
 
 /*----- PROTECTED REGION ID(SpectrumOneCCD::namespace_ending) ENABLED START -----*/
-
-//	Additional Methods
 
 /*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::namespace_ending
 } //	namespace

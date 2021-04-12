@@ -150,24 +150,6 @@ SpectrumOneCCDClass *SpectrumOneCCDClass::instance()
 //===================================================================
 //--------------------------------------------------------
 /**
- * method : 		ForcedInitClass::execute()
- * description : 	method to trigger the execution of the command.
- *
- * @param	device	The device on which the command must be executed
- * @param	in_any	The command input data
- *
- *	returns The command output data (packed in the Any object)
- */
-//--------------------------------------------------------
-CORBA::Any *ForcedInitClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
-{
-	cout2 << "ForcedInitClass::execute(): arrived" << endl;
-	((static_cast<SpectrumOneCCD *>(device))->forced_init());
-	return new CORBA::Any();
-}
-
-//--------------------------------------------------------
-/**
  * method : 		GetTemperatureClass::execute()
  * description : 	method to trigger the execution of the command.
  *
@@ -186,7 +168,7 @@ CORBA::Any *GetTemperatureClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED
 
 //--------------------------------------------------------
 /**
- * method : 		ReConfigClass::execute()
+ * method : 		ForceConfigClass::execute()
  * description : 	method to trigger the execution of the command.
  *
  * @param	device	The device on which the command must be executed
@@ -195,30 +177,10 @@ CORBA::Any *GetTemperatureClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED
  *	returns The command output data (packed in the Any object)
  */
 //--------------------------------------------------------
-CORBA::Any *ReConfigClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
+CORBA::Any *ForceConfigClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
 {
-	cout2 << "ReConfigClass::execute(): arrived" << endl;
-	((static_cast<SpectrumOneCCD *>(device))->re_config());
-	return new CORBA::Any();
-}
-
-//--------------------------------------------------------
-/**
- * method : 		SetNumFlushesClass::execute()
- * description : 	method to trigger the execution of the command.
- *
- * @param	device	The device on which the command must be executed
- * @param	in_any	The command input data
- *
- *	returns The command output data (packed in the Any object)
- */
-//--------------------------------------------------------
-CORBA::Any *SetNumFlushesClass::execute(Tango::DeviceImpl *device, const CORBA::Any &in_any)
-{
-	cout2 << "SetNumFlushesClass::execute(): arrived" << endl;
-	Tango::DevLong argin;
-	extract(in_any, argin);
-	((static_cast<SpectrumOneCCD *>(device))->set_num_flushes(argin));
+	cout2 << "ForceConfigClass::execute(): arrived" << endl;
+	((static_cast<SpectrumOneCCD *>(device))->force_config());
 	return new CORBA::Any();
 }
 
@@ -309,8 +271,8 @@ void SpectrumOneCCDClass::set_default_property()
 	//	Set Default Class Properties
 
 	//	Set Default device Properties
-	prop_name = "GpibAddress";
-	prop_desc = "Gpib Address of the controller (from 0 to 30)";
+	prop_name = "CameraGpibAddress";
+	prop_desc = "Address of the camera on the GPIB bus (from 0 to 30)";
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
@@ -323,8 +285,8 @@ void SpectrumOneCCDClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "Port";
-	prop_desc = "IP port of the controller";
+	prop_name = "GpibControllerPort";
+	prop_desc = "IP port of the GPIB controller";
 	prop_def  = "1234";
 	vect_data.clear();
 	vect_data.push_back("1234");
@@ -337,8 +299,8 @@ void SpectrumOneCCDClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "Host";
-	prop_desc = "Host name or IP adress of the controller";
+	prop_name = "GpibControllerHost";
+	prop_desc = "Host name or IP adress of the GPIB controller";
 	prop_def  = "127.0.0.1";
 	vect_data.clear();
 	vect_data.push_back("127.0.0.1");
@@ -605,6 +567,30 @@ void SpectrumOneCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Not Memorized
 	att_list.push_back(gain);
 
+	//	Attribute : numFlushes
+	numFlushesAttrib	*numflushes = new numFlushesAttrib();
+	Tango::UserDefaultAttrProp	numflushes_prop;
+	numflushes_prop.set_description("Set number of flushes on the camera");
+	//	label	not set for numFlushes
+	//	unit	not set for numFlushes
+	//	standard_unit	not set for numFlushes
+	//	display_unit	not set for numFlushes
+	//	format	not set for numFlushes
+	//	max_value	not set for numFlushes
+	//	min_value	not set for numFlushes
+	//	max_alarm	not set for numFlushes
+	//	min_alarm	not set for numFlushes
+	//	max_warning	not set for numFlushes
+	//	min_warning	not set for numFlushes
+	//	delta_t	not set for numFlushes
+	//	delta_val	not set for numFlushes
+	
+	numflushes->set_default_properties(numflushes_prop);
+	//	Not Polled
+	numflushes->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(numflushes);
+
 
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());
@@ -650,15 +636,6 @@ void SpectrumOneCCDClass::command_factory()
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCDClass::command_factory_before
 
 
-	//	Command ForcedInit
-	ForcedInitClass	*pForcedInitCmd =
-		new ForcedInitClass("ForcedInit",
-			Tango::DEV_VOID, Tango::DEV_VOID,
-			"",
-			"",
-			Tango::OPERATOR);
-	command_list.push_back(pForcedInitCmd);
-
 	//	Command GetTemperature
 	GetTemperatureClass	*pGetTemperatureCmd =
 		new GetTemperatureClass("GetTemperature",
@@ -668,23 +645,14 @@ void SpectrumOneCCDClass::command_factory()
 			Tango::OPERATOR);
 	command_list.push_back(pGetTemperatureCmd);
 
-	//	Command ReConfig
-	ReConfigClass	*pReConfigCmd =
-		new ReConfigClass("ReConfig",
+	//	Command ForceConfig
+	ForceConfigClass	*pForceConfigCmd =
+		new ForceConfigClass("ForceConfig",
 			Tango::DEV_VOID, Tango::DEV_VOID,
 			"",
 			"",
 			Tango::OPERATOR);
-	command_list.push_back(pReConfigCmd);
-
-	//	Command SetNumFlushes
-	SetNumFlushesClass	*pSetNumFlushesCmd =
-		new SetNumFlushesClass("SetNumFlushes",
-			Tango::DEV_LONG, Tango::DEV_VOID,
-			"Number of flushes",
-			"",
-			Tango::OPERATOR);
-	command_list.push_back(pSetNumFlushesCmd);
+	command_list.push_back(pForceConfigCmd);
 
 	//	Command GetGain
 	GetGainClass	*pGetGainCmd =

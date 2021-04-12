@@ -5,17 +5,17 @@
       <inheritances classname="Device_Impl" sourcePath=""/>
       <identification contact="at synchrotron-soleil.fr - hottois" author="hottois" emailDomain="synchrotron-soleil.fr" classFamily="Acquisition" siteSpecific="" platform="All Platforms" bus="Not Applicable" manufacturer="none" reference=""/>
     </description>
-    <deviceProperties name="GpibAddress" description="Gpib Address of the controller (from 0 to 30)">
+    <deviceProperties name="CameraGpibAddress" description="Address of the camera on the GPIB bus (from 0 to 30)">
       <type xsi:type="pogoDsl:UIntType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>0</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="Port" description="IP port of the controller">
+    <deviceProperties name="GpibControllerPort" description="IP port of the GPIB controller">
       <type xsi:type="pogoDsl:UIntType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>1234</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="Host" description="Host name or IP adress of the controller">
+    <deviceProperties name="GpibControllerHost" description="Host name or IP adress of the GPIB controller">
       <type xsi:type="pogoDsl:StringType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>127.0.0.1</DefaultPropValue>
@@ -76,19 +76,6 @@
       </argout>
       <status abstract="true" inherited="true" concrete="true" concreteHere="true"/>
     </commands>
-    <commands name="ForcedInit" description="Force the initialization, injection of the tables and the reconfiguration of the camera" execMethod="forced_init" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
-      <argin description="">
-        <type xsi:type="pogoDsl:VoidType"/>
-      </argin>
-      <argout description="">
-        <type xsi:type="pogoDsl:VoidType"/>
-      </argout>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <excludedStates>RUNNING</excludedStates>
-      <excludedStates>FAULT</excludedStates>
-      <excludedStates>ALARM</excludedStates>
-      <excludedStates>DISABLE</excludedStates>
-    </commands>
     <commands name="GetTemperature" description="Get the temperature of the CCD sensor.&#xA;The temperature will be updated in the lastTemperature attribute." execMethod="get_temperature" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
       <argin description="">
         <type xsi:type="pogoDsl:VoidType"/>
@@ -102,22 +89,9 @@
       <excludedStates>ALARM</excludedStates>
       <excludedStates>DISABLE</excludedStates>
     </commands>
-    <commands name="ReConfig" description="Force the re-configuration of the camera." execMethod="re_config" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+    <commands name="ForceConfig" description="Force the re-configuration of the camera." execMethod="force_config" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
       <argin description="">
         <type xsi:type="pogoDsl:VoidType"/>
-      </argin>
-      <argout description="">
-        <type xsi:type="pogoDsl:VoidType"/>
-      </argout>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <excludedStates>RUNNING</excludedStates>
-      <excludedStates>FAULT</excludedStates>
-      <excludedStates>ALARM</excludedStates>
-      <excludedStates>DISABLE</excludedStates>
-    </commands>
-    <commands name="SetNumFlushes" description="Set the number of flushes for the acquisition" execMethod="set_num_flushes" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
-      <argin description="Number of flushes">
-        <type xsi:type="pogoDsl:IntType"/>
       </argin>
       <argout description="">
         <type xsi:type="pogoDsl:VoidType"/>
@@ -156,6 +130,21 @@
       <dataReadyEvent fire="false" libCheckCriteria="true"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <properties description="Define CCD gain of the camera." label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <writeExcludedStates>RUNNING</writeExcludedStates>
+      <writeExcludedStates>FAULT</writeExcludedStates>
+      <writeExcludedStates>DISABLE</writeExcludedStates>
+    </attributes>
+    <attributes name="numFlushes" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="false" isDynamic="false">
+      <dataType xsi:type="pogoDsl:IntType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Set number of flushes on the camera" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <writeExcludedStates>RUNNING</writeExcludedStates>
+      <writeExcludedStates>FAULT</writeExcludedStates>
+      <writeExcludedStates>ALARM</writeExcludedStates>
+      <writeExcludedStates>DISABLE</writeExcludedStates>
     </attributes>
     <states name="STANDBY" description="">
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>

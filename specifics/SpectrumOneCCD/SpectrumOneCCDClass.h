@@ -82,33 +82,25 @@ public:
 		{return (static_cast<SpectrumOneCCD *>(dev))->is_gain_allowed(ty);}
 };
 
+//	Attribute numFlushes class definition
+class numFlushesAttrib: public Tango::Attr
+{
+public:
+	numFlushesAttrib():Attr("numFlushes",
+			Tango::DEV_LONG, Tango::READ_WRITE) {};
+	~numFlushesAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SpectrumOneCCD *>(dev))->read_numFlushes(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<SpectrumOneCCD *>(dev))->write_numFlushes(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SpectrumOneCCD *>(dev))->is_numFlushes_allowed(ty);}
+};
+
 
 //=========================================
 //	Define classes for commands
 //=========================================
-//	Command ForcedInit class definition
-class ForcedInitClass : public Tango::Command
-{
-public:
-	ForcedInitClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	ForcedInitClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~ForcedInitClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<SpectrumOneCCD *>(dev))->is_ForcedInit_allowed(any);}
-};
-
 //	Command GetTemperature class definition
 class GetTemperatureClass : public Tango::Command
 {
@@ -132,11 +124,11 @@ public:
 	{return (static_cast<SpectrumOneCCD *>(dev))->is_GetTemperature_allowed(any);}
 };
 
-//	Command ReConfig class definition
-class ReConfigClass : public Tango::Command
+//	Command ForceConfig class definition
+class ForceConfigClass : public Tango::Command
 {
 public:
-	ReConfigClass(const char   *name,
+	ForceConfigClass(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out,
 				   const char        *in_desc,
@@ -144,38 +136,15 @@ public:
 				   Tango::DispLevel  level)
 	:Command(name,in,out,in_desc,out_desc, level)	{};
 
-	ReConfigClass(const char   *name,
+	ForceConfigClass(const char   *name,
 	               Tango::CmdArgType in,
 				   Tango::CmdArgType out)
 	:Command(name,in,out)	{};
-	~ReConfigClass() {};
+	~ForceConfigClass() {};
 	
 	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
 	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<SpectrumOneCCD *>(dev))->is_ReConfig_allowed(any);}
-};
-
-//	Command SetNumFlushes class definition
-class SetNumFlushesClass : public Tango::Command
-{
-public:
-	SetNumFlushesClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out,
-				   const char        *in_desc,
-				   const char        *out_desc,
-				   Tango::DispLevel  level)
-	:Command(name,in,out,in_desc,out_desc, level)	{};
-
-	SetNumFlushesClass(const char   *name,
-	               Tango::CmdArgType in,
-				   Tango::CmdArgType out)
-	:Command(name,in,out)	{};
-	~SetNumFlushesClass() {};
-	
-	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
-	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
-	{return (static_cast<SpectrumOneCCD *>(dev))->is_SetNumFlushes_allowed(any);}
+	{return (static_cast<SpectrumOneCCD *>(dev))->is_ForceConfig_allowed(any);}
 };
 
 //	Command GetGain class definition
