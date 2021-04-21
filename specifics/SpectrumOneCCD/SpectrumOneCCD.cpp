@@ -332,9 +332,15 @@ void SpectrumOneCCD::get_device_property()
 
     // Create all properties if empty
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "InvertX");
+<<<<<<< HEAD
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", "CameraGpibAddress");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1234", "GpibControllerPort");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "GpibControllerHost");
+=======
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", "GpibAddress");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1234", "Port");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "Host");
+>>>>>>> master
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1401", "TablesMode");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "/usr/Local/configFiles/SpectrumOne", "TablesPath");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, 
@@ -546,6 +552,11 @@ Tango::DevState SpectrumOneCCD::dev_state()
 	
 	Tango::DevState	argout = Tango::UNKNOWN;
 
+<<<<<<< HEAD
+=======
+    std::cout << "DEV_STATE_CALLED" << std::endl;
+
+>>>>>>> master
     // If initialized, get device state from LIMA
     if(!m_is_device_initialized)
     {

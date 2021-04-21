@@ -44,7 +44,11 @@
 
             <properties>
                 <SPECTRUMONE.name>SpectrumOne</SPECTRUMONE.name>
+<<<<<<< HEAD
                 <SPECTRUMONE.version>1.1</SPECTRUMONE.version>                
+=======
+                <SPECTRUMONE.version>1.0.1-SNAPSHOT</SPECTRUMONE.version>                
+>>>>>>> master
             </properties>
            
             <dependencies>
