@@ -356,9 +356,9 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             if (!ControlFactory::m_is_created)
             {
                 Tango::DbData db_data;
-                db_data.push_back(Tango::DbDatum("Host"));
-                db_data.push_back(Tango::DbDatum("Port"));
-                db_data.push_back(Tango::DbDatum("GpibAddress"));
+                db_data.push_back(Tango::DbDatum("GpibControllerHost"));
+                db_data.push_back(Tango::DbDatum("GpibControllerPort"));
+                db_data.push_back(Tango::DbDatum("CameraGpibAddress"));
                 db_data.push_back(Tango::DbDatum("TablesPath"));
                 db_data.push_back(Tango::DbDatum("TablesMode"));
                 db_data.push_back(Tango::DbDatum("ExpertConfig"));
@@ -675,7 +675,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             {
                 Tango::DbData db_data             ;
                 std::string   config_file_name    ;
-                double        readout_time        = 0.00004; // 40µs by default
+                double        readout_time        = 0.00004; // 40ï¿½s by default
                 long          receiver_fifo_depth = 2500   ; // 2500 frames by default
                 long          frame_packet_number = 128    ; // 128 packets by default
 
