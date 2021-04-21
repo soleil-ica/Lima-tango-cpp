@@ -299,7 +299,7 @@ namespace Pco_ns
         void create_pco_with_ram_dynamic_interface();
         void create_pco_edge_dynamic_interface();
         void create_pco_dimax_dynamic_interface();
-        void create_pco_xxxx_dynamic_interface();
+        void create_pco_xx00_dynamic_interface();
         template <class F1, class F2>
         void create_attribute(std::string name,
             int data_type,
