@@ -59,9 +59,7 @@
                 <PILATUS.name>Pilatus</PILATUS.name>
                 <PILATUS.version>2.1.8</PILATUS.version>
                 <PROSILICA.name>Prosilica</PROSILICA.name>
-                <PROSILICA.version>1.4.8</PROSILICA.version>
-                <UFXC.name>Ufxc</UFXC.name>
-                <UFXC.version>1.1.1</UFXC.version>       
+                <PROSILICA.version>1.4.8</PROSILICA.version> 
                 <XPAD.name>Xpad</XPAD.name>
                 <XPAD.version>1.4.16</XPAD.version>
                 
@@ -140,12 +138,6 @@
                     <artifactId>LimaProsilica-${aol}-shared-${mode}</artifactId>
                     <version>${PROSILICA.version}</version>
                 </dependency>             
-                
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaUfxc-${aol}-shared-${mode}</artifactId>
-                    <version>${UFXC.version}</version>
-                </dependency>
 
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
@@ -179,7 +171,6 @@
                                     <include>specifics/PilatusPixelDetector/*.cpp</include>
                                     <include>specifics/RoiCounters/*.cpp</include>
                                     <include>specifics/ProsilicaCCD/*.cpp</include>           
-                                    <include>specifics/Ufxc/*.cpp</include>
                                     <include>specifics/XpadPixelDetector/*.cpp</include>
                                     <include>specifics/SimulatorCCD/*.cpp</include>                                    
                                 </includes>
@@ -195,7 +186,6 @@
                                     <includePath>specifics/PilatusPixelDetector</includePath>
                                     <includePath>specifics/RoiCounters</includePath>
                                     <includePath>specifics/ProsilicaCCD</includePath>        
-                                    <includePath>specifics/Ufxc</includePath>
                                     <includePath>specifics/XpadPixelDetector</includePath>
                                     <includePath>specifics/SimulatorCCD</includePath>
                                 </includePaths>
@@ -219,8 +209,6 @@
                                     <define>PILATUS_VERSION=${PILATUS.version}</define>
                                     <define>PROSILICA_NAME=${PROSILICA.name}</define>
                                     <define>PROSILICA_VERSION=${PROSILICA.version}</define>
-                                    <define>UFXC_NAME=${UFXC.name}</define>
-                                    <define>UFXC_VERSION=${UFXC.version}</define>        
                                     <define>XPAD_NAME=${XPAD.name}</define>
                                     <define>XPAD_VERSION=${XPAD.version}</define>
                                     <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
@@ -238,7 +226,6 @@
                                     <define>PILATUS_ENABLED</define>
                                     <define>ROICOUNTERS_ENABLED</define>
                                     <define>PROSILICA_ENABLED</define>			
-                                    <define>UFXC_ENABLED</define>
                                     <define>XPAD_ENABLED</define>
                                     <define>SIMULATOR_ENABLED</define>
                                     
@@ -249,23 +236,6 @@
                                     <option>-fopenmp</option>
                                 </options>                                                                                                
                             </cpp>
-                            
-                            <linker>                                                                   
-                                <libs>    
-                                    <lib>
-                                        <!-- UFXC -->
-                                        <name>UFXCLib-i386-Linux-gcc-shared-release-1.0.1</name>
-                                        <type>shared</type>
-                                        <directory>../../../camera/ufxc/sdk/linux/lib</directory>
-                                    </lib>
-                                    <lib>
-                                        <!-- openMP -->
-                                        <name>gomp</name>
-                                        <type>shared</type>
-                                        <directory>/usr/lib</directory>
-                                    </lib>   
-                                </libs>
-                            </linker>
                         </configuration>           
                     </plugin>
                 </plugins>
