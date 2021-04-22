@@ -20,6 +20,8 @@
         <libs-64bits>/home/informatique/ica/ica/LIB_EL6_64</libs-64bits>
         <libs-lambda>../../../camera/lambda/sdk/bin</libs-lambda>
         <libs-xspress3>../../../camera/xspress3/sdk</libs-xspress3>
+		<libs-ufxc-decode>../../../camera/ufxc/UFXC-LIB/UFXCLib/sdk</libs-ufxc-decode>
+		
 
         <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
         <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
@@ -121,7 +123,8 @@
                             <include>specifics/Lambda/*.cpp</include>
                             <include>specifics/Xspress3/*.cpp</include>
                             <include>specifics/Spectral/*.cpp</include>
-                            <include>specifics/Ufxc/*.cpp</include>                            
+                            <include>specifics/Ufxc/*.cpp</include>          
+							
                             <include>specifics/Layout/*.cpp</include>     			
                             <include>specifics/Mask/*.cpp</include>                            
                             <include>specifics/RoiCounters/*.cpp</include>
@@ -152,13 +155,16 @@
                             
                             <includePath>${libs-64bits}/liblog4tango5-devel-5.0.0-16.el6.maxlab.x86_64/usr/include/tango</includePath>    
                             <includePath>${libs-64bits}/omniORB-devel-4.1.7-1.el6.x86_64/usr/include</includePath>  
-                            <includePath>${libs-64bits}/zeromq-4.2.5/include</includePath>   
+                            <includePath>${libs-64bits}/zeromq-3.2.5/include</includePath>   
 
                             <includePath>${libs-64bits}/hdf5-1.8.16/include</includePath>
                             <includePath>${libs-64bits}/yat-${YAT.version}/include</includePath>
                             <includePath>${libs-64bits}/yat4tango-${YAT4Tango.version}/include</includePath>
-                            <includePath>${libs-64bits}/nexuscpp-${NexusCPP.version}/include</includePath>                 
+                            <includePath>${libs-64bits}/nexuscpp-${NexusCPP.version}/include</includePath>        
+							
 							<includePath>${libs-xspress3}/include/</includePath>
+							<includePath>${libs-ufxc-decode}/include/</includePath>
+							
                         </includePaths>
                        
                         <defines>
@@ -252,10 +258,10 @@
                             </lib>
 
                             <lib>
-                                <!-- zmq (4.X.Y) 64 -->
+                                <!-- zmq (3.X.Y) 64 -->
                                 <name>zmq</name>
                                 <type>shared</type>
-                                <directory>${libs-64bits}/zeromq-4.2.5/lib/</directory>
+                                <directory>${libs-64bits}/zeromq-3.2.5/lib/</directory>
                             </lib>
 
                             <lib>
@@ -371,6 +377,12 @@
                                 <name>xspress3</name>
                                 <type>shared</type>
                                 <directory>${libs-xspress3}/bin/</directory>
+                            </lib>
+							
+							<lib>
+                                <name>UfxcDecode-amd64-Linux-gcc-shared-release-1.2.0</name>
+                                <type>shared</type>
+                                <directory>${libs-ufxc-decode}/bin/</directory>
                             </lib>
                                                         
                         </libs>

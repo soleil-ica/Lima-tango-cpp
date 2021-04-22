@@ -425,7 +425,7 @@ void SpectrumOneCCD::read_lastTemperature(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::read_lastTemperature) ENABLED START -----*/
 	//	Set the attribute value
     // Get last reported temperature from camera
-    if(m_camera) m_camera->getTemperature(*attr_lastTemperature_read);
+    m_camera->getTemperature(*attr_lastTemperature_read);
     attr.set_value(attr_lastTemperature_read);
 	
 	
@@ -446,7 +446,7 @@ void SpectrumOneCCD::read_gain(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::read_gain) ENABLED START -----*/
 	//	Set the attribute value
     // Get last reported gain from camera
-    if(m_camera) m_camera->getGain(*attr_gain_read);
+    m_camera->getGain(*attr_gain_read);
     attr.set_value(attr_gain_read);
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::read_gain
@@ -468,8 +468,8 @@ void SpectrumOneCCD::write_gain(Tango::WAttribute &attr)
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::write_gain) ENABLED START -----*/
     // Set gain and query the new gain from camera
-    if(m_camera) m_camera->setGain(static_cast<int>(w_val));
-    if(m_camera) m_camera->pollGain();
+    m_camera->setGain(static_cast<int>(w_val));
+    m_camera->pollGain();
 	
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::write_gain
@@ -509,7 +509,7 @@ void SpectrumOneCCD::write_numFlushes(Tango::WAttribute &attr)
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::write_numFlushes) ENABLED START -----*/
 	
-    if(m_camera) m_camera->setNumFlushes(static_cast<int>(w_val));
+    m_camera->setNumFlushes(static_cast<int>(w_val));
     *attr_numFlushes_read = w_val;
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::write_numFlushes
@@ -607,7 +607,7 @@ void SpectrumOneCCD::get_temperature()
 	
 	//	Add your own code
     // Query camera temperature
-    if(m_camera) m_camera->pollTemperature();
+    m_camera->pollTemperature();
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::get_temperature
 }
 //--------------------------------------------------------
@@ -624,7 +624,7 @@ void SpectrumOneCCD::force_config()
 	
 	//	Add your own code
     // Force re-configuration of camera
-    if(m_camera) m_camera->forceTables();
+    m_camera->forceTables();
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::force_config
 }
@@ -643,7 +643,7 @@ void SpectrumOneCCD::get_gain()
 	
 	//	Add your own code
     // Query gain from camera
-    if(m_camera) m_camera->pollGain();
+    m_camera->pollGain();
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::get_gain
 }
