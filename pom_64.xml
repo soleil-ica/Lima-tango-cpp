@@ -147,15 +147,11 @@
 
                             <includePath>${libs-64bits}/my_breakpad/include</includePath>         
                             <includePath>${libs-64bits}/gsl-1.11/include</includePath>       
-                            <includePath>${libs-64bits}/lz4-r131/lib</includePath>        
-                            <!-- <includePath>${libs-64bits}/libtango8-devel-8.1.2-16.el6.maxlab.x86_64/usr/include/tango</includePath> 
+                            <includePath>${libs-64bits}/lz4-r131/lib</includePath>   
+							
                             <includePath>${libs-64bits}/libtango8-devel-8.1.2-16.el6.maxlab.x86_64/usr/include/</includePath>  -->        
                             <includePath>${libs-64bits}/libtango9-9.2.5-64/include/tango</includePath> 
                             <includePath>${libs-64bits}/libtango9-9.2.5-64/include/</includePath>    
-                            
-                            <includePath>${libs-64bits}/liblog4tango5-devel-5.0.0-16.el6.maxlab.x86_64/usr/include/tango</includePath>    
-                            <includePath>${libs-64bits}/omniORB-devel-4.1.7-1.el6.x86_64/usr/include</includePath>  
-                            <includePath>${libs-64bits}/zeromq-3.2.5/include</includePath>   
 
                             <includePath>${libs-64bits}/hdf5-1.8.16/include</includePath>
                             <includePath>${libs-64bits}/yat-${YAT.version}/include</includePath>
@@ -209,8 +205,7 @@
                             <define>UNIX_64_EL6</define>
                             <define>__LINUX__</define>
                             <define>linux</define>                            
-                        </defines>                        
-            
+                        </defines>    
                     </cpp>        
                     
                     <linker>
@@ -226,42 +221,42 @@
                                 <!-- omniORB4 64 -->
                                 <name>omniORB4</name>
                                 <type>shared</type>
-                                <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
+                                <directory>${libs-64bits}/libtango9-9.2.5-64/lib</directory>
                             </lib>
 
                             <lib>
                                 <!-- omniDynamic4 64 -->
                                 <name>omniDynamic4</name>
                                 <type>shared</type>
-                                <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
+                                <directory>${libs-64bits}/libtango9-9.2.5-64/lib</directory>
                             </lib>
 
                             <lib>
                                 <!-- COS4 64 -->
                                 <name>COS4</name>
                                 <type>shared</type>
-                                <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
+                                <directory>${libs-64bits}/libtango9-9.2.5-64/lib</directory>
                             </lib>
 
                             <lib>
                                 <!-- omniCodeSets4 64 -->
                                 <name>omniCodeSets4</name>
                                 <type>shared</type>
-                                <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
+                                <directory>${libs-64bits}/libtango9-9.2.5-64/lib</directory>
                             </lib>
 
                             <lib>
                                 <!-- omnithread 64 -->
                                 <name>omnithread</name>
                                 <type>shared</type>
-                                <directory>${libs-64bits}/omniORB-4.1.7-1.el6.x86_64/usr/lib64</directory>
+                                <directory>${libs-64bits}/libtango9-9.2.5-64/lib</directory>
                             </lib>
 
                             <lib>
                                 <!-- zmq (3.X.Y) 64 -->
                                 <name>zmq</name>
                                 <type>shared</type>
-                                <directory>${libs-64bits}/zeromq-3.2.5/lib/</directory>
+                               <directory>${libs-64bits}/libtango9-9.2.5-64/lib</directory>
                             </lib>
 
                             <lib>
@@ -275,7 +270,7 @@
                                 <!-- log4tango 64 -->
                                 <name>log4tango</name>
                                 <type>shared</type>
-                                <directory>${libs-64bits}/liblog4tango5-5.0.0-16.el6.maxlab.x86_64/usr/lib64</directory>
+                                <directory>${libs-64bits}/libtango9-9.2.5-64/lib</directory>
                             </lib>
 
                             <lib>
@@ -348,29 +343,31 @@
                             </lib>
 
                             <lib>
-                               <!-- liblambda -->
-                               <name>lambda</name>
-                               <type>shared</type>
-                               <directory>${libs-lambda}/</directory>
+								<!-- liblambda -->
+								<name>lambda</name>
+								<type>shared</type>
+								<directory>${libs-lambda}/</directory>
                             </lib>
 
                             <lib>
-                               <!-- libfsdetcore -->
-                               <name>fsdetcore</name>
-                               <type>shared</type>
-                               <directory>${libs-lambda}/</directory>
+                                <!-- libfsdetcore -->
+                                <name>fsdetcore</name>
+                                <type>shared</type>
+                                <directory>${libs-lambda}/</directory>
                             </lib>
 
                             <lib>
-                               <name>boost_thread</name>
-                               <type>shared</type>
-                               <directory>${libs-lambda}/</directory>
+								<!-- For Lambda -->
+                                <name>boost_thread</name>
+                                <type>shared</type>
+                                <directory>${libs-lambda}/</directory>
                             </lib>
 
                             <lib>
-                               <name>boost_system</name>
-                               <type>shared</type>
-                               <directory>${libs-lambda}/</directory>
+								<!-- For Lambda -->
+								<name>boost_system</name>
+								<type>shared</type>
+								<directory>${libs-lambda}/</directory>
                             </lib>
 
                             <lib>
