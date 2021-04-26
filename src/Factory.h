@@ -1,6 +1,6 @@
 //+=============================================================================
 //
-// file :         Factory.cpp
+// file :         Factory.h
 //
 // description : Include for Factory.cpp
 //
@@ -63,10 +63,15 @@
 #include <ProsilicaSyncCtrlObj.h>   
 #endif
 
-#ifdef SPECTRUMONE_ENABLED
+#ifdef MERLIN_ENABLED
+#include <MerlinCamera.h>
+#include <MerlinInterface.h>
+#endif
+
+/* #ifdef SPECTRUMONE_ENABLED
 #include <SpectrumOneInterface.h>
 #include <SpectrumOneCamera.h>
-#endif
+#endif */
 
 #ifdef ANDOR_ENABLED
 #include <AndorInterface.h>
@@ -108,12 +113,6 @@
 #include <Andor3ShutterCtrlObj.h>
 #include <Andor3SyncCtrlObj.h>    
 #endif
-
-#ifdef MERLIN_ENABLED
-#include <MerlinCamera.h>
-#include <MerlinInterface.h>
-#endif
-
 
 #ifdef VIEWORKSVP_ENABLED
 #include <VieworksVPBinCtrlObj.h>
@@ -164,10 +163,6 @@
 #include <SpectralInterface.h>
 #endif
 
-//ProcessLib/Data : define dimensions of image
-#define WIDTH_INDEX   0
-#define HEIGHT_INDEX  1
-
 #ifdef LAMBDA_ENABLED
 #include <LambdaCamera.h>
 #include <LambdaInterface.h>
@@ -178,12 +173,10 @@
 #include <DhyanaInterface.h>
 #endif
 
-
 #ifdef UFXC_ENABLED
 #include <UfxcCamera.h>
 #include <UfxcInterface.h>
 #endif
-
 
 #ifdef XSPRESS3_ENABLED
 #include <Xspress3Camera.h>
