@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.10.0</version>
+    <version>1.11.0</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -24,10 +24,10 @@
     <properties>
         <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
         <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
-        <CORE.name>Core</CORE.name>
-        <CORE.version>1.7.9</CORE.version>
+        <LIMACORE.name>LimaCore</LIMACORE.name>
+        <LIMACORE.version>1.7.10</LIMACORE.version>
         <SIMULATOR.name>Simulator</SIMULATOR.name>
-        <SIMULATOR.version>1.4.0</SIMULATOR.version>
+        <SIMULATOR.version>1.4.1</SIMULATOR.version>
         
         <YAT.version>1.18.2</YAT.version> 
         <YAT4Tango.version>1.13.1</YAT4Tango.version> 
@@ -60,8 +60,8 @@
                 <PILATUS.version>2.1.9</PILATUS.version>
                 <PROSILICA.name>Prosilica</PROSILICA.name>
                 <PROSILICA.version>1.4.9</PROSILICA.version> 
-				<SPECTRUMONE.name>SpectrumOneCCD</SPECTRUMONE.name>
-                <SPECTRUMONE.version>1.0.0</SPECTRUMONE.version> 
+				<!-- <SPECTRUMONE.name>SpectrumOneCCD</SPECTRUMONE.name>
+                <SPECTRUMONE.version>1.0.0</SPECTRUMONE.version>  -->
                 <XPAD.name>Xpad</XPAD.name>
                 <XPAD.version>1.4.17</XPAD.version>
                 
@@ -101,7 +101,7 @@
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>LimaCore-${aol}-shared-${mode}</artifactId>
-                    <version>${CORE.version}</version>
+                    <version>${LIMACORE.version}</version>
                 </dependency>
                 <!-- Lima Camera Plugins -->
 
@@ -141,11 +141,11 @@
                     <version>${PROSILICA.version}</version>
                 </dependency>  
 
-				 <dependency>
+				 <!-- <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaSpectrumOne-${aol}-shared-${mode}</artifactId>
                     <version>${SPECTRUMONE.version}</version>
-                </dependency> 
+                </dependency>  -->
 
                 <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
@@ -176,7 +176,7 @@
                                     <include>specifics/Merlin/*.cpp</include>
                                     <include>specifics/PilatusPixelDetector/*.cpp</include>                                    
                                     <include>specifics/ProsilicaCCD/*.cpp</include>   
-									<include>specifics/SpectrumOneCCD/*.cpp</include>   
+									<!-- <include>specifics/SpectrumOneCCD/*.cpp</include>    -->
                                     <include>specifics/XpadPixelDetector/*.cpp</include>
                                     <include>specifics/SimulatorCCD/*.cpp</include>      
 
@@ -193,7 +193,7 @@
                                     <includePath>specifics/Merlin</includePath>
                                     <includePath>specifics/PilatusPixelDetector</includePath>                         
                                     <includePath>specifics/ProsilicaCCD</includePath>   
-									<includePath>specifics/SpectrumOneCCD</includePath>    									
+									<!-- <includePath>specifics/SpectrumOneCCD</includePath>    --> 									
                                     <includePath>specifics/XpadPixelDetector</includePath>
                                     <includePath>specifics/SimulatorCCD</includePath>
 									
@@ -207,8 +207,8 @@
                                     <define>PROJECT_VERSION=${project.version}</define>
                                     <define>PROCESSLIB_NAME=${PROCESSLIB.name}</define>
                                     <define>PROCESSLIB_VERSION=${PROCESSLIB.version}</define>
-                                    <define>CORE_NAME=${CORE.name}</define>
-                                    <define>CORE_VERSION=${CORE.version}</define>
+                                    <define>LIMACORE_NAME=${LIMACORE.name}</define>
+                                    <define>LIMACORE_VERSION=${LIMACORE.version}</define>
                                     <define>BASLER_NAME=${BASLER.name}</define>
                                     <define>BASLER_VERSION=${BASLER.version}</define>
                                     <define>IMXPAD_NAME=${IMXPAD.name}</define>
@@ -221,8 +221,8 @@
                                     <define>PILATUS_VERSION=${PILATUS.version}</define>
                                     <define>PROSILICA_NAME=${PROSILICA.name}</define>
                                     <define>PROSILICA_VERSION=${PROSILICA.version}</define>
-									<define>SPECTRUMONE_NAME=${SPECTRUMONE.name}</define>
-                                    <define>SPECTRUMONE_VERSION=${SPECTRUMONE.version}</define>
+									<!-- <define>SPECTRUMONE_NAME=${SPECTRUMONE.name}</define>
+                                    <define>SPECTRUMONE_VERSION=${SPECTRUMONE.version}</define> -->
                                     <define>XPAD_NAME=${XPAD.name}</define>
                                     <define>XPAD_VERSION=${XPAD.version}</define>
                                     <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
@@ -235,7 +235,7 @@
                                     <define>MERLIN_ENABLED</define>
                                     <define>PILATUS_ENABLED</define>   
                                     <define>PROSILICA_ENABLED</define>	
-									<define>SPECTRUMONE_ENABLED</define>	
+									<!-- <define>SPECTRUMONE_ENABLED</define>	 -->
                                     <define>XPAD_ENABLED</define>
                                     <define>SIMULATOR_ENABLED</define>
 									
@@ -245,12 +245,14 @@
                                     
 									<!-- Needed By Basler -->
                                     <define>USE_GIGE</define>
+									
                                     <define>SOLEIL_YAT_STREAM</define>
                                 </defines>                              
                                 
                                 <options>
-                                    <option>-fopenmp</option>
-                                </options>                                                                                                
+									<!-- less verbose -->
+                                    <option>-w</option>
+                                </options>                                                                                        
                             </cpp>
                         </configuration>           
                     </plugin>
@@ -311,7 +313,7 @@
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>LimaCore-${aol}-shared-${mode}</artifactId>
-                    <version>${CORE.version}</version>
+                    <version>${LIMACORE.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
@@ -388,8 +390,8 @@
                                     <define>PROJECT_VERSION=${project.version}</define>
                                     <define>PROCESSLIB_NAME=${PROCESSLIB.name}</define>
                                     <define>PROCESSLIB_VERSION=${PROCESSLIB.version}</define>
-                                    <define>CORE_NAME=${CORE.name}</define>
-                                    <define>CORE_VERSION=${CORE.version}</define>
+                                    <define>LIMACORE_NAME=${LIMACORE.name}</define>
+                                    <define>LIMACORE_VERSION=${LIMACORE.version}</define>
                                     <define>ANDOR_NAME=${ANDOR.name}</define>
                                     <define>ANDOR_VERSION=${ANDOR.version}</define>
                                     <define>PERKINELMER_NAME=${PERKINELMER.name}</define>
