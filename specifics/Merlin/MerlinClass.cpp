@@ -720,7 +720,7 @@ void MerlinClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : gain
 	gainAttrib	*gain = new gainAttrib();
 	Tango::UserDefaultAttrProp	gain_prop;
-    gain_prop.set_description("0 = SHGM\n1 = HGM\n2 = LGM\n3 = SLGM");
+    gain_prop.set_description("0 = SLGM \n1 = LGM\n2 = HGM\n3 = SHGM");
     gain_prop.set_unit(" ");
     gain_prop.set_min_value("0");
     gain_prop.set_max_value("3");
