@@ -59,6 +59,56 @@ __declspec(dllexport)
 
 namespace Hamamatsu_ns
 {
+//+----------------------------------------------------------------------------
+//
+// method : 		SetOutputTriggersPolarityCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *SetOutputTriggersPolarityCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "SetOutputTriggersPolarityCmd::execute(): arrived" << endl;
+
+	const Tango::DevVarUShortArray	*argin;
+	extract(in_any, argin);
+
+	((static_cast<Hamamatsu *>(device))->set_output_triggers_polarity(argin));
+	return new CORBA::Any();
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		SetOutputTriggerKindCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *SetOutputTriggerKindCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "SetOutputTriggerKindCmd::execute(): arrived" << endl;
+
+	const Tango::DevVarUShortArray	*argin;
+	extract(in_any, argin);
+
+	((static_cast<Hamamatsu *>(device))->set_output_trigger_kind(argin));
+	return new CORBA::Any();
+}
+
 
 
 //
@@ -147,6 +197,16 @@ HamamatsuClass *HamamatsuClass::instance()
 //-----------------------------------------------------------------------------
 void HamamatsuClass::command_factory()
 {
+	command_list.push_back(new SetOutputTriggerKindCmd("SetOutputTriggerKind",
+		Tango::DEVVAR_USHORTARRAY, Tango::DEV_VOID,
+		"arg0 : ID of the output to configure (1, 2 or 3 depending on the Sensor model, e.g. C11440-22CU has 3 outputs available)\narg1 : Kind of output trigger to be set : \n              - 1 = LOW (default)\n              - 2 = EXPOSURE\n              - 3 = PROGRAMABLE (not implemented yet)\n              - 4 = TRIGGERREADY\n\n",
+		"",
+		Tango::OPERATOR));
+	command_list.push_back(new SetOutputTriggersPolarityCmd("SetOutputTriggersPolarity",
+		Tango::DEVVAR_USHORTARRAY, Tango::DEV_VOID,
+		"arg0 : ID of the output to configure (1, 2 or 3 depending on the Sensor model, e.g. C11440-22CU has 3 outputs available)\narg1 : Polarity of output trigger to be set : \n              - 1 = NEGATIVE (default)\n              - 2 = POSITIVE",
+		"",
+		Tango::OPERATOR));
 
 	//	add polling if any
 	for (unsigned int i=0 ; i<command_list.size(); i++)
@@ -274,7 +334,7 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	top_view_exposure_time_prop.set_standard_unit("ms");
 	top_view_exposure_time_prop.set_display_unit("ms");
 	top_view_exposure_time_prop.set_format("%7.2f");
-	top_view_exposure_time_prop.set_description("Exposure time for W-VIEW nÂ°1.");
+	top_view_exposure_time_prop.set_description("Exposure time for W-VIEW n°1.");
 	top_view_exposure_time->set_default_properties(top_view_exposure_time_prop);
 	top_view_exposure_time->set_memorized();
 	top_view_exposure_time->set_memorized_init(false);
@@ -288,11 +348,18 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	bottom_view_exposure_time_prop.set_standard_unit("ms");
 	bottom_view_exposure_time_prop.set_display_unit("ms");
 	bottom_view_exposure_time_prop.set_format("%7.2f");
-	bottom_view_exposure_time_prop.set_description("Exposure time for W-VIEW nÂ°2.");
+	bottom_view_exposure_time_prop.set_description("Exposure time for W-VIEW n°2.");
 	bottom_view_exposure_time->set_default_properties(bottom_view_exposure_time_prop);
 	bottom_view_exposure_time->set_memorized();
 	bottom_view_exposure_time->set_memorized_init(false);
 	att_list.push_back(bottom_view_exposure_time);
+
+	//	Attribute : outputTriggersStatus
+	outputTriggersStatusAttrib	*output_triggers_status = new outputTriggersStatusAttrib();
+	Tango::UserDefaultAttrProp	output_triggers_status_prop;
+	output_triggers_status_prop.set_description("Allow user to get current status of the output trigger(s) that may be available on the connected Hamamatsu sensor.");
+	output_triggers_status->set_default_properties(output_triggers_status_prop);
+	att_list.push_back(output_triggers_status);
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------

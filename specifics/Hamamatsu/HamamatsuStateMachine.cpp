@@ -148,10 +148,52 @@ bool Hamamatsu::is_bottomViewExposureTime_allowed(Tango::AttReqType type)
 	}
 	return true;
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_outputTriggersStatus_allowed
+// 
+// description : 	Read/Write allowed for outputTriggersStatus attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_outputTriggersStatus_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
 
 //=================================================
 //		Commands Allowed Methods
 //=================================================
 
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_SetOutputTriggerKind_allowed
+// 
+// description : 	Execution allowed for SetOutputTriggerKind command.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_SetOutputTriggerKind_allowed(const CORBA::Any &any)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_SetOutputTriggersPolarity_allowed
+// 
+// description : 	Execution allowed for SetOutputTriggersPolarity command.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_SetOutputTriggersPolarity_allowed(const CORBA::Any &any)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
 
 }	// namespace Hamamatsu_ns

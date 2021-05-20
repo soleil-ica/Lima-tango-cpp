@@ -98,6 +98,7 @@ public :
 		Tango::DevDouble	attr_topViewExposureTime_write;
 		Tango::DevDouble	*attr_bottomViewExposureTime_read;
 		Tango::DevDouble	attr_bottomViewExposureTime_write;
+		Tango::DevString	*attr_outputTriggersStatus_read;
 //@}
 
 /**
@@ -250,6 +251,10 @@ public :
  */
 	virtual void write_bottomViewExposureTime(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for outputTriggersStatus acquisition result.
+ */
+	virtual void read_outputTriggersStatus(Tango::Attribute &attr);
+/**
  *	Read/Write allowed for lostFrames attribute.
  */
 	virtual bool is_lostFrames_allowed(Tango::AttReqType type);
@@ -270,11 +275,39 @@ public :
  */
 	virtual bool is_bottomViewExposureTime_allowed(Tango::AttReqType type);
 /**
+ *	Read/Write allowed for outputTriggersStatus attribute.
+ */
+	virtual bool is_outputTriggersStatus_allowed(Tango::AttReqType type);
+/**
+ *	Execution allowed for SetOutputTriggerKind command.
+ */
+	virtual bool is_SetOutputTriggerKind_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for SetOutputTriggersPolarity command.
+ */
+	virtual bool is_SetOutputTriggersPolarity_allowed(const CORBA::Any &any);
+/**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
  *	@exception DevFailed
  */
 	virtual Tango::DevState	dev_state();
+/**
+ * Some cameras can output several triggers. You can select each trigger kind by using this function.
+ *	(LOW (default), EXPOSURE, PROGRAMABLE, TRIGGERREADY)
+ *	
+ *	@param	argin	arg0 : ID of the output to configure (1, 2 or 3 depending on the Sensor model, e.g. C11440-22CU has 3 outputs available)\narg1 : Kind of output trigger to be set : \n              - 1 = LOW (default)\n              - 2 = EXPOSURE\n              - 3 = PROGRAMABLE (not implemented yet)\n              - 4 = TRIGGERREADY\n\n
+ *	@exception DevFailed
+ */
+	void	set_output_trigger_kind(const Tango::DevVarUShortArray *);
+/**
+ * Some cameras can output several triggers. You can select each trigger polarity by using this function.
+ *	(POSITIVE (default), NEGATIVE)
+ *	
+ *	@param	argin	arg0 : ID of the output to configure (1, 2 or 3 depending on the Sensor model, e.g. C11440-22CU has 3 outputs available)\narg1 : Polarity of output trigger to be set : \n              - 1 = NEGATIVE (default)\n              - 2 = POSITIVE
+ *	@exception DevFailed
+ */
+	void	set_output_triggers_polarity(const Tango::DevVarUShortArray *);
 
 /**
  *	Read the device properties from database

@@ -45,6 +45,18 @@ namespace Hamamatsu_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class outputTriggersStatusAttrib: public Tango::SpectrumAttr
+{
+public:
+	outputTriggersStatusAttrib():SpectrumAttr("outputTriggersStatus", Tango::DEV_STRING, Tango::READ, 4) {};
+	~outputTriggersStatusAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_outputTriggersStatus(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_outputTriggersStatus_allowed(ty);}
+};
+
 class bottomViewExposureTimeAttrib: public Tango::Attr
 {
 public:
@@ -114,6 +126,54 @@ public:
 //=========================================
 //	Define classes for commands
 //=========================================
+class SetOutputTriggersPolarityCmd : public Tango::Command
+{
+public:
+	SetOutputTriggersPolarityCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	SetOutputTriggersPolarityCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~SetOutputTriggersPolarityCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<Hamamatsu *>(dev))->is_SetOutputTriggersPolarity_allowed(any);}
+};
+
+
+
+class SetOutputTriggerKindCmd : public Tango::Command
+{
+public:
+	SetOutputTriggerKindCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	SetOutputTriggerKindCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~SetOutputTriggerKindCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<Hamamatsu *>(dev))->is_SetOutputTriggerKind_allowed(any);}
+};
+
+
+
 //
 // The HamamatsuClass singleton definition
 //
