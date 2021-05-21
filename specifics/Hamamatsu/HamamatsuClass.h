@@ -57,6 +57,18 @@ public:
 	{return (static_cast<Hamamatsu *>(dev))->is_outputTriggersStatus_allowed(ty);}
 };
 
+class nbOutputTriggerAttrib: public Tango::Attr
+{
+public:
+	nbOutputTriggerAttrib():Attr("nbOutputTrigger", Tango::DEV_USHORT, Tango::READ) {};
+	~nbOutputTriggerAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_nbOutputTrigger(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_nbOutputTrigger_allowed(ty);}
+};
+
 class bottomViewExposureTimeAttrib: public Tango::Attr
 {
 public:
@@ -179,7 +191,7 @@ public:
 //
 
 class
-#ifdef _TG_WINDOWS_
+#ifdef WIN32
 	__declspec(dllexport)
 #endif
 	HamamatsuClass : public Tango::DeviceClass

@@ -631,6 +631,18 @@ void Hamamatsu::read_attr_hardware(vector<long> &attr_list)
 }
 //+----------------------------------------------------------------------------
 //
+// method : 		Hamamatsu::read_nbOutputTrigger
+// 
+// description : 	Extract real attribute values for nbOutputTrigger acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_nbOutputTrigger(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_nbOutputTrigger(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
 // method : 		Hamamatsu::read_outputTriggersStatus
 // 
 // description : 	Extract real attribute values for outputTriggersStatus acquisition result.
@@ -1187,7 +1199,6 @@ void Hamamatsu::manage_lima_exception(lima::Exception & in_exception, const std:
  *	description:	method to execute "SetOutputTriggerKind"
  *	Some cameras can output several triggers. You can select each trigger kind by using this function.
  *	(LOW (default), EXPOSURE, PROGRAMABLE, TRIGGERREADY)
- *	
  *
  * @param	argin	arg0 : ID of the output to configure (1, 2 or 3 depending on the Sensor model, e.g. C11440-22CU has 3 outputs available)\narg1 : Kind of output trigger to be set : \n              - 1 = LOW (default)\n              - 2 = EXPOSURE\n              - 3 = PROGRAMABLE (not implemented yet)\n              - 4 = TRIGGERREADY\n\n
  *
@@ -1208,7 +1219,6 @@ void Hamamatsu::set_output_trigger_kind(const Tango::DevVarUShortArray *argin)
  *	description:	method to execute "SetOutputTriggersPolarity"
  *	Some cameras can output several triggers. You can select each trigger polarity by using this function.
  *	(POSITIVE (default), NEGATIVE)
- *	
  *
  * @param	argin	arg0 : ID of the output to configure (1, 2 or 3 depending on the Sensor model, e.g. C11440-22CU has 3 outputs available)\narg1 : Polarity of output trigger to be set : \n              - 1 = NEGATIVE (default)\n              - 2 = POSITIVE
  *
@@ -1220,6 +1230,10 @@ void Hamamatsu::set_output_triggers_polarity(const Tango::DevVarUShortArray *arg
 
 	//	Add your own code to control device here
 
+    m_camera->setOutputTriggerKind(arg[0], arg[1]);
+	m_camera->
+    
 }
+
 
 }	//	namespace

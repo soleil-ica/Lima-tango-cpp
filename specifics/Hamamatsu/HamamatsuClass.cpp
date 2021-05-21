@@ -334,7 +334,7 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	top_view_exposure_time_prop.set_standard_unit("ms");
 	top_view_exposure_time_prop.set_display_unit("ms");
 	top_view_exposure_time_prop.set_format("%7.2f");
-	top_view_exposure_time_prop.set_description("Exposure time for W-VIEW n°1.");
+	top_view_exposure_time_prop.set_description("Exposure time for W-VIEW n?1.");
 	top_view_exposure_time->set_default_properties(top_view_exposure_time_prop);
 	top_view_exposure_time->set_memorized();
 	top_view_exposure_time->set_memorized_init(false);
@@ -348,11 +348,18 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	bottom_view_exposure_time_prop.set_standard_unit("ms");
 	bottom_view_exposure_time_prop.set_display_unit("ms");
 	bottom_view_exposure_time_prop.set_format("%7.2f");
-	bottom_view_exposure_time_prop.set_description("Exposure time for W-VIEW n°2.");
+	bottom_view_exposure_time_prop.set_description("Exposure time for W-VIEW n?2.");
 	bottom_view_exposure_time->set_default_properties(bottom_view_exposure_time_prop);
 	bottom_view_exposure_time->set_memorized();
 	bottom_view_exposure_time->set_memorized_init(false);
 	att_list.push_back(bottom_view_exposure_time);
+
+	//	Attribute : nbOutputTrigger
+	nbOutputTriggerAttrib	*nb_output_trigger = new nbOutputTriggerAttrib();
+	Tango::UserDefaultAttrProp	nb_output_trigger_prop;
+	nb_output_trigger_prop.set_description("The number of output trigger the sensor is able to manage");
+	nb_output_trigger->set_default_properties(nb_output_trigger_prop);
+	att_list.push_back(nb_output_trigger);
 
 	//	Attribute : outputTriggersStatus
 	outputTriggersStatusAttrib	*output_triggers_status = new outputTriggersStatusAttrib();
@@ -670,7 +677,7 @@ void HamamatsuClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Tango::Device_4Impl");
+	inheritance.push_back("Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

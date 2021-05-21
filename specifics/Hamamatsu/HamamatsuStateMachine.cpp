@@ -162,6 +162,20 @@ bool Hamamatsu::is_outputTriggersStatus_allowed(Tango::AttReqType type)
 		//	Re-Start of Generated Code
 	return true;
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_nbOutputTrigger_allowed
+// 
+// description : 	Read/Write allowed for nbOutputTrigger attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_nbOutputTrigger_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
 
 //=================================================
 //		Commands Allowed Methods
