@@ -178,12 +178,12 @@ bool Hamamatsu::is_nbOutputTrigger_allowed(Tango::AttReqType type)
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		Hamamatsu::is_Polarity_allowed
+// method : 		Hamamatsu::is_Kind_allowed
 // 
-// description : 	Read/Write allowed for Polarity attribute.
+// description : 	Read/Write allowed for Kind attribute.
 //
 //-----------------------------------------------------------------------------
-bool Hamamatsu::is_Polarity_allowed(Tango::AttReqType type)
+bool Hamamatsu::is_Kind_allowed(Tango::AttReqType type)
 {
 		//	End of Generated Code
 
@@ -192,12 +192,12 @@ bool Hamamatsu::is_Polarity_allowed(Tango::AttReqType type)
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		Hamamatsu::is_Kind_allowed
+// method : 		Hamamatsu::is_polarity_allowed
 // 
-// description : 	Read/Write allowed for Kind attribute.
+// description : 	Read/Write allowed for polarity attribute.
 //
 //-----------------------------------------------------------------------------
-bool Hamamatsu::is_Kind_allowed(Tango::AttReqType type)
+bool Hamamatsu::is_polarity_allowed(Tango::AttReqType type)
 {
 		//	End of Generated Code
 

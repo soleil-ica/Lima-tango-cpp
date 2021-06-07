@@ -144,9 +144,10 @@ void Hamamatsu::delete_device()
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_temperatureStatus_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_readoutSpeed_read);
 
-    delete[] attr_nbOutputTrigger_read;
+    //delete[] attr_nbOutputTrigger_read;
 
-    //DELETE_SPECTRUM_ATTRIBUTE(attr_outputTriggersStatus_read);
+    DELETE_SPECTRUM_ATTRIBUTE(attr_Kind_read);
+    DELETE_SPECTRUM_ATTRIBUTE(attr_polarity_read);
 }
 
 //+----------------------------------------------------------------------------
@@ -217,6 +218,19 @@ void Hamamatsu::init_device()
         // Update the hardware with the properties data
         write_at_init();
 
+        CREATE_SPECTRUM_ATTRIBUTE(attr_Kind_read, NBMAXOUTPUTTRIGGER);
+        CREATE_SPECTRUM_ATTRIBUTE(attr_polarity_read, NBMAXOUTPUTTRIGGER);
+
+        for(int i = 1; i <= NBMAXOUTPUTTRIGGER ; i++)
+        {         
+            DEBUG_STREAM << "Init_device : update attr_outputTriggersStatus_read - Iteration " << i  << "/" << NBMAXOUTPUTTRIGGER << endl;
+            
+            attr_Kind_read[i-1] = m_camera->getOutputTriggerKind(i-1);
+            attr_polarity_read[i-1] = m_camera->getOutputTriggerPolarity(i-1);
+            //strcpy(attr_outputTriggersStatus_read[0], "channel\tKind\tPolarity");
+        }
+        DEBUG_STREAM << "Init_device : update attr_outputTriggersStatus_read - DONE" << endl;
+        /*
         //Initiliaze trigger status   
         DEBUG_STREAM << "Init_device : Initiliaze trigger status" << endl;
         attr_outputTriggersStatus_read = new Tango::DevString[NBMAXOUTPUTTRIGGER];
@@ -231,7 +245,7 @@ void Hamamatsu::init_device()
             //strcpy(attr_outputTriggersStatus_read[0], "channel\tKind\tPolarity");
             strcpy(attr_outputTriggersStatus_read[i], updateString.c_str() );
         }
-        DEBUG_STREAM << "Init_device : update attr_outputTriggersStatus_read - DONE" << endl;
+        DEBUG_STREAM << "Init_device : update attr_outputTriggersStatus_read - DONE" << endl;*/
     }
     catch(lima::Exception& e)
     {
@@ -667,6 +681,32 @@ void Hamamatsu::read_attr_hardware(vector<long> &attr_list)
 }
 //+----------------------------------------------------------------------------
 //
+// method : 		Hamamatsu::read_polarity
+// 
+// description : 	Extract real attribute values for polarity acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_polarity(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_polarity(Tango::Attribute &attr) entering... "<< endl;
+
+    
+     try
+	{
+		attr.set_value(attr_polarity_read, NBMAXOUTPUTTRIGGER);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_polarity");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_polarity");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
 // method : 		Hamamatsu::read_Kind
 // 
 // description : 	Extract real attribute values for Kind acquisition result.
@@ -678,10 +718,10 @@ void Hamamatsu::read_Kind(Tango::Attribute &attr)
 
      try
 	{
-		int kind = 0;
+		/*int kind = 0;
         m_camera->getOutputTriggerKind(kind);
-		*attr_Kind_read = (Tango::DevShort)(kind);
-		attr.set_value(attr_Kind_read);
+		*attr_Kind_read = (Tango::DevShort)(kind);*/
+		attr.set_value(attr_Kind_read, NBMAXOUTPUTTRIGGER);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -1386,14 +1426,17 @@ void Hamamatsu::set_output_triggers_polarity(const Tango::DevVarUShortArray *arg
 void Hamamatsu::update_triggers_status(int channel)
 {
      DEBUG_STREAM << "Hamamatsu::update_triggers_status(channel): entering... !" << endl;
-
+/*
      std::string istr = std::to_string(channel);
      std::string updateString = istr + "\t" +  m_camera->getOutputTriggerKindLabel(channel)+ "\t" +  
      m_camera->getOutputTriggerPolarityLabel(channel);
 
      strcpy(attr_outputTriggersStatus_read[channel + 1], updateString.c_str());
-     
+     */
+    attr_Kind_read[channel] = m_camera->getOutputTriggerKind(channel);
+    attr_polarity_read[channel] = m_camera->getOutputTriggerPolarity(channel);
 }
+
 
 
 }	//	namespace

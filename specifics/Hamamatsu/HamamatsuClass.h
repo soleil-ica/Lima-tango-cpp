@@ -45,6 +45,18 @@ namespace Hamamatsu_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class polarityAttrib: public Tango::SpectrumAttr
+{
+public:
+	polarityAttrib():SpectrumAttr("polarity", Tango::DEV_BOOLEAN, Tango::READ, 3) {};
+	~polarityAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_polarity(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_polarity_allowed(ty);}
+};
+
 class outputTriggersStatusAttrib: public Tango::SpectrumAttr
 {
 public:
@@ -67,18 +79,6 @@ public:
 	{(static_cast<Hamamatsu *>(dev))->read_Kind(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 	{return (static_cast<Hamamatsu *>(dev))->is_Kind_allowed(ty);}
-};
-
-class PolarityAttrib: public Tango::Attr
-{
-public:
-	PolarityAttrib():Attr("Polarity", Tango::DEV_SHORT, Tango::READ) {};
-	~PolarityAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Hamamatsu *>(dev))->read_Polarity(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Hamamatsu *>(dev))->is_Polarity_allowed(ty);}
 };
 
 class nbOutputTriggerAttrib: public Tango::Attr

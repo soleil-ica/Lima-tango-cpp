@@ -361,10 +361,6 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	nb_output_trigger->set_default_properties(nb_output_trigger_prop);
 	att_list.push_back(nb_output_trigger);
 
-	//	Attribute : Polarity
-	PolarityAttrib	*polarity = new PolarityAttrib();
-	att_list.push_back(polarity);
-
 	//	Attribute : Kind
 	KindAttrib	*kind = new KindAttrib();
 	Tango::UserDefaultAttrProp	kind_prop;
@@ -378,6 +374,10 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	output_triggers_status_prop.set_description("Allow user to get current status of the output trigger(s) that may be available on the connected Hamamatsu sensor.");
 	output_triggers_status->set_default_properties(output_triggers_status_prop);
 	att_list.push_back(output_triggers_status);
+
+	//	Attribute : polarity
+	polarityAttrib	*polarity = new polarityAttrib();
+	att_list.push_back(polarity);
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
