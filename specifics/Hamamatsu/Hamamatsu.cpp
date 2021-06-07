@@ -136,7 +136,7 @@ void Hamamatsu::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_dyn_temperature_read);
     DELETE_SCALAR_ATTRIBUTE(attr_dyn_highDynamicRangeEnabled_read);
 
-    DELETE_SCALAR_ATTRIBUTE(attr_Polarity_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_polarity_read);
     DELETE_SCALAR_ATTRIBUTE(attr_Kind_read);
 
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerMode_read);
@@ -176,10 +176,7 @@ void Hamamatsu::init_device()
 
     CREATE_SCALAR_ATTRIBUTE(attr_dyn_temperature_read);
     CREATE_SCALAR_ATTRIBUTE(attr_dyn_highDynamicRangeEnabled_read);
-
-    CREATE_SCALAR_ATTRIBUTE(attr_Polarity_read);
-    CREATE_SCALAR_ATTRIBUTE(attr_Kind_read);
-
+    
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerMode_read       , MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerStatus_read     , MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_temperatureStatus_read, MAX_ATTRIBUTE_STRING_LENGTH);
@@ -187,6 +184,8 @@ void Hamamatsu::init_device()
 
     DEBUG_STREAM << "Init_device : attr_outputTriggersStatus_read CREATE" << endl;
     //CREATE_SPECTRUM_ATTRIBUTE(attr_outputTriggersStatus_read, NBMAXOUTPUTTRIGGER+1);
+    CREATE_SPECTRUM_ATTRIBUTE(attr_Kind_read, NBMAXOUTPUTTRIGGER);
+    CREATE_SPECTRUM_ATTRIBUTE(attr_polarity_read, NBMAXOUTPUTTRIGGER);
     DEBUG_STREAM << "Init_device : attr_outputTriggersStatus_read CREATE done" << endl;
 
     m_is_device_initialized = false;
@@ -218,8 +217,7 @@ void Hamamatsu::init_device()
         // Update the hardware with the properties data
         write_at_init();
 
-        CREATE_SPECTRUM_ATTRIBUTE(attr_Kind_read, NBMAXOUTPUTTRIGGER);
-        CREATE_SPECTRUM_ATTRIBUTE(attr_polarity_read, NBMAXOUTPUTTRIGGER);
+        
 
         for(int i = 1; i <= NBMAXOUTPUTTRIGGER ; i++)
         {         
@@ -679,31 +677,7 @@ void Hamamatsu::read_attr_hardware(vector<long> &attr_list)
 	DEBUG_STREAM << "Hamamatsu::read_attr_hardware(vector<long> &attr_list) entering... "<< endl;
 	//	Add your own code here
 }
-//+----------------------------------------------------------------------------
-//
-// method : 		Hamamatsu::read_polarity
-// 
-// description : 	Extract real attribute values for polarity acquisition result.
-//
-//-----------------------------------------------------------------------------
-void Hamamatsu::read_polarity(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "Hamamatsu::read_polarity(Tango::Attribute &attr) entering... "<< endl;
 
-    
-     try
-	{
-		attr.set_value(attr_polarity_read, NBMAXOUTPUTTRIGGER);
-	}
-    catch(Tango::DevFailed & df)
-    {
-        manage_devfailed_exception(df, "Hamamatsu::read_polarity");
-    }
-    catch(Exception & e)
-    {
-        manage_lima_exception(e, "Hamamatsu::read_polarity");
-    }
-}
 
 //+----------------------------------------------------------------------------
 //
@@ -742,17 +716,17 @@ void Hamamatsu::read_Kind(Tango::Attribute &attr)
 // description : 	Extract real attribute values for Polarity acquisition result.
 //
 //-----------------------------------------------------------------------------
-void Hamamatsu::read_Polarity(Tango::Attribute &attr)
+void Hamamatsu::read_polarity(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "Hamamatsu::read_Polarity(Tango::Attribute &attr) entering... "<< endl;
 
     try
 	{
-		int polarity = 0;
+		/*int polarity = 0;
 
         m_camera->getOutputTriggerPolarity(polarity);
-		*attr_Polarity_read = (Tango::DevShort)(polarity);
-		attr.set_value(attr_Polarity_read);
+		*attr_polarity_read = (Tango::DevShort)(polarity);*/
+		attr.set_value(attr_polarity_read, NBMAXOUTPUTTRIGGER);
 	}
     catch(Tango::DevFailed & df)
     {
