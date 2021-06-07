@@ -99,6 +99,8 @@ public :
 		Tango::DevDouble	*attr_bottomViewExposureTime_read;
 		Tango::DevDouble	attr_bottomViewExposureTime_write;
 		Tango::DevUShort	*attr_nbOutputTrigger_read;
+		Tango::DevShort	*attr_Polarity_read;
+		Tango::DevShort	*attr_Kind_read;
 		Tango::DevString	*attr_outputTriggersStatus_read;
 //@}
 
@@ -256,6 +258,14 @@ public :
  */
 	virtual void read_nbOutputTrigger(Tango::Attribute &attr);
 /**
+ *	Extract real attribute values for Polarity acquisition result.
+ */
+	virtual void read_Polarity(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for Kind acquisition result.
+ */
+	virtual void read_Kind(Tango::Attribute &attr);
+/**
  *	Extract real attribute values for outputTriggersStatus acquisition result.
  */
 	virtual void read_outputTriggersStatus(Tango::Attribute &attr);
@@ -283,6 +293,14 @@ public :
  *	Read/Write allowed for nbOutputTrigger attribute.
  */
 	virtual bool is_nbOutputTrigger_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for Polarity attribute.
+ */
+	virtual bool is_Polarity_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for Kind attribute.
+ */
+	virtual bool is_Kind_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for outputTriggersStatus attribute.
  */
@@ -315,6 +333,8 @@ public :
  *	@exception DevFailed
  */
 	void	set_output_triggers_polarity(const Tango::DevVarUShortArray *);
+
+   void update_triggers_status(int channel);
 
 /**
  *	Read the device properties from database
@@ -502,6 +522,8 @@ private :
 
     // method for tango dyn attributes WHEN no write part is available - NULL
     void write_callback_null(yat4tango::DynamicAttributeWriteCallbackData& cbd){/*nop*/}
+
+    
 
 protected :	
 	//	Add your own data members here

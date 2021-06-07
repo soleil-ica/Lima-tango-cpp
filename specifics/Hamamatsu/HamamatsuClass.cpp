@@ -361,6 +361,17 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	nb_output_trigger->set_default_properties(nb_output_trigger_prop);
 	att_list.push_back(nb_output_trigger);
 
+	//	Attribute : Polarity
+	PolarityAttrib	*polarity = new PolarityAttrib();
+	att_list.push_back(polarity);
+
+	//	Attribute : Kind
+	KindAttrib	*kind = new KindAttrib();
+	Tango::UserDefaultAttrProp	kind_prop;
+	kind_prop.set_description("This element can contained 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 lements max");
+	kind->set_default_properties(kind_prop);
+	att_list.push_back(kind);
+
 	//	Attribute : outputTriggersStatus
 	outputTriggersStatusAttrib	*output_triggers_status = new outputTriggersStatusAttrib();
 	Tango::UserDefaultAttrProp	output_triggers_status_prop;
