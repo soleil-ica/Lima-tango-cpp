@@ -204,6 +204,90 @@ bool Hamamatsu::is_polarity_allowed(Tango::AttReqType type)
 		//	Re-Start of Generated Code
 	return true;
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel1Polarity_allowed
+// 
+// description : 	Read/Write allowed for channel1Polarity attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel1Polarity_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel2Polarity_allowed
+// 
+// description : 	Read/Write allowed for channel2Polarity attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel2Polarity_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel3Polarity_allowed
+// 
+// description : 	Read/Write allowed for channel3Polarity attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel3Polarity_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel1Kind_allowed
+// 
+// description : 	Read/Write allowed for channel1Kind attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel1Kind_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel2Kind_allowed
+// 
+// description : 	Read/Write allowed for channel2Kind attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel2Kind_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel3Kind_allowed
+// 
+// description : 	Read/Write allowed for channel3Kind attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel3Kind_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
 
 //=================================================
 //		Commands Allowed Methods

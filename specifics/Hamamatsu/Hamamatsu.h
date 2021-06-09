@@ -99,6 +99,18 @@ public :
 		Tango::DevDouble	*attr_bottomViewExposureTime_read;
 		Tango::DevDouble	attr_bottomViewExposureTime_write;
 		Tango::DevUShort	*attr_nbOutputTrigger_read;
+		Tango::DevUShort	*attr_channel1Polarity_read;
+		Tango::DevUShort	attr_channel1Polarity_write;
+		Tango::DevUShort	*attr_channel2Polarity_read;
+		Tango::DevUShort	attr_channel2Polarity_write;
+		Tango::DevUShort	*attr_channel3Polarity_read;
+		Tango::DevUShort	attr_channel3Polarity_write;
+		Tango::DevUShort	*attr_channel1Kind_read;
+		Tango::DevUShort	attr_channel1Kind_write;
+		Tango::DevUShort	*attr_channel2Kind_read;
+		Tango::DevUShort	attr_channel2Kind_write;
+		Tango::DevUShort	*attr_channel3Kind_read;
+		Tango::DevUShort	attr_channel3Kind_write;
 		Tango::DevShort	*attr_Kind_read;
 		Tango::DevString	*attr_outputTriggersStatus_read;
 		Tango::DevUShort	*attr_polarity_read;
@@ -258,6 +270,54 @@ public :
  */
 	virtual void read_nbOutputTrigger(Tango::Attribute &attr);
 /**
+ *	Extract real attribute values for channel1Polarity acquisition result.
+ */
+	virtual void read_channel1Polarity(Tango::Attribute &attr);
+/**
+ *	Write channel1Polarity attribute values to hardware.
+ */
+	virtual void write_channel1Polarity(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel2Polarity acquisition result.
+ */
+	virtual void read_channel2Polarity(Tango::Attribute &attr);
+/**
+ *	Write channel2Polarity attribute values to hardware.
+ */
+	virtual void write_channel2Polarity(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel3Polarity acquisition result.
+ */
+	virtual void read_channel3Polarity(Tango::Attribute &attr);
+/**
+ *	Write channel3Polarity attribute values to hardware.
+ */
+	virtual void write_channel3Polarity(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel1Kind acquisition result.
+ */
+	virtual void read_channel1Kind(Tango::Attribute &attr);
+/**
+ *	Write channel1Kind attribute values to hardware.
+ */
+	virtual void write_channel1Kind(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel2Kind acquisition result.
+ */
+	virtual void read_channel2Kind(Tango::Attribute &attr);
+/**
+ *	Write channel2Kind attribute values to hardware.
+ */
+	virtual void write_channel2Kind(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel3Kind acquisition result.
+ */
+	virtual void read_channel3Kind(Tango::Attribute &attr);
+/**
+ *	Write channel3Kind attribute values to hardware.
+ */
+	virtual void write_channel3Kind(Tango::WAttribute &attr);
+/**
  *	Extract real attribute values for Kind acquisition result.
  */
 	virtual void read_Kind(Tango::Attribute &attr);
@@ -293,6 +353,30 @@ public :
  *	Read/Write allowed for nbOutputTrigger attribute.
  */
 	virtual bool is_nbOutputTrigger_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel1Polarity attribute.
+ */
+	virtual bool is_channel1Polarity_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel2Polarity attribute.
+ */
+	virtual bool is_channel2Polarity_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel3Polarity attribute.
+ */
+	virtual bool is_channel3Polarity_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel1Kind attribute.
+ */
+	virtual bool is_channel1Kind_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel2Kind attribute.
+ */
+	virtual bool is_channel2Kind_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel3Kind attribute.
+ */
+	virtual bool is_channel3Kind_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for Kind attribute.
  */

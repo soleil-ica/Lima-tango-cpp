@@ -689,6 +689,150 @@ void Hamamatsu::read_attr_hardware(vector<long> &attr_list)
 	DEBUG_STREAM << "Hamamatsu::read_attr_hardware(vector<long> &attr_list) entering... "<< endl;
 	//	Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_channel1Polarity
+// 
+// description : 	Extract real attribute values for channel1Polarity acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_channel1Polarity(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_channel1Polarity(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::write_channel1Polarity
+// 
+// description : 	Write channel1Polarity attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::write_channel1Polarity(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::write_channel1Polarity(Tango::WAttribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_channel2Polarity
+// 
+// description : 	Extract real attribute values for channel2Polarity acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_channel2Polarity(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_channel2Polarity(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::write_channel2Polarity
+// 
+// description : 	Write channel2Polarity attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::write_channel2Polarity(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::write_channel2Polarity(Tango::WAttribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_channel3Polarity
+// 
+// description : 	Extract real attribute values for channel3Polarity acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_channel3Polarity(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_channel3Polarity(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::write_channel3Polarity
+// 
+// description : 	Write channel3Polarity attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::write_channel3Polarity(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::write_channel3Polarity(Tango::WAttribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_channel1Kind
+// 
+// description : 	Extract real attribute values for channel1Kind acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_channel1Kind(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_channel1Kind(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::write_channel1Kind
+// 
+// description : 	Write channel1Kind attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::write_channel1Kind(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::write_channel1Kind(Tango::WAttribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_channel2Kind
+// 
+// description : 	Extract real attribute values for channel2Kind acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_channel2Kind(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_channel2Kind(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::write_channel2Kind
+// 
+// description : 	Write channel2Kind attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::write_channel2Kind(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::write_channel2Kind(Tango::WAttribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_channel3Kind
+// 
+// description : 	Extract real attribute values for channel3Kind acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_channel3Kind(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_channel3Kind(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::write_channel3Kind
+// 
+// description : 	Write channel3Kind attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::write_channel3Kind(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::write_channel3Kind(Tango::WAttribute &attr) entering... "<< endl;
+}
+
 
 
 //+----------------------------------------------------------------------------
@@ -1423,6 +1567,7 @@ void Hamamatsu::update_triggers_status(int channel)
     
     attr_polarity_read[channel] = m_camera->getOutputTriggerPolarity(channel);
 }
+
 
 
 
