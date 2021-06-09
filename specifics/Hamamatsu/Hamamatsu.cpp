@@ -144,10 +144,18 @@ void Hamamatsu::delete_device()
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_temperatureStatus_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_readoutSpeed_read);
 
-    //delete[] attr_nbOutputTrigger_read;
-
     DELETE_SPECTRUM_ATTRIBUTE(attr_Kind_read);
     DELETE_SPECTRUM_ATTRIBUTE(attr_polarity_read);
+
+    /*As we would like the string array to contain a header at the top
+      that array size is the NBMAXOUTPUTTRIGGER + 1
+    */
+    // for (int i = 0; i <= NBMAXOUTPUTTRIGGER; ++i)
+    // {
+    //     CORBA::string_free(attr_outputTriggersStatus_read[i]);
+    // }
+
+    // delete[] attr_outputTriggersStatus_read;
 }
 
 //+----------------------------------------------------------------------------
@@ -184,6 +192,7 @@ void Hamamatsu::init_device()
 
     DEBUG_STREAM << "Init_device : attr_outputTriggersStatus_read CREATE" << endl;
     //CREATE_SPECTRUM_ATTRIBUTE(attr_outputTriggersStatus_read, NBMAXOUTPUTTRIGGER+1);
+    //attr_outputTriggersStatus_read = new Tango::DevString [NBMAXOUTPUTTRIGGER];
     CREATE_SPECTRUM_ATTRIBUTE(attr_Kind_read, NBMAXOUTPUTTRIGGER);
     CREATE_SPECTRUM_ATTRIBUTE(attr_polarity_read, NBMAXOUTPUTTRIGGER);
     DEBUG_STREAM << "Init_device : attr_outputTriggersStatus_read CREATE done" << endl;
@@ -220,30 +229,33 @@ void Hamamatsu::init_device()
         
 
         for(int i = 1; i <= NBMAXOUTPUTTRIGGER ; i++)
-        {         
-            DEBUG_STREAM << "Init_device : update attr_outputTriggersStatus_read - Iteration " << i  << "/" << NBMAXOUTPUTTRIGGER << endl;
-            
+        {                     
             attr_Kind_read[i-1] = m_camera->getOutputTriggerKind(i-1);
             attr_polarity_read[i-1] = m_camera->getOutputTriggerPolarity(i-1);
             //strcpy(attr_outputTriggersStatus_read[0], "channel\tKind\tPolarity");
         }
+
+        //  for(int i = 1; i <= NBMAXOUTPUTTRIGGER ; i++)
+        // {         
+        //     DEBUG_STREAM << "Init_device : update attr_outputTriggersStatus_read - Iteration " << i  << "/" << NBMAXOUTPUTTRIGGER << endl;
+        //     attr_outputTriggersStatus_read[i] = CORBA::string_alloc(MAX_ATTRIBUTE_STRING_LENGTH);
+        // }
+
         DEBUG_STREAM << "Init_device : update attr_outputTriggersStatus_read - DONE" << endl;
-        /*
+        
         //Initiliaze trigger status   
         DEBUG_STREAM << "Init_device : Initiliaze trigger status" << endl;
-        attr_outputTriggersStatus_read = new Tango::DevString[NBMAXOUTPUTTRIGGER];
-        Tango::DevString entete = "Channel\tKind\tPolarity";
-        std::strcpy(attr_outputTriggersStatus_read[0] ,entete);
+        // attr_outputTriggersStatus_read = new Tango::DevString[NBMAXOUTPUTTRIGGER];
+        // Tango::DevString entete = "Channel\tKind\tPolarity";
+        // std::strcpy(attr_outputTriggersStatus_read[0] ,entete);
         DEBUG_STREAM << "Init_device : attr_outputTriggersStatus_read Header done" << endl;
-        for(int i = 1; i <= NBMAXOUTPUTTRIGGER ; i++)
-        {         
-            DEBUG_STREAM << "Init_device : update attr_outputTriggersStatus_read - Iteration " << i  << "/" << NBMAXOUTPUTTRIGGER << endl;
-            std::string istr = std::to_string(i);
-            std::string updateString = istr + "\t" +m_camera->getOutputTriggerPolarityLabel(i-1);
-            //strcpy(attr_outputTriggersStatus_read[0], "channel\tKind\tPolarity");
-            strcpy(attr_outputTriggersStatus_read[i], updateString.c_str() );
-        }
-        DEBUG_STREAM << "Init_device : update attr_outputTriggersStatus_read - DONE" << endl;*/
+        
+        // for(int i = 1; i <= NBMAXOUTPUTTRIGGER ; i++)
+        // {       
+        //     update_triggers_status(i);  
+            
+        // }
+        DEBUG_STREAM << "Init_device : update attr_outputTriggersStatus_read - DONE" << endl;
     }
     catch(lima::Exception& e)
     {
@@ -761,7 +773,7 @@ void Hamamatsu::read_nbOutputTrigger(Tango::Attribute &attr)
 void Hamamatsu::read_outputTriggersStatus(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "Hamamatsu::read_outputTriggersStatus(Tango::Attribute &attr) entering... "<< endl;
-    attr.set_value(attr_outputTriggersStatus_read, NBMAXOUTPUTTRIGGER);
+    attr.set_value(attr_outputTriggersStatus_read, NBMAXOUTPUTTRIGGER + 1);
 }
 
 
@@ -1399,17 +1411,20 @@ void Hamamatsu::set_output_triggers_polarity(const Tango::DevVarUShortArray *arg
 
 void Hamamatsu::update_triggers_status(int channel)
 {
-     DEBUG_STREAM << "Hamamatsu::update_triggers_status(channel): entering... !" << endl;
-/*
-     std::string istr = std::to_string(channel);
-     std::string updateString = istr + "\t" +  m_camera->getOutputTriggerKindLabel(channel)+ "\t" +  
-     m_camera->getOutputTriggerPolarityLabel(channel);
+    DEBUG_STREAM << "Hamamatsu::update_triggers_status(channel): entering... !" << endl;
 
-     strcpy(attr_outputTriggersStatus_read[channel + 1], updateString.c_str());
-     */
+    // std::string istr = std::to_string(channel);
+    // std::string updateString = istr + "\t" +  m_camera->getOutputTriggerKindLabel(channel)+ "\t" +  
+    // m_camera->getOutputTriggerPolarityLabel(channel);
+
+    // strcpy(attr_outputTriggersStatus_read[channel + 1], updateString.c_str());
+     
     attr_Kind_read[channel] = m_camera->getOutputTriggerKind(channel);
+    
     attr_polarity_read[channel] = m_camera->getOutputTriggerPolarity(channel);
 }
+
+
 
 
 

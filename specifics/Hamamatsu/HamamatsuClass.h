@@ -48,7 +48,7 @@ namespace Hamamatsu_ns
 class polarityAttrib: public Tango::SpectrumAttr
 {
 public:
-	polarityAttrib():SpectrumAttr("polarity", Tango::DEV_BOOLEAN, Tango::READ, 3) {};
+	polarityAttrib():SpectrumAttr("polarity", Tango::DEV_USHORT, Tango::READ, 3) {};
 	~polarityAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)

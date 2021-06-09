@@ -364,7 +364,7 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : Kind
 	KindAttrib	*kind = new KindAttrib();
 	Tango::UserDefaultAttrProp	kind_prop;
-	kind_prop.set_description("This element can contained 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 lements max");
+	kind_prop.set_description("This element can contained 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 lements max\n\nKind value : \n1 = Output_Trigger_Kind_Low\n2 = Output_Trigger_Kind_Global_Exposure\n3 = Output_Trigger_Kind_Programmable\n4 = Output_Trigger_Kind_TriggerReady");
 	kind->set_default_properties(kind_prop);
 	att_list.push_back(kind);
 
@@ -377,6 +377,9 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 
 	//	Attribute : polarity
 	polarityAttrib	*polarity = new polarityAttrib();
+	Tango::UserDefaultAttrProp	polarity_prop;
+	polarity_prop.set_description("Polarity value : \n1 = Output_Trigger_Polarity_Negative\n2 = Output_Trigger_Polarity_Positive");
+	polarity->set_default_properties(polarity_prop);
 	att_list.push_back(polarity);
 
 	//	End of Automatic code generation

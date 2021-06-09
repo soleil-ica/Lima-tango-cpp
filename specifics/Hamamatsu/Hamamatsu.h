@@ -101,7 +101,7 @@ public :
 		Tango::DevUShort	*attr_nbOutputTrigger_read;
 		Tango::DevShort	*attr_Kind_read;
 		Tango::DevString	*attr_outputTriggersStatus_read;
-		Tango::DevBoolean	*attr_polarity_read;
+		Tango::DevUShort	*attr_polarity_read;
 //@}
 
 /**
@@ -334,8 +334,6 @@ public :
  */
 	void	set_output_triggers_polarity(const Tango::DevVarUShortArray *);
 
-   void update_triggers_status(int channel);
-
 /**
  *	Read the device properties from database
  */
@@ -344,6 +342,10 @@ public :
 
 	//	Here is the end of the automatic code generation part
 	//-------------------------------------------------------------	
+
+
+   void update_triggers_status(int channel);
+
 private :
 /**
  *	method:	Hamamatsu::manage_devfailed_exception
