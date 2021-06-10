@@ -59,6 +59,8 @@ static const char *RcsId = "$Id:  $";
 #include <helpers/PogoHelper.h>
 #include <Hamamatsu.h>
 #include <HamamatsuClass.h>
+#include <string> 
+#include <string.h>
 
 #define MAX_ATTRIBUTE_STRING_LENGTH 256
 #define READOUTSPEED_NORMAL_VALUE		2
@@ -68,6 +70,9 @@ static const char *RcsId = "$Id:  $";
 
 #define SYNCREADOUT_BLANKMODE_STANDARD	"STANDARD"
 #define SYNCREADOUT_BLANKMODE_MINIMUM	"MINIMUM"
+#define NBMAXOUTPUTTRIGGER 3
+#define NBMAXOUTPUTRIGGERKIND 4
+#define NBMAXOUTPUTTRIGGERPOLARITY 3
 
 namespace Hamamatsu_ns
 {
@@ -131,10 +136,16 @@ void Hamamatsu::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_dyn_temperature_read);
     DELETE_SCALAR_ATTRIBUTE(attr_dyn_highDynamicRangeEnabled_read);
 
+    DELETE_SCALAR_ATTRIBUTE(attr_polarity_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_Kind_read);
+
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerMode_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerStatus_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_temperatureStatus_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_readoutSpeed_read);
+
+    DELETE_SPECTRUM_ATTRIBUTE(attr_Kind_read);
+    DELETE_SPECTRUM_ATTRIBUTE(attr_polarity_read);
 }
 
 //+----------------------------------------------------------------------------
@@ -163,11 +174,14 @@ void Hamamatsu::init_device()
 
     CREATE_SCALAR_ATTRIBUTE(attr_dyn_temperature_read);
     CREATE_SCALAR_ATTRIBUTE(attr_dyn_highDynamicRangeEnabled_read);
-
+    
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerMode_read       , MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerStatus_read     , MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_temperatureStatus_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_readoutSpeed_read     , MAX_ATTRIBUTE_STRING_LENGTH);
+
+    CREATE_SPECTRUM_ATTRIBUTE(attr_Kind_read, NBMAXOUTPUTTRIGGER);
+    CREATE_SPECTRUM_ATTRIBUTE(attr_polarity_read, NBMAXOUTPUTTRIGGER);
 
     m_is_device_initialized = false;
     set_state(Tango::INIT);
@@ -197,6 +211,7 @@ void Hamamatsu::init_device()
 
         // Update the hardware with the properties data
         write_at_init();
+
     }
     catch(lima::Exception& e)
     {
@@ -233,6 +248,7 @@ void Hamamatsu::init_device()
 
     set_state(Tango::STANDBY);
     dev_state();
+    
 }
 
 /*****************************************************************************
@@ -631,6 +647,416 @@ void Hamamatsu::read_attr_hardware(vector<long> &attr_list)
 }
 //+----------------------------------------------------------------------------
 //
+// method : 		Hamamatsu::read_channel1Polarity
+// 
+// description : 	Extract real attribute values for channel1Polarity acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_channel1Polarity(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_channel1Polarity(Tango::Attribute &attr) entering... "<< endl;
+
+    try
+	{
+		unsigned short channel1Polarity = 0;
+
+        m_camera->getOutputTriggerPolarity(1);
+		*attr_channel1Polarity_read = (Tango::DevUShort)channel1Polarity;
+		attr.set_value(attr_channel1Polarity_read, NBMAXOUTPUTTRIGGER);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_channel1Polarity");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_channel1Polarity");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::write_channel1Polarity
+// 
+// description : 	Write channel1Polarity attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::write_channel1Polarity(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::write_channel1Polarity(Tango::WAttribute &attr) entering... "<< endl;
+
+     try
+	{
+        attr.get_write_value(attr_channel1Polarity_write);
+        m_camera->setOutputTriggerPolarity(1, (lima::Hamamatsu::Camera::Output_Trigger_Polarity)attr_channel1Polarity_write);
+
+        m_channel1Polarity = (unsigned short)attr_channel1Polarity_write;
+		PropertyHelper::set_property(this, "MemorizedChannel1Polarity", m_channel1Polarity);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::write_channel1Polarity");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::write_channel1Polarity");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_channel2Polarity
+// 
+// description : 	Extract real attribute values for channel2Polarity acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_channel2Polarity(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_channel2Polarity(Tango::Attribute &attr) entering... "<< endl;
+
+     try
+	{
+		unsigned short channel2Polarity = 0;
+
+        m_camera->getOutputTriggerPolarity(2);
+		*attr_channel2Polarity_read = (Tango::DevUShort)channel2Polarity;
+		attr.set_value(attr_channel2Polarity_read);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_channel2Polarity");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_channel2Polarity");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::write_channel2Polarity
+// 
+// description : 	Write channel2Polarity attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::write_channel2Polarity(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::write_channel2Polarity(Tango::WAttribute &attr) entering... "<< endl;
+
+    try
+	{
+        attr.get_write_value(attr_channel2Polarity_write);
+        m_camera->setOutputTriggerPolarity(2, (lima::Hamamatsu::Camera::Output_Trigger_Polarity)attr_channel2Polarity_write);
+
+        m_channel2Polarity = (unsigned short)attr_channel2Polarity_write;
+		PropertyHelper::set_property(this, "MemorizedChannel2Polarity", m_channel2Polarity);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::write_channel2Polarity");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::write_channel2Polarity");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_channel3Polarity
+// 
+// description : 	Extract real attribute values for channel3Polarity acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_channel3Polarity(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_channel3Polarity(Tango::Attribute &attr) entering... "<< endl;
+
+     try
+	{
+		unsigned short channel3Polarity = 0;
+
+        m_camera->getOutputTriggerPolarity(3);
+		*attr_channel3Polarity_read = (Tango::DevUShort)channel3Polarity;
+		attr.set_value(attr_channel3Polarity_read);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_channel3Polarity");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_channel3Polarity");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::write_channel3Polarity
+// 
+// description : 	Write channel3Polarity attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::write_channel3Polarity(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::write_channel3Polarity(Tango::WAttribute &attr) entering... "<< endl;
+
+    try
+	{
+        attr.get_write_value(attr_channel3Polarity_write);
+        m_camera->setOutputTriggerPolarity(3, (lima::Hamamatsu::Camera::Output_Trigger_Polarity)attr_channel3Polarity_write);
+
+        m_channel3Polarity = (unsigned short)attr_channel3Polarity_write;
+		PropertyHelper::set_property(this, "MemorizedChannel3Polarity", m_channel3Polarity);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::write_channel3Polarity");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::write_channel3Polarity");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_channel1Kind
+// 
+// description : 	Extract real attribute values for channel1Kind acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_channel1Kind(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_channel1Kind(Tango::Attribute &attr) entering... "<< endl;
+
+    try
+	{
+		unsigned short channel1Kind = 0;
+
+        m_camera->getOutputTriggerKind(1);
+		*attr_channel1Kind_read = (Tango::DevUShort)channel1Kind;
+		attr.set_value(attr_channel1Kind_read);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_channel1Kind");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_channel1Kind");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::write_channel1Kind
+// 
+// description : 	Write channel1Kind attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::write_channel1Kind(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::write_channel1Kind(Tango::WAttribute &attr) entering... "<< endl;
+
+     try
+	{
+        attr.get_write_value(attr_channel1Kind_write);
+        m_camera->setOutputTriggerKind(1, (lima::Hamamatsu::Camera::Output_Trigger_Kind)attr_channel1Kind_write);
+
+        m_channel1Kind = (unsigned short)attr_channel1Kind_write;
+		PropertyHelper::set_property(this, "MemorizedChannel1Kind", m_channel1Kind);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::write_channel1Kind");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::write_channel1Kind");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_channel2Kind
+// 
+// description : 	Extract real attribute values for channel2Kind acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_channel2Kind(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_channel2Kind(Tango::Attribute &attr) entering... "<< endl;
+
+    try
+	{
+		unsigned short channel2Kind = 0;
+
+        m_camera->getOutputTriggerKind(2);
+		*attr_channel2Kind_read = (Tango::DevUShort)channel2Kind;
+		attr.set_value(attr_channel2Kind_read);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_channel2Kind");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_channel2Kind");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::write_channel2Kind
+// 
+// description : 	Write channel2Kind attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::write_channel2Kind(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::write_channel2Kind(Tango::WAttribute &attr) entering... "<< endl;
+
+     try
+	{
+        attr.get_write_value(attr_channel2Kind_write);
+        m_camera->setOutputTriggerKind(2, (lima::Hamamatsu::Camera::Output_Trigger_Kind)attr_channel3Kind_write);
+
+        m_channel2Kind = (unsigned short)attr_channel2Kind_write;
+		PropertyHelper::set_property(this, "MemorizedChannel2Kind", m_channel2Kind);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::write_channel2Kind");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::write_channel2Kind");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_channel3Kind
+// 
+// description : 	Extract real attribute values for channel3Kind acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_channel3Kind(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_channel3Kind(Tango::Attribute &attr) entering... "<< endl;
+
+    try
+	{
+		unsigned short channel3Kind = 0;
+
+        m_camera->getOutputTriggerKind(3);
+		*attr_channel3Kind_read = (Tango::DevUShort)channel3Kind;
+		attr.set_value(attr_channel3Kind_read);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_channel3Kind");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_channel3Kind");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::write_channel3Kind
+// 
+// description : 	Write channel3Kind attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::write_channel3Kind(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::write_channel3Kind(Tango::WAttribute &attr) entering... "<< endl;
+
+    try
+	{
+        attr.get_write_value(attr_channel3Kind_write);
+        m_camera->setOutputTriggerKind(3, (lima::Hamamatsu::Camera::Output_Trigger_Kind)attr_channel3Kind_write);
+
+        m_channel3Kind = (unsigned short)attr_channel3Kind_write;
+		PropertyHelper::set_property(this, "MemorizedChannel3Kind", m_channel3Kind);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::write_channel3Kind");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::write_channel3Kind");
+    }
+}
+
+
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_Kind
+// 
+// description : 	Extract real attribute values for Kind acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_Kind(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_Kind(Tango::Attribute &attr) entering... "<< endl;
+
+     try
+	{
+		/*int kind = 0;
+        m_camera->getOutputTriggerKind(kind);
+		*attr_Kind_read = (Tango::DevShort)(kind);*/
+		attr.set_value(attr_Kind_read, NBMAXOUTPUTTRIGGER);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_Kind");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_Kind");
+    }
+}
+
+
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_Polarity
+// 
+// description : 	Extract real attribute values for Polarity acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_polarity(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Hamamatsu::read_Polarity(Tango::Attribute &attr) entering... "<< endl;
+
+    try
+	{
+		/*int polarity = 0;
+
+        m_camera->getOutputTriggerPolarity(polarity);
+		*attr_polarity_read = (Tango::DevShort)(polarity);*/
+		attr.set_value(attr_polarity_read, NBMAXOUTPUTTRIGGER);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_Polarity");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_Polarity");
+    }
+
+}
+
+//+----------------------------------------------------------------------------
+//
 // method : 		Hamamatsu::read_nbOutputTrigger
 // 
 // description : 	Extract real attribute values for nbOutputTrigger acquisition result.
@@ -651,6 +1077,7 @@ void Hamamatsu::read_nbOutputTrigger(Tango::Attribute &attr)
 void Hamamatsu::read_outputTriggersStatus(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "Hamamatsu::read_outputTriggersStatus(Tango::Attribute &attr) entering... "<< endl;
+    attr.set_value(attr_outputTriggersStatus_read, NBMAXOUTPUTTRIGGER + 1);
 }
 
 
@@ -1209,7 +1636,35 @@ void Hamamatsu::set_output_trigger_kind(const Tango::DevVarUShortArray *argin)
 	DEBUG_STREAM << "Hamamatsu::set_output_trigger_kind(): entering... !" << endl;
 
 	//	Add your own code to control device here
+    Tango::DevUShort channel = (*argin) [0];
+    Tango::DevUShort kind = (*argin) [1];
 
+    if (channel < NBMAXOUTPUTTRIGGER)
+    {
+        enum lima::Hamamatsu::Camera::Output_Trigger_Kind hamamatsuKind = lima::Hamamatsu::Camera::Output_Trigger_Kind::Output_Trigger_Kind_Not_Supported;
+
+        switch (kind)
+        {
+
+        case DCAMPROP_OUTPUTTRIGGER_KIND__EXPOSURE:
+            hamamatsuKind = lima::Hamamatsu::Camera::Output_Trigger_Kind::Output_Trigger_Kind_Global_Exposure;
+            break;
+        case DCAMPROP_OUTPUTTRIGGER_KIND__TRIGGERREADY:
+            hamamatsuKind =lima::Hamamatsu::Camera::Output_Trigger_Kind::Output_Trigger_Kind_TriggerReady;
+            break;
+        case DCAMPROP_OUTPUTTRIGGER_KIND__LOW:
+            hamamatsuKind = lima::Hamamatsu::Camera::Output_Trigger_Kind::Output_Trigger_Kind_Low;
+        case DCAMPROP_OUTPUTTRIGGER_KIND__HIGH:
+            hamamatsuKind = lima::Hamamatsu::Camera::Output_Trigger_Kind::Output_Trigger_Kind_High;
+            break;
+        case DCAMPROP_OUTPUTTRIGGER_KIND__PROGRAMABLE:
+        default:
+            //Already taken care of
+            break;
+        }
+        m_camera->setOutputTriggerKind(static_cast<int>(channel), hamamatsuKind);
+        //update_triggers_status(channel);
+    }
 }
 
 //+------------------------------------------------------------------
@@ -1229,11 +1684,53 @@ void Hamamatsu::set_output_triggers_polarity(const Tango::DevVarUShortArray *arg
 	DEBUG_STREAM << "Hamamatsu::set_output_triggers_polarity(): entering... !" << endl;
 
 	//	Add your own code to control device here
+    Tango::DevUShort channel = (*argin) [0];
+    Tango::DevUShort polarity = (*argin) [1];
 
-    m_camera->setOutputTriggerKind(arg[0], arg[1]);
-	m_camera->
-    
+    if (channel < NBMAXOUTPUTTRIGGER)
+    {
+
+        enum lima::Hamamatsu::Camera::Output_Trigger_Polarity hamamatsuPolarity = lima::Hamamatsu::Camera::Output_Trigger_Polarity::Output_Trigger_Polarity_Not_Supported;
+
+        switch (polarity)
+        {
+
+        case DCAMPROP_OUTPUTTRIGGER_POLARITY__NEGATIVE:
+            hamamatsuPolarity = lima::Hamamatsu::Camera::Output_Trigger_Polarity::Output_Trigger_Polarity_Negative;
+            break;
+        case DCAMPROP_OUTPUTTRIGGER_POLARITY__POSITIVE:
+            hamamatsuPolarity = lima::Hamamatsu::Camera::Output_Trigger_Polarity::Output_Trigger_Polarity_Positive;
+            break;
+        default:
+            //Already taken care of
+            break;
+
+            m_camera->setOutputTriggerPolarity(static_cast<int>(channel), hamamatsuPolarity);
+            //update_triggers_status(channel);
+  
+        }
+    }
 }
+
+
+// void Hamamatsu::update_triggers_status(int channel)
+// {
+//     DEBUG_STREAM << "Hamamatsu::update_triggers_status(channel): entering... !" << endl;
+
+//     // std::string istr = std::to_string(channel);
+//     // std::string updateString = istr + "\t" +  m_camera->getOutputTriggerKindLabel(channel)+ "\t" +  
+//     // m_camera->getOutputTriggerPolarityLabel(channel);
+
+//     // strcpy(attr_outputTriggersStatus_read[channel + 1], updateString.c_str());
+     
+//     attr_Kind_read[channel] = m_camera->getOutputTriggerKind(channel);
+    
+//     attr_polarity_read[channel] = m_camera->getOutputTriggerPolarity(channel);
+// }
+
+
+
+
 
 
 }	//	namespace
