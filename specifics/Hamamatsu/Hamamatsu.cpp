@@ -146,6 +146,14 @@ void Hamamatsu::delete_device()
 
     DELETE_SPECTRUM_ATTRIBUTE(attr_Kind_read);
     DELETE_SPECTRUM_ATTRIBUTE(attr_polarity_read);
+
+    DELETE_SCALAR_ATTRIBUTE(attr_channel1Kind_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_channel2Kind_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_channel3Kind_read);
+
+    DELETE_SCALAR_ATTRIBUTE(attr_channel1Polarity_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_channel2Polarity_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_channel3Polarity_read);
 }
 
 //+----------------------------------------------------------------------------
@@ -174,7 +182,15 @@ void Hamamatsu::init_device()
 
     CREATE_SCALAR_ATTRIBUTE(attr_dyn_temperature_read);
     CREATE_SCALAR_ATTRIBUTE(attr_dyn_highDynamicRangeEnabled_read);
-    
+
+    CREATE_SCALAR_ATTRIBUTE(attr_channel1Kind_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_channel2Kind_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_channel3Kind_read);
+
+    CREATE_SCALAR_ATTRIBUTE(attr_channel1Polarity_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_channel2Polarity_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_channel3Polarity_read);
+
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerMode_read       , MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerStatus_read     , MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_temperatureStatus_read, MAX_ATTRIBUTE_STRING_LENGTH);
@@ -205,8 +221,7 @@ void Hamamatsu::init_device()
 
         // Create dynamic attributes
         create_dynamics_attributes();
-
-        // flag needs to be activated to be able to initialize the dynamic attributes
+        // flag needs to be activated t be able to initialize the dynamic attributes
         m_is_device_initialized = true;
 
         // Update the hardware with the properties data
@@ -658,11 +673,11 @@ void Hamamatsu::read_channel1Polarity(Tango::Attribute &attr)
 
     try
 	{
-		unsigned short channel1Polarity = 0;
+		lima::Hamamatsu::Camera::Output_Trigger_Polarity channel1Polarity = lima::Hamamatsu::Camera::Output_Trigger_Polarity::Output_Trigger_Polarity_Not_Supported;
 
-        m_camera->getOutputTriggerPolarity(1);
+        channel1Polarity =  m_camera->getOutputTriggerPolarity(1);
 		*attr_channel1Polarity_read = (Tango::DevUShort)channel1Polarity;
-		attr.set_value(attr_channel1Polarity_read, NBMAXOUTPUTTRIGGER);
+		attr.set_value(attr_channel1Polarity_read);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -716,9 +731,9 @@ void Hamamatsu::read_channel2Polarity(Tango::Attribute &attr)
 
      try
 	{
-		unsigned short channel2Polarity = 0;
+		lima::Hamamatsu::Camera::Output_Trigger_Polarity channel2Polarity = lima::Hamamatsu::Camera::Output_Trigger_Polarity::Output_Trigger_Polarity_Not_Supported;
 
-        m_camera->getOutputTriggerPolarity(2);
+        channel2Polarity =  m_camera->getOutputTriggerPolarity(2);
 		*attr_channel2Polarity_read = (Tango::DevUShort)channel2Polarity;
 		attr.set_value(attr_channel2Polarity_read);
 	}
@@ -774,9 +789,9 @@ void Hamamatsu::read_channel3Polarity(Tango::Attribute &attr)
 
      try
 	{
-		unsigned short channel3Polarity = 0;
+		lima::Hamamatsu::Camera::Output_Trigger_Polarity channel3Polarity = lima::Hamamatsu::Camera::Output_Trigger_Polarity::Output_Trigger_Polarity_Not_Supported;
 
-        m_camera->getOutputTriggerPolarity(3);
+        channel3Polarity =  m_camera->getOutputTriggerPolarity(3);
 		*attr_channel3Polarity_read = (Tango::DevUShort)channel3Polarity;
 		attr.set_value(attr_channel3Polarity_read);
 	}
@@ -807,7 +822,7 @@ void Hamamatsu::write_channel3Polarity(Tango::WAttribute &attr)
         m_camera->setOutputTriggerPolarity(3, (lima::Hamamatsu::Camera::Output_Trigger_Polarity)attr_channel3Polarity_write);
 
         m_channel3Polarity = (unsigned short)attr_channel3Polarity_write;
-		PropertyHelper::set_property(this, "MemorizedChannel3Polarity", m_channel3Polarity);
+		PropertyHelper::set_property(this, "MemorizedChannel2Polarity", m_channel3Polarity);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -832,9 +847,9 @@ void Hamamatsu::read_channel1Kind(Tango::Attribute &attr)
 
     try
 	{
-		unsigned short channel1Kind = 0;
+		lima::Hamamatsu::Camera::Output_Trigger_Kind channel1Kind = lima::Hamamatsu::Camera::Output_Trigger_Kind::Output_Trigger_Kind_Not_Supported;
 
-        m_camera->getOutputTriggerKind(1);
+        channel1Kind =  m_camera->getOutputTriggerKind(1);
 		*attr_channel1Kind_read = (Tango::DevUShort)channel1Kind;
 		attr.set_value(attr_channel1Kind_read);
 	}
@@ -890,9 +905,9 @@ void Hamamatsu::read_channel2Kind(Tango::Attribute &attr)
 
     try
 	{
-		unsigned short channel2Kind = 0;
+		lima::Hamamatsu::Camera::Output_Trigger_Kind channel2Kind = lima::Hamamatsu::Camera::Output_Trigger_Kind::Output_Trigger_Kind_Not_Supported;
 
-        m_camera->getOutputTriggerKind(2);
+        channel2Kind =  m_camera->getOutputTriggerKind(2);
 		*attr_channel2Kind_read = (Tango::DevUShort)channel2Kind;
 		attr.set_value(attr_channel2Kind_read);
 	}
@@ -948,9 +963,9 @@ void Hamamatsu::read_channel3Kind(Tango::Attribute &attr)
 
     try
 	{
-		unsigned short channel3Kind = 0;
+		lima::Hamamatsu::Camera::Output_Trigger_Kind channel3Kind = lima::Hamamatsu::Camera::Output_Trigger_Kind::Output_Trigger_Kind_Not_Supported;
 
-        m_camera->getOutputTriggerKind(3);
+        channel3Kind =  m_camera->getOutputTriggerKind(3);
 		*attr_channel3Kind_read = (Tango::DevUShort)channel3Kind;
 		attr.set_value(attr_channel3Kind_read);
 	}
