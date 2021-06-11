@@ -98,22 +98,24 @@ public :
 		Tango::DevDouble	attr_topViewExposureTime_write;
 		Tango::DevDouble	*attr_bottomViewExposureTime_read;
 		Tango::DevDouble	attr_bottomViewExposureTime_write;
-		Tango::DevUShort	*attr_nbOutputTrigger_read;
+		
 		Tango::DevUShort	*attr_channel1Polarity_read;
 		Tango::DevUShort	attr_channel1Polarity_write;
+
 		Tango::DevUShort	*attr_channel2Polarity_read;
 		Tango::DevUShort	attr_channel2Polarity_write;
+
 		Tango::DevUShort	*attr_channel3Polarity_read;
 		Tango::DevUShort	attr_channel3Polarity_write;
+
 		Tango::DevUShort	*attr_channel1Kind_read;
 		Tango::DevUShort	attr_channel1Kind_write;
+
 		Tango::DevUShort	*attr_channel2Kind_read;
 		Tango::DevUShort	attr_channel2Kind_write;
+
 		Tango::DevUShort	*attr_channel3Kind_read;
 		Tango::DevUShort	attr_channel3Kind_write;
-		Tango::DevShort	*attr_Kind_read;
-		Tango::DevString	*attr_outputTriggersStatus_read;
-		Tango::DevUShort	*attr_polarity_read;
 //@}
 
 /**
@@ -266,10 +268,6 @@ public :
  */
 	virtual void write_bottomViewExposureTime(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for nbOutputTrigger acquisition result.
- */
-	virtual void read_nbOutputTrigger(Tango::Attribute &attr);
-/**
  *	Extract real attribute values for channel1Polarity acquisition result.
  */
 	virtual void read_channel1Polarity(Tango::Attribute &attr);
@@ -318,18 +316,6 @@ public :
  */
 	virtual void write_channel3Kind(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for Kind acquisition result.
- */
-	virtual void read_Kind(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for outputTriggersStatus acquisition result.
- */
-	virtual void read_outputTriggersStatus(Tango::Attribute &attr);
-/**
- *	Extract real attribute values for polarity acquisition result.
- */
-	virtual void read_polarity(Tango::Attribute &attr);
-/**
  *	Read/Write allowed for lostFrames attribute.
  */
 	virtual bool is_lostFrames_allowed(Tango::AttReqType type);
@@ -349,10 +335,6 @@ public :
  *	Read/Write allowed for bottomViewExposureTime attribute.
  */
 	virtual bool is_bottomViewExposureTime_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for nbOutputTrigger attribute.
- */
-	virtual bool is_nbOutputTrigger_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for channel1Polarity attribute.
  */
@@ -378,45 +360,11 @@ public :
  */
 	virtual bool is_channel3Kind_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for Kind attribute.
- */
-	virtual bool is_Kind_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for outputTriggersStatus attribute.
- */
-	virtual bool is_outputTriggersStatus_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for polarity attribute.
- */
-	virtual bool is_polarity_allowed(Tango::AttReqType type);
-/**
- *	Execution allowed for SetOutputTriggerKind command.
- */
-	virtual bool is_SetOutputTriggerKind_allowed(const CORBA::Any &any);
-/**
- *	Execution allowed for SetOutputTriggersPolarity command.
- */
-	virtual bool is_SetOutputTriggersPolarity_allowed(const CORBA::Any &any);
-/**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
  *	@exception DevFailed
  */
 	virtual Tango::DevState	dev_state();
-/**
- * Some cameras can output several triggers. You can select each trigger kind by using this function.
- *	(LOW (default), EXPOSURE, PROGRAMABLE, TRIGGERREADY)
- *	@param	argin	arg0 : ID of the output to configure (1, 2 or 3 depending on the Sensor model, e.g. C11440-22CU has 3 outputs available)\narg1 : Kind of output trigger to be set : \n              - 1 = LOW (default)\n              - 2 = EXPOSURE\n              - 3 = PROGRAMABLE (not implemented yet)\n              - 4 = TRIGGERREADY\n\n
- *	@exception DevFailed
- */
-	void	set_output_trigger_kind(const Tango::DevVarUShortArray *);
-/**
- * Some cameras can output several triggers. You can select each trigger polarity by using this function.
- *	(POSITIVE (default), NEGATIVE)
- *	@param	argin	arg0 : ID of the output to configure (1, 2 or 3 depending on the Sensor model, e.g. C11440-22CU has 3 outputs available)\narg1 : Polarity of output trigger to be set : \n              - 1 = NEGATIVE (default)\n              - 2 = POSITIVE
- *	@exception DevFailed
- */
-	void	set_output_triggers_polarity(const Tango::DevVarUShortArray *);
 
 /**
  *	Read the device properties from database
@@ -620,9 +568,11 @@ protected :
 	double                                              m_top_view_exposure_time   ;
 	double                                              m_bottom_view_exposure_time;
 	bool                                                m_wView_enabled            ;
+	
 	unsigned short										m_channel1Kind			   ;
 	unsigned short										m_channel2Kind			   ;
 	unsigned short										m_channel3Kind			   ;
+
 	unsigned short										m_channel1Polarity		   ;
 	unsigned short										m_channel2Polarity		   ;
 	unsigned short										m_channel3Polarity		   ;
