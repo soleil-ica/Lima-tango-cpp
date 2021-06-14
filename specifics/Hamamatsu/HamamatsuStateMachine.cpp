@@ -148,62 +148,7 @@ bool Hamamatsu::is_bottomViewExposureTime_allowed(Tango::AttReqType type)
 	}
 	return true;
 }
-//+----------------------------------------------------------------------------
-//
-// method : 		Hamamatsu::is_outputTriggersStatus_allowed
-// 
-// description : 	Read/Write allowed for outputTriggersStatus attribute.
-//
-//-----------------------------------------------------------------------------
-bool Hamamatsu::is_outputTriggersStatus_allowed(Tango::AttReqType type)
-{
-		//	End of Generated Code
 
-		//	Re-Start of Generated Code
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Hamamatsu::is_nbOutputTrigger_allowed
-// 
-// description : 	Read/Write allowed for nbOutputTrigger attribute.
-//
-//-----------------------------------------------------------------------------
-bool Hamamatsu::is_nbOutputTrigger_allowed(Tango::AttReqType type)
-{
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Hamamatsu::is_Kind_allowed
-// 
-// description : 	Read/Write allowed for Kind attribute.
-//
-//-----------------------------------------------------------------------------
-bool Hamamatsu::is_Kind_allowed(Tango::AttReqType type)
-{
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Hamamatsu::is_polarity_allowed
-// 
-// description : 	Read/Write allowed for polarity attribute.
-//
-//-----------------------------------------------------------------------------
-bool Hamamatsu::is_polarity_allowed(Tango::AttReqType type)
-{
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-	return true;
-}
 //+----------------------------------------------------------------------------
 //
 // method : 		Hamamatsu::is_channel1Polarity_allowed
@@ -292,34 +237,5 @@ bool Hamamatsu::is_channel3Kind_allowed(Tango::AttReqType type)
 //=================================================
 //		Commands Allowed Methods
 //=================================================
-
-//+----------------------------------------------------------------------------
-//
-// method : 		Hamamatsu::is_SetOutputTriggerKind_allowed
-// 
-// description : 	Execution allowed for SetOutputTriggerKind command.
-//
-//-----------------------------------------------------------------------------
-bool Hamamatsu::is_SetOutputTriggerKind_allowed(const CORBA::Any &any)
-{
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Hamamatsu::is_SetOutputTriggersPolarity_allowed
-// 
-// description : 	Execution allowed for SetOutputTriggersPolarity command.
-//
-//-----------------------------------------------------------------------------
-bool Hamamatsu::is_SetOutputTriggersPolarity_allowed(const CORBA::Any &any)
-{
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-	return true;
-}
 
 }	// namespace Hamamatsu_ns
