@@ -68,9 +68,10 @@ static const char *RcsId = "$Id:  $";
 
 #define SYNCREADOUT_BLANKMODE_STANDARD	"STANDARD"
 #define SYNCREADOUT_BLANKMODE_MINIMUM	"MINIMUM"
-#define NBMAXOUTPUTTRIGGER 3
-#define NBMAXOUTPUTRIGGERKIND 4
-#define NBMAXOUTPUTTRIGGERPOLARITY 3
+
+#define CHANNEL_1 0
+#define CHANNEL_2 1
+#define CHANNEL_3 2 
 
 namespace Hamamatsu_ns
 {
@@ -663,7 +664,7 @@ void Hamamatsu::read_channel1Polarity(Tango::Attribute &attr)
 	{
 		lima::Hamamatsu::Camera::Output_Trigger_Polarity channel1Polarity = lima::Hamamatsu::Camera::Output_Trigger_Polarity::Output_Trigger_Polarity_Not_Supported;
 
-        channel1Polarity =  m_camera->getOutputTriggerPolarity(0);
+        channel1Polarity =  m_camera->getOutputTriggerPolarity(CHANNEL_1);
 		*attr_channel1Polarity_read = (Tango::DevUShort)channel1Polarity;
 		attr.set_value(attr_channel1Polarity_read);
 	}
@@ -691,10 +692,9 @@ void Hamamatsu::write_channel1Polarity(Tango::WAttribute &attr)
      try
 	{
         attr.get_write_value(attr_channel1Polarity_write);
-        m_camera->setOutputTriggerPolarity(0, (lima::Hamamatsu::Camera::Output_Trigger_Polarity)attr_channel1Polarity_write);
+        m_camera->setOutputTriggerPolarity(CHANNEL_1, (lima::Hamamatsu::Camera::Output_Trigger_Polarity)attr_channel1Polarity_write);
 
-        m_channel1Polarity = (unsigned short)attr_channel1Polarity_write;
-		PropertyHelper::set_property(this, "MemorizedChannel1Polarity", m_channel1Polarity);
+		PropertyHelper::set_property(this, "MemorizedChannel1Polarity", (unsigned short)attr_channel1Polarity_write);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -721,7 +721,7 @@ void Hamamatsu::read_channel2Polarity(Tango::Attribute &attr)
 	{
 		lima::Hamamatsu::Camera::Output_Trigger_Polarity channel2Polarity = lima::Hamamatsu::Camera::Output_Trigger_Polarity::Output_Trigger_Polarity_Not_Supported;
 
-        channel2Polarity =  m_camera->getOutputTriggerPolarity(1);
+        channel2Polarity =  m_camera->getOutputTriggerPolarity(CHANNEL_2);
 		*attr_channel2Polarity_read = (Tango::DevUShort)channel2Polarity;
 		attr.set_value(attr_channel2Polarity_read);
 	}
@@ -749,10 +749,9 @@ void Hamamatsu::write_channel2Polarity(Tango::WAttribute &attr)
     try
 	{
         attr.get_write_value(attr_channel2Polarity_write);
-        m_camera->setOutputTriggerPolarity(1, (lima::Hamamatsu::Camera::Output_Trigger_Polarity)attr_channel2Polarity_write);
+        m_camera->setOutputTriggerPolarity(CHANNEL_2, (lima::Hamamatsu::Camera::Output_Trigger_Polarity)attr_channel2Polarity_write);
 
-        m_channel2Polarity = (unsigned short)attr_channel2Polarity_write;
-		PropertyHelper::set_property(this, "MemorizedChannel2Polarity", m_channel2Polarity);
+		PropertyHelper::set_property(this, "MemorizedChannel2Polarity",  (unsigned short)attr_channel2Polarity_write);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -779,7 +778,7 @@ void Hamamatsu::read_channel3Polarity(Tango::Attribute &attr)
 	{
 		lima::Hamamatsu::Camera::Output_Trigger_Polarity channel3Polarity = lima::Hamamatsu::Camera::Output_Trigger_Polarity::Output_Trigger_Polarity_Not_Supported;
 
-        channel3Polarity =  m_camera->getOutputTriggerPolarity(2);
+        channel3Polarity =  m_camera->getOutputTriggerPolarity(CHANNEL_3);
 		*attr_channel3Polarity_read = (Tango::DevUShort)channel3Polarity;
 		attr.set_value(attr_channel3Polarity_read);
 	}
@@ -807,10 +806,9 @@ void Hamamatsu::write_channel3Polarity(Tango::WAttribute &attr)
     try
 	{
         attr.get_write_value(attr_channel3Polarity_write);
-        m_camera->setOutputTriggerPolarity(2, (lima::Hamamatsu::Camera::Output_Trigger_Polarity)attr_channel3Polarity_write);
+        m_camera->setOutputTriggerPolarity(CHANNEL_3, (lima::Hamamatsu::Camera::Output_Trigger_Polarity)attr_channel3Polarity_write);
 
-        m_channel3Polarity = (unsigned short)attr_channel3Polarity_write;
-		PropertyHelper::set_property(this, "MemorizedChannel2Polarity", m_channel3Polarity);
+		PropertyHelper::set_property(this, "MemorizedChannel2Polarity", (unsigned short)attr_channel3Polarity_write);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -837,7 +835,7 @@ void Hamamatsu::read_channel1Kind(Tango::Attribute &attr)
 	{
 		lima::Hamamatsu::Camera::Output_Trigger_Kind channel1Kind = lima::Hamamatsu::Camera::Output_Trigger_Kind::Output_Trigger_Kind_Not_Supported;
 
-        channel1Kind =  m_camera->getOutputTriggerKind(0);
+        channel1Kind =  m_camera->getOutputTriggerKind(CHANNEL_1);
 		*attr_channel1Kind_read = (Tango::DevUShort)channel1Kind;
 		attr.set_value(attr_channel1Kind_read);
 	}
@@ -865,10 +863,9 @@ void Hamamatsu::write_channel1Kind(Tango::WAttribute &attr)
      try
 	{
         attr.get_write_value(attr_channel1Kind_write);
-        m_camera->setOutputTriggerKind(0, (lima::Hamamatsu::Camera::Output_Trigger_Kind)attr_channel1Kind_write);
+        m_camera->setOutputTriggerKind(CHANNEL_1, (lima::Hamamatsu::Camera::Output_Trigger_Kind)attr_channel1Kind_write);
 
-        m_channel1Kind = (unsigned short)attr_channel1Kind_write;
-		PropertyHelper::set_property(this, "MemorizedChannel1Kind", m_channel1Kind);
+		PropertyHelper::set_property(this, "MemorizedChannel1Kind", (unsigned short)attr_channel1Kind_write);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -895,7 +892,7 @@ void Hamamatsu::read_channel2Kind(Tango::Attribute &attr)
 	{
 		lima::Hamamatsu::Camera::Output_Trigger_Kind channel2Kind = lima::Hamamatsu::Camera::Output_Trigger_Kind::Output_Trigger_Kind_Not_Supported;
 
-        channel2Kind =  m_camera->getOutputTriggerKind(1);
+        channel2Kind =  m_camera->getOutputTriggerKind(CHANNEL_2);
 		*attr_channel2Kind_read = (Tango::DevUShort)channel2Kind;
 		attr.set_value(attr_channel2Kind_read);
 	}
@@ -923,10 +920,9 @@ void Hamamatsu::write_channel2Kind(Tango::WAttribute &attr)
      try
 	{
         attr.get_write_value(attr_channel2Kind_write);
-        m_camera->setOutputTriggerKind(1, (lima::Hamamatsu::Camera::Output_Trigger_Kind)attr_channel2Kind_write);
+        m_camera->setOutputTriggerKind(CHANNEL_2, (lima::Hamamatsu::Camera::Output_Trigger_Kind)attr_channel2Kind_write);
 
-        m_channel2Kind = (unsigned short)attr_channel2Kind_write;
-		PropertyHelper::set_property(this, "MemorizedChannel2Kind", m_channel2Kind);
+		PropertyHelper::set_property(this, "MemorizedChannel2Kind", (unsigned short)attr_channel2Kind_write);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -953,7 +949,7 @@ void Hamamatsu::read_channel3Kind(Tango::Attribute &attr)
 	{
 		lima::Hamamatsu::Camera::Output_Trigger_Kind channel3Kind = lima::Hamamatsu::Camera::Output_Trigger_Kind::Output_Trigger_Kind_Not_Supported;
 
-        channel3Kind =  m_camera->getOutputTriggerKind(2);
+        channel3Kind =  m_camera->getOutputTriggerKind(CHANNEL_3);
 		*attr_channel3Kind_read = (Tango::DevUShort)channel3Kind;
 		attr.set_value(attr_channel3Kind_read);
 	}
@@ -981,10 +977,9 @@ void Hamamatsu::write_channel3Kind(Tango::WAttribute &attr)
     try
 	{
         attr.get_write_value(attr_channel3Kind_write);
-        m_camera->setOutputTriggerKind(2, (lima::Hamamatsu::Camera::Output_Trigger_Kind)attr_channel3Kind_write);
+        m_camera->setOutputTriggerKind(CHANNEL_3, (lima::Hamamatsu::Camera::Output_Trigger_Kind)attr_channel3Kind_write);
 
-        m_channel3Kind = (unsigned short)attr_channel3Kind_write;
-		PropertyHelper::set_property(this, "MemorizedChannel3Kind", m_channel3Kind);
+		PropertyHelper::set_property(this, "MemorizedChannel3Kind", (unsigned short)attr_channel3Kind_write);
 	}
     catch(Tango::DevFailed & df)
     {

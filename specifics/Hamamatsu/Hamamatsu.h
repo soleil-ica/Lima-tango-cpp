@@ -376,7 +376,6 @@ public :
 	//-------------------------------------------------------------	
 
 
-   //void update_triggers_status(int channel);
 
 private :
 /**
@@ -569,13 +568,6 @@ protected :
 	double                                              m_bottom_view_exposure_time;
 	bool                                                m_wView_enabled            ;
 	
-	unsigned short										m_channel1Kind			   ;
-	unsigned short										m_channel2Kind			   ;
-	unsigned short										m_channel3Kind			   ;
-
-	unsigned short										m_channel1Polarity		   ;
-	unsigned short										m_channel2Polarity		   ;
-	unsigned short										m_channel3Polarity		   ;
 
     /// yat4tango Dynamic Interface Manager
     yat4tango::DynamicInterfaceManager m_dim;

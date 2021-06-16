@@ -158,10 +158,19 @@ bool Hamamatsu::is_bottomViewExposureTime_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool Hamamatsu::is_channel1Polarity_allowed(Tango::AttReqType type)
 {
-		//	End of Generated Code
+	 if (get_state() == Tango::INIT ||
+        get_state() == Tango::FAULT ||
+        get_state() == Tango::RUNNING)
+    {
+        //	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+	}
 
-		//	Re-Start of Generated Code
-	return true;
+	//	Re-Start of Generated Code
+	return false;
 }
 //+----------------------------------------------------------------------------
 //
@@ -172,10 +181,18 @@ bool Hamamatsu::is_channel1Polarity_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool Hamamatsu::is_channel2Polarity_allowed(Tango::AttReqType type)
 {
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-	return true;
+	if (get_state() == Tango::INIT ||
+        get_state() == Tango::FAULT ||
+        get_state() == Tango::RUNNING)
+    {
+        //	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+	}
+	//	Re-Start of Generated Code
+	return false;
 }
 //+----------------------------------------------------------------------------
 //
@@ -186,10 +203,18 @@ bool Hamamatsu::is_channel2Polarity_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool Hamamatsu::is_channel3Polarity_allowed(Tango::AttReqType type)
 {
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-	return true;
+	if (get_state() == Tango::INIT ||
+        get_state() == Tango::FAULT ||
+        get_state() == Tango::RUNNING)
+    {
+        //	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+	}
+	//	Re-Start of Generated Code
+	return false;
 }
 //+----------------------------------------------------------------------------
 //
@@ -200,10 +225,18 @@ bool Hamamatsu::is_channel3Polarity_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool Hamamatsu::is_channel1Kind_allowed(Tango::AttReqType type)
 {
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-	return true;
+	if (get_state() == Tango::INIT ||
+        get_state() == Tango::FAULT ||
+        get_state() == Tango::RUNNING)
+    {
+        //	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+	}
+	//	Re-Start of Generated Code
+	return false;
 }
 //+----------------------------------------------------------------------------
 //
@@ -214,10 +247,18 @@ bool Hamamatsu::is_channel1Kind_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool Hamamatsu::is_channel2Kind_allowed(Tango::AttReqType type)
 {
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-	return true;
+	if (get_state() == Tango::INIT ||
+        get_state() == Tango::FAULT ||
+        get_state() == Tango::RUNNING)
+    {
+        //	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+	}
+	//	Re-Start of Generated Code
+	return false;
 }
 //+----------------------------------------------------------------------------
 //
@@ -228,10 +269,18 @@ bool Hamamatsu::is_channel2Kind_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool Hamamatsu::is_channel3Kind_allowed(Tango::AttReqType type)
 {
-		//	End of Generated Code
-
-		//	Re-Start of Generated Code
-	return true;
+	if (get_state() == Tango::INIT ||
+        get_state() == Tango::FAULT ||
+        get_state() == Tango::RUNNING)
+    {
+        //	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+	}
+	//	Re-Start of Generated Code
+	return false;
 }
 
 //=================================================

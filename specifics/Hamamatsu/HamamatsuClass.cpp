@@ -297,7 +297,7 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : channel1Polarity
 	channel1PolarityAttrib	*channel1_polarity = new channel1PolarityAttrib();
 	Tango::UserDefaultAttrProp	channel1_polarity_prop;
-	channel1_polarity_prop.set_description("Polarity value : \n1 = Output_Trigger_Polarity_Negative\n2 = Output_Trigger_Polarity_Positive");
+	channel1_polarity_prop.set_description("Polarity value : \n1 = Negative\n2 = Positive");
 	channel1_polarity->set_default_properties(channel1_polarity_prop);
 	channel1_polarity->set_disp_level(Tango::EXPERT);
 	att_list.push_back(channel1_polarity);
@@ -305,7 +305,7 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : channel2Polarity
 	channel2PolarityAttrib	*channel2_polarity = new channel2PolarityAttrib();
 	Tango::UserDefaultAttrProp	channel2_polarity_prop;
-	channel2_polarity_prop.set_description("Polarity value : \n1 = Output_Trigger_Polarity_Negative\n2 = Output_Trigger_Polarity_Positive");
+	channel2_polarity_prop.set_description("Polarity value : \n1 = Negative\n2 = Positive");
 	channel2_polarity->set_default_properties(channel2_polarity_prop);
 	channel2_polarity->set_disp_level(Tango::EXPERT);
 	att_list.push_back(channel2_polarity);
@@ -313,7 +313,7 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : channel3Polarity
 	channel3PolarityAttrib	*channel3_polarity = new channel3PolarityAttrib();
 	Tango::UserDefaultAttrProp	channel3_polarity_prop;
-	channel3_polarity_prop.set_description("Polarity value : \n1 = Output_Trigger_Polarity_Negative\n2 = Output_Trigger_Polarity_Positive");
+	channel3_polarity_prop.set_description("Polarity value : \n1 = Negative\n2 = Positive");
 	channel3_polarity->set_default_properties(channel3_polarity_prop);
 	channel3_polarity->set_disp_level(Tango::EXPERT);
 	att_list.push_back(channel3_polarity);
