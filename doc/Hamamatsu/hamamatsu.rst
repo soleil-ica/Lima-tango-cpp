@@ -35,9 +35,9 @@ bottomViewExposureTime  R/W        Double     Exposure time for second W-VIEW.
 channel1Polarity	R/W	   UShort     Polarity for channel 1 (NEGATIVE = 1, POSITIVE = 2).
 channel2Polarity	R/W	   UShort     Polarity for channel 2 (NEGATIVE = 1, POSITIVE = 2).
 channel3Polarity	R/W	   UShort     Polarity for channel 3 (NEGATIVE = 1, POSITIVE = 2).
-channel1Kind		R/W	   UShort     Kind for channel 1 (LOW = 1, GLOBAL_EXPOSURE  = 1, PROGRAMMABLE = 2, TRIGGER_READY = 3, HIGH = 4).
-channel2Kind		R/W	   UShort     Kind for channel 2 (LOW = 1, GLOBAL_EXPOSURE  = 1, PROGRAMMABLE = 2, TRIGGER_READY = 3, HIGH = 4).
-channel3Kind		R/W	   UShort     Kind for channel 3 (LOW = 1, GLOBAL_EXPOSURE  = 1, PROGRAMMABLE = 2, TRIGGER_READY = 3, HIGH = 4). 
+channel1Kind		R/W	   UShort     Kind for channel 1 (LOW = 1, GLOBAL_EXPOSURE  = 2, PROGRAMMABLE = 3, TRIGGER_READY = 4, HIGH = 5).
+channel2Kind		R/W	   UShort     Kind for channel 2 (LOW = 1, GLOBAL_EXPOSURE  = 2, PROGRAMMABLE = 3, TRIGGER_READY = 4, HIGH = 5).
+channel3Kind		R/W	   UShort     Kind for channel 3 (LOW = 1, GLOBAL_EXPOSURE  = 2, PROGRAMMABLE = 3, TRIGGER_READY = 4, HIGH = 5). 
 ======================= ========== ========== ==============================================================================================
 
 
