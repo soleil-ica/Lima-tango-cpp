@@ -45,6 +45,90 @@ namespace Hamamatsu_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class channel3KindAttrib: public Tango::Attr
+{
+public:
+	channel3KindAttrib():Attr("channel3Kind", Tango::DEV_USHORT, Tango::READ_WRITE) {};
+	~channel3KindAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_channel3Kind(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_channel3Kind(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_channel3Kind_allowed(ty);}
+};
+
+class channel2KindAttrib: public Tango::Attr
+{
+public:
+	channel2KindAttrib():Attr("channel2Kind", Tango::DEV_USHORT, Tango::READ_WRITE) {};
+	~channel2KindAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_channel2Kind(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_channel2Kind(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_channel2Kind_allowed(ty);}
+};
+
+class channel1KindAttrib: public Tango::Attr
+{
+public:
+	channel1KindAttrib():Attr("channel1Kind", Tango::DEV_USHORT, Tango::READ_WRITE) {};
+	~channel1KindAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_channel1Kind(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_channel1Kind(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_channel1Kind_allowed(ty);}
+};
+
+class channel3PolarityAttrib: public Tango::Attr
+{
+public:
+	channel3PolarityAttrib():Attr("channel3Polarity", Tango::DEV_USHORT, Tango::READ_WRITE) {};
+	~channel3PolarityAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_channel3Polarity(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_channel3Polarity(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_channel3Polarity_allowed(ty);}
+};
+
+class channel2PolarityAttrib: public Tango::Attr
+{
+public:
+	channel2PolarityAttrib():Attr("channel2Polarity", Tango::DEV_USHORT, Tango::READ_WRITE) {};
+	~channel2PolarityAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_channel2Polarity(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_channel2Polarity(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_channel2Polarity_allowed(ty);}
+};
+
+class channel1PolarityAttrib: public Tango::Attr
+{
+public:
+	channel1PolarityAttrib():Attr("channel1Polarity", Tango::DEV_USHORT, Tango::READ_WRITE) {};
+	~channel1PolarityAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_channel1Polarity(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_channel1Polarity(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_channel1Polarity_allowed(ty);}
+};
+
 class bottomViewExposureTimeAttrib: public Tango::Attr
 {
 public:

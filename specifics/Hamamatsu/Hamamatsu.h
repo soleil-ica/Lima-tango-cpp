@@ -98,6 +98,24 @@ public :
 		Tango::DevDouble	attr_topViewExposureTime_write;
 		Tango::DevDouble	*attr_bottomViewExposureTime_read;
 		Tango::DevDouble	attr_bottomViewExposureTime_write;
+		
+		Tango::DevUShort	*attr_channel1Polarity_read;
+		Tango::DevUShort	attr_channel1Polarity_write;
+
+		Tango::DevUShort	*attr_channel2Polarity_read;
+		Tango::DevUShort	attr_channel2Polarity_write;
+
+		Tango::DevUShort	*attr_channel3Polarity_read;
+		Tango::DevUShort	attr_channel3Polarity_write;
+
+		Tango::DevUShort	*attr_channel1Kind_read;
+		Tango::DevUShort	attr_channel1Kind_write;
+
+		Tango::DevUShort	*attr_channel2Kind_read;
+		Tango::DevUShort	attr_channel2Kind_write;
+
+		Tango::DevUShort	*attr_channel3Kind_read;
+		Tango::DevUShort	attr_channel3Kind_write;
 //@}
 
 /**
@@ -250,6 +268,54 @@ public :
  */
 	virtual void write_bottomViewExposureTime(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for channel1Polarity acquisition result.
+ */
+	virtual void read_channel1Polarity(Tango::Attribute &attr);
+/**
+ *	Write channel1Polarity attribute values to hardware.
+ */
+	virtual void write_channel1Polarity(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel2Polarity acquisition result.
+ */
+	virtual void read_channel2Polarity(Tango::Attribute &attr);
+/**
+ *	Write channel2Polarity attribute values to hardware.
+ */
+	virtual void write_channel2Polarity(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel3Polarity acquisition result.
+ */
+	virtual void read_channel3Polarity(Tango::Attribute &attr);
+/**
+ *	Write channel3Polarity attribute values to hardware.
+ */
+	virtual void write_channel3Polarity(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel1Kind acquisition result.
+ */
+	virtual void read_channel1Kind(Tango::Attribute &attr);
+/**
+ *	Write channel1Kind attribute values to hardware.
+ */
+	virtual void write_channel1Kind(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel2Kind acquisition result.
+ */
+	virtual void read_channel2Kind(Tango::Attribute &attr);
+/**
+ *	Write channel2Kind attribute values to hardware.
+ */
+	virtual void write_channel2Kind(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel3Kind acquisition result.
+ */
+	virtual void read_channel3Kind(Tango::Attribute &attr);
+/**
+ *	Write channel3Kind attribute values to hardware.
+ */
+	virtual void write_channel3Kind(Tango::WAttribute &attr);
+/**
  *	Read/Write allowed for lostFrames attribute.
  */
 	virtual bool is_lostFrames_allowed(Tango::AttReqType type);
@@ -270,6 +336,30 @@ public :
  */
 	virtual bool is_bottomViewExposureTime_allowed(Tango::AttReqType type);
 /**
+ *	Read/Write allowed for channel1Polarity attribute.
+ */
+	virtual bool is_channel1Polarity_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel2Polarity attribute.
+ */
+	virtual bool is_channel2Polarity_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel3Polarity attribute.
+ */
+	virtual bool is_channel3Polarity_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel1Kind attribute.
+ */
+	virtual bool is_channel1Kind_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel2Kind attribute.
+ */
+	virtual bool is_channel2Kind_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel3Kind attribute.
+ */
+	virtual bool is_channel3Kind_allowed(Tango::AttReqType type);
+/**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
  *	@exception DevFailed
@@ -284,6 +374,9 @@ public :
 
 	//	Here is the end of the automatic code generation part
 	//-------------------------------------------------------------	
+
+
+
 private :
 /**
  *	method:	Hamamatsu::manage_devfailed_exception
@@ -463,6 +556,8 @@ private :
     // method for tango dyn attributes WHEN no write part is available - NULL
     void write_callback_null(yat4tango::DynamicAttributeWriteCallbackData& cbd){/*nop*/}
 
+    
+
 protected :	
 	//	Add your own data members here
 	//-----------------------------------------
@@ -472,6 +567,7 @@ protected :
 	double                                              m_top_view_exposure_time   ;
 	double                                              m_bottom_view_exposure_time;
 	bool                                                m_wView_enabled            ;
+	
 
     /// yat4tango Dynamic Interface Manager
     yat4tango::DynamicInterfaceManager m_dim;
