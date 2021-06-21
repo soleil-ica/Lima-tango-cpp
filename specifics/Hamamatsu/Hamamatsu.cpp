@@ -58,7 +58,6 @@ static const char *RcsId = "$Id:  $";
 #include <Hamamatsu.h>
 #include <HamamatsuClass.h>
 #include <string> 
-#include <string.h>
 
 #define MAX_ATTRIBUTE_STRING_LENGTH 256
 #define READOUTSPEED_NORMAL_VALUE		2
@@ -658,18 +657,18 @@ void Hamamatsu::read_attr_hardware(vector<long> &attr_list)
 //-----------------------------------------------------------------------------
 void Hamamatsu::read_channel1Polarity(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Hamamatsu::read_channel1Polarity(Tango::Attribute &attr) entering... "<< endl;
+    DEBUG_STREAM << "Hamamatsu::read_channel1Polarity(Tango::Attribute &attr) entering... " << endl;
 
     try
-	{ 
-		*attr_channel1Polarity_read = (Tango::DevUShort)m_camera->getOutputTriggerPolarity(CHANNEL_1);
-		attr.set_value(attr_channel1Polarity_read);
-	}
-    catch(Tango::DevFailed & df)
+    {
+        *attr_channel1Polarity_read = (Tango::DevUShort)m_camera->getOutputTriggerPolarity(CHANNEL_1);
+        attr.set_value(attr_channel1Polarity_read);
+    }
+    catch (Tango::DevFailed &df)
     {
         manage_devfailed_exception(df, "Hamamatsu::read_channel1Polarity");
     }
-    catch(Exception & e)
+    catch (Exception &e)
     {
         manage_lima_exception(e, "Hamamatsu::read_channel1Polarity");
     }
