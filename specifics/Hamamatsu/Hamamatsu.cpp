@@ -683,20 +683,20 @@ void Hamamatsu::read_channel1Polarity(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Hamamatsu::write_channel1Polarity(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Hamamatsu::write_channel1Polarity(Tango::WAttribute &attr) entering... "<< endl;
+    DEBUG_STREAM << "Hamamatsu::write_channel1Polarity(Tango::WAttribute &attr) entering... " << endl;
 
-     try
-	{
+    try
+    {
         attr.get_write_value(attr_channel1Polarity_write);
         m_camera->setOutputTriggerPolarity(CHANNEL_1, (lima::Hamamatsu::Camera::Output_Trigger_Polarity)attr_channel1Polarity_write);
 
-		PropertyHelper::set_property(this, "MemorizedChannel1Polarity", attr_channel1Polarity_write);
-	}
-    catch(Tango::DevFailed & df)
+        PropertyHelper::set_property(this, "MemorizedChannel1Polarity", attr_channel1Polarity_write);
+    }
+    catch (Tango::DevFailed &df)
     {
         manage_devfailed_exception(df, "Hamamatsu::write_channel1Polarity");
     }
-    catch(Exception & e)
+    catch (Exception &e)
     {
         manage_lima_exception(e, "Hamamatsu::write_channel1Polarity");
     }
