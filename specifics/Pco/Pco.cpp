@@ -196,10 +196,18 @@ void Pco::init_device()
 
         INFO_STREAM << "Write tango hardware at Init - pixelRate." << endl;
         Tango::WAttribute &pixelRate = dev_attr->get_w_attr_by_name("pixelRate");
-        std::string pixel_rate_str = yat4tango::PropertyHelper::get_memorized_attribute<std::string>(this, "pixelRate");
-        attr_pixelRate_write = const_cast<Tango::DevString>(pixel_rate_str.c_str());
-        pixelRate.set_write_value(attr_pixelRate_write);
-        write_pixelRate(pixelRate);
+        try
+        {
+            std::string pixel_rate_str = yat4tango::PropertyHelper::get_memorized_attribute<std::string>(this, "pixelRate");
+            attr_pixelRate_write = const_cast<Tango::DevString>(pixel_rate_str.c_str());
+            pixelRate.set_write_value(attr_pixelRate_write);
+            write_pixelRate(pixelRate);
+        }
+        catch(Tango::DevFailed&) 
+        {
+            ERROR_STREAM << "Failed to write memorized attribute - pixelRate." << endl;
+        }
+        
     }
     catch(lima::Exception& e)
     {
