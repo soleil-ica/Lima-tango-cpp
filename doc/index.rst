@@ -49,6 +49,7 @@ This device server provides several Tango classes:
   SimulatorCCD <SimulatorCCD/simulatorccd>
   SlsEiger <SlsEiger/slseiger>
   SlsJungfrau <SlsJungfrau/slsjungfrau>
+  SpectralInstrument <Spectral/spectral>
   SpectrumOneCCD <SpectrumeOneCCD/spectrumoneccd>
   Ufxc <Ufxc/ufxc>
   Uview <Uview/uview>
