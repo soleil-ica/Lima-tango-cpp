@@ -66,6 +66,7 @@ static const char *RcsId = "$Id:  $";
 //================================================================
 //  Attributes managed is:
 //================================================================
+//  cooler  |  Tango::DevBoolean	Scalar
 //================================================================
 
 namespace Spectral_ns
@@ -84,7 +85,7 @@ namespace Spectral_ns
  */
 //--------------------------------------------------------
 Spectral::Spectral(Tango::DeviceClass *cl, string &s)
- : TANGO_BASE_CLASS(cl, s.c_str())
+ : Tango::Device_4Impl(cl, s.c_str())
 {
 	/*----- PROTECTED REGION ID(Spectral::constructor_1) ENABLED START -----*/
 	init_device();
@@ -93,7 +94,7 @@ Spectral::Spectral(Tango::DeviceClass *cl, string &s)
 }
 //--------------------------------------------------------
 Spectral::Spectral(Tango::DeviceClass *cl, const char *s)
- : TANGO_BASE_CLASS(cl, s)
+ : Tango::Device_4Impl(cl, s)
 {
 	/*----- PROTECTED REGION ID(Spectral::constructor_2) ENABLED START -----*/
 	init_device();
@@ -102,7 +103,7 @@ Spectral::Spectral(Tango::DeviceClass *cl, const char *s)
 }
 //--------------------------------------------------------
 Spectral::Spectral(Tango::DeviceClass *cl, const char *s, const char *d)
- : TANGO_BASE_CLASS(cl, s, d)
+ : Tango::Device_4Impl(cl, s, d)
 {
 	/*----- PROTECTED REGION ID(Spectral::constructor_3) ENABLED START -----*/
 	init_device();
@@ -128,6 +129,7 @@ void Spectral::delete_device()
         return;
 
 	/*----- PROTECTED REGION END -----*/	//	Spectral::delete_device
+	delete[] attr_cooler_read;
 }
 
 //--------------------------------------------------------
@@ -189,6 +191,7 @@ void Spectral::init_device()
 	//	Get the device properties from database
 	get_device_property();
 	
+	attr_cooler_read = new Tango::DevBoolean[1];
 
 	/*----- PROTECTED REGION ID(Spectral::init_device) ENABLED START -----*/
 	
@@ -217,10 +220,10 @@ void Spectral::get_device_property()
 
 	//	Read device properties from database.
 	Tango::DbData	dev_prop;
-	dev_prop.push_back(Tango::DbDatum("ExpertConnectionAddress"));
-	dev_prop.push_back(Tango::DbDatum("ExpertConnectionPort"));
-	dev_prop.push_back(Tango::DbDatum("ExpertImagePacketPixelsNb"));
-	dev_prop.push_back(Tango::DbDatum("ExpertImagePacketDelayMicroSec"));
+	dev_prop.push_back(Tango::DbDatum("ConnectionAddress"));
+	dev_prop.push_back(Tango::DbDatum("ConnectionPort"));
+	dev_prop.push_back(Tango::DbDatum("ImagePacketPixelsNb"));
+	dev_prop.push_back(Tango::DbDatum("ImagePacketDelayMicroSec"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -235,49 +238,49 @@ void Spectral::get_device_property()
 			(static_cast<SpectralClass *>(get_device_class()));
 		int	i = -1;
 
-		//	Try to initialize ExpertConnectionAddress from class property
+		//	Try to initialize ConnectionAddress from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  expertConnectionAddress;
+		if (cl_prop.is_empty()==false)	cl_prop  >>  connectionAddress;
 		else {
-			//	Try to initialize ExpertConnectionAddress from default device value
+			//	Try to initialize ConnectionAddress from default device value
 			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  expertConnectionAddress;
+			if (def_prop.is_empty()==false)	def_prop  >>  connectionAddress;
 		}
-		//	And try to extract ExpertConnectionAddress value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertConnectionAddress;
+		//	And try to extract ConnectionAddress value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  connectionAddress;
 
-		//	Try to initialize ExpertConnectionPort from class property
+		//	Try to initialize ConnectionPort from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  expertConnectionPort;
+		if (cl_prop.is_empty()==false)	cl_prop  >>  connectionPort;
 		else {
-			//	Try to initialize ExpertConnectionPort from default device value
+			//	Try to initialize ConnectionPort from default device value
 			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  expertConnectionPort;
+			if (def_prop.is_empty()==false)	def_prop  >>  connectionPort;
 		}
-		//	And try to extract ExpertConnectionPort value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertConnectionPort;
+		//	And try to extract ConnectionPort value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  connectionPort;
 
-		//	Try to initialize ExpertImagePacketPixelsNb from class property
+		//	Try to initialize ImagePacketPixelsNb from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  expertImagePacketPixelsNb;
+		if (cl_prop.is_empty()==false)	cl_prop  >>  imagePacketPixelsNb;
 		else {
-			//	Try to initialize ExpertImagePacketPixelsNb from default device value
+			//	Try to initialize ImagePacketPixelsNb from default device value
 			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  expertImagePacketPixelsNb;
+			if (def_prop.is_empty()==false)	def_prop  >>  imagePacketPixelsNb;
 		}
-		//	And try to extract ExpertImagePacketPixelsNb value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertImagePacketPixelsNb;
+		//	And try to extract ImagePacketPixelsNb value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  imagePacketPixelsNb;
 
-		//	Try to initialize ExpertImagePacketDelayMicroSec from class property
+		//	Try to initialize ImagePacketDelayMicroSec from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  expertImagePacketDelayMicroSec;
+		if (cl_prop.is_empty()==false)	cl_prop  >>  imagePacketDelayMicroSec;
 		else {
-			//	Try to initialize ExpertImagePacketDelayMicroSec from default device value
+			//	Try to initialize ImagePacketDelayMicroSec from default device value
 			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  expertImagePacketDelayMicroSec;
+			if (def_prop.is_empty()==false)	def_prop  >>  imagePacketDelayMicroSec;
 		}
-		//	And try to extract ExpertImagePacketDelayMicroSec value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertImagePacketDelayMicroSec;
+		//	And try to extract ImagePacketDelayMicroSec value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  imagePacketDelayMicroSec;
 
 	}
 
@@ -287,7 +290,7 @@ void Spectral::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "ExpertConnectionAddress"       ); // 127.0.0.1 by default
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0"        , "ExpertConnectionPort"          ); // port 0 by default
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "512"      , "ExpertImagePacketPixelsNb"     ); // 512 pixels in one packet by default
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "300"      , "ExpertImagePacketDelayMicroSec"); // 300 µs between two packets by default
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "300"      , "ExpertImagePacketDelayMicroSec"); // 300 ï¿½s between two packets by default
 	
 	/*----- PROTECTED REGION END -----*/	//	Spectral::get_device_property_after
 }
@@ -300,7 +303,7 @@ void Spectral::get_device_property()
 //--------------------------------------------------------
 void Spectral::always_executed_hook()
 {
-	//INFO_STREAM << "Spectral::always_executed_hook()  " << device_name << endl;
+	INFO_STREAM << "Spectral::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Spectral::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -350,7 +353,7 @@ void Spectral::always_executed_hook()
 //--------------------------------------------------------
 void Spectral::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	//DEBUG_STREAM << "Spectral::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	DEBUG_STREAM << "Spectral::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Spectral::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -358,6 +361,67 @@ void Spectral::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 	/*----- PROTECTED REGION END -----*/	//	Spectral::read_attr_hardware
 }
 
+//--------------------------------------------------------
+/**
+ *	Read attribute cooler related method
+ *	Description: Turns the CCD cooling On/Off
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Spectral::read_cooler(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Spectral::read_cooler(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Spectral::read_cooler) ENABLED START -----*/
+	//	Set the attribute value
+	 try
+	{
+		*attr_cooler_read = (Tango::DevBoolean) m_camera->getCoolerValue();
+		attr.set_value(attr_cooler_read);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Spectral::read_cooler");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Spectral::read_cooler");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	Spectral::read_cooler
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute cooler related method
+ *	Description: Turns the CCD cooling On/Off
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Spectral::write_cooler(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Spectral::write_cooler(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	
+	/*----- PROTECTED REGION ID(Spectral::write_cooler) ENABLED START -----*/
+	try
+	{
+        attr.get_write_value(attr_cooler_write);
+		m_camera->setCoolerValue( (bool) attr_cooler_write);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Spectral::write_cooler");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Spectral::write_cooler");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	Spectral::write_cooler
+}
 
 //--------------------------------------------------------
 /**
@@ -452,6 +516,54 @@ void Spectral::manage_lima_exception(lima::Exception & in_exception, const std::
                                    in_exception.getErrMsg().c_str(),
                                    in_caller_method_name.c_str());
 }
+// //--------------------------------------------------------
+// /**
+//  *	Read attribute cooler related method
+//  *	Description: Turns the CCD cooling On/Off
+//  *
+//  *	Data type:	Tango::DevBoolean
+//  *	Attr type:	Scalar
+//  */
+// //--------------------------------------------------------
+// void Spectral::read_cooler(Tango::Attribute &attr)
+// {
+// 	DEBUG_STREAM << "Spectral::read_cooler(Tango::Attribute &attr) entering... " << endl;
+// 	//	Set the attribute value
+// 	 try
+// 	{
+// 		*attr_cooler_read = (Tango::DevBoolean) m_camera->getCoolerValue();
+// 		attr.set_value(attr_cooler_read);
+// 	}
+//     catch(Tango::DevFailed & df)
+//     {
+//         manage_devfailed_exception(df, "Spectral::read_cooler");
+//     }
+//     catch(Exception & e)
+//     {
+//         manage_lima_exception(e, "Spectral::read_cooler");
+//     }
+// 	
+// }
+
+// //--------------------------------------------------------
+// /**
+//  *	Write attribute cooler related method
+//  *	Description: Turns the CCD cooling On/Off
+//  *
+//  *	Data type:	Tango::DevBoolean
+//  *	Attr type:	Scalar
+//  */
+// //--------------------------------------------------------
+// void Spectral::write_cooler(Tango::WAttribute &attr)
+// {
+// 	DEBUG_STREAM << "Spectral::write_cooler(Tango::WAttribute &attr) entering... " << endl;
+// 	//	Retrieve write value
+// 	Tango::DevBoolean	w_val;
+// 	attr.get_write_value(w_val);
+// 	
+// 	
+// }
+
 
 /*----- PROTECTED REGION END -----*/	//	Spectral::namespace_ending
 } //	namespace

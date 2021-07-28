@@ -54,6 +54,26 @@ namespace Spectral_ns
 //		Attributes Allowed Methods
 //=================================================
 
+//--------------------------------------------------------
+/**
+ *	Method      : Spectral::is_cooler_allowed()
+ *	Description : Execution allowed for cooler attribute
+ */
+//--------------------------------------------------------
+bool Spectral::is_cooler_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Not any excluded states for cooler attribute in Write access.
+	/*----- PROTECTED REGION ID(Spectral::coolerStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Spectral::coolerStateAllowed_WRITE
+
+	//	Not any excluded states for cooler attribute in read access.
+	/*----- PROTECTED REGION ID(Spectral::coolerStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Spectral::coolerStateAllowed_READ
+	return true;
+}
+
 //=================================================
 //		Commands Allowed Methods
 //=================================================

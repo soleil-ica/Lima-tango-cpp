@@ -71,7 +71,7 @@ namespace Spectral_ns
 
 /*----- PROTECTED REGION END -----*/	//	Spectral::Additional Class Declarations
 
-class Spectral : public TANGO_BASE_CLASS
+class Spectral : public Tango::Device_4Impl
 {
 
 /*----- PROTECTED REGION ID(Spectral::Data Members) ENABLED START -----*/
@@ -82,19 +82,23 @@ class Spectral : public TANGO_BASE_CLASS
 
 //	Device property data members
 public:
-	//	ExpertConnectionAddress:	Only an expert User could change this property.<br>
+	//	ConnectionAddress:	Only an expert User could change this property.<br>
 	//  Server name or IP address of the SI Image SGL II software.<BR>
-	string	expertConnectionAddress;
-	//	ExpertConnectionPort:	Only an expert User could change this property.<br>
+	string	connectionAddress;
+	//	ConnectionPort:	Only an expert User could change this property.<br>
 	//  TCP/IP port of the SI Image SGL II software.<BR>
-	Tango::DevLong	expertConnectionPort;
-	//	ExpertImagePacketPixelsNb:	Only an expert User could change this property.<br>
+	Tango::DevLong	connectionPort;
+	//	ImagePacketPixelsNb:	Only an expert User could change this property.<br>
 	//  Number of pixels sent into a image part TCP/IP packet.<BR>
-	Tango::DevLong	expertImagePacketPixelsNb;
-	//	ExpertImagePacketDelayMicroSec:	Only an expert User could change this property.<br>
+	Tango::DevLong	imagePacketPixelsNb;
+	//	ImagePacketDelayMicroSec:	Only an expert User could change this property.<br>
 	//  Delay between the sending of two image part TCP/IP packets (in micro-seconds).<BR>
-	Tango::DevLong	expertImagePacketDelayMicroSec;
+	Tango::DevLong	imagePacketDelayMicroSec;
 
+//	Attribute data members
+public:
+	Tango::DevBoolean	*attr_cooler_read;
+	Tango::DevBoolean	attr_cooler_write;
 
 //	Constructors and destructors
 public:
@@ -155,6 +159,17 @@ public:
 	 */
 	//--------------------------------------------------------
 	virtual void read_attr_hardware(vector<long> &attr_list);
+
+/**
+ *	Attribute cooler related methods
+ *	Description: Turns the CCD cooling On/Off
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void read_cooler(Tango::Attribute &attr);
+	virtual void write_cooler(Tango::WAttribute &attr);
+	virtual bool is_cooler_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------

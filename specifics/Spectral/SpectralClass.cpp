@@ -227,7 +227,7 @@ void SpectralClass::set_default_property()
 	//	Set Default Class Properties
 
 	//	Set Default device Properties
-	prop_name = "ExpertConnectionAddress";
+	prop_name = "ConnectionAddress";
 	prop_desc = "Only an expert User could change this property.<br>\nServer name or IP address of the SI Image SGL II software.<BR>";
 	prop_def  = "127.0.0.1";
 	vect_data.clear();
@@ -241,7 +241,7 @@ void SpectralClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ExpertConnectionPort";
+	prop_name = "ConnectionPort";
 	prop_desc = "Only an expert User could change this property.<br>\nTCP/IP port of the SI Image SGL II software.<BR>";
 	prop_def  = "0";
 	vect_data.clear();
@@ -255,7 +255,7 @@ void SpectralClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ExpertImagePacketPixelsNb";
+	prop_name = "ImagePacketPixelsNb";
 	prop_desc = "Only an expert User could change this property.<br>\nNumber of pixels sent into a image part TCP/IP packet.<BR>";
 	prop_def  = "512";
 	vect_data.clear();
@@ -269,7 +269,7 @@ void SpectralClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ExpertImagePacketDelayMicroSec";
+	prop_name = "ImagePacketDelayMicroSec";
 	prop_desc = "Only an expert User could change this property.<br>\nDelay between the sending of two image part TCP/IP packets (in micro-seconds).<BR>";
 	prop_def  = "300";
 	vect_data.clear();
@@ -416,7 +416,7 @@ void SpectralClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("TANGO_BASE_CLASS");
+	inheritance.push_back("Tango::Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 
@@ -451,14 +451,14 @@ void SpectralClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 	}
 
 	//	Manage dynamic attributes if any
-	//erase_dynamic_attributes(devlist_ptr, get_class_attr()->get_attr_list());
+	erase_dynamic_attributes(devlist_ptr, get_class_attr()->get_attr_list());
 
 	//	Export devices to the outside world
 	for (unsigned long i=1 ; i<=devlist_ptr->length() ; i++)
 	{
 		//	Add dynamic attributes if any
 		Spectral *dev = static_cast<Spectral *>(device_list[device_list.size()-i]);
-		//dev->add_dynamic_attributes();
+		dev->add_dynamic_attributes();
 
 		//	Check before if database used.
 		if ((Tango::Util::_UseDb == true) && (Tango::Util::_FileDb == false))
@@ -487,6 +487,30 @@ void SpectralClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Add your own code
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectralClass::attribute_factory_before
+	//	Attribute : cooler
+	coolerAttrib	*cooler = new coolerAttrib();
+	Tango::UserDefaultAttrProp	cooler_prop;
+	cooler_prop.set_description("Turns the CCD cooling On/Off");
+	//	label	not set for cooler
+	//	unit	not set for cooler
+	//	standard_unit	not set for cooler
+	//	display_unit	not set for cooler
+	//	format	not set for cooler
+	//	max_value	not set for cooler
+	//	min_value	not set for cooler
+	//	max_alarm	not set for cooler
+	//	min_alarm	not set for cooler
+	//	max_warning	not set for cooler
+	//	min_warning	not set for cooler
+	//	delta_t	not set for cooler
+	//	delta_val	not set for cooler
+	
+	cooler->set_default_properties(cooler_prop);
+	//	Not Polled
+	cooler->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(cooler);
+
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());
 	/*----- PROTECTED REGION ID(SpectralClass::attribute_factory_after) ENABLED START -----*/

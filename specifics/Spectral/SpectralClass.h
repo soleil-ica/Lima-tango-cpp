@@ -56,6 +56,25 @@ namespace Spectral_ns
 
 /*----- PROTECTED REGION END -----*/	//	SpectralClass::classes for dynamic creation
 
+//=========================================
+//	Define classes for attributes
+//=========================================
+//	Attribute cooler class definition
+class coolerAttrib: public Tango::Attr
+{
+public:
+	coolerAttrib():Attr("cooler",
+			Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~coolerAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Spectral *>(dev))->read_cooler(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Spectral *>(dev))->write_cooler(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Spectral *>(dev))->is_cooler_allowed(ty);}
+};
+
+
 /**
  *	The SpectralClass singleton definition
  */

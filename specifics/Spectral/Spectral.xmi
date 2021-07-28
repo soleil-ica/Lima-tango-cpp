@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="ASCII"?>
 <pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
-  <classes name="Spectral" pogoRevision="8.1">
-    <description description="Device for detectors from Spectral Instruments. " title="Spectral detector TANGO specific device." sourcePath="/media/sf_Partage/DeviceSources-Spectral/Lima/applications/tango/cpp/specifics/Spectral" language="Cpp" filestogenerate="XMI   file,Code files,html Pages" license="GPL" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false" descriptionHtmlExists="false">
+  <classes name="Spectral" pogoRevision="8.2">
+    <description description="Device for detectors from Spectral Instruments. " title="Spectral detector TANGO specific device." sourcePath="/home/informatique/ica/di-franco/Lima/applications/tango/cpp/specifics/Spectral" language="Cpp" filestogenerate="XMI   file,Code files" license="GPL" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
       <inheritances classname="Device_Impl" sourcePath=""/>
       <identification contact="at synchrotron-soleil.fr - cedric.castel" author="cedric.castel" emailDomain="synchrotron-soleil.fr" classFamily="Acquisition" siteSpecific="" platform="Unix Like" bus="Ethernet" manufacturer="PSI" reference=""/>
     </description>
-    <deviceProperties name="ExpertConnectionAddress" description="Only an expert User could change this property.&lt;br>&#xA;Server name or IP address of the SI Image SGL II software.&lt;BR>">
+    <deviceProperties name="ConnectionAddress" description="Only an expert User could change this property.&lt;br>&#xA;Server name or IP address of the SI Image SGL II software.&lt;BR>">
       <type xsi:type="pogoDsl:StringType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>127.0.0.1</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="ExpertConnectionPort" description="Only an expert User could change this property.&lt;br>&#xA;TCP/IP port of the SI Image SGL II software.&lt;BR>">
+    <deviceProperties name="ConnectionPort" description="Only an expert User could change this property.&lt;br>&#xA;TCP/IP port of the SI Image SGL II software.&lt;BR>">
       <type xsi:type="pogoDsl:IntType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>0</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="ExpertImagePacketPixelsNb" description="Only an expert User could change this property.&lt;br>&#xA;Number of pixels sent into a image part TCP/IP packet.&lt;BR>">
+    <deviceProperties name="ImagePacketPixelsNb" description="Only an expert User could change this property.&lt;br>&#xA;Number of pixels sent into a image part TCP/IP packet.&lt;BR>">
       <type xsi:type="pogoDsl:IntType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>512</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="ExpertImagePacketDelayMicroSec" description="Only an expert User could change this property.&lt;br>&#xA;Delay between the sending of two image part TCP/IP packets (in micro-seconds).&lt;BR>">
+    <deviceProperties name="ImagePacketDelayMicroSec" description="Only an expert User could change this property.&lt;br>&#xA;Delay between the sending of two image part TCP/IP packets (in micro-seconds).&lt;BR>">
       <type xsi:type="pogoDsl:IntType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>300</DefaultPropValue>
@@ -43,6 +43,14 @@
       </argout>
       <status abstract="true" inherited="true" concrete="true"/>
     </commands>
+    <attributes name="cooler" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="true" isDynamic="false">
+      <dataType xsi:type="pogoDsl:BooleanType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Turns the CCD cooling On/Off" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+    </attributes>
     <states name="INIT" description="">
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </states>
@@ -55,6 +63,6 @@
     <states name="RUNNING" description="">
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </states>
-    <preferences docHome="./doc_html" makefileHome="/usr/local/share/pogo/preferences"/>
+    <preferences docHome="../doc/doc_html" makefileHome="$(TANGO_HOME)"/>
   </classes>
 </pogoDsl:PogoSystem>
