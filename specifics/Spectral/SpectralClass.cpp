@@ -487,29 +487,53 @@ void SpectralClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Add your own code
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectralClass::attribute_factory_before
-	//	Attribute : cooler
-	coolerAttrib	*cooler = new coolerAttrib();
-	Tango::UserDefaultAttrProp	cooler_prop;
-	cooler_prop.set_description("Turns the CCD cooling On/Off");
-	//	label	not set for cooler
-	//	unit	not set for cooler
-	//	standard_unit	not set for cooler
-	//	display_unit	not set for cooler
-	//	format	not set for cooler
-	//	max_value	not set for cooler
-	//	min_value	not set for cooler
-	//	max_alarm	not set for cooler
-	//	min_alarm	not set for cooler
-	//	max_warning	not set for cooler
-	//	min_warning	not set for cooler
-	//	delta_t	not set for cooler
-	//	delta_val	not set for cooler
+	//	Attribute : cooling
+	coolingAttrib	*cooling = new coolingAttrib();
+	Tango::UserDefaultAttrProp	cooling_prop;
+	cooling_prop.set_description("Turns the CCD cooling On/Off");
+	//	label	not set for cooling
+	//	unit	not set for cooling
+	//	standard_unit	not set for cooling
+	//	display_unit	not set for cooling
+	//	format	not set for cooling
+	//	max_value	not set for cooling
+	//	min_value	not set for cooling
+	//	max_alarm	not set for cooling
+	//	min_alarm	not set for cooling
+	//	max_warning	not set for cooling
+	//	min_warning	not set for cooling
+	//	delta_t	not set for cooling
+	//	delta_val	not set for cooling
 	
-	cooler->set_default_properties(cooler_prop);
+	cooling->set_default_properties(cooling_prop);
 	//	Not Polled
-	cooler->set_disp_level(Tango::OPERATOR);
+	cooling->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
-	att_list.push_back(cooler);
+	att_list.push_back(cooling);
+
+	//	Attribute : ccdTemperature
+	ccdTemperatureAttrib	*ccdtemperature = new ccdTemperatureAttrib();
+	Tango::UserDefaultAttrProp	ccdtemperature_prop;
+	ccdtemperature_prop.set_description("Camera temperature status (°C)");
+	//	label	not set for ccdTemperature
+	ccdtemperature_prop.set_unit("°C");
+	//	standard_unit	not set for ccdTemperature
+	//	display_unit	not set for ccdTemperature
+	//	format	not set for ccdTemperature
+	//	max_value	not set for ccdTemperature
+	//	min_value	not set for ccdTemperature
+	//	max_alarm	not set for ccdTemperature
+	//	min_alarm	not set for ccdTemperature
+	//	max_warning	not set for ccdTemperature
+	//	min_warning	not set for ccdTemperature
+	//	delta_t	not set for ccdTemperature
+	//	delta_val	not set for ccdTemperature
+	
+	ccdtemperature->set_default_properties(ccdtemperature_prop);
+	//	Not Polled
+	ccdtemperature->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(ccdtemperature);
 
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());

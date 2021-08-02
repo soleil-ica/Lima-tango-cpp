@@ -76,7 +76,8 @@ class Spectral : public Tango::Device_4Impl
 
 /*----- PROTECTED REGION ID(Spectral::Data Members) ENABLED START -----*/
 
-//	Add your own data members
+public:
+	Tango::DevBoolean	attr_cooling_write;
 
 /*----- PROTECTED REGION END -----*/	//	Spectral::Data Members
 
@@ -97,8 +98,8 @@ public:
 
 //	Attribute data members
 public:
-	Tango::DevBoolean	*attr_cooler_read;
-	Tango::DevBoolean	attr_cooler_write;
+	Tango::DevBoolean	*attr_cooling_read;
+	Tango::DevString	*attr_ccdTemperature_read;
 
 //	Constructors and destructors
 public:
@@ -161,15 +162,24 @@ public:
 	virtual void read_attr_hardware(vector<long> &attr_list);
 
 /**
- *	Attribute cooler related methods
+ *	Attribute cooling related methods
  *	Description: Turns the CCD cooling On/Off
  *
  *	Data type:	Tango::DevBoolean
  *	Attr type:	Scalar
  */
-	virtual void read_cooler(Tango::Attribute &attr);
-	virtual void write_cooler(Tango::WAttribute &attr);
-	virtual bool is_cooler_allowed(Tango::AttReqType type);
+	virtual void read_cooling(Tango::Attribute &attr);
+	virtual void write_cooling(Tango::WAttribute &attr);
+	virtual bool is_cooling_allowed(Tango::AttReqType type);
+/**
+ *	Attribute ccdTemperature related methods
+ *	Description: Camera temperature status (°C)
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+	virtual void read_ccdTemperature(Tango::Attribute &attr);
+	virtual bool is_ccdTemperature_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------

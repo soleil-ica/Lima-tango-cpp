@@ -59,19 +59,32 @@ namespace Spectral_ns
 //=========================================
 //	Define classes for attributes
 //=========================================
-//	Attribute cooler class definition
-class coolerAttrib: public Tango::Attr
+//	Attribute cooling class definition
+class coolingAttrib: public Tango::Attr
 {
 public:
-	coolerAttrib():Attr("cooler",
+	coolingAttrib():Attr("cooling",
 			Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
-	~coolerAttrib() {};
+	~coolingAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Spectral *>(dev))->read_cooler(att);}
+		{(static_cast<Spectral *>(dev))->read_cooling(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<Spectral *>(dev))->write_cooler(att);}
+		{(static_cast<Spectral *>(dev))->write_cooling(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Spectral *>(dev))->is_cooler_allowed(ty);}
+		{return (static_cast<Spectral *>(dev))->is_cooling_allowed(ty);}
+};
+
+//	Attribute ccdTemperature class definition
+class ccdTemperatureAttrib: public Tango::Attr
+{
+public:
+	ccdTemperatureAttrib():Attr("ccdTemperature",
+			Tango::DEV_STRING, Tango::READ) {};
+	~ccdTemperatureAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Spectral *>(dev))->read_ccdTemperature(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Spectral *>(dev))->is_ccdTemperature_allowed(ty);}
 };
 
 

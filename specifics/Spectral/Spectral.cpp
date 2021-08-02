@@ -64,9 +64,10 @@ static const char *RcsId = "$Id:  $";
 //================================================================
 
 //================================================================
-//  Attributes managed is:
+//  Attributes managed are:
 //================================================================
-//  cooler  |  Tango::DevBoolean	Scalar
+//  cooling         |  Tango::DevBoolean	Scalar
+//  ccdTemperature  |  Tango::DevString	Scalar
 //================================================================
 
 namespace Spectral_ns
@@ -129,7 +130,8 @@ void Spectral::delete_device()
         return;
 
 	/*----- PROTECTED REGION END -----*/	//	Spectral::delete_device
-	delete[] attr_cooler_read;
+	delete[] attr_cooling_read;
+	delete[] attr_ccdTemperature_read;
 }
 
 //--------------------------------------------------------
@@ -191,7 +193,8 @@ void Spectral::init_device()
 	//	Get the device properties from database
 	get_device_property();
 	
-	attr_cooler_read = new Tango::DevBoolean[1];
+	attr_cooling_read = new Tango::DevBoolean[1];
+	attr_ccdTemperature_read = new Tango::DevString[1];
 
 	/*----- PROTECTED REGION ID(Spectral::init_device) ENABLED START -----*/
 	
@@ -363,64 +366,93 @@ void Spectral::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 
 //--------------------------------------------------------
 /**
- *	Read attribute cooler related method
+ *	Read attribute cooling related method
  *	Description: Turns the CCD cooling On/Off
  *
  *	Data type:	Tango::DevBoolean
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Spectral::read_cooler(Tango::Attribute &attr)
+void Spectral::read_cooling(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Spectral::read_cooler(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Spectral::read_cooler) ENABLED START -----*/
+	DEBUG_STREAM << "Spectral::read_cooling(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Spectral::read_cooling) ENABLED START -----*/
 	//	Set the attribute value
-	 try
+	try
 	{
-		*attr_cooler_read = (Tango::DevBoolean) m_camera->getCoolerValue();
-		attr.set_value(attr_cooler_read);
+		*attr_cooling_read = (Tango::DevBoolean) m_camera->getCoolingValue();
+		attr.set_value(attr_cooling_read);
 	}
     catch(Tango::DevFailed & df)
     {
-        manage_devfailed_exception(df, "Spectral::read_cooler");
+        manage_devfailed_exception(df, "Spectral::read_cooling");
     }
     catch(Exception & e)
     {
-        manage_lima_exception(e, "Spectral::read_cooler");
+        manage_lima_exception(e, "Spectral::read_cooling");
     }
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::read_cooler
+	/*----- PROTECTED REGION END -----*/	//	Spectral::read_cooling
 }
 //--------------------------------------------------------
 /**
- *	Write attribute cooler related method
+ *	Write attribute cooling related method
  *	Description: Turns the CCD cooling On/Off
  *
  *	Data type:	Tango::DevBoolean
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Spectral::write_cooler(Tango::WAttribute &attr)
+void Spectral::write_cooling(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Spectral::write_cooler(Tango::WAttribute &attr) entering... " << endl;
-	//	Retrieve write value
-	
-	/*----- PROTECTED REGION ID(Spectral::write_cooler) ENABLED START -----*/
+	DEBUG_STREAM << "Spectral::write_cooling(Tango::WAttribute &attr) entering... " << endl;
+
+	/*----- PROTECTED REGION ID(Spectral::write_cooling) ENABLED START -----*/
 	try
 	{
-        attr.get_write_value(attr_cooler_write);
-		m_camera->setCoolerValue( (bool) attr_cooler_write);
+        attr.get_write_value(attr_cooling_write);
+		m_camera->setCoolingValue( (bool) attr_cooling_write);
 	}
     catch(Tango::DevFailed & df)
     {
-        manage_devfailed_exception(df, "Spectral::write_cooler");
+        manage_devfailed_exception(df, "Spectral::write_cooling");
     }
     catch(Exception & e)
     {
-        manage_lima_exception(e, "Spectral::write_cooler");
+        manage_lima_exception(e, "Spectral::write_cooling");
     }
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::write_cooler
+	/*----- PROTECTED REGION END -----*/	//	Spectral::write_cooling
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute ccdTemperature related method
+ *	Description: Camera temperature status (C)
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Spectral::read_ccdTemperature(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Spectral::read_ccdTemperature(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Spectral::read_ccdTemperature) ENABLED START -----*/
+	
+	try
+	{
+		*attr_ccdTemperature_read = (Tango::DevString) m_camera->getCCDTemperature().c_str();
+		attr.set_value(attr_ccdTemperature_read);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Spectral::read_ccdTemperature");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Spectral::read_ccdTemperature");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	Spectral::read_ccdTemperature
 }
 
 //--------------------------------------------------------
@@ -516,54 +548,6 @@ void Spectral::manage_lima_exception(lima::Exception & in_exception, const std::
                                    in_exception.getErrMsg().c_str(),
                                    in_caller_method_name.c_str());
 }
-// //--------------------------------------------------------
-// /**
-//  *	Read attribute cooler related method
-//  *	Description: Turns the CCD cooling On/Off
-//  *
-//  *	Data type:	Tango::DevBoolean
-//  *	Attr type:	Scalar
-//  */
-// //--------------------------------------------------------
-// void Spectral::read_cooler(Tango::Attribute &attr)
-// {
-// 	DEBUG_STREAM << "Spectral::read_cooler(Tango::Attribute &attr) entering... " << endl;
-// 	//	Set the attribute value
-// 	 try
-// 	{
-// 		*attr_cooler_read = (Tango::DevBoolean) m_camera->getCoolerValue();
-// 		attr.set_value(attr_cooler_read);
-// 	}
-//     catch(Tango::DevFailed & df)
-//     {
-//         manage_devfailed_exception(df, "Spectral::read_cooler");
-//     }
-//     catch(Exception & e)
-//     {
-//         manage_lima_exception(e, "Spectral::read_cooler");
-//     }
-// 	
-// }
-
-// //--------------------------------------------------------
-// /**
-//  *	Write attribute cooler related method
-//  *	Description: Turns the CCD cooling On/Off
-//  *
-//  *	Data type:	Tango::DevBoolean
-//  *	Attr type:	Scalar
-//  */
-// //--------------------------------------------------------
-// void Spectral::write_cooler(Tango::WAttribute &attr)
-// {
-// 	DEBUG_STREAM << "Spectral::write_cooler(Tango::WAttribute &attr) entering... " << endl;
-// 	//	Retrieve write value
-// 	Tango::DevBoolean	w_val;
-// 	attr.get_write_value(w_val);
-// 	
-// 	
-// }
-
 
 /*----- PROTECTED REGION END -----*/	//	Spectral::namespace_ending
 } //	namespace

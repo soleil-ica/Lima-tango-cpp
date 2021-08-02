@@ -56,21 +56,37 @@ namespace Spectral_ns
 
 //--------------------------------------------------------
 /**
- *	Method      : Spectral::is_cooler_allowed()
- *	Description : Execution allowed for cooler attribute
+ *	Method      : Spectral::is_cooling_allowed()
+ *	Description : Execution allowed for cooling attribute
  */
 //--------------------------------------------------------
-bool Spectral::is_cooler_allowed(TANGO_UNUSED(Tango::AttReqType type))
+bool Spectral::is_cooling_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	//	Not any excluded states for cooler attribute in Write access.
-	/*----- PROTECTED REGION ID(Spectral::coolerStateAllowed_WRITE) ENABLED START -----*/
+	//	Not any excluded states for cooling attribute in Write access.
+	/*----- PROTECTED REGION ID(Spectral::coolingStateAllowed_WRITE) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::coolerStateAllowed_WRITE
+	/*----- PROTECTED REGION END -----*/	//	Spectral::coolingStateAllowed_WRITE
 
-	//	Not any excluded states for cooler attribute in read access.
-	/*----- PROTECTED REGION ID(Spectral::coolerStateAllowed_READ) ENABLED START -----*/
+	//	Not any excluded states for cooling attribute in read access.
+	/*----- PROTECTED REGION ID(Spectral::coolingStateAllowed_READ) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::coolerStateAllowed_READ
+	/*----- PROTECTED REGION END -----*/	//	Spectral::coolingStateAllowed_READ
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : Spectral::is_ccdTemperature_allowed()
+ *	Description : Execution allowed for ccdTemperature attribute
+ */
+//--------------------------------------------------------
+bool Spectral::is_ccdTemperature_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Not any excluded states for ccdTemperature attribute in read access.
+	/*----- PROTECTED REGION ID(Spectral::ccdTemperatureStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Spectral::ccdTemperatureStateAllowed_READ
 	return true;
 }
 
