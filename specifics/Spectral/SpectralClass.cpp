@@ -131,8 +131,8 @@ SpectralClass *SpectralClass::init(const char *name)
 		catch (bad_alloc &)
 		{
 			throw;
-		}		
-	}		
+		}
+	}
 	return _instance;
 }
 
@@ -416,7 +416,7 @@ void SpectralClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Tango::Device_4Impl");
+	inheritance.push_back("TANGO_BASE_CLASS");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 
@@ -447,7 +447,7 @@ void SpectralClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
 	{
 		cout4 << "Device name : " << (*devlist_ptr)[i].in() << endl;
-		device_list.push_back(new Spectral(this, (*devlist_ptr)[i]));							 
+		device_list.push_back(new Spectral(this, (*devlist_ptr)[i]));
 	}
 
 	//	Manage dynamic attributes if any
@@ -514,9 +514,9 @@ void SpectralClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : ccdTemperature
 	ccdTemperatureAttrib	*ccdtemperature = new ccdTemperatureAttrib();
 	Tango::UserDefaultAttrProp	ccdtemperature_prop;
-	ccdtemperature_prop.set_description("Camera temperature status (°C)");
+	ccdtemperature_prop.set_description("Camera temperature status (C)");
 	//	label	not set for ccdTemperature
-	ccdtemperature_prop.set_unit("°C");
+	ccdtemperature_prop.set_unit("C");
 	//	standard_unit	not set for ccdTemperature
 	//	display_unit	not set for ccdTemperature
 	//	format	not set for ccdTemperature
@@ -535,6 +535,37 @@ void SpectralClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Not Memorized
 	att_list.push_back(ccdtemperature);
 
+	//	Attribute : readoutSpeed
+	readoutSpeedAttrib	*readoutspeed = new readoutSpeedAttrib();
+	Tango::UserDefaultAttrProp	readoutspeed_prop;
+	//	description	not set for readoutSpeed
+	//	label	not set for readoutSpeed
+	//	unit	not set for readoutSpeed
+	//	standard_unit	not set for readoutSpeed
+	//	display_unit	not set for readoutSpeed
+	//	format	not set for readoutSpeed
+	//	max_value	not set for readoutSpeed
+	//	min_value	not set for readoutSpeed
+	//	max_alarm	not set for readoutSpeed
+	//	min_alarm	not set for readoutSpeed
+	//	max_warning	not set for readoutSpeed
+	//	min_warning	not set for readoutSpeed
+	//	delta_t	not set for readoutSpeed
+	//	delta_val	not set for readoutSpeed
+	
+	{
+		vector<string> labels;
+		labels.push_back("1MHz");
+		labels.push_back("690KHz");
+		readoutspeed_prop.set_enum_labels(labels);
+	}
+	readoutspeed->set_default_properties(readoutspeed_prop);
+	//	Not Polled
+	readoutspeed->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(readoutspeed);
+
+
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());
 	/*----- PROTECTED REGION ID(SpectralClass::attribute_factory_after) ENABLED START -----*/
@@ -542,6 +573,26 @@ void SpectralClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Add your own code
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectralClass::attribute_factory_after
+}
+//--------------------------------------------------------
+/**
+ *	Method      : SpectralClass::pipe_factory()
+ *	Description : Create the pipe object(s)
+ *                and store them in the pipe list
+ */
+//--------------------------------------------------------
+void SpectralClass::pipe_factory()
+{
+	/*----- PROTECTED REGION ID(SpectralClass::pipe_factory_before) ENABLED START -----*/
+	
+	//	Add your own code
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectralClass::pipe_factory_before
+	/*----- PROTECTED REGION ID(SpectralClass::pipe_factory_after) ENABLED START -----*/
+	
+	//	Add your own code
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectralClass::pipe_factory_after
 }
 //--------------------------------------------------------
 /**
@@ -575,7 +626,7 @@ void SpectralClass::command_factory()
  * method : 		SpectralClass::create_static_attribute_list
  * description : 	Create the a list of static attributes
  *
- * @param	att_list	the ceated attribute list 
+ * @param	att_list	the ceated attribute list
  */
 //--------------------------------------------------------
 void SpectralClass::create_static_attribute_list(vector<Tango::Attr *> &att_list)
@@ -609,10 +660,10 @@ void SpectralClass::erase_dynamic_attributes(const Tango::DevVarStringArray *dev
 	Tango::Util *tg = Tango::Util::instance();
 
 	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
-	{	
+	{
 		Tango::DeviceImpl *dev_impl = tg->get_device_by_name(((string)(*devlist_ptr)[i]).c_str());
 		Spectral *dev = static_cast<Spectral *> (dev_impl);
-		
+
 		vector<Tango::Attribute *> &dev_att_list = dev->get_device_attr()->get_attribute_list();
 		vector<Tango::Attribute *>::iterator ite_att;
 		for (ite_att=dev_att_list.begin() ; ite_att != dev_att_list.end() ; ++ite_att)
@@ -644,7 +695,7 @@ void SpectralClass::erase_dynamic_attributes(const Tango::DevVarStringArray *dev
 Tango::Attr *SpectralClass::get_attr_object_by_name(vector<Tango::Attr *> &att_list, string attname)
 {
 	vector<Tango::Attr *>::iterator it;
-	for (it=att_list.begin() ; it<att_list.end() ; it++)
+	for (it=att_list.begin() ; it<att_list.end() ; ++it)
 		if ((*it)->get_name()==attname)
 			return (*it);
 	//	Attr does not exist

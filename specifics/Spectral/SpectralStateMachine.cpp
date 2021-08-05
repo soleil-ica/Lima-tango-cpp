@@ -90,8 +90,36 @@ bool Spectral::is_ccdTemperature_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	return true;
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : Spectral::is_readoutSpeed_allowed()
+ *	Description : Execution allowed for readoutSpeed attribute
+ */
+//--------------------------------------------------------
+bool Spectral::is_readoutSpeed_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Not any excluded states for readoutSpeed attribute in Write access.
+	/*----- PROTECTED REGION ID(Spectral::readoutSpeedStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Spectral::readoutSpeedStateAllowed_WRITE
+
+	//	Not any excluded states for readoutSpeed attribute in read access.
+	/*----- PROTECTED REGION ID(Spectral::readoutSpeedStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Spectral::readoutSpeedStateAllowed_READ
+	return true;
+}
+
+
 //=================================================
 //		Commands Allowed Methods
 //=================================================
+
+
+/*----- PROTECTED REGION ID(Spectral::SpectralStateAllowed.AdditionalMethods) ENABLED START -----*/
+
+//	Additional Methods
+
+/*----- PROTECTED REGION END -----*/	//	Spectral::SpectralStateAllowed.AdditionalMethods
 
 }	//	End of namespace

@@ -67,7 +67,8 @@ static const char *RcsId = "$Id:  $";
 //  Attributes managed are:
 //================================================================
 //  cooling         |  Tango::DevBoolean	Scalar
-//  ccdTemperature  |  Tango::DevString	Scalar
+//  ccdTemperature  |  Tango::DevFloat	Scalar
+//  readoutSpeed    |  Tango::DevEnum	Scalar
 //================================================================
 
 namespace Spectral_ns
@@ -86,7 +87,7 @@ namespace Spectral_ns
  */
 //--------------------------------------------------------
 Spectral::Spectral(Tango::DeviceClass *cl, string &s)
- : Tango::Device_4Impl(cl, s.c_str())
+ : TANGO_BASE_CLASS(cl, s.c_str())
 {
 	/*----- PROTECTED REGION ID(Spectral::constructor_1) ENABLED START -----*/
 	init_device();
@@ -95,7 +96,7 @@ Spectral::Spectral(Tango::DeviceClass *cl, string &s)
 }
 //--------------------------------------------------------
 Spectral::Spectral(Tango::DeviceClass *cl, const char *s)
- : Tango::Device_4Impl(cl, s)
+ : TANGO_BASE_CLASS(cl, s)
 {
 	/*----- PROTECTED REGION ID(Spectral::constructor_2) ENABLED START -----*/
 	init_device();
@@ -104,7 +105,7 @@ Spectral::Spectral(Tango::DeviceClass *cl, const char *s)
 }
 //--------------------------------------------------------
 Spectral::Spectral(Tango::DeviceClass *cl, const char *s, const char *d)
- : Tango::Device_4Impl(cl, s, d)
+ : TANGO_BASE_CLASS(cl, s, d)
 {
 	/*----- PROTECTED REGION ID(Spectral::constructor_3) ENABLED START -----*/
 	init_device();
@@ -132,6 +133,7 @@ void Spectral::delete_device()
 	/*----- PROTECTED REGION END -----*/	//	Spectral::delete_device
 	delete[] attr_cooling_read;
 	delete[] attr_ccdTemperature_read;
+	delete[] attr_readoutSpeed_read;
 }
 
 //--------------------------------------------------------
@@ -194,8 +196,8 @@ void Spectral::init_device()
 	get_device_property();
 	
 	attr_cooling_read = new Tango::DevBoolean[1];
-	attr_ccdTemperature_read = new Tango::DevString[1];
-
+	attr_ccdTemperature_read = new Tango::DevFloat[1];
+	attr_readoutSpeed_read = new readoutSpeedEnum[1];
 	/*----- PROTECTED REGION ID(Spectral::init_device) ENABLED START -----*/
 	
     //	Initialize device
@@ -306,7 +308,7 @@ void Spectral::get_device_property()
 //--------------------------------------------------------
 void Spectral::always_executed_hook()
 {
-	INFO_STREAM << "Spectral::always_executed_hook()  " << device_name << endl;
+	DEBUG_STREAM << "Spectral::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Spectral::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -363,6 +365,21 @@ void Spectral::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 	
 	/*----- PROTECTED REGION END -----*/	//	Spectral::read_attr_hardware
 }
+//--------------------------------------------------------
+/**
+ *	Method      : Spectral::write_attr_hardware()
+ *	Description : Hardware writing for attributes
+ */
+//--------------------------------------------------------
+void Spectral::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
+{
+	DEBUG_STREAM << "Spectral::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	/*----- PROTECTED REGION ID(Spectral::write_attr_hardware) ENABLED START -----*/
+	
+	//	Add your own code
+	
+	/*----- PROTECTED REGION END -----*/	//	Spectral::write_attr_hardware
+}
 
 //--------------------------------------------------------
 /**
@@ -406,7 +423,7 @@ void Spectral::read_cooling(Tango::Attribute &attr)
 void Spectral::write_cooling(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Spectral::write_cooling(Tango::WAttribute &attr) entering... " << endl;
-
+	//	Retrieve write value
 	/*----- PROTECTED REGION ID(Spectral::write_cooling) ENABLED START -----*/
 	try
 	{
@@ -429,7 +446,7 @@ void Spectral::write_cooling(Tango::WAttribute &attr)
  *	Read attribute ccdTemperature related method
  *	Description: Camera temperature status (C)
  *
- *	Data type:	Tango::DevString
+ *	Data type:	Tango::DevFloat
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
@@ -440,7 +457,7 @@ void Spectral::read_ccdTemperature(Tango::Attribute &attr)
 	
 	try
 	{
-		*attr_ccdTemperature_read = (Tango::DevString) m_camera->getCCDTemperature().c_str();
+		*attr_ccdTemperature_read = (Tango::DevFloat) m_camera->getCCDTemperature();
 		attr.set_value(attr_ccdTemperature_read);
 	}
     catch(Tango::DevFailed & df)
@@ -453,6 +470,89 @@ void Spectral::read_ccdTemperature(Tango::Attribute &attr)
     }
 	
 	/*----- PROTECTED REGION END -----*/	//	Spectral::read_ccdTemperature
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute readoutSpeed related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevEnum (readoutSpeedEnum)
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Spectral::read_readoutSpeed(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Spectral::read_readoutSpeed(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Spectral::read_readoutSpeed) ENABLED START -----*/
+	//	Set the attribute value
+	
+	try
+	{
+		ushort readout_speed =  m_camera->getReadoutSpeed();
+		Tango::DevShort* sh;
+
+		switch(readout_speed)
+		{
+			case readoutSpeedValues::value_1MHZ : sh = (Tango::DevShort*) readoutSpeedEnum::_1MHZ; break;
+
+			case readoutSpeedValues::value_690KHZ : sh = (Tango::DevShort*) readoutSpeedEnum::_690KHZ; break;
+
+			default : 
+				 break;
+		}
+		attr.set_value( (Tango::DevShort*) &sh );
+
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Spectral::read_readoutSpeed");
+    }
+    catch(Exception & e)
+    {
+       manage_lima_exception(e, "Spectral::read_readoutSpeed");
+    }
+    
+	/*----- PROTECTED REGION END -----*/	//	Spectral::read_readoutSpeed
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute readoutSpeed related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevEnum (readoutSpeedEnum)
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Spectral::write_readoutSpeed(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Spectral::write_readoutSpeed(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	/*----- PROTECTED REGION ID(Spectral::write_readoutSpeed) ENABLED START -----*/
+	try
+	{
+		ushort readout = 0;
+        attr.get_write_value(attr_readout_speed_write);
+		switch(attr_readout_speed_write)
+		{
+			case readoutSpeedEnum::_1MHZ : readout = readoutSpeedValues::value_1MHZ; break;
+
+			case readoutSpeedEnum::_690KHZ : readout = readoutSpeedValues::value_690KHZ ; break;
+
+			default : 
+				 break;
+		}
+		m_camera->setReadoutSpeedValue( readout );
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Spectral::write_readoutSpeed");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Spectral::write_readoutSpeed");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	Spectral::write_readoutSpeed
 }
 
 //--------------------------------------------------------
@@ -471,6 +571,21 @@ void Spectral::add_dynamic_attributes()
 	/*----- PROTECTED REGION END -----*/	//	Spectral::add_dynamic_attributes
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : Spectral::add_dynamic_commands()
+ *	Description : Create the dynamic commands if any
+ *                for specified device.
+ */
+//--------------------------------------------------------
+void Spectral::add_dynamic_commands()
+{
+	/*----- PROTECTED REGION ID(Spectral::add_dynamic_commands) ENABLED START -----*/
+	
+	//	Add your own code to create and add dynamic commands if any
+	
+	/*----- PROTECTED REGION END -----*/	//	Spectral::add_dynamic_commands
+}
 
 /*----- PROTECTED REGION ID(Spectral::namespace_ending) ENABLED START -----*/
 

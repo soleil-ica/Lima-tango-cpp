@@ -65,19 +65,32 @@ using namespace yat4tango;
 
 namespace Spectral_ns
 {
+enum _readoutSpeedEnum {
+	_1MHZ,
+	_690KHZ,
+} ;
+typedef _readoutSpeedEnum readoutSpeedEnum;
+
 /*----- PROTECTED REGION ID(Spectral::Additional Class Declarations) ENABLED START -----*/
 
 //	Additional Class Declarations
 
 /*----- PROTECTED REGION END -----*/	//	Spectral::Additional Class Declarations
 
-class Spectral : public Tango::Device_4Impl
+class Spectral : public TANGO_BASE_CLASS
 {
 
 /*----- PROTECTED REGION ID(Spectral::Data Members) ENABLED START -----*/
 
 public:
 	Tango::DevBoolean	attr_cooling_write;
+	Tango::DevShort     attr_readout_speed_write;
+
+	enum readoutSpeedValues : ushort
+	{
+		value_1MHZ = 18,
+		value_690KHZ = 40,
+	};
 
 /*----- PROTECTED REGION END -----*/	//	Spectral::Data Members
 
@@ -99,7 +112,8 @@ public:
 //	Attribute data members
 public:
 	Tango::DevBoolean	*attr_cooling_read;
-	Tango::DevString	*attr_ccdTemperature_read;
+	Tango::DevFloat	*attr_ccdTemperature_read;
+	readoutSpeedEnum	*attr_readoutSpeed_read;
 
 //	Constructors and destructors
 public:
@@ -127,7 +141,7 @@ public:
 	Spectral(Tango::DeviceClass *cl,const char *s,const char *d);
 	/**
 	 * The device object destructor.
-	 */	
+	 */
 	~Spectral() {delete_device();};
 
 
@@ -160,6 +174,13 @@ public:
 	 */
 	//--------------------------------------------------------
 	virtual void read_attr_hardware(vector<long> &attr_list);
+	//--------------------------------------------------------
+	/*
+	 *	Method      : Spectral::write_attr_hardware()
+	 *	Description : Hardware writing for attributes.
+	 */
+	//--------------------------------------------------------
+	virtual void write_attr_hardware(vector<long> &attr_list);
 
 /**
  *	Attribute cooling related methods
@@ -173,13 +194,23 @@ public:
 	virtual bool is_cooling_allowed(Tango::AttReqType type);
 /**
  *	Attribute ccdTemperature related methods
- *	Description: Camera temperature status (°C)
+ *	Description: Camera temperature status (C)
  *
- *	Data type:	Tango::DevString
+ *	Data type:	Tango::DevFloat
  *	Attr type:	Scalar
  */
 	virtual void read_ccdTemperature(Tango::Attribute &attr);
 	virtual bool is_ccdTemperature_allowed(Tango::AttReqType type);
+/**
+ *	Attribute readoutSpeed related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevEnum
+ *	Attr type:	Scalar
+ */
+	virtual void read_readoutSpeed(Tango::Attribute &attr);
+	virtual void write_readoutSpeed(Tango::WAttribute &attr);
+	virtual bool is_readoutSpeed_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------
@@ -192,9 +223,18 @@ public:
 
 
 
+
 //	Command related methods
 public:
 
+
+	//--------------------------------------------------------
+	/**
+	 *	Method      : Spectral::add_dynamic_commands()
+	 *	Description : Add dynamic commands if any.
+	 */
+	//--------------------------------------------------------
+	void add_dynamic_commands();
 
 /*----- PROTECTED REGION ID(Spectral::Additional Method prototypes) ENABLED START -----*/
 

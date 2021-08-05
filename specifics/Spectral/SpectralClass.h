@@ -79,12 +79,29 @@ class ccdTemperatureAttrib: public Tango::Attr
 {
 public:
 	ccdTemperatureAttrib():Attr("ccdTemperature",
-			Tango::DEV_STRING, Tango::READ) {};
+			Tango::DEV_FLOAT, Tango::READ) {};
 	~ccdTemperatureAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
 		{(static_cast<Spectral *>(dev))->read_ccdTemperature(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 		{return (static_cast<Spectral *>(dev))->is_ccdTemperature_allowed(ty);}
+};
+
+//	Attribute readoutSpeed class definition
+class readoutSpeedAttrib: public Tango::Attr
+{
+public:
+	readoutSpeedAttrib():Attr("readoutSpeed",
+			Tango::DEV_ENUM, Tango::READ_WRITE) {};
+	~readoutSpeedAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Spectral *>(dev))->read_readoutSpeed(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Spectral *>(dev))->write_readoutSpeed(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Spectral *>(dev))->is_readoutSpeed_allowed(ty);}
+	virtual bool same_type(const type_info &in_type) {return typeid(readoutSpeedEnum) == in_type;}
+	virtual string get_enum_type() {return string("readoutSpeedEnum");}
 };
 
 
@@ -122,6 +139,7 @@ class SpectralClass : public Tango::DeviceClass
 		static SpectralClass *_instance;
 		void command_factory();
 		void attribute_factory(vector<Tango::Attr *> &);
+		void pipe_factory();
 		void write_class_property();
 		void set_default_property();
 		void get_class_property();
