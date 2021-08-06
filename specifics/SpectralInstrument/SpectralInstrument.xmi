@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
   <classes name="SpectralInstrument" pogoRevision="9.1">
-    <description description="Device for detectors from Spectral Instruments. " title="Spectral Instrument detector TANGO specific device." sourcePath="Z:\Lima\applications\tango\cpp\specifics\Spectral" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions" license="GPL" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
+    <description description="Device for detectors from Spectral Instruments. " title="Spectral Instrument detector TANGO specific device." sourcePath="Z:\Lima\applications\tango\cpp\specifics\SpectralInstrument" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions" license="GPL" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
       <inheritances classname="Device_Impl" sourcePath=""/>
       <identification contact="at synchrotron-soleil.fr - cedric.castel" author="cedric.castel" emailDomain="synchrotron-soleil.fr" classFamily="Acquisition" siteSpecific="" platform="Unix Like" bus="Ethernet" manufacturer="PSI" reference=""/>
     </description>
