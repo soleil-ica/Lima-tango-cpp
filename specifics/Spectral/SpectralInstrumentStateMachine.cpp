@@ -4,9 +4,9 @@ static const char *RcsId = "$Id:  $";
 //
 // file :        SpectralStateMachine.cpp
 //
-// description : State machine file for the Spectral class
+// description : State machine file for the Spectral Instrument class
 //
-// project :     Spectral detector TANGO specific device.
+// project :     Spectral Instrument detector TANGO specific device.
 //
 // This file is part of Tango device class.
 // 
@@ -35,9 +35,9 @@ static const char *RcsId = "$Id:  $";
 //        (Program Obviously used to Generate tango Object)
 //=============================================================================
 
-#include <Spectral.h>
+#include <SpectralInstrument.h>
 
-/*----- PROTECTED REGION END -----*/	//	Spectral::SpectralStateMachine.cpp
+/*----- PROTECTED REGION END -----*/	//	Spectral::SpectralInstrumentStateMachine.cpp
 
 //================================================================
 //  States   |  Description

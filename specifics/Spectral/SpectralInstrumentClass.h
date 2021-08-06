@@ -1,15 +1,15 @@
 /*----- PROTECTED REGION ID(SpectralClass.h) ENABLED START -----*/
 //=============================================================================
 //
-// file :        SpectralClass.h
+// file :        SpectralInstrumentClass.h
 //
-// description : Include for the Spectral root class.
+// description : Include for the Spectral Instrument root class.
 //               This class is the singleton class for
-//                the Spectral device class.
+//                the Spectral Instrument device class.
 //               It contains all properties and methods which the 
-//               Spectral requires only once e.g. the commands.
+//               Spectral Instrument requires only once e.g. the commands.
 //
-// project :     Spectral detector TANGO specific device.
+// project :     Spectral Instrument detector TANGO specific device.
 //
 // This file is part of Tango device class.
 // 
@@ -43,10 +43,10 @@
 #define SpectralClass_H
 
 #include <tango.h>
-#include <Spectral.h>
+#include <SpectralInstrument.h>
 
 
-/*----- PROTECTED REGION END -----*/	//	SpectralClass.h
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass.h
 
 
 namespace Spectral_ns

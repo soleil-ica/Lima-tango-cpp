@@ -51,8 +51,8 @@
 #include "lima/CtAcquisition.h"
 #include "lima/CtImage.h"
 
-#include "SpectralInterface.h"
-#include "SpectralCamera.h"
+#include "SpectralInstrumentInterface.h"
+#include "SpectralInstrumentCamera.h"
 
 using namespace yat4tango;
 

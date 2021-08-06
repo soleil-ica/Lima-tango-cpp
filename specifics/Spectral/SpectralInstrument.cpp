@@ -40,8 +40,8 @@ static const char *RcsId = "$Id:  $";
 //=============================================================================
 
 // PROJECT
-#include <Spectral.h>
-#include <SpectralClass.h>
+#include <SpectralInstrument.h>
+#include <SpectralInstrumentClass.h>
 
 //- YAT/YAT4TANGO
 #include <yat4tango/InnerAppender.h>

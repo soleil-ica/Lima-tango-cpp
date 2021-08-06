@@ -152,7 +152,7 @@ static const char *RcsId = "$Id:  $";
 #endif
 
 #ifdef SPECTRAL_ENABLED  
-#include <SpectralClass.h>
+#include <SpectralInstrumentClass.h>
 #endif
 
 #ifndef WIN32

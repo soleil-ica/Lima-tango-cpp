@@ -1,4 +1,4 @@
-/*----- PROTECTED REGION ID(SpectralClass.cpp) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrumentClass.cpp) ENABLED START -----*/
 static const char *RcsId      = "$Id:  $";
 static const char *TagName    = "$Name:  $";
 static const char *CvsPath    = "$Source:  $";
@@ -6,15 +6,15 @@ static const char *SvnPath    = "$HeadURL:  $";
 static const char *HttpServer = "http://www.esrf.eu/computing/cs/tango/tango_doc/ds_doc/";
 //=============================================================================
 //
-// file :        SpectralClass.cpp
+// file :        SpectralInstrumentClass.cpp
 //
-// description : C++ source for the SpectralClass.
+// description : C++ source for the SpectralInstrumentClass.
 //               A singleton class derived from DeviceClass.
 //               It implements the command and attribute list
 //               and all properties and methods required
-//               by the Spectral once per process.
+//               by the Spectral Instrument once per process.
 //
-// project :     Spectral detector TANGO specific device.
+// project :     Spectral Instrument detector TANGO specific device.
 //
 // This file is part of Tango device class.
 // 
@@ -44,13 +44,13 @@ static const char *HttpServer = "http://www.esrf.eu/computing/cs/tango/tango_doc
 //=============================================================================
 
 
-#include <SpectralClass.h>
+#include <SpectralInstrumentClass.h>
 
-/*----- PROTECTED REGION END -----*/	//	SpectralClass.cpp
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass.cpp
 
 //-------------------------------------------------------------------
 /**
- *	Create SpectralClass singleton and
+ *	Create SpectralInstrumentClass singleton and
  *	return it in a C function for Python usage
  */
 //-------------------------------------------------------------------

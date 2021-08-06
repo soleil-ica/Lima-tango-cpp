@@ -159,8 +159,8 @@
 #endif
 
 #ifdef SPECTRAL_ENABLED  
-#include <SpectralCamera.h>
-#include <SpectralInterface.h>
+#include <SpectralInstrumentCamera.h>
+#include <SpectralInstrumentInterface.h>
 #endif
 
 #ifdef LAMBDA_ENABLED
