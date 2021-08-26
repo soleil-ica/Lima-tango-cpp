@@ -313,6 +313,15 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	global_gain->set_memorized_init(false);
 	att_list.push_back(global_gain);
 
+	//	Attribute : fps
+	fpsAttrib	*fps = new fpsAttrib();
+	Tango::UserDefaultAttrProp	fps_prop;
+	fps_prop.set_label("FPS");
+	fps_prop.set_format("%.2f");
+	fps_prop.set_description("The last computed frame per second (the value is computed every 100 frames only)");
+	fps->set_default_properties(fps_prop);
+	att_list.push_back(fps);
+
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
 }
@@ -563,7 +572,7 @@ void DhyanaClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Tango::Device_4Impl");
+	inheritance.push_back("Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

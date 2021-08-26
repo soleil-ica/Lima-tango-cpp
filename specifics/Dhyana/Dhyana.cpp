@@ -100,6 +100,7 @@ void Dhyana::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_temperatureTarget_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_temperature_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_fanSpeed_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_fps_read);
 	//	Delete device allocated objects
 
 	INFO_STREAM << "Remove the inner-appender." << endl;
@@ -133,6 +134,7 @@ void Dhyana::init_device()
 	CREATE_SCALAR_ATTRIBUTE(attr_temperatureTarget_read, 0.0);
 	CREATE_SCALAR_ATTRIBUTE(attr_temperature_read, 0.0);
 	CREATE_SCALAR_ATTRIBUTE(attr_fanSpeed_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_fps_read);
 
 
 	m_is_device_initialized = false;
@@ -361,6 +363,42 @@ void Dhyana::read_attr_hardware(vector<long> &attr_list)
 	DEBUG_STREAM << "Dhyana::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	//	Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Dhyana::read_fps
+// 
+// description : 	Extract real attribute values for fps acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Dhyana::read_fps(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Dhyana::read_fps(Tango::Attribute &attr) entering... "<< endl;
+	try
+	{
+		double fps = 0.0;
+		m_camera->getFPS(fps);
+		*attr_fps_read = fps;
+		attr.set_value(attr_fps_read);
+	}
+    catch(Tango::DevFailed & df)
+    {
+		ERROR_STREAM << df << endl;
+		//- rethrow exception
+        Tango::Except::re_throw_exception(df,
+										  "TANGO_DEVICE_ERROR",
+										  string(df.errors[0].desc).c_str(),
+										  "Dhyana::read_fps");
+    }
+    catch(Exception & e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+		//- throw exception
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+									   e.getErrMsg().c_str(),
+									   "Dhyana::read_fps");
+    }
+}
+
 
 //+----------------------------------------------------------------------------
 //
@@ -714,6 +752,7 @@ Tango::DevState Dhyana::dev_state()
 	argout = DeviceState;
 	return argout;
 }
+
 
 
 

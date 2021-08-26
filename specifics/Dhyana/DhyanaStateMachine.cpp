@@ -203,6 +203,20 @@ bool Dhyana::is_globalGain_allowed(Tango::AttReqType type)
 	}
 	return true;
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Dhyana::is_fps_allowed
+// 
+// description : 	Read/Write allowed for fps attribute.
+//
+//-----------------------------------------------------------------------------
+bool Dhyana::is_fps_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
 
 //=================================================
 //		Commands Allowed Methods

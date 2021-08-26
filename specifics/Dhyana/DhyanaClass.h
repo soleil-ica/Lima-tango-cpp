@@ -50,6 +50,18 @@ namespace Dhyana_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class fpsAttrib: public Tango::Attr
+{
+public:
+	fpsAttrib():Attr("fps", Tango::DEV_DOUBLE, Tango::READ) {};
+	~fpsAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Dhyana *>(dev))->read_fps(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Dhyana *>(dev))->is_fps_allowed(ty);}
+};
+
 class globalGainAttrib: public Tango::Attr
 {
 public:

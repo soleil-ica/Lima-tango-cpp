@@ -104,6 +104,7 @@ public :
 		Tango::DevUShort	attr_fanSpeed_write;
 		Tango::DevString	*attr_globalGain_read;
 		Tango::DevString	attr_globalGain_write;
+		Tango::DevDouble	*attr_fps_read;
 //@}
 
 /**
@@ -233,6 +234,10 @@ public :
  */
 	virtual void write_globalGain(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for fps acquisition result.
+ */
+	virtual void read_fps(Tango::Attribute &attr);
+/**
  *	Read/Write allowed for tucamVersion attribute.
  */
 	virtual bool is_tucamVersion_allowed(Tango::AttReqType type);
@@ -252,6 +257,10 @@ public :
  *	Read/Write allowed for globalGain attribute.
  */
 	virtual bool is_globalGain_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for fps attribute.
+ */
+	virtual bool is_fps_allowed(Tango::AttReqType type);
 /**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
