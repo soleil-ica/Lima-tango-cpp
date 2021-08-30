@@ -85,10 +85,8 @@ private:
 public:
 	//	CameraGpibAddress:	Address of the camera on the GPIB bus (from 0 to 30)
 	Tango::DevULong	cameraGpibAddress;
-	//	GpibControllerPort:	IP port of the GPIB controller
-	Tango::DevULong	gpibControllerPort;
-	//	GpibControllerHost:	Host name or IP adress of the GPIB controller
-	string	gpibControllerHost;
+	//	GpibBoardIndex:	Index of the NI GPIB board
+	Tango::DevULong	gpibBoardIndex;
 	//	TablesPath:	Path of the tables to be loaded in the camera for its initialization
 	string	tablesPath;
 	//	ExpertConfig:	Advanced config for the camera
@@ -99,12 +97,51 @@ public:
 	//  Is contained in the file names of the tables.
 	//  For example the mode of XXXX1401.TAB is 1401.
 	string	tablesMode;
+	//	SimpleCommandTimeout:	TNONE   Infinite timeout
+	//  T10us   Timeout of 10 us
+	//  T30us   Timeout of 30 us
+	//  T100us  Timeout of 100 us
+	//  T300us  Timeout of 300 us
+	//  T1ms    Timeout of 1 ms
+	//  T3ms    Timeout of 3 ms
+	//  T10ms   Timeout of 10 ms
+	//  T30ms   Timeout of 30 ms
+	//  T100ms  Timeout of 100 ms
+	//  T300ms  Timeout of 300 ms
+	//  T1s     Timeout of 1 s
+	//  T3s     Timeout of 3 s
+	//  T10s    Timeout of 10 s
+	//  T30s    Timeout of 30 s
+	//  T100s   Timeout of 100 s
+	//  T300s   Timeout of 300 s
+	//  T1000s  Timeout of 1000 s
+	Tango::DevULong	simpleCommandTimeout;
+	//	DataAcquisitionTimeout:	TNONE   Infinite timeout
+	//  T10us   Timeout of 10 us
+	//  T30us   Timeout of 30 us
+	//  T100us  Timeout of 100 us
+	//  T300us  Timeout of 300 us
+	//  T1ms    Timeout of 1 ms
+	//  T3ms    Timeout of 3 ms
+	//  T10ms   Timeout of 10 ms
+	//  T30ms   Timeout of 30 ms
+	//  T100ms  Timeout of 100 ms
+	//  T300ms  Timeout of 300 ms
+	//  T1s     Timeout of 1 s
+	//  T3s     Timeout of 3 s
+	//  T10s    Timeout of 10 s
+	//  T30s    Timeout of 30 s
+	//  T100s   Timeout of 100 s
+	//  T300s   Timeout of 300 s
+	//  T1000s  Timeout of 1000 s
+	Tango::DevULong	dataAcquisitionTimeout;
 
 //	Attribute data members
 public:
 	Tango::DevDouble	*attr_lastTemperature_read;
 	Tango::DevLong	*attr_gain_read;
 	Tango::DevLong	*attr_numFlushes_read;
+	Tango::DevBoolean	*attr_OpenShutter_read;
 
 //	Constructors and destructors
 public:
@@ -202,6 +239,18 @@ public:
 	virtual void read_numFlushes(Tango::Attribute &attr);
 	virtual void write_numFlushes(Tango::WAttribute &attr);
 	virtual bool is_numFlushes_allowed(Tango::AttReqType type);
+/**
+ *	Attribute OpenShutter related methods
+ *	Description: Open/close camera shutter.
+ *               True = Opened
+ *               False = Closed
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void read_OpenShutter(Tango::Attribute &attr);
+	virtual void write_OpenShutter(Tango::WAttribute &attr);
+	virtual bool is_OpenShutter_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------

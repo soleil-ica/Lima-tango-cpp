@@ -285,25 +285,11 @@ void SpectrumOneCCDClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "GpibControllerPort";
-	prop_desc = "IP port of the GPIB controller";
-	prop_def  = "1234";
+	prop_name = "GpibBoardIndex";
+	prop_desc = "Index of the NI GPIB board";
+	prop_def  = "0";
 	vect_data.clear();
-	vect_data.push_back("1234");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "GpibControllerHost";
-	prop_desc = "Host name or IP adress of the GPIB controller";
-	prop_def  = "127.0.0.1";
-	vect_data.clear();
-	vect_data.push_back("127.0.0.1");
+	vect_data.push_back("0");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -378,6 +364,34 @@ void SpectrumOneCCDClass::set_default_property()
 	prop_def  = "1401";
 	vect_data.clear();
 	vect_data.push_back("1401");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "SimpleCommandTimeout";
+	prop_desc = "TNONE   Infinite timeout\nT10us   Timeout of 10 us\nT30us   Timeout of 30 us\nT100us  Timeout of 100 us\nT300us  Timeout of 300 us\nT1ms    Timeout of 1 ms\nT3ms    Timeout of 3 ms\nT10ms   Timeout of 10 ms\nT30ms   Timeout of 30 ms\nT100ms  Timeout of 100 ms\nT300ms  Timeout of 300 ms\nT1s     Timeout of 1 s\nT3s     Timeout of 3 s\nT10s    Timeout of 10 s\nT30s    Timeout of 30 s\nT100s   Timeout of 100 s\nT300s   Timeout of 300 s\nT1000s  Timeout of 1000 s";
+	prop_def  = "T3s";
+	vect_data.clear();
+	vect_data.push_back("T3s");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "DataAcquisitionTimeout";
+	prop_desc = "TNONE   Infinite timeout\nT10us   Timeout of 10 us\nT30us   Timeout of 30 us\nT100us  Timeout of 100 us\nT300us  Timeout of 300 us\nT1ms    Timeout of 1 ms\nT3ms    Timeout of 3 ms\nT10ms   Timeout of 10 ms\nT30ms   Timeout of 30 ms\nT100ms  Timeout of 100 ms\nT300ms  Timeout of 300 ms\nT1s     Timeout of 1 s\nT3s     Timeout of 3 s\nT10s    Timeout of 10 s\nT30s    Timeout of 30 s\nT100s   Timeout of 100 s\nT300s   Timeout of 300 s\nT1000s  Timeout of 1000 s";
+	prop_def  = "T100s";
+	vect_data.clear();
+	vect_data.push_back("T100s");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -590,6 +604,30 @@ void SpectrumOneCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	numflushes->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
 	att_list.push_back(numflushes);
+
+	//	Attribute : OpenShutter
+	OpenShutterAttrib	*openshutter = new OpenShutterAttrib();
+	Tango::UserDefaultAttrProp	openshutter_prop;
+	openshutter_prop.set_description("Open/close camera shutter.\nTrue = Opened\nFalse = Closed");
+	//	label	not set for OpenShutter
+	//	unit	not set for OpenShutter
+	//	standard_unit	not set for OpenShutter
+	//	display_unit	not set for OpenShutter
+	//	format	not set for OpenShutter
+	//	max_value	not set for OpenShutter
+	//	min_value	not set for OpenShutter
+	//	max_alarm	not set for OpenShutter
+	//	min_alarm	not set for OpenShutter
+	//	max_warning	not set for OpenShutter
+	//	min_warning	not set for OpenShutter
+	//	delta_t	not set for OpenShutter
+	//	delta_val	not set for OpenShutter
+	
+	openshutter->set_default_properties(openshutter_prop);
+	//	Not Polled
+	openshutter->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(openshutter);
 
 
 	//	Create a list of static attributes
