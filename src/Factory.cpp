@@ -389,7 +389,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 
-/* #ifdef SPECTRUMONE_ENABLED
+#ifdef SPECTRUMONE_ENABLED
         if (detector_type == "SpectrumOneCCD")
         {
 
@@ -439,7 +439,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 return m_control;
             }
         }
-#endif */
+#endif
 
 #ifdef ANDOR_ENABLED
         if (detector_type == "AndorCCD")

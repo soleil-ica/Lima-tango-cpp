@@ -35,7 +35,7 @@
 
 #include <tango.h>
 
-#include <PogoHelper.h>
+#include <helpers/PogoHelper.h>
 
 #include <yat4tango/InnerAppender.h>
 #include <yat4tango/PropertyHelper.h>
@@ -45,6 +45,7 @@
 #include <lima/CtControl.h>
 
 #include <SpectrumOneInterface.h>
+#include <SpectrumOneCamera.h>
 
 
 /*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD.h

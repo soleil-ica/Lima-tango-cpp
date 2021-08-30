@@ -68,10 +68,15 @@
 #include <MerlinInterface.h>
 #endif
 
-/* #ifdef SPECTRUMONE_ENABLED
+#ifdef SPECTRUMONE_ENABLED
 #include <SpectrumOneInterface.h>
 #include <SpectrumOneCamera.h>
-#endif */
+#include <SpectrumOneRoiCtrlObj.h>
+#include <SpectrumOneDetInfoCtrlObj.h>
+#include <SpectrumOneSyncCtrlObj.h>
+#include <SpectrumOneEventCtrlObj.h>
+#include <SpectrumOneBinCtrlObj.h>
+#endif
 
 #ifdef ANDOR_ENABLED
 #include <AndorInterface.h>
