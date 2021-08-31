@@ -97,7 +97,8 @@ public:
 	//  Is contained in the file names of the tables.
 	//  For example the mode of XXXX1401.TAB is 1401.
 	string	tablesMode;
-	//	SimpleCommandTimeout:	TNONE   Infinite timeout
+	//	SimpleCommandTimeout:	Default timeout for commands:
+	//  TNONE   Infinite timeout
 	//  T10us   Timeout of 10 us
 	//  T30us   Timeout of 30 us
 	//  T100us  Timeout of 100 us
@@ -115,8 +116,9 @@ public:
 	//  T100s   Timeout of 100 s
 	//  T300s   Timeout of 300 s
 	//  T1000s  Timeout of 1000 s
-	Tango::DevULong	simpleCommandTimeout;
-	//	DataAcquisitionTimeout:	TNONE   Infinite timeout
+	string	simpleCommandTimeout;
+	//	DataAcquisitionTimeout:	Timeout for data reception:
+	//  TNONE   Infinite timeout
 	//  T10us   Timeout of 10 us
 	//  T30us   Timeout of 30 us
 	//  T100us  Timeout of 100 us
@@ -134,14 +136,14 @@ public:
 	//  T100s   Timeout of 100 s
 	//  T300s   Timeout of 300 s
 	//  T1000s  Timeout of 1000 s
-	Tango::DevULong	dataAcquisitionTimeout;
+	string	dataAcquisitionTimeout;
 
 //	Attribute data members
 public:
 	Tango::DevDouble	*attr_lastTemperature_read;
 	Tango::DevLong	*attr_gain_read;
 	Tango::DevLong	*attr_numFlushes_read;
-	Tango::DevBoolean	*attr_OpenShutter_read;
+	Tango::DevBoolean	*attr_openShutter_read;
 
 //	Constructors and destructors
 public:
@@ -240,7 +242,7 @@ public:
 	virtual void write_numFlushes(Tango::WAttribute &attr);
 	virtual bool is_numFlushes_allowed(Tango::AttReqType type);
 /**
- *	Attribute OpenShutter related methods
+ *	Attribute openShutter related methods
  *	Description: Open/close camera shutter.
  *               True = Opened
  *               False = Closed
@@ -248,9 +250,9 @@ public:
  *	Data type:	Tango::DevBoolean
  *	Attr type:	Scalar
  */
-	virtual void read_OpenShutter(Tango::Attribute &attr);
-	virtual void write_OpenShutter(Tango::WAttribute &attr);
-	virtual bool is_OpenShutter_allowed(Tango::AttReqType type);
+	virtual void read_openShutter(Tango::Attribute &attr);
+	virtual void write_openShutter(Tango::WAttribute &attr);
+	virtual bool is_openShutter_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------

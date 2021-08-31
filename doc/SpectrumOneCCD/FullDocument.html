@@ -25,6 +25,7 @@
 				<li> <a href="FullDocument.html#attrlastTemperature"> lastTemperature </a>
 				<li> <a href="FullDocument.html#attrgain"> gain </a>
 				<li> <a href="FullDocument.html#attrnumFlushes"> numFlushes </a>
+				<li> <a href="FullDocument.html#attropenShutter"> openShutter </a>
 			</ul>
 			<li> <a href="FullDocument.html#states">       States       </a>
 		</ul>
@@ -108,16 +109,10 @@
 		<td> 0 <br> </td>
 	</tr>
 	<tr>
-		<td> GpibControllerPort </td>
-		<td> IP port of the GPIB controller </td>
+		<td> GpibBoardIndex </td>
+		<td> Index of the NI GPIB board </td>
 		<td> int </td>
-		<td> 1234 <br> </td>
-	</tr>
-	<tr>
-		<td> GpibControllerHost </td>
-		<td> Host name or IP adress of the GPIB controller </td>
-		<td> String </td>
-		<td> 127.0.0.1 <br> </td>
+		<td> 0 <br> </td>
 	</tr>
 	<tr>
 		<td> TablesPath </td>
@@ -135,7 +130,7 @@
 		<td> InvertX </td>
 		<td> Used to invert the X axis of the images </td>
 		<td> boolean </td>
-		<td> false <br> </td>
+		<td> true <br> </td>
 	</tr>
 	<tr>
 		<td> TablesMode </td>
@@ -144,6 +139,54 @@
 			For example the mode of XXXX1401.TAB is 1401. </td>
 		<td> String </td>
 		<td> 1401 <br> </td>
+	</tr>
+	<tr>
+		<td> SimpleCommandTimeout </td>
+		<td> Default timeout for commands:<Br>
+			TNONE   Infinite timeout<Br>
+			T10us   Timeout of 10 us<Br>
+			T30us   Timeout of 30 us<Br>
+			T100us  Timeout of 100 us<Br>
+			T300us  Timeout of 300 us<Br>
+			T1ms    Timeout of 1 ms<Br>
+			T3ms    Timeout of 3 ms<Br>
+			T10ms   Timeout of 10 ms<Br>
+			T30ms   Timeout of 30 ms<Br>
+			T100ms  Timeout of 100 ms<Br>
+			T300ms  Timeout of 300 ms<Br>
+			T1s     Timeout of 1 s<Br>
+			T3s     Timeout of 3 s<Br>
+			T10s    Timeout of 10 s<Br>
+			T30s    Timeout of 30 s<Br>
+			T100s   Timeout of 100 s<Br>
+			T300s   Timeout of 300 s<Br>
+			T1000s  Timeout of 1000 s </td>
+		<td> String </td>
+		<td> T3s <br> </td>
+	</tr>
+	<tr>
+		<td> DataAcquisitionTimeout </td>
+		<td> Timeout for data reception:<Br>
+			TNONE   Infinite timeout<Br>
+			T10us   Timeout of 10 us<Br>
+			T30us   Timeout of 30 us<Br>
+			T100us  Timeout of 100 us<Br>
+			T300us  Timeout of 300 us<Br>
+			T1ms    Timeout of 1 ms<Br>
+			T3ms    Timeout of 3 ms<Br>
+			T10ms   Timeout of 10 ms<Br>
+			T30ms   Timeout of 30 ms<Br>
+			T100ms  Timeout of 100 ms<Br>
+			T300ms  Timeout of 300 ms<Br>
+			T1s     Timeout of 1 s<Br>
+			T3s     Timeout of 3 s<Br>
+			T10s    Timeout of 10 s<Br>
+			T30s    Timeout of 30 s<Br>
+			T100s   Timeout of 100 s<Br>
+			T300s   Timeout of 300 s<Br>
+			T1000s  Timeout of 1000 s </td>
+		<td> String </td>
+		<td> T100s <br> </td>
 	</tr>
 </table>
 <br><br>
@@ -491,6 +534,18 @@
 		<td> Tango::DEV_LONG </td>
 		<td> OPERATOR </td>
 		<td> Set number of flushes on the camera </td>
+	</tr>
+	<tr>
+		<td> <a href="AttropenShutter.html"> openShutter </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_BOOLEAN </td>
+		<td> OPERATOR </td>
+		<td> Open/close camera shutter.<Br>
+			True = Opened<Br>
+			False = Closed </td>
 	</tr>
 </table>
 <br><br>
@@ -854,6 +909,175 @@
 				<tr>
 					<td> Data Type </td>
 					<td> Tango::DEV_LONG </td>
+				</tr>
+				<tr>
+					<td> Display Level </td>
+					<td> OPERATOR </td>
+				</tr>
+				<tr>
+					<td> Inherited </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Abstract </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Polling Period </td>
+					<td> Not polled </td>
+				</tr>
+				<tr>
+					<td> Memorized </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Read allowed for </td>
+					<td> All states </td>
+				</tr>
+				<tr>
+					<td> Write NOT allowed for </td>
+					<td> <font size="-1">  <li> RUNNING </li>  <li> FAULT </li>  <li> ALARM </li>  <li> DISABLE </li> </font> </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Center" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Properties </b></font></center></td>
+				</tr>
+				<tr>
+					<td> label </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> standard unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> display unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> format </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_time </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_val </td>
+					<td>  </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Right" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Event Criteria </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Archive Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Push Change event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push Archive event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push DataReady event by user code </td>
+					<td> false </td>
+				</tr>
+			</table>
+		</td>
+	</TR>
+</table>
+<br><br>
+<hr>
+<a name="attropenShutter"> </a>
+<br><br><br>
+<font size="+1"><u><b> Attribute openShutter : </b></u></font>
+<ul>
+	Open/close camera shutter.<Br>
+	True = Opened<Br>
+	False = Closed
+</ul>
+<br><br><br>
+<Table Border=0 Cellpadding=0 CELLSPACING=20>
+	<TR>
+		<TD ALIGN="left" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Definition </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Attribute Type </td>
+					<td> Scalar </td>
+				</tr>
+				<tr>
+					<td> R/W Type </td>
+					<td> READ_WRITE </td>
+				</tr>
+				<tr>
+					<td> Data Type </td>
+					<td> Tango::DEV_BOOLEAN </td>
 				</tr>
 				<tr>
 					<td> Display Level </td>

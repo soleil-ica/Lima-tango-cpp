@@ -25,16 +25,10 @@
 		<td> 0 <br> </td>
 	</tr>
 	<tr>
-		<td> GpibControllerPort </td>
-		<td> IP port of the GPIB controller </td>
+		<td> GpibBoardIndex </td>
+		<td> Index of the NI GPIB board </td>
 		<td> int </td>
-		<td> 1234 <br> </td>
-	</tr>
-	<tr>
-		<td> GpibControllerHost </td>
-		<td> Host name or IP adress of the GPIB controller </td>
-		<td> String </td>
-		<td> 127.0.0.1 <br> </td>
+		<td> 0 <br> </td>
 	</tr>
 	<tr>
 		<td> TablesPath </td>
@@ -52,7 +46,7 @@
 		<td> InvertX </td>
 		<td> Used to invert the X axis of the images </td>
 		<td> boolean </td>
-		<td> false <br> </td>
+		<td> true <br> </td>
 	</tr>
 	<tr>
 		<td> TablesMode </td>
@@ -61,6 +55,54 @@
 			For example the mode of XXXX1401.TAB is 1401. </td>
 		<td> String </td>
 		<td> 1401 <br> </td>
+	</tr>
+	<tr>
+		<td> SimpleCommandTimeout </td>
+		<td> Default timeout for commands:<Br>
+			TNONE   Infinite timeout<Br>
+			T10us   Timeout of 10 us<Br>
+			T30us   Timeout of 30 us<Br>
+			T100us  Timeout of 100 us<Br>
+			T300us  Timeout of 300 us<Br>
+			T1ms    Timeout of 1 ms<Br>
+			T3ms    Timeout of 3 ms<Br>
+			T10ms   Timeout of 10 ms<Br>
+			T30ms   Timeout of 30 ms<Br>
+			T100ms  Timeout of 100 ms<Br>
+			T300ms  Timeout of 300 ms<Br>
+			T1s     Timeout of 1 s<Br>
+			T3s     Timeout of 3 s<Br>
+			T10s    Timeout of 10 s<Br>
+			T30s    Timeout of 30 s<Br>
+			T100s   Timeout of 100 s<Br>
+			T300s   Timeout of 300 s<Br>
+			T1000s  Timeout of 1000 s </td>
+		<td> String </td>
+		<td> T3s <br> </td>
+	</tr>
+	<tr>
+		<td> DataAcquisitionTimeout </td>
+		<td> Timeout for data reception:<Br>
+			TNONE   Infinite timeout<Br>
+			T10us   Timeout of 10 us<Br>
+			T30us   Timeout of 30 us<Br>
+			T100us  Timeout of 100 us<Br>
+			T300us  Timeout of 300 us<Br>
+			T1ms    Timeout of 1 ms<Br>
+			T3ms    Timeout of 3 ms<Br>
+			T10ms   Timeout of 10 ms<Br>
+			T30ms   Timeout of 30 ms<Br>
+			T100ms  Timeout of 100 ms<Br>
+			T300ms  Timeout of 300 ms<Br>
+			T1s     Timeout of 1 s<Br>
+			T3s     Timeout of 3 s<Br>
+			T10s    Timeout of 10 s<Br>
+			T30s    Timeout of 30 s<Br>
+			T100s   Timeout of 100 s<Br>
+			T300s   Timeout of 300 s<Br>
+			T1000s  Timeout of 1000 s </td>
+		<td> String </td>
+		<td> T100s <br> </td>
 	</tr>
 </table>
 </body>

@@ -63,7 +63,7 @@
 //  lastTemperature  |  Tango::DevDouble	Scalar
 //  gain             |  Tango::DevLong	Scalar
 //  numFlushes       |  Tango::DevLong	Scalar
-//  OpenShutter      |  Tango::DevBoolean	Scalar
+//  openShutter      |  Tango::DevBoolean	Scalar
 //================================================================
 
 namespace SpectrumOneCCD_ns
@@ -346,7 +346,7 @@ void SpectrumOneCCD::get_device_property()
 	//	Check device property data members init
 
     // Create all properties if empty
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "InvertX");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", "InvertX");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "5", "CameraGpibAddress");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", "GpibBoardIndex");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1401", "TablesMode");
@@ -504,9 +504,10 @@ void SpectrumOneCCD::read_numFlushes(Tango::Attribute &attr)
 	DEBUG_STREAM << "SpectrumOneCCD::read_numFlushes(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::read_numFlushes) ENABLED START -----*/
 	//	Set the attribute value
-    int temp;
-    m_camera->getNumFlushes(temp);
-    *attr_numFlushes_read = static_cast<long>(temp);
+    // Get the last reported num_flushes from the camera
+    int num_flushes;
+    m_camera->getNumFlushes(num_flushes);
+    *attr_numFlushes_read = static_cast<long>(num_flushes);
 	attr.set_value(attr_numFlushes_read);
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::read_numFlushes
@@ -528,13 +529,14 @@ void SpectrumOneCCD::write_numFlushes(Tango::WAttribute &attr)
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::write_numFlushes) ENABLED START -----*/
 	
+    // Set num flushes
     m_camera->setNumFlushes(static_cast<int>(w_val));
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::write_numFlushes
 }
 //--------------------------------------------------------
 /**
- *	Read attribute OpenShutter related method
+ *	Read attribute openShutter related method
  *	Description: Open/close camera shutter.
  *               True = Opened
  *               False = Closed
@@ -543,19 +545,20 @@ void SpectrumOneCCD::write_numFlushes(Tango::WAttribute &attr)
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void SpectrumOneCCD::read_OpenShutter(Tango::Attribute &attr)
+void SpectrumOneCCD::read_openShutter(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "SpectrumOneCCD::read_OpenShutter(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::read_OpenShutter) ENABLED START -----*/
+	DEBUG_STREAM << "SpectrumOneCCD::read_openShutter(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::read_openShutter) ENABLED START -----*/
 	//	Set the attribute value
+    // Get the last reported shutter state from the camera
     m_camera->getShutter(*attr_OpenShutter_read);
 	attr.set_value(attr_OpenShutter_read);
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::read_OpenShutter
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::read_openShutter
 }
 //--------------------------------------------------------
 /**
- *	Write attribute OpenShutter related method
+ *	Write attribute openShutter related method
  *	Description: Open/close camera shutter.
  *               True = Opened
  *               False = Closed
@@ -564,16 +567,17 @@ void SpectrumOneCCD::read_OpenShutter(Tango::Attribute &attr)
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void SpectrumOneCCD::write_OpenShutter(Tango::WAttribute &attr)
+void SpectrumOneCCD::write_openShutter(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "SpectrumOneCCD::write_OpenShutter(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "SpectrumOneCCD::write_openShutter(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::write_OpenShutter) ENABLED START -----*/
-	
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::write_openShutter) ENABLED START -----*/
+    // Set shutter state
     m_camera->setShutter(w_val);
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::write_OpenShutter
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::write_openShutter
 }
 
 //--------------------------------------------------------

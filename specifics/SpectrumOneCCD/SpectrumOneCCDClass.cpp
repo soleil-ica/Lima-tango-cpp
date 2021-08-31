@@ -347,9 +347,9 @@ void SpectrumOneCCDClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 	prop_name = "InvertX";
 	prop_desc = "Used to invert the X axis of the images";
-	prop_def  = "false";
+	prop_def  = "true";
 	vect_data.clear();
-	vect_data.push_back("false");
+	vect_data.push_back("true");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -374,7 +374,7 @@ void SpectrumOneCCDClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 	prop_name = "SimpleCommandTimeout";
-	prop_desc = "TNONE   Infinite timeout\nT10us   Timeout of 10 us\nT30us   Timeout of 30 us\nT100us  Timeout of 100 us\nT300us  Timeout of 300 us\nT1ms    Timeout of 1 ms\nT3ms    Timeout of 3 ms\nT10ms   Timeout of 10 ms\nT30ms   Timeout of 30 ms\nT100ms  Timeout of 100 ms\nT300ms  Timeout of 300 ms\nT1s     Timeout of 1 s\nT3s     Timeout of 3 s\nT10s    Timeout of 10 s\nT30s    Timeout of 30 s\nT100s   Timeout of 100 s\nT300s   Timeout of 300 s\nT1000s  Timeout of 1000 s";
+	prop_desc = "Default timeout for commands:\nTNONE   Infinite timeout\nT10us   Timeout of 10 us\nT30us   Timeout of 30 us\nT100us  Timeout of 100 us\nT300us  Timeout of 300 us\nT1ms    Timeout of 1 ms\nT3ms    Timeout of 3 ms\nT10ms   Timeout of 10 ms\nT30ms   Timeout of 30 ms\nT100ms  Timeout of 100 ms\nT300ms  Timeout of 300 ms\nT1s     Timeout of 1 s\nT3s     Timeout of 3 s\nT10s    Timeout of 10 s\nT30s    Timeout of 30 s\nT100s   Timeout of 100 s\nT300s   Timeout of 300 s\nT1000s  Timeout of 1000 s";
 	prop_def  = "T3s";
 	vect_data.clear();
 	vect_data.push_back("T3s");
@@ -388,7 +388,7 @@ void SpectrumOneCCDClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 	prop_name = "DataAcquisitionTimeout";
-	prop_desc = "TNONE   Infinite timeout\nT10us   Timeout of 10 us\nT30us   Timeout of 30 us\nT100us  Timeout of 100 us\nT300us  Timeout of 300 us\nT1ms    Timeout of 1 ms\nT3ms    Timeout of 3 ms\nT10ms   Timeout of 10 ms\nT30ms   Timeout of 30 ms\nT100ms  Timeout of 100 ms\nT300ms  Timeout of 300 ms\nT1s     Timeout of 1 s\nT3s     Timeout of 3 s\nT10s    Timeout of 10 s\nT30s    Timeout of 30 s\nT100s   Timeout of 100 s\nT300s   Timeout of 300 s\nT1000s  Timeout of 1000 s";
+	prop_desc = "Timeout for data reception:\nTNONE   Infinite timeout\nT10us   Timeout of 10 us\nT30us   Timeout of 30 us\nT100us  Timeout of 100 us\nT300us  Timeout of 300 us\nT1ms    Timeout of 1 ms\nT3ms    Timeout of 3 ms\nT10ms   Timeout of 10 ms\nT30ms   Timeout of 30 ms\nT100ms  Timeout of 100 ms\nT300ms  Timeout of 300 ms\nT1s     Timeout of 1 s\nT3s     Timeout of 3 s\nT10s    Timeout of 10 s\nT30s    Timeout of 30 s\nT100s   Timeout of 100 s\nT300s   Timeout of 300 s\nT1000s  Timeout of 1000 s";
 	prop_def  = "T100s";
 	vect_data.clear();
 	vect_data.push_back("T100s");
@@ -605,23 +605,23 @@ void SpectrumOneCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Not Memorized
 	att_list.push_back(numflushes);
 
-	//	Attribute : OpenShutter
-	OpenShutterAttrib	*openshutter = new OpenShutterAttrib();
+	//	Attribute : openShutter
+	openShutterAttrib	*openshutter = new openShutterAttrib();
 	Tango::UserDefaultAttrProp	openshutter_prop;
 	openshutter_prop.set_description("Open/close camera shutter.\nTrue = Opened\nFalse = Closed");
-	//	label	not set for OpenShutter
-	//	unit	not set for OpenShutter
-	//	standard_unit	not set for OpenShutter
-	//	display_unit	not set for OpenShutter
-	//	format	not set for OpenShutter
-	//	max_value	not set for OpenShutter
-	//	min_value	not set for OpenShutter
-	//	max_alarm	not set for OpenShutter
-	//	min_alarm	not set for OpenShutter
-	//	max_warning	not set for OpenShutter
-	//	min_warning	not set for OpenShutter
-	//	delta_t	not set for OpenShutter
-	//	delta_val	not set for OpenShutter
+	//	label	not set for openShutter
+	//	unit	not set for openShutter
+	//	standard_unit	not set for openShutter
+	//	display_unit	not set for openShutter
+	//	format	not set for openShutter
+	//	max_value	not set for openShutter
+	//	min_value	not set for openShutter
+	//	max_alarm	not set for openShutter
+	//	min_alarm	not set for openShutter
+	//	max_warning	not set for openShutter
+	//	min_warning	not set for openShutter
+	//	delta_t	not set for openShutter
+	//	delta_val	not set for openShutter
 	
 	openshutter->set_default_properties(openshutter_prop);
 	//	Not Polled

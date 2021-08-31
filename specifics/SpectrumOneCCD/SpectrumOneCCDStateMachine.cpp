@@ -132,21 +132,34 @@ bool SpectrumOneCCD::is_numFlushes_allowed(TANGO_UNUSED(Tango::AttReqType type))
 
 //--------------------------------------------------------
 /**
- *	Method      : SpectrumOneCCD::is_OpenShutter_allowed()
- *	Description : Execution allowed for OpenShutter attribute
+ *	Method      : SpectrumOneCCD::is_openShutter_allowed()
+ *	Description : Execution allowed for openShutter attribute
  */
 //--------------------------------------------------------
-bool SpectrumOneCCD::is_OpenShutter_allowed(TANGO_UNUSED(Tango::AttReqType type))
+bool SpectrumOneCCD::is_openShutter_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	//	Not any excluded states for OpenShutter attribute in Write access.
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::OpenShutterStateAllowed_WRITE) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::OpenShutterStateAllowed_WRITE
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::RUNNING ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::ALARM ||
+			get_state()==Tango::DISABLE)
+		{
+		/*----- PROTECTED REGION ID(SpectrumOneCCD::openShutterStateAllowed_WRITE) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::openShutterStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
 
-	//	Not any excluded states for OpenShutter attribute in read access.
-	/*----- PROTECTED REGION ID(SpectrumOneCCD::OpenShutterStateAllowed_READ) ENABLED START -----*/
+	//	Not any excluded states for openShutter attribute in read access.
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::openShutterStateAllowed_READ) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::OpenShutterStateAllowed_READ
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::openShutterStateAllowed_READ
 	return true;
 }
 
