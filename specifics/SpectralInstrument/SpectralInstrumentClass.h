@@ -1,7 +1,7 @@
-/*----- PROTECTED REGION ID(SpectralClass.h) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrumentClass.h) ENABLED START -----*/
 //=============================================================================
 //
-// file :        SpectralInstrumentClass.h
+// file :        SpectralInstrumentInstrumentClass.h
 //
 // description : Include for the Spectral Instrument root class.
 //               This class is the singleton class for
@@ -39,8 +39,8 @@
 //=============================================================================
 
 
-#ifndef SpectralClass_H
-#define SpectralClass_H
+#ifndef SpectralInstrumentClass_H
+#define SpectralInstrumentClass_H
 
 #include <tango.h>
 #include <SpectralInstrument.h>
@@ -49,12 +49,12 @@
 /*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass.h
 
 
-namespace Spectral_ns
+namespace SpectralInstrument_ns
 {
-/*----- PROTECTED REGION ID(SpectralClass::classes for dynamic creation) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrumentClass::classes for dynamic creation) ENABLED START -----*/
 
 
-/*----- PROTECTED REGION END -----*/	//	SpectralClass::classes for dynamic creation
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass::classes for dynamic creation
 
 //=========================================
 //	Define classes for attributes
@@ -67,11 +67,11 @@ public:
 			Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
 	~coolingAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Spectral *>(dev))->read_cooling(att);}
+		{(static_cast<SpectralInstrument *>(dev))->read_cooling(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<Spectral *>(dev))->write_cooling(att);}
+		{(static_cast<SpectralInstrument *>(dev))->write_cooling(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Spectral *>(dev))->is_cooling_allowed(ty);}
+		{return (static_cast<SpectralInstrument *>(dev))->is_cooling_allowed(ty);}
 };
 
 //	Attribute ccdTemperature class definition
@@ -82,9 +82,9 @@ public:
 			Tango::DEV_FLOAT, Tango::READ) {};
 	~ccdTemperatureAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Spectral *>(dev))->read_ccdTemperature(att);}
+		{(static_cast<SpectralInstrument *>(dev))->read_ccdTemperature(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Spectral *>(dev))->is_ccdTemperature_allowed(ty);}
+		{return (static_cast<SpectralInstrument *>(dev))->is_ccdTemperature_allowed(ty);}
 };
 
 //	Attribute readoutSpeed class definition
@@ -95,30 +95,30 @@ public:
 			Tango::DEV_ENUM, Tango::READ_WRITE) {};
 	~readoutSpeedAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Spectral *>(dev))->read_readoutSpeed(att);}
+		{(static_cast<SpectralInstrument *>(dev))->read_readoutSpeed(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<Spectral *>(dev))->write_readoutSpeed(att);}
+		{(static_cast<SpectralInstrument *>(dev))->write_readoutSpeed(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Spectral *>(dev))->is_readoutSpeed_allowed(ty);}
+		{return (static_cast<SpectralInstrument *>(dev))->is_readoutSpeed_allowed(ty);}
 	virtual bool same_type(const type_info &in_type) {return typeid(readoutSpeedEnum) == in_type;}
 	virtual string get_enum_type() {return string("readoutSpeedEnum");}
 };
 
 
 /**
- *	The SpectralClass singleton definition
+ *	The SpectralInstrumentClass singleton definition
  */
 
 #ifdef _TG_WINDOWS_
-class __declspec(dllexport)  SpectralClass : public Tango::DeviceClass
+class __declspec(dllexport)  SpectralInstrumentClass : public Tango::DeviceClass
 #else
-class SpectralClass : public Tango::DeviceClass
+class SpectralInstrumentClass : public Tango::DeviceClass
 #endif
 {
-	/*----- PROTECTED REGION ID(SpectralClass::Additionnal DServer data members) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrumentClass::Additionnal DServer data members) ENABLED START -----*/
 	
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectralClass::Additionnal DServer data members
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass::Additionnal DServer data members
 
 	public:
 		//	write class properties data members
@@ -127,16 +127,16 @@ class SpectralClass : public Tango::DeviceClass
 		Tango::DbData	dev_def_prop;
 	
 		//	Method prototypes
-		static SpectralClass *init(const char *);
-		static SpectralClass *instance();
-		~SpectralClass();
+		static SpectralInstrumentClass *init(const char *);
+		static SpectralInstrumentClass *instance();
+		~SpectralInstrumentClass();
 		Tango::DbDatum	get_class_property(string &);
 		Tango::DbDatum	get_default_device_property(string &);
 		Tango::DbDatum	get_default_class_property(string &);
 	
 	protected:
-		SpectralClass(string &);
-		static SpectralClass *_instance;
+		SpectralInstrumentClass(string &);
+		static SpectralInstrumentClass *_instance;
 		void command_factory();
 		void attribute_factory(vector<Tango::Attr *> &);
 		void pipe_factory();
@@ -156,4 +156,4 @@ class SpectralClass : public Tango::DeviceClass
 
 }	//	End of namespace
 
-#endif   //	Spectral_H
+#endif   //	SpectralInstrument_H

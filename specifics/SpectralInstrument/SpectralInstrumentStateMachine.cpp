@@ -1,10 +1,10 @@
-/*----- PROTECTED REGION ID(SpectralStateMachine.cpp) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrumentStateMachine.cpp) ENABLED START -----*/
 static const char *RcsId = "$Id:  $";
 //=============================================================================
 //
-// file :        SpectralStateMachine.cpp
+// file :        SpectralInstrumentStateMachine.cpp
 //
-// description : State machine file for the Spectral Instrument class
+// description : State machine file for the SpectralInstrument Instrument class
 //
 // project :     Spectral Instrument detector TANGO specific device.
 //
@@ -37,7 +37,7 @@ static const char *RcsId = "$Id:  $";
 
 #include <SpectralInstrument.h>
 
-/*----- PROTECTED REGION END -----*/	//	Spectral::SpectralInstrumentStateMachine.cpp
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::SpectralInstrumentStateMachine.cpp
 
 //================================================================
 //  States   |  Description
@@ -48,7 +48,7 @@ static const char *RcsId = "$Id:  $";
 //  RUNNING  |  
 
 
-namespace Spectral_ns
+namespace SpectralInstrument_ns
 {
 //=================================================
 //		Attributes Allowed Methods
@@ -56,57 +56,57 @@ namespace Spectral_ns
 
 //--------------------------------------------------------
 /**
- *	Method      : Spectral::is_cooling_allowed()
+ *	Method      : SpectralInstrument::is_cooling_allowed()
  *	Description : Execution allowed for cooling attribute
  */
 //--------------------------------------------------------
-bool Spectral::is_cooling_allowed(TANGO_UNUSED(Tango::AttReqType type))
+bool SpectralInstrument::is_cooling_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
 	//	Not any excluded states for cooling attribute in Write access.
-	/*----- PROTECTED REGION ID(Spectral::coolingStateAllowed_WRITE) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrument::coolingStateAllowed_WRITE) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::coolingStateAllowed_WRITE
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::coolingStateAllowed_WRITE
 
 	//	Not any excluded states for cooling attribute in read access.
-	/*----- PROTECTED REGION ID(Spectral::coolingStateAllowed_READ) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrument::coolingStateAllowed_READ) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::coolingStateAllowed_READ
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::coolingStateAllowed_READ
 	return true;
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Spectral::is_ccdTemperature_allowed()
+ *	Method      : SpectralInstrument::is_ccdTemperature_allowed()
  *	Description : Execution allowed for ccdTemperature attribute
  */
 //--------------------------------------------------------
-bool Spectral::is_ccdTemperature_allowed(TANGO_UNUSED(Tango::AttReqType type))
+bool SpectralInstrument::is_ccdTemperature_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
 
 	//	Not any excluded states for ccdTemperature attribute in read access.
-	/*----- PROTECTED REGION ID(Spectral::ccdTemperatureStateAllowed_READ) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrument::ccdTemperatureStateAllowed_READ) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::ccdTemperatureStateAllowed_READ
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::ccdTemperatureStateAllowed_READ
 	return true;
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Spectral::is_readoutSpeed_allowed()
+ *	Method      : SpectralInstrument::is_readoutSpeed_allowed()
  *	Description : Execution allowed for readoutSpeed attribute
  */
 //--------------------------------------------------------
-bool Spectral::is_readoutSpeed_allowed(TANGO_UNUSED(Tango::AttReqType type))
+bool SpectralInstrument::is_readoutSpeed_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
 	//	Not any excluded states for readoutSpeed attribute in Write access.
-	/*----- PROTECTED REGION ID(Spectral::readoutSpeedStateAllowed_WRITE) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrument::readoutSpeedStateAllowed_WRITE) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::readoutSpeedStateAllowed_WRITE
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::readoutSpeedStateAllowed_WRITE
 
 	//	Not any excluded states for readoutSpeed attribute in read access.
-	/*----- PROTECTED REGION ID(Spectral::readoutSpeedStateAllowed_READ) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrument::readoutSpeedStateAllowed_READ) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::readoutSpeedStateAllowed_READ
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::readoutSpeedStateAllowed_READ
 	return true;
 }
 
@@ -116,10 +116,10 @@ bool Spectral::is_readoutSpeed_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //=================================================
 
 
-/*----- PROTECTED REGION ID(Spectral::SpectralStateAllowed.AdditionalMethods) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrument::SpectralInstrumentStateAllowed.AdditionalMethods) ENABLED START -----*/
 
 //	Additional Methods
 
-/*----- PROTECTED REGION END -----*/	//	Spectral::SpectralStateAllowed.AdditionalMethods
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::SpectralInstrumentStateAllowed.AdditionalMethods
 
 }	//	End of namespace

@@ -151,7 +151,7 @@ static const char *RcsId = "$Id:  $";
 #include <Xspress3Class.h>
 #endif
 
-#ifdef SPECTRAL_ENABLED  
+#ifdef SPECTRALINSTRUMENT_ENABLED  
 #include <SpectralInstrumentClass.h>
 #endif
 
@@ -280,8 +280,8 @@ void Tango::DServer::class_factory()
     add_class(Xspress3_ns::Xspress3Class::init("Xspress3"));
 #endif	
 
-#ifdef SPECTRAL_ENABLED  
-    add_class(Spectral_ns::SpectralClass::init("Spectral"));
+#ifdef SPECTRALINSTRUMENT_ENABLED  
+    add_class(SpectralInstrument_ns::SpectralInstrumentClass::init("SpectralInstrument"));
 #endif
 
 	

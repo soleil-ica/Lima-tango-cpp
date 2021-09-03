@@ -1,9 +1,9 @@
-.. _lima-tango-spectral:
+.. _lima-tango-spectral-instrument:
 
-Spectral Tango C++ device
+Spectral Instrument Tango C++ device
 ==========================
 
-This is the reference documentation of the Spectral Tango C++ device.
+This is the reference documentation of the Spectral Instrument Tango C++ device.
 
 
 Properties

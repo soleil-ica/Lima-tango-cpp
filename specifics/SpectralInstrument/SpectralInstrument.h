@@ -1,11 +1,11 @@
-/*----- PROTECTED REGION ID(Spectral.h) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrument.h) ENABLED START -----*/
 //=============================================================================
 //
-// file :        Spectral.h
+// file :        SpectralInstrument.h
 //
-// description : Include file for the Spectral class
+// description : Include file for the Spectral Instrument class
 //
-// project :     Spectral detector TANGO specific device.
+// project :     Spectral Instrument detector TANGO specific device.
 //
 // This file is part of Tango device class.
 // 
@@ -35,8 +35,8 @@
 //=============================================================================
 
 
-#ifndef Spectral_H
-#define Spectral_H
+#ifndef SpectralInstrument_H
+#define SpectralInstrument_H
 
 #include <tango.h>
 
@@ -56,14 +56,14 @@
 
 using namespace yat4tango;
 
-/*----- PROTECTED REGION END -----*/	//	Spectral.h
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrument.h
 
 /**
- *  Spectral class description:
+ *  Spectral Instrument class description:
  *    Device for detectors from Spectral Instruments. 
  */
 
-namespace Spectral_ns
+namespace SpectralInstrument_ns
 {
 enum _readoutSpeedEnum {
 	_1MHZ,
@@ -71,16 +71,16 @@ enum _readoutSpeedEnum {
 } ;
 typedef _readoutSpeedEnum readoutSpeedEnum;
 
-/*----- PROTECTED REGION ID(Spectral::Additional Class Declarations) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrument::Additional Class Declarations) ENABLED START -----*/
 
 //	Additional Class Declarations
 
 /*----- PROTECTED REGION END -----*/	//	Spectral::Additional Class Declarations
 
-class Spectral : public TANGO_BASE_CLASS
+class SpectralInstrument : public TANGO_BASE_CLASS
 {
 
-/*----- PROTECTED REGION ID(Spectral::Data Members) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrument::Data Members) ENABLED START -----*/
 
 public:
 	Tango::DevBoolean	attr_cooling_write;
@@ -92,7 +92,7 @@ public:
 		value_690KHZ = 40,
 	};
 
-/*----- PROTECTED REGION END -----*/	//	Spectral::Data Members
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::Data Members
 
 //	Device property data members
 public:
@@ -123,14 +123,14 @@ public:
 	 *	@param cl	Class.
 	 *	@param s 	Device Name
 	 */
-	Spectral(Tango::DeviceClass *cl,string &s);
+	SpectralInstrument(Tango::DeviceClass *cl,string &s);
 	/**
 	 * Constructs a newly device object.
 	 *
 	 *	@param cl	Class.
 	 *	@param s 	Device Name
 	 */
-	Spectral(Tango::DeviceClass *cl,const char *s);
+	SpectralInstrument(Tango::DeviceClass *cl,const char *s);
 	/**
 	 * Constructs a newly device object.
 	 *
@@ -138,11 +138,11 @@ public:
 	 *	@param s 	Device name
 	 *	@param d	Device description.
 	 */
-	Spectral(Tango::DeviceClass *cl,const char *s,const char *d);
+	SpectralInstrument(Tango::DeviceClass *cl,const char *s,const char *d);
 	/**
 	 * The device object destructor.
 	 */
-	~Spectral() {delete_device();};
+	~SpectralInstrument() {delete_device();};
 
 
 //	Miscellaneous methods
@@ -169,14 +169,14 @@ public:
 public:
 	//--------------------------------------------------------
 	/*
-	 *	Method      : Spectral::read_attr_hardware()
+	 *	Method      : SpectralInstrument::read_attr_hardware()
 	 *	Description : Hardware acquisition for attributes.
 	 */
 	//--------------------------------------------------------
 	virtual void read_attr_hardware(vector<long> &attr_list);
 	//--------------------------------------------------------
 	/*
-	 *	Method      : Spectral::write_attr_hardware()
+	 *	Method      : SpectralInstrument::write_attr_hardware()
 	 *	Description : Hardware writing for attributes.
 	 */
 	//--------------------------------------------------------
@@ -215,7 +215,7 @@ public:
 
 	//--------------------------------------------------------
 	/**
-	 *	Method      : Spectral::add_dynamic_attributes()
+	 *	Method      : SpectralInstrument::add_dynamic_attributes()
 	 *	Description : Add dynamic attributes if any.
 	 */
 	//--------------------------------------------------------
@@ -230,13 +230,13 @@ public:
 
 	//--------------------------------------------------------
 	/**
-	 *	Method      : Spectral::add_dynamic_commands()
+	 *	Method      : SpectralInstrument::add_dynamic_commands()
 	 *	Description : Add dynamic commands if any.
 	 */
 	//--------------------------------------------------------
 	void add_dynamic_commands();
 
-/*----- PROTECTED REGION ID(Spectral::Additional Method prototypes) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrument::Additional Method prototypes) ENABLED START -----*/
 
 //	Additional Method prototypes
 private:
@@ -263,23 +263,23 @@ private:
 
 protected :	
     // lima OBJECTS
-    lima::Spectral::Interface * m_hw    ;
+    lima::SpectralInstrument::Interface * m_hw    ;
     lima::CtControl           * m_ct    ;
-    lima::Spectral::Camera    * m_camera;
+    lima::SpectralInstrument::Camera    * m_camera;
 	bool                        m_is_device_initialized;
     stringstream                m_status_message       ;
 
 	yat4tango::DynamicInterfaceManager m_dim;
 
-/*----- PROTECTED REGION END -----*/	//	Spectral::Additional Method prototypes
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::Additional Method prototypes
 };
 
-/*----- PROTECTED REGION ID(Spectral::Additional Classes Definitions) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrument::Additional Classes Definitions) ENABLED START -----*/
 
 //	Additional Classes Definitions
 
-/*----- PROTECTED REGION END -----*/	//	Spectral::Additional Classes Definitions
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::Additional Classes Definitions
 
 }	//	End of namespace
 
-#endif   //	Spectral_H
+#endif   //	SpectralInstrument_H

@@ -1,16 +1,16 @@
-/*----- PROTECTED REGION ID(Spectral.cpp) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrument.cpp) ENABLED START -----*/
 static const char *RcsId = "$Id:  $";
 //=============================================================================
 //
-// file :        Spectral.cpp
+// file :        SpectralInstrument.cpp
 //
-// description : C++ source for the Spectral class and its commands.
+// description : C++ source for the Spectral Instrument class and its commands.
 //               The class is derived from Device. It represents the
 //               CORBA servant object which will be accessed from the
 //               network. All commands which can be executed on the
-//               Spectral are implemented in this file.
+//               Spectral Instrument are implemented in this file.
 //
-// project :     Spectral detector TANGO specific device.
+// project :     Spectral Instrument detector TANGO specific device.
 //
 // This file is part of Tango device class.
 // 
@@ -46,10 +46,10 @@ static const char *RcsId = "$Id:  $";
 //- YAT/YAT4TANGO
 #include <yat4tango/InnerAppender.h>
 
-/*----- PROTECTED REGION END -----*/	//	Spectral.cpp
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrument.cpp
 
 /**
- *  Spectral class description:
+ *  Spectral Instrument class description:
  *    Device for detectors from Spectral Instruments. 
  */
 
@@ -71,58 +71,58 @@ static const char *RcsId = "$Id:  $";
 //  readoutSpeed    |  Tango::DevEnum	Scalar
 //================================================================
 
-namespace Spectral_ns
+namespace SpectralInstrument_ns
 {
-/*----- PROTECTED REGION ID(Spectral::namespace_starting) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrument::namespace_starting) ENABLED START -----*/
 
 //	static initializations
 
-/*----- PROTECTED REGION END -----*/	//	Spectral::namespace_starting
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::namespace_starting
 
 //--------------------------------------------------------
 /**
- *	Method      : Spectral::Spectral()
+ *	Method      : SpectralInstrument::SpectralInstrument()
  *	Description : Constructors for a Tango device
  *                implementing the classSpectral
  */
 //--------------------------------------------------------
-Spectral::Spectral(Tango::DeviceClass *cl, string &s)
+SpectralInstrument::SpectralInstrument(Tango::DeviceClass *cl, string &s)
  : TANGO_BASE_CLASS(cl, s.c_str())
 {
-	/*----- PROTECTED REGION ID(Spectral::constructor_1) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrument::constructor_1) ENABLED START -----*/
 	init_device();
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::constructor_1
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::constructor_1
 }
 //--------------------------------------------------------
-Spectral::Spectral(Tango::DeviceClass *cl, const char *s)
+SpectralInstrument::SpectralInstrument(Tango::DeviceClass *cl, const char *s)
  : TANGO_BASE_CLASS(cl, s)
 {
-	/*----- PROTECTED REGION ID(Spectral::constructor_2) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrument::constructor_2) ENABLED START -----*/
 	init_device();
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::constructor_2
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::constructor_2
 }
 //--------------------------------------------------------
-Spectral::Spectral(Tango::DeviceClass *cl, const char *s, const char *d)
+SpectralInstrument::SpectralInstrument(Tango::DeviceClass *cl, const char *s, const char *d)
  : TANGO_BASE_CLASS(cl, s, d)
 {
-	/*----- PROTECTED REGION ID(Spectral::constructor_3) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrument::constructor_3) ENABLED START -----*/
 	init_device();
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::constructor_3
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::constructor_3
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Spectral::delete_device()
+ *	Method      : SpectralInstrument::delete_device()
  *	Description : will be called at device destruction or at init command
  */
 //--------------------------------------------------------
-void Spectral::delete_device()
+void SpectralInstrument::delete_device()
 {
-	DEBUG_STREAM << "Spectral::delete_device() " << device_name << endl;
-	/*----- PROTECTED REGION ID(Spectral::delete_device) ENABLED START -----*/
+	DEBUG_STREAM << "SpectralInstrument::delete_device() " << device_name << endl;
+	/*----- PROTECTED REGION ID(SpectralInstrument::delete_device) ENABLED START -----*/
 	
     INFO_STREAM << "Remove the inner-appender." << endl;
     yat4tango::InnerAppender::release(this);
@@ -130,7 +130,7 @@ void Spectral::delete_device()
     if(!m_is_device_initialized )
         return;
 
-	/*----- PROTECTED REGION END -----*/	//	Spectral::delete_device
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::delete_device
 	delete[] attr_cooling_read;
 	delete[] attr_ccdTemperature_read;
 	delete[] attr_readoutSpeed_read;
@@ -138,15 +138,15 @@ void Spectral::delete_device()
 
 //--------------------------------------------------------
 /**
- *	Method      : Spectral::init_device()
+ *	Method      : SpectralInstrument::init_device()
  *	Description : will be called at device initialization.
  */
 //--------------------------------------------------------
-void Spectral::init_device()
+void SpectralInstrument::init_device()
 {
-	DEBUG_STREAM << "Spectral::init_device() create device " << device_name << endl;
-	/*----- PROTECTED REGION ID(Spectral::init_device_before) ENABLED START -----*/
-	INFO_STREAM << "Spectral::init_device() create device " << device_name << endl;
+	DEBUG_STREAM << "SpectralInstrument::init_device() create device " << device_name << endl;
+	/*----- PROTECTED REGION ID(SpectralInstrument::init_device_before) ENABLED START -----*/
+	INFO_STREAM << "SpectralInstrument::init_device() create device " << device_name << endl;
 
     m_is_device_initialized = false;
     set_state(Tango::INIT);
@@ -158,10 +158,10 @@ void Spectral::init_device()
 	try
 	{
 		//- get the main object used to pilot the lima framework		
-		m_ct = ControlFactory::instance().get_control("Spectral");
+		m_ct = ControlFactory::instance().get_control("SpectralInstrument");
 		
 		//- get interface to specific camera
-		m_hw = dynamic_cast<lima::Spectral::Interface*>(m_ct->hwInterface());
+		m_hw = dynamic_cast<lima::SpectralInstrument::Interface*>(m_ct->hwInterface());
 		
 		//- get camera to specific detector
 		m_camera = &(m_hw->getCamera());
@@ -189,7 +189,7 @@ void Spectral::init_device()
 		return;
 	}
 
-	/*----- PROTECTED REGION END -----*/	//	Spectral::init_device_before
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::init_device_before
 	
 
 	//	Get the device properties from database
@@ -198,29 +198,29 @@ void Spectral::init_device()
 	attr_cooling_read = new Tango::DevBoolean[1];
 	attr_ccdTemperature_read = new Tango::DevFloat[1];
 	attr_readoutSpeed_read = new readoutSpeedEnum[1];
-	/*----- PROTECTED REGION ID(Spectral::init_device) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrument::init_device) ENABLED START -----*/
 	
     //	Initialize device
 	m_is_device_initialized = true;
 	set_state(Tango::STANDBY);
 	dev_state();	
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::init_device
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::init_device
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Spectral::get_device_property()
+ *	Method      : SpectralInstrument::get_device_property()
  *	Description : Read database to initialize property data members.
  */
 //--------------------------------------------------------
-void Spectral::get_device_property()
+void SpectralInstrument::get_device_property()
 {
-	/*----- PROTECTED REGION ID(Spectral::get_device_property_before) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrument::get_device_property_before) ENABLED START -----*/
 	
 	//	Initialize property data members
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::get_device_property_before
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::get_device_property_before
 
 
 	//	Read device properties from database.
@@ -237,10 +237,10 @@ void Spectral::get_device_property()
 		if (Tango::Util::instance()->_UseDb==true)
 			get_db_device()->get_property(dev_prop);
 	
-		//	get instance on SpectralClass to get class property
+		//	get instance on SpectralInstrumentClass to get class property
 		Tango::DbDatum	def_prop, cl_prop;
-		SpectralClass	*ds_class =
-			(static_cast<SpectralClass *>(get_device_class()));
+		SpectralInstrumentClass	*ds_class =
+			(static_cast<SpectralInstrumentClass *>(get_device_class()));
 		int	i = -1;
 
 		//	Try to initialize ConnectionAddress from class property
@@ -289,27 +289,27 @@ void Spectral::get_device_property()
 
 	}
 
-	/*----- PROTECTED REGION ID(Spectral::get_device_property_after) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrument::get_device_property_after) ENABLED START -----*/
 	
 	//	Check device property data members init
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "ExpertConnectionAddress"       ); // 127.0.0.1 by default
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0"        , "ExpertConnectionPort"          ); // port 0 by default
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "512"      , "ExpertImagePacketPixelsNb"     ); // 512 pixels in one packet by default
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "300"      , "ExpertImagePacketDelayMicroSec"); // 300 �s between two packets by default
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "ConnectionAddress"       ); // 127.0.0.1 by default
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0"        , "ConnectionPort"          ); // port 0 by default
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "512"      , "ImagePacketPixelsNb"     ); // 512 pixels in one packet by default
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "300"      , "ImagePacketDelayMicroSec"); // 300 �s between two packets by default
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::get_device_property_after
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::get_device_property_after
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Spectral::always_executed_hook()
+ *	Method      : SpectralInstrument::always_executed_hook()
  *	Description : method always executed before any command is executed
  */
 //--------------------------------------------------------
-void Spectral::always_executed_hook()
+void SpectralInstrument::always_executed_hook()
 {
-	DEBUG_STREAM << "Spectral::always_executed_hook()  " << device_name << endl;
-	/*----- PROTECTED REGION ID(Spectral::always_executed_hook) ENABLED START -----*/
+	//DEBUG_STREAM << "SpectralInstrument::always_executed_hook()  " << device_name << endl;
+	/*----- PROTECTED REGION ID(SpectralInstrument::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
     try
@@ -317,10 +317,10 @@ void Spectral::always_executed_hook()
         m_status_message.str("");
 
 		//- get the main object used to pilot the lima framework		
-		m_ct = ControlFactory::instance().get_control("Spectral");
+		m_ct = ControlFactory::instance().get_control("SpectralInstrument");
 		
 		//- get interface to specific camera
-		m_hw = dynamic_cast<lima::Spectral::Interface*>(m_ct->hwInterface());
+		m_hw = dynamic_cast<lima::SpectralInstrument::Interface*>(m_ct->hwInterface());
 		
 		//- get camera to specific detector
 		m_camera = &(m_hw->getCamera());
@@ -347,38 +347,38 @@ void Spectral::always_executed_hook()
         return;
     }
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::always_executed_hook
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::always_executed_hook
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Spectral::read_attr_hardware()
+ *	Method      : SpectralInstrument::read_attr_hardware()
  *	Description : Hardware acquisition for attributes
  */
 //--------------------------------------------------------
-void Spectral::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
+void SpectralInstrument::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "Spectral::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
-	/*----- PROTECTED REGION ID(Spectral::read_attr_hardware) ENABLED START -----*/
+	DEBUG_STREAM << "SpectralInstrument::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	/*----- PROTECTED REGION ID(SpectralInstrument::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::read_attr_hardware
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::read_attr_hardware
 }
 //--------------------------------------------------------
 /**
- *	Method      : Spectral::write_attr_hardware()
+ *	Method      : SpectralInstrument::write_attr_hardware()
  *	Description : Hardware writing for attributes
  */
 //--------------------------------------------------------
-void Spectral::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
+void SpectralInstrument::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "Spectral::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
-	/*----- PROTECTED REGION ID(Spectral::write_attr_hardware) ENABLED START -----*/
+	DEBUG_STREAM << "SpectralInstrument::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	/*----- PROTECTED REGION ID(SpectralInstrument::write_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::write_attr_hardware
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::write_attr_hardware
 }
 
 //--------------------------------------------------------
@@ -390,10 +390,10 @@ void Spectral::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Spectral::read_cooling(Tango::Attribute &attr)
+void SpectralInstrument::read_cooling(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Spectral::read_cooling(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Spectral::read_cooling) ENABLED START -----*/
+	DEBUG_STREAM << "SpectralInstrument::read_cooling(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SpectralInstrument::read_cooling) ENABLED START -----*/
 	//	Set the attribute value
 	try
 	{
@@ -402,14 +402,14 @@ void Spectral::read_cooling(Tango::Attribute &attr)
 	}
     catch(Tango::DevFailed & df)
     {
-        manage_devfailed_exception(df, "Spectral::read_cooling");
+        manage_devfailed_exception(df, "SpectralInstrument::read_cooling");
     }
     catch(Exception & e)
     {
-        manage_lima_exception(e, "Spectral::read_cooling");
+        manage_lima_exception(e, "SpectralInstrument::read_cooling");
     }
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::read_cooling
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::read_cooling
 }
 //--------------------------------------------------------
 /**
@@ -420,11 +420,11 @@ void Spectral::read_cooling(Tango::Attribute &attr)
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Spectral::write_cooling(Tango::WAttribute &attr)
+void SpectralInstrument::write_cooling(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Spectral::write_cooling(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "SpectralInstrument::write_cooling(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-	/*----- PROTECTED REGION ID(Spectral::write_cooling) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrument::write_cooling) ENABLED START -----*/
 	try
 	{
         attr.get_write_value(attr_cooling_write);
@@ -432,14 +432,14 @@ void Spectral::write_cooling(Tango::WAttribute &attr)
 	}
     catch(Tango::DevFailed & df)
     {
-        manage_devfailed_exception(df, "Spectral::write_cooling");
+        manage_devfailed_exception(df, "SpectralInstrument::write_cooling");
     }
     catch(Exception & e)
     {
-        manage_lima_exception(e, "Spectral::write_cooling");
+        manage_lima_exception(e, "SpectralInstrument::write_cooling");
     }
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::write_cooling
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::write_cooling
 }
 //--------------------------------------------------------
 /**
@@ -450,10 +450,10 @@ void Spectral::write_cooling(Tango::WAttribute &attr)
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Spectral::read_ccdTemperature(Tango::Attribute &attr)
+void SpectralInstrument::read_ccdTemperature(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Spectral::read_ccdTemperature(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Spectral::read_ccdTemperature) ENABLED START -----*/
+	DEBUG_STREAM << "SpectralInstrument::read_ccdTemperature(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SpectralInstrument::read_ccdTemperature) ENABLED START -----*/
 	
 	try
 	{
@@ -462,14 +462,14 @@ void Spectral::read_ccdTemperature(Tango::Attribute &attr)
 	}
     catch(Tango::DevFailed & df)
     {
-        manage_devfailed_exception(df, "Spectral::read_ccdTemperature");
+        manage_devfailed_exception(df, "SpectralInstrument::read_ccdTemperature");
     }
     catch(Exception & e)
     {
-        manage_lima_exception(e, "Spectral::read_ccdTemperature");
+        manage_lima_exception(e, "SpectralInstrument::read_ccdTemperature");
     }
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::read_ccdTemperature
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::read_ccdTemperature
 }
 //--------------------------------------------------------
 /**
@@ -480,10 +480,10 @@ void Spectral::read_ccdTemperature(Tango::Attribute &attr)
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Spectral::read_readoutSpeed(Tango::Attribute &attr)
+void SpectralInstrument::read_readoutSpeed(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Spectral::read_readoutSpeed(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Spectral::read_readoutSpeed) ENABLED START -----*/
+	DEBUG_STREAM << "SpectralInstrument::read_readoutSpeed(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SpectralInstrument::read_readoutSpeed) ENABLED START -----*/
 	//	Set the attribute value
 	
 	try
@@ -505,14 +505,14 @@ void Spectral::read_readoutSpeed(Tango::Attribute &attr)
 	}
     catch(Tango::DevFailed & df)
     {
-        manage_devfailed_exception(df, "Spectral::read_readoutSpeed");
+        manage_devfailed_exception(df, "SpectralInstrument::read_readoutSpeed");
     }
     catch(Exception & e)
     {
-       manage_lima_exception(e, "Spectral::read_readoutSpeed");
+       manage_lima_exception(e, "SpectralInstrument::read_readoutSpeed");
     }
     
-	/*----- PROTECTED REGION END -----*/	//	Spectral::read_readoutSpeed
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::read_readoutSpeed
 }
 //--------------------------------------------------------
 /**
@@ -523,11 +523,11 @@ void Spectral::read_readoutSpeed(Tango::Attribute &attr)
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Spectral::write_readoutSpeed(Tango::WAttribute &attr)
+void SpectralInstrument::write_readoutSpeed(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Spectral::write_readoutSpeed(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "SpectralInstrument::write_readoutSpeed(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-	/*----- PROTECTED REGION ID(Spectral::write_readoutSpeed) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrument::write_readoutSpeed) ENABLED START -----*/
 	try
 	{
 		ushort readout = 0;
@@ -545,54 +545,54 @@ void Spectral::write_readoutSpeed(Tango::WAttribute &attr)
 	}
     catch(Tango::DevFailed & df)
     {
-        manage_devfailed_exception(df, "Spectral::write_readoutSpeed");
+        manage_devfailed_exception(df, "SpectralInstrument::write_readoutSpeed");
     }
     catch(Exception & e)
     {
-        manage_lima_exception(e, "Spectral::write_readoutSpeed");
+        manage_lima_exception(e, "SpectralInstrument::write_readoutSpeed");
     }
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::write_readoutSpeed
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::write_readoutSpeed
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Spectral::add_dynamic_attributes()
+ *	Method      : SpectralInstrument::add_dynamic_attributes()
  *	Description : Create the dynamic attributes if any
  *                for specified device.
  */
 //--------------------------------------------------------
-void Spectral::add_dynamic_attributes()
+void SpectralInstrument::add_dynamic_attributes()
 {
-	/*----- PROTECTED REGION ID(Spectral::add_dynamic_attributes) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrument::add_dynamic_attributes) ENABLED START -----*/
 	
 	//	Add your own code to create and add dynamic attributes if any
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::add_dynamic_attributes
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::add_dynamic_attributes
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Spectral::add_dynamic_commands()
+ *	Method      : SpectralInstrument::add_dynamic_commands()
  *	Description : Create the dynamic commands if any
  *                for specified device.
  */
 //--------------------------------------------------------
-void Spectral::add_dynamic_commands()
+void SpectralInstrument::add_dynamic_commands()
 {
-	/*----- PROTECTED REGION ID(Spectral::add_dynamic_commands) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrument::add_dynamic_commands) ENABLED START -----*/
 	
 	//	Add your own code to create and add dynamic commands if any
 	
-	/*----- PROTECTED REGION END -----*/	//	Spectral::add_dynamic_commands
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::add_dynamic_commands
 }
 
-/*----- PROTECTED REGION ID(Spectral::namespace_ending) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrument::namespace_ending) ENABLED START -----*/
 
 //	Additional Methods
 //+------------------------------------------------------------------
 /**
- *	method:	Spectral::dev_state
+ *	method:	SpectralInstrument::dev_state
  *
  *	description:	method to execute "State"
  *	This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
@@ -601,10 +601,10 @@ void Spectral::add_dynamic_commands()
  *
  */
 //+------------------------------------------------------------------
-Tango::DevState Spectral::dev_state()
+Tango::DevState SpectralInstrument::dev_state()
 {
     Tango::DevState	argout = DeviceImpl::dev_state();
-    DEBUG_STREAM << "Spectral::dev_state(): entering... !" << endl;
+    DEBUG_STREAM << "SpectralInstrument::dev_state(): entering... !" << endl;
 
     // Add your own code to control device here
     stringstream    DeviceStatus;
@@ -631,12 +631,12 @@ Tango::DevState Spectral::dev_state()
 
 //+------------------------------------------------------------------
 /**
- *	method:	Spectral::manage_devfailed_exception
+ *	method:	SpectralInstrument::manage_devfailed_exception
  *
  *	description: method which manages DevFailed exceptions
  */
 //+------------------------------------------------------------------
-void Spectral::manage_devfailed_exception(Tango::DevFailed & in_exception, const std::string & in_caller_method_name)
+void SpectralInstrument::manage_devfailed_exception(Tango::DevFailed & in_exception, const std::string & in_caller_method_name)
 {
     ERROR_STREAM << in_exception << endl;
 	
@@ -649,12 +649,12 @@ void Spectral::manage_devfailed_exception(Tango::DevFailed & in_exception, const
 
 //+------------------------------------------------------------------
 /**
- *	method:	Spectral::manage_lima_exception
+ *	method:	SpectralInstrument::manage_lima_exception
  *
  *	description: method which manages lima exceptions
  */
 //+------------------------------------------------------------------
-void Spectral::manage_lima_exception(lima::Exception & in_exception, const std::string & in_caller_method_name)
+void SpectralInstrument::manage_lima_exception(lima::Exception & in_exception, const std::string & in_caller_method_name)
 {
     ERROR_STREAM << in_exception.getErrMsg() << endl;
 
@@ -664,5 +664,5 @@ void Spectral::manage_lima_exception(lima::Exception & in_exception, const std::
                                    in_caller_method_name.c_str());
 }
 
-/*----- PROTECTED REGION END -----*/	//	Spectral::namespace_ending
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::namespace_ending
 } //	namespace

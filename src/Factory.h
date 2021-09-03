@@ -158,7 +158,7 @@
 #include <SlsEigerInterface.h>
 #endif
 
-#ifdef SPECTRAL_ENABLED  
+#ifdef SPECTRALINSTRUMENT_ENABLED  
 #include <SpectralInstrumentCamera.h>
 #include <SpectralInstrumentInterface.h>
 #endif
