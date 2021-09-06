@@ -389,20 +389,21 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 
-/* #ifdef SPECTRUMONE_ENABLED
+#ifdef SPECTRUMONE_ENABLED
         if (detector_type == "SpectrumOneCCD")
         {
 
             if (!ControlFactory::m_is_created)
             {
                 Tango::DbData db_data;
-                db_data.push_back(Tango::DbDatum("GpibControllerHost"));
-                db_data.push_back(Tango::DbDatum("GpibControllerPort"));
+                db_data.push_back(Tango::DbDatum("GpibBoardIndex"));
                 db_data.push_back(Tango::DbDatum("CameraGpibAddress"));
                 db_data.push_back(Tango::DbDatum("TablesPath"));
                 db_data.push_back(Tango::DbDatum("TablesMode"));
                 db_data.push_back(Tango::DbDatum("ExpertConfig"));
                 db_data.push_back(Tango::DbDatum("InvertX"));
+                db_data.push_back(Tango::DbDatum("SimpleCommandTimeout"));
+                db_data.push_back(Tango::DbDatum("DataAcquisitionTimeout"));
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
 
                 SpectrumOne::GpibConfig gpib_config;
@@ -412,23 +413,25 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 
                 unsigned long temp;
 
-                // Host
-                db_data[0] >> gpib_config.host;
-                // Port
-                db_data[1] >> temp;
-                gpib_config.port = static_cast<size_t>(temp);
+                // Board index
+                db_data[0] >> temp;
+                gpib_config.board_index = static_cast<size_t>(temp);
                 // GpibAddress
-                db_data[2] >> temp;
+                db_data[1] >> temp;
                 gpib_config.gpib_address = static_cast<size_t>(temp);
                 // TablesPath
-                db_data[3] >> command_config.tables_path;
+                db_data[2] >> command_config.tables_path;
                 // TablesMode
-                db_data[4] >> command_config.tables_mode;
+                db_data[3] >> command_config.tables_mode;
                 // ExpertConfig
-                db_data[5] >> expert_config_vect;
+                db_data[4] >> expert_config_vect;
                 command_config.expert_config = yat::StringUtil::join(expert_config_vect, '\n');
                 // InvertX
-                db_data[6] >> command_config.invert_x;
+                db_data[5] >> command_config.invert_x;
+                // SimpleCommandTimeout
+                db_data[6] >> gpib_config.default_timeout_str;
+                // DataAcquisitionTimeout
+                db_data[7] >> gpib_config.long_timeout_str;
 
 
                 m_camera = static_cast<void*> (new SpectrumOne::Camera(gpib_config, command_config));
@@ -439,7 +442,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 return m_control;
             }
         }
-#endif */
+#endif
 
 #ifdef ANDOR_ENABLED
         if (detector_type == "AndorCCD")
@@ -1297,12 +1300,12 @@ void ControlFactory::reset(const std::string& detector_type)
                 }
 #endif
 
-/* #ifdef SPECTRUMONE_ENABLED        
+#ifdef SPECTRUMONE_ENABLED        
                 if (detector_type == "SpectrumOneCCD")
                 {
 					delete (static_cast<SpectrumOne::Camera*> (m_camera));				
                 }
-#endif */
+#endif
 
 #ifdef UFXC_ENABLED        
                 if (detector_type == "Ufxc")

@@ -4628,6 +4628,7 @@ void LimaDetector::create_log_info_attributes(void)
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(DHYANA_NAME), YAT_XSTR(DHYANA_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PCO_NAME), YAT_XSTR(PCO_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SPECTRUMONE_NAME), YAT_XSTR(SPECTRUMONE_VERSION) );
 #else //- Win32
     #ifdef _WIN32
         yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ANDOR_NAME), YAT_XSTR(ANDOR_VERSION) );
@@ -4656,7 +4657,6 @@ void LimaDetector::create_log_info_attributes(void)
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MERLIN_NAME), YAT_XSTR(MERLIN_VERSION) );
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
-            // yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SPECTRUMONE_NAME), YAT_XSTR(SPECTRUMONE_VERSION) );
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );        
             
         #endif

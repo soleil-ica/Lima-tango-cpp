@@ -63,6 +63,7 @@
 //  lastTemperature  |  Tango::DevDouble	Scalar
 //  gain             |  Tango::DevLong	Scalar
 //  numFlushes       |  Tango::DevLong	Scalar
+//  openShutter      |  Tango::DevBoolean	Scalar
 //================================================================
 
 namespace SpectrumOneCCD_ns
@@ -123,6 +124,7 @@ void SpectrumOneCCD::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_lastTemperature_read);
     DELETE_SCALAR_ATTRIBUTE(attr_gain_read);
     DELETE_SCALAR_ATTRIBUTE(attr_numFlushes_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_OpenShutter_read);
 
     // Inner Appenders in specific devices are the cause of a bug in Lima
     // INFO_STREAM << "Remove the inner-appender." << std::endl;
@@ -151,6 +153,7 @@ void SpectrumOneCCD::init_device()
     CREATE_SCALAR_ATTRIBUTE(attr_lastTemperature_read, 0.0);
     CREATE_SCALAR_ATTRIBUTE(attr_gain_read,  0L);
     CREATE_SCALAR_ATTRIBUTE(attr_numFlushes_read,  0L);
+    CREATE_SCALAR_ATTRIBUTE(attr_OpenShutter_read, false);
 
     // Inner Appenders in specific devices are the cause of a bug in Lima
     // try
@@ -227,12 +230,13 @@ void SpectrumOneCCD::get_device_property()
 	//	Read device properties from database.
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("CameraGpibAddress"));
-	dev_prop.push_back(Tango::DbDatum("GpibControllerPort"));
-	dev_prop.push_back(Tango::DbDatum("GpibControllerHost"));
+	dev_prop.push_back(Tango::DbDatum("GpibBoardIndex"));
 	dev_prop.push_back(Tango::DbDatum("TablesPath"));
 	dev_prop.push_back(Tango::DbDatum("ExpertConfig"));
 	dev_prop.push_back(Tango::DbDatum("InvertX"));
 	dev_prop.push_back(Tango::DbDatum("TablesMode"));
+	dev_prop.push_back(Tango::DbDatum("SimpleCommandTimeout"));
+	dev_prop.push_back(Tango::DbDatum("DataAcquisitionTimeout"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -258,27 +262,16 @@ void SpectrumOneCCD::get_device_property()
 		//	And try to extract CameraGpibAddress value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  cameraGpibAddress;
 
-		//	Try to initialize GpibControllerPort from class property
+		//	Try to initialize GpibBoardIndex from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  gpibControllerPort;
+		if (cl_prop.is_empty()==false)	cl_prop  >>  gpibBoardIndex;
 		else {
-			//	Try to initialize GpibControllerPort from default device value
+			//	Try to initialize GpibBoardIndex from default device value
 			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  gpibControllerPort;
+			if (def_prop.is_empty()==false)	def_prop  >>  gpibBoardIndex;
 		}
-		//	And try to extract GpibControllerPort value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  gpibControllerPort;
-
-		//	Try to initialize GpibControllerHost from class property
-		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  gpibControllerHost;
-		else {
-			//	Try to initialize GpibControllerHost from default device value
-			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  gpibControllerHost;
-		}
-		//	And try to extract GpibControllerHost value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  gpibControllerHost;
+		//	And try to extract GpibBoardIndex value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  gpibBoardIndex;
 
 		//	Try to initialize TablesPath from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -324,6 +317,28 @@ void SpectrumOneCCD::get_device_property()
 		//	And try to extract TablesMode value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  tablesMode;
 
+		//	Try to initialize SimpleCommandTimeout from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  simpleCommandTimeout;
+		else {
+			//	Try to initialize SimpleCommandTimeout from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  simpleCommandTimeout;
+		}
+		//	And try to extract SimpleCommandTimeout value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  simpleCommandTimeout;
+
+		//	Try to initialize DataAcquisitionTimeout from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  dataAcquisitionTimeout;
+		else {
+			//	Try to initialize DataAcquisitionTimeout from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  dataAcquisitionTimeout;
+		}
+		//	And try to extract DataAcquisitionTimeout value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  dataAcquisitionTimeout;
+
 	}
 
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::get_device_property_after) ENABLED START -----*/
@@ -331,10 +346,9 @@ void SpectrumOneCCD::get_device_property()
 	//	Check device property data members init
 
     // Create all properties if empty
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "InvertX");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", "CameraGpibAddress");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1234", "GpibControllerPort");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "127.0.0.1", "GpibControllerHost");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", "InvertX");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "5", "CameraGpibAddress");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", "GpibBoardIndex");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1401", "TablesMode");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "/usr/Local/configFiles/SpectrumOne", "TablesPath");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, 
@@ -358,6 +372,8 @@ void SpectrumOneCCD::get_device_property()
         "total_parallel_pixels=\n"
         "total_serial_pixels=",
         "ExpertConfig");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "T3s", "SimpleCommandTimeout");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "T100s", "DataAcquisitionTimeout");
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::get_device_property_after
 }
@@ -488,6 +504,10 @@ void SpectrumOneCCD::read_numFlushes(Tango::Attribute &attr)
 	DEBUG_STREAM << "SpectrumOneCCD::read_numFlushes(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::read_numFlushes) ENABLED START -----*/
 	//	Set the attribute value
+    // Get the last reported num_flushes from the camera
+    int num_flushes;
+    m_camera->getNumFlushes(num_flushes);
+    *attr_numFlushes_read = static_cast<long>(num_flushes);
 	attr.set_value(attr_numFlushes_read);
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::read_numFlushes
@@ -509,10 +529,55 @@ void SpectrumOneCCD::write_numFlushes(Tango::WAttribute &attr)
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::write_numFlushes) ENABLED START -----*/
 	
+    // Set num flushes
     m_camera->setNumFlushes(static_cast<int>(w_val));
-    *attr_numFlushes_read = w_val;
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::write_numFlushes
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute openShutter related method
+ *	Description: Open/close camera shutter.
+ *               True = Opened
+ *               False = Closed
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SpectrumOneCCD::read_openShutter(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SpectrumOneCCD::read_openShutter(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::read_openShutter) ENABLED START -----*/
+	//	Set the attribute value
+    // Get the last reported shutter state from the camera
+    m_camera->getShutter(*attr_OpenShutter_read);
+	attr.set_value(attr_OpenShutter_read);
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::read_openShutter
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute openShutter related method
+ *	Description: Open/close camera shutter.
+ *               True = Opened
+ *               False = Closed
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SpectrumOneCCD::write_openShutter(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "SpectrumOneCCD::write_openShutter(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevBoolean	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::write_openShutter) ENABLED START -----*/
+    // Set shutter state
+    m_camera->setShutter(w_val);
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::write_openShutter
 }
 
 //--------------------------------------------------------

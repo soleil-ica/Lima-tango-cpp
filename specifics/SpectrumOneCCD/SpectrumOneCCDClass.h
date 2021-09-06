@@ -97,6 +97,21 @@ public:
 		{return (static_cast<SpectrumOneCCD *>(dev))->is_numFlushes_allowed(ty);}
 };
 
+//	Attribute openShutter class definition
+class openShutterAttrib: public Tango::Attr
+{
+public:
+	openShutterAttrib():Attr("openShutter",
+			Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~openShutterAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SpectrumOneCCD *>(dev))->read_openShutter(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<SpectrumOneCCD *>(dev))->write_openShutter(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SpectrumOneCCD *>(dev))->is_openShutter_allowed(ty);}
+};
+
 
 //=========================================
 //	Define classes for commands

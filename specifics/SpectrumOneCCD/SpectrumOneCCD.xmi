@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
   <classes name="SpectrumOneCCD" pogoRevision="9.6">
-    <description description="Specific TANGO device for the LIMA plugin SpectrumOne." title="SpectrumOne" sourcePath="/home/informatique/ica/hottois/Lima/applications/tango/cpp/specifics/SpectrumOneCCD" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions,html Pages" license="GPL" copyright="" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false" descriptionHtmlExists="false">
+    <description description="Specific TANGO device for the LIMA plugin SpectrumOne." title="SpectrumOne" sourcePath="D:\soleil\github_workspace\Lima-tango-cpp\specifics\SpectrumOneCCD" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions" license="GPL" copyright="" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
       <inheritances classname="Device_Impl" sourcePath=""/>
       <identification contact="at synchrotron-soleil.fr - hottois" author="hottois" emailDomain="synchrotron-soleil.fr" classFamily="Acquisition" siteSpecific="" platform="All Platforms" bus="Not Applicable" manufacturer="none" reference=""/>
     </description>
@@ -10,15 +10,10 @@
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>0</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="GpibControllerPort" description="IP port of the GPIB controller">
+    <deviceProperties name="GpibBoardIndex" description="Index of the NI GPIB board">
       <type xsi:type="pogoDsl:UIntType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>1234</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="GpibControllerHost" description="Host name or IP adress of the GPIB controller">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>127.0.0.1</DefaultPropValue>
+      <DefaultPropValue>0</DefaultPropValue>
     </deviceProperties>
     <deviceProperties name="TablesPath" description="Path of the tables to be loaded in the camera for its initialization">
       <type xsi:type="pogoDsl:StringType"/>
@@ -51,12 +46,22 @@
     <deviceProperties name="InvertX" description="Used to invert the X axis of the images">
       <type xsi:type="pogoDsl:BooleanType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>false</DefaultPropValue>
+      <DefaultPropValue>true</DefaultPropValue>
     </deviceProperties>
     <deviceProperties name="TablesMode" description="Mode of the tables to send to the camera for its initialization.&#xA;Is contained in the file names of the tables.&#xA;For example the mode of XXXX1401.TAB is 1401.">
       <type xsi:type="pogoDsl:StringType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>1401</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="SimpleCommandTimeout" description="Default timeout for commands:&#xA;TNONE   Infinite timeout&#xA;T10us   Timeout of 10 us&#xA;T30us   Timeout of 30 us&#xA;T100us  Timeout of 100 us&#xA;T300us  Timeout of 300 us&#xA;T1ms    Timeout of 1 ms&#xA;T3ms    Timeout of 3 ms&#xA;T10ms   Timeout of 10 ms&#xA;T30ms   Timeout of 30 ms&#xA;T100ms  Timeout of 100 ms&#xA;T300ms  Timeout of 300 ms&#xA;T1s     Timeout of 1 s&#xA;T3s     Timeout of 3 s&#xA;T10s    Timeout of 10 s&#xA;T30s    Timeout of 30 s&#xA;T100s   Timeout of 100 s&#xA;T300s   Timeout of 300 s&#xA;T1000s  Timeout of 1000 s">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>T3s</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="DataAcquisitionTimeout" description="Timeout for data reception:&#xA;TNONE   Infinite timeout&#xA;T10us   Timeout of 10 us&#xA;T30us   Timeout of 30 us&#xA;T100us  Timeout of 100 us&#xA;T300us  Timeout of 300 us&#xA;T1ms    Timeout of 1 ms&#xA;T3ms    Timeout of 3 ms&#xA;T10ms   Timeout of 10 ms&#xA;T30ms   Timeout of 30 ms&#xA;T100ms  Timeout of 100 ms&#xA;T300ms  Timeout of 300 ms&#xA;T1s     Timeout of 1 s&#xA;T3s     Timeout of 3 s&#xA;T10s    Timeout of 10 s&#xA;T30s    Timeout of 30 s&#xA;T100s   Timeout of 100 s&#xA;T300s   Timeout of 300 s&#xA;T1000s  Timeout of 1000 s">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>T100s</DefaultPropValue>
     </deviceProperties>
     <commands name="State" description="This command gets the device state (stored in its device_state data member) and returns it to the caller." execMethod="dev_state" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
       <argin description="none">
@@ -141,6 +146,18 @@
       <dataReadyEvent fire="false" libCheckCriteria="true"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <properties description="Set number of flushes on the camera" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <writeExcludedStates>RUNNING</writeExcludedStates>
+      <writeExcludedStates>FAULT</writeExcludedStates>
+      <writeExcludedStates>ALARM</writeExcludedStates>
+      <writeExcludedStates>DISABLE</writeExcludedStates>
+    </attributes>
+    <attributes name="openShutter" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="false" isDynamic="false">
+      <dataType xsi:type="pogoDsl:BooleanType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <dataReadyEvent fire="false" libCheckCriteria="true"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Open/close camera shutter.&#xA;True = Opened&#xA;False = Closed" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
       <writeExcludedStates>RUNNING</writeExcludedStates>
       <writeExcludedStates>FAULT</writeExcludedStates>
       <writeExcludedStates>ALARM</writeExcludedStates>

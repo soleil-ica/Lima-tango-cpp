@@ -130,6 +130,39 @@ bool SpectrumOneCCD::is_numFlushes_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	return true;
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : SpectrumOneCCD::is_openShutter_allowed()
+ *	Description : Execution allowed for openShutter attribute
+ */
+//--------------------------------------------------------
+bool SpectrumOneCCD::is_openShutter_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::RUNNING ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::ALARM ||
+			get_state()==Tango::DISABLE)
+		{
+		/*----- PROTECTED REGION ID(SpectrumOneCCD::openShutterStateAllowed_WRITE) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::openShutterStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Not any excluded states for openShutter attribute in read access.
+	/*----- PROTECTED REGION ID(SpectrumOneCCD::openShutterStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::openShutterStateAllowed_READ
+	return true;
+}
+
 
 //=================================================
 //		Commands Allowed Methods
