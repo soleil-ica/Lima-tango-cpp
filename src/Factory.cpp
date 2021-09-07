@@ -1053,8 +1053,8 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 		
-#ifdef SPECTRAL_ENABLED
-        if (detector_type == "Spectral")
+#ifdef SPECTRALINSTRUMENT_ENABLED
+        if (detector_type == "SpectralInstrument")
         {
             if (!ControlFactory::m_is_created)
             {
@@ -1076,13 +1076,13 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data[prop_index++] >> image_packet_pixels_nb;
                 db_data[prop_index++] >> image_packet_delay_micro_sec;
                 
-                m_camera = static_cast<void*> (new Spectral::Camera(connection_address          ,   // server name or IP address of the SI Image SGL II software
+                m_camera = static_cast<void*> (new SpectralInstrument::Camera(connection_address          ,   // server name or IP address of the SI Image SGL II software
                                                                     connection_port             ,   // TCP/IP port of the SI Image SGL II software
                                                                     image_packet_pixels_nb      ,   // number of pixels sent into a image part TCP/IP packet
                                                                     image_packet_delay_micro_sec)); // delay between the sending of two image part TCP/IP packets (in micro-seconds)
                                                                 
-                m_interface = static_cast<void*> (new Spectral::Interface(*(static_cast<Spectral::Camera*> (m_camera))));
-                m_control = new CtControl(static_cast<Spectral::Interface*> (m_interface));
+                m_interface = static_cast<void*> (new SpectralInstrument::Interface(*(static_cast<SpectralInstrument::Camera*> (m_camera))));
+                m_control = new CtControl(static_cast<SpectralInstrument::Interface*> (m_interface));
 
                 ControlFactory::m_is_created = true;
                 return m_control;
@@ -1321,10 +1321,10 @@ void ControlFactory::reset(const std::string& detector_type)
                 }
 #endif  
 
-#ifdef SPECTRAL_ENABLED        
-                if (detector_type == "Spectral")
+#ifdef SPECTRALINSTRUMENT_ENABLED        
+                if (detector_type == "SpectralInstrument")
                 {
-                    delete (static_cast<Spectral::Camera*> (m_camera));
+                    delete (static_cast<SpectralInstrument::Camera*> (m_camera));
                 }
 #endif
 

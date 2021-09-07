@@ -1,11 +1,11 @@
-/*----- PROTECTED REGION ID(Spectral.h) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrument.h) ENABLED START -----*/
 //=============================================================================
 //
-// file :        Spectral.h
+// file :        SpectralInstrument.h
 //
-// description : Include file for the Spectral class
+// description : Include file for the Spectral Instrument class
 //
-// project :     Spectral detector TANGO specific device.
+// project :     Spectral Instrument detector TANGO specific device.
 //
 // This file is part of Tango device class.
 // 
@@ -35,8 +35,8 @@
 //=============================================================================
 
 
-#ifndef Spectral_H
-#define Spectral_H
+#ifndef SpectralInstrument_H
+#define SpectralInstrument_H
 
 #include <tango.h>
 
@@ -51,50 +51,69 @@
 #include "lima/CtAcquisition.h"
 #include "lima/CtImage.h"
 
-#include "SpectralInterface.h"
-#include "SpectralCamera.h"
+#include "SpectralInstrumentInterface.h"
+#include "SpectralInstrumentCamera.h"
 
 using namespace yat4tango;
 
-/*----- PROTECTED REGION END -----*/	//	Spectral.h
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrument.h
 
 /**
- *  Spectral class description:
+ *  Spectral Instrument class description:
  *    Device for detectors from Spectral Instruments. 
  */
 
-namespace Spectral_ns
+namespace SpectralInstrument_ns
 {
-/*----- PROTECTED REGION ID(Spectral::Additional Class Declarations) ENABLED START -----*/
+enum _readoutSpeedEnum {
+	_1MHZ,
+	_690KHZ,
+} ;
+typedef _readoutSpeedEnum readoutSpeedEnum;
+
+/*----- PROTECTED REGION ID(SpectralInstrument::Additional Class Declarations) ENABLED START -----*/
 
 //	Additional Class Declarations
 
 /*----- PROTECTED REGION END -----*/	//	Spectral::Additional Class Declarations
 
-class Spectral : public TANGO_BASE_CLASS
+class SpectralInstrument : public TANGO_BASE_CLASS
 {
 
-/*----- PROTECTED REGION ID(Spectral::Data Members) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrument::Data Members) ENABLED START -----*/
 
-//	Add your own data members
+public:
+	Tango::DevBoolean	attr_cooling_write;
+	Tango::DevShort     attr_readout_speed_write;
 
-/*----- PROTECTED REGION END -----*/	//	Spectral::Data Members
+	enum readoutSpeedValues : ushort
+	{
+		value_1MHZ = 18,
+		value_690KHZ = 40,
+	};
+
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::Data Members
 
 //	Device property data members
 public:
-	//	ExpertConnectionAddress:	Only an expert User could change this property.<br>
+	//	ConnectionAddress:	Only an expert User could change this property.<br>
 	//  Server name or IP address of the SI Image SGL II software.<BR>
-	string	expertConnectionAddress;
-	//	ExpertConnectionPort:	Only an expert User could change this property.<br>
+	string	connectionAddress;
+	//	ConnectionPort:	Only an expert User could change this property.<br>
 	//  TCP/IP port of the SI Image SGL II software.<BR>
-	Tango::DevLong	expertConnectionPort;
-	//	ExpertImagePacketPixelsNb:	Only an expert User could change this property.<br>
+	Tango::DevLong	connectionPort;
+	//	ImagePacketPixelsNb:	Only an expert User could change this property.<br>
 	//  Number of pixels sent into a image part TCP/IP packet.<BR>
-	Tango::DevLong	expertImagePacketPixelsNb;
-	//	ExpertImagePacketDelayMicroSec:	Only an expert User could change this property.<br>
+	Tango::DevLong	imagePacketPixelsNb;
+	//	ImagePacketDelayMicroSec:	Only an expert User could change this property.<br>
 	//  Delay between the sending of two image part TCP/IP packets (in micro-seconds).<BR>
-	Tango::DevLong	expertImagePacketDelayMicroSec;
+	Tango::DevLong	imagePacketDelayMicroSec;
 
+//	Attribute data members
+public:
+	Tango::DevBoolean	*attr_cooling_read;
+	Tango::DevFloat	*attr_ccdTemperature_read;
+	readoutSpeedEnum	*attr_readoutSpeed_read;
 
 //	Constructors and destructors
 public:
@@ -104,14 +123,14 @@ public:
 	 *	@param cl	Class.
 	 *	@param s 	Device Name
 	 */
-	Spectral(Tango::DeviceClass *cl,string &s);
+	SpectralInstrument(Tango::DeviceClass *cl,string &s);
 	/**
 	 * Constructs a newly device object.
 	 *
 	 *	@param cl	Class.
 	 *	@param s 	Device Name
 	 */
-	Spectral(Tango::DeviceClass *cl,const char *s);
+	SpectralInstrument(Tango::DeviceClass *cl,const char *s);
 	/**
 	 * Constructs a newly device object.
 	 *
@@ -119,11 +138,11 @@ public:
 	 *	@param s 	Device name
 	 *	@param d	Device description.
 	 */
-	Spectral(Tango::DeviceClass *cl,const char *s,const char *d);
+	SpectralInstrument(Tango::DeviceClass *cl,const char *s,const char *d);
 	/**
 	 * The device object destructor.
-	 */	
-	~Spectral() {delete_device();};
+	 */
+	~SpectralInstrument() {delete_device();};
 
 
 //	Miscellaneous methods
@@ -150,16 +169,53 @@ public:
 public:
 	//--------------------------------------------------------
 	/*
-	 *	Method      : Spectral::read_attr_hardware()
+	 *	Method      : SpectralInstrument::read_attr_hardware()
 	 *	Description : Hardware acquisition for attributes.
 	 */
 	//--------------------------------------------------------
 	virtual void read_attr_hardware(vector<long> &attr_list);
+	//--------------------------------------------------------
+	/*
+	 *	Method      : SpectralInstrument::write_attr_hardware()
+	 *	Description : Hardware writing for attributes.
+	 */
+	//--------------------------------------------------------
+	virtual void write_attr_hardware(vector<long> &attr_list);
+
+/**
+ *	Attribute cooling related methods
+ *	Description: Turns the CCD cooling On/Off
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void read_cooling(Tango::Attribute &attr);
+	virtual void write_cooling(Tango::WAttribute &attr);
+	virtual bool is_cooling_allowed(Tango::AttReqType type);
+/**
+ *	Attribute ccdTemperature related methods
+ *	Description: Camera temperature status (C)
+ *
+ *	Data type:	Tango::DevFloat
+ *	Attr type:	Scalar
+ */
+	virtual void read_ccdTemperature(Tango::Attribute &attr);
+	virtual bool is_ccdTemperature_allowed(Tango::AttReqType type);
+/**
+ *	Attribute readoutSpeed related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevEnum
+ *	Attr type:	Scalar
+ */
+	virtual void read_readoutSpeed(Tango::Attribute &attr);
+	virtual void write_readoutSpeed(Tango::WAttribute &attr);
+	virtual bool is_readoutSpeed_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------
 	/**
-	 *	Method      : Spectral::add_dynamic_attributes()
+	 *	Method      : SpectralInstrument::add_dynamic_attributes()
 	 *	Description : Add dynamic attributes if any.
 	 */
 	//--------------------------------------------------------
@@ -167,11 +223,20 @@ public:
 
 
 
+
 //	Command related methods
 public:
 
 
-/*----- PROTECTED REGION ID(Spectral::Additional Method prototypes) ENABLED START -----*/
+	//--------------------------------------------------------
+	/**
+	 *	Method      : SpectralInstrument::add_dynamic_commands()
+	 *	Description : Add dynamic commands if any.
+	 */
+	//--------------------------------------------------------
+	void add_dynamic_commands();
+
+/*----- PROTECTED REGION ID(SpectralInstrument::Additional Method prototypes) ENABLED START -----*/
 
 //	Additional Method prototypes
 private:
@@ -198,23 +263,23 @@ private:
 
 protected :	
     // lima OBJECTS
-    lima::Spectral::Interface * m_hw    ;
+    lima::SpectralInstrument::Interface * m_hw    ;
     lima::CtControl           * m_ct    ;
-    lima::Spectral::Camera    * m_camera;
+    lima::SpectralInstrument::Camera    * m_camera;
 	bool                        m_is_device_initialized;
     stringstream                m_status_message       ;
 
 	yat4tango::DynamicInterfaceManager m_dim;
 
-/*----- PROTECTED REGION END -----*/	//	Spectral::Additional Method prototypes
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::Additional Method prototypes
 };
 
-/*----- PROTECTED REGION ID(Spectral::Additional Classes Definitions) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrument::Additional Classes Definitions) ENABLED START -----*/
 
 //	Additional Classes Definitions
 
-/*----- PROTECTED REGION END -----*/	//	Spectral::Additional Classes Definitions
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrument::Additional Classes Definitions
 
 }	//	End of namespace
 
-#endif   //	Spectral_H
+#endif   //	SpectralInstrument_H

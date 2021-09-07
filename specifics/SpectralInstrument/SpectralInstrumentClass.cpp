@@ -1,4 +1,4 @@
-/*----- PROTECTED REGION ID(SpectralClass.cpp) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrumentClass.cpp) ENABLED START -----*/
 static const char *RcsId      = "$Id:  $";
 static const char *TagName    = "$Name:  $";
 static const char *CvsPath    = "$Source:  $";
@@ -6,15 +6,15 @@ static const char *SvnPath    = "$HeadURL:  $";
 static const char *HttpServer = "http://www.esrf.eu/computing/cs/tango/tango_doc/ds_doc/";
 //=============================================================================
 //
-// file :        SpectralClass.cpp
+// file :        SpectralInstrumentClass.cpp
 //
-// description : C++ source for the SpectralClass.
+// description : C++ source for the SpectralInstrumentClass.
 //               A singleton class derived from DeviceClass.
 //               It implements the command and attribute list
 //               and all properties and methods required
-//               by the Spectral once per process.
+//               by the Spectral Instrument once per process.
 //
-// project :     Spectral detector TANGO specific device.
+// project :     Spectral Instrument detector TANGO specific device.
 //
 // This file is part of Tango device class.
 // 
@@ -44,13 +44,13 @@ static const char *HttpServer = "http://www.esrf.eu/computing/cs/tango/tango_doc
 //=============================================================================
 
 
-#include <SpectralClass.h>
+#include <SpectralInstrumentClass.h>
 
-/*----- PROTECTED REGION END -----*/	//	SpectralClass.cpp
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass.cpp
 
 //-------------------------------------------------------------------
 /**
- *	Create SpectralClass singleton and
+ *	Create SpectralInstrumentClass singleton and
  *	return it in a C function for Python usage
  */
 //-------------------------------------------------------------------
@@ -61,50 +61,50 @@ __declspec(dllexport)
 
 #endif
 
-	Tango::DeviceClass *_create_Spectral_class(const char *name) {
-		return Spectral_ns::SpectralClass::init(name);
+	Tango::DeviceClass *_create_SpectralInstrument_class(const char *name) {
+		return SpectralInstrument_ns::SpectralInstrumentClass::init(name);
 	}
 }
 
-namespace Spectral_ns
+namespace SpectralInstrument_ns
 {
 //===================================================================
 //	Initialize pointer for singleton pattern
 //===================================================================
-SpectralClass *SpectralClass::_instance = NULL;
+SpectralInstrumentClass *SpectralInstrumentClass::_instance = NULL;
 
 //--------------------------------------------------------
 /**
- * method : 		SpectralClass::SpectralClass(string &s)
- * description : 	constructor for the SpectralClass
+ * method : 		SpectralInstrumentClass::SpectralInstrumentClass(string &s)
+ * description : 	constructor for the SpectralInstrumentClass
  *
  * @param s	The class name
  */
 //--------------------------------------------------------
-SpectralClass::SpectralClass(string &s):Tango::DeviceClass(s)
+SpectralInstrumentClass::SpectralInstrumentClass(string &s):Tango::DeviceClass(s)
 {
-	cout2 << "Entering SpectralClass constructor" << endl;
+	cout2 << "Entering SpectralInstrumentClass constructor" << endl;
 	set_default_property();
 	write_class_property();
 
-	/*----- PROTECTED REGION ID(SpectralClass::constructor) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrumentClass::constructor) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectralClass::constructor
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass::constructor
 
-	cout2 << "Leaving SpectralClass constructor" << endl;
+	cout2 << "Leaving SpectralInstrumentClass constructor" << endl;
 }
 
 //--------------------------------------------------------
 /**
- * method : 		SpectralClass::~SpectralClass()
- * description : 	destructor for the SpectralClass
+ * method : 		SpectralInstrumentClass::~SpectralInstrumentClass()
+ * description : 	destructor for the SpectralInstrumentClass
  */
 //--------------------------------------------------------
-SpectralClass::~SpectralClass()
+SpectralInstrumentClass::~SpectralInstrumentClass()
 {
-	/*----- PROTECTED REGION ID(SpectralClass::destructor) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrumentClass::destructor) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectralClass::destructor
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass::destructor
 
 	_instance = NULL;
 }
@@ -112,38 +112,38 @@ SpectralClass::~SpectralClass()
 
 //--------------------------------------------------------
 /**
- * method : 		SpectralClass::init
+ * method : 		SpectralInstrumentClass::init
  * description : 	Create the object if not already done.
  *                  Otherwise, just return a pointer to the object
  *
  * @param	name	The class name
  */
 //--------------------------------------------------------
-SpectralClass *SpectralClass::init(const char *name)
+SpectralInstrumentClass *SpectralInstrumentClass::init(const char *name)
 {
 	if (_instance == NULL)
 	{
 		try
 		{
 			string s(name);
-			_instance = new SpectralClass(s);
+			_instance = new SpectralInstrumentClass(s);
 		}
 		catch (bad_alloc &)
 		{
 			throw;
-		}		
-	}		
+		}
+	}
 	return _instance;
 }
 
 //--------------------------------------------------------
 /**
- * method : 		SpectralClass::instance
+ * method : 		SpectralInstrumentClass::instance
  * description : 	Check if object already created,
  *                  and return a pointer to the object
  */
 //--------------------------------------------------------
-SpectralClass *SpectralClass::instance()
+SpectralInstrumentClass *SpectralInstrumentClass::instance()
 {
 	if (_instance == NULL)
 	{
@@ -164,11 +164,11 @@ SpectralClass *SpectralClass::instance()
 //===================================================================
 //--------------------------------------------------------
 /**
- *	Method      : SpectralClass::get_class_property()
+ *	Method      : SpectralInstrumentClass::get_class_property()
  *	Description : Get the class property for specified name.
  */
 //--------------------------------------------------------
-Tango::DbDatum SpectralClass::get_class_property(string &prop_name)
+Tango::DbDatum SpectralInstrumentClass::get_class_property(string &prop_name)
 {
 	for (unsigned int i=0 ; i<cl_prop.size() ; i++)
 		if (cl_prop[i].name == prop_name)
@@ -179,11 +179,11 @@ Tango::DbDatum SpectralClass::get_class_property(string &prop_name)
 
 //--------------------------------------------------------
 /**
- *	Method      : SpectralClass::get_default_device_property()
+ *	Method      : SpectralInstrumentClass::get_default_device_property()
  *	Description : Return the default value for device property.
  */
 //--------------------------------------------------------
-Tango::DbDatum SpectralClass::get_default_device_property(string &prop_name)
+Tango::DbDatum SpectralInstrumentClass::get_default_device_property(string &prop_name)
 {
 	for (unsigned int i=0 ; i<dev_def_prop.size() ; i++)
 		if (dev_def_prop[i].name == prop_name)
@@ -194,11 +194,11 @@ Tango::DbDatum SpectralClass::get_default_device_property(string &prop_name)
 
 //--------------------------------------------------------
 /**
- *	Method      : SpectralClass::get_default_class_property()
+ *	Method      : SpectralInstrumentClass::get_default_class_property()
  *	Description : Return the default value for class property.
  */
 //--------------------------------------------------------
-Tango::DbDatum SpectralClass::get_default_class_property(string &prop_name)
+Tango::DbDatum SpectralInstrumentClass::get_default_class_property(string &prop_name)
 {
 	for (unsigned int i=0 ; i<cl_def_prop.size() ; i++)
 		if (cl_def_prop[i].name == prop_name)
@@ -210,14 +210,14 @@ Tango::DbDatum SpectralClass::get_default_class_property(string &prop_name)
 
 //--------------------------------------------------------
 /**
- *	Method      : SpectralClass::set_default_property()
+ *	Method      : SpectralInstrumentClass::set_default_property()
  *	Description : Set default property (class and device) for wizard.
  *                For each property, add to wizard property name and description.
  *                If default value has been set, add it to wizard property and
  *                store it in a DbDatum.
  */
 //--------------------------------------------------------
-void SpectralClass::set_default_property()
+void SpectralInstrumentClass::set_default_property()
 {
 	string	prop_name;
 	string	prop_desc;
@@ -227,7 +227,7 @@ void SpectralClass::set_default_property()
 	//	Set Default Class Properties
 
 	//	Set Default device Properties
-	prop_name = "ExpertConnectionAddress";
+	prop_name = "ConnectionAddress";
 	prop_desc = "Only an expert User could change this property.<br>\nServer name or IP address of the SI Image SGL II software.<BR>";
 	prop_def  = "127.0.0.1";
 	vect_data.clear();
@@ -241,7 +241,7 @@ void SpectralClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ExpertConnectionPort";
+	prop_name = "ConnectionPort";
 	prop_desc = "Only an expert User could change this property.<br>\nTCP/IP port of the SI Image SGL II software.<BR>";
 	prop_def  = "0";
 	vect_data.clear();
@@ -255,7 +255,7 @@ void SpectralClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ExpertImagePacketPixelsNb";
+	prop_name = "ImagePacketPixelsNb";
 	prop_desc = "Only an expert User could change this property.<br>\nNumber of pixels sent into a image part TCP/IP packet.<BR>";
 	prop_def  = "512";
 	vect_data.clear();
@@ -269,7 +269,7 @@ void SpectralClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ExpertImagePacketDelayMicroSec";
+	prop_name = "ImagePacketDelayMicroSec";
 	prop_desc = "Only an expert User could change this property.<br>\nDelay between the sending of two image part TCP/IP packets (in micro-seconds).<BR>";
 	prop_def  = "300";
 	vect_data.clear();
@@ -287,11 +287,11 @@ void SpectralClass::set_default_property()
 
 //--------------------------------------------------------
 /**
- *	Method      : SpectralClass::write_class_property()
+ *	Method      : SpectralInstrumentClass::write_class_property()
  *	Description : Set class description fields as property in database
  */
 //--------------------------------------------------------
-void SpectralClass::write_class_property()
+void SpectralInstrumentClass::write_class_property()
 {
 	//	First time, check if database used
 	if (Tango::Util::_UseDb == false)
@@ -304,19 +304,19 @@ void SpectralClass::write_class_property()
 
 	//	Put title
 	Tango::DbDatum	title("ProjectTitle");
-	string	str_title("Spectral detector TANGO specific device.");
+	string	str_title("SpectralInstrument detector TANGO specific device.");
 	title << str_title;
 	data.push_back(title);
 
 	//	Put Description
 	Tango::DbDatum	description("Description");
 	vector<string>	str_desc;
-	str_desc.push_back("Device for detectors from Spectral Instruments. ");
+	str_desc.push_back("Device for detectors from SpectralInstrument Instruments. ");
 	description << str_desc;
 	data.push_back(description);
 
 	//	put cvs or svn location
-	string	filename("Spectral");
+	string	filename("SpectralInstrument");
 	filename += "Class.cpp";
 
 	// check for cvs information
@@ -430,35 +430,35 @@ void SpectralClass::write_class_property()
 
 //--------------------------------------------------------
 /**
- *	Method      : SpectralClass::device_factory()
+ *	Method      : SpectralInstrumentClass::device_factory()
  *	Description : Create the device object(s)
  *                and store them in the device list
  */
 //--------------------------------------------------------
-void SpectralClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
+void SpectralInstrumentClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 {
-	/*----- PROTECTED REGION ID(SpectralClass::device_factory_before) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrumentClass::device_factory_before) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectralClass::device_factory_before
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass::device_factory_before
 
 	//	Create devices and add it into the device list
 	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
 	{
 		cout4 << "Device name : " << (*devlist_ptr)[i].in() << endl;
-		device_list.push_back(new Spectral(this, (*devlist_ptr)[i]));							 
+		device_list.push_back(new SpectralInstrument(this, (*devlist_ptr)[i]));
 	}
 
 	//	Manage dynamic attributes if any
-	//erase_dynamic_attributes(devlist_ptr, get_class_attr()->get_attr_list());
+	erase_dynamic_attributes(devlist_ptr, get_class_attr()->get_attr_list());
 
 	//	Export devices to the outside world
 	for (unsigned long i=1 ; i<=devlist_ptr->length() ; i++)
 	{
 		//	Add dynamic attributes if any
-		Spectral *dev = static_cast<Spectral *>(device_list[device_list.size()-i]);
-		//dev->add_dynamic_attributes();
+		SpectralInstrument *dev = static_cast<SpectralInstrument *>(device_list[device_list.size()-i]);
+		dev->add_dynamic_attributes();
 
 		//	Check before if database used.
 		if ((Tango::Util::_UseDb == true) && (Tango::Util::_FileDb == false))
@@ -467,55 +467,154 @@ void SpectralClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 			export_device(dev, dev->get_name().c_str());
 	}
 
-	/*----- PROTECTED REGION ID(SpectralClass::device_factory_after) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrumentClass::device_factory_after) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectralClass::device_factory_after
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass::device_factory_after
 }
 //--------------------------------------------------------
 /**
- *	Method      : SpectralClass::attribute_factory()
+ *	Method      : SpectralInstrumentClass::attribute_factory()
  *	Description : Create the attribute object(s)
  *                and store them in the attribute list
  */
 //--------------------------------------------------------
-void SpectralClass::attribute_factory(vector<Tango::Attr *> &att_list)
+void SpectralInstrumentClass::attribute_factory(vector<Tango::Attr *> &att_list)
 {
-	/*----- PROTECTED REGION ID(SpectralClass::attribute_factory_before) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrumentClass::attribute_factory_before) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectralClass::attribute_factory_before
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass::attribute_factory_before
+	//	Attribute : cooling
+	coolingAttrib	*cooling = new coolingAttrib();
+	Tango::UserDefaultAttrProp	cooling_prop;
+	cooling_prop.set_description("Turns the CCD cooling On/Off");
+	//	label	not set for cooling
+	//	unit	not set for cooling
+	//	standard_unit	not set for cooling
+	//	display_unit	not set for cooling
+	//	format	not set for cooling
+	//	max_value	not set for cooling
+	//	min_value	not set for cooling
+	//	max_alarm	not set for cooling
+	//	min_alarm	not set for cooling
+	//	max_warning	not set for cooling
+	//	min_warning	not set for cooling
+	//	delta_t	not set for cooling
+	//	delta_val	not set for cooling
+	
+	cooling->set_default_properties(cooling_prop);
+	//	Not Polled
+	cooling->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(cooling);
+
+	//	Attribute : ccdTemperature
+	ccdTemperatureAttrib	*ccdtemperature = new ccdTemperatureAttrib();
+	Tango::UserDefaultAttrProp	ccdtemperature_prop;
+	ccdtemperature_prop.set_description("Camera temperature status (C)");
+	//	label	not set for ccdTemperature
+	ccdtemperature_prop.set_unit("C");
+	//	standard_unit	not set for ccdTemperature
+	//	display_unit	not set for ccdTemperature
+	//	format	not set for ccdTemperature
+	//	max_value	not set for ccdTemperature
+	//	min_value	not set for ccdTemperature
+	//	max_alarm	not set for ccdTemperature
+	//	min_alarm	not set for ccdTemperature
+	//	max_warning	not set for ccdTemperature
+	//	min_warning	not set for ccdTemperature
+	//	delta_t	not set for ccdTemperature
+	//	delta_val	not set for ccdTemperature
+	
+	ccdtemperature->set_default_properties(ccdtemperature_prop);
+	//	Not Polled
+	ccdtemperature->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(ccdtemperature);
+
+	//	Attribute : readoutSpeed
+	readoutSpeedAttrib	*readoutspeed = new readoutSpeedAttrib();
+	Tango::UserDefaultAttrProp	readoutspeed_prop;
+	//	description	not set for readoutSpeed
+	//	label	not set for readoutSpeed
+	//	unit	not set for readoutSpeed
+	//	standard_unit	not set for readoutSpeed
+	//	display_unit	not set for readoutSpeed
+	//	format	not set for readoutSpeed
+	//	max_value	not set for readoutSpeed
+	//	min_value	not set for readoutSpeed
+	//	max_alarm	not set for readoutSpeed
+	//	min_alarm	not set for readoutSpeed
+	//	max_warning	not set for readoutSpeed
+	//	min_warning	not set for readoutSpeed
+	//	delta_t	not set for readoutSpeed
+	//	delta_val	not set for readoutSpeed
+	
+	{
+		vector<string> labels;
+		labels.push_back("1MHz");
+		labels.push_back("690KHz");
+		readoutspeed_prop.set_enum_labels(labels);
+	}
+	readoutspeed->set_default_properties(readoutspeed_prop);
+	//	Not Polled
+	readoutspeed->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(readoutspeed);
+
+
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());
-	/*----- PROTECTED REGION ID(SpectralClass::attribute_factory_after) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrumentClass::attribute_factory_after) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectralClass::attribute_factory_after
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass::attribute_factory_after
 }
 //--------------------------------------------------------
 /**
- *	Method      : SpectralClass::command_factory()
+ *	Method      : SpectralInstrumentClass::pipe_factory()
+ *	Description : Create the pipe object(s)
+ *                and store them in the pipe list
+ */
+//--------------------------------------------------------
+void SpectralInstrumentClass::pipe_factory()
+{
+	/*----- PROTECTED REGION ID(SpectralInstrumentClass::pipe_factory_before) ENABLED START -----*/
+	
+	//	Add your own code
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass::pipe_factory_before
+	/*----- PROTECTED REGION ID(SpectralInstrumentClass::pipe_factory_after) ENABLED START -----*/
+	
+	//	Add your own code
+	
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass::pipe_factory_after
+}
+//--------------------------------------------------------
+/**
+ *	Method      : SpectralInstrumentClass::command_factory()
  *	Description : Create the command object(s)
  *                and store them in the command list
  */
 //--------------------------------------------------------
-void SpectralClass::command_factory()
+void SpectralInstrumentClass::command_factory()
 {
-	/*----- PROTECTED REGION ID(SpectralClass::command_factory_before) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrumentClass::command_factory_before) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectralClass::command_factory_before
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass::command_factory_before
 
 
-	/*----- PROTECTED REGION ID(SpectralClass::command_factory_after) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrumentClass::command_factory_after) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectralClass::command_factory_after
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass::command_factory_after
 }
 
 //===================================================================
@@ -524,13 +623,13 @@ void SpectralClass::command_factory()
 
 //--------------------------------------------------------
 /**
- * method : 		SpectralClass::create_static_attribute_list
+ * method : 		SpectralInstrumentClass::create_static_attribute_list
  * description : 	Create the a list of static attributes
  *
- * @param	att_list	the ceated attribute list 
+ * @param	att_list	the ceated attribute list
  */
 //--------------------------------------------------------
-void SpectralClass::create_static_attribute_list(vector<Tango::Attr *> &att_list)
+void SpectralInstrumentClass::create_static_attribute_list(vector<Tango::Attr *> &att_list)
 {
 	for (unsigned long i=0 ; i<att_list.size() ; i++)
 	{
@@ -541,30 +640,30 @@ void SpectralClass::create_static_attribute_list(vector<Tango::Attr *> &att_list
 
 	cout2 << defaultAttList.size() << " attributes in default list" << endl;
 
-	/*----- PROTECTED REGION ID(SpectralClass::create_static_att_list) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrumentClass::create_static_att_list) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectralClass::create_static_att_list
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass::create_static_att_list
 }
 
 
 //--------------------------------------------------------
 /**
- * method : 		SpectralClass::erase_dynamic_attributes
+ * method : 		SpectralInstrumentClass::erase_dynamic_attributes
  * description : 	delete the dynamic attributes if any.
  *
  * @param	devlist_ptr	the device list pointer
  * @param	list of all attributes
  */
 //--------------------------------------------------------
-void SpectralClass::erase_dynamic_attributes(const Tango::DevVarStringArray *devlist_ptr, vector<Tango::Attr *> &att_list)
+void SpectralInstrumentClass::erase_dynamic_attributes(const Tango::DevVarStringArray *devlist_ptr, vector<Tango::Attr *> &att_list)
 {
 	Tango::Util *tg = Tango::Util::instance();
 
 	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
-	{	
+	{
 		Tango::DeviceImpl *dev_impl = tg->get_device_by_name(((string)(*devlist_ptr)[i]).c_str());
-		Spectral *dev = static_cast<Spectral *> (dev_impl);
-		
+		SpectralInstrument *dev = static_cast<SpectralInstrument *> (dev_impl);
+
 		vector<Tango::Attribute *> &dev_att_list = dev->get_device_attr()->get_attribute_list();
 		vector<Tango::Attribute *>::iterator ite_att;
 		for (ite_att=dev_att_list.begin() ; ite_att != dev_att_list.end() ; ++ite_att)
@@ -582,21 +681,21 @@ void SpectralClass::erase_dynamic_attributes(const Tango::DevVarStringArray *dev
 			}
 		}
 	}
-	/*----- PROTECTED REGION ID(SpectralClass::erase_dynamic_attributes) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(SpectralInstrumentClass::erase_dynamic_attributes) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	SpectralClass::erase_dynamic_attributes
+	/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass::erase_dynamic_attributes
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : SpectralClass::get_attr_by_name()
+ *	Method      : SpectralInstrumentClass::get_attr_by_name()
  *	Description : returns Tango::Attr * object found by name
  */
 //--------------------------------------------------------
-Tango::Attr *SpectralClass::get_attr_object_by_name(vector<Tango::Attr *> &att_list, string attname)
+Tango::Attr *SpectralInstrumentClass::get_attr_object_by_name(vector<Tango::Attr *> &att_list, string attname)
 {
 	vector<Tango::Attr *>::iterator it;
-	for (it=att_list.begin() ; it<att_list.end() ; it++)
+	for (it=att_list.begin() ; it<att_list.end() ; ++it)
 		if ((*it)->get_name()==attname)
 			return (*it);
 	//	Attr does not exist
@@ -604,7 +703,7 @@ Tango::Attr *SpectralClass::get_attr_object_by_name(vector<Tango::Attr *> &att_l
 }
 
 
-/*----- PROTECTED REGION ID(SpectralClass::Additional Methods) ENABLED START -----*/
+/*----- PROTECTED REGION ID(SpectralInstrumentClass::Additional Methods) ENABLED START -----*/
 
-/*----- PROTECTED REGION END -----*/	//	SpectralClass::Additional Methods
+/*----- PROTECTED REGION END -----*/	//	SpectralInstrumentClass::Additional Methods
 } //	namespace

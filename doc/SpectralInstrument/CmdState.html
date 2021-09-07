@@ -1,18 +1,18 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <html>
 <head>
-<title> Spectral Tango Class Command Status </title>
+<title> SpectralInstrument Tango Class Command State </title>
 </head>
 <body text="Black" bgcolor="White" link="Blue" vlink="Purple" alink="Red">
 <br><br><br>
-<font size="+1"><u><b> Command Status : </b></u></font>
+<font size="+1"><u><b> Command State : </b></u></font>
 <ul>
-	This command gets the device status (stored in its device_status data member) and returns it to the caller.
+	This command gets the device state (stored in its device_state data member) and returns it to the caller.
 </ul>
 <br><br><br>
 <Table Border=2 Cellpadding=3 CELLSPACING=0>
 	<tr bgcolor="#CCCCFF" class="TableHeadingColor">
-	<td colspan=0> <font size=+1> <center><b> Status Definition </b></font></center></td>
+	<td colspan=0> <font size=+1> <center><b> State Definition </b></font></center></td>
 	</tr>
 	<tr>
 		<td> Input Argument </td>
@@ -21,8 +21,8 @@
 	</tr>
 	<tr>
 		<td> Output Argument </td>
-		<td> Tango::CONST_DEV_STRING </td>
-		<td> Device status </td>
+		<td> Tango::DEV_STATE </td>
+		<td> Device state </td>
 	</tr>
 	<tr>
 		<td> DisplayLevel </td>

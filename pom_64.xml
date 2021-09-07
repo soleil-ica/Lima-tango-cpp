@@ -122,7 +122,7 @@
                             <include>specifics/SlsEiger/*.cpp</include>
                             <include>specifics/Lambda/*.cpp</include>
                             <include>specifics/Xspress3/*.cpp</include>
-                            <include>specifics/Spectral/*.cpp</include>
+                            <include>specifics/SpectralInstrument/*.cpp</include>
                             <include>specifics/Ufxc/*.cpp</include>          
 							
                             <include>specifics/Layout/*.cpp</include>     			
@@ -138,7 +138,7 @@
                             <includePath>specifics/SlsEiger</includePath>
                             <includePath>specifics/Lambda</includePath>        
                             <includePath>specifics/Xspress3</includePath>     
-                            <includePath>specifics/Spectral</includePath>   
+                            <includePath>specifics/SpectralInstrument</includePath>   
                             <includePath>specifics/Ufxc</includePath>   
 
                             <includePath>specifics/Layout</includePath>         
