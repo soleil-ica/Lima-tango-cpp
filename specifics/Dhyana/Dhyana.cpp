@@ -865,10 +865,9 @@ void Dhyana::read_channel1(Tango::Attribute &attr)
 	{
 		int channel = 0;
 		lima::Dhyana::Camera::TucamSignal signal = lima::Dhyana::Camera::TucamSignal::SignalTrigIn;
-		m_camera->getOutputSignal1(channel, signal);
+		m_camera->getOutputSignal(channel, signal);
 
 		Tango::DevShort* sh;
-		std::clog << "Signal 1 : " << signal << std::endl;
 
 		switch (signal)
 		{
@@ -915,7 +914,6 @@ void Dhyana::write_channel1(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_channel1(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-	
 	try
 	{
 		int channel = 0;
@@ -972,8 +970,7 @@ void Dhyana::read_channel2(Tango::Attribute &attr)
 	{
 		int channel = 1;
 		lima::Dhyana::Camera::TucamSignal signal = lima::Dhyana::Camera::TucamSignal::SignalTrigIn;
-		m_camera->getOutputSignal2(channel, signal);
-		std::clog << "Signal 2 : " << signal << std::endl;
+		m_camera->getOutputSignal(channel, signal);
 
 		Tango::DevShort* sh;
 
@@ -1077,9 +1074,7 @@ void Dhyana::read_channel3(Tango::Attribute &attr)
 	{
 		int channel = 2;
 		lima::Dhyana::Camera::TucamSignal signal = lima::Dhyana::Camera::TucamSignal::SignalTrigIn;
-		m_camera->getOutputSignal3(channel, signal);
-
-		std::clog << "Signal 3 : " << signal << std::endl;
+		m_camera->getOutputSignal(channel, signal);
 
 		Tango::DevShort* sh;
 
