@@ -199,6 +199,96 @@ public:
 	virtual string get_enum_type() {return string("channel3Enum");}
 };
 
+//	Attribute width_ch1 class definition
+class width_ch1Attrib: public Tango::Attr
+{
+public:
+	width_ch1Attrib():Attr("width_ch1",
+			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~width_ch1Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Dhyana *>(dev))->read_width_ch1(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Dhyana *>(dev))->write_width_ch1(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Dhyana *>(dev))->is_width_ch1_allowed(ty);}
+};
+
+//	Attribute width_ch2 class definition
+class width_ch2Attrib: public Tango::Attr
+{
+public:
+	width_ch2Attrib():Attr("width_ch2",
+			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~width_ch2Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Dhyana *>(dev))->read_width_ch2(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Dhyana *>(dev))->write_width_ch2(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Dhyana *>(dev))->is_width_ch2_allowed(ty);}
+};
+
+//	Attribute width_ch3 class definition
+class width_ch3Attrib: public Tango::Attr
+{
+public:
+	width_ch3Attrib():Attr("width_ch3",
+			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~width_ch3Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Dhyana *>(dev))->read_width_ch3(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Dhyana *>(dev))->write_width_ch3(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Dhyana *>(dev))->is_width_ch3_allowed(ty);}
+};
+
+//	Attribute delay_ch1 class definition
+class delay_ch1Attrib: public Tango::Attr
+{
+public:
+	delay_ch1Attrib():Attr("delay_ch1",
+			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~delay_ch1Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Dhyana *>(dev))->read_delay_ch1(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Dhyana *>(dev))->write_delay_ch1(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Dhyana *>(dev))->is_delay_ch1_allowed(ty);}
+};
+
+//	Attribute delay_ch2 class definition
+class delay_ch2Attrib: public Tango::Attr
+{
+public:
+	delay_ch2Attrib():Attr("delay_ch2",
+			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~delay_ch2Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Dhyana *>(dev))->read_delay_ch2(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Dhyana *>(dev))->write_delay_ch2(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Dhyana *>(dev))->is_delay_ch2_allowed(ty);}
+};
+
+//	Attribute delay_ch3 class definition
+class delay_ch3Attrib: public Tango::Attr
+{
+public:
+	delay_ch3Attrib():Attr("delay_ch3",
+			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~delay_ch3Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Dhyana *>(dev))->read_delay_ch3(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Dhyana *>(dev))->write_delay_ch3(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Dhyana *>(dev))->is_delay_ch3_allowed(ty);}
+};
+
 
 /**
  *	The DhyanaClass singleton definition

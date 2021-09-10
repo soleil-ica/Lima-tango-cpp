@@ -662,9 +662,9 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	{
 		vector<string> labels;
-		labels.push_back("ExposureStart1");
-		labels.push_back("Readout1");
-		labels.push_back("Global1");
+		labels.push_back("ExposureStart");
+		labels.push_back("Readout");
+		labels.push_back("Global");
 		channel1_prop.set_enum_labels(labels);
 	}
 	channel1->set_default_properties(channel1_prop);
@@ -693,9 +693,9 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	{
 		vector<string> labels;
-		labels.push_back("ExposureStart2");
-		labels.push_back("Readout2");
-		labels.push_back("Global2");
+		labels.push_back("ExposureStart");
+		labels.push_back("Readout");
+		labels.push_back("Global");
 		channel2_prop.set_enum_labels(labels);
 	}
 	channel2->set_default_properties(channel2_prop);
@@ -724,9 +724,9 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	{
 		vector<string> labels;
-		labels.push_back("ExposureStart3");
-		labels.push_back("Readout3");
-		labels.push_back("Global3");
+		labels.push_back("ExposureStart");
+		labels.push_back("Readout");
+		labels.push_back("Global");
 		channel3_prop.set_enum_labels(labels);
 	}
 	channel3->set_default_properties(channel3_prop);
@@ -734,6 +734,150 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	channel3->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
 	att_list.push_back(channel3);
+
+	//	Attribute : width_ch1
+	width_ch1Attrib	*width_ch1 = new width_ch1Attrib();
+	Tango::UserDefaultAttrProp	width_ch1_prop;
+	//	description	not set for width_ch1
+	//	label	not set for width_ch1
+	width_ch1_prop.set_unit("ms");
+	//	standard_unit	not set for width_ch1
+	//	display_unit	not set for width_ch1
+	//	format	not set for width_ch1
+	//	max_value	not set for width_ch1
+	//	min_value	not set for width_ch1
+	//	max_alarm	not set for width_ch1
+	//	min_alarm	not set for width_ch1
+	//	max_warning	not set for width_ch1
+	//	min_warning	not set for width_ch1
+	//	delta_t	not set for width_ch1
+	//	delta_val	not set for width_ch1
+	
+	width_ch1->set_default_properties(width_ch1_prop);
+	//	Not Polled
+	width_ch1->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(width_ch1);
+
+	//	Attribute : width_ch2
+	width_ch2Attrib	*width_ch2 = new width_ch2Attrib();
+	Tango::UserDefaultAttrProp	width_ch2_prop;
+	//	description	not set for width_ch2
+	//	label	not set for width_ch2
+	width_ch2_prop.set_unit("ms");
+	//	standard_unit	not set for width_ch2
+	//	display_unit	not set for width_ch2
+	//	format	not set for width_ch2
+	//	max_value	not set for width_ch2
+	//	min_value	not set for width_ch2
+	//	max_alarm	not set for width_ch2
+	//	min_alarm	not set for width_ch2
+	//	max_warning	not set for width_ch2
+	//	min_warning	not set for width_ch2
+	//	delta_t	not set for width_ch2
+	//	delta_val	not set for width_ch2
+	
+	width_ch2->set_default_properties(width_ch2_prop);
+	//	Not Polled
+	width_ch2->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(width_ch2);
+
+	//	Attribute : width_ch3
+	width_ch3Attrib	*width_ch3 = new width_ch3Attrib();
+	Tango::UserDefaultAttrProp	width_ch3_prop;
+	//	description	not set for width_ch3
+	//	label	not set for width_ch3
+	width_ch3_prop.set_unit("ms");
+	//	standard_unit	not set for width_ch3
+	//	display_unit	not set for width_ch3
+	//	format	not set for width_ch3
+	//	max_value	not set for width_ch3
+	//	min_value	not set for width_ch3
+	//	max_alarm	not set for width_ch3
+	//	min_alarm	not set for width_ch3
+	//	max_warning	not set for width_ch3
+	//	min_warning	not set for width_ch3
+	//	delta_t	not set for width_ch3
+	//	delta_val	not set for width_ch3
+	
+	width_ch3->set_default_properties(width_ch3_prop);
+	//	Not Polled
+	width_ch3->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(width_ch3);
+
+	//	Attribute : delay_ch1
+	delay_ch1Attrib	*delay_ch1 = new delay_ch1Attrib();
+	Tango::UserDefaultAttrProp	delay_ch1_prop;
+	//	description	not set for delay_ch1
+	//	label	not set for delay_ch1
+	delay_ch1_prop.set_unit("ms");
+	//	standard_unit	not set for delay_ch1
+	//	display_unit	not set for delay_ch1
+	//	format	not set for delay_ch1
+	//	max_value	not set for delay_ch1
+	//	min_value	not set for delay_ch1
+	//	max_alarm	not set for delay_ch1
+	//	min_alarm	not set for delay_ch1
+	//	max_warning	not set for delay_ch1
+	//	min_warning	not set for delay_ch1
+	//	delta_t	not set for delay_ch1
+	//	delta_val	not set for delay_ch1
+	
+	delay_ch1->set_default_properties(delay_ch1_prop);
+	//	Not Polled
+	delay_ch1->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(delay_ch1);
+
+	//	Attribute : delay_ch2
+	delay_ch2Attrib	*delay_ch2 = new delay_ch2Attrib();
+	Tango::UserDefaultAttrProp	delay_ch2_prop;
+	//	description	not set for delay_ch2
+	//	label	not set for delay_ch2
+	delay_ch2_prop.set_unit("ms");
+	//	standard_unit	not set for delay_ch2
+	//	display_unit	not set for delay_ch2
+	//	format	not set for delay_ch2
+	//	max_value	not set for delay_ch2
+	//	min_value	not set for delay_ch2
+	//	max_alarm	not set for delay_ch2
+	//	min_alarm	not set for delay_ch2
+	//	max_warning	not set for delay_ch2
+	//	min_warning	not set for delay_ch2
+	//	delta_t	not set for delay_ch2
+	//	delta_val	not set for delay_ch2
+	
+	delay_ch2->set_default_properties(delay_ch2_prop);
+	//	Not Polled
+	delay_ch2->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(delay_ch2);
+
+	//	Attribute : delay_ch3
+	delay_ch3Attrib	*delay_ch3 = new delay_ch3Attrib();
+	Tango::UserDefaultAttrProp	delay_ch3_prop;
+	//	description	not set for delay_ch3
+	//	label	not set for delay_ch3
+	delay_ch3_prop.set_unit("ms");
+	//	standard_unit	not set for delay_ch3
+	//	display_unit	not set for delay_ch3
+	//	format	not set for delay_ch3
+	//	max_value	not set for delay_ch3
+	//	min_value	not set for delay_ch3
+	//	max_alarm	not set for delay_ch3
+	//	min_alarm	not set for delay_ch3
+	//	max_warning	not set for delay_ch3
+	//	min_warning	not set for delay_ch3
+	//	delta_t	not set for delay_ch3
+	//	delta_val	not set for delay_ch3
+	
+	delay_ch3->set_default_properties(delay_ch3_prop);
+	//	Not Polled
+	delay_ch3->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(delay_ch3);
 
 
 	//	Create a list of static attributes

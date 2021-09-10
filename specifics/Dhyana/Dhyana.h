@@ -79,33 +79,32 @@ using namespace yat4tango;
 
 namespace Dhyana_ns
 {
-enum _channel1Enum : short
-{
-	_EXPOSURESTART1,
-	_READOUT1,
-	_GLOBAL1,
-} ;
-typedef _channel1Enum channel1Enum;
-
-enum _channel2Enum : short
-{
-	_EXPOSURESTART2,
-	_READOUT2,
-	_GLOBAL2,
-} ;
-typedef _channel2Enum channel2Enum;
-
-enum _channel3Enum : short
-{
-	_EXPOSURESTART3,
-	_READOUT3,
-	_GLOBAL3,
-} ;
-typedef _channel3Enum channel3Enum;
 
 /*----- PROTECTED REGION ID(Dhyana::Additional Class Declarations) ENABLED START -----*/
 
-//	Additional Class Declarations
+enum class _channel1Enum : short
+{
+	_EXPOSURESTART,
+	_READOUT,
+	_GLOBAL,
+} ;
+typedef _channel1Enum channel1Enum;
+
+enum class _channel2Enum : short
+{
+	_EXPOSURESTART,
+	_READOUT,
+	_GLOBAL,
+} ;
+typedef _channel2Enum channel2Enum;
+
+enum class _channel3Enum : short
+{
+	_EXPOSURESTART,
+	_READOUT,
+	_GLOBAL,
+} ;
+typedef _channel3Enum channel3Enum;
 
 /*----- PROTECTED REGION END -----*/	//	Dhyana::Additional Class Declarations
 
@@ -116,7 +115,18 @@ class Dhyana : public TANGO_BASE_CLASS
 
 //	Add your own data members
 public:
-
+	Tango::DevString	attr_globalGain_write;
+	Tango::DevUShort	attr_fanSpeed_write;
+	Tango::DevDouble	attr_temperatureTarget_write;
+	channel1Enum	attr_channel1_write;
+	channel2Enum	attr_channel2_write;
+	channel3Enum	attr_channel3_write;
+	Tango::DevDouble	attr_width_ch1_write;
+	Tango::DevDouble	attr_width_ch2_write;
+	Tango::DevDouble	attr_width_ch3_write;
+	Tango::DevDouble	attr_delay_ch1_write;
+	Tango::DevDouble	attr_delay_ch2_write;
+	Tango::DevDouble	attr_delay_ch3_write;
 /*----- PROTECTED REGION END -----*/	//	Dhyana::Data Members
 
 //	Device property data members
@@ -136,18 +146,18 @@ public:
 	Tango::DevString	*attr_tucamVersion_read;
 	Tango::DevDouble	*attr_temperature_read;
 	Tango::DevDouble	*attr_temperatureTarget_read;
-	Tango::DevDouble	attr_temperatureTarget_write;
 	Tango::DevUShort	*attr_fanSpeed_read;
-	Tango::DevUShort	attr_fanSpeed_write;
 	Tango::DevString	*attr_globalGain_read;
-	Tango::DevString	attr_globalGain_write;
 	Tango::DevDouble	*attr_fps_read;
 	channel1Enum	*attr_channel1_read;
 	channel2Enum	*attr_channel2_read;
 	channel3Enum	*attr_channel3_read;
-	channel1Enum	attr_channel1_write;
-	channel2Enum	attr_channel2_write;
-	channel3Enum	attr_channel3_write;
+	Tango::DevDouble	*attr_width_ch1_read;
+	Tango::DevDouble	*attr_width_ch2_read;
+	Tango::DevDouble	*attr_width_ch3_read;
+	Tango::DevDouble	*attr_delay_ch1_read;
+	Tango::DevDouble	*attr_delay_ch2_read;
+	Tango::DevDouble	*attr_delay_ch3_read;
 
 //	Constructors and destructors
 public:
@@ -303,6 +313,66 @@ public:
 	virtual void read_channel3(Tango::Attribute &attr);
 	virtual void write_channel3(Tango::WAttribute &attr);
 	virtual bool is_channel3_allowed(Tango::AttReqType type);
+/**
+ *	Attribute width_ch1 related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+	virtual void read_width_ch1(Tango::Attribute &attr);
+	virtual void write_width_ch1(Tango::WAttribute &attr);
+	virtual bool is_width_ch1_allowed(Tango::AttReqType type);
+/**
+ *	Attribute width_ch2 related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+	virtual void read_width_ch2(Tango::Attribute &attr);
+	virtual void write_width_ch2(Tango::WAttribute &attr);
+	virtual bool is_width_ch2_allowed(Tango::AttReqType type);
+/**
+ *	Attribute width_ch3 related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+	virtual void read_width_ch3(Tango::Attribute &attr);
+	virtual void write_width_ch3(Tango::WAttribute &attr);
+	virtual bool is_width_ch3_allowed(Tango::AttReqType type);
+/**
+ *	Attribute delay_ch1 related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+	virtual void read_delay_ch1(Tango::Attribute &attr);
+	virtual void write_delay_ch1(Tango::WAttribute &attr);
+	virtual bool is_delay_ch1_allowed(Tango::AttReqType type);
+/**
+ *	Attribute delay_ch2 related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+	virtual void read_delay_ch2(Tango::Attribute &attr);
+	virtual void write_delay_ch2(Tango::WAttribute &attr);
+	virtual bool is_delay_ch2_allowed(Tango::AttReqType type);
+/**
+ *	Attribute delay_ch3 related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+	virtual void read_delay_ch3(Tango::Attribute &attr);
+	virtual void write_delay_ch3(Tango::WAttribute &attr);
+	virtual bool is_delay_ch3_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------
@@ -353,6 +423,13 @@ protected :
     lima::Dhyana::Interface*  m_hw;
     lima::CtControl*          m_ct;
     lima::Dhyana::Camera*     m_camera;
+	double 					  m_delay_ch1;
+	double 					  m_delay_ch2;
+	double 					  m_delay_ch3;
+	double 					  m_width_ch1;
+	double 					  m_width_ch2;
+	double 					  m_width_ch3;
+	lima::Dhyana::Camera::TucamSignalEdge signalEdge;
 /*----- PROTECTED REGION END -----*/	//	Dhyana::Additional Method prototypes
 };
 
