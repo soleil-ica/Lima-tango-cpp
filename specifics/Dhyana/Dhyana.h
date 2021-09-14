@@ -65,6 +65,9 @@
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
 #define TUCAM_VERSION  "1.0.0"
 
+#define CHANNEL_1 0
+#define CHANNEL_2 1
+#define CHANNEL_3 2
 
 using namespace lima;
 using namespace std;
@@ -79,32 +82,53 @@ using namespace yat4tango;
 
 namespace Dhyana_ns
 {
-
-/*----- PROTECTED REGION ID(Dhyana::Additional Class Declarations) ENABLED START -----*/
-
-enum class _channel1Enum : short
+enum _channel1Enum : short
 {
-	_EXPOSURESTART,
-	_READOUT,
-	_GLOBAL,
+	_EXPOSURESTART1,
+	_READOUT1,
+	_GLOBAL1,
 } ;
 typedef _channel1Enum channel1Enum;
 
-enum class _channel2Enum : short
+enum _channel2Enum : short
 {
-	_EXPOSURESTART,
-	_READOUT,
-	_GLOBAL,
+	_EXPOSURESTART2,
+	_READOUT2,
+	_GLOBAL2,
 } ;
 typedef _channel2Enum channel2Enum;
 
-enum class _channel3Enum : short
+enum _channel3Enum : short
 {
-	_EXPOSURESTART,
-	_READOUT,
-	_GLOBAL,
+	_EXPOSURESTART3,
+	_READOUT3,
+	_GLOBAL3,
 } ;
 typedef _channel3Enum channel3Enum;
+
+enum _edge1Enum : short
+{
+	_RISING1,
+	_FAILING1,
+} ;
+typedef _edge1Enum edge1Enum;
+
+enum _edge2Enum : short
+{
+	_RISING2,
+	_FAILING2,
+} ;
+typedef _edge2Enum edge2Enum;
+
+enum _edge3Enum : short
+{
+	_RISING3,
+	_FAILING3,
+} ;
+typedef _edge3Enum edge3Enum;
+
+/*----- PROTECTED REGION ID(Dhyana::Additional Class Declarations) ENABLED START -----*/
+
 
 /*----- PROTECTED REGION END -----*/	//	Dhyana::Additional Class Declarations
 
@@ -127,6 +151,9 @@ public:
 	Tango::DevDouble	attr_delay_ch1_write;
 	Tango::DevDouble	attr_delay_ch2_write;
 	Tango::DevDouble	attr_delay_ch3_write;
+	edge1Enum	attr_edge1_write;
+	edge2Enum	attr_edge2_write;
+	edge3Enum	attr_edge3_write;
 /*----- PROTECTED REGION END -----*/	//	Dhyana::Data Members
 
 //	Device property data members
@@ -158,6 +185,9 @@ public:
 	Tango::DevDouble	*attr_delay_ch1_read;
 	Tango::DevDouble	*attr_delay_ch2_read;
 	Tango::DevDouble	*attr_delay_ch3_read;
+	edge1Enum	*attr_edge1_read;
+	edge2Enum	*attr_edge2_read;
+	edge3Enum	*attr_edge3_read;
 
 //	Constructors and destructors
 public:
@@ -373,6 +403,36 @@ public:
 	virtual void read_delay_ch3(Tango::Attribute &attr);
 	virtual void write_delay_ch3(Tango::WAttribute &attr);
 	virtual bool is_delay_ch3_allowed(Tango::AttReqType type);
+/**
+ *	Attribute edge1 related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevEnum
+ *	Attr type:	Scalar
+ */
+	virtual void read_edge1(Tango::Attribute &attr);
+	virtual void write_edge1(Tango::WAttribute &attr);
+	virtual bool is_edge1_allowed(Tango::AttReqType type);
+/**
+ *	Attribute edge2 related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevEnum
+ *	Attr type:	Scalar
+ */
+	virtual void read_edge2(Tango::Attribute &attr);
+	virtual void write_edge2(Tango::WAttribute &attr);
+	virtual bool is_edge2_allowed(Tango::AttReqType type);
+/**
+ *	Attribute edge3 related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevEnum
+ *	Attr type:	Scalar
+ */
+	virtual void read_edge3(Tango::Attribute &attr);
+	virtual void write_edge3(Tango::WAttribute &attr);
+	virtual bool is_edge3_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------
@@ -429,7 +489,12 @@ protected :
 	double 					  m_width_ch1;
 	double 					  m_width_ch2;
 	double 					  m_width_ch3;
-	lima::Dhyana::Camera::TucamSignalEdge signalEdge;
+	short 					  m_edge_ch1;
+	short 					  m_edge_ch2;
+	short 					  m_edge_ch3;
+	lima::Dhyana::Camera::TucamSignal signal1;
+	lima::Dhyana::Camera::TucamSignal signal2;
+	lima::Dhyana::Camera::TucamSignal signal3;
 /*----- PROTECTED REGION END -----*/	//	Dhyana::Additional Method prototypes
 };
 

@@ -397,6 +397,66 @@ bool Dhyana::is_delay_ch3_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	return true;
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : Dhyana::is_edge1_allowed()
+ *	Description : Execution allowed for edge1 attribute
+ */
+//--------------------------------------------------------
+bool Dhyana::is_edge1_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Not any excluded states for edge1 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::edge1StateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::edge1StateAllowed_WRITE
+
+	//	Not any excluded states for edge1 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::edge1StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::edge1StateAllowed_READ
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : Dhyana::is_edge2_allowed()
+ *	Description : Execution allowed for edge2 attribute
+ */
+//--------------------------------------------------------
+bool Dhyana::is_edge2_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Not any excluded states for edge2 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::edge2StateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::edge2StateAllowed_WRITE
+
+	//	Not any excluded states for edge2 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::edge2StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::edge2StateAllowed_READ
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : Dhyana::is_edge3_allowed()
+ *	Description : Execution allowed for edge3 attribute
+ */
+//--------------------------------------------------------
+bool Dhyana::is_edge3_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Not any excluded states for edge3 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::edge3StateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::edge3StateAllowed_WRITE
+
+	//	Not any excluded states for edge3 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::edge3StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::edge3StateAllowed_READ
+	return true;
+}
+
 
 //=================================================
 //		Commands Allowed Methods

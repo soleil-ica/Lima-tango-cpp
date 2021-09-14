@@ -289,6 +289,57 @@ public:
 		{return (static_cast<Dhyana *>(dev))->is_delay_ch3_allowed(ty);}
 };
 
+//	Attribute edge1 class definition
+class edge1Attrib: public Tango::Attr
+{
+public:
+	edge1Attrib():Attr("edge1",
+			Tango::DEV_ENUM, Tango::READ_WRITE) {};
+	~edge1Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Dhyana *>(dev))->read_edge1(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Dhyana *>(dev))->write_edge1(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Dhyana *>(dev))->is_edge1_allowed(ty);}
+	virtual bool same_type(const type_info &in_type) {return typeid(edge1Enum) == in_type;}
+	virtual string get_enum_type() {return string("edge1Enum");}
+};
+
+//	Attribute edge2 class definition
+class edge2Attrib: public Tango::Attr
+{
+public:
+	edge2Attrib():Attr("edge2",
+			Tango::DEV_ENUM, Tango::READ_WRITE) {};
+	~edge2Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Dhyana *>(dev))->read_edge2(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Dhyana *>(dev))->write_edge2(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Dhyana *>(dev))->is_edge2_allowed(ty);}
+	virtual bool same_type(const type_info &in_type) {return typeid(edge2Enum) == in_type;}
+	virtual string get_enum_type() {return string("edge2Enum");}
+};
+
+//	Attribute edge3 class definition
+class edge3Attrib: public Tango::Attr
+{
+public:
+	edge3Attrib():Attr("edge3",
+			Tango::DEV_ENUM, Tango::READ_WRITE) {};
+	~edge3Attrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Dhyana *>(dev))->read_edge3(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Dhyana *>(dev))->write_edge3(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Dhyana *>(dev))->is_edge3_allowed(ty);}
+	virtual bool same_type(const type_info &in_type) {return typeid(edge3Enum) == in_type;}
+	virtual string get_enum_type() {return string("edge3Enum");}
+};
+
 
 /**
  *	The DhyanaClass singleton definition

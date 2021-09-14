@@ -662,9 +662,9 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	{
 		vector<string> labels;
-		labels.push_back("ExposureStart");
-		labels.push_back("Readout");
-		labels.push_back("Global");
+		labels.push_back("ExposureStart1");
+		labels.push_back("Readout1");
+		labels.push_back("Global1");
 		channel1_prop.set_enum_labels(labels);
 	}
 	channel1->set_default_properties(channel1_prop);
@@ -693,9 +693,9 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	{
 		vector<string> labels;
-		labels.push_back("ExposureStart");
-		labels.push_back("Readout");
-		labels.push_back("Global");
+		labels.push_back("ExposureStart2");
+		labels.push_back("Readout2");
+		labels.push_back("Global2");
 		channel2_prop.set_enum_labels(labels);
 	}
 	channel2->set_default_properties(channel2_prop);
@@ -724,9 +724,9 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	{
 		vector<string> labels;
-		labels.push_back("ExposureStart");
-		labels.push_back("Readout");
-		labels.push_back("Global");
+		labels.push_back("ExposureStart3");
+		labels.push_back("Readout3");
+		labels.push_back("Global3");
 		channel3_prop.set_enum_labels(labels);
 	}
 	channel3->set_default_properties(channel3_prop);
@@ -878,6 +878,96 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	delay_ch3->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
 	att_list.push_back(delay_ch3);
+
+	//	Attribute : edge1
+	edge1Attrib	*edge1 = new edge1Attrib();
+	Tango::UserDefaultAttrProp	edge1_prop;
+	//	description	not set for edge1
+	//	label	not set for edge1
+	//	unit	not set for edge1
+	//	standard_unit	not set for edge1
+	//	display_unit	not set for edge1
+	//	format	not set for edge1
+	//	max_value	not set for edge1
+	//	min_value	not set for edge1
+	//	max_alarm	not set for edge1
+	//	min_alarm	not set for edge1
+	//	max_warning	not set for edge1
+	//	min_warning	not set for edge1
+	//	delta_t	not set for edge1
+	//	delta_val	not set for edge1
+	
+	{
+		vector<string> labels;
+		labels.push_back("Rising1");
+		labels.push_back("Failing1");
+		edge1_prop.set_enum_labels(labels);
+	}
+	edge1->set_default_properties(edge1_prop);
+	//	Not Polled
+	edge1->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(edge1);
+
+	//	Attribute : edge2
+	edge2Attrib	*edge2 = new edge2Attrib();
+	Tango::UserDefaultAttrProp	edge2_prop;
+	//	description	not set for edge2
+	//	label	not set for edge2
+	//	unit	not set for edge2
+	//	standard_unit	not set for edge2
+	//	display_unit	not set for edge2
+	//	format	not set for edge2
+	//	max_value	not set for edge2
+	//	min_value	not set for edge2
+	//	max_alarm	not set for edge2
+	//	min_alarm	not set for edge2
+	//	max_warning	not set for edge2
+	//	min_warning	not set for edge2
+	//	delta_t	not set for edge2
+	//	delta_val	not set for edge2
+	
+	{
+		vector<string> labels;
+		labels.push_back("Rising2");
+		labels.push_back("Failing2");
+		edge2_prop.set_enum_labels(labels);
+	}
+	edge2->set_default_properties(edge2_prop);
+	//	Not Polled
+	edge2->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(edge2);
+
+	//	Attribute : edge3
+	edge3Attrib	*edge3 = new edge3Attrib();
+	Tango::UserDefaultAttrProp	edge3_prop;
+	//	description	not set for edge3
+	//	label	not set for edge3
+	//	unit	not set for edge3
+	//	standard_unit	not set for edge3
+	//	display_unit	not set for edge3
+	//	format	not set for edge3
+	//	max_value	not set for edge3
+	//	min_value	not set for edge3
+	//	max_alarm	not set for edge3
+	//	min_alarm	not set for edge3
+	//	max_warning	not set for edge3
+	//	min_warning	not set for edge3
+	//	delta_t	not set for edge3
+	//	delta_val	not set for edge3
+	
+	{
+		vector<string> labels;
+		labels.push_back("Rising3");
+		labels.push_back("Failing3");
+		edge3_prop.set_enum_labels(labels);
+	}
+	edge3->set_default_properties(edge3_prop);
+	//	Not Polled
+	edge3->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(edge3);
 
 
 	//	Create a list of static attributes
