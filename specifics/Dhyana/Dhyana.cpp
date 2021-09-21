@@ -616,7 +616,6 @@ void Dhyana::write_temperatureTarget(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_temperatureTarget(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-
 	/*----- PROTECTED REGION ID(Dhyana::write_temperatureTarget) ENABLED START -----*/
 	// the variable w_val will not be used !
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
@@ -700,7 +699,6 @@ void Dhyana::write_fanSpeed(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_fanSpeed(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-
 	/*----- PROTECTED REGION ID(Dhyana::write_fanSpeed) ENABLED START -----*/
 	// the variable w_val will not be used !
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
@@ -937,7 +935,6 @@ void Dhyana::write_channel1(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_channel1(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-
 	/*----- PROTECTED REGION ID(Dhyana::write_channel1) ENABLED START -----*/
 
 	try
@@ -1044,7 +1041,6 @@ void Dhyana::write_channel2(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_channel2(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-
 	/*----- PROTECTED REGION ID(Dhyana::write_channel2) ENABLED START -----*/
 	try
 	{
@@ -1150,7 +1146,6 @@ void Dhyana::write_channel3(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_channel3(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-
 	/*----- PROTECTED REGION ID(Dhyana::write_channel3) ENABLED START -----*/
 
 	try
@@ -1246,7 +1241,6 @@ void Dhyana::write_width_ch1(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_width_ch1(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-
 	/*----- PROTECTED REGION ID(Dhyana::write_width_ch1) ENABLED START -----*/
 	try
 	{
@@ -1326,7 +1320,6 @@ void Dhyana::write_width_ch2(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_width_ch2(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-
 	/*----- PROTECTED REGION ID(Dhyana::write_width_ch2) ENABLED START -----*/
 	try
 	{
@@ -1407,7 +1400,6 @@ void Dhyana::write_width_ch3(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_width_ch3(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-
 	/*----- PROTECTED REGION ID(Dhyana::write_width_ch3) ENABLED START -----*/
 	try
 	{
@@ -1488,7 +1480,6 @@ void Dhyana::write_delay_ch1(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_delay_ch1(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-
 	/*----- PROTECTED REGION ID(Dhyana::write_delay_ch1) ENABLED START -----*/
 	try
 	{
@@ -1569,7 +1560,6 @@ void Dhyana::write_delay_ch2(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_delay_ch2(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-
 	/*----- PROTECTED REGION ID(Dhyana::write_delay_ch2) ENABLED START -----*/
 	try
 	{
@@ -1650,7 +1640,6 @@ void Dhyana::write_delay_ch3(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_delay_ch3(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-
 	/*----- PROTECTED REGION ID(Dhyana::write_delay_ch3) ENABLED START -----*/
 	try
 	{
@@ -1745,7 +1734,6 @@ void Dhyana::write_edge1(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_edge1(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-
 	/*----- PROTECTED REGION ID(Dhyana::write_edge1) ENABLED START -----*/
 	
 	try
@@ -1850,7 +1838,6 @@ void Dhyana::write_edge2(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_edge2(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-	
 	/*----- PROTECTED REGION ID(Dhyana::write_edge2) ENABLED START -----*/
 	try
 	{
@@ -1956,7 +1943,6 @@ void Dhyana::write_edge3(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_edge3(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-
 	/*----- PROTECTED REGION ID(Dhyana::write_edge3) ENABLED START -----*/
 	try
 	{
