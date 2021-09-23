@@ -279,121 +279,121 @@ bool Dhyana::is_channel3_allowed(TANGO_UNUSED(Tango::AttReqType type))
 
 //--------------------------------------------------------
 /**
- *	Method      : Dhyana::is_width_ch1_allowed()
- *	Description : Execution allowed for width_ch1 attribute
+ *	Method      : Dhyana::is_width1_allowed()
+ *	Description : Execution allowed for width1 attribute
  */
 //--------------------------------------------------------
-bool Dhyana::is_width_ch1_allowed(TANGO_UNUSED(Tango::AttReqType type))
+bool Dhyana::is_width1_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	//	Not any excluded states for width_ch1 attribute in Write access.
-	/*----- PROTECTED REGION ID(Dhyana::width_ch1StateAllowed_WRITE) ENABLED START -----*/
+	//	Not any excluded states for width1 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::width1StateAllowed_WRITE) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::width_ch1StateAllowed_WRITE
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::width1StateAllowed_WRITE
 
-	//	Not any excluded states for width_ch1 attribute in read access.
-	/*----- PROTECTED REGION ID(Dhyana::width_ch1StateAllowed_READ) ENABLED START -----*/
+	//	Not any excluded states for width1 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::width1StateAllowed_READ) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::width_ch1StateAllowed_READ
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::width1StateAllowed_READ
 	return true;
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Dhyana::is_width_ch2_allowed()
- *	Description : Execution allowed for width_ch2 attribute
+ *	Method      : Dhyana::is_width2_allowed()
+ *	Description : Execution allowed for width2 attribute
  */
 //--------------------------------------------------------
-bool Dhyana::is_width_ch2_allowed(TANGO_UNUSED(Tango::AttReqType type))
+bool Dhyana::is_width2_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	//	Not any excluded states for width_ch2 attribute in Write access.
-	/*----- PROTECTED REGION ID(Dhyana::width_ch2StateAllowed_WRITE) ENABLED START -----*/
+	//	Not any excluded states for width2 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::width2StateAllowed_WRITE) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::width_ch2StateAllowed_WRITE
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::width2StateAllowed_WRITE
 
-	//	Not any excluded states for width_ch2 attribute in read access.
-	/*----- PROTECTED REGION ID(Dhyana::width_ch2StateAllowed_READ) ENABLED START -----*/
+	//	Not any excluded states for width2 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::width2StateAllowed_READ) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::width_ch2StateAllowed_READ
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::width2StateAllowed_READ
 	return true;
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Dhyana::is_width_ch3_allowed()
- *	Description : Execution allowed for width_ch3 attribute
+ *	Method      : Dhyana::is_width3_allowed()
+ *	Description : Execution allowed for width3 attribute
  */
 //--------------------------------------------------------
-bool Dhyana::is_width_ch3_allowed(TANGO_UNUSED(Tango::AttReqType type))
+bool Dhyana::is_width3_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	//	Not any excluded states for width_ch3 attribute in Write access.
-	/*----- PROTECTED REGION ID(Dhyana::width_ch3StateAllowed_WRITE) ENABLED START -----*/
+	//	Not any excluded states for width3 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::width3StateAllowed_WRITE) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::width_ch3StateAllowed_WRITE
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::width3StateAllowed_WRITE
 
-	//	Not any excluded states for width_ch3 attribute in read access.
-	/*----- PROTECTED REGION ID(Dhyana::width_ch3StateAllowed_READ) ENABLED START -----*/
+	//	Not any excluded states for width3 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::width3StateAllowed_READ) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::width_ch3StateAllowed_READ
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::width3StateAllowed_READ
 	return true;
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Dhyana::is_delay_ch1_allowed()
- *	Description : Execution allowed for delay_ch1 attribute
+ *	Method      : Dhyana::is_delay1_allowed()
+ *	Description : Execution allowed for delay1 attribute
  */
 //--------------------------------------------------------
-bool Dhyana::is_delay_ch1_allowed(TANGO_UNUSED(Tango::AttReqType type))
+bool Dhyana::is_delay1_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	//	Not any excluded states for delay_ch1 attribute in Write access.
-	/*----- PROTECTED REGION ID(Dhyana::delay_ch1StateAllowed_WRITE) ENABLED START -----*/
+	//	Not any excluded states for delay1 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::delay1StateAllowed_WRITE) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay_ch1StateAllowed_WRITE
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay1StateAllowed_WRITE
 
-	//	Not any excluded states for delay_ch1 attribute in read access.
-	/*----- PROTECTED REGION ID(Dhyana::delay_ch1StateAllowed_READ) ENABLED START -----*/
+	//	Not any excluded states for delay1 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::delay1StateAllowed_READ) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay_ch1StateAllowed_READ
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay1StateAllowed_READ
 	return true;
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Dhyana::is_delay_ch2_allowed()
- *	Description : Execution allowed for delay_ch2 attribute
+ *	Method      : Dhyana::is_delay2_allowed()
+ *	Description : Execution allowed for delay2 attribute
  */
 //--------------------------------------------------------
-bool Dhyana::is_delay_ch2_allowed(TANGO_UNUSED(Tango::AttReqType type))
+bool Dhyana::is_delay2_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	//	Not any excluded states for delay_ch2 attribute in Write access.
-	/*----- PROTECTED REGION ID(Dhyana::delay_ch2StateAllowed_WRITE) ENABLED START -----*/
+	//	Not any excluded states for delay2 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::delay2StateAllowed_WRITE) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay_ch2StateAllowed_WRITE
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay2StateAllowed_WRITE
 
-	//	Not any excluded states for delay_ch2 attribute in read access.
-	/*----- PROTECTED REGION ID(Dhyana::delay_ch2StateAllowed_READ) ENABLED START -----*/
+	//	Not any excluded states for delay2 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::delay2StateAllowed_READ) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay_ch2StateAllowed_READ
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay2StateAllowed_READ
 	return true;
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Dhyana::is_delay_ch3_allowed()
- *	Description : Execution allowed for delay_ch3 attribute
+ *	Method      : Dhyana::is_delay3_allowed()
+ *	Description : Execution allowed for delay3 attribute
  */
 //--------------------------------------------------------
-bool Dhyana::is_delay_ch3_allowed(TANGO_UNUSED(Tango::AttReqType type))
+bool Dhyana::is_delay3_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	//	Not any excluded states for delay_ch3 attribute in Write access.
-	/*----- PROTECTED REGION ID(Dhyana::delay_ch3StateAllowed_WRITE) ENABLED START -----*/
+	//	Not any excluded states for delay3 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::delay3StateAllowed_WRITE) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay_ch3StateAllowed_WRITE
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay3StateAllowed_WRITE
 
-	//	Not any excluded states for delay_ch3 attribute in read access.
-	/*----- PROTECTED REGION ID(Dhyana::delay_ch3StateAllowed_READ) ENABLED START -----*/
+	//	Not any excluded states for delay3 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::delay3StateAllowed_READ) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay_ch3StateAllowed_READ
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay3StateAllowed_READ
 	return true;
 }
 

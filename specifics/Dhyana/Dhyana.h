@@ -84,51 +84,48 @@ namespace Dhyana_ns
 {
 enum _channel1Enum : short
 {
-	_EXPOSURESTART1,
-	_READOUT1,
-	_GLOBAL1,
 } ;
 typedef _channel1Enum channel1Enum;
 
 enum _channel2Enum : short
 {
-	_EXPOSURESTART2,
-	_READOUT2,
-	_GLOBAL2,
 } ;
 typedef _channel2Enum channel2Enum;
 
 enum _channel3Enum : short
 {
-	_EXPOSURESTART3,
-	_READOUT3,
-	_GLOBAL3,
 } ;
 typedef _channel3Enum channel3Enum;
 
 enum _edge1Enum : short
 {
-	_RISING1,
-	_FAILING1,
 } ;
 typedef _edge1Enum edge1Enum;
 
 enum _edge2Enum : short
 {
-	_RISING2,
-	_FAILING2,
 } ;
 typedef _edge2Enum edge2Enum;
 
 enum _edge3Enum : short
 {
-	_RISING3,
-	_FAILING3,
 } ;
 typedef _edge3Enum edge3Enum;
 
 /*----- PROTECTED REGION ID(Dhyana::Additional Class Declarations) ENABLED START -----*/
 
+enum class TriggeroutMode : short
+{
+	EXPOSURESTART,
+	READOUT,
+	GLOBAL
+};
+
+enum class edgeMode : short
+{
+	RISING,
+	FAILING
+};
 
 /*----- PROTECTED REGION END -----*/	//	Dhyana::Additional Class Declarations
 
@@ -145,12 +142,12 @@ public:
 	channel1Enum	attr_channel1_write;
 	channel2Enum	attr_channel2_write;
 	channel3Enum	attr_channel3_write;
-	Tango::DevDouble	attr_width_ch1_write;
-	Tango::DevDouble	attr_width_ch2_write;
-	Tango::DevDouble	attr_width_ch3_write;
-	Tango::DevDouble	attr_delay_ch1_write;
-	Tango::DevDouble	attr_delay_ch2_write;
-	Tango::DevDouble	attr_delay_ch3_write;
+	Tango::DevDouble	attr_width1_write;
+	Tango::DevDouble	attr_width2_write;
+	Tango::DevDouble	attr_width3_write;
+	Tango::DevDouble	attr_delay1_write;
+	Tango::DevDouble	attr_delay2_write;
+	Tango::DevDouble	attr_delay3_write;
 	edge1Enum	attr_edge1_write;
 	edge2Enum	attr_edge2_write;
 	edge3Enum	attr_edge3_write;
@@ -179,12 +176,12 @@ public:
 	channel1Enum	*attr_channel1_read;
 	channel2Enum	*attr_channel2_read;
 	channel3Enum	*attr_channel3_read;
-	Tango::DevDouble	*attr_width_ch1_read;
-	Tango::DevDouble	*attr_width_ch2_read;
-	Tango::DevDouble	*attr_width_ch3_read;
-	Tango::DevDouble	*attr_delay_ch1_read;
-	Tango::DevDouble	*attr_delay_ch2_read;
-	Tango::DevDouble	*attr_delay_ch3_read;
+	Tango::DevDouble	*attr_width1_read;
+	Tango::DevDouble	*attr_width2_read;
+	Tango::DevDouble	*attr_width3_read;
+	Tango::DevDouble	*attr_delay1_read;
+	Tango::DevDouble	*attr_delay2_read;
+	Tango::DevDouble	*attr_delay3_read;
 	edge1Enum	*attr_edge1_read;
 	edge2Enum	*attr_edge2_read;
 	edge3Enum	*attr_edge3_read;
@@ -344,65 +341,65 @@ public:
 	virtual void write_channel3(Tango::WAttribute &attr);
 	virtual bool is_channel3_allowed(Tango::AttReqType type);
 /**
- *	Attribute width_ch1 related methods
+ *	Attribute width1 related methods
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
-	virtual void read_width_ch1(Tango::Attribute &attr);
-	virtual void write_width_ch1(Tango::WAttribute &attr);
-	virtual bool is_width_ch1_allowed(Tango::AttReqType type);
+	virtual void read_width1(Tango::Attribute &attr);
+	virtual void write_width1(Tango::WAttribute &attr);
+	virtual bool is_width1_allowed(Tango::AttReqType type);
 /**
- *	Attribute width_ch2 related methods
+ *	Attribute width2 related methods
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
-	virtual void read_width_ch2(Tango::Attribute &attr);
-	virtual void write_width_ch2(Tango::WAttribute &attr);
-	virtual bool is_width_ch2_allowed(Tango::AttReqType type);
+	virtual void read_width2(Tango::Attribute &attr);
+	virtual void write_width2(Tango::WAttribute &attr);
+	virtual bool is_width2_allowed(Tango::AttReqType type);
 /**
- *	Attribute width_ch3 related methods
+ *	Attribute width3 related methods
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
-	virtual void read_width_ch3(Tango::Attribute &attr);
-	virtual void write_width_ch3(Tango::WAttribute &attr);
-	virtual bool is_width_ch3_allowed(Tango::AttReqType type);
+	virtual void read_width3(Tango::Attribute &attr);
+	virtual void write_width3(Tango::WAttribute &attr);
+	virtual bool is_width3_allowed(Tango::AttReqType type);
 /**
- *	Attribute delay_ch1 related methods
+ *	Attribute delay1 related methods
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
-	virtual void read_delay_ch1(Tango::Attribute &attr);
-	virtual void write_delay_ch1(Tango::WAttribute &attr);
-	virtual bool is_delay_ch1_allowed(Tango::AttReqType type);
+	virtual void read_delay1(Tango::Attribute &attr);
+	virtual void write_delay1(Tango::WAttribute &attr);
+	virtual bool is_delay1_allowed(Tango::AttReqType type);
 /**
- *	Attribute delay_ch2 related methods
+ *	Attribute delay2 related methods
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
-	virtual void read_delay_ch2(Tango::Attribute &attr);
-	virtual void write_delay_ch2(Tango::WAttribute &attr);
-	virtual bool is_delay_ch2_allowed(Tango::AttReqType type);
+	virtual void read_delay2(Tango::Attribute &attr);
+	virtual void write_delay2(Tango::WAttribute &attr);
+	virtual bool is_delay2_allowed(Tango::AttReqType type);
 /**
- *	Attribute delay_ch3 related methods
+ *	Attribute delay3 related methods
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
-	virtual void read_delay_ch3(Tango::Attribute &attr);
-	virtual void write_delay_ch3(Tango::WAttribute &attr);
-	virtual bool is_delay_ch3_allowed(Tango::AttReqType type);
+	virtual void read_delay3(Tango::Attribute &attr);
+	virtual void write_delay3(Tango::WAttribute &attr);
+	virtual bool is_delay3_allowed(Tango::AttReqType type);
 /**
  *	Attribute edge1 related methods
  *	Description: 

@@ -75,12 +75,12 @@ static const char *RcsId = "$Id:  $";
 //  channel1           |  Tango::DevEnum	Scalar
 //  channel2           |  Tango::DevEnum	Scalar
 //  channel3           |  Tango::DevEnum	Scalar
-//  width_ch1          |  Tango::DevDouble	Scalar
-//  width_ch2          |  Tango::DevDouble	Scalar
-//  width_ch3          |  Tango::DevDouble	Scalar
-//  delay_ch1          |  Tango::DevDouble	Scalar
-//  delay_ch2          |  Tango::DevDouble	Scalar
-//  delay_ch3          |  Tango::DevDouble	Scalar
+//  width1             |  Tango::DevDouble	Scalar
+//  width2             |  Tango::DevDouble	Scalar
+//  width3             |  Tango::DevDouble	Scalar
+//  delay1             |  Tango::DevDouble	Scalar
+//  delay2             |  Tango::DevDouble	Scalar
+//  delay3             |  Tango::DevDouble	Scalar
 //  edge1              |  Tango::DevEnum	Scalar
 //  edge2              |  Tango::DevEnum	Scalar
 //  edge3              |  Tango::DevEnum	Scalar
@@ -162,12 +162,12 @@ void Dhyana::delete_device()
 	delete[] attr_channel1_read;
 	delete[] attr_channel2_read;
 	delete[] attr_channel3_read;
-	delete[] attr_width_ch1_read;
-	delete[] attr_width_ch2_read;
-	delete[] attr_width_ch3_read;
-	delete[] attr_delay_ch1_read;
-	delete[] attr_delay_ch2_read;
-	delete[] attr_delay_ch3_read;
+	delete[] attr_width1_read;
+	delete[] attr_width2_read;
+	delete[] attr_width3_read;
+	delete[] attr_delay1_read;
+	delete[] attr_delay2_read;
+	delete[] attr_delay3_read;
 	delete[] attr_edge1_read;
 	delete[] attr_edge2_read;
 	delete[] attr_edge3_read;
@@ -196,17 +196,63 @@ void Dhyana::init_device()
 	attr_channel1_read = new channel1Enum[1];
 	attr_channel2_read = new channel2Enum[1];
 	attr_channel3_read = new channel3Enum[1];
-	attr_width_ch1_read = new Tango::DevDouble[1];
-	attr_width_ch2_read = new Tango::DevDouble[1];
-	attr_width_ch3_read = new Tango::DevDouble[1];
-	attr_delay_ch1_read = new Tango::DevDouble[1];
-	attr_delay_ch2_read = new Tango::DevDouble[1];
-	attr_delay_ch3_read = new Tango::DevDouble[1];
+	attr_width1_read = new Tango::DevDouble[1];
+	attr_width2_read = new Tango::DevDouble[1];
+	attr_width3_read = new Tango::DevDouble[1];
+	attr_delay1_read = new Tango::DevDouble[1];
+	attr_delay2_read = new Tango::DevDouble[1];
+	attr_delay3_read = new Tango::DevDouble[1];
 	attr_edge1_read = new edge1Enum[1];
 	attr_edge2_read = new edge2Enum[1];
 	attr_edge3_read = new edge3Enum[1];
 	/*----- PROTECTED REGION ID(Dhyana::init_device) ENABLED START -----*/
-	
+
+	Tango::Attribute &triggerout1 = get_device_attr()->get_attr_by_name("channel1");
+	Tango::MultiAttrProp<Tango::DevEnum> multi_prop_triggerout1;
+	triggerout1.get_properties(multi_prop_triggerout1);
+
+	multi_prop_triggerout1.enum_labels = {"ExposureStart", "Readout", "Global"};
+	triggerout1.set_properties(multi_prop_triggerout1);
+
+
+	Tango::Attribute &triggerout2 = get_device_attr()->get_attr_by_name("channel2");
+	Tango::MultiAttrProp<Tango::DevEnum> multi_prop_triggerout2;
+	triggerout2.get_properties(multi_prop_triggerout2);
+
+	multi_prop_triggerout2.enum_labels = {"ExposureStart", "Readout", "Global"};
+	triggerout2.set_properties(multi_prop_triggerout2);
+
+	Tango::Attribute &triggerout3 = get_device_attr()->get_attr_by_name("channel3");
+	Tango::MultiAttrProp<Tango::DevEnum> multi_prop_triggerout3;
+	triggerout3.get_properties(multi_prop_triggerout3);
+
+	multi_prop_triggerout3.enum_labels = {"ExposureStart", "Readout", "Global"};
+	triggerout3.set_properties(multi_prop_triggerout3);
+
+
+	Tango::Attribute &edgeout1 = get_device_attr()->get_attr_by_name("edge1");
+	Tango::MultiAttrProp<Tango::DevEnum> multi_prop_edgeout1;
+	edgeout1.get_properties(multi_prop_edgeout1);
+
+	multi_prop_edgeout1.enum_labels = {"Rising", "Failing"};
+	edgeout1.set_properties(multi_prop_edgeout1);
+
+
+    Tango::Attribute &edgeout2 = get_device_attr()->get_attr_by_name("edge2");
+	Tango::MultiAttrProp<Tango::DevEnum> multi_prop_edgeout2;
+	edgeout2.get_properties(multi_prop_edgeout2);
+
+	multi_prop_edgeout2.enum_labels = {"Rising", "Failing"};
+	edgeout2.set_properties(multi_prop_edgeout2);
+
+
+	Tango::Attribute &edgeout3 = get_device_attr()->get_attr_by_name("edge3");
+	Tango::MultiAttrProp<Tango::DevEnum> multi_prop_edgeout3;
+	edgeout3.get_properties(multi_prop_edgeout3);
+
+	multi_prop_edgeout3.enum_labels = {"Rising", "Failing"};
+	edgeout3.set_properties(multi_prop_edgeout3);
+
 	//	Initialize device
 
 	CREATE_DEVSTRING_ATTRIBUTE(attr_tucamVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
@@ -782,6 +828,8 @@ void Dhyana::write_globalGain(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_globalGain(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	Tango::DevString	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_globalGain) ENABLED START -----*/
 	// the variable w_val will not be used !
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
@@ -893,11 +941,11 @@ void Dhyana::read_channel1(Tango::Attribute &attr)
 
 		switch (signal1)
 		{
-			case lima::Dhyana::Camera::SignalStart : sh = (Tango::DevShort*) channel1Enum::_EXPOSURESTART1; break;
+			case lima::Dhyana::Camera::SignalStart : sh = (Tango::DevShort*) TriggeroutMode::EXPOSURESTART; break;
 
-			case lima::Dhyana::Camera::SignalGlobal : sh = (Tango::DevShort*) channel1Enum::_GLOBAL1; break;
+			case lima::Dhyana::Camera::SignalGlobal : sh = (Tango::DevShort*) TriggeroutMode::GLOBAL; break;
 
-			case lima::Dhyana::Camera::SignalReadEnd : sh = (Tango::DevShort*) channel1Enum::_READOUT1; break;
+			case lima::Dhyana::Camera::SignalReadEnd : sh = (Tango::DevShort*) TriggeroutMode::READOUT; break;
 		}
 
 		attr.set_value( (Tango::DevShort*) &sh);
@@ -943,15 +991,15 @@ void Dhyana::write_channel1(Tango::WAttribute &attr)
 
 		switch (attr_channel1_write)
 		{
-		case channel1Enum::_EXPOSURESTART1:
+		case TriggeroutMode::EXPOSURESTART:
 			signal1 = lima::Dhyana::Camera::TucamSignal::SignalStart;
 			break;
 
-		case channel1Enum::_GLOBAL1:
+		case TriggeroutMode::GLOBAL:
 			signal1 = lima::Dhyana::Camera::TucamSignal::SignalGlobal;
 			break;
 
-		case channel1Enum::_READOUT1:
+		case TriggeroutMode::READOUT:
 			signal1 = lima::Dhyana::Camera::TucamSignal::SignalReadEnd;
 			break;
 		}
@@ -999,11 +1047,11 @@ void Dhyana::read_channel2(Tango::Attribute &attr)
 
 		switch (signal2)
 		{
-			case lima::Dhyana::Camera::SignalStart : sh = (Tango::DevShort*) channel2Enum::_EXPOSURESTART2; break;
+			case lima::Dhyana::Camera::SignalStart : sh = (Tango::DevShort*) TriggeroutMode::EXPOSURESTART; break;
 
-			case lima::Dhyana::Camera::SignalGlobal : sh = (Tango::DevShort*) channel2Enum::_GLOBAL2; break;
+			case lima::Dhyana::Camera::SignalGlobal : sh = (Tango::DevShort*) TriggeroutMode::GLOBAL; break;
 
-			case lima::Dhyana::Camera::SignalReadEnd : sh = (Tango::DevShort*) channel2Enum::_READOUT2; break;
+			case lima::Dhyana::Camera::SignalReadEnd : sh = (Tango::DevShort*) TriggeroutMode::READOUT; break;
 		}
 
 		attr.set_value( (Tango::DevShort*) &sh);
@@ -1048,15 +1096,15 @@ void Dhyana::write_channel2(Tango::WAttribute &attr)
 
 		switch (attr_channel2_write)
 		{
-		case channel2Enum::_EXPOSURESTART2:
+		case TriggeroutMode::EXPOSURESTART:
 			signal2 = lima::Dhyana::Camera::TucamSignal::SignalStart;
 			break;
 
-		case channel2Enum::_GLOBAL2:
+		case TriggeroutMode::GLOBAL:
 			signal2 = lima::Dhyana::Camera::TucamSignal::SignalGlobal;
 			break;
 
-		case channel2Enum::_READOUT2:
+		case TriggeroutMode::READOUT:
 			signal2 = lima::Dhyana::Camera::TucamSignal::SignalReadEnd;
 			break;
 		}
@@ -1104,11 +1152,11 @@ void Dhyana::read_channel3(Tango::Attribute &attr)
 
 		switch (signal3)
 		{
-			case lima::Dhyana::Camera::SignalStart : sh = (Tango::DevShort*) channel3Enum::_EXPOSURESTART3; break;
+			case lima::Dhyana::Camera::SignalStart : sh = (Tango::DevShort*) TriggeroutMode::EXPOSURESTART; break;
 
-			case lima::Dhyana::Camera::SignalGlobal : sh = (Tango::DevShort*) channel3Enum::_GLOBAL3; break;
+			case lima::Dhyana::Camera::SignalGlobal : sh = (Tango::DevShort*) TriggeroutMode::GLOBAL; break;
 
-			case lima::Dhyana::Camera::SignalReadEnd : sh = (Tango::DevShort*) channel3Enum::_READOUT3; break;
+			case lima::Dhyana::Camera::SignalReadEnd : sh = (Tango::DevShort*) TriggeroutMode::READOUT; break;
 		}
 
 		attr.set_value( (Tango::DevShort*) &sh);
@@ -1154,15 +1202,15 @@ void Dhyana::write_channel3(Tango::WAttribute &attr)
 
 		switch (attr_channel3_write)
 		{
-		case channel3Enum::_EXPOSURESTART3:
+		case TriggeroutMode::EXPOSURESTART:
 			signal3 = lima::Dhyana::Camera::TucamSignal::SignalStart;
 			break;
 
-		case channel3Enum::_GLOBAL3:
+		case TriggeroutMode::GLOBAL:
 			signal3 = lima::Dhyana::Camera::TucamSignal::SignalGlobal;
 			break;
 
-		case channel3Enum::_READOUT3:
+		case TriggeroutMode::READOUT:
 			signal3 = lima::Dhyana::Camera::TucamSignal::SignalReadEnd;
 			break;
 		}
@@ -1189,24 +1237,24 @@ void Dhyana::write_channel3(Tango::WAttribute &attr)
 }
 //--------------------------------------------------------
 /**
- *	Read attribute width_ch1 related method
+ *	Read attribute width1 related method
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Dhyana::read_width_ch1(Tango::Attribute &attr)
+void Dhyana::read_width1(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Dhyana::read_width_ch1(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Dhyana::read_width_ch1) ENABLED START -----*/
+	DEBUG_STREAM << "Dhyana::read_width1(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Dhyana::read_width1) ENABLED START -----*/
 	//	Set the attribute value
 	
 	try
 	{
 		m_camera->getOutputSignal(CHANNEL_1, signal1, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch1, (int&)m_delay_ch1, (int&)m_width_ch1);
-		*attr_width_ch1_read = m_width_ch1;
-		attr.set_value(attr_width_ch1_read);
+		*attr_width1_read = m_width_ch1;
+		attr.set_value(attr_width1_read);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -1226,26 +1274,26 @@ void Dhyana::read_width_ch1(Tango::Attribute &attr)
 									   "Dhyana::read_width_ch1");
     }
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::read_width_ch1
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::read_width1
 }
 //--------------------------------------------------------
 /**
- *	Write attribute width_ch1 related method
+ *	Write attribute width1 related method
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Dhyana::write_width_ch1(Tango::WAttribute &attr)
+void Dhyana::write_width1(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Dhyana::write_width_ch1(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Dhyana::write_width1(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-	/*----- PROTECTED REGION ID(Dhyana::write_width_ch1) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(Dhyana::write_width1) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_width_ch1_write);
-		m_width_ch1 = (double)attr_width_ch1_write;
+		attr.get_write_value(attr_width1_write);
+		m_width_ch1 = (double)attr_width1_write;
 		m_camera->setOutputSignal(CHANNEL_1, signal1, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch1, m_delay_ch1, m_width_ch1);
 	}
 	catch (Tango::DevFailed &df)
@@ -1265,27 +1313,27 @@ void Dhyana::write_width_ch1(Tango::WAttribute &attr)
 									   e.getErrMsg().c_str(),
 									   "Dhyana::write_width_ch1");
 	}
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::write_width_ch1
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::write_width1
 }
 //--------------------------------------------------------
 /**
- *	Read attribute width_ch2 related method
+ *	Read attribute width2 related method
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Dhyana::read_width_ch2(Tango::Attribute &attr)
+void Dhyana::read_width2(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Dhyana::read_width_ch2(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Dhyana::read_width_ch2) ENABLED START -----*/
+	DEBUG_STREAM << "Dhyana::read_width2(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Dhyana::read_width2) ENABLED START -----*/
 	//	Set the attribute value
 	try
 	{
 		m_camera->getOutputSignal(CHANNEL_2, signal2, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch2, (int&)m_delay_ch2, (int&)m_width_ch2);
-		*attr_width_ch2_read = m_width_ch2;
-		attr.set_value(attr_width_ch2_read);
+		*attr_width2_read = m_width_ch2;
+		attr.set_value(attr_width2_read);
 	}
 	catch (Tango::DevFailed &df)
 	{
@@ -1305,26 +1353,26 @@ void Dhyana::read_width_ch2(Tango::Attribute &attr)
 									   "Dhyana::read_width_ch2");
 	}
 
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::read_width_ch2
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::read_width2
 }
 //--------------------------------------------------------
 /**
- *	Write attribute width_ch2 related method
+ *	Write attribute width2 related method
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Dhyana::write_width_ch2(Tango::WAttribute &attr)
+void Dhyana::write_width2(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Dhyana::write_width_ch2(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Dhyana::write_width2(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-	/*----- PROTECTED REGION ID(Dhyana::write_width_ch2) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(Dhyana::write_width2) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_width_ch2_write);
-		m_width_ch2 = (double)attr_width_ch2_write;
+		attr.get_write_value(attr_width2_write);
+		m_width_ch2 = (double)attr_width2_write;
 		m_camera->setOutputSignal(CHANNEL_2, signal2, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch2, m_delay_ch2, m_width_ch2);
 	}
 	catch (Tango::DevFailed &df)
@@ -1345,27 +1393,27 @@ void Dhyana::write_width_ch2(Tango::WAttribute &attr)
 									   "Dhyana::write_width_ch2");
 	}
 
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::write_width_ch2
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::write_width2
 }
 //--------------------------------------------------------
 /**
- *	Read attribute width_ch3 related method
+ *	Read attribute width3 related method
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Dhyana::read_width_ch3(Tango::Attribute &attr)
+void Dhyana::read_width3(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Dhyana::read_width_ch3(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Dhyana::read_width_ch3) ENABLED START -----*/
+	DEBUG_STREAM << "Dhyana::read_width3(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Dhyana::read_width3) ENABLED START -----*/
 	//	Set the attribute value
 	try
 	{
 		m_camera->getOutputSignal(CHANNEL_3, signal3, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch3, (int&)m_delay_ch3, (int&)m_width_ch3);
-		*attr_width_ch3_read = m_width_ch3;
-		attr.set_value(attr_width_ch3_read);
+		*attr_width3_read = m_width_ch3;
+		attr.set_value(attr_width3_read);
 	}
 	catch (Tango::DevFailed &df)
 	{
@@ -1385,26 +1433,26 @@ void Dhyana::read_width_ch3(Tango::Attribute &attr)
 									   "Dhyana::read_width_ch3");
 	}
 
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::read_width_ch3
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::read_width3
 }
 //--------------------------------------------------------
 /**
- *	Write attribute width_ch3 related method
+ *	Write attribute width3 related method
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Dhyana::write_width_ch3(Tango::WAttribute &attr)
+void Dhyana::write_width3(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Dhyana::write_width_ch3(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Dhyana::write_width3(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-	/*----- PROTECTED REGION ID(Dhyana::write_width_ch3) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(Dhyana::write_width3) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_width_ch3_write);
-		m_width_ch3 = (double)attr_width_ch3_write;
+		attr.get_write_value(attr_width3_write);
+		m_width_ch3 = (double)attr_width3_write;
 		m_camera->setOutputSignal(CHANNEL_3, signal3, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch3, m_delay_ch3, m_width_ch3);
 	}
 	catch (Tango::DevFailed &df)
@@ -1425,27 +1473,27 @@ void Dhyana::write_width_ch3(Tango::WAttribute &attr)
 									   "Dhyana::write_width_ch3");
 	}
 
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::write_width_ch3
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::write_width3
 }
 //--------------------------------------------------------
 /**
- *	Read attribute delay_ch1 related method
+ *	Read attribute delay1 related method
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Dhyana::read_delay_ch1(Tango::Attribute &attr)
+void Dhyana::read_delay1(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Dhyana::read_delay_ch1(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Dhyana::read_delay_ch1) ENABLED START -----*/
+	DEBUG_STREAM << "Dhyana::read_delay1(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Dhyana::read_delay1) ENABLED START -----*/
 	//	Set the attribute value
 	try
 	{
 		m_camera->getOutputSignal(CHANNEL_1, signal1, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch1, (int&)m_delay_ch1, (int&)m_width_ch1);
-		*attr_delay_ch1_read = m_delay_ch1;
-		attr.set_value(attr_delay_ch1_read);
+		*attr_delay1_read = m_delay_ch1;
+		attr.set_value(attr_delay1_read);
 	}
 	catch (Tango::DevFailed &df)
 	{
@@ -1465,26 +1513,26 @@ void Dhyana::read_delay_ch1(Tango::Attribute &attr)
 									   "Dhyana::read_delay_ch1");
 	}
 
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::read_delay_ch1
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::read_delay1
 }
 //--------------------------------------------------------
 /**
- *	Write attribute delay_ch1 related method
+ *	Write attribute delay1 related method
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Dhyana::write_delay_ch1(Tango::WAttribute &attr)
+void Dhyana::write_delay1(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Dhyana::write_delay_ch1(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Dhyana::write_delay1(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-	/*----- PROTECTED REGION ID(Dhyana::write_delay_ch1) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(Dhyana::write_delay1) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_delay_ch1_write);
-		m_delay_ch1 = (double)attr_delay_ch1_write;
+		attr.get_write_value(attr_delay1_write);
+		m_delay_ch1 = (double)attr_delay1_write;
 		m_camera->setOutputSignal(CHANNEL_1, signal1, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch1, m_delay_ch1, m_width_ch1);
 	}
 	catch (Tango::DevFailed &df)
@@ -1505,27 +1553,27 @@ void Dhyana::write_delay_ch1(Tango::WAttribute &attr)
 									   "Dhyana::write_delay_ch1");
 	}
 
-		/*----- PROTECTED REGION END -----*/	//	Dhyana::write_delay_ch1
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::write_delay1
 }
 //--------------------------------------------------------
 /**
- *	Read attribute delay_ch2 related method
+ *	Read attribute delay2 related method
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Dhyana::read_delay_ch2(Tango::Attribute &attr)
+void Dhyana::read_delay2(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Dhyana::read_delay_ch2(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Dhyana::read_delay_ch2) ENABLED START -----*/
+	DEBUG_STREAM << "Dhyana::read_delay2(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Dhyana::read_delay2) ENABLED START -----*/
 	//	Set the attribute value
 	try
 	{
 		m_camera->getOutputSignal(CHANNEL_2, signal2, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch2, (int&)m_delay_ch2, (int&)m_width_ch2);
-		*attr_delay_ch2_read = m_delay_ch2;
-		attr.set_value(attr_delay_ch2_read);
+		*attr_delay2_read = m_delay_ch2;
+		attr.set_value(attr_delay2_read);
 	}
 	catch (Tango::DevFailed &df)
 	{
@@ -1545,26 +1593,26 @@ void Dhyana::read_delay_ch2(Tango::Attribute &attr)
 									   "Dhyana::read_delay_ch2");
 	}
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::read_delay_ch2
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::read_delay2
 }
 //--------------------------------------------------------
 /**
- *	Write attribute delay_ch2 related method
+ *	Write attribute delay2 related method
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Dhyana::write_delay_ch2(Tango::WAttribute &attr)
+void Dhyana::write_delay2(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Dhyana::write_delay_ch2(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Dhyana::write_delay2(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-	/*----- PROTECTED REGION ID(Dhyana::write_delay_ch2) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(Dhyana::write_delay2) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_delay_ch2_write);
-		m_delay_ch2 = (double)attr_delay_ch2_write;
+		attr.get_write_value(attr_delay2_write);
+		m_delay_ch2 = (double)attr_delay2_write;
 		m_camera->setOutputSignal(CHANNEL_2, signal2, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch2, m_delay_ch2, m_width_ch2);
 	}
 	catch (Tango::DevFailed &df)
@@ -1585,27 +1633,27 @@ void Dhyana::write_delay_ch2(Tango::WAttribute &attr)
 									   "Dhyana::write_delay_ch2");
 	}
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::write_delay_ch2
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::write_delay2
 }
 //--------------------------------------------------------
 /**
- *	Read attribute delay_ch3 related method
+ *	Read attribute delay3 related method
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Dhyana::read_delay_ch3(Tango::Attribute &attr)
+void Dhyana::read_delay3(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Dhyana::read_delay_ch3(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Dhyana::read_delay_ch3) ENABLED START -----*/
+	DEBUG_STREAM << "Dhyana::read_delay3(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Dhyana::read_delay3) ENABLED START -----*/
 	//	Set the attribute value
 	try
 	{
 		m_camera->getOutputSignal(CHANNEL_3, signal3, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch3, (int&)m_delay_ch3, (int&)m_width_ch3);
-		*attr_delay_ch3_read = m_delay_ch3;
-		attr.set_value(attr_delay_ch3_read);
+		*attr_delay3_read = m_delay_ch3;
+		attr.set_value(attr_delay3_read);
 	}
 	catch (Tango::DevFailed &df)
 	{
@@ -1625,26 +1673,26 @@ void Dhyana::read_delay_ch3(Tango::Attribute &attr)
 									   "Dhyana::read_delay_ch3");
 	}
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::read_delay_ch3
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::read_delay3
 }
 //--------------------------------------------------------
 /**
- *	Write attribute delay_ch3 related method
+ *	Write attribute delay3 related method
  *	Description: 
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Dhyana::write_delay_ch3(Tango::WAttribute &attr)
+void Dhyana::write_delay3(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Dhyana::write_delay_ch3(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Dhyana::write_delay3(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-	/*----- PROTECTED REGION ID(Dhyana::write_delay_ch3) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(Dhyana::write_delay3) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_delay_ch3_write);
-		m_delay_ch3 = (double)attr_delay_ch3_write;
+		attr.get_write_value(attr_delay3_write);
+		m_delay_ch3 = (double)attr_delay3_write;
 		m_camera->setOutputSignal(CHANNEL_3, signal3, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch3, m_delay_ch3, m_width_ch3);
 	}
 	catch (Tango::DevFailed &df)
@@ -1665,7 +1713,7 @@ void Dhyana::write_delay_ch3(Tango::WAttribute &attr)
 									   "Dhyana::write_delay_ch3");
 	}
 	
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::write_delay_ch3
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::write_delay3
 }
 //--------------------------------------------------------
 /**
@@ -1690,11 +1738,11 @@ void Dhyana::read_edge1(Tango::Attribute &attr)
 		switch (m_edge_ch1)
 		{
 		case lima::Dhyana::Camera::TucamSignalEdge::SignalEdgeFalling:
-			sh = (Tango::DevShort *)edge1Enum::_FAILING1;
+			sh = (Tango::DevShort *)edgeMode::FAILING;
 			break;
 
 		case lima::Dhyana::Camera::TucamSignalEdge::SignalEdgeRising:
-			sh = (Tango::DevShort *)edge1Enum::_RISING1;
+			sh = (Tango::DevShort *)edgeMode::RISING;
 			break;
 		}
 
@@ -1742,11 +1790,11 @@ void Dhyana::write_edge1(Tango::WAttribute &attr)
 
 		switch (attr_edge1_write)
 		{
-		case edge1Enum::_FAILING1:
+		case edgeMode::FAILING:
 			m_edge_ch1 = lima::Dhyana::Camera::TucamSignalEdge::SignalEdgeFalling;
 			break;
 
-		case edge1Enum::_RISING1:
+		case edgeMode::RISING:
 			m_edge_ch1 = lima::Dhyana::Camera::TucamSignalEdge::SignalEdgeRising;
 			break;
 		}
@@ -1794,11 +1842,11 @@ void Dhyana::read_edge2(Tango::Attribute &attr)
 		switch (m_edge_ch2)
 		{
 		case lima::Dhyana::Camera::TucamSignalEdge::SignalEdgeFalling:
-			sh = (Tango::DevShort *)edge2Enum::_FAILING2;
+			sh = (Tango::DevShort *)edgeMode::FAILING;
 			break;
 
 		case lima::Dhyana::Camera::TucamSignalEdge::SignalEdgeRising:
-			sh = (Tango::DevShort *)edge2Enum::_RISING2;
+			sh = (Tango::DevShort *)edgeMode::RISING;
 			break;
 		}
 
@@ -1845,11 +1893,11 @@ void Dhyana::write_edge2(Tango::WAttribute &attr)
 
 		switch (attr_edge2_write)
 		{
-		case edge2Enum::_FAILING2:
+		case edgeMode::FAILING:
 			m_edge_ch2 = lima::Dhyana::Camera::TucamSignalEdge::SignalEdgeFalling;
 			break;
 
-		case edge2Enum::_RISING2:
+		case edgeMode::RISING:
 			m_edge_ch2 = lima::Dhyana::Camera::TucamSignalEdge::SignalEdgeRising;
 			break;
 		}
@@ -1898,11 +1946,11 @@ void Dhyana::read_edge3(Tango::Attribute &attr)
 		switch (m_edge_ch3)
 		{
 		case lima::Dhyana::Camera::TucamSignalEdge::SignalEdgeFalling:
-			sh = (Tango::DevShort *)edge3Enum::_FAILING3;
+			sh = (Tango::DevShort *)edgeMode::FAILING;
 			break;
 
 		case lima::Dhyana::Camera::TucamSignalEdge::SignalEdgeRising:
-			sh = (Tango::DevShort *)edge3Enum::_RISING3;
+			sh = (Tango::DevShort *)edgeMode::RISING;
 			break;
 		}
 
@@ -1950,11 +1998,11 @@ void Dhyana::write_edge3(Tango::WAttribute &attr)
 
 		switch (attr_edge3_write)
 		{
-		case edge3Enum::_FAILING3:
+		case edgeMode::FAILING:
 			m_edge_ch3 = lima::Dhyana::Camera::TucamSignalEdge::SignalEdgeFalling;
 			break;
 
-		case edge3Enum::_RISING3:
+		case edgeMode::RISING:
 			m_edge_ch3 = lima::Dhyana::Camera::TucamSignalEdge::SignalEdgeRising;
 			break;
 		}
