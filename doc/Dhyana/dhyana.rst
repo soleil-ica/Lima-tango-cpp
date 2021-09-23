@@ -35,18 +35,18 @@ temperatureTarget               W                        Double             Set 
 fanSpeed                        R/W                      UShort             Define the fan speed of the detector [0..5]
 globalGain                      R/W                      String             Define the gain of the detector [LOW, HIGH, HDR]
 fps                             R/W                      Double             Get frame rate value
-channel1                        R/W                      Enum               Set trigger output mode on channel 1
-channel2                        R/W                      Enum               Set trigger output mode on channel 2
-channel3                        R/W                      Enum               Set trigger output mode on channel 3
-width_ch1                       R/W                      Double             Set width value option on channel 1 mode
-width_ch2                       R/W                      Double             Set width value option on channel 2 mode
-width_ch3                       R/W                      Double             Set width value option on channel 3 mode
-delay_ch1                       R/W                      Double             Set delay value option on channel 1 mode
-delay_ch2                       R/W                      Double             Set delay value option on channel 2 mode
-delay_ch3                       R/W                      Double             Set delay value option on channel 3 mode
-edge1                           R/W                      Enum               Set edge option value on channel 1 mode
-edge2                           R/W                      Enum               Set edge option value on channel 2 mode
-edge3                           R/W                      Enum               Set edge option value on channel 3 mode
+channel1                        R/W                      Enum               Set trigger output mode (ExposureStart, Readout, Global) on channel 1
+channel2                        R/W                      Enum               Set trigger output mode (ExposureStart, Readout, Global) on channel 2
+channel3                        R/W                      Enum               Set trigger output mode (ExposureStart, Readout, Global) on channel 3
+width1                          R/W                      Double             Set width value option on channel 1 mode
+width2                          R/W                      Double             Set width value option on channel 2 mode
+width3                          R/W                      Double             Set width value option on channel 3 mode
+delay1                          R/W                      Double             Set delay value option on channel 1 mode
+delay2                          R/W                      Double             Set delay value option on channel 2 mode
+delay3                          R/W                      Double             Set delay value option on channel 3 mode
+edge1                           R/W                      Enum               Set edge option value (Rising, Failing) on channel 1 mode
+edge2                           R/W                      Enum               Set edge option value (Rising, Failing) on channel 2 mode
+edge3                           R/W                      Enum               Set edge option value (Rising, Failing) on channel 3 mode
 =============================== ======================== ================== ===============================================
 
 
