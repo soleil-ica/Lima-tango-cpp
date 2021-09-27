@@ -146,6 +146,19 @@ void Dhyana::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_temperature_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_fanSpeed_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_fps_read);
+
+	DELETE_SCALAR_ATTRIBUTE(attr_channel1_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_channel2_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_channel3_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_width1_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_width2_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_width3_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_delay1_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_delay2_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_delay3_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_edge1_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_edge2_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_edge3_read);
 	//	Delete device allocated objects
 
 	INFO_STREAM << "Remove the inner-appender." << endl;
@@ -159,18 +172,9 @@ void Dhyana::delete_device()
 	//}
 
 	/*----- PROTECTED REGION END -----*/	//	Dhyana::delete_device
-	delete[] attr_channel1_read;
-	delete[] attr_channel2_read;
-	delete[] attr_channel3_read;
-	delete[] attr_width1_read;
-	delete[] attr_width2_read;
-	delete[] attr_width3_read;
-	delete[] attr_delay1_read;
-	delete[] attr_delay2_read;
-	delete[] attr_delay3_read;
-	delete[] attr_edge1_read;
-	delete[] attr_edge2_read;
-	delete[] attr_edge3_read;
+	
+
+
 }
 
 //--------------------------------------------------------
@@ -193,18 +197,23 @@ void Dhyana::init_device()
 	//	Get the device properties from database
 	get_device_property();
 	
-	attr_channel1_read = new channel1Enum[1];
-	attr_channel2_read = new channel2Enum[1];
-	attr_channel3_read = new channel3Enum[1];
-	attr_width1_read = new Tango::DevDouble[1];
-	attr_width2_read = new Tango::DevDouble[1];
-	attr_width3_read = new Tango::DevDouble[1];
-	attr_delay1_read = new Tango::DevDouble[1];
-	attr_delay2_read = new Tango::DevDouble[1];
-	attr_delay3_read = new Tango::DevDouble[1];
-	attr_edge1_read = new edge1Enum[1];
-	attr_edge2_read = new edge2Enum[1];
-	attr_edge3_read = new edge3Enum[1];
+    // Define the labels of the DevEnum attributes
+	CREATE_SCALAR_ATTRIBUTE(attr_channel1_read, (channel1Enum)TriggeroutMode::kEXPOSURESTART);
+	CREATE_SCALAR_ATTRIBUTE(attr_channel2_read,(channel2Enum)TriggeroutMode::kEXPOSURESTART);
+	CREATE_SCALAR_ATTRIBUTE(attr_channel3_read, (channel3Enum)TriggeroutMode::kEXPOSURESTART);
+
+
+	CREATE_SCALAR_ATTRIBUTE(attr_width1_read, 5.0);
+	CREATE_SCALAR_ATTRIBUTE(attr_width2_read, 5.0);
+	CREATE_SCALAR_ATTRIBUTE(attr_width3_read, 5.0);
+	CREATE_SCALAR_ATTRIBUTE(attr_delay1_read, 0.0);
+	CREATE_SCALAR_ATTRIBUTE(attr_delay2_read, 0.0);
+	CREATE_SCALAR_ATTRIBUTE(attr_delay3_read, 0.0);
+
+	// Define the labels of the DevEnum attributes
+	CREATE_SCALAR_ATTRIBUTE(attr_edge1_read, (edge1Enum)EdgeMode::kRISING);
+	CREATE_SCALAR_ATTRIBUTE(attr_edge2_read, (edge2Enum)EdgeMode::kRISING);
+	CREATE_SCALAR_ATTRIBUTE(attr_edge3_read, (edge3Enum)EdgeMode::kRISING);
 	/*----- PROTECTED REGION ID(Dhyana::init_device) ENABLED START -----*/
 
 	Tango::Attribute &triggerout1 = get_device_attr()->get_attr_by_name("channel1");
@@ -828,8 +837,6 @@ void Dhyana::write_globalGain(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_globalGain(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
-	Tango::DevString	w_val;
-	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_globalGain) ENABLED START -----*/
 	// the variable w_val will not be used !
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
@@ -934,21 +941,27 @@ void Dhyana::read_channel1(Tango::Attribute &attr)
 	//	Set the attribute value	
 	try
 	{
-		signal1 = lima::Dhyana::Camera::TucamSignal::kSignalTrigIn;
-		m_camera->getOutputSignal(CHANNEL_1, signal1, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch1, (int&)m_delay_ch1, (int&)m_width_ch1);
+		m_signal1 = lima::Dhyana::Camera::TucamSignal::kSignalTrigIn;
+		m_camera->getOutputSignal(CHANNEL_1, m_signal1, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch1, (int&)m_delay_ch1, (int&)m_width_ch1);
 
-		Tango::DevShort* sh;
+		Tango::DevShort* devShortValue;
 
-		switch (signal1)
+		switch (m_signal1)
 		{
-			case lima::Dhyana::Camera::kSignalStart : sh = (Tango::DevShort*) TriggeroutMode::EXPOSURESTART; break;
+		case lima::Dhyana::Camera::kSignalStart:
+			devShortValue = (Tango::DevShort *)TriggeroutMode::kEXPOSURESTART;
+			break;
 
-			case lima::Dhyana::Camera::kSignalGlobal : sh = (Tango::DevShort*) TriggeroutMode::GLOBAL; break;
+		case lima::Dhyana::Camera::kSignalGlobal:
+			devShortValue = (Tango::DevShort *)TriggeroutMode::kGLOBAL;
+			break;
 
-			case lima::Dhyana::Camera::kSignalReadEnd : sh = (Tango::DevShort*) TriggeroutMode::READOUT; break;
+		case lima::Dhyana::Camera::kSignalReadEnd:
+			devShortValue = (Tango::DevShort *)TriggeroutMode::kREADOUT;
+			break;
 		}
 
-		attr.set_value( (Tango::DevShort*) &sh);
+		attr.set_value( (Tango::DevShort*) &devShortValue);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -991,19 +1004,19 @@ void Dhyana::write_channel1(Tango::WAttribute &attr)
 
 		switch (attr_channel1_write)
 		{
-		case TriggeroutMode::EXPOSURESTART:
-			signal1 = lima::Dhyana::Camera::TucamSignal::kSignalStart;
+		case TriggeroutMode::kEXPOSURESTART:
+			m_signal1 = lima::Dhyana::Camera::TucamSignal::kSignalStart;
 			break;
 
-		case TriggeroutMode::GLOBAL:
-			signal1 = lima::Dhyana::Camera::TucamSignal::kSignalGlobal;
+		case TriggeroutMode::kGLOBAL:
+			m_signal1 = lima::Dhyana::Camera::TucamSignal::kSignalGlobal;
 			break;
 
-		case TriggeroutMode::READOUT:
-			signal1 = lima::Dhyana::Camera::TucamSignal::kSignalReadEnd;
+		case TriggeroutMode::kREADOUT:
+			m_signal1 = lima::Dhyana::Camera::TucamSignal::kSignalReadEnd;
 			break;
 		}
-		m_camera->setOutputSignal(CHANNEL_1, signal1, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch1, m_delay_ch1, m_width_ch1);
+		m_camera->setOutputSignal(CHANNEL_1, m_signal1, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch1, m_delay_ch1, m_width_ch1);
 	}
 	catch (Tango::DevFailed &df)
 	{
@@ -1040,21 +1053,27 @@ void Dhyana::read_channel2(Tango::Attribute &attr)
 	//	Set the attribute value
 	try
 	{
-		signal2 = lima::Dhyana::Camera::TucamSignal::kSignalTrigIn;
-		m_camera->getOutputSignal(CHANNEL_2, signal2, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch2, (int&)m_delay_ch2, (int&)m_width_ch2);
+		m_signal2 = lima::Dhyana::Camera::TucamSignal::kSignalTrigIn;
+		m_camera->getOutputSignal(CHANNEL_2, m_signal2, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch2, (int&)m_delay_ch2, (int&)m_width_ch2);
 
-		Tango::DevShort* sh;
+		Tango::DevShort* devShortValue;
 
-		switch (signal2)
+		switch (m_signal2)
 		{
-			case lima::Dhyana::Camera::kSignalStart : sh = (Tango::DevShort*) TriggeroutMode::EXPOSURESTART; break;
+		case lima::Dhyana::Camera::kSignalStart:
+			devShortValue = (Tango::DevShort *)TriggeroutMode::kEXPOSURESTART;
+			break;
 
-			case lima::Dhyana::Camera::kSignalGlobal : sh = (Tango::DevShort*) TriggeroutMode::GLOBAL; break;
+		case lima::Dhyana::Camera::kSignalGlobal:
+			devShortValue = (Tango::DevShort *)TriggeroutMode::kGLOBAL;
+			break;
 
-			case lima::Dhyana::Camera::kSignalReadEnd : sh = (Tango::DevShort*) TriggeroutMode::READOUT; break;
+		case lima::Dhyana::Camera::kSignalReadEnd:
+			devShortValue = (Tango::DevShort *)TriggeroutMode::kREADOUT;
+			break;
 		}
 
-		attr.set_value( (Tango::DevShort*) &sh);
+		attr.set_value( (Tango::DevShort*) &devShortValue);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -1096,19 +1115,19 @@ void Dhyana::write_channel2(Tango::WAttribute &attr)
 
 		switch (attr_channel2_write)
 		{
-		case TriggeroutMode::EXPOSURESTART:
-			signal2 = lima::Dhyana::Camera::TucamSignal::kSignalStart;
+		case TriggeroutMode::kEXPOSURESTART:
+			m_signal2 = lima::Dhyana::Camera::TucamSignal::kSignalStart;
 			break;
 
-		case TriggeroutMode::GLOBAL:
-			signal2 = lima::Dhyana::Camera::TucamSignal::kSignalGlobal;
+		case TriggeroutMode::kGLOBAL:
+			m_signal2 = lima::Dhyana::Camera::TucamSignal::kSignalGlobal;
 			break;
 
-		case TriggeroutMode::READOUT:
-			signal2 = lima::Dhyana::Camera::TucamSignal::kSignalReadEnd;
+		case TriggeroutMode::kREADOUT:
+			m_signal2 = lima::Dhyana::Camera::TucamSignal::kSignalReadEnd;
 			break;
 		}
-		m_camera->setOutputSignal(CHANNEL_2, signal2, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch2, m_delay_ch2, m_width_ch2);
+		m_camera->setOutputSignal(CHANNEL_2, m_signal2, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch2, m_delay_ch2, m_width_ch2);
 	}
 	catch (Tango::DevFailed &df)
 	{
@@ -1146,20 +1165,26 @@ void Dhyana::read_channel3(Tango::Attribute &attr)
 	//	Set the attribute value
 	try
 	{
-		m_camera->getOutputSignal(CHANNEL_3, signal3, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch3, (int&)m_delay_ch3, (int&)m_width_ch3);
+		m_camera->getOutputSignal(CHANNEL_3, m_signal3, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch3, (int&)m_delay_ch3, (int&)m_width_ch3);
 
-		Tango::DevShort* sh;
+		Tango::DevShort* devShortValue;
 
-		switch (signal3)
+		switch (m_signal3)
 		{
-			case lima::Dhyana::Camera::kSignalStart : sh = (Tango::DevShort*) TriggeroutMode::EXPOSURESTART; break;
+		case lima::Dhyana::Camera::kSignalStart:
+			devShortValue = (Tango::DevShort *)TriggeroutMode::kEXPOSURESTART;
+			break;
 
-			case lima::Dhyana::Camera::kSignalGlobal : sh = (Tango::DevShort*) TriggeroutMode::GLOBAL; break;
+		case lima::Dhyana::Camera::kSignalGlobal:
+			devShortValue = (Tango::DevShort *)TriggeroutMode::kGLOBAL;
+			break;
 
-			case lima::Dhyana::Camera::kSignalReadEnd : sh = (Tango::DevShort*) TriggeroutMode::READOUT; break;
+		case lima::Dhyana::Camera::kSignalReadEnd:
+			devShortValue = (Tango::DevShort *)TriggeroutMode::kREADOUT;
+			break;
 		}
 
-		attr.set_value( (Tango::DevShort*) &sh);
+		attr.set_value( (Tango::DevShort*) &devShortValue);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -1202,19 +1227,19 @@ void Dhyana::write_channel3(Tango::WAttribute &attr)
 
 		switch (attr_channel3_write)
 		{
-		case TriggeroutMode::EXPOSURESTART:
-			signal3 = lima::Dhyana::Camera::TucamSignal::kSignalStart;
+		case TriggeroutMode::kEXPOSURESTART:
+			m_signal3 = lima::Dhyana::Camera::TucamSignal::kSignalStart;
 			break;
 
-		case TriggeroutMode::GLOBAL:
-			signal3 = lima::Dhyana::Camera::TucamSignal::kSignalGlobal;
+		case TriggeroutMode::kGLOBAL:
+			m_signal3 = lima::Dhyana::Camera::TucamSignal::kSignalGlobal;
 			break;
 
-		case TriggeroutMode::READOUT:
-			signal3 = lima::Dhyana::Camera::TucamSignal::kSignalReadEnd;
+		case TriggeroutMode::kREADOUT:
+			m_signal3 = lima::Dhyana::Camera::TucamSignal::kSignalReadEnd;
 			break;
 		}
-		m_camera->setOutputSignal(CHANNEL_3, signal3, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch3, m_delay_ch3, m_width_ch3);
+		m_camera->setOutputSignal(CHANNEL_3, m_signal3, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch3, m_delay_ch3, m_width_ch3);
 	}
 	catch (Tango::DevFailed &df)
 	{
@@ -1252,7 +1277,7 @@ void Dhyana::read_width1(Tango::Attribute &attr)
 	
 	try
 	{
-		m_camera->getOutputSignal(CHANNEL_1, signal1, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch1, (int&)m_delay_ch1, (int&)m_width_ch1);
+		m_camera->getOutputSignal(CHANNEL_1, m_signal1, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch1, (int&)m_delay_ch1, (int&)m_width_ch1);
 		*attr_width1_read = m_width_ch1;
 		attr.set_value(attr_width1_read);
 	}
@@ -1294,7 +1319,7 @@ void Dhyana::write_width1(Tango::WAttribute &attr)
 	{
 		attr.get_write_value(attr_width1_write);
 		m_width_ch1 = (double)attr_width1_write;
-		m_camera->setOutputSignal(CHANNEL_1, signal1, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch1, m_delay_ch1, m_width_ch1);
+		m_camera->setOutputSignal(CHANNEL_1, m_signal1, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch1, m_delay_ch1, m_width_ch1);
 	}
 	catch (Tango::DevFailed &df)
 	{
@@ -1331,7 +1356,7 @@ void Dhyana::read_width2(Tango::Attribute &attr)
 	//	Set the attribute value
 	try
 	{
-		m_camera->getOutputSignal(CHANNEL_2, signal2, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch2, (int&)m_delay_ch2, (int&)m_width_ch2);
+		m_camera->getOutputSignal(CHANNEL_2, m_signal2, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch2, (int&)m_delay_ch2, (int&)m_width_ch2);
 		*attr_width2_read = m_width_ch2;
 		attr.set_value(attr_width2_read);
 	}
@@ -1373,7 +1398,7 @@ void Dhyana::write_width2(Tango::WAttribute &attr)
 	{
 		attr.get_write_value(attr_width2_write);
 		m_width_ch2 = (double)attr_width2_write;
-		m_camera->setOutputSignal(CHANNEL_2, signal2, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch2, m_delay_ch2, m_width_ch2);
+		m_camera->setOutputSignal(CHANNEL_2, m_signal2, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch2, m_delay_ch2, m_width_ch2);
 	}
 	catch (Tango::DevFailed &df)
 	{
@@ -1411,7 +1436,7 @@ void Dhyana::read_width3(Tango::Attribute &attr)
 	//	Set the attribute value
 	try
 	{
-		m_camera->getOutputSignal(CHANNEL_3, signal3, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch3, (int&)m_delay_ch3, (int&)m_width_ch3);
+		m_camera->getOutputSignal(CHANNEL_3, m_signal3, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch3, (int&)m_delay_ch3, (int&)m_width_ch3);
 		*attr_width3_read = m_width_ch3;
 		attr.set_value(attr_width3_read);
 	}
@@ -1453,7 +1478,7 @@ void Dhyana::write_width3(Tango::WAttribute &attr)
 	{
 		attr.get_write_value(attr_width3_write);
 		m_width_ch3 = (double)attr_width3_write;
-		m_camera->setOutputSignal(CHANNEL_3, signal3, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch3, m_delay_ch3, m_width_ch3);
+		m_camera->setOutputSignal(CHANNEL_3, m_signal3, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch3, m_delay_ch3, m_width_ch3);
 	}
 	catch (Tango::DevFailed &df)
 	{
@@ -1491,7 +1516,7 @@ void Dhyana::read_delay1(Tango::Attribute &attr)
 	//	Set the attribute value
 	try
 	{
-		m_camera->getOutputSignal(CHANNEL_1, signal1, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch1, (int&)m_delay_ch1, (int&)m_width_ch1);
+		m_camera->getOutputSignal(CHANNEL_1, m_signal1, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch1, (int&)m_delay_ch1, (int&)m_width_ch1);
 		*attr_delay1_read = m_delay_ch1;
 		attr.set_value(attr_delay1_read);
 	}
@@ -1533,7 +1558,7 @@ void Dhyana::write_delay1(Tango::WAttribute &attr)
 	{
 		attr.get_write_value(attr_delay1_write);
 		m_delay_ch1 = (double)attr_delay1_write;
-		m_camera->setOutputSignal(CHANNEL_1, signal1, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch1, m_delay_ch1, m_width_ch1);
+		m_camera->setOutputSignal(CHANNEL_1, m_signal1, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch1, m_delay_ch1, m_width_ch1);
 	}
 	catch (Tango::DevFailed &df)
 	{
@@ -1571,7 +1596,7 @@ void Dhyana::read_delay2(Tango::Attribute &attr)
 	//	Set the attribute value
 	try
 	{
-		m_camera->getOutputSignal(CHANNEL_2, signal2, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch2, (int&)m_delay_ch2, (int&)m_width_ch2);
+		m_camera->getOutputSignal(CHANNEL_2, m_signal2, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch2, (int&)m_delay_ch2, (int&)m_width_ch2);
 		*attr_delay2_read = m_delay_ch2;
 		attr.set_value(attr_delay2_read);
 	}
@@ -1613,7 +1638,7 @@ void Dhyana::write_delay2(Tango::WAttribute &attr)
 	{
 		attr.get_write_value(attr_delay2_write);
 		m_delay_ch2 = (double)attr_delay2_write;
-		m_camera->setOutputSignal(CHANNEL_2, signal2, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch2, m_delay_ch2, m_width_ch2);
+		m_camera->setOutputSignal(CHANNEL_2, m_signal2, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch2, m_delay_ch2, m_width_ch2);
 	}
 	catch (Tango::DevFailed &df)
 	{
@@ -1651,7 +1676,7 @@ void Dhyana::read_delay3(Tango::Attribute &attr)
 	//	Set the attribute value
 	try
 	{
-		m_camera->getOutputSignal(CHANNEL_3, signal3, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch3, (int&)m_delay_ch3, (int&)m_width_ch3);
+		m_camera->getOutputSignal(CHANNEL_3, m_signal3, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch3, (int&)m_delay_ch3, (int&)m_width_ch3);
 		*attr_delay3_read = m_delay_ch3;
 		attr.set_value(attr_delay3_read);
 	}
@@ -1693,7 +1718,7 @@ void Dhyana::write_delay3(Tango::WAttribute &attr)
 	{
 		attr.get_write_value(attr_delay3_write);
 		m_delay_ch3 = (double)attr_delay3_write;
-		m_camera->setOutputSignal(CHANNEL_3, signal3, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch3, m_delay_ch3, m_width_ch3);
+		m_camera->setOutputSignal(CHANNEL_3, m_signal3, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch3, m_delay_ch3, m_width_ch3);
 	}
 	catch (Tango::DevFailed &df)
 	{
@@ -1732,21 +1757,21 @@ void Dhyana::read_edge1(Tango::Attribute &attr)
 	
 	try
 	{
-		m_camera->getOutputSignal(CHANNEL_1, signal1, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch1, (int&)m_delay_ch1, (int&)m_width_ch1);
-		Tango::DevShort *sh;
+		m_camera->getOutputSignal(CHANNEL_1, m_signal1, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch1, (int&)m_delay_ch1, (int&)m_width_ch1);
+		Tango::DevShort *devShortValue;
 
 		switch (m_edge_ch1)
 		{
 		case lima::Dhyana::Camera::TucamSignalEdge::kSignalEdgeFalling:
-			sh = (Tango::DevShort *)edgeMode::FAILING;
+			devShortValue = (Tango::DevShort *)EdgeMode::kFAILING;
 			break;
 
 		case lima::Dhyana::Camera::TucamSignalEdge::kSignalEdgeRising:
-			sh = (Tango::DevShort *)edgeMode::RISING;
+			devShortValue = (Tango::DevShort *)EdgeMode::kRISING;
 			break;
 		}
 
-		attr.set_value( (Tango::DevShort*) &sh );
+		attr.set_value( (Tango::DevShort*) &devShortValue );
 		
 	}
     catch(Tango::DevFailed & df)
@@ -1790,15 +1815,15 @@ void Dhyana::write_edge1(Tango::WAttribute &attr)
 
 		switch (attr_edge1_write)
 		{
-		case edgeMode::FAILING:
+		case EdgeMode::kFAILING:
 			m_edge_ch1 = lima::Dhyana::Camera::TucamSignalEdge::kSignalEdgeFalling;
 			break;
 
-		case edgeMode::RISING:
+		case EdgeMode::kRISING:
 			m_edge_ch1 = lima::Dhyana::Camera::TucamSignalEdge::kSignalEdgeRising;
 			break;
 		}
-		m_camera->setOutputSignal(CHANNEL_1, signal1, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch1, m_delay_ch1, m_width_ch1);
+		m_camera->setOutputSignal(CHANNEL_1, m_signal1, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch1, m_delay_ch1, m_width_ch1);
 
 	}
 	catch (Tango::DevFailed &df)
@@ -1836,21 +1861,21 @@ void Dhyana::read_edge2(Tango::Attribute &attr)
 	//	Set the attribute value
 	try
 	{
-		m_camera->getOutputSignal(CHANNEL_2, signal2, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch2, (int&)m_delay_ch2, (int&)m_width_ch2);
-		Tango::DevShort *sh;
+		m_camera->getOutputSignal(CHANNEL_2, m_signal2, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch2, (int&)m_delay_ch2, (int&)m_width_ch2);
+		Tango::DevShort *devShortValue;
 
 		switch (m_edge_ch2)
 		{
 		case lima::Dhyana::Camera::TucamSignalEdge::kSignalEdgeFalling:
-			sh = (Tango::DevShort *)edgeMode::FAILING;
+			devShortValue = (Tango::DevShort *)EdgeMode::kFAILING;
 			break;
 
 		case lima::Dhyana::Camera::TucamSignalEdge::kSignalEdgeRising:
-			sh = (Tango::DevShort *)edgeMode::RISING;
+			devShortValue = (Tango::DevShort *)EdgeMode::kRISING;
 			break;
 		}
 
-		attr.set_value( (Tango::DevShort*) &sh );
+		attr.set_value( (Tango::DevShort*) &devShortValue );
 		
 	}
     catch(Tango::DevFailed & df)
@@ -1893,15 +1918,15 @@ void Dhyana::write_edge2(Tango::WAttribute &attr)
 
 		switch (attr_edge2_write)
 		{
-		case edgeMode::FAILING:
+		case EdgeMode::kFAILING:
 			m_edge_ch2 = lima::Dhyana::Camera::TucamSignalEdge::kSignalEdgeFalling;
 			break;
 
-		case edgeMode::RISING:
+		case EdgeMode::kRISING:
 			m_edge_ch2 = lima::Dhyana::Camera::TucamSignalEdge::kSignalEdgeRising;
 			break;
 		}
-		m_camera->setOutputSignal(CHANNEL_2, signal2, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch2, m_delay_ch2, m_width_ch2);
+		m_camera->setOutputSignal(CHANNEL_2, m_signal2, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch2, m_delay_ch2, m_width_ch2);
 
 	}
 	catch (Tango::DevFailed &df)
@@ -1940,21 +1965,21 @@ void Dhyana::read_edge3(Tango::Attribute &attr)
 	//	Set the attribute value
 	try
 	{
-		m_camera->getOutputSignal(CHANNEL_3, signal3, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch3, (int&)m_delay_ch3, (int&)m_width_ch3);
-		Tango::DevShort *sh;
+		m_camera->getOutputSignal(CHANNEL_3, m_signal3, (lima::Dhyana::Camera::TucamSignalEdge&)m_edge_ch3, (int&)m_delay_ch3, (int&)m_width_ch3);
+		Tango::DevShort *devShortValue;
 
 		switch (m_edge_ch3)
 		{
 		case lima::Dhyana::Camera::TucamSignalEdge::kSignalEdgeFalling:
-			sh = (Tango::DevShort *)edgeMode::FAILING;
+			devShortValue = (Tango::DevShort *)EdgeMode::kFAILING;
 			break;
 
 		case lima::Dhyana::Camera::TucamSignalEdge::kSignalEdgeRising:
-			sh = (Tango::DevShort *)edgeMode::RISING;
+			devShortValue = (Tango::DevShort *)EdgeMode::kRISING;
 			break;
 		}
 
-		attr.set_value( (Tango::DevShort*) &sh );
+		attr.set_value( (Tango::DevShort*) &devShortValue );
 
 		
 	}
@@ -1998,15 +2023,15 @@ void Dhyana::write_edge3(Tango::WAttribute &attr)
 
 		switch (attr_edge3_write)
 		{
-		case edgeMode::FAILING:
+		case EdgeMode::kFAILING:
 			m_edge_ch3 = lima::Dhyana::Camera::TucamSignalEdge::kSignalEdgeFalling;
 			break;
 
-		case edgeMode::RISING:
+		case EdgeMode::kRISING:
 			m_edge_ch3 = lima::Dhyana::Camera::TucamSignalEdge::kSignalEdgeRising;
 			break;
 		}
-		m_camera->setOutputSignal(CHANNEL_3, signal3, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch3, m_delay_ch3, m_width_ch3);
+		m_camera->setOutputSignal(CHANNEL_3, m_signal3, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch3, m_delay_ch3, m_width_ch3);
 
 	}
 	catch (Tango::DevFailed &df)
@@ -2088,7 +2113,7 @@ Tango::DevState Dhyana::dev_state()
 	set_state(argout);    // Give the state to Tango.
 	if (argout!=Tango::ALARM)
 		DeviceImpl::dev_state();
-	return get_state();  // Return it after Tango management.
+	return argout;  // Return it after Tango management.
 }
 //--------------------------------------------------------
 /**

@@ -116,15 +116,15 @@ typedef _edge3Enum edge3Enum;
 
 enum class TriggeroutMode : short
 {
-	EXPOSURESTART,
-	READOUT,
-	GLOBAL
+	kEXPOSURESTART,
+	kREADOUT,
+	kGLOBAL
 };
 
-enum class edgeMode : short
+enum class EdgeMode : short
 {
-	RISING,
-	FAILING
+	kRISING,
+	kFAILING
 };
 
 /*----- PROTECTED REGION END -----*/	//	Dhyana::Additional Class Declarations
@@ -489,9 +489,9 @@ protected :
 	short 					  m_edge_ch1;
 	short 					  m_edge_ch2;
 	short 					  m_edge_ch3;
-	lima::Dhyana::Camera::TucamSignal signal1;
-	lima::Dhyana::Camera::TucamSignal signal2;
-	lima::Dhyana::Camera::TucamSignal signal3;
+	lima::Dhyana::Camera::TucamSignal m_signal1;
+	lima::Dhyana::Camera::TucamSignal m_signal2;
+	lima::Dhyana::Camera::TucamSignal m_signal3;
 /*----- PROTECTED REGION END -----*/	//	Dhyana::Additional Method prototypes
 };
 

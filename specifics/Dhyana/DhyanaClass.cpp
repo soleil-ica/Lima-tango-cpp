@@ -662,7 +662,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	channel1->set_default_properties(channel1_prop);
 	//	Not Polled
-	channel1->set_disp_level(Tango::OPERATOR);
+	channel1->set_disp_level(Tango::EXPERT);
 	channel1->set_memorized();
 	channel1->set_memorized_init(true);
 	att_list.push_back(channel1);
@@ -687,7 +687,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	channel2->set_default_properties(channel2_prop);
 	//	Not Polled
-	channel2->set_disp_level(Tango::OPERATOR);
+	channel2->set_disp_level(Tango::EXPERT);
 	channel2->set_memorized();
 	channel2->set_memorized_init(true);
 	att_list.push_back(channel2);
@@ -712,7 +712,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	channel3->set_default_properties(channel3_prop);
 	//	Not Polled
-	channel3->set_disp_level(Tango::OPERATOR);
+	channel3->set_disp_level(Tango::EXPERT);
 	channel3->set_memorized();
 	channel3->set_memorized_init(true);
 	att_list.push_back(channel3);
@@ -722,7 +722,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	width1_prop;
 	//	description	not set for width1
 	//	label	not set for width1
-	//	unit	not set for width1
+	width1_prop.set_unit("ms");
 	//	standard_unit	not set for width1
 	//	display_unit	not set for width1
 	//	format	not set for width1
@@ -737,7 +737,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	width1->set_default_properties(width1_prop);
 	//	Not Polled
-	width1->set_disp_level(Tango::OPERATOR);
+	width1->set_disp_level(Tango::EXPERT);
 	width1->set_memorized();
 	width1->set_memorized_init(true);
 	att_list.push_back(width1);
@@ -747,7 +747,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	width2_prop;
 	//	description	not set for width2
 	//	label	not set for width2
-	//	unit	not set for width2
+	width2_prop.set_unit("ms");
 	//	standard_unit	not set for width2
 	//	display_unit	not set for width2
 	//	format	not set for width2
@@ -762,7 +762,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	width2->set_default_properties(width2_prop);
 	//	Not Polled
-	width2->set_disp_level(Tango::OPERATOR);
+	width2->set_disp_level(Tango::EXPERT);
 	width2->set_memorized();
 	width2->set_memorized_init(true);
 	att_list.push_back(width2);
@@ -772,7 +772,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	width3_prop;
 	//	description	not set for width3
 	//	label	not set for width3
-	//	unit	not set for width3
+	width3_prop.set_unit("ms");
 	//	standard_unit	not set for width3
 	//	display_unit	not set for width3
 	//	format	not set for width3
@@ -787,7 +787,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	width3->set_default_properties(width3_prop);
 	//	Not Polled
-	width3->set_disp_level(Tango::OPERATOR);
+	width3->set_disp_level(Tango::EXPERT);
 	width3->set_memorized();
 	width3->set_memorized_init(true);
 	att_list.push_back(width3);
@@ -812,7 +812,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	delay1->set_default_properties(delay1_prop);
 	//	Not Polled
-	delay1->set_disp_level(Tango::OPERATOR);
+	delay1->set_disp_level(Tango::EXPERT);
 	delay1->set_memorized();
 	delay1->set_memorized_init(true);
 	att_list.push_back(delay1);
@@ -837,7 +837,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	delay2->set_default_properties(delay2_prop);
 	//	Not Polled
-	delay2->set_disp_level(Tango::OPERATOR);
+	delay2->set_disp_level(Tango::EXPERT);
 	delay2->set_memorized();
 	delay2->set_memorized_init(true);
 	att_list.push_back(delay2);
@@ -862,7 +862,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	delay3->set_default_properties(delay3_prop);
 	//	Not Polled
-	delay3->set_disp_level(Tango::OPERATOR);
+	delay3->set_disp_level(Tango::EXPERT);
 	delay3->set_memorized();
 	delay3->set_memorized_init(true);
 	att_list.push_back(delay3);
@@ -887,7 +887,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	edge1->set_default_properties(edge1_prop);
 	//	Not Polled
-	edge1->set_disp_level(Tango::OPERATOR);
+	edge1->set_disp_level(Tango::EXPERT);
 	edge1->set_memorized();
 	edge1->set_memorized_init(true);
 	att_list.push_back(edge1);
@@ -912,7 +912,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	edge2->set_default_properties(edge2_prop);
 	//	Not Polled
-	edge2->set_disp_level(Tango::OPERATOR);
+	edge2->set_disp_level(Tango::EXPERT);
 	edge2->set_memorized();
 	edge2->set_memorized_init(true);
 	att_list.push_back(edge2);
@@ -937,7 +937,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	edge3->set_default_properties(edge3_prop);
 	//	Not Polled
-	edge3->set_disp_level(Tango::OPERATOR);
+	edge3->set_disp_level(Tango::EXPERT);
 	edge3->set_memorized();
 	edge3->set_memorized_init(true);
 	att_list.push_back(edge3);
