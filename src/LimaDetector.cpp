@@ -3380,7 +3380,7 @@ void LimaDetector::snap()
     //    Add your own code to control device here
     try
     {
-        if(dev_state() == Tango::RUNNING)//mantis #22238
+        if((dev_state() == Tango::RUNNING) && !expertUsePrepareCmd)//mantis #22238
             return;
 
         if(attr_nbFrames_write == 0)
@@ -4664,7 +4664,7 @@ void LimaDetector::create_log_info_attributes(void)
 #endif
 
 		//- instanciate the log Adapter
-		yat4tango::YatLogAdapter::initialize(this);		
+		//yat4tango::YatLogAdapter::initialize(this);		
 }
 
 //+----------------------------------------------------------------------------
@@ -4681,7 +4681,7 @@ void LimaDetector::delete_log_info_attributes()
 	yat4tango::DeviceInfo::release(this);
 
 	INFO_STREAM << "Remove the log-adapter." << endl;
-	yat4tango::YatLogAdapter::release();	
+	//yat4tango::YatLogAdapter::release();	
 }
 
 //+----------------------------------------------------------------------------
