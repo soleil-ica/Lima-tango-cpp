@@ -2108,12 +2108,12 @@ Tango::DevState Dhyana::dev_state()
 	set_status(DeviceStatus.str());
 
 	argout = DeviceState;
-
+	return argout;
 	/*----- PROTECTED REGION END -----*/	//	Dhyana::dev_state
 	set_state(argout);    // Give the state to Tango.
 	if (argout!=Tango::ALARM)
 		DeviceImpl::dev_state();
-	return argout;  // Return it after Tango management.
+	return get_state();  // Return it after Tango management.
 }
 //--------------------------------------------------------
 /**
