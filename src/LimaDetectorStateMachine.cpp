@@ -815,9 +815,14 @@ bool LimaDetector::is_operationsList_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool LimaDetector::is_fileExtension_allowed(Tango::AttReqType type)
 {
-	if (get_state() == Tango::FAULT)
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT)
 	{
 		//	End of Generated Code
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}	
 
 		//	Re-Start of Generated Code
 		return false;

@@ -957,7 +957,7 @@ void LimaDetector::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "SOFTWARE", "FileManagedMode");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "SYNCHRONOUS", "FileWriteMode");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "NO_COPY", "FileMemoryMode");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", "FileTimestampEnabled");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "FileTimestampEnabled");
 
     vec_init.clear();
     vec_init.push_back("Hardware");

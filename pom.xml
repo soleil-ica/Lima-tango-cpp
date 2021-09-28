@@ -58,9 +58,7 @@
                 <MERLIN.version>1.2.3</MERLIN.version>
                 <PILATUS.name>Pilatus</PILATUS.name>
                 <PILATUS.version>2.1.9</PILATUS.version>
-                <PROSILICA.name>Prosilica</PROSILICA.name>
-                <PROSILICA.version>1.4.9</PROSILICA.version> 
-				<!-- <SPECTRUMONE.name>SpectrumOneCCD</SPECTRUMONE.name>
+                <!-- <SPECTRUMONE.name>SpectrumOneCCD</SPECTRUMONE.name>
                 <SPECTRUMONE.version>1.0.0</SPECTRUMONE.version>  -->
                 <XPAD.name>Xpad</XPAD.name>
                 <XPAD.version>1.4.17</XPAD.version>
@@ -135,12 +133,6 @@
                     <version>${PILATUS.version}</version>
                 </dependency>
 
-                <dependency>
-                    <groupId>fr.soleil.lib.Lima.Camera</groupId>
-                    <artifactId>LimaProsilica-${aol}-shared-${mode}</artifactId>
-                    <version>${PROSILICA.version}</version>
-                </dependency>  
-
 				 <!-- <dependency>
                     <groupId>fr.soleil.lib.Lima.Camera</groupId>
                     <artifactId>LimaSpectrumOne-${aol}-shared-${mode}</artifactId>
@@ -174,8 +166,7 @@
                                     <include>specifics/ImXpad/*.cpp</include>                                                              
                                     <include>specifics/MarCCD/*.cpp</include>                                   
                                     <include>specifics/Merlin/*.cpp</include>
-                                    <include>specifics/PilatusPixelDetector/*.cpp</include>                                    
-                                    <include>specifics/ProsilicaCCD/*.cpp</include>   
+                                    <include>specifics/PilatusPixelDetector/*.cpp</include>                                      
 									<!-- <include>specifics/SpectrumOneCCD/*.cpp</include>    -->
                                     <include>specifics/XpadPixelDetector/*.cpp</include>
                                     <include>specifics/SimulatorCCD/*.cpp</include>      
@@ -192,7 +183,6 @@
                                     <includePath>specifics/MarCCD</includePath>                              
                                     <includePath>specifics/Merlin</includePath>
                                     <includePath>specifics/PilatusPixelDetector</includePath>                         
-                                    <includePath>specifics/ProsilicaCCD</includePath>   
 									<!-- <includePath>specifics/SpectrumOneCCD</includePath>    --> 									
                                     <includePath>specifics/XpadPixelDetector</includePath>
                                     <includePath>specifics/SimulatorCCD</includePath>
@@ -219,8 +209,6 @@
                                     <define>MERLIN_VERSION=${MERLIN.version}</define>
                                     <define>PILATUS_NAME=${PILATUS.name}</define>
                                     <define>PILATUS_VERSION=${PILATUS.version}</define>
-                                    <define>PROSILICA_NAME=${PROSILICA.name}</define>
-                                    <define>PROSILICA_VERSION=${PROSILICA.version}</define>
 									<!-- <define>SPECTRUMONE_NAME=${SPECTRUMONE.name}</define>
                                     <define>SPECTRUMONE_VERSION=${SPECTRUMONE.version}</define> -->
                                     <define>XPAD_NAME=${XPAD.name}</define>
@@ -234,7 +222,6 @@
                                     <define>MARCCD_ENABLED</define>       
                                     <define>MERLIN_ENABLED</define>
                                     <define>PILATUS_ENABLED</define>   
-                                    <define>PROSILICA_ENABLED</define>	
 									<!-- <define>SPECTRUMONE_ENABLED</define>	 -->
                                     <define>XPAD_ENABLED</define>
                                     <define>SIMULATOR_ENABLED</define>
