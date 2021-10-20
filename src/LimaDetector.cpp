@@ -4656,7 +4656,6 @@ void LimaDetector::create_log_info_attributes(void)
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MARCCD_NAME), YAT_XSTR(MARCCD_VERSION) );
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MERLIN_NAME), YAT_XSTR(MERLIN_VERSION) );
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
-            yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PROSILICA_NAME), YAT_XSTR(PROSILICA_VERSION) );
             yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );        
             
         #endif

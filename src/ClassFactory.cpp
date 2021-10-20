@@ -79,14 +79,6 @@ static const char *RcsId = "$Id:  $";
 #include <MaxipixClass.h>
 #endif
 
-#ifdef ADSC_ENABLED
-#include <AdscCCDClass.h>
-#endif
-
-#ifdef PROSILICA_ENABLED
-#include <ProsilicaCCDClass.h>
-#endif
-
 #ifdef SPECTRUMONE_ENABLED
 #include <SpectrumOneCCDClass.h>
 #endif
@@ -109,14 +101,6 @@ static const char *RcsId = "$Id:  $";
 
 #ifdef ANDOR_ENABLED
 #include <AndorCCDClass.h>
-#endif
-
-#ifdef ANDOR3_ENABLED
-#include <Andor3Class.h>
-#endif
-
-#ifdef VIEWORKSVP_ENABLED
-#include <VieworksVPClass.h>
 #endif
 
 #ifdef HAMAMATSU_ENABLED
@@ -195,14 +179,6 @@ void Tango::DServer::class_factory()
     add_class(Maxipix_ns::MaxipixClass::init("Maxipix"));
 #endif
     
-#ifdef ADSC_ENABLED	
-    add_class(AdscCCD_ns::AdscCCDClass::init("AdscCCD"));
-#endif
-
-#ifdef PROSILICA_ENABLED
-    add_class(ProsilicaCCD_ns::ProsilicaCCDClass::init("ProsilicaCCD"));
-#endif
-
 #ifdef SPECTRUMONE_ENABLED
     add_class(SpectrumOneCCD_ns::SpectrumOneCCDClass::init("SpectrumOneCCD"));
 #endif
@@ -227,14 +203,6 @@ void Tango::DServer::class_factory()
     add_class(AndorCCD_ns::AndorCCDClass::init("AndorCCD"));
 #endif
 	
-#ifdef ANDOR3_ENABLED
-    add_class(Andor3_ns::Andor3Class::init("Andor3"));
-#endif
-
-#ifdef VIEWORKSVP_ENABLED
-    add_class(VieworksVP_ns::Andor3Class::init("VieworksVP"));
-#endif
-
 #ifdef HAMAMATSU_ENABLED
     add_class(Hamamatsu_ns::HamamatsuClass::init("Hamamatsu"));
 #endif
@@ -267,7 +235,6 @@ void Tango::DServer::class_factory()
     add_class(Lambda_ns::LambdaClass::init("Lambda"));
 #endif	
 
-	
 #ifdef DHYANA_ENABLED        
     add_class(Dhyana_ns::DhyanaClass::init("Dhyana"));
 #endif

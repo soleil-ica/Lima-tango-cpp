@@ -124,7 +124,7 @@ void SpectrumOneCCD::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_lastTemperature_read);
     DELETE_SCALAR_ATTRIBUTE(attr_gain_read);
     DELETE_SCALAR_ATTRIBUTE(attr_numFlushes_read);
-    DELETE_SCALAR_ATTRIBUTE(attr_OpenShutter_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_openShutter_read);
 
     // Inner Appenders in specific devices are the cause of a bug in Lima
     // INFO_STREAM << "Remove the inner-appender." << std::endl;
@@ -153,7 +153,7 @@ void SpectrumOneCCD::init_device()
     CREATE_SCALAR_ATTRIBUTE(attr_lastTemperature_read, 0.0);
     CREATE_SCALAR_ATTRIBUTE(attr_gain_read,  0L);
     CREATE_SCALAR_ATTRIBUTE(attr_numFlushes_read,  0L);
-    CREATE_SCALAR_ATTRIBUTE(attr_OpenShutter_read, false);
+    CREATE_SCALAR_ATTRIBUTE(attr_openShutter_read, false);
 
     // Inner Appenders in specific devices are the cause of a bug in Lima
     // try
@@ -551,8 +551,8 @@ void SpectrumOneCCD::read_openShutter(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(SpectrumOneCCD::read_openShutter) ENABLED START -----*/
 	//	Set the attribute value
     // Get the last reported shutter state from the camera
-    m_camera->getShutter(*attr_OpenShutter_read);
-	attr.set_value(attr_OpenShutter_read);
+    m_camera->getShutter(*attr_openShutter_read);
+	attr.set_value(attr_openShutter_read);
 	
 	/*----- PROTECTED REGION END -----*/	//	SpectrumOneCCD::read_openShutter
 }
