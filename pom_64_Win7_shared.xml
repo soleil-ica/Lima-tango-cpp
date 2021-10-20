@@ -4,23 +4,23 @@
     <parent>
         <groupId>fr.soleil</groupId>
         <artifactId>super-pom-C-CPP-device</artifactId>
-		<version>18.1.2</version>
+		<version>21.2.5-64</version>
     </parent>
 	
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.11.0</version>
+    <version>1.11.1</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
     <description>LimaDetector device</description>
 	
 	<properties>
-        <YAT.version>1.17.5</YAT.version> 
-        <YAT4Tango.version>1.12.3</YAT4Tango.version> 
-        <NexusCPP.version>3.3.6</NexusCPP.version> 
+        <YAT.version>1.18.6</YAT.version> 
+        <YAT4Tango.version>1.13.3</YAT4Tango.version> 
+        <NexusCPP.version>3.4.0</NexusCPP.version> 
         
-        <libs-64bits>X:\Repo</libs-64bits>
+        <libs-64bits>C:\VC_12_MAVEN\LIB_VC12_64</libs-64bits>
 
 		<tango-lib>${libs-64bits}\tango\win64\lib\vc12_dll\</tango-lib>
 		<tango-include>${libs-64bits}\tango\win64\include\vc12\</tango-include>
@@ -31,21 +31,15 @@
 		<omniorb-lib>${tango-lib}</omniorb-lib>
 		<omniorb-include>${tango-include}</omniorb-include>
 		
-		<!--<yat-lib>${libs-64bits}\YAT-${YAT.version}\target\nar\lib\amd64-Windows-msvc\shared\</yat-lib>
-		<yat-include>${libs-64bits}\YAT-${YAT.version}\target\nar\include\</yat-include>-->
-		<yat-lib>T:\DEV\flosvn\YAT-${YAT.version}\target\nar\lib\amd64-Windows-msvc\shared\</yat-lib>
-		<yat-include>T:\DEV\flosvn\YAT-${YAT.version}\include\</yat-include>
+		<yat-lib>T:\DEV\libs\yat\target\nar\lib\amd64-Windows-msvc\shared\</yat-lib>
+        <yat-include>T:\DEV\libs\yat\include\</yat-include>
 
 		<log4tango-lib>${tango-lib}</log4tango-lib>
 		<log4tango-include>${tango-include}</log4tango-include>
 		
-		<!--<yat4tango-lib>${libs-64bits}\YAT4Tango-${YAT4Tango.version}\target\nar\lib\amd64-Windows-msvc\shared\</yat4tango-lib>
-		<yat4tango-include>${libs-64bits}\YAT4Tango-${YAT4Tango.version}\target\nar\include\</yat4tango-include>-->
 		<yat4tango-lib>T:\DEV\flosvn\YAT4Tango-${YAT4Tango.version}\target\nar\lib\amd64-Windows-msvc\shared\</yat4tango-lib>
 		<yat4tango-include>T:\DEV\flosvn\YAT4Tango-${YAT4Tango.version}\include\</yat4tango-include>
 
-		<!--<nexuscpp-lib>${libs-64bits}\NexusCPP-${NexusCPP.version}\target\nar\lib\amd64-Windows-msvc\shared</nexuscpp-lib> -->
-		<!--<nexuscpp-include>${libs-64bits}\NexusCPP-${NexusCPP.version}\target\nar\include\</nexuscpp-include>-->
 		<nexuscpp-lib>T:\DEV\flosvn\NexusCPP-${NexusCPP.version}\target\nar\lib\amd64-Windows-msvc\shared</nexuscpp-lib>
 		<nexuscpp-include>T:\DEV\flosvn\NexusCPP-${NexusCPP.version}\include\</nexuscpp-include>
 		
@@ -53,16 +47,16 @@
         <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
         <LIMACORE.name>LimaCore</LIMACORE.name>
         <LIMACORE.version>1.7.10</LIMACORE.version>
+		<DHYANA.name>Dhyana</DHYANA.name>
+        <DHYANA.version>1.3.0</DHYANA.version>
+        <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
+        <HAMAMATSU.version>2.4.2</HAMAMATSU.version>
+        <PCO.name>Pco</PCO.name>
+        <PCO.version>1.8.1</PCO.version>
         <SIMULATOR.name>Simulator</SIMULATOR.name>
         <SIMULATOR.version>1.4.1</SIMULATOR.version>
-        <PCO.name>Pco</PCO.name>
-        <PCO.version>1.8.0</PCO.version>
-       <!--  <PERKIN.name>PerkinElmer</PERKIN.name>
-        <PERKIN.version>1.5.0</PERKIN.version> -->
-        <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
-        <HAMAMATSU.version>2.4.1</HAMAMATSU.version>
-        <DHYANA.name>Dhyana</DHYANA.name>
-        <DHYANA.version>1.2.1</DHYANA.version>
+		<SPECTRUMONE.name>SpectrumOne</SPECTRUMONE.name>
+        <SPECTRUMONE.version>1.2.0</SPECTRUMONE.version>
         
 	</properties>
 	
@@ -99,13 +93,6 @@
             <version>${PCO.version}</version>
         </dependency>
         
-        <!-- Not supported yet -->
-        <!-- <dependency>   
-            <groupId>fr.soleil.lib.Lima.Camera</groupId>
-            <artifactId>LimaPerkinElmer-${aol}-shared-${mode}</artifactId>
-            <version>${PERKIN.version}</version>
-        </dependency> -->
-
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaHamamatsu-${aol}-shared-${mode}</artifactId>
@@ -116,6 +103,12 @@
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaDhyana-${aol}-shared-${mode}</artifactId>
             <version>${DHYANA.version}</version>
+        </dependency>
+		
+		<dependency>
+            <groupId>fr.soleil.lib.Lima.Camera</groupId>
+            <artifactId>LimaSpectrumOne-${aol}-shared-${mode}</artifactId>
+            <version>${SPECTRUMONE.version}</version>
         </dependency>
     </dependencies>
         
@@ -135,7 +128,7 @@
                             <include>specifics/Dhyana/*.cpp</include>
                             <include>specifics/Hamamatsu/*.cpp</include>
                             <include>specifics/Pco/*.cpp</include>
-                            <!-- <include>specifics/PerkinElmer/*.cpp</include> -->
+							<include>specifics/SpectrumOneCCD/*.cpp</include>
                             
                             <include>specifics/Layout/*.cpp</include>
                             <include>specifics/RoiCounters/*.cpp</include>
@@ -147,7 +140,7 @@
                             <includePath>specifics/Dhyana</includePath>
                             <includePath>specifics/Hamamatsu</includePath>
                             <includePath>specifics/Pco</includePath>
-                           <!--  <includePath>specifics/PerkinElmer</includePath> -->
+							<includePath>specifics/SpectrumOneCCD</includePath>
                             
                             <includePath>specifics/Layout</includePath>
                             <includePath>specifics/RoiCounters</includePath>
@@ -170,15 +163,15 @@
                             <define>LIMACORE_NAME=${LIMACORE.name}</define>
                             <define>LIMACORE_VERSION=${LIMACORE.version}</define>
                             <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
-                           <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
+                            <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
                             <define>PCO_NAME=${PCO.name}</define>
                             <define>PCO_VERSION=${PCO.version}</define>
-                            <!-- <define>PERKIN_NAME=${PERKIN.name}</define>
-                            <define>PERKIN_VERSION=${PERKIN.version}</define> -->
                             <define>HAMAMATSU_NAME=${HAMAMATSU.name}</define>
                             <define>HAMAMATSU_VERSION=${HAMAMATSU.version}</define>
                             <define>DHYANA_NAME=${DHYANA.name}</define>
                             <define>DHYANA_VERSION=${DHYANA.version}</define>
+							<define>SPECTRUMONE_NAME=${SPECTRUMONE.name}</define>
+                            <define>SPECTRUMONE_VERSION=${SPECTRUMONE.version}</define>
 
                             <!-- define which detector you need to ENABLE -->      
                             <define>SIMULATOR_ENABLED</define>
@@ -186,6 +179,7 @@
                             <define>PERKIN_ENABLED</define>
                             <define>HAMAMATSU_ENABLED</define>
                             <define>DHYANA_ENABLED</define>
+							<define>SPECTRUMONE_ENABLED</define>
 
                             <define>LAYOUT_ENABLED</define>
                             <define>ROICOUNTERS_ENABLED</define>             

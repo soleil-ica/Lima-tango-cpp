@@ -9,7 +9,7 @@
     
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.11.0</version>
+    <version>1.11.1</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -41,13 +41,13 @@
         <XSPRESS3.name>Xspress3</XSPRESS3.name>
         <XSPRESS3.version>1.0.3</XSPRESS3.version>  
         <UFXC.name>Ufxc</UFXC.name>
-        <UFXC.version>2.0.0</UFXC.version>    
-        <SPECTRAL.name>Spectral</SPECTRAL.name>
-        <SPECTRAL.version>1.0.0</SPECTRAL.version>   
+        <UFXC.version>2.0.1</UFXC.version>    
+        <SPECTRAL.name>SpectralInstrument</SPECTRAL.name>
+        <SPECTRAL.version>1.1.0</SPECTRAL.version>   
 
-        <YAT.version>1.18.2</YAT.version> 
-        <YAT4Tango.version>1.13.1</YAT4Tango.version> 
-        <NexusCPP.version>3.3.6</NexusCPP.version> 
+        <YAT.version>1.18.6</YAT.version> 
+        <YAT4Tango.version>1.13.3</YAT4Tango.version> 
+        <NexusCPP.version>3.4.0</NexusCPP.version> 
     </properties>
 
     <scm>
@@ -100,7 +100,7 @@
        </dependency>
        <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
-            <artifactId>LimaSpectral-amd64-Linux-gcc-shared-${mode}</artifactId>
+            <artifactId>LimaSpectralInstrument-amd64-Linux-gcc-shared-${mode}</artifactId>
             <version>${SPECTRAL.version}</version>
        </dependency>
     </dependencies>
@@ -149,7 +149,7 @@
                             <includePath>${libs-64bits}/gsl-1.11/include</includePath>       
                             <includePath>${libs-64bits}/lz4-r131/lib</includePath>   
 							
-                            <includePath>${libs-64bits}/libtango8-devel-8.1.2-16.el6.maxlab.x86_64/usr/include/</includePath>  -->        
+<!--                        <includePath>${libs-64bits}/libtango8-devel-8.1.2-16.el6.maxlab.x86_64/usr/include/</includePath>-->
                             <includePath>${libs-64bits}/libtango9-9.2.5-64/include/tango</includePath> 
                             <includePath>${libs-64bits}/libtango9-9.2.5-64/include/</includePath>    
 
