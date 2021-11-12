@@ -6,7 +6,7 @@
 //
 // project :	
 //
-// $Author:  Cédric Castel
+// $Author:  Cï¿½dric Castel
 //
 // $Revision:  $
 // $Date:  16/04/2020
@@ -34,7 +34,7 @@
 #include <yat4tango/InnerAppender.h>
 
 /**
- * @author	$Author:  Cédric Castel
+ * @author	$Author:  Cedric Castel
  * @version	$Revision:  $
  */
 

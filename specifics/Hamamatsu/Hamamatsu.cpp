@@ -798,7 +798,7 @@ void Hamamatsu::write_channel3Polarity(Tango::WAttribute &attr)
         attr.get_write_value(attr_channel3Polarity_write);
         m_camera->setOutputTriggerPolarity(CHANNEL_3, (lima::Hamamatsu::Camera::Output_Trigger_Polarity)attr_channel3Polarity_write);
 
-		PropertyHelper::set_property(this, "MemorizedChannel2Polarity", attr_channel3Polarity_write);
+		PropertyHelper::set_property(this, "MemorizedChannel3Polarity", attr_channel3Polarity_write);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -1284,8 +1284,7 @@ void Hamamatsu::write_readoutSpeed_callback(yat4tango::DynamicAttributeWriteCall
 {
 	try
 	{
-        write_dynamic_string_attribute<Tango::DevString>(cbd, &lima::Hamamatsu::Camera::setReadoutSpeedLabel,
-                                                         "MemorizedReadoutSpeed", "Hamamatsu::write_readoutSpeed_callback");
+        write_dynamic_string_attribute<Tango::DevString>(cbd, &lima::Hamamatsu::Camera::setReadoutSpeedLabel, "MemorizedReadoutSpeed", "Hamamatsu::write_readoutSpeed_callback");
 	}
     catch(Tango::DevFailed & df)
     {
@@ -1423,8 +1422,7 @@ void Hamamatsu::write_highDynamicRangeEnabled_callback(yat4tango::DynamicAttribu
 {
 	try
 	{
-        write_dynamic_attribute<Tango::DevBoolean>(cbd, &lima::Hamamatsu::Camera::setHighDynamicRangeEnabled, 
-                                                   "MemorizedHighDynamicRangeEnabled", "Hamamatsu::write_highDynamicRangeEnabled_callback");
+        write_dynamic_attribute<Tango::DevBoolean>(cbd, &lima::Hamamatsu::Camera::setHighDynamicRangeEnabled, "MemorizedHighDynamicRangeEnabled", "Hamamatsu::write_highDynamicRangeEnabled_callback");
 	}
     catch(Tango::DevFailed & df)
     {
