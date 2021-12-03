@@ -6,7 +6,7 @@
 //
 // project :	
 //
-// $Author:  C�dric Castel
+// $Author:  Cedric Castel
 //
 // $Revision:  $
 // $Date:  16/04/2020

@@ -336,6 +336,45 @@ void Hamamatsu::write_at_init(void)
     {
         write_property_in_dynamic_attribute<Tango::DevBoolean>("highDynamicRangeEnabled", "MemorizedHighDynamicRangeEnabled", &Hamamatsu::write_highDynamicRangeEnabled_callback);
     }
+
+    //------------------------------------------------------------------------------
+    // Output triggers Polarities and Kinds
+    //------------------------------------------------------------------------------
+    INFO_STREAM << "Write tango hardware at Init - channel1Polarity." << endl;
+    Tango::WAttribute &channel1Polarity = dev_attr->get_w_attr_by_name("channel1Polarity");
+    attr_channel1Polarity_write = PropertyHelper::get_property<Tango::DevUShort>(this,"MemorizedChannel1Polarity");
+    channel1Polarity.set_write_value(attr_channel1Polarity_write);
+    write_channel1Polarity(channel1Polarity);
+
+    INFO_STREAM << "Write tango hardware at Init - channel2Polarity." << endl;
+    Tango::WAttribute &channel2Polarity = dev_attr->get_w_attr_by_name("channel2Polarity");
+    attr_channel2Polarity_write = PropertyHelper::get_property<Tango::DevUShort>(this,"MemorizedChannel2Polarity");
+    channel2Polarity.set_write_value(attr_channel2Polarity_write);
+    write_channel2Polarity(channel2Polarity);
+
+    INFO_STREAM << "Write tango hardware at Init - channel3Polarity." << endl;
+    Tango::WAttribute &channel3Polarity = dev_attr->get_w_attr_by_name("channel3Polarity");
+    attr_channel3Polarity_write = PropertyHelper::get_property<Tango::DevUShort>(this,"MemorizedChannel3Polarity");
+    channel3Polarity.set_write_value(attr_channel3Polarity_write);
+    write_channel3Polarity(channel3Polarity);
+
+    INFO_STREAM << "Write tango hardware at Init - channel1Kind." << endl;
+    Tango::WAttribute &channel1Kind = dev_attr->get_w_attr_by_name("channel1Kind");
+    attr_channel1Kind_write = PropertyHelper::get_property<Tango::DevUShort>(this,"MemorizedChannel1Kind");
+    channel1Kind.set_write_value(attr_channel1Kind_write);
+    write_channel1Kind(channel1Kind);
+
+    INFO_STREAM << "Write tango hardware at Init - channel2Kind." << endl;
+    Tango::WAttribute &channel2Kind = dev_attr->get_w_attr_by_name("channel2Kind");
+    attr_channel2Kind_write = PropertyHelper::get_property<Tango::DevUShort>(this,"MemorizedChannel2Kind");
+    channel2Kind.set_write_value(attr_channel2Kind_write);
+    write_channel2Kind(channel2Kind);
+
+    INFO_STREAM << "Write tango hardware at Init - channel3Kind." << endl;
+    Tango::WAttribute &channel3Kind = dev_attr->get_w_attr_by_name("channel3Kind");
+    attr_channel3Kind_write = PropertyHelper::get_property<Tango::DevUShort>(this,"MemorizedChannel3Kind");
+    channel3Kind.set_write_value(attr_channel3Kind_write);
+    write_channel3Kind(channel3Kind);
 }
 
 /*****************************************************************************
@@ -588,6 +627,14 @@ void Hamamatsu::get_device_property()
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "MemorizedHighDynamicRangeEnabled");
 
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "10", "ExpertFrameBufferSize");
+
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "MemorizedChannel1Polarity");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "MemorizedChannel2Polarity");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "MemorizedChannel3Polarity");
+
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "MemorizedChannel1Kind");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "MemorizedChannel2Kind");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "MemorizedChannel3Kind");
 }
 
 //+----------------------------------------------------------------------------
