@@ -98,22 +98,16 @@ public :
 		Tango::DevDouble	attr_topViewExposureTime_write;
 		Tango::DevDouble	*attr_bottomViewExposureTime_read;
 		Tango::DevDouble	attr_bottomViewExposureTime_write;
-		
 		Tango::DevUShort	*attr_channel1Polarity_read;
 		Tango::DevUShort	attr_channel1Polarity_write;
-
 		Tango::DevUShort	*attr_channel2Polarity_read;
 		Tango::DevUShort	attr_channel2Polarity_write;
-
 		Tango::DevUShort	*attr_channel3Polarity_read;
 		Tango::DevUShort	attr_channel3Polarity_write;
-
 		Tango::DevUShort	*attr_channel1Kind_read;
 		Tango::DevUShort	attr_channel1Kind_write;
-
 		Tango::DevUShort	*attr_channel2Kind_read;
 		Tango::DevUShort	attr_channel2Kind_write;
-
 		Tango::DevUShort	*attr_channel3Kind_read;
 		Tango::DevUShort	attr_channel3Kind_write;
 //@}

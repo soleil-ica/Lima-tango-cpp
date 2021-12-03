@@ -203,7 +203,7 @@ public:
 //
 
 class
-#ifdef _TG_WINDOWS_
+#ifdef WIN32
 	__declspec(dllexport)
 #endif
 	HamamatsuClass : public Tango::DeviceClass

@@ -39,6 +39,7 @@
 </TABLE>
 
 <HR WIDTH="100%"></H5>
+
 <Br>&nbsp;<Br><Br>&nbsp;<Br><Br>&nbsp;<Br><center><Table Border=2 Cellpadding=3 CELLSPACING=0 WIDTH="100%">
 <Tr><Td><Br>&nbsp;<Br>
 <center>
@@ -241,14 +242,32 @@ There is no Class properties.<Br><Br>
 <Tr><Td><b>fps</b>: <Font Size=-1>The last computed frame per second (the value is computed every 100 frames only)</Font></Td>
 <Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>wViewEnabled</b></Td>
+<Tr><Td><b>wViewEnabled</b>: <Font Size=-1>Enable the W-VIEW</Font></Td>
 <Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>topViewExposureTime</b>: <Font Size=-1>Exposure time for W-VIEW n°1.</Font></Td>
+<Tr><Td><b>topViewExposureTime</b>: <Font Size=-1>Exposure time for W-VIEW #1</Font></Td>
 <Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>bottomViewExposureTime</b>: <Font Size=-1>Exposure time for W-VIEW n°2.</Font></Td>
+<Tr><Td><b>bottomViewExposureTime</b>: <Font Size=-1>Exposure time for W-VIEW #2</Font></Td>
 <Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>channel1Polarity</b>: <Font Size=-1>Polarity value :  1 = Negative 2 = Positive</Font></Td>
+<Td><Center><Font Size=-1>DEV_USHORT</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>channel2Polarity</b>: <Font Size=-1>Polarity value :  1 = Negative 2 = Positive</Font></Td>
+<Td><Center><Font Size=-1>DEV_USHORT</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>channel3Polarity</b>: <Font Size=-1>Polarity value :  1 = Negative 2 = Positive</Font></Td>
+<Td><Center><Font Size=-1>DEV_USHORT</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>channel1Kind</b>: <Font Size=-1>This element can contain 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 elements max  Kind value :  1 = Output_Trigger_Kind_Low 2 = Output_Trigger_Kind_Global_Exposure 3 = Output_Trigger_Kind_Programmable 4 = Output_Trigger_Kind_TriggerReady 5 = Output_Trigger_Kind_High (may need SDK update)</Font></Td>
+<Td><Center><Font Size=-1>DEV_USHORT</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>channel2Kind</b>: <Font Size=-1>This element can contain 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 elements max  Kind value :  1 = Output_Trigger_Kind_Low 2 = Output_Trigger_Kind_Global_Exposure 3 = Output_Trigger_Kind_Programmable 4 = Output_Trigger_Kind_TriggerReady 5 = Output_Trigger_Kind_High (may need SDK update)</Font></Td>
+<Td><Center><Font Size=-1>DEV_USHORT</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>channel3Kind</b>: <Font Size=-1>This element can contain 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 elements max  Kind value :  1 = Output_Trigger_Kind_Low 2 = Output_Trigger_Kind_Global_Exposure 3 = Output_Trigger_Kind_Programmable 4 = Output_Trigger_Kind_TriggerReady 5 = Output_Trigger_Kind_High (may need SDK update)</Font></Td>
+<Td><Center><Font Size=-1>DEV_USHORT</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
 </Table>
 </Center>

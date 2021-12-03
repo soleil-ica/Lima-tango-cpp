@@ -264,6 +264,9 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 
 	//	Attribute : wViewEnabled
 	wViewEnabledAttrib	*w_view_enabled = new wViewEnabledAttrib();
+	Tango::UserDefaultAttrProp	w_view_enabled_prop;
+	w_view_enabled_prop.set_description("Enable the W-VIEW");
+	w_view_enabled->set_default_properties(w_view_enabled_prop);
 	att_list.push_back(w_view_enabled);
 
 	//	Attribute : topViewExposureTime
@@ -274,7 +277,7 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	top_view_exposure_time_prop.set_standard_unit("ms");
 	top_view_exposure_time_prop.set_display_unit("ms");
 	top_view_exposure_time_prop.set_format("%7.2f");
-	top_view_exposure_time_prop.set_description("Exposure time for W-VIEW n°1.");
+	top_view_exposure_time_prop.set_description("Exposure time for W-VIEW #1");
 	top_view_exposure_time->set_default_properties(top_view_exposure_time_prop);
 	top_view_exposure_time->set_memorized();
 	top_view_exposure_time->set_memorized_init(false);
@@ -288,7 +291,7 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	bottom_view_exposure_time_prop.set_standard_unit("ms");
 	bottom_view_exposure_time_prop.set_display_unit("ms");
 	bottom_view_exposure_time_prop.set_format("%7.2f");
-	bottom_view_exposure_time_prop.set_description("Exposure time for W-VIEW n°2.");
+	bottom_view_exposure_time_prop.set_description("Exposure time for W-VIEW #2");
 	bottom_view_exposure_time->set_default_properties(bottom_view_exposure_time_prop);
 	bottom_view_exposure_time->set_memorized();
 	bottom_view_exposure_time->set_memorized_init(false);
@@ -321,7 +324,7 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : channel1Kind
 	channel1KindAttrib	*channel1_kind = new channel1KindAttrib();
 	Tango::UserDefaultAttrProp	channel1_kind_prop;
-	channel1_kind_prop.set_description("This element can contained 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 elements max\n\nKind value : \n1 = Output_Trigger_Kind_Low\n2 = Output_Trigger_Kind_Global_Exposure\n3 = Output_Trigger_Kind_Programmable\n4 = Output_Trigger_Kind_TriggerReady\n5 = Output_Trigger_Kind_High (may need SDK update)");
+	channel1_kind_prop.set_description("This element can contain 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 elements max\n\nKind value : \n1 = Output_Trigger_Kind_Low\n2 = Output_Trigger_Kind_Global_Exposure\n3 = Output_Trigger_Kind_Programmable\n4 = Output_Trigger_Kind_TriggerReady\n5 = Output_Trigger_Kind_High (may need SDK update)");
 	channel1_kind->set_default_properties(channel1_kind_prop);
 	channel1_kind->set_disp_level(Tango::EXPERT);
 	att_list.push_back(channel1_kind);
@@ -329,7 +332,7 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : channel2Kind
 	channel2KindAttrib	*channel2_kind = new channel2KindAttrib();
 	Tango::UserDefaultAttrProp	channel2_kind_prop;
-	channel2_kind_prop.set_description("This element can contained 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 elements max\n\nKind value : \n1 = Output_Trigger_Kind_Low\n2 = Output_Trigger_Kind_Global_Exposure\n3 = Output_Trigger_Kind_Programmable\n4 = Output_Trigger_Kind_TriggerReady\n5 = Output_Trigger_Kind_High (may need SDK update)");
+	channel2_kind_prop.set_description("This element can contain 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 elements max\n\nKind value : \n1 = Output_Trigger_Kind_Low\n2 = Output_Trigger_Kind_Global_Exposure\n3 = Output_Trigger_Kind_Programmable\n4 = Output_Trigger_Kind_TriggerReady\n5 = Output_Trigger_Kind_High (may need SDK update)");
 	channel2_kind->set_default_properties(channel2_kind_prop);
 	channel2_kind->set_disp_level(Tango::EXPERT);
 	att_list.push_back(channel2_kind);
@@ -337,7 +340,7 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : channel3Kind
 	channel3KindAttrib	*channel3_kind = new channel3KindAttrib();
 	Tango::UserDefaultAttrProp	channel3_kind_prop;
-	channel3_kind_prop.set_description("This element can contained 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 elements max\n\nKind value : \n1 = Output_Trigger_Kind_Low\n2 = Output_Trigger_Kind_Global_Exposure\n3 = Output_Trigger_Kind_Programmable\n4 = Output_Trigger_Kind_TriggerReady\n5 = Output_Trigger_Kind_High (may need SDK update)");
+	channel3_kind_prop.set_description("This element can contain 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 elements max\n\nKind value : \n1 = Output_Trigger_Kind_Low\n2 = Output_Trigger_Kind_Global_Exposure\n3 = Output_Trigger_Kind_Programmable\n4 = Output_Trigger_Kind_TriggerReady\n5 = Output_Trigger_Kind_High (may need SDK update)");
 	channel3_kind->set_default_properties(channel3_kind_prop);
 	channel3_kind->set_disp_level(Tango::EXPERT);
 	att_list.push_back(channel3_kind);
