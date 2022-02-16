@@ -54,15 +54,6 @@
 #include <MaxipixInterface.h>
 #endif
 
-#ifdef PROSILICA_ENABLED
-#include <ProsilicaInterface.h>
-#include <ProsilicaCamera.h>
-#include <ProsilicaDetInfoCtrlObj.h>
-#include <ProsilicaBufferCtrlObj.h>
-#include <ProsilicaVideoCtrlObj.h>
-#include <ProsilicaSyncCtrlObj.h>   
-#endif
-
 #ifdef MERLIN_ENABLED
 #include <MerlinCamera.h>
 #include <MerlinInterface.h>

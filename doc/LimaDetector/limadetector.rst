@@ -36,8 +36,7 @@ DetectorType                        SimulatorCCD                String          
                                                                                         - Pco                                                                                               
                                                                                         - PerkinElmer                                                                                       
                                                                                         - PilatusPixelDetector                                                                              
-                                                                                        - PrincetonCCD                                                                                      
-                                                                                        - ProsilicaCCD                                                                                      
+                                                                                        - PrincetonCCD                                                                                                                                                                        
                                                                                         - SimulatorCCD    
                                                                                         - SlsEiger
                                                                                         - SlsJungfrau

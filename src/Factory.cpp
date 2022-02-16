@@ -328,27 +328,6 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 
-#ifdef PROSILICA_ENABLED
-        if (detector_type == "ProsilicaCCD")
-        {
-
-            if (!ControlFactory::m_is_created)
-            {
-                Tango::DbData db_data;
-                db_data.push_back(Tango::DbDatum("DetectorIP"));
-                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
-                std::string camera_ip;
-                db_data[0] >> camera_ip;
-
-                m_camera = static_cast<void*> (new Prosilica::Camera(camera_ip.c_str()));
-                m_interface = static_cast<void*> (new Prosilica::Interface(static_cast<Prosilica::Camera*> (m_camera)));
-                m_control = new CtControl(static_cast<Prosilica::Interface*> (m_interface));
-                ControlFactory::m_is_created = true;
-                return m_control;
-            }
-        }
-#endif
-
 #ifdef MERLIN_ENABLED
         if (detector_type == "Merlin")
         {
@@ -1192,13 +1171,6 @@ void ControlFactory::reset(const std::string& detector_type)
                 if (detector_type == "Maxipix")
                 {
                     delete (static_cast<Maxipix::Camera*> (m_camera));
-                }
-#endif 
-
-#ifdef PROSILICA_ENABLED        
-                if (detector_type == "ProsilicaCCD")
-                {
-                    delete (static_cast<Prosilica::Camera*> (m_camera));
                 }
 #endif 
 

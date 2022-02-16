@@ -45,7 +45,6 @@ This device server provides several Tango classes:
   PerkinElmer <PerkinElmer/perkinelmer>
   PilatusPixelDetector <PilatusPixelDetector/pilatuspixeldetector>
   PrincetonCCD <PrincetonCCD/princetonccd>
-  ProsilicaCCD <ProsilicaCCD/prosilicaccd>
   SimulatorCCD <SimulatorCCD/simulatorccd>
   SlsEiger <SlsEiger/slseiger>
   SlsJungfrau <SlsJungfrau/slsjungfrau>
