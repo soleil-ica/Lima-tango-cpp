@@ -9,7 +9,7 @@
     
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.11.1</version>
+    <version>1.11.2</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -41,7 +41,7 @@
         <XSPRESS3.name>Xspress3</XSPRESS3.name>
         <XSPRESS3.version>1.0.3</XSPRESS3.version>  
         <UFXC.name>Ufxc</UFXC.name>
-        <UFXC.version>2.0.1</UFXC.version>    
+        <UFXC.version>2.0.2</UFXC.version>    
         <SPECTRAL.name>SpectralInstrument</SPECTRAL.name>
         <SPECTRAL.version>1.1.0</SPECTRAL.version>   
 
@@ -149,7 +149,6 @@
                             <includePath>${libs-64bits}/gsl-1.11/include</includePath>       
                             <includePath>${libs-64bits}/lz4-r131/lib</includePath>   
 							
-<!--                        <includePath>${libs-64bits}/libtango8-devel-8.1.2-16.el6.maxlab.x86_64/usr/include/</includePath>-->
                             <includePath>${libs-64bits}/libtango9-9.2.5-64/include/tango</includePath> 
                             <includePath>${libs-64bits}/libtango9-9.2.5-64/include/</includePath>    
 
