@@ -246,6 +246,10 @@
             </activation>
             
             <properties>  
+			
+				<YAT.version>1.18.6</YAT.version> 
+				<YAT4Tango.version>1.13.3</YAT4Tango.version> 
+		
                 <ANDOR.name>Andor</ANDOR.name>
                 <ANDOR.version>1.4.1</ANDOR.version>
                 <PERKINELMER.name>PerkinElmer</PERKINELMER.name>

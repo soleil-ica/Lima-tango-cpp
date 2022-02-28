@@ -50,7 +50,7 @@
 		<DHYANA.name>Dhyana</DHYANA.name>
         <DHYANA.version>1.3.0</DHYANA.version>
         <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
-        <HAMAMATSU.version>2.4.2</HAMAMATSU.version>
+        <HAMAMATSU.version>2.4.3</HAMAMATSU.version>
         <PCO.name>Pco</PCO.name>
         <PCO.version>1.8.1</PCO.version>
 		<PERKINELMER.name>PerkinElmer</PERKINELMER.name>
@@ -188,7 +188,7 @@
                             <!-- define which detector you need to ENABLE -->      
                             <define>SIMULATOR_ENABLED</define>
                             <define>PCO_ENABLED</define>
-                            <define>PERKIN_ENABLED</define>
+                            <define>PERKINELMER_ENABLED</define>
                             <define>HAMAMATSU_ENABLED</define>
                             <define>DHYANA_ENABLED</define>
 							<define>SPECTRUMONE_ENABLED</define>
