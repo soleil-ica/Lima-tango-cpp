@@ -100,6 +100,7 @@ public:
 	Tango::DevString	*attr_configFilesPath_read;
 	Tango::DevBoolean	*attr_distortionCorrection_read;
 	Tango::DevDouble	*attr_energyThreshold_read;
+	Tango::DevDouble	attr_energyThreshold_write;
 	Tango::DevString	*attr_libraryVersion_read;
 	Tango::DevDouble	*attr_highVoltage_read;
 	Tango::DevDouble	*attr_humidity_read;
@@ -307,39 +308,21 @@ private:
      */
     void manage_lima_exception(lima::Exception & in_exception, const std::string & in_caller_method_name);
 
-	//-------------------------------------------------------------	
-    // Template methods
-	//-------------------------------------------------------------	
-    /// Use to update a static attribute and the hardware with a property value
-    template< typename T1, typename T2>
-    void write_property_in_static_attribute(const std::string & in_attribute_name,
-                                            T1 * out_attr_read,
-                                            const T2 & in_memorized_property,
-                                            void (Lambda_ns::Lambda::*in_write_method)(Tango::WAttribute &));
-
-    /// Use to update a string static attribute and the hardware with a property value
-    void write_property_in_string_static_attribute(const std::string & in_attribute_name,
-                                                   Tango::DevString * out_attr_read,
-                                                   const std::string & in_memorized_property,
-                                                   void (Lambda_ns::Lambda::*in_write_method)(Tango::WAttribute &));
 
 protected :	
     //lima OBJECTS
-    lima::Lambda::Interface * m_hw    ;
-    lima::CtControl         * m_ct    ;
-    lima::Lambda::Camera    * m_camera;
-	bool                      m_is_device_initialized;
-    stringstream              m_status_message       ;
-
-	yat4tango::DynamicInterfaceManager m_dim;
+    lima::Lambda::Interface* 	m_hw;
+    lima::CtControl*			m_ct;
+    lima::Lambda::Camera* 		m_camera;
+	bool                      	m_is_device_initialized;
+    std::stringstream         	m_status_message;
+	std::string					m_library_version;
 
 /*----- PROTECTED REGION END -----*/	//	Lambda::Additional Method prototypes
 };
 
 /*----- PROTECTED REGION ID(Lambda::Additional Classes Definitions) ENABLED START -----*/
 
-//	Additional Classes Definitions
-#include "Lambda.hpp"
 
 /*----- PROTECTED REGION END -----*/	//	Lambda::Additional Classes Definitions
 

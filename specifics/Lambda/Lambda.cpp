@@ -49,8 +49,7 @@ namespace Lambda_ns
 	//-------------------------------------------------------------------------
 	// MAX SIZES FOR STRING ATTRIBUTES
 	//-------------------------------------------------------------------------
-	static const size_t CONFIG_FILES_PATH_SIZE_MAX = 255; // size max
-	static const size_t LIBRARY_VERSION_SIZE_MAX = 255; // size max
+	static const size_t STR_ATTR_SIZE_MAX = 255; // size max
 }
 
 /*----- PROTECTED REGION END -----*/	//	Lambda.cpp
@@ -170,11 +169,11 @@ void Lambda::init_device()
     //	Initialize device
     CREATE_SCALAR_ATTRIBUTE(attr_distortionCorrection_read);
     CREATE_SCALAR_ATTRIBUTE(attr_energyThreshold_read, (Tango::DevDouble  )5.0f );
-    CREATE_DEVSTRING_ATTRIBUTE(attr_configFilesPath_read);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_configFilesPath_read,Lambda_ns::STR_ATTR_SIZE_MAX);
     CREATE_SCALAR_ATTRIBUTE(attr_highVoltage_read, (Tango::DevDouble)5.0f   );
     CREATE_SCALAR_ATTRIBUTE(attr_humidity_read, (Tango::DevDouble)5.0f );
     CREATE_SCALAR_ATTRIBUTE(attr_temperature_read, (Tango::DevDouble)5.0f );
-    CREATE_DEVSTRING_ATTRIBUTE(attr_libraryVersion_read, Lambda_ns::LIBRARY_VERSION_SIZE_MAX);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_libraryVersion_read, Lambda_ns::STR_ATTR_SIZE_MAX);
     
     m_is_device_initialized = false;
     set_state(Tango::INIT);
@@ -190,7 +189,7 @@ void Lambda::init_device()
 		m_hw = dynamic_cast<lima::Lambda::Interface*>(m_ct->hwInterface());
 		
 		//- get camera to specific detector
-		m_camera = &(m_hw->getCamera());	
+		m_camera = &(m_hw->getCamera());
 	}
 	catch(Exception& e)
 	{
@@ -215,6 +214,8 @@ void Lambda::init_device()
 		// Update the hardware with the properties data
 		write_at_init();
 		m_camera->setDistortionCorrection(distortionCorrection);
+		//- Get the lib version only once
+		m_camera->getLibVersion(m_library_version);
 	}
     catch(Tango::DevFailed& df)
 	{
@@ -436,10 +437,8 @@ void Lambda::read_distortionCorrection(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(Lambda::read_distortionCorrection) ENABLED START -----*/
     try
     {
-        bool w_distortionCorrection = false;
-        m_camera->getDistortionCorrection(w_distortionCorrection);
-        *attr_distortionCorrection_read = w_distortionCorrection;
-    	attr.set_value(attr_distortionCorrection_read);
+        m_camera->getDistortionCorrection(*attr_distortionCorrection_read);
+        attr.set_value(attr_distortionCorrection_read);
     }
     catch (Tango::DevFailed& df)
     {
@@ -473,7 +472,7 @@ void Lambda::read_energyThreshold(Tango::Attribute &attr)
     }
 	catch(...)
     {
-        INFO_STREAM      << "Read_energyThreshold FAILED" << endl;
+        INFO_STREAM << "Read_energyThreshold FAILED" << endl;
 	}
 
 	/*----- PROTECTED REGION END -----*/	//	Lambda::read_energyThreshold
@@ -497,8 +496,7 @@ void Lambda::write_energyThreshold(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(Lambda::write_energyThreshold) ENABLED START -----*/
 	try
     {
-		double data = static_cast<double>(w_val);
-        m_camera->setEnergyThreshold(data);
+        m_camera->setEnergyThreshold(w_val);
     }
     catch (Tango::DevFailed& df)
     {
@@ -522,9 +520,7 @@ void Lambda::read_libraryVersion(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(Lambda::read_libraryVersion) ENABLED START -----*/
 	try
     {
-    	std::string w_libVersion = "";
-        m_camera->getLibVersion(w_libVersion);
-		strcpy(*attr_libraryVersion_read, w_libVersion.c_str());
+		strcpy(*attr_libraryVersion_read, m_library_version.c_str());
 		attr.set_value(attr_libraryVersion_read);
     }
     catch (Tango::DevFailed& df)
@@ -533,10 +529,9 @@ void Lambda::read_libraryVersion(Tango::Attribute &attr)
     }
     catch(...)
     {
-        INFO_STREAM      << "Read_libraryVersion FAILED" << endl;
+        INFO_STREAM << "Read_libraryVersion FAILED" << endl;
 	}
 
-	
 	/*----- PROTECTED REGION END -----*/	//	Lambda::read_libraryVersion
 }
 //--------------------------------------------------------
@@ -556,7 +551,7 @@ void Lambda::read_highVoltage(Tango::Attribute &attr)
     {
 		//the function "hasFeature" returns a boolean depending on the compatibility between the code and the firmware:
 		//if the this function returns false it means that this function is not supported by the firmware.
-		if (m_camera->hasFeature(xsp::lambda::Feature::FEAT_HV)
+		if (m_camera->hasFeature(xsp::lambda::Feature::FEAT_HV))
 		{
 			m_camera->getHighVoltage(*attr_highVoltage_read);
     		attr.set_value(attr_highVoltage_read);
@@ -573,11 +568,9 @@ void Lambda::read_highVoltage(Tango::Attribute &attr)
     }
     catch(...)
     {
-        INFO_STREAM      << "Read_highVoltage FAILED" << endl;
+        INFO_STREAM << "Read_highVoltage FAILED" << endl;
 	}
 
-    
-	
 	/*----- PROTECTED REGION END -----*/	//	Lambda::read_highVoltage
 }
 //--------------------------------------------------------
@@ -634,16 +627,15 @@ void Lambda::read_temperature(Tango::Attribute &attr)
 	
 	try
     {
-        double w_temperature = 0;
-        m_camera->getTemperature(w_temperature);
+        m_camera->getTemperature(*attr_temperature_read);
 
-		//if the temperature returns 0 it means that this function is not supported by the firmware.
-		if (w_temperature == 0)
+		// if the temperature returns 0 it means that this function is not supported by the firmware.
+		if (*attr_temperature_read == 0)
 		{
 			attr.set_quality(Tango::ATTR_INVALID);
 		}
-		else {
-			*attr_temperature_read = w_temperature;
+		else
+		{
     		attr.set_value(attr_temperature_read);
 		}
     }
