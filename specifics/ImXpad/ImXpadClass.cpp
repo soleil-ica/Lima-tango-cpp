@@ -548,6 +548,7 @@ void ImXpadClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	geometrical_correction_flag_prop.set_unit(" ");
 	geometrical_correction_flag_prop.set_standard_unit(" ");
 	geometrical_correction_flag_prop.set_display_unit(" ");
+	geometrical_correction_flag_prop.set_description("Enable/Disable Geometrical correction");
 	geometrical_correction_flag->set_default_properties(geometrical_correction_flag_prop);
 	geometrical_correction_flag->set_memorized();
 	geometrical_correction_flag->set_memorized_init(false);
@@ -559,6 +560,7 @@ void ImXpadClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	flat_field_correction_flag_prop.set_unit(" ");
 	flat_field_correction_flag_prop.set_standard_unit(" ");
 	flat_field_correction_flag_prop.set_display_unit(" ");
+	flat_field_correction_flag_prop.set_description("Enable/Disable Flatfield correction");
 	flat_field_correction_flag->set_default_properties(flat_field_correction_flag_prop);
 	flat_field_correction_flag->set_memorized();
 	flat_field_correction_flag->set_memorized_init(false);
@@ -568,6 +570,7 @@ void ImXpadClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	calibrationFileNameAttrib	*calibration_file_name = new calibrationFileNameAttrib();
 	Tango::UserDefaultAttrProp	calibration_file_name_prop;
 	calibration_file_name_prop.set_unit(" ");
+	calibration_file_name_prop.set_description("Define the calibration file name");
 	calibration_file_name->set_default_properties(calibration_file_name_prop);
 	att_list.push_back(calibration_file_name);
 
@@ -585,6 +588,9 @@ void ImXpadClass::attribute_factory(vector<Tango::Attr *> &att_list)
 
 	//	Attribute : nbStackingImages
 	nbStackingImagesAttrib	*nb_stacking_images = new nbStackingImagesAttrib();
+	Tango::UserDefaultAttrProp	nb_stacking_images_prop;
+	nb_stacking_images_prop.set_description("Define the number of images to acquire in the acquisition mode :<BR>\n- STACKING_16<BR>\n- STACKING/32<BR>");
+	nb_stacking_images->set_default_properties(nb_stacking_images_prop);
 	nb_stacking_images->set_memorized();
 	nb_stacking_images->set_memorized_init(false);
 	att_list.push_back(nb_stacking_images);
@@ -619,6 +625,7 @@ void ImXpadClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	time_prop.set_unit("ms");
 	time_prop.set_standard_unit("ms");
 	time_prop.set_display_unit("%6.2f");
+	time_prop.set_description("Define the calbration exposure time");
 	time->set_default_properties(time_prop);
 	time->set_memorized();
 	time->set_memorized_init(false);
@@ -630,6 +637,7 @@ void ImXpadClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	i_thl_prop.set_unit(" ");
 	i_thl_prop.set_standard_unit(" ");
 	i_thl_prop.set_display_unit(" ");
+	i_thl_prop.set_description("Define the limit of the threshold scan during calibration");
 	i_thl->set_default_properties(i_thl_prop);
 	i_thl->set_memorized();
 	i_thl->set_memorized_init(false);
@@ -881,7 +889,7 @@ void ImXpadClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "ModuleMask";
-	prop_desc = "Dfine the modules Mask. <BR>\nEach bit of this Mask fix if a specific module is enabled or disabled.<BR>\nValue must be in Hexadecimal format ";
+	prop_desc = "Dfine the modules Mask. <BR>\nEach bit of this Mask fix if a specific module is enabled or disabled.<BR>\nValue must be in Hexadecimal format";
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
@@ -1032,7 +1040,7 @@ void ImXpadClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Tango::Device_4Impl");
+	inheritance.push_back("Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 
