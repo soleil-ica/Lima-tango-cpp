@@ -573,6 +573,7 @@ void PilatusPixelDetector::write_imagePath(Tango::WAttribute &attr)
         }
         attr.get_write_value(attr_imagePath_write);
         m_camera->setImgpath(attr_imagePath_write);
+		INFO_STREAM<<"imagePath defined by user is : " <<attr_imagePath_write<<endl;
         PropertyHelper::set_property(this, "MemorizedImagePath", attr_imagePath_write);
     }
     catch(Tango::DevFailed& df)
@@ -644,6 +645,7 @@ void PilatusPixelDetector::write_fileName(Tango::WAttribute &attr)
     {
         attr.get_write_value(attr_fileName_write);
         m_camera->setFileName(attr_fileName_write);
+		INFO_STREAM<<"fileName defined by user is : " <<attr_fileName_write<<endl;
         PropertyHelper::set_property(this, "MemorizedFileName", attr_fileName_write);
     }
     catch(Tango::DevFailed& df)

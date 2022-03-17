@@ -3305,10 +3305,10 @@ void LimaDetector::prepare()
     //	Add your own code to control device here
     try
     {
+		if(dev_state() == Tango::RUNNING && !expertUsePrepareCmd)//mantis #22238
+            return;
         if(expertUsePrepareCmd)
         {
-            if(dev_state() == Tango::RUNNING)//mantis #22238
-                return;
             ////////////////////////////////////////////////////////
             //because start() force nbFrames = 0 & CtSaving::Manual
             m_saving_par.nbframes = attr_nbFrames_write;
@@ -3380,7 +3380,7 @@ void LimaDetector::snap()
     //    Add your own code to control device here
     try
     {
-        if(dev_state() == Tango::RUNNING)//mantis #22238
+        if(dev_state() == Tango::RUNNING && !expertUsePrepareCmd)//mantis #22238
             return;
 
         if(attr_nbFrames_write == 0)
