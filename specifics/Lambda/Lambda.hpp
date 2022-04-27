@@ -2,7 +2,7 @@
 /*! 
  *  \file   Lambda.hpp
  *  \brief  class Lambda
- *  \author Cédric Castel - SOLEIL (MEDIANE SYSTEME - IT consultant) 
+ *  \author Cï¿½dric Castel - SOLEIL (MEDIANE SYSTEME - IT consultant) 
  */
 /*************************************************************************/
 #ifndef Lambda_HPP
