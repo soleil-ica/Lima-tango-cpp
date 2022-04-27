@@ -82,32 +82,6 @@ bool Lambda::is_configFilesPath_allowed(TANGO_UNUSED(Tango::AttReqType type))
 
 //--------------------------------------------------------
 /**
- *	Method      : Lambda::is_readoutTime_allowed()
- *	Description : Execution allowed for readoutTime attribute
- */
-//--------------------------------------------------------
-bool Lambda::is_readoutTime_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-
-	//	Check access type.
-	if ( type==Tango::READ_REQ )
-	{
-		//	Compare device state with not allowed states for READ 
-		if (get_state()==Tango::INIT ||
-			get_state()==Tango::FAULT)
-		{
-		/*----- PROTECTED REGION ID(Lambda::readoutTimeStateAllowed_READ) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	Lambda::readoutTimeStateAllowed_READ
-			return false;
-		}
-		return true;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
  *	Method      : Lambda::is_distortionCorrection_allowed()
  *	Description : Execution allowed for distortionCorrection attribute
  */
@@ -134,11 +108,11 @@ bool Lambda::is_distortionCorrection_allowed(TANGO_UNUSED(Tango::AttReqType type
 
 //--------------------------------------------------------
 /**
- *	Method      : Lambda::is_energyThreshold1_allowed()
- *	Description : Execution allowed for energyThreshold1 attribute
+ *	Method      : Lambda::is_energyThreshold_allowed()
+ *	Description : Execution allowed for energyThreshold attribute
  */
 //--------------------------------------------------------
-bool Lambda::is_energyThreshold1_allowed(TANGO_UNUSED(Tango::AttReqType type))
+bool Lambda::is_energyThreshold_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
 	//	Check access type.
 	if ( type!=Tango::READ_REQ )
@@ -148,9 +122,9 @@ bool Lambda::is_energyThreshold1_allowed(TANGO_UNUSED(Tango::AttReqType type))
 			get_state()==Tango::FAULT ||
 			get_state()==Tango::RUNNING)
 		{
-		/*----- PROTECTED REGION ID(Lambda::energyThreshold1StateAllowed_WRITE) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	Lambda::energyThreshold1StateAllowed_WRITE
+		/*----- PROTECTED REGION ID(Lambda::energyThresholdStateAllowed_WRITE) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	Lambda::energyThresholdStateAllowed_WRITE
 			return false;
 		}
 		return true;
@@ -164,9 +138,9 @@ bool Lambda::is_energyThreshold1_allowed(TANGO_UNUSED(Tango::AttReqType type))
 		if (get_state()==Tango::INIT ||
 			get_state()==Tango::FAULT)
 		{
-		/*----- PROTECTED REGION ID(Lambda::energyThreshold1StateAllowed_READ) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	Lambda::energyThreshold1StateAllowed_READ
+		/*----- PROTECTED REGION ID(Lambda::energyThresholdStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	Lambda::energyThresholdStateAllowed_READ
 			return false;
 		}
 		return true;
@@ -176,38 +150,78 @@ bool Lambda::is_energyThreshold1_allowed(TANGO_UNUSED(Tango::AttReqType type))
 
 //--------------------------------------------------------
 /**
- *	Method      : Lambda::is_operatingMode_allowed()
- *	Description : Execution allowed for operatingMode attribute
+ *	Method      : Lambda::is_libraryVersion_allowed()
+ *	Description : Execution allowed for libraryVersion attribute
  */
 //--------------------------------------------------------
-bool Lambda::is_operatingMode_allowed(TANGO_UNUSED(Tango::AttReqType type))
+bool Lambda::is_libraryVersion_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
 
-	//	Not any excluded states for operatingMode attribute in read access.
-	/*----- PROTECTED REGION ID(Lambda::operatingModeStateAllowed_READ) ENABLED START -----*/
+	//	Not any excluded states for libraryVersion attribute in read access.
+	/*----- PROTECTED REGION ID(Lambda::libraryVersionStateAllowed_READ) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Lambda::operatingModeStateAllowed_READ
+	/*----- PROTECTED REGION END -----*/	//	Lambda::libraryVersionStateAllowed_READ
 	return true;
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Lambda::is_burstMode_allowed()
- *	Description : Execution allowed for burstMode attribute
+ *	Method      : Lambda::is_highVoltage_allowed()
+ *	Description : Execution allowed for highVoltage attribute
  */
 //--------------------------------------------------------
-bool Lambda::is_burstMode_allowed(TANGO_UNUSED(Tango::AttReqType type))
+bool Lambda::is_highVoltage_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
 
-	//	Not any excluded states for burstMode attribute in read access.
-	/*----- PROTECTED REGION ID(Lambda::burstModeStateAllowed_READ) ENABLED START -----*/
+	//	Not any excluded states for highVoltage attribute in read access.
+	/*----- PROTECTED REGION ID(Lambda::highVoltageStateAllowed_READ) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	Lambda::burstModeStateAllowed_READ
+	/*----- PROTECTED REGION END -----*/	//	Lambda::highVoltageStateAllowed_READ
 	return true;
 }
+
+//--------------------------------------------------------
+/**
+ *	Method      : Lambda::is_humidity_allowed()
+ *	Description : Execution allowed for humidity attribute
+ */
+//--------------------------------------------------------
+bool Lambda::is_humidity_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Not any excluded states for humidity attribute in read access.
+	/*----- PROTECTED REGION ID(Lambda::humidityStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::humidityStateAllowed_READ
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : Lambda::is_temperature_allowed()
+ *	Description : Execution allowed for temperature attribute
+ */
+//--------------------------------------------------------
+bool Lambda::is_temperature_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Not any excluded states for temperature attribute in read access.
+	/*----- PROTECTED REGION ID(Lambda::temperatureStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::temperatureStateAllowed_READ
+	return true;
+}
+
 
 //=================================================
 //		Commands Allowed Methods
 //=================================================
+
+
+/*----- PROTECTED REGION ID(Lambda::LambdaStateAllowed.AdditionalMethods) ENABLED START -----*/
+
+//	Additional Methods
+
+/*----- PROTECTED REGION END -----*/	//	Lambda::LambdaStateAllowed.AdditionalMethods
 
 }	//	End of namespace
