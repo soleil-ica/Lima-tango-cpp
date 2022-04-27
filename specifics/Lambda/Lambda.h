@@ -72,7 +72,7 @@ namespace Lambda_ns
 
 /*----- PROTECTED REGION END -----*/	//	Lambda::Additional Class Declarations
 
-class Lambda : public Tango::Device_4Impl
+class Lambda : public TANGO_BASE_CLASS
 {
 
 /*----- PROTECTED REGION ID(Lambda::Data Members) ENABLED START -----*/
@@ -91,18 +91,19 @@ public:
 	//  - The values of the pixels are rounded during division. <br>
 	//  - If pixel value is saturated, the division is not applied.<br>
 	Tango::DevBoolean	distortionCorrection;
-	//	MemorizedEnergyThreshold1:	Only the device could modify this property <br>
+	//	MemorizedEnergyThreshold:	Only the device could modify this property <br>
 	//  The User should never change this property<br>
-	Tango::DevFloat	memorizedEnergyThreshold1;
+	Tango::DevFloat	memorizedEnergyThreshold;
 
 //	Attribute data members
 public:
 	Tango::DevString	*attr_configFilesPath_read;
-	Tango::DevFloat	*attr_readoutTime_read;
 	Tango::DevBoolean	*attr_distortionCorrection_read;
-	Tango::DevFloat	*attr_energyThreshold1_read;
-	Tango::DevString	*attr_operatingMode_read;
-	Tango::DevBoolean	*attr_burstMode_read;
+	Tango::DevDouble	*attr_energyThreshold_read;
+	Tango::DevString	*attr_libraryVersion_read;
+	Tango::DevDouble	*attr_highVoltage_read;
+	Tango::DevDouble	*attr_humidity_read;
+	Tango::DevDouble	*attr_temperature_read;
 
 //	Constructors and destructors
 public:
@@ -130,7 +131,7 @@ public:
 	Lambda(Tango::DeviceClass *cl,const char *s,const char *d);
 	/**
 	 * The device object destructor.
-	 */	
+	 */
 	~Lambda() {delete_device();};
 
 
@@ -181,16 +182,6 @@ public:
 	virtual void read_configFilesPath(Tango::Attribute &attr);
 	virtual bool is_configFilesPath_allowed(Tango::AttReqType type);
 /**
- *	Attribute readoutTime related methods
- *	Description: get readout time during image acquisition.<br>
- *               Depends of the operating mode.<br>
- *
- *	Data type:	Tango::DevFloat
- *	Attr type:	Scalar
- */
-	virtual void read_readoutTime(Tango::Attribute &attr);
-	virtual bool is_readoutTime_allowed(Tango::AttReqType type);
-/**
  *	Attribute distortionCorrection related methods
  *	Description: get distortion correction.<br>
  *               When distortion correction is enabled :<br>
@@ -204,38 +195,52 @@ public:
 	virtual void read_distortionCorrection(Tango::Attribute &attr);
 	virtual bool is_distortionCorrection_allowed(Tango::AttReqType type);
 /**
- *	Attribute energyThreshold1 related methods
+ *	Attribute energyThreshold related methods
  *	Description: set/get first energy threshold in eV.<br>
  *               The photon is counted If the energy is above this threshold.<br>
  *
- *	Data type:	Tango::DevFloat
+ *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
-	virtual void read_energyThreshold1(Tango::Attribute &attr);
-	virtual void write_energyThreshold1(Tango::WAttribute &attr);
-	virtual bool is_energyThreshold1_allowed(Tango::AttReqType type);
+	virtual void read_energyThreshold(Tango::Attribute &attr);
+	virtual void write_energyThreshold(Tango::WAttribute &attr);
+	virtual bool is_energyThreshold_allowed(Tango::AttReqType type);
 /**
- *	Attribute operatingMode related methods
- *	Description: get operating mode of the detector:<br>
- *               24bit mode : TwentyFourBit<br>
- *               12bit mode :  ContinuousReadWrite<br>
+ *	Attribute libraryVersion related methods
+ *	Description: 
  *
  *	Data type:	Tango::DevString
  *	Attr type:	Scalar
  */
-	virtual void read_operatingMode(Tango::Attribute &attr);
-	virtual bool is_operatingMode_allowed(Tango::AttReqType type);
+	virtual void read_libraryVersion(Tango::Attribute &attr);
+	virtual bool is_libraryVersion_allowed(Tango::AttReqType type);
 /**
- *	Attribute burstMode related methods
- *	Description: get the value of burst mode.<br>
- *               true: 10GE link.<br>
- *               false: 1GE link<br>
+ *	Attribute highVoltage related methods
+ *	Description: 
  *
- *	Data type:	Tango::DevBoolean
+ *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
  */
-	virtual void read_burstMode(Tango::Attribute &attr);
-	virtual bool is_burstMode_allowed(Tango::AttReqType type);
+	virtual void read_highVoltage(Tango::Attribute &attr);
+	virtual bool is_highVoltage_allowed(Tango::AttReqType type);
+/**
+ *	Attribute humidity related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+	virtual void read_humidity(Tango::Attribute &attr);
+	virtual bool is_humidity_allowed(Tango::AttReqType type);
+/**
+ *	Attribute temperature related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+	virtual void read_temperature(Tango::Attribute &attr);
+	virtual bool is_temperature_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------
@@ -248,9 +253,18 @@ public:
 
 
 
+
 //	Command related methods
 public:
 
+
+	//--------------------------------------------------------
+	/**
+	 *	Method      : Lambda::add_dynamic_commands()
+	 *	Description : Add dynamic commands if any.
+	 */
+	//--------------------------------------------------------
+	void add_dynamic_commands();
 
 /*----- PROTECTED REGION ID(Lambda::Additional Method prototypes) ENABLED START -----*/
 
