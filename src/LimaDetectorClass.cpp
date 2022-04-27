@@ -1017,7 +1017,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "DetectorType";
-	prop_desc = "Define the type of the connected Detector .<BR>\nAvailables types :<BR>\n- AndorCCD<BR>\n- BaslerCCD<BR>\n- Eiger<br>\n- Hamamatsu<br>\n- ImXpad<br>\n- MarCCD<BR>\n- Maxipix <BR>\n- Merlin <BR>\n- Pco<BR>\n- PerkinElmer<BR>\n- PilatusPixelDetector<BR>\n- ProsilicaCCD<BR>\n- PrincetonCCD<BR>\n- SimulatorCCD<BR>\n- UviewCCD<BR>\n- XpadPixelDetector<BR>\n\n";
+	prop_desc = "Define the type of the connected Detector .<BR>\nAvailables types :<BR>\n- AndorCCD<BR>\n- BaslerCCD<BR>\n- Eiger<br>\n- Hamamatsu<br>\n- ImXpad<br>\n- MarCCD<BR>\n- Maxipix <BR>\n- Merlin <BR>\n- Pco<BR>\n- PerkinElmer<BR>\n- PilatusPixelDetector<BR>\n- PrincetonCCD<BR>\n- SimulatorCCD<BR>\n- UviewCCD<BR>\n- XpadPixelDetector<BR>\n\n";
 	prop_def  = "SimulatorCCD";
 	vect_data.clear();
 	vect_data.push_back("SimulatorCCD");
