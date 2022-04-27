@@ -3305,10 +3305,10 @@ void LimaDetector::prepare()
     //	Add your own code to control device here
     try
     {
+		if(dev_state() == Tango::RUNNING && !expertUsePrepareCmd)//mantis #22238
+            return;
         if(expertUsePrepareCmd)
         {
-            if(dev_state() == Tango::RUNNING)//mantis #22238
-                return;
             ////////////////////////////////////////////////////////
             //because start() force nbFrames = 0 & CtSaving::Manual
             m_saving_par.nbframes = attr_nbFrames_write;
@@ -3380,7 +3380,7 @@ void LimaDetector::snap()
     //    Add your own code to control device here
     try
     {
-        if(dev_state() == Tango::RUNNING)//mantis #22238
+        if(dev_state() == Tango::RUNNING && !expertUsePrepareCmd)//mantis #22238
             return;
 
         if(attr_nbFrames_write == 0)
@@ -4628,6 +4628,7 @@ void LimaDetector::create_log_info_attributes(void)
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(DHYANA_NAME), YAT_XSTR(DHYANA_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PCO_NAME), YAT_XSTR(PCO_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SPECTRUMONE_NAME), YAT_XSTR(SPECTRUMONE_VERSION) );
 #else //- Win32
     #ifdef _WIN32
