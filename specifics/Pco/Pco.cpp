@@ -684,8 +684,11 @@ void Pco::read_sensorTemperature(Tango::Attribute &attr)
     {
         std::string temp_temperature_info,temp_temperature;
         m_camera->getTemperatureInfo(temp_temperature_info);
-        yat::StringUtil::extract_token(&temp_temperature_info, '[', ']', &temp_temperature);
-        *attr_sensorTemperature_read = yat::StringUtil::to_num<float>(temp_temperature);
+		
+		//Parse the answer to only get the camera temperature.
+		std::vector<std::string> parsed_args;
+		yat::StringUtil::match(temp_temperature_info, "*[*]*[*]*[*]*[*]", &parsed_args); 
+        *attr_sensorTemperature_read = yat::StringUtil::to_num<float>(parsed_args[3]);
         attr.set_value(attr_sensorTemperature_read);
     }
     catch (lima::Exception& e)
@@ -1540,3 +1543,4 @@ Tango::DevState Pco::dev_state()
 
 
 }	//	namespace
+
