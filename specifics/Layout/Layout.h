@@ -45,8 +45,11 @@
 #include <tango.h>
 #include <yat4tango/PropertyHelper.h>
 #include <yat4tango/InnerAppender.h>
+#include <yat4tango/Logging.h>
 #include <yat/threading/Mutex.h>
 #include <yat/utils/XString.h>
+#include "yat/utils/Logging.h"
+#include <yat/time/Timer.h>
 
 #include "lima/HwInterface.h"
 #include "lima/CtControl.h"
@@ -59,8 +62,8 @@
 #include <map>
 
 
-#define MAX_ATTRIBUTE_STRING_LENGTH     256
-#define CURRENT_VERSION                 "1.2.0"
+#define MAX_ATTRIBUTE_STRING_LENGTH 	256
+#define CURRENT_VERSION                 "1.3.0"
 
 namespace Layout_ns
 {
@@ -69,83 +72,215 @@ namespace Layout_ns
     {
     public:
 
-        //ctor
+        //-----------------------------------------------
+		//ctor
+		//-----------------------------------------------
         LayoutTask(const std::string& opType, long opValue) :
-        LinkTask(),
+        LinkTask(true),
         m_operation_type(opType),
         m_operation_value(opValue) { }
 
-        //dtor
+        //-----------------------------------------------
+		//dtor
+		//-----------------------------------------------
         ~LayoutTask(){}       
         
-        //define the operation type ( + - * / >> << )
+        //-----------------------------------------------
+		//define the operation type ( + - * / >> << ROTATION FLIP CIRPAD2x10 CIRPAD4x5)
+		//-----------------------------------------------
         void setOperationType(const std::string& opType)
-        {
-            m_operation_type = opType;
+        {            
+			m_operation_type = opType;
+			transform(m_operation_type.begin(), m_operation_type.end(), m_operation_type.begin(), ::toupper);
         }
 
-        //get the operation type ( + - * / >> << )
+        //-----------------------------------------------
+		//get the operation type (+ - * / >> << ROTATION FLIP CIRPAD2x10 CIRPAD4x5 )
+		//-----------------------------------------------
         const std::string& getOperationType()
         {
             return m_operation_type;
         }
         
-        //define the operation value
+        //-----------------------------------------------
+		//define the operation value
+		//-----------------------------------------------
         void setOperationValue(long opValue)
         {
             m_operation_value = opValue;
         }
 
-        //get the operation value
+        //-----------------------------------------------
+		//get the operation value
+		//-----------------------------------------------
         long getOperationValue()
         {
             return m_operation_value;
         }
         
-        virtual Data process(Data &aData)
+		//-----------------------------------------------
+		//process is called from lima core for each image and apply operation on it
+		//-----------------------------------------------
+        Data process(Data &aData)
         {
+			yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+			yat::Timer t1;
             Data aNewData;
-            aNewData.frameNumber = aData.frameNumber;
-            aNewData = aData;
             switch(aData.type)
             {
                 case Data::UINT8: _compute<unsigned char>(aData, aNewData);
                     break;
-                case Data::UINT16: _compute<unsigned short>(aData, aNewData);
+                case Data::INT8: _compute<char>(aData, aNewData);
+                    break;					
+                case Data::UINT16: _compute<unsigned short>(aData, aNewData);	
                     break;
                 case Data::INT16: _compute<short>(aData, aNewData);
                     break;                    
                 case Data::UINT32: _compute<unsigned int>(aData, aNewData);
                     break;
                 case Data::INT32: _compute<int>(aData, aNewData);
-                    break;                    
+                    break;   				
+				default:
+					YAT_INFO<<"Layout: Undefined image Type : "<< aData.type << std::endl;
+					break;
             }
+			YAT_INFO<<"[Elapsed time : "<<t1.elapsed_msec()<< " (ms)]"<<std::endl;
+			YAT_INFO<<" "<< std::endl;				
             return aNewData;
         }
 
     private:
+	
+	
+		//-----------------------------------------------
+		//CIRPAD ONLY : arrangement of image in order to diplay it on 2 cols and 10 rows
+		//-----------------------------------------------
+		template<class INPUT>
+		Data cirpad_2x10(Data &aSrc)
+		{
+			YAT_INFO<<"LayoutTask: Apply operation : "<< m_operation_type << " ()"<<std::endl;
+			#define MODULE_NB			20
+			#define MODULE_WIDTH 		560
+			#define MODULE_HEIGHT 		120
+			#define MODULE_PIX_NB 		MODULE_HEIGHT*MODULE_WIDTH
+			#define MODULE_WIDTH_BYTES 	560*aSrc.depth()
+			Data aDst = aSrc.copy();
+			aDst.dimensions.clear();
+			aDst.dimensions.push_back(2*MODULE_WIDTH);		//width		
+			aDst.dimensions.push_back(10*MODULE_HEIGHT);	//height
+			Buffer *buff = new Buffer();
+			INPUT  dstdata[2*10*MODULE_HEIGHT*MODULE_WIDTH];
+	
+			//idea is to copy each module ligne by line (560 pix) at the right position
+			for (int i = 0; i <MODULE_NB; i++) 
+			{
+				for (int j=0;j<MODULE_HEIGHT;j++)
+				{
+					if( i%2 == 0 )
+						memcpy(&dstdata[(MODULE_WIDTH*2*j + 1*MODULE_WIDTH) + ((i-0)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], MODULE_WIDTH_BYTES);
+					else
+						memcpy(&dstdata[(MODULE_WIDTH*2*j + 0*MODULE_WIDTH) + ((i-1)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], MODULE_WIDTH_BYTES);
+				}
+			}
 
+			buff->data = dstdata;
+			aDst.setBuffer(buff);
+			buff->unref();
+					
+			return aDst;
+		}
+		
+		//-----------------------------------------------
+		//CIRPAD ONLY : arrangement of image in order to diplay it on 4 cols and 5 rows
+		//-----------------------------------------------		
+		template<class INPUT>
+		Data cirpad_4x5(Data &aSrc)
+		{
+			YAT_INFO<<"LayoutTask: Apply operation : "<< m_operation_type << " ()"<<std::endl;
+			#define MODULE_NB			20
+			#define MODULE_WIDTH 		560
+			#define MODULE_HEIGHT 		120
+			#define MODULE_PIX_NB 		MODULE_HEIGHT*MODULE_WIDTH
+			#define MODULE_WIDTH_BYTES 	560*aSrc.depth()		
+			Data aDst = aSrc.copy();
+			aDst.dimensions.clear();
+			aDst.dimensions.push_back(4*MODULE_WIDTH);	//width		
+			aDst.dimensions.push_back(5*MODULE_HEIGHT);	//height
+			Buffer *buff = new Buffer();
+			INPUT  dstdata[4*5*MODULE_HEIGHT*MODULE_WIDTH];
+
+			//idea is to copy each module ligne by line (560 pix) at the right position
+			for (int i = 0; i <MODULE_NB; i++) 
+			{
+				for (int j=0;j<MODULE_HEIGHT;j++)
+				{
+					if( i%4 == 0 )
+						memcpy(&dstdata[(MODULE_WIDTH*4*j + 3*MODULE_WIDTH) + ((i-0)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], aSrc.depth()*MODULE_WIDTH);
+					else if(i%4==1)
+						memcpy(&dstdata[(MODULE_WIDTH*4*j + 2*MODULE_WIDTH) + ((i-1)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], aSrc.depth()*MODULE_WIDTH);
+					else if(i%4==2)
+						memcpy(&dstdata[(MODULE_WIDTH*4*j + 1*MODULE_WIDTH) + ((i-2)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], aSrc.depth()*MODULE_WIDTH);
+					else if(i%4==3)
+						memcpy(&dstdata[(MODULE_WIDTH*4*j + 0*MODULE_WIDTH) + ((i-3)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], aSrc.depth()*MODULE_WIDTH);
+				}
+			}
+
+			buff->data = dstdata;
+			aDst.setBuffer(buff);
+			buff->unref();
+			return aDst;
+		}
+		
+		
+		//-----------------------------------------------
+		//Apply some aritmetic operations (+ - * / >> <<) on image
+		//-----------------------------------------------
+		template<class INPUT>
+		Data operation_arithmetic(Data &aSrc)
+		{			
+			YAT_INFO<<"LayoutTask: Apply operation arithmetic : "<< m_operation_type << " ("<<m_operation_value<<")"<<std::endl;
+			Data aDst = aSrc.copy();
+			int aNbPixel = aSrc.dimensions[0] * aSrc.dimensions[1];
+			for(int i = 0; i < aNbPixel; i++)
+			{
+				if(m_operation_type == "+")
+					((INPUT*) aDst.data())[i] = ((INPUT*) aSrc.data())[i] + (INPUT)m_operation_value;
+				if(m_operation_type == "-")
+					((INPUT*) aDst.data())[i] = ((INPUT*) aSrc.data())[i] - (INPUT)m_operation_value;
+				if(m_operation_type == "*")
+					((INPUT*) aDst.data())[i] = ((INPUT*) aSrc.data())[i] * (INPUT)m_operation_value;
+				if(m_operation_type == "/")
+					((INPUT*) aDst.data())[i] = (m_operation_value > 0) ? ( ((INPUT*) aSrc.data())[i]/(INPUT)m_operation_value):(((INPUT*) aSrc.data())[i]);
+				if(m_operation_type == "<<")
+					((INPUT*) aDst.data())[i] = ((INPUT*) aSrc.data())[i]<<(INPUT)m_operation_value;
+				if(m_operation_type == ">>")
+					((INPUT*) aDst.data())[i] = ((INPUT*) aSrc.data())[i]>>(INPUT)m_operation_value;				
+			}
+			
+			return aDst;
+		}
+		
+		//-----------------------------------------------
+		//called by process method
+		//-----------------------------------------------		
         template<class INPUT>
         void _compute(Data &aSrc, Data &aDst)
         {
             INPUT *aSrcPt = (INPUT*) aSrc.data();
             INPUT *aDstPt = (INPUT*) aDst.data();
             int aNbPixel = aSrc.dimensions[0] * aSrc.dimensions[1];
-            for(int i = 0; i < aNbPixel; i++, aSrcPt++, aDstPt++)
-            {
-                if(m_operation_type == "+")
-                    *aDstPt = (*aSrcPt + m_operation_value);
-                if(m_operation_type == "-")
-                    *aDstPt = (*aSrcPt > m_operation_value) ? (*aSrcPt - m_operation_value) : 0;
-                if(m_operation_type == "*")
-                    *aDstPt = (*aSrcPt * m_operation_value);
-                if(m_operation_type == "/")
-                    *aDstPt = (m_operation_value > 0) ? (*aSrcPt / m_operation_value) : *aSrcPt;
-                if(m_operation_type == "<<")
-                    *aDstPt = (*aSrcPt << m_operation_value);
-                if(m_operation_type == ">>")
-                    *aDstPt = (*aSrcPt >> m_operation_value);
-            }
+			if(m_operation_type == "CIRPAD_2X10")
+			{
+                aDst = cirpad_2x10<INPUT>(aSrc);
+			}
+			else if(m_operation_type == "CIRPAD_4X5")
+			{
+                aDst = cirpad_4x5<INPUT>(aSrc);	
+			}
+			else
+			{
+                aDst = operation_arithmetic<INPUT>(aSrc);		
+			}
         }
 
         std::string m_operation_type;

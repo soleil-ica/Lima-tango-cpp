@@ -375,8 +375,8 @@ void LimaDetector::init_device()
         //- That means, we need to call tis only at the command Init() and not at the start of the device
         if(LimaDetector::m_init_count > 1)
         {
-            //- force Init() on the specific sub device.
-            INFO_STREAM << "Force Initialization on the specific sub device." << endl;
+            //- force Init() on the specific device.
+            INFO_STREAM << "Force Initialization on the specific device." << endl;
             ControlFactory::instance().init_specific_device(detectorType);
         }	
 	
@@ -3043,16 +3043,16 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
         if(imageSource == "ACQUISITION")
         {                   
             if(counter > 0)
-            {
-                DEBUG_STREAM << "last_image_counter -> " << counter << endl;
-
+            {         
                 Data last_image;
 				if(cbd.dya->get_name() == "image")
 				{
+					DEBUG_STREAM << "ReadImage : counter = " << counter << endl;
 					m_ct->ReadImage(last_image, -1);
 				}
 				else //NECESSARY "baseImage"
 				{
+					DEBUG_STREAM << "ReadBaseImage : counter = " << counter << endl;
 					m_ct->ReadBaseImage(last_image, -1);
 				}
 
@@ -3128,9 +3128,9 @@ void LimaDetector::read_image_callback(yat4tango::DynamicAttributeReadCallbackDa
         {
             if(counter > 0)
             {
-                DEBUG_STREAM << "last_image_counter -> " << counter << endl;
                 CtVideo::Image last_image; //never put this variable in the class data member, refrence is locked in ctVideo (mantis 0021083)
 				//NB : it s always the base image  no processLib operations are applied in video mode
+				DEBUG_STREAM << "getLastImage : counter = " << counter << endl;
                 m_ct->video()->getLastImage(last_image); //last image acquired
                 if(last_image.buffer() != 0)
                 {

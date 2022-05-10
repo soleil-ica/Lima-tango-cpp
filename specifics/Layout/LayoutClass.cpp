@@ -330,7 +330,7 @@ void LayoutClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	operation_type_prop.set_unit(" ");
 	operation_type_prop.set_standard_unit(" ");
 	operation_type_prop.set_display_unit(" ");
-	operation_type_prop.set_description("Arithmetic available types :<br>\n+ <br>\n- <br>\n* <br>\n/ <br>\n>> <br>\n<< <br>\nFLIP<br>\nROTATION<br>\nNONE <br>");
+	operation_type_prop.set_description("Arithmetic available types :<br>\n+ <br>\n- <br>\n* <br>\n/ <br>\n>> <br>\n<< <br>\nFLIP<br>\nROTATION<br>\nCIRPAD_2X10<br>\nCIRPAD_4X5<br>\nNONE <br>");
 	operation_type->set_default_properties(operation_type_prop);
 	att_list.push_back(operation_type);
 
@@ -594,7 +594,7 @@ void LayoutClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Tango::Device_4Impl");
+	inheritance.push_back("Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

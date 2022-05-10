@@ -1119,16 +1119,18 @@ void ControlFactory::reset(const std::string& detector_type)
             ControlFactory::m_is_created = false;
             if (m_control)
             {
-                delete m_control;
-                m_control = 0;
+                YAT_LOG_INFO("delete m_control" );	
+				delete m_control;
+                m_control = 0;				
             }
 
             if (m_camera)
             {
+				YAT_LOG_INFO("delete m_camera" );				
 #ifdef SIMULATOR_ENABLED        
                 if (detector_type == "SimulatorCCD")
                 {
-                    delete (static_cast<Simulator::Camera*> (m_camera));
+					delete (static_cast<Simulator::Camera*> (m_camera));
                 }
 #endif
 
@@ -1307,6 +1309,7 @@ void ControlFactory::reset(const std::string& detector_type)
 			
             if (m_interface)
             {
+				YAT_LOG_INFO("delete m_interface" );				
                 delete m_interface;
                 m_interface = 0;
             }

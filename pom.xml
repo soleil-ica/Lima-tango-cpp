@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.11.2</version>
+    <version>1.11.2-SNAPSHOT</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -29,7 +29,7 @@
         <SIMULATOR.name>Simulator</SIMULATOR.name>
         <SIMULATOR.version>1.4.1</SIMULATOR.version>
         
-        <YAT.version>1.18.7</YAT.version> 
+        <YAT.version>1.18.9</YAT.version> 
         <YAT4Tango.version>1.13.4</YAT4Tango.version> 
         <NexusCPP.version>3.4.0</NexusCPP.version> 
         
@@ -74,19 +74,19 @@
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>YAT4Tango-${aol}-shared-${mode}</artifactId>
-                    <version>${YAT4Tango.version}</version>
+                    <!--<version>${YAT4Tango.version}</version>-->
                 </dependency>
         
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>YAT-${aol}-shared-${mode}</artifactId>
-                    <version>${YAT.version}</version>
+                    <!--<version>${YAT.version}</version>-->
                 </dependency>          
                  
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>NexusCPP-${aol}-shared-${mode}</artifactId>
-                    <version>${NexusCPP.version}</version>
+                    <!--<version>${NexusCPP.version}</version>-->
                 </dependency>          
         
                 <dependency>

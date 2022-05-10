@@ -114,22 +114,7 @@ void Layout::delete_device()
 	DELETE_DEVSTRING_ATTRIBUTE(attr_version_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_operationType_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_operationValue_read);
-	
 
-		
-    //remove user layout tasks associated to externalOperation
-	INFO_STREAM << "- remove all user layout tasks ..."<<endl;
-	if(!m_layout_tasks.empty())
-	{	
-		for (int i = 0; i < m_layout_tasks.size(); i++)
-		{
-			delete m_layout_tasks.at(i);
-		}
-		m_layout_tasks.clear();
-	}
-	
-	INFO_STREAM << "Remove the inner-appender." << endl;
-	yat4tango::InnerAppender::release(this);		
 }
 
 //+----------------------------------------------------------------------------
@@ -148,21 +133,17 @@ void Layout::init_device()
     //--------------------------------------------
     get_device_property();
 	
-	CREATE_DEVSTRING_ATTRIBUTE(attr_version_read, 256);
-    CREATE_DEVSTRING_ATTRIBUTE(attr_operationType_read, 255);
-    CREATE_DEVSTRING_ATTRIBUTE(attr_operationValue_read, 255);
+	CREATE_DEVSTRING_ATTRIBUTE(attr_version_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_operationType_read, MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_operationValue_read, MAX_ATTRIBUTE_STRING_LENGTH);
 
     //By default INIT, need to ensure that all objets are OK before set the device to STANDBY
     set_state(Tango::INIT);
     m_is_device_initialized = false;
     m_status_message.str("");
-//	m_mapOperations.clear();
+	m_mapOperations.clear();
     m_layout_tasks.clear();
     m_ct = 0;
-	
-	//- instanciate the appender in order to manage logs
-	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;
-	yat4tango::InnerAppender::initialize(this, 512);	
 	
     try
     {
@@ -170,19 +151,6 @@ void Layout::init_device()
         //in fact LimaDetector is create the singleton control objet
         //so this call, will only return existing object!
         m_ct = ControlFactory::instance().get_control("Layout");
-		
-		//remove external operations
-		INFO_STREAM << "- remove all external operations ..."<<endl;
-		if(!m_mapOperations.empty())
-		{			
-			std::map<long, operationParams >::iterator it;
-			for(it = m_mapOperations.begin() ; it!= m_mapOperations.end() ; ++it)
-			{
-				delete_external_operation(it->first);
-			}    
-
-			m_mapOperations.clear();
-		}		
     }
     catch (Exception& e)
     {
@@ -402,6 +370,7 @@ void Layout::read_attr_hardware(vector<long> &attr_list)
 void Layout::read_version(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "Layout::read_version(Tango::Attribute &attr) entering... "<< endl;
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
 		strcpy(*attr_version_read, CURRENT_VERSION);
@@ -506,6 +475,8 @@ void Layout::write_operationType(Tango::WAttribute &attr)
             (current != "<<") &&
             (current != "FLIP") &&
 			(current != "ROTATION") &&
+			(current != "CIRPAD_2X10") &&
+			(current != "CIRPAD_4X5") &&
             (current != "NONE")
             )
         {
@@ -520,6 +491,8 @@ void Layout::write_operationType(Tango::WAttribute &attr)
                                            "\n<<"
                                            "\nFLIP"
 										   "\nROTATION"
+										   "\CIRPAD_2X10"
+										   "\CIRPAD_4X5"										   
                                            "\nNONE",
                                            "Layout::write_operationType");
         }
@@ -645,6 +618,7 @@ void Layout::add_external_operation(long level)
     DEBUG_STREAM << "Layout::add_external_operation() entering ... " << endl;
     //add a new operation
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+	transform(m_operationType.begin(), m_operationType.end(), m_operationType.begin(), ::toupper);
     if (m_ct != 0)
     {
         try
@@ -729,7 +703,10 @@ void Layout::add_external_operation(long level)
                 m_operationType == "*"	||
                 m_operationType == "/"	||
                 m_operationType == "<<"	||
-                m_operationType == ">>" )
+                m_operationType == ">>" ||
+				m_operationType == "CIRPAD_2X10" ||
+				m_operationType == "CIRPAD_4X5" 
+				)
             {
                 //create new operation
                 std::stringstream opId("");
@@ -822,12 +799,11 @@ void Layout::memorize_all_operations(void)
 //+------------------------------------------------------------------
 void Layout::add_operation(Tango::DevLong argin)
 {
-    DEBUG_STREAM << "Layout::add_operation(): entering... !" << endl;
+    INFO_STREAM << "Layout::add_operation(): entering... !" << endl;
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     //	Add your own code to control device here
     try
     {
-        yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
         add_external_operation(argin);
         memorize_all_operations();
     }
@@ -857,13 +833,12 @@ void Layout::add_operation(Tango::DevLong argin)
 //+------------------------------------------------------------------
 void Layout::remove_operation(Tango::DevLong argin)
 {
-    DEBUG_STREAM << "Layout::remove_operation(): entering... !" << endl;
+    INFO_STREAM << "Layout::remove_operation(): entering... !" << endl;
 
     //	Add your own code to control device here
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
-        yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 		std::map<long, operationParams >::iterator it;			
 		it = m_mapOperations.find (argin);	
 		if (it != m_mapOperations.end())
