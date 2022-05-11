@@ -101,7 +101,6 @@ void Pco::delete_device()
     //	Delete device allocated objects
 
     DELETE_DEVSTRING_ATTRIBUTE(attr_pixelRate_read);
-    DELETE_SCALAR_ATTRIBUTE(attr_currentRecordedFrame_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_cameraModel_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_dllVersion_read);
     DELETE_SCALAR_ATTRIBUTE(attr_sensorTemperature_read);
@@ -115,6 +114,7 @@ void Pco::delete_device()
     DELETE_DEVSTRING_ATTRIBUTE(attr_shutterMode_read);
     DELETE_SCALAR_ATTRIBUTE(attr_doubleImage_read);
     DELETE_SCALAR_ATTRIBUTE(attr_forcedFIFOMode_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_currentRecordedFrame_read);
 
     INFO_STREAM << "Remove the inner-appender." << endl;
     yat4tango::InnerAppender::release(this);
@@ -147,7 +147,6 @@ void Pco::init_device()
     get_device_property();
 
     CREATE_DEVSTRING_ATTRIBUTE(attr_pixelRate_read, MAX_ATTRIBUTE_STRING_LENGTH);
-    CREATE_SCALAR_ATTRIBUTE(attr_currentRecordedFrame_read);
     CREATE_DEVSTRING_ATTRIBUTE(attr_cameraModel_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dllVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_SCALAR_ATTRIBUTE(attr_sensorTemperature_read);
@@ -161,6 +160,7 @@ void Pco::init_device()
     CREATE_DEVSTRING_ATTRIBUTE(attr_shutterMode_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_SCALAR_ATTRIBUTE(attr_doubleImage_read);
     CREATE_SCALAR_ATTRIBUTE(attr_forcedFIFOMode_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_currentRecordedFrame_read);
 
     m_is_device_initialized = false;
     strcpy(*attr_pixelRate_read, "Not Initialised");
@@ -296,11 +296,15 @@ void Pco::create_dynamic_interface()
         {
             create_pco_edge_dynamic_interface();
         }
-        else //- Not EDGE
+		
+		//For pixelfly camera, only Pixel Rate, camera Model, and sensor temperature are used.
+		//if it is not an edge or a pixelfly we create pco with ram dynamic interface.
+		
+        else if (!(m_camera_model.find("pco.pixelfly usb") != string::npos))//- Not EDGE
         {
             // ie: either dimax or XX00
             create_pco_with_ram_dynamic_interface();
-
+			
             if (m_camera_model.find("pco.dimax") != string::npos)
             {
                 create_pco_dimax_dynamic_interface();
@@ -685,11 +689,26 @@ void Pco::read_sensorTemperature(Tango::Attribute &attr)
         std::string temp_temperature_info,temp_temperature;
         m_camera->getTemperatureInfo(temp_temperature_info);
 		
-		//Parse the answer to only get the camera temperature.
-		std::vector<std::string> parsed_args;
-		yat::StringUtil::match(temp_temperature_info, "*[*]*[*]*[*]*[*]", &parsed_args); 
-        *attr_sensorTemperature_read = yat::StringUtil::to_num<float>(parsed_args[3]);
-        attr.set_value(attr_sensorTemperature_read);
+		/*To display PCO pixelfly camera temperature it is necessary to create a new attribute called "cameraTemperature" and filter in the case of a pixelfly:
+		if (m_camera_model.find("pco.pixelfly usb") != string::npos)
+		{
+			//Parse the answer to only get the camera temperature.
+			std::vector<std::string> parsed_args;
+			yat::StringUtil::match(temp_temperature_info, "*[*]*[*]*[*]*[*]", &parsed_args); 
+			//Camera temperature corresponds to the third occurrence of parsed_args.
+			*attr_cameraTemperature_read = yat::StringUtil::to_num<float>(parsed_args[3]);
+			attr.set_value(attr_cameraTemperature_read);
+		}*/
+		if (m_camera_model.find("pco.pixelfly usb") != string::npos)
+		{
+			attr.set_quality(Tango::ATTR_INVALID);
+			INFO_STREAM << "Image sensor temperature is missing" << endl;
+		}
+		else {
+			yat::StringUtil::extract_token(&temp_temperature_info, '[', ']', &temp_temperature);
+			*attr_sensorTemperature_read = yat::StringUtil::to_num<float>(temp_temperature);
+			attr.set_value(attr_sensorTemperature_read);
+		}
     }
     catch (lima::Exception& e)
     {
