@@ -32,10 +32,10 @@ Attribute name          Read/Write Type       Description
 configFilesPath         R          String     Path of configuration files.
 energyThreshold         R/W        Double     Get/Set the threshold settings in keV for the Lambda detector.
 distortionCorrection    R          Boolean    Get whether interpolation of extra large pixels is enabled.
-highVoltage             R          Double     Get the measured high voltage value from a specific detector module. (Older detector firmware might not support this command. In this case, a value of 0.0 is returned).
-humidity                R          Double     Get the measured humidity from a specific detector module. (Older detector firmware might not support this command. In this case, the valueof 0.0 is returned).
+highVoltage             R          Double     Get the measured high voltage value from a specific detector module. (Older detector firmware might not support this command. In this case, the attribute is displayed as INVALID).
+humidity                R          Double     Get the measured humidity from a specific detector module. (Older detector firmware might not support this command. In this case,  the attribute is displayed as INVALID).
 libraryVersion          R          String     Get the version of the library as a string in the format "major.minor.patch".
-temperature             R          Double     Get a vector of measured temperatures from a specific detector module. The number of values and their meaning depends on hardware revision of the detectorreadout board.For new readout boards, three values are returned: the board temperature, theFPGA temperature, and the temperature from the humidity sensor. (Older boardsdo not support this command, and an empty vector is returned).
+temperature             R          Double     Get the board temperature from the specific detector module. (Older boards do not support this command, and, in this case,  the attribute is displayed as INVALID).
 ======================= ========== ========== ==============================================================================================
 
 
