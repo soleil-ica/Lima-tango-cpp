@@ -4346,7 +4346,7 @@ void LimaDetector::configure_image_type(void)
     {
         hw_det_info->setCurrImageType(Bpp2);
     }	
-    if(detectorPixelDepth == "4")
+    else if(detectorPixelDepth == "4")
     {
         hw_det_info->setCurrImageType(Bpp4);
     }	
