@@ -168,9 +168,9 @@ void Lambda::init_device()
 	
 	/*----- PROTECTED REGION ID(Lambda::init_device) ENABLED START -----*/
     //	Initialize device
-    CREATE_SCALAR_ATTRIBUTE(attr_distortionCorrection_read, (Tango::DevBoolean)true    );
+    CREATE_SCALAR_ATTRIBUTE(attr_distortionCorrection_read);
     CREATE_SCALAR_ATTRIBUTE(attr_energyThreshold_read, (Tango::DevDouble  )5.0f );
-    CREATE_DEVSTRING_ATTRIBUTE(attr_configFilesPath_read, Lambda_ns::CONFIG_FILES_PATH_SIZE_MAX);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_configFilesPath_read);
     CREATE_SCALAR_ATTRIBUTE(attr_highVoltage_read, (Tango::DevDouble)5.0f   );
     CREATE_SCALAR_ATTRIBUTE(attr_humidity_read, (Tango::DevDouble)5.0f );
     CREATE_SCALAR_ATTRIBUTE(attr_temperature_read, (Tango::DevDouble)5.0f );
@@ -213,12 +213,8 @@ void Lambda::init_device()
     try
 	{
 		// Update the hardware with the properties data
-        sleep (1);
 		write_at_init();
-		bool w_distortionCorrection = false;
-        m_camera->getDistortionCorrection(w_distortionCorrection);
-        *attr_distortionCorrection_read = w_distortionCorrection;
-		
+		m_camera->setDistortionCorrection(distortionCorrection);
 	}
     catch(Tango::DevFailed& df)
 	{
@@ -240,8 +236,6 @@ void Lambda::init_device()
 		set_state(Tango::FAULT);
 		return;
 	}
-
-	set_state(Tango::STANDBY);
 	dev_state();
 
 	/*----- PROTECTED REGION END -----*/	//	Lambda::init_device
@@ -414,7 +408,6 @@ void Lambda::read_configFilesPath(Tango::Attribute &attr)
     {
        	const char* temp = configFilesPath.c_str();
         strcpy(*attr_configFilesPath_read, temp);
-        //attr.set_quality(Tango::ATTR_VALID);
     	attr.set_value(attr_configFilesPath_read);
     }
     catch (Tango::DevFailed& df)
@@ -445,7 +438,6 @@ void Lambda::read_distortionCorrection(Tango::Attribute &attr)
     {
         bool w_distortionCorrection = false;
         m_camera->getDistortionCorrection(w_distortionCorrection);
-        attr.set_quality(Tango::ATTR_VALID);
         *attr_distortionCorrection_read = w_distortionCorrection;
     	attr.set_value(attr_distortionCorrection_read);
     }
@@ -472,9 +464,7 @@ void Lambda::read_energyThreshold(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(Lambda::read_energyThreshold) ENABLED START -----*/
 	try
     {
-		double w_energyThreshold =0.0;
-		m_camera->getEnergyThreshold(w_energyThreshold);
-		*attr_energyThreshold_read = w_energyThreshold;
+		m_camera->getEnergyThreshold(*attr_energyThreshold_read);
 		attr.set_value(attr_energyThreshold_read);
     }
     catch (Tango::DevFailed& df)
@@ -514,11 +504,6 @@ void Lambda::write_energyThreshold(Tango::WAttribute &attr)
     {
         manage_devfailed_exception(df, "write_energyThreshold");
     }
-    catch(...)
-    {
-        INFO_STREAM      << "Write_energyThreshold FAILED" << endl;
-    }
-	
 	
 	/*----- PROTECTED REGION END -----*/	//	Lambda::write_energyThreshold
 }
@@ -570,17 +555,15 @@ void Lambda::read_highVoltage(Tango::Attribute &attr)
 	try
     {
 		//the function "hasFeature" returns a boolean depending on the compatibility between the code and the firmware:
-		//if the boolean returns false it means that this function is not supported by the firmware.
-		auto w_has_feature = m_camera->hasFeature(xsp::lambda::Feature::FEAT_HV);
-		if (w_has_feature){
-			double w_highVoltage = 0.0;
-        	m_camera->getHighVoltage(w_highVoltage);
-        	*attr_highVoltage_read = w_highVoltage;
+		//if the this function returns false it means that this function is not supported by the firmware.
+		if (m_camera->hasFeature(xsp::lambda::Feature::FEAT_HV)
+		{
+			m_camera->getHighVoltage(*attr_highVoltage_read);
     		attr.set_value(attr_highVoltage_read);
 		}
-		else {
+		else 
+		{
 			attr.set_quality(Tango::ATTR_INVALID);
-			INFO_STREAM << "highVoltage is not supported by the firmware" << endl;
 		}
         
     }
@@ -613,13 +596,12 @@ void Lambda::read_humidity(Tango::Attribute &attr)
 	try
     {
 		//force the double
-        double w_humidity = 99.99;
+        double w_humidity = -1;
         m_camera->getHumidity(w_humidity);
 
 		//if the humidity returns 0.0 it means that this function is not supported by the firmware.
 		if (w_humidity == 0.0){
 			attr.set_quality(Tango::ATTR_INVALID);
-			INFO_STREAM << "humidity is not supported by the firmware" << endl;
 		}
 
 		else 
@@ -659,7 +641,6 @@ void Lambda::read_temperature(Tango::Attribute &attr)
 		if (w_temperature == 0)
 		{
 			attr.set_quality(Tango::ATTR_INVALID);
-			INFO_STREAM << "temperature is not supported by the firmware" << endl;
 		}
 		else {
 			*attr_temperature_read = w_temperature;
@@ -783,120 +764,18 @@ void Lambda::manage_lima_exception(lima::Exception & in_exception, const std::st
                                    in_caller_method_name.c_str());
 }
 
-/*************************************************************************************************************
- * \brief Use to update a string static attribute and the hardware with a property value
- * \param[in]  in_attribute_name     Name of the attribute linked to the property value
- * \param[out] out_attr_read         Tango attribute member to filled with the data value
- * \param[in]  in_memorized_property Property variable
- * \param[in]  in_write_method       Pointer on a controller method to call to set the data
-*************************************************************************************************************/
-void Lambda::write_property_in_string_static_attribute(const std::string & in_attribute_name,
-                                                       Tango::DevString * out_attr_read,
-                                                       const std::string & in_memorized_property,
-                                                       void (Lambda_ns::Lambda::*in_write_method)(Tango::WAttribute &))
-{
-	INFO_STREAM << "Write tango hardware at Init - " << in_attribute_name << "." << endl;
-
-    strcpy(*out_attr_read, in_memorized_property.c_str());
-	Tango::WAttribute & attribute = dev_attr->get_w_attr_by_name(in_attribute_name.c_str());
-	attribute.set_write_value(*out_attr_read);
-    (this->*in_write_method)(attribute);
-}
-
 
 /*****************************************************************************
  * \brief Update the hardware with the properties data
  *****************************************************************************/
 void Lambda::write_at_init(void)
 {
-    INFO_STREAM << "- Update the hardware with the properties" << endl;
-
-    write_property_in_static_attribute("energyThreshold", attr_energyThreshold_read, memorizedEnergyThreshold, &Lambda::write_energyThreshold);
+    INFO_STREAM << "Write tango hardware at Init - energyThreshold." << endl;
+	Tango::WAttribute &energyThreshold = dev_attr->get_w_attr_by_name("energyThreshold");
+	attr_energyThreshold_write = memorizedEnergyThreshold;
+	energyThreshold.set_write_value(attr_energyThreshold_write);
+	write_energyThreshold(energyThreshold);
 
 }
-
-
-// //--------------------------------------------------------
-// /**
-//  *	Read attribute burstMode related method
-//  *	Description: get the value of burst mode.<br>
-//  *               true: 10GE link.<br>
-//  *               false: 1GE link<br>
-//  *
-//  *	Data type:	Tango::DevBoolean
-//  *	Attr type:	Scalar
-//  */
-// //--------------------------------------------------------
-// void Lambda::read_burstMode(Tango::Attribute &attr)
-// {
-// 	DEBUG_STREAM << "Lambda::read_burstMode(Tango::Attribute &attr) entering... " << endl;
-//     try
-//     {
-// 		/**attr_burstMode_read = m_camera->getBurstMode();
-//         attr.set_quality(Tango::ATTR_VALID);
-//     	attr.set_value(attr_burstMode_read);*/
-//     }
-//     catch (Tango::DevFailed& df)
-//     {
-//         manage_devfailed_exception(df, "read_burstMode");
-//     }
-// 	
-// }
-
-// //--------------------------------------------------------
-// /**
-//  *	Read attribute operatingMode related method
-//  *	Description: get operating mode of the detector:<br>
-//  *               24bit mode : TwentyFourBit<br>
-//  *               12bit mode :  ContinuousReadWrite<br>
-//  *
-//  *	Data type:	Tango::DevString
-//  *	Attr type:	Scalar
-//  */
-// //--------------------------------------------------------
-// void Lambda::read_operatingMode(Tango::Attribute &attr)
-// {
-// 	DEBUG_STREAM << "Lambda::read_operatingMode(Tango::Attribute &attr) entering... " << endl;
-// 	//	Set the attribute value
-//     try
-//     {
-//         /*std::string temp = m_camera->getOperationMode();
-//         strcpy(*attr_operatingMode_read, temp.c_str());
-//         attr.set_quality(Tango::ATTR_VALID);
-//     	attr.set_value(attr_operatingMode_read);*/
-//     }
-//     catch (Tango::DevFailed& df)
-//     {
-//         manage_devfailed_exception(df, "read_operatingMode");
-//     }
-// 	
-// }
-
-// //--------------------------------------------------------
-// /**
-//  *	Read attribute readoutTime related method
-//  *	Description: get readout time during image acquisition.<br>
-//  *               Depends of the operating mode.<br>
-//  *
-//  *	Data type:	Tango::DevFloat
-//  *	Attr type:	Scalar
-//  */
-// //--------------------------------------------------------
-// void Lambda::read_readoutTime(Tango::Attribute &attr)
-// {
-// 	DEBUG_STREAM << "Lambda::read_readoutTime(Tango::Attribute &attr) entering... " << endl;
-//     try
-//     {
-//         /**attr_readoutTime_read = m_camera->getReadoutTimeMs();
-//         attr.set_quality(Tango::ATTR_VALID);
-//     	attr.set_value(attr_readoutTime_read);*/
-//     }
-//     catch (Tango::DevFailed& df)
-//     {
-//         manage_devfailed_exception(df, "read_readoutTime");
-//     }
-// }
-
-
 /*----- PROTECTED REGION END -----*/	//	Lambda::namespace_ending
 } //	namespace
