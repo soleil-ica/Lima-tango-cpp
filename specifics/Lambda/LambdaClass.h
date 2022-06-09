@@ -72,19 +72,6 @@ public:
 		{return (static_cast<Lambda *>(dev))->is_configFilesPath_allowed(ty);}
 };
 
-//	Attribute readoutTime class definition
-class readoutTimeAttrib: public Tango::Attr
-{
-public:
-	readoutTimeAttrib():Attr("readoutTime",
-			Tango::DEV_FLOAT, Tango::READ) {};
-	~readoutTimeAttrib() {};
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Lambda *>(dev))->read_readoutTime(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Lambda *>(dev))->is_readoutTime_allowed(ty);}
-};
-
 //	Attribute distortionCorrection class definition
 class distortionCorrectionAttrib: public Tango::Attr
 {
@@ -98,45 +85,71 @@ public:
 		{return (static_cast<Lambda *>(dev))->is_distortionCorrection_allowed(ty);}
 };
 
-//	Attribute energyThreshold1 class definition
-class energyThreshold1Attrib: public Tango::Attr
+//	Attribute energyThreshold class definition
+class energyThresholdAttrib: public Tango::Attr
 {
 public:
-	energyThreshold1Attrib():Attr("energyThreshold1",
-			Tango::DEV_FLOAT, Tango::READ_WRITE) {};
-	~energyThreshold1Attrib() {};
+	energyThresholdAttrib():Attr("energyThreshold",
+			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~energyThresholdAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Lambda *>(dev))->read_energyThreshold1(att);}
+		{(static_cast<Lambda *>(dev))->read_energyThreshold(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<Lambda *>(dev))->write_energyThreshold1(att);}
+		{(static_cast<Lambda *>(dev))->write_energyThreshold(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Lambda *>(dev))->is_energyThreshold1_allowed(ty);}
+		{return (static_cast<Lambda *>(dev))->is_energyThreshold_allowed(ty);}
 };
 
-//	Attribute operatingMode class definition
-class operatingModeAttrib: public Tango::Attr
+//	Attribute libraryVersion class definition
+class libraryVersionAttrib: public Tango::Attr
 {
 public:
-	operatingModeAttrib():Attr("operatingMode",
+	libraryVersionAttrib():Attr("libraryVersion",
 			Tango::DEV_STRING, Tango::READ) {};
-	~operatingModeAttrib() {};
+	~libraryVersionAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Lambda *>(dev))->read_operatingMode(att);}
+		{(static_cast<Lambda *>(dev))->read_libraryVersion(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Lambda *>(dev))->is_operatingMode_allowed(ty);}
+		{return (static_cast<Lambda *>(dev))->is_libraryVersion_allowed(ty);}
 };
 
-//	Attribute burstMode class definition
-class burstModeAttrib: public Tango::Attr
+//	Attribute highVoltage class definition
+class highVoltageAttrib: public Tango::Attr
 {
 public:
-	burstModeAttrib():Attr("burstMode",
-			Tango::DEV_BOOLEAN, Tango::READ) {};
-	~burstModeAttrib() {};
+	highVoltageAttrib():Attr("highVoltage",
+			Tango::DEV_DOUBLE, Tango::READ) {};
+	~highVoltageAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Lambda *>(dev))->read_burstMode(att);}
+		{(static_cast<Lambda *>(dev))->read_highVoltage(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Lambda *>(dev))->is_burstMode_allowed(ty);}
+		{return (static_cast<Lambda *>(dev))->is_highVoltage_allowed(ty);}
+};
+
+//	Attribute humidity class definition
+class humidityAttrib: public Tango::Attr
+{
+public:
+	humidityAttrib():Attr("humidity",
+			Tango::DEV_DOUBLE, Tango::READ) {};
+	~humidityAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Lambda *>(dev))->read_humidity(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Lambda *>(dev))->is_humidity_allowed(ty);}
+};
+
+//	Attribute temperature class definition
+class temperatureAttrib: public Tango::Attr
+{
+public:
+	temperatureAttrib():Attr("temperature",
+			Tango::DEV_DOUBLE, Tango::READ) {};
+	~temperatureAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Lambda *>(dev))->read_temperature(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Lambda *>(dev))->is_temperature_allowed(ty);}
 };
 
 
@@ -174,6 +187,7 @@ class LambdaClass : public Tango::DeviceClass
 		static LambdaClass *_instance;
 		void command_factory();
 		void attribute_factory(vector<Tango::Attr *> &);
+		void pipe_factory();
 		void write_class_property();
 		void set_default_property();
 		void get_class_property();

@@ -835,7 +835,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data[0] >> config_file_path;
                 db_data[1] >> distortion_correction;
 
-                m_camera    = static_cast<void*> (new Lambda::Camera(config_file_path, distortion_correction));
+                m_camera    = static_cast<void*> (new Lambda::Camera(config_file_path));
                 m_interface = static_cast<void*> (new Lambda::Interface(*static_cast<Lambda::Camera*> (m_camera)));
                 m_control   = new CtControl(static_cast<Lambda::Interface*> (m_interface));
 

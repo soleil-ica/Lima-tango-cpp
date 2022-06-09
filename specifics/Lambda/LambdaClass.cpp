@@ -131,8 +131,8 @@ LambdaClass *LambdaClass::init(const char *name)
 		catch (bad_alloc &)
 		{
 			throw;
-		}		
-	}		
+		}
+	}
 	return _instance;
 }
 
@@ -254,11 +254,11 @@ void LambdaClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "MemorizedEnergyThreshold1";
+	prop_name = "MemorizedEnergyThreshold";
 	prop_desc = "Only the device could modify this property <br>\nThe User should never change this property<br>";
-	prop_def  = "7000.0";
+	prop_def  = "7";
 	vect_data.clear();
-	vect_data.push_back("7000.0");
+	vect_data.push_back("7");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -300,108 +300,10 @@ void LambdaClass::write_class_property()
 	description << str_desc;
 	data.push_back(description);
 
-	//	put cvs or svn location
-	string	filename("Lambda");
-	filename += "Class.cpp";
-
-	// check for cvs information
-	string	src_path(CvsPath);
-	start = src_path.find("/");
-	if (start!=string::npos)
-	{
-		end   = src_path.find(filename);
-		if (end>start)
-		{
-			string	strloc = src_path.substr(start, end-start);
-			//	Check if specific repository
-			start = strloc.find("/cvsroot/");
-			if (start!=string::npos && start>0)
-			{
-				string	repository = strloc.substr(0, start);
-				if (repository.find("/segfs/")!=string::npos)
-					strloc = "ESRF:" + strloc.substr(start, strloc.length()-start);
-			}
-			Tango::DbDatum	cvs_loc("cvs_location");
-			cvs_loc << strloc;
-			data.push_back(cvs_loc);
-		}
-	}
-
-	// check for svn information
-	else
-	{
-		string	src_path(SvnPath);
-		start = src_path.find("://");
-		if (start!=string::npos)
-		{
-			end = src_path.find(filename);
-			if (end>start)
-			{
-				header = "$HeadURL: ";
-				start = header.length();
-				string	strloc = src_path.substr(start, (end-start));
-				
-				Tango::DbDatum	svn_loc("svn_location");
-				svn_loc << strloc;
-				data.push_back(svn_loc);
-			}
-		}
-	}
-
-	//	Get CVS or SVN revision tag
-	
-	// CVS tag
-	string	tagname(TagName);
-	header = "$Name: ";
-	start = header.length();
-	string	endstr(" $");
-	
-	end   = tagname.find(endstr);
-	if (end!=string::npos && end>start)
-	{
-		string	strtag = tagname.substr(start, end-start);
-		Tango::DbDatum	cvs_tag("cvs_tag");
-		cvs_tag << strtag;
-		data.push_back(cvs_tag);
-	}
-	
-	// SVN tag
-	string	svnpath(SvnPath);
-	header = "$HeadURL: ";
-	start = header.length();
-	
-	end   = svnpath.find(endstr);
-	if (end!=string::npos && end>start)
-	{
-		string	strloc = svnpath.substr(start, end-start);
-		
-		string tagstr ("/tags/");
-		start = strloc.find(tagstr);
-		if ( start!=string::npos )
-		{
-			start = start + tagstr.length();
-			end   = strloc.find(filename);
-			string	strtag = strloc.substr(start, end-start-1);
-			
-			Tango::DbDatum	svn_tag("svn_tag");
-			svn_tag << strtag;
-			data.push_back(svn_tag);
-		}
-	}
-
-	//	Get URL location
-	string	httpServ(HttpServer);
-	if (httpServ.length()>0)
-	{
-		Tango::DbDatum	db_doc_url("doc_url");
-		db_doc_url << httpServ;
-		data.push_back(db_doc_url);
-	}
-
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Tango::Device_4Impl");
+	inheritance.push_back("TANGO_BASE_CLASS");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 
@@ -432,18 +334,18 @@ void LambdaClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
 	{
 		cout4 << "Device name : " << (*devlist_ptr)[i].in() << endl;
-		device_list.push_back(new Lambda(this, (*devlist_ptr)[i]));							 
+		device_list.push_back(new Lambda(this, (*devlist_ptr)[i]));
 	}
 
 	//	Manage dynamic attributes if any
-	//erase_dynamic_attributes(devlist_ptr, get_class_attr()->get_attr_list());
+	erase_dynamic_attributes(devlist_ptr, get_class_attr()->get_attr_list());
 
 	//	Export devices to the outside world
 	for (unsigned long i=1 ; i<=devlist_ptr->length() ; i++)
 	{
 		//	Add dynamic attributes if any
 		Lambda *dev = static_cast<Lambda *>(device_list[device_list.size()-i]);
-		//dev->add_dynamic_attributes();
+		dev->add_dynamic_attributes();
 
 		//	Check before if database used.
 		if ((Tango::Util::_UseDb == true) && (Tango::Util::_FileDb == false))
@@ -492,33 +394,9 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	configfilespath->set_default_properties(configfilespath_prop);
 	//	Not Polled
-	configfilespath->set_disp_level(Tango::EXPERT);
+	configfilespath->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
 	att_list.push_back(configfilespath);
-
-	//	Attribute : readoutTime
-	readoutTimeAttrib	*readouttime = new readoutTimeAttrib();
-	Tango::UserDefaultAttrProp	readouttime_prop;
-	readouttime_prop.set_description("get readout time during image acquisition.<br>\nDepends of the operating mode.<br>");
-	//	label	not set for readoutTime
-	readouttime_prop.set_unit("ms");
-	readouttime_prop.set_standard_unit("ms");
-	readouttime_prop.set_display_unit("ms");
-	readouttime_prop.set_format("%1.0f");
-	//	max_value	not set for readoutTime
-	//	min_value	not set for readoutTime
-	//	max_alarm	not set for readoutTime
-	//	min_alarm	not set for readoutTime
-	//	max_warning	not set for readoutTime
-	//	min_warning	not set for readoutTime
-	//	delta_t	not set for readoutTime
-	//	delta_val	not set for readoutTime
-	
-	readouttime->set_default_properties(readouttime_prop);
-	//	Not Polled
-	readouttime->set_disp_level(Tango::EXPERT);
-	//	Not Memorized
-	att_list.push_back(readouttime);
 
 	//	Attribute : distortionCorrection
 	distortionCorrectionAttrib	*distortioncorrection = new distortionCorrectionAttrib();
@@ -540,82 +418,131 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	
 	distortioncorrection->set_default_properties(distortioncorrection_prop);
 	//	Not Polled
-	distortioncorrection->set_disp_level(Tango::EXPERT);
+	distortioncorrection->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
 	att_list.push_back(distortioncorrection);
 
-	//	Attribute : energyThreshold1
-	energyThreshold1Attrib	*energythreshold1 = new energyThreshold1Attrib();
-	Tango::UserDefaultAttrProp	energythreshold1_prop;
-	energythreshold1_prop.set_description("set/get first energy threshold in eV.<br>\nThe photon is counted If the energy is above this threshold.<br>");
-	//	label	not set for energyThreshold1
-	energythreshold1_prop.set_unit("eV");
-	energythreshold1_prop.set_standard_unit("eV");
-	energythreshold1_prop.set_display_unit("eV");
-	energythreshold1_prop.set_format("%6.2f");
-	energythreshold1_prop.set_max_value("300000");
-	energythreshold1_prop.set_min_value("0");
-	//	max_alarm	not set for energyThreshold1
-	//	min_alarm	not set for energyThreshold1
-	//	max_warning	not set for energyThreshold1
-	//	min_warning	not set for energyThreshold1
-	//	delta_t	not set for energyThreshold1
-	//	delta_val	not set for energyThreshold1
+	//	Attribute : energyThreshold
+	energyThresholdAttrib	*energythreshold = new energyThresholdAttrib();
+	Tango::UserDefaultAttrProp	energythreshold_prop;
+	energythreshold_prop.set_description("set/get first energy threshold in eV.<br>\nThe photon is counted If the energy is above this threshold.<br>");
+	//	label	not set for energyThreshold
+	energythreshold_prop.set_unit("KeV");
+	energythreshold_prop.set_standard_unit("KeV");
+	energythreshold_prop.set_display_unit("KeV");
+	energythreshold_prop.set_format("%6.2f");
+	energythreshold_prop.set_max_value("300");
+	energythreshold_prop.set_min_value("0");
+	//	max_alarm	not set for energyThreshold
+	//	min_alarm	not set for energyThreshold
+	//	max_warning	not set for energyThreshold
+	//	min_warning	not set for energyThreshold
+	//	delta_t	not set for energyThreshold
+	//	delta_val	not set for energyThreshold
 	
-	energythreshold1->set_default_properties(energythreshold1_prop);
+	energythreshold->set_default_properties(energythreshold_prop);
 	//	Not Polled
-	energythreshold1->set_disp_level(Tango::OPERATOR);
-	energythreshold1->set_memorized();
-	energythreshold1->set_memorized_init(false);
-	att_list.push_back(energythreshold1);
+	energythreshold->set_disp_level(Tango::OPERATOR);
+	energythreshold->set_memorized();
+	energythreshold->set_memorized_init(false);
+	att_list.push_back(energythreshold);
 
-	//	Attribute : operatingMode
-	operatingModeAttrib	*operatingmode = new operatingModeAttrib();
-	Tango::UserDefaultAttrProp	operatingmode_prop;
-	operatingmode_prop.set_description("get operating mode of the detector:<br>\n24bit mode : TwentyFourBit<br>\n12bit mode :  ContinuousReadWrite<br>");
-	operatingmode_prop.set_label("operatingMode");
-	//	unit	not set for operatingMode
-	//	standard_unit	not set for operatingMode
-	//	display_unit	not set for operatingMode
-	//	format	not set for operatingMode
-	//	max_value	not set for operatingMode
-	//	min_value	not set for operatingMode
-	//	max_alarm	not set for operatingMode
-	//	min_alarm	not set for operatingMode
-	//	max_warning	not set for operatingMode
-	//	min_warning	not set for operatingMode
-	//	delta_t	not set for operatingMode
-	//	delta_val	not set for operatingMode
+	//	Attribute : libraryVersion
+	libraryVersionAttrib	*libraryversion = new libraryVersionAttrib();
+	Tango::UserDefaultAttrProp	libraryversion_prop;
+	//	description	not set for libraryVersion
+	//	label	not set for libraryVersion
+	//	unit	not set for libraryVersion
+	//	standard_unit	not set for libraryVersion
+	//	display_unit	not set for libraryVersion
+	//	format	not set for libraryVersion
+	//	max_value	not set for libraryVersion
+	//	min_value	not set for libraryVersion
+	//	max_alarm	not set for libraryVersion
+	//	min_alarm	not set for libraryVersion
+	//	max_warning	not set for libraryVersion
+	//	min_warning	not set for libraryVersion
+	//	delta_t	not set for libraryVersion
+	//	delta_val	not set for libraryVersion
 	
-	operatingmode->set_default_properties(operatingmode_prop);
+	libraryversion->set_default_properties(libraryversion_prop);
 	//	Not Polled
-	operatingmode->set_disp_level(Tango::OPERATOR);
+	libraryversion->set_disp_level(Tango::EXPERT);
 	//	Not Memorized
-	att_list.push_back(operatingmode);
+	att_list.push_back(libraryversion);
 
-	//	Attribute : burstMode
-	burstModeAttrib	*burstmode = new burstModeAttrib();
-	Tango::UserDefaultAttrProp	burstmode_prop;
-	burstmode_prop.set_description("get the value of burst mode.<br>\ntrue: 10GE link.<br>\nfalse: 1GE link<br>");
-	//	label	not set for burstMode
-	//	unit	not set for burstMode
-	//	standard_unit	not set for burstMode
-	//	display_unit	not set for burstMode
-	//	format	not set for burstMode
-	//	max_value	not set for burstMode
-	//	min_value	not set for burstMode
-	//	max_alarm	not set for burstMode
-	//	min_alarm	not set for burstMode
-	//	max_warning	not set for burstMode
-	//	min_warning	not set for burstMode
-	//	delta_t	not set for burstMode
-	//	delta_val	not set for burstMode
+	//	Attribute : highVoltage
+	highVoltageAttrib	*highvoltage = new highVoltageAttrib();
+	Tango::UserDefaultAttrProp	highvoltage_prop;
+	//	description	not set for highVoltage
+	//	label	not set for highVoltage
+	//	unit	not set for highVoltage
+	//	standard_unit	not set for highVoltage
+	//	display_unit	not set for highVoltage
+	//	format	not set for highVoltage
+	//	max_value	not set for highVoltage
+	//	min_value	not set for highVoltage
+	//	max_alarm	not set for highVoltage
+	//	min_alarm	not set for highVoltage
+	//	max_warning	not set for highVoltage
+	//	min_warning	not set for highVoltage
+	//	delta_t	not set for highVoltage
+	//	delta_val	not set for highVoltage
 	
-	burstmode->set_default_properties(burstmode_prop);
+	highvoltage->set_default_properties(highvoltage_prop);
 	//	Not Polled
-	burstmode->set_disp_level(Tango::EXPERT);
+	highvoltage->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
-	att_list.push_back(burstmode);
+	att_list.push_back(highvoltage);
+
+	//	Attribute : humidity
+	humidityAttrib	*humidity = new humidityAttrib();
+	Tango::UserDefaultAttrProp	humidity_prop;
+	//	description	not set for humidity
+	//	label	not set for humidity
+	//	unit	not set for humidity
+	//	standard_unit	not set for humidity
+	//	display_unit	not set for humidity
+	//	format	not set for humidity
+	//	max_value	not set for humidity
+	//	min_value	not set for humidity
+	//	max_alarm	not set for humidity
+	//	min_alarm	not set for humidity
+	//	max_warning	not set for humidity
+	//	min_warning	not set for humidity
+	//	delta_t	not set for humidity
+	//	delta_val	not set for humidity
+	
+	humidity->set_default_properties(humidity_prop);
+	//	Not Polled
+	humidity->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(humidity);
+
+	//	Attribute : temperature
+	temperatureAttrib	*temperature = new temperatureAttrib();
+	Tango::UserDefaultAttrProp	temperature_prop;
+	//	description	not set for temperature
+	//	label	not set for temperature
+	//	unit	not set for temperature
+	//	standard_unit	not set for temperature
+	//	display_unit	not set for temperature
+	//	format	not set for temperature
+	//	max_value	not set for temperature
+	//	min_value	not set for temperature
+	//	max_alarm	not set for temperature
+	//	min_alarm	not set for temperature
+	//	max_warning	not set for temperature
+	//	min_warning	not set for temperature
+	//	delta_t	not set for temperature
+	//	delta_val	not set for temperature
+	
+	temperature->set_default_properties(temperature_prop);
+	//	Not Polled
+	temperature->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(temperature);
+
 
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());
@@ -624,6 +551,26 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Add your own code
 	
 	/*----- PROTECTED REGION END -----*/	//	LambdaClass::attribute_factory_after
+}
+//--------------------------------------------------------
+/**
+ *	Method      : LambdaClass::pipe_factory()
+ *	Description : Create the pipe object(s)
+ *                and store them in the pipe list
+ */
+//--------------------------------------------------------
+void LambdaClass::pipe_factory()
+{
+	/*----- PROTECTED REGION ID(LambdaClass::pipe_factory_before) ENABLED START -----*/
+	
+	//	Add your own code
+	
+	/*----- PROTECTED REGION END -----*/	//	LambdaClass::pipe_factory_before
+	/*----- PROTECTED REGION ID(LambdaClass::pipe_factory_after) ENABLED START -----*/
+	
+	//	Add your own code
+	
+	/*----- PROTECTED REGION END -----*/	//	LambdaClass::pipe_factory_after
 }
 //--------------------------------------------------------
 /**
@@ -657,7 +604,7 @@ void LambdaClass::command_factory()
  * method : 		LambdaClass::create_static_attribute_list
  * description : 	Create the a list of static attributes
  *
- * @param	att_list	the ceated attribute list 
+ * @param	att_list	the ceated attribute list
  */
 //--------------------------------------------------------
 void LambdaClass::create_static_attribute_list(vector<Tango::Attr *> &att_list)
@@ -691,10 +638,10 @@ void LambdaClass::erase_dynamic_attributes(const Tango::DevVarStringArray *devli
 	Tango::Util *tg = Tango::Util::instance();
 
 	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
-	{	
+	{
 		Tango::DeviceImpl *dev_impl = tg->get_device_by_name(((string)(*devlist_ptr)[i]).c_str());
 		Lambda *dev = static_cast<Lambda *> (dev_impl);
-		
+
 		vector<Tango::Attribute *> &dev_att_list = dev->get_device_attr()->get_attribute_list();
 		vector<Tango::Attribute *>::iterator ite_att;
 		for (ite_att=dev_att_list.begin() ; ite_att != dev_att_list.end() ; ++ite_att)
@@ -719,14 +666,14 @@ void LambdaClass::erase_dynamic_attributes(const Tango::DevVarStringArray *devli
 
 //--------------------------------------------------------
 /**
- *	Method      : LambdaClass::get_attr_by_name()
+ *	Method      : LambdaClass::get_attr_object_by_name()
  *	Description : returns Tango::Attr * object found by name
  */
 //--------------------------------------------------------
 Tango::Attr *LambdaClass::get_attr_object_by_name(vector<Tango::Attr *> &att_list, string attname)
 {
 	vector<Tango::Attr *>::iterator it;
-	for (it=att_list.begin() ; it<att_list.end() ; it++)
+	for (it=att_list.begin() ; it<att_list.end() ; ++it)
 		if ((*it)->get_name()==attname)
 			return (*it);
 	//	Attr does not exist
