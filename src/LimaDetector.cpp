@@ -3321,7 +3321,7 @@ void LimaDetector::prepare()
             m_ct->saving()->setParameters(m_saving_par);
 
 			//TODO : check later if it is possible to remove completly setAcqNbFrames from here !
-			if(detectorType != "Ufxc")			
+			//if(detectorType != "Ufxc")// [Jira: DET-410] Add start Cmd for UFXC device		
 			{
 				//- in SNAP mode, we request attr_nbFrames_write frames
 				m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
@@ -3406,7 +3406,7 @@ void LimaDetector::snap()
             m_ct->saving()->setParameters(m_saving_par);
 
 			//TODO : check later if it is possible to remove completly setAcqNbFrames from here !
-			if(detectorType != "Ufxc")
+			//if(detectorType != "Ufxc")// [Jira: DET-410] Add start Cmd for UFXC device
 			{
 				//- in SNAP mode, we request attr_nbFrames_write frames
 				m_ct->acquisition()->setAcqNbFrames(attr_nbFrames_write);
