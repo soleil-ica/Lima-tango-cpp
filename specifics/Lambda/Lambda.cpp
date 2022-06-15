@@ -168,11 +168,11 @@ void Lambda::init_device()
 	/*----- PROTECTED REGION ID(Lambda::init_device) ENABLED START -----*/
     //	Initialize device
     CREATE_SCALAR_ATTRIBUTE(attr_distortionCorrection_read);
-    CREATE_SCALAR_ATTRIBUTE(attr_energyThreshold_read, (Tango::DevDouble  )5.0f );
+    CREATE_SCALAR_ATTRIBUTE(attr_energyThreshold_read);
     CREATE_DEVSTRING_ATTRIBUTE(attr_configFilesPath_read,Lambda_ns::STR_ATTR_SIZE_MAX);
-    CREATE_SCALAR_ATTRIBUTE(attr_highVoltage_read, (Tango::DevDouble)5.0f   );
-    CREATE_SCALAR_ATTRIBUTE(attr_humidity_read, (Tango::DevDouble)5.0f );
-    CREATE_SCALAR_ATTRIBUTE(attr_temperature_read, (Tango::DevDouble)5.0f );
+    CREATE_SCALAR_ATTRIBUTE(attr_highVoltage_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_humidity_read);
+    CREATE_SCALAR_ATTRIBUTE(attr_temperature_read);
     CREATE_DEVSTRING_ATTRIBUTE(attr_libraryVersion_read, Lambda_ns::STR_ATTR_SIZE_MAX);
     
     m_is_device_initialized = false;
@@ -415,6 +415,11 @@ void Lambda::read_configFilesPath(Tango::Attribute &attr)
     {
         manage_devfailed_exception(df, "read_configFilesPath");
     }
+	catch (lima::Exception& le)
+    {
+        manage_lima_exception(le, "read_configFilesPath");
+    }
+	
 
 	/*----- PROTECTED REGION END -----*/	//	Lambda::read_configFilesPath
 }
@@ -444,6 +449,10 @@ void Lambda::read_distortionCorrection(Tango::Attribute &attr)
     {
         manage_devfailed_exception(df, "read_distortionCorrection");
     }
+	catch (lima::Exception& le)
+    {
+        manage_lima_exception(le, "read_distortionCorrection");
+    }
 
 	/*----- PROTECTED REGION END -----*/	//	Lambda::read_distortionCorrection
 }
@@ -470,10 +479,10 @@ void Lambda::read_energyThreshold(Tango::Attribute &attr)
     {
         manage_devfailed_exception(df, "read_energyThreshold");
     }
-	catch(...)
+	catch (lima::Exception& le)
     {
-        INFO_STREAM << "Read_energyThreshold FAILED" << endl;
-	}
+        manage_lima_exception(le, "read_energyThreshold");
+    }
 
 	/*----- PROTECTED REGION END -----*/	//	Lambda::read_energyThreshold
 }
@@ -502,6 +511,10 @@ void Lambda::write_energyThreshold(Tango::WAttribute &attr)
     {
         manage_devfailed_exception(df, "write_energyThreshold");
     }
+	catch (lima::Exception& le)
+    {
+        manage_lima_exception(le, "write_energyThreshold");
+    }
 	
 	/*----- PROTECTED REGION END -----*/	//	Lambda::write_energyThreshold
 }
@@ -527,10 +540,10 @@ void Lambda::read_libraryVersion(Tango::Attribute &attr)
     {
         manage_devfailed_exception(df, "read_libraryVersion");
     }
-    catch(...)
+    catch (lima::Exception& le)
     {
-        INFO_STREAM << "Read_libraryVersion FAILED" << endl;
-	}
+        manage_lima_exception(le, "read_libraryVersion");
+    }
 
 	/*----- PROTECTED REGION END -----*/	//	Lambda::read_libraryVersion
 }
@@ -550,7 +563,7 @@ void Lambda::read_highVoltage(Tango::Attribute &attr)
 	try
     {
 		//the function "hasFeature" returns a boolean depending on the compatibility between the code and the firmware:
-		//if the this function returns false it means that this function is not supported by the firmware.
+		//if the this function returns false it means that this functionnality is not supported by the firmware.
 		if (m_camera->hasFeature(xsp::lambda::Feature::FEAT_HV))
 		{
 			m_camera->getHighVoltage(*attr_highVoltage_read);
@@ -566,10 +579,10 @@ void Lambda::read_highVoltage(Tango::Attribute &attr)
     {
         manage_devfailed_exception(df, "read_highVoltage");
     }
-    catch(...)
+    catch (lima::Exception& le)
     {
-        INFO_STREAM << "Read_highVoltage FAILED" << endl;
-	}
+        manage_lima_exception(le, "read_highVoltage");
+    }
 
 	/*----- PROTECTED REGION END -----*/	//	Lambda::read_highVoltage
 }
@@ -588,26 +601,26 @@ void Lambda::read_humidity(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(Lambda::read_humidity) ENABLED START -----*/
 	try
     {
-		//force the double
-        double w_humidity = -1;
-        m_camera->getHumidity(w_humidity);
+        m_camera->getHumidity(*attr_humidity_read);
 
 		//if the humidity returns 0.0 it means that this function is not supported by the firmware.
-		if (w_humidity == 0.0){
+		if (*attr_humidity_read == 0.0)
+		{
 			attr.set_quality(Tango::ATTR_INVALID);
 		}
-
 		else 
 		{
-			*attr_humidity_read = w_humidity;
-    		attr.set_value(attr_humidity_read);
+			attr.set_value(attr_humidity_read);
 		}
     }
     catch (Tango::DevFailed& df)
     {
         manage_devfailed_exception(df, "read_humidity");
     }
-	
+	catch (lima::Exception& le)
+    {
+        manage_lima_exception(le, "read_humidity");
+    }
 	
 	/*----- PROTECTED REGION END -----*/	//	Lambda::read_humidity
 }
@@ -642,6 +655,10 @@ void Lambda::read_temperature(Tango::Attribute &attr)
     catch (Tango::DevFailed& df)
     {
         manage_devfailed_exception(df, "read_temperature");
+    }
+	catch (lima::Exception& le)
+    {
+        manage_lima_exception(le, "read_temperature");
     }
 	
 	/*----- PROTECTED REGION END -----*/	//	Lambda::read_temperature
