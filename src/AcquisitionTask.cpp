@@ -172,6 +172,7 @@ void AcquisitionTask::process_message(yat::Message& msg) throw(Tango::DevFailed)
                 try
                 {
                     m_acq_conf.ct->stopAcq();
+                    m_acq_conf.ct->abortAcq();
                     m_acq_conf.ct->video()->stopLive();
 
                     // Ensure the plugin has finished acquiring to continue.
