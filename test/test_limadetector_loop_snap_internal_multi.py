@@ -135,7 +135,7 @@ def run(proxy_name = 'arafat/lima_basler/basler.2', exposure_time = 100, latency
     nb_loops = int(nb_loops)
     print '\n'
     try:
-	prepare(proxy)
+        prepare(proxy)
         current_loop = 0
         while(current_loop<nb_loops):
             print '\n========================================================'
