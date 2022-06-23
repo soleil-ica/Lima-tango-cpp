@@ -151,7 +151,6 @@ namespace Layout_ns
 
     private:
 	
-	
 		//-----------------------------------------------
 		//CIRPAD ONLY : arrangement of image in order to diplay it on 2 cols and 10 rows
 		//-----------------------------------------------
@@ -168,24 +167,18 @@ namespace Layout_ns
 			aDst.dimensions.clear();
 			aDst.dimensions.push_back(2*MODULE_WIDTH);		//width		
 			aDst.dimensions.push_back(10*MODULE_HEIGHT);	//height
-			Buffer *buff = new Buffer();
-			INPUT  dstdata[2*10*MODULE_HEIGHT*MODULE_WIDTH];
-	
+				
 			//idea is to copy each module ligne by line (560 pix) at the right position
 			for (int i = 0; i <MODULE_NB; i++) 
 			{
 				for (int j=0;j<MODULE_HEIGHT;j++)
 				{
 					if( i%2 == 0 )
-						memcpy(&dstdata[(MODULE_WIDTH*2*j + 1*MODULE_WIDTH) + ((i-0)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], MODULE_WIDTH_BYTES);
+						memcpy(&((INPUT*) aDst.data())[(MODULE_WIDTH*2*j + 1*MODULE_WIDTH) + ((i-0)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], MODULE_WIDTH_BYTES);
 					else
-						memcpy(&dstdata[(MODULE_WIDTH*2*j + 0*MODULE_WIDTH) + ((i-1)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], MODULE_WIDTH_BYTES);
+						memcpy(&((INPUT*) aDst.data())[(MODULE_WIDTH*2*j + 0*MODULE_WIDTH) + ((i-1)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], MODULE_WIDTH_BYTES);
 				}
 			}
-
-			buff->data = dstdata;
-			aDst.setBuffer(buff);
-			buff->unref();
 					
 			return aDst;
 		}
@@ -206,8 +199,6 @@ namespace Layout_ns
 			aDst.dimensions.clear();
 			aDst.dimensions.push_back(4*MODULE_WIDTH);	//width		
 			aDst.dimensions.push_back(5*MODULE_HEIGHT);	//height
-			Buffer *buff = new Buffer();
-			INPUT  dstdata[4*5*MODULE_HEIGHT*MODULE_WIDTH];
 
 			//idea is to copy each module ligne by line (560 pix) at the right position
 			for (int i = 0; i <MODULE_NB; i++) 
@@ -215,22 +206,18 @@ namespace Layout_ns
 				for (int j=0;j<MODULE_HEIGHT;j++)
 				{
 					if( i%4 == 0 )
-						memcpy(&dstdata[(MODULE_WIDTH*4*j + 3*MODULE_WIDTH) + ((i-0)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], aSrc.depth()*MODULE_WIDTH);
+						memcpy(&((INPUT*) aDst.data())[(MODULE_WIDTH*4*j + 3*MODULE_WIDTH) + ((i-0)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], aSrc.depth()*MODULE_WIDTH);
 					else if(i%4==1)
-						memcpy(&dstdata[(MODULE_WIDTH*4*j + 2*MODULE_WIDTH) + ((i-1)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], aSrc.depth()*MODULE_WIDTH);
+						memcpy(&((INPUT*) aDst.data())[(MODULE_WIDTH*4*j + 2*MODULE_WIDTH) + ((i-1)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], aSrc.depth()*MODULE_WIDTH);
 					else if(i%4==2)
-						memcpy(&dstdata[(MODULE_WIDTH*4*j + 1*MODULE_WIDTH) + ((i-2)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], aSrc.depth()*MODULE_WIDTH);
+						memcpy(&((INPUT*) aDst.data())[(MODULE_WIDTH*4*j + 1*MODULE_WIDTH) + ((i-2)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], aSrc.depth()*MODULE_WIDTH);
 					else if(i%4==3)
-						memcpy(&dstdata[(MODULE_WIDTH*4*j + 0*MODULE_WIDTH) + ((i-3)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], aSrc.depth()*MODULE_WIDTH);
+						memcpy(&((INPUT*) aDst.data())[(MODULE_WIDTH*4*j + 0*MODULE_WIDTH) + ((i-3)*MODULE_PIX_NB)], &((INPUT*) aSrc.data())[i*MODULE_PIX_NB + MODULE_WIDTH*j], aSrc.depth()*MODULE_WIDTH);
 				}
 			}
 
-			buff->data = dstdata;
-			aDst.setBuffer(buff);
-			buff->unref();
 			return aDst;
 		}
-		
 		
 		//-----------------------------------------------
 		//Apply some aritmetic operations (+ - * / >> <<) on image
