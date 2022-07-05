@@ -19,25 +19,14 @@
 		<td> <center><b> Description </b></center> </td>
 	</tr>
 	<tr>
-		<td> <a href="AttrconfigFilesPath.html"> configFilesPath </a> </td>
+		<td> <a href="AttrconfigFile.html"> configFile </a> </td>
 		<td> false </td>
 		<td> false </td>
 		<td> Scalar </td>
 		<td> READ </td>
 		<td> Tango::DEV_STRING </td>
-		<td> EXPERT </td>
-		<td> Path of configuration file. </td>
-	</tr>
-	<tr>
-		<td> <a href="AttrreadoutTime.html"> readoutTime </a> </td>
-		<td> false </td>
-		<td> false </td>
-		<td> Scalar </td>
-		<td> READ </td>
-		<td> Tango::DEV_FLOAT </td>
-		<td> EXPERT </td>
-		<td> get readout time during image acquisition.<br><Br>
-			Depends of the operating mode.<br> </td>
+		<td> OPERATOR </td>
+		<td> Configuration file used to initialize the detector </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrdistortionCorrection.html"> distortionCorrection </a> </td>
@@ -46,47 +35,63 @@
 		<td> Scalar </td>
 		<td> READ </td>
 		<td> Tango::DEV_BOOLEAN </td>
-		<td> EXPERT </td>
-		<td> get distortion correction.<br><Br>
+		<td> OPERATOR </td>
+		<td> distortion correction.<br><Br>
 			When distortion correction is enabled :<br><Br>
 			- Large pixels are divided according to predefined denominator. <br><Br>
 			- The values of the pixels are rounded during division. <br><Br>
 			- If pixel value is saturated, the division is not applied.<br> </td>
 	</tr>
 	<tr>
-		<td> <a href="AttrenergyThreshold1.html"> energyThreshold1 </a> </td>
+		<td> <a href="AttrenergyThreshold.html"> energyThreshold </a> </td>
 		<td> false </td>
 		<td> false </td>
 		<td> Scalar </td>
 		<td> READ_WRITE </td>
-		<td> Tango::DEV_FLOAT </td>
+		<td> Tango::DEV_DOUBLE </td>
 		<td> OPERATOR </td>
-		<td> set/get first energy threshold in eV.<br><Br>
+		<td> energy threshold in KeV.<br><Br>
 			The photon is counted If the energy is above this threshold.<br> </td>
 	</tr>
 	<tr>
-		<td> <a href="AttroperatingMode.html"> operatingMode </a> </td>
+		<td> <a href="AttrlibraryVersion.html"> libraryVersion </a> </td>
 		<td> false </td>
 		<td> false </td>
 		<td> Scalar </td>
 		<td> READ </td>
 		<td> Tango::DEV_STRING </td>
-		<td> OPERATOR </td>
-		<td> get operating mode of the detector:<br><Br>
-			24bit mode : TwentyFourBit<br><Br>
-			12bit mode :  ContinuousReadWrite<br> </td>
+		<td> EXPERT </td>
+		<td> Version of the xsp library </td>
 	</tr>
 	<tr>
-		<td> <a href="AttrburstMode.html"> burstMode </a> </td>
+		<td> <a href="AttrhighVoltage.html"> highVoltage </a> </td>
 		<td> false </td>
 		<td> false </td>
 		<td> Scalar </td>
 		<td> READ </td>
-		<td> Tango::DEV_BOOLEAN </td>
-		<td> EXPERT </td>
-		<td> get the value of burst mode.<br><Br>
-			true: 10GE link.<br><Br>
-			false: 1GE link<br> </td>
+		<td> Tango::DEV_DOUBLE </td>
+		<td> OPERATOR </td>
+		<td> Value in V of the high Voltage </td>
+	</tr>
+	<tr>
+		<td> <a href="Attrhumidity.html"> humidity </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ </td>
+		<td> Tango::DEV_DOUBLE </td>
+		<td> OPERATOR </td>
+		<td> measured humidity in % </td>
+	</tr>
+	<tr>
+		<td> <a href="Attrtemperature.html"> temperature </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ </td>
+		<td> Tango::DEV_DOUBLE </td>
+		<td> OPERATOR </td>
+		<td> measured temperature in deg C </td>
 	</tr>
 </table>
 <br><br>

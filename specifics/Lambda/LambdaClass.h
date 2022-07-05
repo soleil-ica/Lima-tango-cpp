@@ -59,17 +59,17 @@ namespace Lambda_ns
 //=========================================
 //	Define classes for attributes
 //=========================================
-//	Attribute configFilesPath class definition
-class configFilesPathAttrib: public Tango::Attr
+//	Attribute configFile class definition
+class configFileAttrib: public Tango::Attr
 {
 public:
-	configFilesPathAttrib():Attr("configFilesPath",
+	configFileAttrib():Attr("configFile",
 			Tango::DEV_STRING, Tango::READ) {};
-	~configFilesPathAttrib() {};
+	~configFileAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Lambda *>(dev))->read_configFilesPath(att);}
+		{(static_cast<Lambda *>(dev))->read_configFile(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Lambda *>(dev))->is_configFilesPath_allowed(ty);}
+		{return (static_cast<Lambda *>(dev))->is_configFile_allowed(ty);}
 };
 
 //	Attribute distortionCorrection class definition

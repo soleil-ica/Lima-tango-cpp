@@ -227,10 +227,11 @@ void LambdaClass::set_default_property()
 	//	Set Default Class Properties
 
 	//	Set Default device Properties
-	prop_name = "ConfigFilesPath";
-	prop_desc = "Configuration files path used during the camera instanciation.";
-	prop_def  = "";
+	prop_name = "ConfigFile";
+	prop_desc = "Configuration file used to initialize the detector.";
+	prop_def  = "/opt/xsp/config/system.yml";
 	vect_data.clear();
+	vect_data.push_back("/opt/xsp/config/system.yml");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -374,34 +375,34 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Add your own code
 	
 	/*----- PROTECTED REGION END -----*/	//	LambdaClass::attribute_factory_before
-	//	Attribute : configFilesPath
-	configFilesPathAttrib	*configfilespath = new configFilesPathAttrib();
-	Tango::UserDefaultAttrProp	configfilespath_prop;
-	configfilespath_prop.set_description("Path of configuration file.");
-	//	label	not set for configFilesPath
-	//	unit	not set for configFilesPath
-	//	standard_unit	not set for configFilesPath
-	//	display_unit	not set for configFilesPath
-	//	format	not set for configFilesPath
-	//	max_value	not set for configFilesPath
-	//	min_value	not set for configFilesPath
-	//	max_alarm	not set for configFilesPath
-	//	min_alarm	not set for configFilesPath
-	//	max_warning	not set for configFilesPath
-	//	min_warning	not set for configFilesPath
-	//	delta_t	not set for configFilesPath
-	//	delta_val	not set for configFilesPath
+	//	Attribute : configFile
+	configFileAttrib	*configfile = new configFileAttrib();
+	Tango::UserDefaultAttrProp	configfile_prop;
+	configfile_prop.set_description("Configuration file used to initialize the detector");
+	//	label	not set for configFile
+	//	unit	not set for configFile
+	//	standard_unit	not set for configFile
+	//	display_unit	not set for configFile
+	//	format	not set for configFile
+	//	max_value	not set for configFile
+	//	min_value	not set for configFile
+	//	max_alarm	not set for configFile
+	//	min_alarm	not set for configFile
+	//	max_warning	not set for configFile
+	//	min_warning	not set for configFile
+	//	delta_t	not set for configFile
+	//	delta_val	not set for configFile
 	
-	configfilespath->set_default_properties(configfilespath_prop);
+	configfile->set_default_properties(configfile_prop);
 	//	Not Polled
-	configfilespath->set_disp_level(Tango::OPERATOR);
+	configfile->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
-	att_list.push_back(configfilespath);
+	att_list.push_back(configfile);
 
 	//	Attribute : distortionCorrection
 	distortionCorrectionAttrib	*distortioncorrection = new distortionCorrectionAttrib();
 	Tango::UserDefaultAttrProp	distortioncorrection_prop;
-	distortioncorrection_prop.set_description("get distortion correction.<br>\nWhen distortion correction is enabled :<br>\n- Large pixels are divided according to predefined denominator. <br>\n- The values of the pixels are rounded during division. <br>\n- If pixel value is saturated, the division is not applied.<br>");
+	distortioncorrection_prop.set_description("distortion correction.<br>\nWhen distortion correction is enabled :<br>\n- Large pixels are divided according to predefined denominator. <br>\n- The values of the pixels are rounded during division. <br>\n- If pixel value is saturated, the division is not applied.<br>");
 	//	label	not set for distortionCorrection
 	//	unit	not set for distortionCorrection
 	//	standard_unit	not set for distortionCorrection
@@ -425,7 +426,7 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : energyThreshold
 	energyThresholdAttrib	*energythreshold = new energyThresholdAttrib();
 	Tango::UserDefaultAttrProp	energythreshold_prop;
-	energythreshold_prop.set_description("set/get first energy threshold in eV.<br>\nThe photon is counted If the energy is above this threshold.<br>");
+	energythreshold_prop.set_description("energy threshold in KeV.<br>\nThe photon is counted If the energy is above this threshold.<br>");
 	//	label	not set for energyThreshold
 	energythreshold_prop.set_unit("KeV");
 	energythreshold_prop.set_standard_unit("KeV");
@@ -443,14 +444,13 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	energythreshold->set_default_properties(energythreshold_prop);
 	//	Not Polled
 	energythreshold->set_disp_level(Tango::OPERATOR);
-	energythreshold->set_memorized();
-	energythreshold->set_memorized_init(false);
+	//	Not Memorized
 	att_list.push_back(energythreshold);
 
 	//	Attribute : libraryVersion
 	libraryVersionAttrib	*libraryversion = new libraryVersionAttrib();
 	Tango::UserDefaultAttrProp	libraryversion_prop;
-	//	description	not set for libraryVersion
+	libraryversion_prop.set_description("Version of the xsp library");
 	//	label	not set for libraryVersion
 	//	unit	not set for libraryVersion
 	//	standard_unit	not set for libraryVersion
@@ -474,9 +474,9 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : highVoltage
 	highVoltageAttrib	*highvoltage = new highVoltageAttrib();
 	Tango::UserDefaultAttrProp	highvoltage_prop;
-	//	description	not set for highVoltage
+	highvoltage_prop.set_description("Value in V of the high Voltage");
 	//	label	not set for highVoltage
-	//	unit	not set for highVoltage
+	highvoltage_prop.set_unit("V");
 	//	standard_unit	not set for highVoltage
 	//	display_unit	not set for highVoltage
 	//	format	not set for highVoltage
@@ -498,9 +498,9 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : humidity
 	humidityAttrib	*humidity = new humidityAttrib();
 	Tango::UserDefaultAttrProp	humidity_prop;
-	//	description	not set for humidity
+	humidity_prop.set_description("measured humidity in %");
 	//	label	not set for humidity
-	//	unit	not set for humidity
+	humidity_prop.set_unit("%");
 	//	standard_unit	not set for humidity
 	//	display_unit	not set for humidity
 	//	format	not set for humidity
@@ -522,9 +522,9 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : temperature
 	temperatureAttrib	*temperature = new temperatureAttrib();
 	Tango::UserDefaultAttrProp	temperature_prop;
-	//	description	not set for temperature
+	temperature_prop.set_description("measured temperature in deg C");
 	//	label	not set for temperature
-	//	unit	not set for temperature
+	temperature_prop.set_unit("deg C");
 	//	standard_unit	not set for temperature
 	//	display_unit	not set for temperature
 	//	format	not set for temperature

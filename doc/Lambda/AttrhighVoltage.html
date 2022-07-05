@@ -1,17 +1,13 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <html>
 <head>
-<title> Lambda Tango Class Attribute distortionCorrection </title>
+<title> Lambda Tango Class Attribute highVoltage </title>
 </head>
 <body text="Black" bgcolor="White" link="Blue" vlink="Purple" alink="Red">
 <br><br><br>
-<font size="+1"><u><b> Attribute distortionCorrection : </b></u></font>
+<font size="+1"><u><b> Attribute highVoltage : </b></u></font>
 <ul>
-	get distortion correction.<br><Br>
-	When distortion correction is enabled :<br><Br>
-	- Large pixels are divided according to predefined denominator. <br><Br>
-	- The values of the pixels are rounded during division. <br><Br>
-	- If pixel value is saturated, the division is not applied.<br>
+	Value in V of the high Voltage
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -31,11 +27,11 @@
 				</tr>
 				<tr>
 					<td> Data Type </td>
-					<td> Tango::DEV_BOOLEAN </td>
+					<td> Tango::DEV_DOUBLE </td>
 				</tr>
 				<tr>
 					<td> Display Level </td>
-					<td> EXPERT </td>
+					<td> OPERATOR </td>
 				</tr>
 				<tr>
 					<td> Inherited </td>
@@ -56,7 +52,7 @@
 			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
 				<tr>
 					<td> Read NOT allowed for </td>
-					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li> </font> </td>
+					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
 				</tr>
 			</table>
 		</td>
@@ -71,7 +67,7 @@
 				</tr>
 				<tr>
 					<td> unit </td>
-					<td>  </td>
+					<td> V </td>
 				</tr>
 				<tr>
 					<td> standard unit </td>

@@ -72,7 +72,7 @@ namespace Lambda_ns
 //================================================================
 //  Attributes managed are:
 //================================================================
-//  configFilesPath       |  Tango::DevString	Scalar
+//  configFile            |  Tango::DevString	Scalar
 //  distortionCorrection  |  Tango::DevBoolean	Scalar
 //  energyThreshold       |  Tango::DevDouble	Scalar
 //  libraryVersion        |  Tango::DevString	Scalar
@@ -134,7 +134,7 @@ void Lambda::delete_device()
     //	Delete device allocated objects
     DELETE_SCALAR_ATTRIBUTE(attr_distortionCorrection_read);
     DELETE_SCALAR_ATTRIBUTE(attr_energyThreshold_read);
-    DELETE_DEVSTRING_ATTRIBUTE(attr_configFilesPath_read);
+    DELETE_DEVSTRING_ATTRIBUTE(attr_configFile_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_highVoltage_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_humidity_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_temperature_read);
@@ -169,7 +169,7 @@ void Lambda::init_device()
     //	Initialize device
     CREATE_SCALAR_ATTRIBUTE(attr_distortionCorrection_read);
     CREATE_SCALAR_ATTRIBUTE(attr_energyThreshold_read);
-    CREATE_DEVSTRING_ATTRIBUTE(attr_configFilesPath_read,Lambda_ns::STR_ATTR_SIZE_MAX);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_configFile_read,Lambda_ns::STR_ATTR_SIZE_MAX);
     CREATE_SCALAR_ATTRIBUTE(attr_highVoltage_read);
     CREATE_SCALAR_ATTRIBUTE(attr_humidity_read);
     CREATE_SCALAR_ATTRIBUTE(attr_temperature_read);
@@ -178,7 +178,6 @@ void Lambda::init_device()
     m_is_device_initialized = false;
     set_state(Tango::INIT);
     m_status_message.str("");
-
 
     try
 	{
@@ -193,18 +192,16 @@ void Lambda::init_device()
 	}
 	catch(Exception& e)
 	{
-		INFO_STREAM      << "Initialization Failed : " << e.getErrMsg() << endl;
-		m_status_message << "Initialization Failed : " << e.getErrMsg( ) << endl;
-		m_is_device_initialized = false;
+		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
+		ERROR_STREAM     << m_status_message.str() << endl;
 		set_state(Tango::FAULT);
 		return;
 	}
 	catch(...)
 	{
-		INFO_STREAM      << "Initialization Failed : UNKNOWN" << endl;
-		m_status_message << "Initialization Failed : UNKNOWN" << endl;
+		m_status_message << "Initialization Failed : Unknown Error" << endl;
+		ERROR_STREAM     << m_status_message.str() << endl;
 		set_state(Tango::FAULT);
-		m_is_device_initialized = false;
 		return;
 	}
     //	Initialize device
@@ -213,9 +210,16 @@ void Lambda::init_device()
 	{
 		// Update the hardware with the properties data
 		write_at_init();
+		//- Set the distortion correction (from property)
 		m_camera->setDistortionCorrection(distortionCorrection);
+		//- Get the distortion correction (from hardware)
+		m_camera->getDistortionCorrection(*attr_distortionCorrection_read);
 		//- Get the lib version only once
-		m_camera->getLibVersion(m_library_version);
+		m_library_version = m_camera->getLibVersion();
+		strcpy(*attr_libraryVersion_read, m_library_version.c_str());
+		//- Get the config file name
+		m_config_file = m_camera->getConfigFile();
+		strcpy(*attr_configFile_read, m_config_file.c_str());
 	}
     catch(Tango::DevFailed& df)
 	{
@@ -231,12 +235,21 @@ void Lambda::init_device()
 	}
 	catch(Exception& e)
 	{
-		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
+		ERROR_STREAM     << m_status_message.str() << endl;
 		m_is_device_initialized = false;
 		set_state(Tango::FAULT);
 		return;
 	}
+	catch(...)
+	{
+		m_status_message << "Initialization Failed : Unknown Error" << endl;
+		ERROR_STREAM     << m_status_message.str() << endl;
+		m_is_device_initialized = false;
+		set_state(Tango::FAULT);
+		return;
+	}
+
 	dev_state();
 
 	/*----- PROTECTED REGION END -----*/	//	Lambda::init_device
@@ -259,7 +272,7 @@ void Lambda::get_device_property()
 
 	//	Read device properties from database.
 	Tango::DbData	dev_prop;
-	dev_prop.push_back(Tango::DbDatum("ConfigFilesPath"));
+	dev_prop.push_back(Tango::DbDatum("ConfigFile"));
 	dev_prop.push_back(Tango::DbDatum("DistortionCorrection"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedEnergyThreshold"));
 
@@ -276,16 +289,16 @@ void Lambda::get_device_property()
 			(static_cast<LambdaClass *>(get_device_class()));
 		int	i = -1;
 
-		//	Try to initialize ConfigFilesPath from class property
+		//	Try to initialize ConfigFile from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  configFilesPath;
+		if (cl_prop.is_empty()==false)	cl_prop  >>  configFile;
 		else {
-			//	Try to initialize ConfigFilesPath from default device value
+			//	Try to initialize ConfigFile from default device value
 			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  configFilesPath;
+			if (def_prop.is_empty()==false)	def_prop  >>  configFile;
 		}
-		//	And try to extract ConfigFilesPath value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  configFilesPath;
+		//	And try to extract ConfigFile value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  configFile;
 
 		//	Try to initialize DistortionCorrection from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -314,9 +327,9 @@ void Lambda::get_device_property()
 	/*----- PROTECTED REGION ID(Lambda::get_device_property_after) ENABLED START -----*/
 	
 	//	Check device property data members init
-	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "/opt/xsp/config", "ConfigFilesPath"              );
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "/opt/xsp/config/system.yml", "ConfigFile");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "True"  , "DistortionCorrection");
-	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "2.0", "MemorizedEnergyThreshold"    );
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "2.0", "MemorizedEnergyThreshold");
 	/*----- PROTECTED REGION END -----*/	//	Lambda::get_device_property_after
 }
 
@@ -394,39 +407,26 @@ void Lambda::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 
 //--------------------------------------------------------
 /**
- *	Read attribute configFilesPath related method
- *	Description: Path of configuration file.
+ *	Read attribute configFile related method
+ *	Description: Configuration file used to initialize the detector
  *
  *	Data type:	Tango::DevString
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Lambda::read_configFilesPath(Tango::Attribute &attr)
+void Lambda::read_configFile(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Lambda::read_configFilesPath(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Lambda::read_configFilesPath) ENABLED START -----*/
-    try
-    {
-       	const char* temp = configFilesPath.c_str();
-        strcpy(*attr_configFilesPath_read, temp);
-    	attr.set_value(attr_configFilesPath_read);
-    }
-    catch (Tango::DevFailed& df)
-    {
-        manage_devfailed_exception(df, "read_configFilesPath");
-    }
-	catch (lima::Exception& le)
-    {
-        manage_lima_exception(le, "read_configFilesPath");
-    }
+	DEBUG_STREAM << "Lambda::read_configFile(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Lambda::read_configFile) ENABLED START -----*/
+	//	Set the attribute value
+	attr.set_value(attr_configFile_read);
 	
-
-	/*----- PROTECTED REGION END -----*/	//	Lambda::read_configFilesPath
+	/*----- PROTECTED REGION END -----*/	//	Lambda::read_configFile
 }
 //--------------------------------------------------------
 /**
  *	Read attribute distortionCorrection related method
- *	Description: get distortion correction.<br>
+ *	Description: distortion correction.<br>
  *               When distortion correction is enabled :<br>
  *               - Large pixels are divided according to predefined denominator. <br>
  *               - The values of the pixels are rounded during division. <br>
@@ -442,7 +442,6 @@ void Lambda::read_distortionCorrection(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(Lambda::read_distortionCorrection) ENABLED START -----*/
     try
     {
-        m_camera->getDistortionCorrection(*attr_distortionCorrection_read);
         attr.set_value(attr_distortionCorrection_read);
     }
     catch (Tango::DevFailed& df)
@@ -459,7 +458,7 @@ void Lambda::read_distortionCorrection(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute energyThreshold related method
- *	Description: set/get first energy threshold in eV.<br>
+ *	Description: energy threshold in KeV.<br>
  *               The photon is counted If the energy is above this threshold.<br>
  *
  *	Data type:	Tango::DevDouble
@@ -489,7 +488,7 @@ void Lambda::read_energyThreshold(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Write attribute energyThreshold related method
- *	Description: set/get first energy threshold in eV.<br>
+ *	Description: energy threshold in KeV.<br>
  *               The photon is counted If the energy is above this threshold.<br>
  *
  *	Data type:	Tango::DevDouble
@@ -506,6 +505,8 @@ void Lambda::write_energyThreshold(Tango::WAttribute &attr)
 	try
     {
         m_camera->setEnergyThreshold(w_val);
+		//- Memorize the write value
+		yat4tango::PropertyHelper::set_property(this, "MemorizedEnergyThreshold", w_val);
     }
     catch (Tango::DevFailed& df)
     {
@@ -521,7 +522,7 @@ void Lambda::write_energyThreshold(Tango::WAttribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute libraryVersion related method
- *	Description: 
+ *	Description: Version of the xsp library
  *
  *	Data type:	Tango::DevString
  *	Attr type:	Scalar
@@ -533,7 +534,6 @@ void Lambda::read_libraryVersion(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(Lambda::read_libraryVersion) ENABLED START -----*/
 	try
     {
-		strcpy(*attr_libraryVersion_read, m_library_version.c_str());
 		attr.set_value(attr_libraryVersion_read);
     }
     catch (Tango::DevFailed& df)
@@ -550,7 +550,7 @@ void Lambda::read_libraryVersion(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute highVoltage related method
- *	Description: 
+ *	Description: Value in V of the high Voltage
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -589,7 +589,7 @@ void Lambda::read_highVoltage(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute humidity related method
- *	Description: 
+ *	Description: measured humidity in %
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -627,7 +627,7 @@ void Lambda::read_humidity(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute temperature related method
- *	Description: 
+ *	Description: measured temperature in deg C
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -781,10 +781,9 @@ void Lambda::write_at_init(void)
 {
     INFO_STREAM << "Write tango hardware at Init - energyThreshold." << endl;
 	Tango::WAttribute &energyThreshold = dev_attr->get_w_attr_by_name("energyThreshold");
-	attr_energyThreshold_write = memorizedEnergyThreshold;
-	energyThreshold.set_write_value(attr_energyThreshold_write);
+	*attr_energyThreshold_read = memorizedEnergyThreshold; // does the cast
+	energyThreshold.set_write_value(*attr_energyThreshold_read);
 	write_energyThreshold(energyThreshold);
-
 }
 /*----- PROTECTED REGION END -----*/	//	Lambda::namespace_ending
 } //	namespace

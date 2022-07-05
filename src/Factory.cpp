@@ -822,20 +822,20 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             if (!ControlFactory::m_is_created)
             {
                 Tango::DbData db_data;
-                std::string config_file_path = "/opt/xsp/config";
+                std::string config_file = "/opt/xsp/config/system.yml";
                 bool distortion_correction = true;
 
                 // configuration path
-                db_data.push_back(Tango::DbDatum("ConfigFilesPath"));
+                db_data.push_back(Tango::DbDatum("ConfigFile"));
 
                 // distortion correction
                 db_data.push_back(Tango::DbDatum("DistortionCorrection"));
 
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
-                db_data[0] >> config_file_path;
+                db_data[0] >> config_file;
                 db_data[1] >> distortion_correction;
 
-                m_camera    = static_cast<void*> (new Lambda::Camera(config_file_path));
+                m_camera    = static_cast<void*> (new Lambda::Camera(config_file));
                 m_interface = static_cast<void*> (new Lambda::Interface(*static_cast<Lambda::Camera*> (m_camera)));
                 m_control   = new CtControl(static_cast<Lambda::Interface*> (m_interface));
 

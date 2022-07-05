@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.11.3-SNAPSHOT</version>
+    <version>1.11.3</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -27,12 +27,7 @@
         <LIMACORE.name>LimaCore</LIMACORE.name>
         <LIMACORE.version>1.7.10</LIMACORE.version>
         <SIMULATOR.name>Simulator</SIMULATOR.name>
-        <SIMULATOR.version>1.4.1</SIMULATOR.version>
-        
-        <YAT.version>1.18.9</YAT.version> 
-        <YAT4Tango.version>1.13.4</YAT4Tango.version> 
-        <NexusCPP.version>3.4.0</NexusCPP.version> 
-        
+        <SIMULATOR.version>1.4.1</SIMULATOR.version>        
     </properties>
 
     <profiles>
@@ -51,13 +46,13 @@
                 <BASLER.name>Basler</BASLER.name>
                 <BASLER.version>1.6.1</BASLER.version>
                 <IMXPAD.name>ImXpad</IMXPAD.name>
-                <IMXPAD.version>1.1.0</IMXPAD.version>
+                <IMXPAD.version>1.1.1</IMXPAD.version>
                 <MARCCD.name>Marccd</MARCCD.name>
                 <MARCCD.version>1.3.18</MARCCD.version>
                 <MERLIN.name>Merlin</MERLIN.name>
-                <MERLIN.version>1.2.4</MERLIN.version>
+                <MERLIN.version>1.3.0</MERLIN.version>
                 <PILATUS.name>Pilatus</PILATUS.name>
-                <PILATUS.version>2.1.9</PILATUS.version>
+                <PILATUS.version>2.1.10</PILATUS.version>
                 <XPAD.name>Xpad</XPAD.name>
                 <XPAD.version>1.4.17</XPAD.version>
                 
@@ -74,19 +69,16 @@
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>YAT4Tango-${aol}-shared-${mode}</artifactId>
-                    <!--<version>${YAT4Tango.version}</version>-->
                 </dependency>
         
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>YAT-${aol}-shared-${mode}</artifactId>
-                    <!--<version>${YAT.version}</version>-->
                 </dependency>          
                  
                 <dependency>
                     <groupId>fr.soleil.lib</groupId>
                     <artifactId>NexusCPP-${aol}-shared-${mode}</artifactId>
-                    <!--<version>${NexusCPP.version}</version>-->
                 </dependency>          
         
                 <dependency>
@@ -221,6 +213,7 @@
                                     <define>USE_GIGE</define>
 									
                                     <define>SOLEIL_YAT_STREAM</define>
+									<define>UNIX_32_EL6</define>
                                 </defines>                              
                                 
                                 <options>

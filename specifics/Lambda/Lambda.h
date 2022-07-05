@@ -83,8 +83,8 @@ class Lambda : public TANGO_BASE_CLASS
 
 //	Device property data members
 public:
-	//	ConfigFilesPath:	Configuration files path used during the camera instanciation.
-	string	configFilesPath;
+	//	ConfigFile:	Configuration file used to initialize the detector.
+	string	configFile;
 	//	DistortionCorrection:	set distortion correction.<br>
 	//  When distortion correction is enabled :<br>
 	//  - Large pixels are divided according to predefined denominator. <br>
@@ -97,10 +97,9 @@ public:
 
 //	Attribute data members
 public:
-	Tango::DevString	*attr_configFilesPath_read;
+	Tango::DevString	*attr_configFile_read;
 	Tango::DevBoolean	*attr_distortionCorrection_read;
 	Tango::DevDouble	*attr_energyThreshold_read;
-	Tango::DevDouble	attr_energyThreshold_write;
 	Tango::DevString	*attr_libraryVersion_read;
 	Tango::DevDouble	*attr_highVoltage_read;
 	Tango::DevDouble	*attr_humidity_read;
@@ -174,17 +173,17 @@ public:
 	virtual void write_attr_hardware(vector<long> &attr_list);
 
 /**
- *	Attribute configFilesPath related methods
- *	Description: Path of configuration file.
+ *	Attribute configFile related methods
+ *	Description: Configuration file used to initialize the detector
  *
  *	Data type:	Tango::DevString
  *	Attr type:	Scalar
  */
-	virtual void read_configFilesPath(Tango::Attribute &attr);
-	virtual bool is_configFilesPath_allowed(Tango::AttReqType type);
+	virtual void read_configFile(Tango::Attribute &attr);
+	virtual bool is_configFile_allowed(Tango::AttReqType type);
 /**
  *	Attribute distortionCorrection related methods
- *	Description: get distortion correction.<br>
+ *	Description: distortion correction.<br>
  *               When distortion correction is enabled :<br>
  *               - Large pixels are divided according to predefined denominator. <br>
  *               - The values of the pixels are rounded during division. <br>
@@ -197,7 +196,7 @@ public:
 	virtual bool is_distortionCorrection_allowed(Tango::AttReqType type);
 /**
  *	Attribute energyThreshold related methods
- *	Description: set/get first energy threshold in eV.<br>
+ *	Description: energy threshold in KeV.<br>
  *               The photon is counted If the energy is above this threshold.<br>
  *
  *	Data type:	Tango::DevDouble
@@ -208,7 +207,7 @@ public:
 	virtual bool is_energyThreshold_allowed(Tango::AttReqType type);
 /**
  *	Attribute libraryVersion related methods
- *	Description: 
+ *	Description: Version of the xsp library
  *
  *	Data type:	Tango::DevString
  *	Attr type:	Scalar
@@ -217,7 +216,7 @@ public:
 	virtual bool is_libraryVersion_allowed(Tango::AttReqType type);
 /**
  *	Attribute highVoltage related methods
- *	Description: 
+ *	Description: Value in V of the high Voltage
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -226,7 +225,7 @@ public:
 	virtual bool is_highVoltage_allowed(Tango::AttReqType type);
 /**
  *	Attribute humidity related methods
- *	Description: 
+ *	Description: measured humidity in %
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -235,7 +234,7 @@ public:
 	virtual bool is_humidity_allowed(Tango::AttReqType type);
 /**
  *	Attribute temperature related methods
- *	Description: 
+ *	Description: measured temperature in deg C
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -317,6 +316,7 @@ protected :
 	bool                      	m_is_device_initialized;
     std::stringstream         	m_status_message;
 	std::string					m_library_version;
+	std::string					m_config_file;
 
 /*----- PROTECTED REGION END -----*/	//	Lambda::Additional Method prototypes
 };

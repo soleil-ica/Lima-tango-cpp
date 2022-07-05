@@ -832,7 +832,7 @@ void LimaDetectorClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	nb_frames_prop.set_standard_unit(" ");
 	nb_frames_prop.set_display_unit(" ");
 	nb_frames_prop.set_format("%6d");
-	nb_frames_prop.set_description("Define the number of frames to acquire.<br>\nAvailable only in acqusisition mode, i.e SNAP.<br>\nIn vide mode, i.e START it is always forced to 0, this is mean that we request an infinite number of frames.");
+	nb_frames_prop.set_description("Define the number of frames to acquire.<br>\nAvailable only in acqusisition mode, i.e SNAP.<br>\nIn live mode, i.e START it is forced to 0, this means that we request an infinite number of frames.");
 	nb_frames->set_default_properties(nb_frames_prop);
 	nb_frames->set_memorized();
 	nb_frames->set_memorized_init(false);

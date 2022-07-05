@@ -19,12 +19,13 @@
 			</ul>
 			<li> <a href="FullDocument.html#attributes">   Attributes   </a>
 			<ul>
-				<li> <a href="FullDocument.html#attrconfigFilesPath"> configFilesPath </a>
-				<li> <a href="FullDocument.html#attrreadoutTime"> readoutTime </a>
+				<li> <a href="FullDocument.html#attrconfigFile"> configFile </a>
 				<li> <a href="FullDocument.html#attrdistortionCorrection"> distortionCorrection </a>
-				<li> <a href="FullDocument.html#attrenergyThreshold1"> energyThreshold1 </a>
-				<li> <a href="FullDocument.html#attroperatingMode"> operatingMode </a>
-				<li> <a href="FullDocument.html#attrburstMode"> burstMode </a>
+				<li> <a href="FullDocument.html#attrenergyThreshold"> energyThreshold </a>
+				<li> <a href="FullDocument.html#attrlibraryVersion"> libraryVersion </a>
+				<li> <a href="FullDocument.html#attrhighVoltage"> highVoltage </a>
+				<li> <a href="FullDocument.html#attrhumidity"> humidity </a>
+				<li> <a href="FullDocument.html#attrtemperature"> temperature </a>
 			</ul>
 			<li> <a href="FullDocument.html#states">       States       </a>
 		</ul>
@@ -62,7 +63,7 @@
 			</Table>
 		</ul></td>
 		<td>
-			<ul><li> <a href="http://www.esrf.fr/computing/cs/tango/tango_doc/kernel_doc/cpp_doc/" target="new"> Tango::DeviceImpl</a></li>
+			<ul><li> <a href="http://www.esrf.eu/computing/cs/tango/tango_doc/kernel_doc/cpp_doc/" target="new"> Tango::DeviceImpl</a></li>
 			<ul> <li> Lambda</li>
 			<br>
 			<br>
@@ -76,6 +77,25 @@
 	<br><br>
 	<ul>
 		Device for Lambda detectors from XSpectrum.
+		
+		<Br>
+		<center>
+		<h1>
+				<Br>
+		Device Description 		<Br> <Br>
+		Eiger Class	<Br>
+		</h1>
+		<b>
+		Revision:  - Author: 
+		</b>
+		</center>
+		
+		
+		<Center>
+		
+		<Br>
+		<Br>
+		</Center>
 		
 		<!---  /*PROTECTED REGION ID(FullDocument.html) ENABLED START*/  --->
 			<!--- Add your own documentation, pictures, links,.... --->
@@ -102,10 +122,10 @@
 		<td> <center><b> Default Value </b></center> </td>
 	</tr>
 	<tr>
-		<td> ConfigFilesPath </td>
-		<td> Configuration files path used during the camera instanciation. </td>
+		<td> ConfigFile </td>
+		<td> Configuration file used to initialize the detector. </td>
 		<td> String </td>
-		<td> none </td>
+		<td> /opt/xsp/config/system.yml <br> </td>
 	</tr>
 	<tr>
 		<td> DistortionCorrection </td>
@@ -118,11 +138,11 @@
 		<td> True <br> </td>
 	</tr>
 	<tr>
-		<td> MemorizedEnergyThreshold1 </td>
+		<td> MemorizedEnergyThreshold </td>
 		<td> Only the device could modify this property <br><Br>
 			The User should never change this property<br> </td>
 		<td> float </td>
-		<td> 7000.0 <br> </td>
+		<td> 7 <br> </td>
 	</tr>
 </table>
 <br><br>
@@ -270,25 +290,14 @@
 		<td> <center><b> Description </b></center> </td>
 	</tr>
 	<tr>
-		<td> <a href="AttrconfigFilesPath.html"> configFilesPath </a> </td>
+		<td> <a href="AttrconfigFile.html"> configFile </a> </td>
 		<td> false </td>
 		<td> false </td>
 		<td> Scalar </td>
 		<td> READ </td>
 		<td> Tango::DEV_STRING </td>
-		<td> EXPERT </td>
-		<td> Path of configuration file. </td>
-	</tr>
-	<tr>
-		<td> <a href="AttrreadoutTime.html"> readoutTime </a> </td>
-		<td> false </td>
-		<td> false </td>
-		<td> Scalar </td>
-		<td> READ </td>
-		<td> Tango::DEV_FLOAT </td>
-		<td> EXPERT </td>
-		<td> get readout time during image acquisition.<br><Br>
-			Depends of the operating mode.<br> </td>
+		<td> OPERATOR </td>
+		<td> Configuration file used to initialize the detector </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrdistortionCorrection.html"> distortionCorrection </a> </td>
@@ -297,47 +306,63 @@
 		<td> Scalar </td>
 		<td> READ </td>
 		<td> Tango::DEV_BOOLEAN </td>
-		<td> EXPERT </td>
-		<td> get distortion correction.<br><Br>
+		<td> OPERATOR </td>
+		<td> distortion correction.<br><Br>
 			When distortion correction is enabled :<br><Br>
 			- Large pixels are divided according to predefined denominator. <br><Br>
 			- The values of the pixels are rounded during division. <br><Br>
 			- If pixel value is saturated, the division is not applied.<br> </td>
 	</tr>
 	<tr>
-		<td> <a href="AttrenergyThreshold1.html"> energyThreshold1 </a> </td>
+		<td> <a href="AttrenergyThreshold.html"> energyThreshold </a> </td>
 		<td> false </td>
 		<td> false </td>
 		<td> Scalar </td>
 		<td> READ_WRITE </td>
-		<td> Tango::DEV_FLOAT </td>
+		<td> Tango::DEV_DOUBLE </td>
 		<td> OPERATOR </td>
-		<td> set/get first energy threshold in eV.<br><Br>
+		<td> energy threshold in KeV.<br><Br>
 			The photon is counted If the energy is above this threshold.<br> </td>
 	</tr>
 	<tr>
-		<td> <a href="AttroperatingMode.html"> operatingMode </a> </td>
+		<td> <a href="AttrlibraryVersion.html"> libraryVersion </a> </td>
 		<td> false </td>
 		<td> false </td>
 		<td> Scalar </td>
 		<td> READ </td>
 		<td> Tango::DEV_STRING </td>
-		<td> OPERATOR </td>
-		<td> get operating mode of the detector:<br><Br>
-			24bit mode : TwentyFourBit<br><Br>
-			12bit mode :  ContinuousReadWrite<br> </td>
+		<td> EXPERT </td>
+		<td> Version of the xsp library </td>
 	</tr>
 	<tr>
-		<td> <a href="AttrburstMode.html"> burstMode </a> </td>
+		<td> <a href="AttrhighVoltage.html"> highVoltage </a> </td>
 		<td> false </td>
 		<td> false </td>
 		<td> Scalar </td>
 		<td> READ </td>
-		<td> Tango::DEV_BOOLEAN </td>
-		<td> EXPERT </td>
-		<td> get the value of burst mode.<br><Br>
-			true: 10GE link.<br><Br>
-			false: 1GE link<br> </td>
+		<td> Tango::DEV_DOUBLE </td>
+		<td> OPERATOR </td>
+		<td> Value in V of the high Voltage </td>
+	</tr>
+	<tr>
+		<td> <a href="Attrhumidity.html"> humidity </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ </td>
+		<td> Tango::DEV_DOUBLE </td>
+		<td> OPERATOR </td>
+		<td> measured humidity in % </td>
+	</tr>
+	<tr>
+		<td> <a href="Attrtemperature.html"> temperature </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ </td>
+		<td> Tango::DEV_DOUBLE </td>
+		<td> OPERATOR </td>
+		<td> measured temperature in deg C </td>
 	</tr>
 </table>
 <br><br>
@@ -346,11 +371,11 @@
 <font size="+1"><u><b> There is no dynamic attribute defined. </b></u></font>
 <br><br>
 <hr>
-<a name="attrconfigFilesPath"> </a>
+<a name="attrconfigFile"> </a>
 <br><br><br>
-<font size="+1"><u><b> Attribute configFilesPath : </b></u></font>
+<font size="+1"><u><b> Attribute configFile : </b></u></font>
 <ul>
-	Path of configuration file.
+	Configuration file used to initialize the detector
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -374,7 +399,7 @@
 				</tr>
 				<tr>
 					<td> Display Level </td>
-					<td> EXPERT </td>
+					<td> OPERATOR </td>
 				</tr>
 				<tr>
 					<td> Inherited </td>
@@ -395,7 +420,7 @@
 			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
 				<tr>
 					<td> Read NOT allowed for </td>
-					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li> </font> </td>
+					<td> <font size="-1">  <li> FAULT </li> </font> </td>
 				</tr>
 			</table>
 		</td>
@@ -423,170 +448,6 @@
 				<tr>
 					<td> format </td>
 					<td>  </td>
-				</tr>
-				<tr>
-					<td> max_value </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> min_value </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> max_alarm </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> min_alarm </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> max_warning </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> min_warning </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> delta_time </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> delta_val </td>
-					<td>  </td>
-				</tr>
-			</table>
-		</td>
-		<TD ALIGN="Right" VALIGN=top>
-			<Table Border=2 Cellpadding=3 CELLSPACING=0>
-				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
-				<td colspan=0> <font size=+1> <center><b> Attribute Event Criteria </b></font></center></td>
-				</tr>
-				<tr>
-					<td> Periodic </td>
-					<td> Not set </td>
-				</tr>
-				<tr>
-					<td> Relative Change </td>
-					<td> Not set </td>
-				</tr>
-				<tr>
-					<td> Absolute Change </td>
-					<td> Not set </td>
-				</tr>
-			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
-				<tr>
-					<td> Archive Periodic </td>
-					<td> Not set </td>
-				</tr>
-				<tr>
-					<td> Archive Relative Change </td>
-					<td> Not set </td>
-				</tr>
-				<tr>
-					<td> Archive Absolute Change </td>
-					<td> Not set </td>
-				</tr>
-			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
-				<tr>
-					<td> Push Change event by user code </td>
-					<td> false </td>
-				</tr>
-			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
-				<tr>
-					<td> Push Archive event by user code </td>
-					<td> false </td>
-				</tr>
-			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
-				<tr>
-					<td> Push DataReady event by user code </td>
-					<td> false </td>
-				</tr>
-			</table>
-		</td>
-	</TR>
-</table>
-<br><br>
-<hr>
-<a name="attrreadoutTime"> </a>
-<br><br><br>
-<font size="+1"><u><b> Attribute readoutTime : </b></u></font>
-<ul>
-	get readout time during image acquisition.<br><Br>
-	Depends of the operating mode.<br>
-</ul>
-<br><br><br>
-<Table Border=0 Cellpadding=0 CELLSPACING=20>
-	<TR>
-		<TD ALIGN="left" VALIGN=top>
-			<Table Border=2 Cellpadding=3 CELLSPACING=0>
-				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
-				<td colspan=0> <font size=+1> <center><b> Attribute Definition </b></font></center></td>
-				</tr>
-				<tr>
-					<td> Attribute Type </td>
-					<td> Scalar </td>
-				</tr>
-				<tr>
-					<td> R/W Type </td>
-					<td> READ </td>
-				</tr>
-				<tr>
-					<td> Data Type </td>
-					<td> Tango::DEV_FLOAT </td>
-				</tr>
-				<tr>
-					<td> Display Level </td>
-					<td> EXPERT </td>
-				</tr>
-				<tr>
-					<td> Inherited </td>
-					<td> false </td>
-				</tr>
-				<tr>
-					<td> Abstract </td>
-					<td> false </td>
-				</tr>
-				<tr>
-					<td> Polling Period </td>
-					<td> Not polled </td>
-				</tr>
-				<tr>
-					<td> Memorized </td>
-					<td> Not set </td>
-				</tr>
-			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
-				<tr>
-					<td> Read NOT allowed for </td>
-					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li> </font> </td>
-				</tr>
-			</table>
-		</td>
-		<TD ALIGN="Center" VALIGN=top>
-			<Table Border=2 Cellpadding=3 CELLSPACING=0>
-				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
-				<td colspan=0> <font size=+1> <center><b> Attribute Properties </b></font></center></td>
-				</tr>
-				<tr>
-					<td> label </td>
-					<td>  </td>
-				</tr>
-				<tr>
-					<td> unit </td>
-					<td> ms </td>
-				</tr>
-				<tr>
-					<td> standard unit </td>
-					<td> ms </td>
-				</tr>
-				<tr>
-					<td> display unit </td>
-					<td> ms </td>
-				</tr>
-				<tr>
-					<td> format </td>
-					<td> %1.0f </td>
 				</tr>
 				<tr>
 					<td> max_value </td>
@@ -677,7 +538,7 @@
 <br><br><br>
 <font size="+1"><u><b> Attribute distortionCorrection : </b></u></font>
 <ul>
-	get distortion correction.<br><Br>
+	distortion correction.<br><Br>
 	When distortion correction is enabled :<br><Br>
 	- Large pixels are divided according to predefined denominator. <br><Br>
 	- The values of the pixels are rounded during division. <br><Br>
@@ -705,7 +566,7 @@
 				</tr>
 				<tr>
 					<td> Display Level </td>
-					<td> EXPERT </td>
+					<td> OPERATOR </td>
 				</tr>
 				<tr>
 					<td> Inherited </td>
@@ -726,7 +587,7 @@
 			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
 				<tr>
 					<td> Read NOT allowed for </td>
-					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li> </font> </td>
+					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
 				</tr>
 			</table>
 		</td>
@@ -840,11 +701,11 @@
 </table>
 <br><br>
 <hr>
-<a name="attrenergyThreshold1"> </a>
+<a name="attrenergyThreshold"> </a>
 <br><br><br>
-<font size="+1"><u><b> Attribute energyThreshold1 : </b></u></font>
+<font size="+1"><u><b> Attribute energyThreshold : </b></u></font>
 <ul>
-	set/get first energy threshold in eV.<br><Br>
+	energy threshold in KeV.<br><Br>
 	The photon is counted If the energy is above this threshold.<br>
 </ul>
 <br><br><br>
@@ -865,7 +726,7 @@
 				</tr>
 				<tr>
 					<td> Data Type </td>
-					<td> Tango::DEV_FLOAT </td>
+					<td> Tango::DEV_DOUBLE </td>
 				</tr>
 				<tr>
 					<td> Display Level </td>
@@ -889,16 +750,16 @@
 				</tr>
 				<tr>
 					<td> Write hardware at init. </td>
-					<td> Not set </td>
+					<td> true </td>
 				</tr>
 			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
 				<tr>
 					<td> Read NOT allowed for </td>
-					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li> </font> </td>
+					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
 				</tr>
 				<tr>
 					<td> Write NOT allowed for </td>
-					<td> <font size="-1">  <li> INIT </li>  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
+					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
 				</tr>
 			</table>
 		</td>
@@ -913,15 +774,15 @@
 				</tr>
 				<tr>
 					<td> unit </td>
-					<td> eV </td>
+					<td> KeV </td>
 				</tr>
 				<tr>
 					<td> standard unit </td>
-					<td> eV </td>
+					<td> KeV </td>
 				</tr>
 				<tr>
 					<td> display unit </td>
-					<td> eV </td>
+					<td> KeV </td>
 				</tr>
 				<tr>
 					<td> format </td>
@@ -929,7 +790,7 @@
 				</tr>
 				<tr>
 					<td> max_value </td>
-					<td> 300000 </td>
+					<td> 300 </td>
 				</tr>
 				<tr>
 					<td> min_value </td>
@@ -1012,13 +873,11 @@
 </table>
 <br><br>
 <hr>
-<a name="attroperatingMode"> </a>
+<a name="attrlibraryVersion"> </a>
 <br><br><br>
-<font size="+1"><u><b> Attribute operatingMode : </b></u></font>
+<font size="+1"><u><b> Attribute libraryVersion : </b></u></font>
 <ul>
-	get operating mode of the detector:<br><Br>
-	24bit mode : TwentyFourBit<br><Br>
-	12bit mode :  ContinuousReadWrite<br>
+	Version of the xsp library
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -1042,7 +901,7 @@
 				</tr>
 				<tr>
 					<td> Display Level </td>
-					<td> OPERATOR </td>
+					<td> EXPERT </td>
 				</tr>
 				<tr>
 					<td> Inherited </td>
@@ -1062,8 +921,8 @@
 				</tr>
 			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
 				<tr>
-					<td> Read allowed for </td>
-					<td> All states </td>
+					<td> Read NOT allowed for </td>
+					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
 				</tr>
 			</table>
 		</td>
@@ -1074,7 +933,7 @@
 				</tr>
 				<tr>
 					<td> label </td>
-					<td> operatingMode </td>
+					<td>  </td>
 				</tr>
 				<tr>
 					<td> unit </td>
@@ -1177,13 +1036,11 @@
 </table>
 <br><br>
 <hr>
-<a name="attrburstMode"> </a>
+<a name="attrhighVoltage"> </a>
 <br><br><br>
-<font size="+1"><u><b> Attribute burstMode : </b></u></font>
+<font size="+1"><u><b> Attribute highVoltage : </b></u></font>
 <ul>
-	get the value of burst mode.<br><Br>
-	true: 10GE link.<br><Br>
-	false: 1GE link<br>
+	Value in V of the high Voltage
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -1203,11 +1060,11 @@
 				</tr>
 				<tr>
 					<td> Data Type </td>
-					<td> Tango::DEV_BOOLEAN </td>
+					<td> Tango::DEV_DOUBLE </td>
 				</tr>
 				<tr>
 					<td> Display Level </td>
-					<td> EXPERT </td>
+					<td> OPERATOR </td>
 				</tr>
 				<tr>
 					<td> Inherited </td>
@@ -1227,8 +1084,8 @@
 				</tr>
 			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
 				<tr>
-					<td> Read allowed for </td>
-					<td> All states </td>
+					<td> Read NOT allowed for </td>
+					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
 				</tr>
 			</table>
 		</td>
@@ -1243,7 +1100,333 @@
 				</tr>
 				<tr>
 					<td> unit </td>
+					<td> V </td>
+				</tr>
+				<tr>
+					<td> standard unit </td>
 					<td>  </td>
+				</tr>
+				<tr>
+					<td> display unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> format </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_time </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_val </td>
+					<td>  </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Right" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Event Criteria </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Archive Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Push Change event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push Archive event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push DataReady event by user code </td>
+					<td> false </td>
+				</tr>
+			</table>
+		</td>
+	</TR>
+</table>
+<br><br>
+<hr>
+<a name="attrhumidity"> </a>
+<br><br><br>
+<font size="+1"><u><b> Attribute humidity : </b></u></font>
+<ul>
+	measured humidity in %
+</ul>
+<br><br><br>
+<Table Border=0 Cellpadding=0 CELLSPACING=20>
+	<TR>
+		<TD ALIGN="left" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Definition </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Attribute Type </td>
+					<td> Scalar </td>
+				</tr>
+				<tr>
+					<td> R/W Type </td>
+					<td> READ </td>
+				</tr>
+				<tr>
+					<td> Data Type </td>
+					<td> Tango::DEV_DOUBLE </td>
+				</tr>
+				<tr>
+					<td> Display Level </td>
+					<td> OPERATOR </td>
+				</tr>
+				<tr>
+					<td> Inherited </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Abstract </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Polling Period </td>
+					<td> Not polled </td>
+				</tr>
+				<tr>
+					<td> Memorized </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Read NOT allowed for </td>
+					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Center" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Properties </b></font></center></td>
+				</tr>
+				<tr>
+					<td> label </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> unit </td>
+					<td> % </td>
+				</tr>
+				<tr>
+					<td> standard unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> display unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> format </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_time </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_val </td>
+					<td>  </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Right" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Event Criteria </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Archive Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Push Change event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push Archive event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push DataReady event by user code </td>
+					<td> false </td>
+				</tr>
+			</table>
+		</td>
+	</TR>
+</table>
+<br><br>
+<hr>
+<a name="attrtemperature"> </a>
+<br><br><br>
+<font size="+1"><u><b> Attribute temperature : </b></u></font>
+<ul>
+	measured temperature in deg C
+</ul>
+<br><br><br>
+<Table Border=0 Cellpadding=0 CELLSPACING=20>
+	<TR>
+		<TD ALIGN="left" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Definition </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Attribute Type </td>
+					<td> Scalar </td>
+				</tr>
+				<tr>
+					<td> R/W Type </td>
+					<td> READ </td>
+				</tr>
+				<tr>
+					<td> Data Type </td>
+					<td> Tango::DEV_DOUBLE </td>
+				</tr>
+				<tr>
+					<td> Display Level </td>
+					<td> OPERATOR </td>
+				</tr>
+				<tr>
+					<td> Inherited </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Abstract </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Polling Period </td>
+					<td> Not polled </td>
+				</tr>
+				<tr>
+					<td> Memorized </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Read NOT allowed for </td>
+					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Center" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Properties </b></font></center></td>
+				</tr>
+				<tr>
+					<td> label </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> unit </td>
+					<td> deg C </td>
 				</tr>
 				<tr>
 					<td> standard unit </td>
@@ -1352,10 +1535,6 @@
 	<tr bgcolor="#CCCCFF" class="TableHeadingColor">
 		<td> <center><b> Name </b></center> </td>
 		<td> <center><b> Description </b></center> </td>
-	</tr>
-	<tr>
-		<td> INIT </td>
-		<td>  </td>
 	</tr>
 	<tr>
 		<td> STANDBY </td>

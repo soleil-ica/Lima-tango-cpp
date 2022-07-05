@@ -9,18 +9,18 @@ This is the reference documentation of the XSpectrum LAMBDA Tango C++ device.
 Properties
 ----------
 
-======================= =============== =============== =========================================================================
-Property name           Default value   Type            Description
-======================= =============== =============== =========================================================================
-ConfigFilesPath         /opt/xsp/config String          Configuration files path used during the camera instanciation.
-DistortionCorrection    false           Boolean         Set distortion correction.
+======================= =========================== =============== =========================================================================
+Property name           Default value               Type            Description
+======================= =========================== =============== =========================================================================
+ConfigFile              /opt/xsp/config/system.yml  String          Configuration file used to initialize the detector.
+DistortionCorrection    false                       Boolean         Set distortion correction.
 
-                                                        When distortion correction is enabled :
+                                                                    When distortion correction is enabled :
 
-                                                        - Large pixels are divided according to predefined denominator.
-                                                        - The values of the pixels are rounded during division.
-                                                        - If pixel value is saturated, the division is not applied.
-======================= =============== =============== =========================================================================
+                                                                        - Large pixels are divided according to predefined denominator.
+                                                                        - The values of the pixels are rounded during division.
+                                                                        - If pixel value is saturated, the division is not applied.
+======================= =========================== =============== =========================================================================
 
 
 Attributes
@@ -29,7 +29,7 @@ Attributes
 ======================= ========== ========== ==============================================================================================
 Attribute name          Read/Write Type       Description
 ======================= ========== ========== ==============================================================================================
-configFilesPath         R          String     Path of configuration files.
+configFile              R          String     Configuration file used to initialize the detector.
 energyThreshold         R/W        Double     Get/Set the threshold settings in keV for the Lambda detector.
 distortionCorrection    R          Boolean    Get whether interpolation of extra large pixels is enabled.
 highVoltage             R          Double     Get the measured high voltage value from a specific detector module. (Older detector firmware might not support this command. In this case, a value of 0.0 is returned).
