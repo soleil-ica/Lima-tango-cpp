@@ -13,7 +13,7 @@ Properties
 Property name           Default value   Type            Description
 ======================= =============== =============== =========================================================================
 ConfigFilesPath         /opt/xsp/config String          Configuration files path used during the camera instanciation.
-DistortionCorrection    true            Boolean         Set distortion correction.
+DistortionCorrection    false           Boolean         Set distortion correction.
 
                                                         When distortion correction is enabled :
 
@@ -30,22 +30,12 @@ Attributes
 Attribute name          Read/Write Type       Description
 ======================= ========== ========== ==============================================================================================
 configFilesPath         R          String     Path of configuration files.
-readoutTime             R          Float      Get readout time used during image acquisition. Depends of the operating mode (12bit/24bit).
-distortionCorrection    R          Boolean    Get distortion correction.
-                                              When distortion correction is enabled :
-
-                                              - Large pixels are divided according to predefined denominator.
-                                              - The values of the pixels are rounded during division.
-                                              - If pixel value is saturated, the division is not applied.
-energyThreshold1        R/W        Float      Set/get first energy threshold in eV.
-operatingMode           R          String     Get operating mode of the detector:
-
-                                              - 24bit mode: TwentyFourBit
-                                              - 12bit mode: ContinuousReadWrite
-burstMode               R          Boolean    Get the value of burst mode.
-
-                                              - True: 10GE link.
-                                              - False: 1GE link.
+energyThreshold         R/W        Double     Get/Set the threshold settings in keV for the Lambda detector.
+distortionCorrection    R          Boolean    Get whether interpolation of extra large pixels is enabled.
+highVoltage             R          Double     Get the measured high voltage value from a specific detector module. (Older detector firmware might not support this command. In this case, a value of 0.0 is returned).
+humidity                R          Double     Get the measured humidity from a specific detector module. (Older detector firmware might not support this command. In this case, the valueof 0.0 is returned).
+libraryVersion          R          String     Get the version of the library as a string in the format "major.minor.patch".
+temperature             R          Double     Get a vector of measured temperatures from a specific detector module. The number of values and their meaning depends on hardware revision of the detectorreadout board.For new readout boards, three values are returned: the board temperature, theFPGA temperature, and the temperature from the humidity sensor. (Older boardsdo not support this command, and an empty vector is returned).
 ======================= ========== ========== ==============================================================================================
 
 
