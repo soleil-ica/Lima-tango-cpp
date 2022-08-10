@@ -108,8 +108,8 @@
                             <define>PROJECT_VERSION=${project.version}</define>
                             <define>PROCESSLIB_NAME=${PROCESSLIB.name}</define>
                             <define>PROCESSLIB_VERSION=${PROCESSLIB.version}</define>
-                            <define>LIMACORE_NAME=${CORE.name}</define>
-                            <define>LIMACORE_VERSION=${CORE.version}</define>
+                            <define>LIMACORE_NAME=${LIMACORE.name}</define>
+                            <define>LIMACORE_VERSION=${LIMACORE.version}</define>
                             <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
                             <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
 							<define>LAMBDA_NAME=${LAMBDA.name}</define>

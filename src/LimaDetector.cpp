@@ -94,7 +94,6 @@ LimaDetector::LimaDetector(Tango::DeviceClass *cl, string &s)
 :Tango::Device_4Impl(cl, s.c_str()), m_dim(this)
 {
     init_device();
-
 }
 LimaDetector::LimaDetector(Tango::DeviceClass *cl, const char *s)
 :Tango::Device_4Impl(cl, s), m_dim(this)
@@ -149,7 +148,7 @@ void LimaDetector::delete_device()
     DELETE_SCALAR_ATTRIBUTE(attr_fileTargetPath_read);
     DELETE_SCALAR_ATTRIBUTE(attr_fileNbFrames_read);
 
-    //related to shutter , don't cost too much to do this below, even if shutter capability is not available
+    //- related to shutter , don't cost too much to do this below, even if shutter capability is not available
     DELETE_DEVSTRING_ATTRIBUTE(attr_shutterMode_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_shutterState_read);
     DELETE_SCALAR_ATTRIBUTE(attr_shutterOpenTime_read);
@@ -4625,35 +4624,34 @@ void LimaDetector::create_log_info_attributes(void)
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(LIMACORE_NAME), YAT_XSTR(LIMACORE_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SIMULATOR_NAME), YAT_XSTR(SIMULATOR_VERSION));
 
-//- Win64
-#if defined(_WIN64)
+#if defined(_WIN64) //- Win64
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(DHYANA_NAME), YAT_XSTR(DHYANA_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PCO_NAME), YAT_XSTR(PCO_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SPECTRUMONE_NAME), YAT_XSTR(SPECTRUMONE_VERSION) );
-#elif defined(_WIN32)//- Win32
+#elif defined(_WIN32) //- Win32
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ANDOR_NAME), YAT_XSTR(ANDOR_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PRINCETON_NAME), YAT_XSTR(PRINCETON_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UVIEW_NAME), YAT_XSTR(UVIEW_VERSION) );
-#elif defined(UNIX_32_EL6)
+#elif defined(UNIX_32_EL6) //- linux32
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(BASLER_NAME), YAT_XSTR(BASLER_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(IMXPAD_NAME), YAT_XSTR(IMXPAD_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MARCCD_NAME), YAT_XSTR(MARCCD_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MERLIN_NAME), YAT_XSTR(MERLIN_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PILATUS_NAME), YAT_XSTR(PILATUS_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XPAD_NAME), YAT_XSTR(XPAD_VERSION) );        
-#elif defined(UNIX_64_EL5)
+#elif defined(UNIX_64_EL5) //- linux64-el5
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(MAXIPIX_NAME), YAT_XSTR(MAXIPIX_VERSION) );
-#elif defined(UNIX_64_EL6)
+#elif defined(UNIX_64_EL6) //- linux64-el6
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION));
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSJUNGFRAU_NAME), YAT_XSTR(SLSJUNGFRAU_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSEIGER_NAME), YAT_XSTR(SLSEIGER_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XSPRESS3_NAME), YAT_XSTR(XSPRESS3_VERSION));
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SPECTRAL_NAME), YAT_XSTR(SPECTRAL_VERSION));
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UFXC_NAME), YAT_XSTR(UFXC_VERSION) ); 
-#elif defined(UNIX_64_EL7)
+#elif defined(UNIX_64_EL7) //- linux64-el7
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(LAMBDA_NAME), YAT_XSTR(LAMBDA_VERSION_DEVICE));//- name conflict with lambda sdk
 #endif
 

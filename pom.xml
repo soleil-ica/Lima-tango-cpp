@@ -392,6 +392,7 @@
                                     <define>NEXUSCPP_DLL</define>
                                     
                                     <define>UNIX_64_EL5</define> -->	<!-- in order to avoid compilation of BREAKPAD CRASH HANDLER-->
+									<define>LINUX64_NO_CRASH_REPORT</define>
                                 </defines>                                                                            
                             </cpp> 
                         </configuration>
