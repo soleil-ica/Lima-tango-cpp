@@ -9,7 +9,7 @@
     
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.11.2</version>
+    <version>1.12.0</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -18,7 +18,6 @@
     <properties>
         <!-- path to the 64 bits libs -->
         <libs-64bits>/home/informatique/ica/ica/LIB_EL6_64</libs-64bits>
-        <libs-lambda>../../../camera/lambda/sdk/bin</libs-lambda>
         <libs-xspress3>../../../camera/xspress3/sdk</libs-xspress3>
 		<libs-ufxc-decode>../../../camera/ufxc/UFXC-LIB/UFXCLib/sdk</libs-ufxc-decode>
 		
@@ -35,9 +34,7 @@
         <SLSJUNGFRAU.name>SlsJungfrau</SLSJUNGFRAU.name>
         <SLSJUNGFRAU.version>1.2.1</SLSJUNGFRAU.version>
         <SLSEIGER.name>SlsEiger</SLSEIGER.name>
-        <SLSEIGER.version>1.0.2</SLSEIGER.version>
-        <LAMBDA.name>Lambda</LAMBDA.name>
-        <LAMBDA.version>2.0.0</LAMBDA.version>    
+        <SLSEIGER.version>1.0.2</SLSEIGER.version>   
         <XSPRESS3.name>Xspress3</XSPRESS3.name>
         <XSPRESS3.version>1.0.3</XSPRESS3.version>  
         <UFXC.name>Ufxc</UFXC.name>
@@ -83,11 +80,6 @@
             <artifactId>LimaSlsJungfrau-amd64-Linux-gcc-shared-${mode}</artifactId>
             <version>${SLSJUNGFRAU.version}</version>
         </dependency>       
-        <dependency>
-            <groupId>fr.soleil.lib.Lima.Camera</groupId>
-            <artifactId>LimaLambda-amd64-Linux-gcc-shared-${mode}</artifactId>
-            <version>${LAMBDA.version}</version>
-       </dependency>
        <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaXspress3-amd64-Linux-gcc-shared-${mode}</artifactId>
@@ -120,7 +112,6 @@
                             <include>specifics/Eiger/*.cpp</include>
                             <include>specifics/SlsJungfrau/*.cpp</include>
                             <include>specifics/SlsEiger/*.cpp</include>
-                            <include>specifics/Lambda/*.cpp</include>
                             <include>specifics/Xspress3/*.cpp</include>
                             <include>specifics/SpectralInstrument/*.cpp</include>
                             <include>specifics/Ufxc/*.cpp</include>          
@@ -136,7 +127,6 @@
                             <includePath>specifics/Eiger</includePath> 
                             <includePath>specifics/SlsJungfrau</includePath>
                             <includePath>specifics/SlsEiger</includePath>
-                            <includePath>specifics/Lambda</includePath>        
                             <includePath>specifics/Xspress3</includePath>     
                             <includePath>specifics/SpectralInstrument</includePath>   
                             <includePath>specifics/Ufxc</includePath>   
@@ -177,8 +167,6 @@
                             <define>SLSJUNGFRAU_VERSION=${SLSJUNGFRAU.version}</define>
                             <define>SLSEIGER_NAME=${SLSEIGER.name}</define>
                             <define>SLSEIGER_VERSION=${SLSEIGER.version}</define>
-                            <define>LAMBDA_NAME=${LAMBDA.name}</define>
-                            <define>LAMBDA_VERSION_DEVICE=${LAMBDA.version}</define> <!-- name conflict with lambda sdk --> 
                             <define>XSPRESS3_NAME=${XSPRESS3.name}</define>
                             <define>XSPRESS3_VERSION=${XSPRESS3.version}</define>
                             <define>UFXC_NAME=${UFXC.name}</define>
@@ -191,7 +179,6 @@
                             <define>EIGER_ENABLED</define>     
                             <define>SLSJUNGFRAU_ENABLED</define> 
                             <define>SLSEIGER_ENABLED</define>
-                            <define>LAMBDA_ENABLED</define>
                             <define>XSPRESS3_ENABLED</define>
                             <define>UFXC_ENABLED</define>
                             <define>SPECTRAL_ENABLED</define>
@@ -340,35 +327,6 @@
                                 <type>shared</type>
                                 <directory>${libs-64bits}/gsl-1.11/lib/</directory>
                             </lib>
-
-                            <lib>
-								<!-- liblambda -->
-								<name>lambda</name>
-								<type>shared</type>
-								<directory>${libs-lambda}/</directory>
-                            </lib>
-
-                            <lib>
-                                <!-- libfsdetcore -->
-                                <name>fsdetcore</name>
-                                <type>shared</type>
-                                <directory>${libs-lambda}/</directory>
-                            </lib>
-
-                            <lib>
-								<!-- For Lambda -->
-                                <name>boost_thread</name>
-                                <type>shared</type>
-                                <directory>${libs-lambda}/</directory>
-                            </lib>
-
-                            <lib>
-								<!-- For Lambda -->
-								<name>boost_system</name>
-								<type>shared</type>
-								<directory>${libs-lambda}/</directory>
-                            </lib>
-
                             <lib>
                                 <name>xspress3</name>
                                 <type>shared</type>

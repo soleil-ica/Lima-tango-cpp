@@ -9,7 +9,7 @@
 	
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.11.3</version>
+    <version>1.12.0</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -48,7 +48,7 @@
         <LIMACORE.name>LimaCore</LIMACORE.name>
         <LIMACORE.version>1.7.10</LIMACORE.version>
 		<DHYANA.name>Dhyana</DHYANA.name>
-        <DHYANA.version>1.3.1</DHYANA.version>
+        <DHYANA.version>1.4.0</DHYANA.version>
         <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
         <HAMAMATSU.version>2.4.4</HAMAMATSU.version>
         <PCO.name>Pco</PCO.name>
