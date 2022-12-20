@@ -100,7 +100,6 @@
                             <includePath>${libs-64bits}/yat-${YAT.version}/include</includePath>
                             <includePath>${libs-64bits}/yat4tango-${YAT4Tango.version}/include</includePath>
                             <includePath>${libs-64bits}/nexuscpp-${NexusCPP.version}/include</includePath>                 
-							<includePath>${libs-xspress3}/include/</includePath>
                         </includePaths>
                        
                         <defines>

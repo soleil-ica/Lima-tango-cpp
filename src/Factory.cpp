@@ -567,7 +567,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             if (!ControlFactory::m_is_created)
             {
 				//- Set Serialisation mode
-				//- this allow dynamic attr in pco specific device
+				//- this allow dynamic attr in Hamamatsu specific device
 				YAT_LOG_INFO("Set Serialisation Model : BY_PROCESS");
 				Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_PROCESS);
 
@@ -959,78 +959,6 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             }
         }
 #endif
-				
-#ifdef XSPRESS3_ENABLED
-        if (detector_type == "Xspress3")
-        {
-            if (!ControlFactory::m_is_created)
-            {
-                Tango::DbData db_data;
-                std::string   base_ip_adress = "192.168.0.1";
-                std::string   base_mac_address = "02.00.00.00.00.00";				
-                long		  base_port = 30123;				 
-                long		  card_index = 0;
-                std::string   directory_name = "/etc/xspress3/calibration/me4_mar_2018/settings/";
-                long          max_frames = 16384;
-                long          nb_cards = 2;
-                long          nb_chans = 4;
-		        bool          no_udp = false;
-                
-                // configuration complete path
-                db_data.push_back(Tango::DbDatum("BaseIPAdress"));
-                db_data.push_back(Tango::DbDatum("BaseMacAddress"));
-                db_data.push_back(Tango::DbDatum("BasePort"));
-                db_data.push_back(Tango::DbDatum("CardIndex"));
-                db_data.push_back(Tango::DbDatum("DirectoryName"));
-                db_data.push_back(Tango::DbDatum("MaxFrames"));				
-                db_data.push_back(Tango::DbDatum("NbCards"));				
-                db_data.push_back(Tango::DbDatum("NbChans"));				
-                db_data.push_back(Tango::DbDatum("NoUDP"));
-
-                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
-
-                db_data[0] >> base_ip_adress;
-                db_data[1] >> base_mac_address;
-                db_data[2] >> base_port;
-                db_data[3] >> card_index;
-                db_data[4] >> directory_name;
-                db_data[5] >> max_frames;
-                db_data[6] >> nb_cards;
-                db_data[7] >> nb_chans;
-                db_data[8] >> no_udp;
-				
-				std::cout<<"- base_ip_adress = "<<base_ip_adress<<std::endl;
-				std::cout<<"- base_mac_address = "<<base_mac_address<<std::endl;
-				std::cout<<"- base_port = "<<base_port<<std::endl;
-				std::cout<<"- card_index = "<<card_index<<std::endl;
-				std::cout<<"- directory_name = "<<directory_name<<std::endl;
-				std::cout<<"- max_frames = "<<max_frames<<std::endl;
-				std::cout<<"- nb_cards = "<<nb_cards<<std::endl;
-				std::cout<<"- nb_chans = "<<nb_chans<<std::endl;
-				std::cout<<"- no_udp = "<<no_udp<<std::endl;
-				
-                // create and initialize the camera and create interface and control  
-                m_camera    = static_cast<void*> (new Xspress3::Camera(nb_cards,
-																	   max_frames,
-																	   base_ip_adress,
-																	   base_port,
-																	   base_mac_address,
-																	   nb_chans,
-																	   false,//create scope module
-																	   "NULL",//scope module name
-																	   0,//debug
-																	   card_index,
-																	   no_udp,
-																	   directory_name));
-
-		static_cast<Xspress3::Camera*> (m_camera)->setUseDtc(false);
-                m_interface = static_cast<void*> (new Xspress3::Interface(*(static_cast<Xspress3::Camera*> (m_camera))));
-                m_control   = new CtControl(static_cast<Xspress3::Interface*> (m_interface));
-                ControlFactory::m_is_created = true;
-                return m_control;
-            }
-        }
-#endif
 		
 #ifdef SPECTRALINSTRUMENT_ENABLED
         if (detector_type == "SpectralInstrument")
@@ -1287,13 +1215,6 @@ void ControlFactory::reset(const std::string& detector_type)
 					delete (static_cast<Ufxc::Camera*> (m_camera));				
                 }
 #endif
-				
-#ifdef XSPRESS3_ENABLED        
-                if (detector_type == "Xspress3")
-                {
-                    delete (static_cast<Xspress3::Camera*> (m_camera));
-                }
-#endif  
 
 #ifdef SPECTRALINSTRUMENT_ENABLED        
                 if (detector_type == "SpectralInstrument")

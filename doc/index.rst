@@ -53,7 +53,6 @@ This device server provides several Tango classes:
   Ufxc <Ufxc/ufxc>
   Uview <Uview/uview>
   XpadPixelDetector <XpadPixelDetector/xpadpixeldetector>
-  Xspress3 <Xspress3/xspress3>
   
 --------------------------
 

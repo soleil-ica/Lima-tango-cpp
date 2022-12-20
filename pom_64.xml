@@ -18,7 +18,6 @@
     <properties>
         <!-- path to the 64 bits libs -->
         <libs-64bits>/home/informatique/ica/ica/LIB_EL6_64</libs-64bits>
-        <libs-xspress3>../../../camera/xspress3/sdk</libs-xspress3>
 		<libs-ufxc-decode>../../../camera/ufxc/UFXC-LIB/UFXCLib/sdk</libs-ufxc-decode>
 		
 
@@ -34,9 +33,7 @@
         <SLSJUNGFRAU.name>SlsJungfrau</SLSJUNGFRAU.name>
         <SLSJUNGFRAU.version>1.2.1</SLSJUNGFRAU.version>
         <SLSEIGER.name>SlsEiger</SLSEIGER.name>
-        <SLSEIGER.version>1.0.2</SLSEIGER.version>   
-        <XSPRESS3.name>Xspress3</XSPRESS3.name>
-        <XSPRESS3.version>1.0.3</XSPRESS3.version>  
+        <SLSEIGER.version>1.0.2</SLSEIGER.version>
         <UFXC.name>Ufxc</UFXC.name>
         <UFXC.version>2.0.3</UFXC.version>    
         <SPECTRAL.name>SpectralInstrument</SPECTRAL.name>
@@ -82,11 +79,6 @@
         </dependency>       
        <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
-            <artifactId>LimaXspress3-amd64-Linux-gcc-shared-${mode}</artifactId>
-            <version>${XSPRESS3.version}</version>
-       </dependency>
-       <dependency>
-            <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaUfxc-amd64-Linux-gcc-shared-${mode}</artifactId>
             <version>${UFXC.version}</version>
        </dependency>
@@ -112,7 +104,6 @@
                             <include>specifics/Eiger/*.cpp</include>
                             <include>specifics/SlsJungfrau/*.cpp</include>
                             <include>specifics/SlsEiger/*.cpp</include>
-                            <include>specifics/Xspress3/*.cpp</include>
                             <include>specifics/SpectralInstrument/*.cpp</include>
                             <include>specifics/Ufxc/*.cpp</include>          
 							
@@ -126,8 +117,7 @@
                             <includePath>specifics/SimulatorCCD</includePath>         
                             <includePath>specifics/Eiger</includePath> 
                             <includePath>specifics/SlsJungfrau</includePath>
-                            <includePath>specifics/SlsEiger</includePath>
-                            <includePath>specifics/Xspress3</includePath>     
+                            <includePath>specifics/SlsEiger</includePath>  
                             <includePath>specifics/SpectralInstrument</includePath>   
                             <includePath>specifics/Ufxc</includePath>   
 
@@ -147,7 +137,6 @@
                             <includePath>${libs-64bits}/yat4tango-${YAT4Tango.version}/include</includePath>
                             <includePath>${libs-64bits}/nexuscpp-${NexusCPP.version}/include</includePath>        
 							
-							<includePath>${libs-xspress3}/include/</includePath>
 							<includePath>${libs-ufxc-decode}/include/</includePath>
 							
                         </includePaths>
@@ -167,8 +156,6 @@
                             <define>SLSJUNGFRAU_VERSION=${SLSJUNGFRAU.version}</define>
                             <define>SLSEIGER_NAME=${SLSEIGER.name}</define>
                             <define>SLSEIGER_VERSION=${SLSEIGER.version}</define>
-                            <define>XSPRESS3_NAME=${XSPRESS3.name}</define>
-                            <define>XSPRESS3_VERSION=${XSPRESS3.version}</define>
                             <define>UFXC_NAME=${UFXC.name}</define>
                             <define>UFXC_VERSION=${UFXC.version}</define>
                             <define>SPECTRAL_NAME=${SPECTRAL.name}</define>
@@ -179,7 +166,6 @@
                             <define>EIGER_ENABLED</define>     
                             <define>SLSJUNGFRAU_ENABLED</define> 
                             <define>SLSEIGER_ENABLED</define>
-                            <define>XSPRESS3_ENABLED</define>
                             <define>UFXC_ENABLED</define>
                             <define>SPECTRAL_ENABLED</define>
 							
@@ -327,12 +313,6 @@
                                 <type>shared</type>
                                 <directory>${libs-64bits}/gsl-1.11/lib/</directory>
                             </lib>
-                            <lib>
-                                <name>xspress3</name>
-                                <type>shared</type>
-                                <directory>${libs-xspress3}/bin/</directory>
-                            </lib>
-							
 							<lib>
                                 <name>UfxcDecode-amd64-Linux-gcc-shared-release-1.2.0</name>
                                 <type>shared</type>

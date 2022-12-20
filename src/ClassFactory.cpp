@@ -131,10 +131,6 @@ static const char *RcsId = "$Id:  $";
 #include <UfxcClass.h>
 #endif
 
-#ifdef XSPRESS3_ENABLED
-#include <Xspress3Class.h>
-#endif
-
 #ifdef SPECTRALINSTRUMENT_ENABLED  
 #include <SpectralInstrumentClass.h>
 #endif
@@ -241,11 +237,7 @@ void Tango::DServer::class_factory()
 	
 #ifdef UFXC_ENABLED        
     add_class(Ufxc_ns::UfxcClass::init("Ufxc"));
-#endif	
-
-#ifdef XSPRESS3_ENABLED        
-    add_class(Xspress3_ns::Xspress3Class::init("Xspress3"));
-#endif	
+#endif
 
 #ifdef SPECTRALINSTRUMENT_ENABLED  
     add_class(SpectralInstrument_ns::SpectralInstrumentClass::init("SpectralInstrument"));
