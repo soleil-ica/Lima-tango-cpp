@@ -35,7 +35,7 @@
 
 #include <tango.h>
 
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 
 #include <yat4tango/InnerAppender.h>
 #include <yat4tango/PropertyHelper.h>

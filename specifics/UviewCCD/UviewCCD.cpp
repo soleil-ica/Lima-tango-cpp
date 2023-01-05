@@ -57,7 +57,7 @@ static const char *RcsId = "$Id:  $";
 #include <tango.h>
 #include <UviewCCD.h>
 #include <UviewCCDClass.h>
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 
 const short ROIid1 = 1;
 const short ROIid2 = 2;

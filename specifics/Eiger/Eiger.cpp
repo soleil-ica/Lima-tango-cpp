@@ -57,7 +57,7 @@ static const char *RcsId = "$Id:  $";
 
 
 #include "tango.h"
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 #include <Eiger.h>
 #include <EigerClass.h>
 
