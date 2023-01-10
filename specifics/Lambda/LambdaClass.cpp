@@ -14,7 +14,7 @@ static const char *HttpServer = "http://www.esrf.eu/computing/cs/tango/tango_doc
 //               and all properties and methods required
 //               by the Lambda once per process.
 //
-// project :     Sls dectector TANGO specific device.
+// project :     XSpectrum Lambda detector TANGO specific device.
 //
 // This file is part of Tango device class.
 // 

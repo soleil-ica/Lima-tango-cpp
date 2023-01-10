@@ -85,8 +85,7 @@ bool Lambda::is_distortionCorrection_allowed(TANGO_UNUSED(Tango::AttReqType type
 	if ( type==Tango::READ_REQ )
 	{
 		//	Compare device state with not allowed states for READ 
-		if (get_state()==Tango::FAULT ||
-			get_state()==Tango::RUNNING)
+		if (get_state()==Tango::FAULT)
 		{
 		/*----- PROTECTED REGION ID(Lambda::distortionCorrectionStateAllowed_READ) ENABLED START -----*/
 		
@@ -152,8 +151,7 @@ bool Lambda::is_libraryVersion_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	if ( type==Tango::READ_REQ )
 	{
 		//	Compare device state with not allowed states for READ 
-		if (get_state()==Tango::FAULT ||
-			get_state()==Tango::RUNNING)
+		if (get_state()==Tango::FAULT)
 		{
 		/*----- PROTECTED REGION ID(Lambda::libraryVersionStateAllowed_READ) ENABLED START -----*/
 		

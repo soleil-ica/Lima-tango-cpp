@@ -10,7 +10,7 @@ static const char *RcsId = "$Id:  $";
 //               network. All commands which can be executed on the
 //               Lambda are implemented in this file.
 //
-// project :     Sls dectector TANGO specific device.
+// project :     XSpectrum Lambda detector TANGO specific device.
 //
 // This file is part of Tango device class.
 // 
@@ -176,6 +176,7 @@ void Lambda::init_device()
     CREATE_DEVSTRING_ATTRIBUTE(attr_libraryVersion_read, Lambda_ns::STR_ATTR_SIZE_MAX);
     
     m_is_device_initialized = false;
+	m_has_hv_feature 		= false;
     set_state(Tango::INIT);
     m_status_message.str("");
 
@@ -212,14 +213,17 @@ void Lambda::init_device()
 		write_at_init();
 		//- Set the distortion correction (from property)
 		m_camera->setDistortionCorrection(distortionCorrection);
-		//- Get the distortion correction (from hardware)
+		//- Get the distortion correction (from hardware), only once
 		m_camera->getDistortionCorrection(*attr_distortionCorrection_read);
-		//- Get the lib version only once
+		//- Get the lib version, only once
 		m_library_version = m_camera->getLibVersion();
 		strcpy(*attr_libraryVersion_read, m_library_version.c_str());
-		//- Get the config file name
+		//- Get the config file name, only once
 		m_config_file = m_camera->getConfigFile();
 		strcpy(*attr_configFile_read, m_config_file.c_str());
+		//- Check if camera has the High Voltage feature, only once
+		if (m_camera->hasFeature(xsp::lambda::Feature::FEAT_HV))
+			m_has_hv_feature = true;
 	}
     catch(Tango::DevFailed& df)
 	{
@@ -233,7 +237,7 @@ void Lambda::init_device()
 		set_state(Tango::FAULT);
 		return;
 	}
-	catch(Exception& e)
+	catch(lima::Exception& e)
 	{
 		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
 		ERROR_STREAM     << m_status_message.str() << endl;
@@ -352,20 +356,18 @@ void Lambda::always_executed_hook()
         //update state
         dev_state();
     }
-    catch (Exception& e)
+    catch (lima::Exception& e)
     {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        m_status_message << "always_executed_hook : " << e.getErrMsg() << endl;
-        //- throw exception
+		m_status_message << "always_executed_hook : " << e.getErrMsg() << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
         set_state(Tango::FAULT);
         m_is_device_initialized = false;
         return;
     }
     catch (...)
     {
-        ERROR_STREAM << "always_executed_hook : UNKNOWN" << endl;
-        m_status_message << "always_executed_hook : UNKNOWN" << endl;
-        //- throw exception
+		m_status_message << "always_executed_hook : Unknown Error" << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
         set_state(Tango::FAULT);
         m_is_device_initialized = false;
         return;
@@ -440,19 +442,8 @@ void Lambda::read_distortionCorrection(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "Lambda::read_distortionCorrection(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Lambda::read_distortionCorrection) ENABLED START -----*/
-    try
-    {
-        attr.set_value(attr_distortionCorrection_read);
-    }
-    catch (Tango::DevFailed& df)
-    {
-        manage_devfailed_exception(df, "read_distortionCorrection");
-    }
-	catch (lima::Exception& le)
-    {
-        manage_lima_exception(le, "read_distortionCorrection");
-    }
-
+    attr.set_value(attr_distortionCorrection_read);
+    
 	/*----- PROTECTED REGION END -----*/	//	Lambda::read_distortionCorrection
 }
 //--------------------------------------------------------
@@ -532,18 +523,7 @@ void Lambda::read_libraryVersion(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "Lambda::read_libraryVersion(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Lambda::read_libraryVersion) ENABLED START -----*/
-	try
-    {
-		attr.set_value(attr_libraryVersion_read);
-    }
-    catch (Tango::DevFailed& df)
-    {
-        manage_devfailed_exception(df, "read_libraryVersion");
-    }
-    catch (lima::Exception& le)
-    {
-        manage_lima_exception(le, "read_libraryVersion");
-    }
+	attr.set_value(attr_libraryVersion_read);
 
 	/*----- PROTECTED REGION END -----*/	//	Lambda::read_libraryVersion
 }
@@ -562,9 +542,8 @@ void Lambda::read_highVoltage(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(Lambda::read_highVoltage) ENABLED START -----*/
 	try
     {
-		//the function "hasFeature" returns a boolean depending on the compatibility between the code and the firmware:
-		//if the this function returns false it means that this functionnality is not supported by the firmware.
-		if (m_camera->hasFeature(xsp::lambda::Feature::FEAT_HV))
+		//- High Voltage has been checked at init
+		if (m_has_hv_feature)
 		{
 			m_camera->getHighVoltage(*attr_highVoltage_read);
     		attr.set_value(attr_highVoltage_read);

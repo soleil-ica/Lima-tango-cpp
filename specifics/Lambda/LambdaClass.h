@@ -9,7 +9,7 @@
 //               It contains all properties and methods which the 
 //               Lambda requires only once e.g. the commands.
 //
-// project :     Sls dectector TANGO specific device.
+// project :     XSpectrum Lambda detector TANGO specific device.
 //
 // This file is part of Tango device class.
 // 

@@ -5,7 +5,7 @@
 //
 // description : Include file for the Lambda class
 //
-// project :     Sls dectector TANGO specific device.
+// project :     XSpectrum Lambda detector TANGO specific device.
 //
 // This file is part of Tango device class.
 // 
@@ -54,8 +54,6 @@
 
 #include "LambdaInclude.h"
 #include "LambdaCamera.h"
-
-using namespace yat4tango;
 
 /*----- PROTECTED REGION END -----*/	//	Lambda.h
 
@@ -309,14 +307,17 @@ private:
 
 
 protected :	
-    //lima OBJECTS
+    //- lima stuff
     lima::Lambda::Interface* 	m_hw;
     lima::CtControl*			m_ct;
     lima::Lambda::Camera* 		m_camera;
+	//- Tango device stuff
 	bool                      	m_is_device_initialized;
     std::stringstream         	m_status_message;
+	//- Lambda stuff
 	std::string					m_library_version;
 	std::string					m_config_file;
+	bool						m_has_hv_feature;
 
 /*----- PROTECTED REGION END -----*/	//	Lambda::Additional Method prototypes
 };
