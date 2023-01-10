@@ -63,22 +63,20 @@ namespace Dhyana_ns
 bool Dhyana::is_tucamVersion_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
 
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
 	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
 		{
-			return true;
+		/*----- PROTECTED REGION ID(Dhyana::tucamVersionStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	Dhyana::tucamVersionStateAllowed_READ
+			return false;
 		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
+		return true;
 	}
 	return true;
 }
@@ -92,22 +90,20 @@ bool Dhyana::is_tucamVersion_allowed(TANGO_UNUSED(Tango::AttReqType type))
 bool Dhyana::is_temperature_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
 
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
 	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::INIT ||
+			get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
 		{
-			return true;
+		/*----- PROTECTED REGION ID(Dhyana::temperatureStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	Dhyana::temperatureStateAllowed_READ
+			return false;
 		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
+		return true;
 	}
 	return true;
 }
@@ -120,22 +116,25 @@ bool Dhyana::is_temperature_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Dhyana::is_temperatureTarget_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
+	//	Not any excluded states for temperatureTarget attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::temperatureTargetStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::temperatureTargetStateAllowed_WRITE
 
-		if (get_state() == Tango::FAULT && is_device_initialized())
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::INIT ||
+			get_state()==Tango::RUNNING)
 		{
-			return true;
+		/*----- PROTECTED REGION ID(Dhyana::temperatureTargetStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	Dhyana::temperatureTargetStateAllowed_READ
+			return false;
 		}
-		//	Re-Start of Generated Code
-		return false;
+		return true;
 	}
 	return true;
 }
@@ -148,22 +147,25 @@ bool Dhyana::is_temperatureTarget_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Dhyana::is_fanSpeed_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
+	//	Not any excluded states for fanSpeed attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::fanSpeedStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::fanSpeedStateAllowed_WRITE
 
-		if (get_state() == Tango::FAULT && is_device_initialized())
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::INIT ||
+			get_state()==Tango::RUNNING)
 		{
-			return true;
+		/*----- PROTECTED REGION ID(Dhyana::fanSpeedStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	Dhyana::fanSpeedStateAllowed_READ
+			return false;
 		}
-		//	Re-Start of Generated Code
-		return false;
+		return true;
 	}
 	return true;
 }
@@ -176,22 +178,25 @@ bool Dhyana::is_fanSpeed_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Dhyana::is_globalGain_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
+	//	Not any excluded states for globalGain attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::globalGainStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::globalGainStateAllowed_WRITE
 
-		if (get_state() == Tango::FAULT && is_device_initialized())
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::INIT ||
+			get_state()==Tango::RUNNING)
 		{
-			return true;
+		/*----- PROTECTED REGION ID(Dhyana::globalGainStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	Dhyana::globalGainStateAllowed_READ
+			return false;
 		}
-		//	Re-Start of Generated Code
-		return false;
+		return true;
 	}
 	return true;
 }
@@ -205,23 +210,10 @@ bool Dhyana::is_globalGain_allowed(TANGO_UNUSED(Tango::AttReqType type))
 bool Dhyana::is_fps_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
 
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
+	//	Not any excluded states for fps attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::fpsStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::fpsStateAllowed_READ
 	return true;
 }
 
@@ -233,23 +225,15 @@ bool Dhyana::is_fps_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Dhyana::is_channel1_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
+	//	Not any excluded states for channel1 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::channel1StateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::channel1StateAllowed_WRITE
 
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
+	//	Not any excluded states for channel1 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::channel1StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::channel1StateAllowed_READ
 	return true;
 }
 
@@ -261,23 +245,15 @@ bool Dhyana::is_channel1_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Dhyana::is_channel2_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
+	//	Not any excluded states for channel2 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::channel2StateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::channel2StateAllowed_WRITE
 
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
+	//	Not any excluded states for channel2 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::channel2StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::channel2StateAllowed_READ
 	return true;
 }
 
@@ -289,23 +265,15 @@ bool Dhyana::is_channel2_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Dhyana::is_channel3_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
+	//	Not any excluded states for channel3 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::channel3StateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::channel3StateAllowed_WRITE
 
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
+	//	Not any excluded states for channel3 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::channel3StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::channel3StateAllowed_READ
 	return true;
 }
 
@@ -317,23 +285,15 @@ bool Dhyana::is_channel3_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Dhyana::is_width1_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
+	//	Not any excluded states for width1 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::width1StateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::width1StateAllowed_WRITE
 
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
+	//	Not any excluded states for width1 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::width1StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::width1StateAllowed_READ
 	return true;
 }
 
@@ -345,23 +305,15 @@ bool Dhyana::is_width1_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Dhyana::is_width2_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
+	//	Not any excluded states for width2 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::width2StateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::width2StateAllowed_WRITE
 
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
+	//	Not any excluded states for width2 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::width2StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::width2StateAllowed_READ
 	return true;
 }
 
@@ -373,23 +325,15 @@ bool Dhyana::is_width2_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Dhyana::is_width3_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
+	//	Not any excluded states for width3 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::width3StateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::width3StateAllowed_WRITE
 
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
+	//	Not any excluded states for width3 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::width3StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::width3StateAllowed_READ
 	return true;
 }
 
@@ -401,23 +345,15 @@ bool Dhyana::is_width3_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Dhyana::is_delay1_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
+	//	Not any excluded states for delay1 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::delay1StateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay1StateAllowed_WRITE
 
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
+	//	Not any excluded states for delay1 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::delay1StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay1StateAllowed_READ
 	return true;
 }
 
@@ -429,23 +365,15 @@ bool Dhyana::is_delay1_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Dhyana::is_delay2_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
+	//	Not any excluded states for delay2 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::delay2StateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay2StateAllowed_WRITE
 
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
+	//	Not any excluded states for delay2 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::delay2StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay2StateAllowed_READ
 	return true;
 }
 
@@ -457,23 +385,15 @@ bool Dhyana::is_delay2_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Dhyana::is_delay3_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
+	//	Not any excluded states for delay3 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::delay3StateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay3StateAllowed_WRITE
 
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
+	//	Not any excluded states for delay3 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::delay3StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::delay3StateAllowed_READ
 	return true;
 }
 
@@ -485,23 +405,15 @@ bool Dhyana::is_delay3_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Dhyana::is_edge1_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
+	//	Not any excluded states for edge1 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::edge1StateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::edge1StateAllowed_WRITE
 
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
+	//	Not any excluded states for edge1 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::edge1StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::edge1StateAllowed_READ
 	return true;
 }
 
@@ -513,23 +425,15 @@ bool Dhyana::is_edge1_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Dhyana::is_edge2_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
+	//	Not any excluded states for edge2 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::edge2StateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::edge2StateAllowed_WRITE
 
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
+	//	Not any excluded states for edge2 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::edge2StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::edge2StateAllowed_READ
 	return true;
 }
 
@@ -541,23 +445,15 @@ bool Dhyana::is_edge2_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Dhyana::is_edge3_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
+	//	Not any excluded states for edge3 attribute in Write access.
+	/*----- PROTECTED REGION ID(Dhyana::edge3StateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::edge3StateAllowed_WRITE
 
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
+	//	Not any excluded states for edge3 attribute in read access.
+	/*----- PROTECTED REGION ID(Dhyana::edge3StateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::edge3StateAllowed_READ
 	return true;
 }
 
