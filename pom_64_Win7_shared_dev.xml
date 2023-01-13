@@ -4,40 +4,24 @@
     <parent>
         <groupId>fr.soleil</groupId>
         <artifactId>super-pom-C-CPP-device</artifactId>
-		<version>21.3.8</version>
+		<version>21.2.5-64</version>
     </parent>
 	
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.11.0</version>
+    <version>1.12.1</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
     <description>LimaDetector device</description>
-    
-<!--    <profiles>
-        <profile>
-            <id>Windows7_x64</id>
-            <activation>
-            <os>
-                <family>windows</family>
-                <name>windows 7</name>
-            </os>
-            </activation>
-            
-			<properties>
-				<FSOpt.value></FSOpt.value>
-			</properties>
-        </profile>
-    </profiles>-->
 	
 	<properties>
-        <libs-64bits>C:\VC_12_MAVEN\LIB_VC12_64</libs-64bits>
-        
-        <YAT.version>1.18.2</YAT.version> 
-        <YAT4Tango.version>1.13.2</YAT4Tango.version> 
-        <NexusCPP.version>3.4.0</NexusCPP.version> 
-
+		<YAT.version>1.19.3</YAT.version> 
+        <YAT4Tango.version>1.13.8</YAT4Tango.version> 
+        <NexusCPP.version>3.4.1</NexusCPP.version> 
+		
+		<libs-64bits>//filer2.ica.synchrotron-soleil.fr/ica/LIB_VC12_64</libs-64bits>
+		
 		<tango-lib>${libs-64bits}\tango\win64\lib\vc12_dll\</tango-lib>
 		<tango-include>${libs-64bits}\tango\win64\include\vc12\</tango-include>
 
@@ -47,35 +31,34 @@
 		<omniorb-lib>${tango-lib}</omniorb-lib>
 		<omniorb-include>${tango-include}</omniorb-include>
 		
-		<yat-lib>${libs-64bits}\YAT-${YAT.version}\target\nar\lib\amd64-Windows-msvc\shared\</yat-lib>
-		<yat-include>${libs-64bits}\YAT-${YAT.version}\target\nar\include\</yat-include>
-
 		<log4tango-lib>${tango-lib}</log4tango-lib>
 		<log4tango-include>${tango-include}</log4tango-include>
 		
-		<yat4tango-lib>${libs-64bits}\YAT4Tango-${YAT4Tango.version}\target\nar\lib\amd64-Windows-msvc\shared\</yat4tango-lib>
-		<yat4tango-include>${libs-64bits}\YAT4Tango-${YAT4Tango.version}\target\nar\include\</yat4tango-include>
+		<yat-lib>${libs-64bits}\yat\${YAT.version}\lib\</yat-lib>
+		<yat-include>${libs-64bits}\yat\${YAT.version}\include\</yat-include>
 
-		<nexuscpp-lib>${libs-64bits}\NexusCPP-${NexusCPP.version}\target\nar\lib\amd64-Windows-msvc\shared</nexuscpp-lib>
-		<nexuscpp-include>${libs-64bits}\NexusCPP-${NexusCPP.version}\target\nar\include\</nexuscpp-include>
+		<yat4tango-lib>${libs-64bits}\yat4tango\${YAT4Tango.version}\lib\</yat4tango-lib>
+		<yat4tango-include>${libs-64bits}\yat4tango\${YAT4Tango.version}\include\</yat4tango-include>
+
+		<nexuscpp-lib>${libs-64bits}\nexuscpp\${NexusCPP.version}\lib\</nexuscpp-lib>
+		<nexuscpp-include>${libs-64bits}\nexuscpp\${NexusCPP.version}\include\</nexuscpp-include>
 		
         <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
         <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
-
-        <CORE.name>Core</CORE.name>
-        <CORE.version>1.7.10</CORE.version>
-		
-        <!-- <SIMULATOR.name>Simulator</SIMULATOR.name> -->
-        <!-- <SIMULATOR.version>1.4.0</SIMULATOR.version> -->
-
-        <PCO.name>PCO</PCO.name>
-        <PCO.version>1.8.0</PCO.version>
-		
-        <!--<HAMAMATSU.name>HAMAMATSU</HAMAMATSU.name>-->
-        <!--<HAMAMATSU.version>2.2.0</HAMAMATSU.version>-->
-
-        <!-- <DHYANA.name>DHYANA</DHYANA.name> -->
-        <!-- <DHYANA.version>1.2.0</DHYANA.version> -->
+        <LIMACORE.name>LimaCore</LIMACORE.name>
+        <LIMACORE.version>1.7.11</LIMACORE.version>
+  
+        <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
+        <HAMAMATSU.version>2.4.4</HAMAMATSU.version>
+        <PCO.name>Pco</PCO.name>
+        <PCO.version>1.9.0</PCO.version>
+		<PERKINELMER.name>PerkinElmer</PERKINELMER.name>
+        <PERKINELMER.version>1.5.0</PERKINELMER.version>
+        <SIMULATOR.name>Simulator</SIMULATOR.name>
+        <SIMULATOR.version>1.4.1</SIMULATOR.version>
+		<SPECTRUMONE.name>SpectrumOne</SPECTRUMONE.name>
+        <SPECTRUMONE.version>1.2.0</SPECTRUMONE.version>	  
+																			 
 	</properties>
 	
     <scm>
@@ -88,7 +71,7 @@
         <dependency>
             <groupId>fr.soleil.lib</groupId>
             <artifactId>LimaCore-${aol}-shared-${mode}</artifactId>
-            <version>${CORE.version}</version>
+            <version>${LIMACORE.version}</version>
         </dependency>
 		
         <!-- LimaProcesslib -->
@@ -105,18 +88,18 @@
             <!-- <version>${SIMULATOR.version}</version> -->
         <!-- </dependency> -->
 
-        <dependency>
+        <!-- <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaPco-${aol}-shared-${mode}</artifactId>
             <version>${PCO.version}</version>
-        </dependency>
-<!--
+        </dependency> -->
+
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaHamamatsu-${aol}-shared-${mode}</artifactId>
             <version>${HAMAMATSU.version}</version>
         </dependency>
--->
+
         <!-- <dependency> -->
             <!-- <groupId>fr.soleil.lib.Lima.Camera</groupId> -->
             <!-- <artifactId>LimaDhyana-${aol}-shared-${mode}</artifactId> -->
@@ -141,18 +124,23 @@
 							<!-- <include>specifics/Mask/*.cpp</include>     			 -->
                             <!-- <include>specifics/SimulatorCCD/*.cpp</include>							 -->
                             <!-- <include>specifics/Dhyana/*.cpp</include> -->
-                            <!--<include>specifics/Hamamatsu/*.cpp</include>-->
-                            <include>specifics/Pco/*.cpp</include>
+                            <include>specifics/Hamamatsu/*.cpp</include>
+                            <!-- <include>specifics/Pco/*.cpp</include> -->
+							
+<!-- 							<include>specifics/Layout/*.cpp</include>
+                            <include>specifics/RoiCounters/*.cpp</include>
+							<include>specifics/Mask/*.cpp</include> -->
                         </includes>
                         <includePaths>                          
                             <includePath>src</includePath>                                   
                             <!-- <includePath>specifics/SimulatorCCD</includePath> 		 -->
                             <!-- <includePath>specifics/Dhyana</includePath>  -->
-                            <!--<includePath>specifics/Hamamatsu</includePath>-->
-                            <includePath>specifics/Pco</includePath>
-                            <!-- <includePath>specifics/Layout</includePath>          -->
-                            <!-- <includePath>specifics/RoiCounters</includePath> -->
-							<!-- <includePath>specifics/Mask</includePath> -->
+                            <includePath>specifics/Hamamatsu</includePath>
+                            <!-- <includePath>specifics/Pco</includePath> -->
+                            
+<!-- 							<includePath>specifics/Layout</includePath>         
+                            <includePath>specifics/RoiCounters</includePath>
+							<includePath>specifics/Mask</includePath> -->
 							
 							<includePath>${yat4tango-include}</includePath>
 							<includePath>${nexuscpp-include}</includePath>
@@ -168,26 +156,27 @@
                             <define>PROJECT_VERSION=${project.version}</define>
                             <define>PROCESSLIB_NAME=${PROCESSLIB.name}</define>
                             <define>PROCESSLIB_VERSION=${PROCESSLIB.version}</define>
-                            <define>CORE_NAME=${CORE.name}</define>
-                            <define>CORE_VERSION=${CORE.version}</define>
+                            <define>LIMACORE_NAME=${LIMACORE.name}</define>
+                            <define>LIMACORE_VERSION=${LIMACORE.version}</define>
                             <!-- <define>SIMULATOR_NAME=${SIMULATOR.name}</define> -->
                             <!-- <define>SIMULATOR_VERSION=${SIMULATOR.version}</define> -->
-                            <define>PCO_NAME=${PCO.name}</define>
-                            <define>PCO_VERSION=${PCO.version}</define>
-                            <!--<define>HAMAMATSU_NAME=${HAMAMATSU.name}</define>-->
-                            <!--<define>HAMAMATSU_VERSION=${HAMAMATSU.version}</define>-->
+                            <!-- <define>PCO_NAME=${PCO.name}</define>
+                            <define>PCO_VERSION=${PCO.version}</define> -->
+                            <define>HAMAMATSU_NAME=${HAMAMATSU.name}</define>
+                            <define>HAMAMATSU_VERSION=${HAMAMATSU.version}</define>
                             <!-- <define>DHYANA_NAME=${DHYANA.name}</define> -->
                             <!-- <define>DHYANA_VERSION=${DHYANA.version}</define> -->
 
                             <!-- define which detector you need to ENABLE -->      
                             <!-- <define>SIMULATOR_ENABLED</define> 						 -->
-                            <define>PCO_ENABLED</define> 						
-                            <!--<define>HAMAMATSU_ENABLED</define>-->
+                            <!-- <define>PCO_ENABLED</define> 						 -->
+                            <define>HAMAMATSU_ENABLED</define>
                             <!-- <define>DHYANA_ENABLED</define> 					 -->
-
-                            <!-- <define>LAYOUT_ENABLED</define>		   -->
-                            <!-- <define>ROICOUNTERS_ENABLED</define>              -->
-							<!-- <define>MASK_ENABLED</define> -->
+<!-- 
+                            <define>LAYOUT_ENABLED</define>		  
+                            <define>ROICOUNTERS_ENABLED</define>             
+							<define>MASK_ENABLED</define> -->
+							
                             <define>SOLEIL_YAT_STREAM</define>
 							
                             <define>WIN32</define> 						
@@ -198,12 +187,11 @@
 							<define>TANGO_HAS_DLL</define>
 							<define>LOG4TANGO_HAS_DLL</define>
 							<define>YAT_DLL</define>
-							<define>YAT_BUILD</define>
 							<define>YAT4TANGO_DLL</define>
-							<define>YAT4TANGO_BUILD</define>
 							<define>NEXUSCPP_DLL</define>
 							<define>USE_NX_FINALIZER</define>
 							<define>UNIX_64_EL5</define>
+							<define>LINUX64_NO_CRASH_REPORT</define>
                         </defines>                        
                     </cpp>        
 					
@@ -211,14 +199,14 @@
 						<libs>
 							<!-- yat4tango 64 bits -->
 							<lib>
-								<name>YAT4Tango-amd64-Windows-msvc-shared-release-${YAT4Tango.version}</name>
+								<name>YAT4Tango-amd64-Windows-msvc12-shared-release-${YAT4Tango.version}</name>
 								<type>shared</type>
 								<directory>${yat4tango-lib}</directory>
 							</lib>
 
 							<!-- nexuscpp 64 bits -->
 							<lib>
-								<name>NexusCPP-amd64-Windows-msvc-shared-release-${NexusCPP.version}</name>
+								<name>NexusCPP-amd64-Windows-msvc12-shared-release-${NexusCPP.version}</name>
 								<type>shared</type>
 								<directory>${nexuscpp-lib}</directory>
 							</lib>
@@ -240,7 +228,7 @@
 							
 							<!-- yat 64 bits -->
 							<lib>
-								<name>YAT-amd64-Windows-msvc-shared-release-${YAT.version}</name>
+								<name>YAT-amd64-Windows-msvc12-shared-release-${YAT.version}</name>
 								<type>shared</type>
 								<directory>${yat-lib}</directory>
 							</lib>

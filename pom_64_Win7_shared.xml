@@ -16,8 +16,8 @@
     <description>LimaDetector device</description>
 	
 	<properties>
-        <YAT.version>1.19.3</YAT.version> 
-        <YAT4Tango.version>1.13.8</YAT4Tango.version> 
+        <YAT.version>1.19.5</YAT.version> 
+        <YAT4Tango.version>1.13.10</YAT4Tango.version> 
         <NexusCPP.version>3.4.1</NexusCPP.version> 
         
         <libs-64bits>//filer2.ica.synchrotron-soleil.fr/ica/LIB_VC12_64</libs-64bits>
@@ -44,21 +44,21 @@
 		<nexuscpp-include>${libs-64bits}\nexuscpp\${NexusCPP.version}\include\</nexuscpp-include>
 		
         <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
-        <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
+        <PROCESSLIB.version>1.3.10</PROCESSLIB.version>
         <LIMACORE.name>LimaCore</LIMACORE.name>
         <LIMACORE.version>1.7.11</LIMACORE.version>
 		<DHYANA.name>Dhyana</DHYANA.name>
-        <DHYANA.version>1.4.0</DHYANA.version>
+        <DHYANA.version>1.5.0</DHYANA.version>
         <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
-        <HAMAMATSU.version>2.4.4</HAMAMATSU.version>
+        <HAMAMATSU.version>2.4.5</HAMAMATSU.version>
         <PCO.name>Pco</PCO.name>
-        <PCO.version>1.9.0</PCO.version> 
+        <PCO.version>1.9.1</PCO.version>
 		<PERKINELMER.name>PerkinElmer</PERKINELMER.name>
-        <PERKINELMER.version>1.5.0</PERKINELMER.version>
+        <PERKINELMER.version>1.5.1</PERKINELMER.version>
         <SIMULATOR.name>Simulator</SIMULATOR.name>
-        <SIMULATOR.version>1.4.1</SIMULATOR.version>
+        <SIMULATOR.version>1.4.2</SIMULATOR.version>
 		<SPECTRUMONE.name>SpectrumOne</SPECTRUMONE.name>
-        <SPECTRUMONE.version>1.2.0</SPECTRUMONE.version> 
+        <SPECTRUMONE.version>1.2.1</SPECTRUMONE.version>
         
 	</properties>
 	
@@ -117,7 +117,7 @@
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaSpectrumOne-${aol}-shared-${mode}</artifactId>
             <version>${SPECTRUMONE.version}</version>
-        </dependency> 
+        </dependency>
     </dependencies>
         
     <build>
@@ -135,9 +135,10 @@
                             <include>specifics/SimulatorCCD/*.cpp</include>
                             <include>specifics/Dhyana/*.cpp</include>
                             <include>specifics/Hamamatsu/*.cpp</include>
-                            <include>specifics/Pco/*.cpp</include> 
+                            <include>specifics/Pco/*.cpp</include>
 							<include>specifics/PerkinElmer/*.cpp</include>
-							<include>specifics/SpectrumOneCCD/*.cpp</include> 
+							<include>specifics/SpectrumOneCCD/*.cpp</include>
+                            
                             <include>specifics/Layout/*.cpp</include>
                             <include>specifics/RoiCounters/*.cpp</include>
 							<include>specifics/Mask/*.cpp</include>
@@ -147,7 +148,7 @@
                             <includePath>specifics/SimulatorCCD</includePath>
                             <includePath>specifics/Dhyana</includePath>
                             <includePath>specifics/Hamamatsu</includePath>
-                            <includePath>specifics/Pco</includePath> 
+                            <includePath>specifics/Pco</includePath>
 							<includePath>specifics/PerkinElmer</includePath>
 							<includePath>specifics/SpectrumOneCCD</includePath>
                             
@@ -210,6 +211,7 @@
 							<define>USE_NX_FINALIZER</define>
 							<define>UNIX_64_EL5</define>
 							<define>LINUX64_NO_CRASH_REPORT</define>
+							<define>WITHOUT_GSL</define>
                         </defines>                        
                     </cpp>        
 					

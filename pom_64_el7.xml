@@ -9,7 +9,7 @@
     
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.12.0</version>
+    <version>1.12.1</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -22,13 +22,13 @@
         <libs-lambda>../../../camera/lambda/sdk/bin</libs-lambda>
 
         <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
-        <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
+        <PROCESSLIB.version>1.3.10</PROCESSLIB.version>
         <LIMACORE.name>LimaCore</LIMACORE.name>
-        <LIMACORE.version>1.7.9</LIMACORE.version>
+        <LIMACORE.version>1.7.11</LIMACORE.version>
         <SIMULATOR.name>Simulator</SIMULATOR.name>
-        <SIMULATOR.version>1.4.0</SIMULATOR.version>
+        <SIMULATOR.version>1.4.2</SIMULATOR.version>
 		<LAMBDA.name>Lambda</LAMBDA.name>
-        <LAMBDA.version>2.0.0</LAMBDA.version>
+        <LAMBDA.version>2.0.1</LAMBDA.version>
 
         <YAT.version>1.18.5</YAT.version> 
         <YAT4Tango.version>1.13.2</YAT4Tango.version> 
@@ -126,7 +126,8 @@
                             <define>LINUX64_NO_CRASH_REPORT</define>
 							<define>UNIX_64_EL7</define>
                             <define>__LINUX__</define>
-                            <define>linux</define>                            
+                            <define>linux</define>
+							<define>WITHOUT_GSL</define>							
                         </defines>                        
                     </cpp>        
                     
@@ -250,18 +251,16 @@
                                 <directory>${libs-64bits}/nexuscpp-${NexusCPP.version}/lib</directory>
                             </lib>   
                             
-                            <lib>
-                                <!-- gsl (1.11) 64-->
+                            <!-- <lib>
                                 <name>gsl</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/gsl-1.15-13.el7.x86_64/lib/</directory>
                             </lib>
                             <lib>
-                                <!-- gsl (1.11) 64-->
                                 <name>gslcblas</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/gsl-1.15-13.el7.x86_64/lib/</directory>
-                            </lib>							
+                            </lib>							 -->
                         </libs>
                     </linker>
 

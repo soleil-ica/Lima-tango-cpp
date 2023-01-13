@@ -9,7 +9,7 @@
     
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.12.0</version>
+    <version>1.12.1</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -17,31 +17,31 @@
  
     <properties>
         <!-- path to the 64 bits libs -->
-        <libs-64bits>/home/informatique/ica/ica/LIB_EL6_64</libs-64bits>
-		<libs-ufxc-decode>../../../camera/ufxc/UFXC-LIB/UFXCLib/sdk</libs-ufxc-decode>
+        <libs-64bits>/home/informatique/ica/ica/LIB_EL6_64</libs-64bits> 
+		<libs-ufxc-decode>${libs-64bits}/UFXC-images-decoding/1.2.0</libs-ufxc-decode>
 		
-
         <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
-        <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
+        <PROCESSLIB.version>1.3.10</PROCESSLIB.version>
         <LIMACORE.name>LimaCore</LIMACORE.name>
-        <LIMACORE.version>1.7.10</LIMACORE.version>
+        <LIMACORE.version>1.7.11</LIMACORE.version>
       
         <EIGER.name>Eiger</EIGER.name>
-        <EIGER.version>2.3.1</EIGER.version>
+        <EIGER.version>2.3.2</EIGER.version>
         <SIMULATOR.name>Simulator</SIMULATOR.name>
-        <SIMULATOR.version>1.4.1</SIMULATOR.version>
+        <SIMULATOR.version>1.4.2</SIMULATOR.version>
         <SLSJUNGFRAU.name>SlsJungfrau</SLSJUNGFRAU.name>
-        <SLSJUNGFRAU.version>1.2.1</SLSJUNGFRAU.version>
+        <SLSJUNGFRAU.version>1.2.2</SLSJUNGFRAU.version>
         <SLSEIGER.name>SlsEiger</SLSEIGER.name>
-        <SLSEIGER.version>1.0.2</SLSEIGER.version>
+        <SLSEIGER.version>1.0.3</SLSEIGER.version>
         <UFXC.name>Ufxc</UFXC.name>
-        <UFXC.version>2.0.3</UFXC.version>    
+        <UFXC.version>2.0.4</UFXC.version>    
         <SPECTRAL.name>SpectralInstrument</SPECTRAL.name>
-        <SPECTRAL.version>1.1.0</SPECTRAL.version>   
+        <SPECTRAL.version>1.1.1</SPECTRAL.version>   
 
-        <YAT.version>1.18.6</YAT.version> 
-        <YAT4Tango.version>1.13.3</YAT4Tango.version> 
-        <NexusCPP.version>3.4.0</NexusCPP.version> 
+        <YAT.version>1.19.5</YAT.version> 
+        <YAT4Tango.version>1.13.10</YAT4Tango.version> 
+        <NexusCPP.version>3.4.1</NexusCPP.version> 
+
     </properties>
 
     <scm>
@@ -126,16 +126,16 @@
                             <includePath>specifics/RoiCounters</includePath>
 
                             <includePath>${libs-64bits}/my_breakpad/include</includePath>         
-                            <includePath>${libs-64bits}/gsl-1.11/include</includePath>       
+                            <!-- <includePath>${libs-64bits}/gsl-1.11/include</includePath>        -->
                             <includePath>${libs-64bits}/lz4-r131/lib</includePath>   
 							
                             <includePath>${libs-64bits}/libtango9-9.2.5-64/include/tango</includePath> 
                             <includePath>${libs-64bits}/libtango9-9.2.5-64/include/</includePath>    
 
                             <includePath>${libs-64bits}/hdf5-1.8.16/include</includePath>
-                            <includePath>${libs-64bits}/yat-${YAT.version}/include</includePath>
-                            <includePath>${libs-64bits}/yat4tango-${YAT4Tango.version}/include</includePath>
-                            <includePath>${libs-64bits}/nexuscpp-${NexusCPP.version}/include</includePath>        
+                            <includePath>${libs-64bits}/yat/${YAT.version}/include</includePath>
+                            <includePath>${libs-64bits}/yat4tango/${YAT4Tango.version}/include</includePath>
+                            <includePath>${libs-64bits}/nexuscpp/${NexusCPP.version}/include</includePath>        
 							
 							<includePath>${libs-ufxc-decode}/include/</includePath>
 							
@@ -176,7 +176,8 @@
                             <define>SOLEIL_YAT_STREAM</define>
                             <define>UNIX_64_EL6</define>
                             <define>__LINUX__</define>
-                            <define>linux</define>                            
+                            <define>linux</define>        
+							<define>WITHOUT_GSL</define>							
                         </defines>    
                     </cpp>        
                     
@@ -284,35 +285,33 @@
                                 <!-- YAT 64 -->
                                 <name>YAT-amd64-Linux-gcc-shared-release-${YAT.version}</name>
                                 <type>shared</type>
-                                <directory>${libs-64bits}/yat-${YAT.version}/lib</directory>
+                                <directory>${libs-64bits}/yat/${YAT.version}/lib</directory>
                             </lib>
 
                             <lib>
                                 <!-- YAT4Tango 64 -->
                                 <name>YAT4Tango-amd64-Linux-gcc-shared-release-${YAT4Tango.version}</name>
                                 <type>shared</type>
-                                <directory>${libs-64bits}/yat4tango-${YAT4Tango.version}/lib</directory>
+                                <directory>${libs-64bits}/yat4tango/${YAT4Tango.version}/lib</directory>
                             </lib>      
 
                             <lib>
                                 <!-- NexusCPP 64 -->
                                 <name>NexusCPP-amd64-Linux-gcc-shared-release-${NexusCPP.version}</name>
                                 <type>shared</type>
-                                <directory>${libs-64bits}/nexuscpp-${NexusCPP.version}/lib</directory>
+                                <directory>${libs-64bits}/nexuscpp/${NexusCPP.version}/lib</directory>
                             </lib>   
                             
-                            <lib>
-                                <!-- gsl (1.11) 64-->
+                            <!-- <lib>
                                 <name>gsl</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/gsl-1.11/lib/</directory>
                             </lib>
                             <lib>
-                                <!-- gsl (1.11) 64-->
                                 <name>gslcblas</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/gsl-1.11/lib/</directory>
-                            </lib>
+                            </lib> -->
 							<lib>
                                 <name>UfxcDecode-amd64-Linux-gcc-shared-release-1.2.0</name>
                                 <type>shared</type>
