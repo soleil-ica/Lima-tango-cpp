@@ -93,7 +93,7 @@
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaPco-${aol}-shared-${mode}</artifactId>
             <version>${PCO.version}</version>
-        </dependency> -->
+        </dependency>
 		
 		<dependency>
 			<groupId>fr.soleil.lib.Lima.Camera</groupId>
