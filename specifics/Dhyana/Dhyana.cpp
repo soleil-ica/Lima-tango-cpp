@@ -2031,7 +2031,6 @@ void Dhyana::write_edge3(Tango::WAttribute &attr)
 	try
 	{
 		attr_edge3_write = w_val;
-		
 		switch (attr_edge3_write)
 		{
 		case EdgeMode::kFAILING:
