@@ -744,7 +744,7 @@ void Dhyana::write_fanSpeed(Tango::WAttribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
-		attr.get_write_value(attr_fanSpeed_write);
+		attr_fanSpeed_write = w_val;
 		m_camera->setFanSpeed(attr_fanSpeed_write);
 		yat4tango::PropertyHelper::set_property(this, "MemorizedFanSpeed", attr_fanSpeed_write);
 	}
@@ -830,7 +830,7 @@ void Dhyana::write_globalGain(Tango::WAttribute &attr)
 	try
 	{
 		m_global_gain = *attr_globalGain_read;//memorize previous valid value
-		attr.get_write_value(attr_globalGain_write);
+		attr_globalGain_write = w_val;
 		std::string current = attr_globalGain_write;
 		transform(current.begin(), current.end(), current.begin(), ::toupper);
 		if((current != "LOW") &&
@@ -989,7 +989,7 @@ void Dhyana::write_channel1(Tango::WAttribute &attr)
 
 	try
 	{
-		attr.get_write_value(attr_channel1_write);
+		attr_channel1_write = w_val;
 
 		switch (attr_channel1_write)
 		{
@@ -1102,7 +1102,7 @@ void Dhyana::write_channel2(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(Dhyana::write_channel2) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_channel2_write);
+		attr_channel2_write = w_val;
 
 		switch (attr_channel2_write)
 		{
@@ -1216,7 +1216,7 @@ void Dhyana::write_channel3(Tango::WAttribute &attr)
 
 	try
 	{
-		attr.get_write_value(attr_channel3_write);
+		attr_channel3_write = w_val;
 
 		switch (attr_channel3_write)
 		{
@@ -1312,7 +1312,7 @@ void Dhyana::write_width1(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(Dhyana::write_width1) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_width1_write);
+		attr_width1_write = w_val;
 		m_width_ch1 = (double)attr_width1_write;
 		m_camera->setOutputSignal(CHANNEL_1, m_signal1, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch1, m_delay_ch1, m_width_ch1);
 	}
@@ -1393,7 +1393,7 @@ void Dhyana::write_width2(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(Dhyana::write_width2) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_width2_write);
+		attr_width2_write = w_val;
 		m_width_ch2 = (double)attr_width2_write;
 		m_camera->setOutputSignal(CHANNEL_2, m_signal2, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch2, m_delay_ch2, m_width_ch2);
 	}
@@ -1475,7 +1475,7 @@ void Dhyana::write_width3(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(Dhyana::write_width3) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_width3_write);
+		attr_width3_write = w_val;
 		m_width_ch3 = (double)attr_width3_write;
 		m_camera->setOutputSignal(CHANNEL_3, m_signal3, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch3, m_delay_ch3, m_width_ch3);
 	}
@@ -1557,7 +1557,7 @@ void Dhyana::write_delay1(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(Dhyana::write_delay1) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_delay1_write);
+		attr_delay1_write = w_val;
 		m_delay_ch1 = (double)attr_delay1_write;
 		m_camera->setOutputSignal(CHANNEL_1, m_signal1, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch1, m_delay_ch1, m_width_ch1);
 	}
@@ -1639,7 +1639,7 @@ void Dhyana::write_delay2(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(Dhyana::write_delay2) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_delay2_write);
+		attr_delay2_write = w_val;
 		m_delay_ch2 = (double)attr_delay2_write;
 		m_camera->setOutputSignal(CHANNEL_2, m_signal2, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch2, m_delay_ch2, m_width_ch2);
 	}
@@ -1721,7 +1721,7 @@ void Dhyana::write_delay3(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(Dhyana::write_delay3) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_delay3_write);
+		attr_delay3_write = w_val;
 		m_delay_ch3 = (double)attr_delay3_write;
 		m_camera->setOutputSignal(CHANNEL_3, m_signal3, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch3, m_delay_ch3, m_width_ch3);
 	}
@@ -1818,7 +1818,7 @@ void Dhyana::write_edge1(Tango::WAttribute &attr)
 	
 	try
 	{
-		attr.get_write_value(attr_edge1_write);
+		attr_edge1_write = w_val;
 
 		switch (attr_edge1_write)
 		{
@@ -1923,7 +1923,7 @@ void Dhyana::write_edge2(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(Dhyana::write_edge2) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_edge2_write);
+		attr_edge2_write = w_val;
 
 		switch (attr_edge2_write)
 		{
@@ -2030,8 +2030,8 @@ void Dhyana::write_edge3(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(Dhyana::write_edge3) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_edge3_write);
-
+		attr_edge3_write = w_val;
+		
 		switch (attr_edge3_write)
 		{
 		case EdgeMode::kFAILING:
