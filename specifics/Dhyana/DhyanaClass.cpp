@@ -350,6 +350,32 @@ void DhyanaClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 	/*----- PROTECTED REGION ID(DhyanaClass::device_factory_before) ENABLED START -----*/
 	
 	//	Add your own code
+
+	//	Create devices and add it into the device list
+	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
+	{
+		cout4 << "Device name : " << (*devlist_ptr)[i].in() << endl;
+		device_list.push_back(new Dhyana(this, (*devlist_ptr)[i]));
+	}
+
+	//	Manage dynamic attributes if any
+	//erase_dynamic_attributes(devlist_ptr, get_class_attr()->get_attr_list());
+
+	//	Export devices to the outside world
+	for (unsigned long i=1 ; i<=devlist_ptr->length() ; i++)
+	{
+		//	Add dynamic attributes if any
+		Dhyana *dev = static_cast<Dhyana *>(device_list[device_list.size()-i]);
+		dev->add_dynamic_attributes();
+
+		//	Check before if database used.
+		if ((Tango::Util::_UseDb == true) && (Tango::Util::_FileDb == false))
+			export_device(dev);
+		else
+			export_device(dev, dev->get_name().c_str());
+	}
+
+	return;
 	
 	/*----- PROTECTED REGION END -----*/	//	DhyanaClass::device_factory_before
 
