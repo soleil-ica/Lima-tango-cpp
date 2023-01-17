@@ -194,7 +194,26 @@ void Dhyana::init_device()
 
 	//	Get the device properties from database
 	get_device_property();
+
 	
+	
+	// Define the labels of the DevEnum attributes
+	CREATE_SCALAR_ATTRIBUTE(attr_channel1_read, (channel1Enum)TriggeroutMode::kEXPOSURESTART);
+	CREATE_SCALAR_ATTRIBUTE(attr_channel2_read,(channel2Enum)TriggeroutMode::kEXPOSURESTART);
+	CREATE_SCALAR_ATTRIBUTE(attr_channel3_read, (channel3Enum)TriggeroutMode::kEXPOSURESTART);
+
+
+	CREATE_SCALAR_ATTRIBUTE(attr_width1_read, 5.0);
+	CREATE_SCALAR_ATTRIBUTE(attr_width2_read, 5.0);
+	CREATE_SCALAR_ATTRIBUTE(attr_width3_read, 5.0);
+	CREATE_SCALAR_ATTRIBUTE(attr_delay1_read, 0.0);
+	CREATE_SCALAR_ATTRIBUTE(attr_delay2_read, 0.0);
+	CREATE_SCALAR_ATTRIBUTE(attr_delay3_read, 0.0);
+
+	// Define the labels of the DevEnum attributes
+	CREATE_SCALAR_ATTRIBUTE(attr_edge1_read, (edge1Enum)EdgeMode::kRISING);
+	CREATE_SCALAR_ATTRIBUTE(attr_edge2_read, (edge2Enum)EdgeMode::kRISING);
+	CREATE_SCALAR_ATTRIBUTE(attr_edge3_read, (edge3Enum)EdgeMode::kRISING);
 	/*----- PROTECTED REGION ID(Dhyana::init_device) ENABLED START -----*/
 
 	Tango::Attribute &triggerout1 = get_device_attr()->get_attr_by_name("channel1");
