@@ -172,7 +172,18 @@ void Dhyana::delete_device()
 	//}
 
 	/*----- PROTECTED REGION END -----*/	//	Dhyana::delete_device
-
+	delete[] attr_channel1_read;
+	delete[] attr_channel2_read;
+	delete[] attr_channel3_read;
+	delete[] attr_width1_read;
+	delete[] attr_width2_read;
+	delete[] attr_width3_read;
+	delete[] attr_delay1_read;
+	delete[] attr_delay2_read;
+	delete[] attr_delay3_read;
+	delete[] attr_edge1_read;
+	delete[] attr_edge2_read;
+	delete[] attr_edge3_read;
 }
 
 //--------------------------------------------------------
@@ -194,26 +205,19 @@ void Dhyana::init_device()
 
 	//	Get the device properties from database
 	get_device_property();
-
 	
-	
-	// Define the labels of the DevEnum attributes
-	CREATE_SCALAR_ATTRIBUTE(attr_channel1_read, (channel1Enum)TriggeroutMode::kEXPOSURESTART);
-	CREATE_SCALAR_ATTRIBUTE(attr_channel2_read,(channel2Enum)TriggeroutMode::kEXPOSURESTART);
-	CREATE_SCALAR_ATTRIBUTE(attr_channel3_read, (channel3Enum)TriggeroutMode::kEXPOSURESTART);
-
-
-	CREATE_SCALAR_ATTRIBUTE(attr_width1_read, 5.0);
-	CREATE_SCALAR_ATTRIBUTE(attr_width2_read, 5.0);
-	CREATE_SCALAR_ATTRIBUTE(attr_width3_read, 5.0);
-	CREATE_SCALAR_ATTRIBUTE(attr_delay1_read, 0.0);
-	CREATE_SCALAR_ATTRIBUTE(attr_delay2_read, 0.0);
-	CREATE_SCALAR_ATTRIBUTE(attr_delay3_read, 0.0);
-
-	// Define the labels of the DevEnum attributes
-	CREATE_SCALAR_ATTRIBUTE(attr_edge1_read, (edge1Enum)EdgeMode::kRISING);
-	CREATE_SCALAR_ATTRIBUTE(attr_edge2_read, (edge2Enum)EdgeMode::kRISING);
-	CREATE_SCALAR_ATTRIBUTE(attr_edge3_read, (edge3Enum)EdgeMode::kRISING);
+	attr_channel1_read = new channel1Enum[1];
+	attr_channel2_read = new channel2Enum[1];
+	attr_channel3_read = new channel3Enum[1];
+	attr_width1_read = new Tango::DevDouble[1];
+	attr_width2_read = new Tango::DevDouble[1];
+	attr_width3_read = new Tango::DevDouble[1];
+	attr_delay1_read = new Tango::DevDouble[1];
+	attr_delay2_read = new Tango::DevDouble[1];
+	attr_delay3_read = new Tango::DevDouble[1];
+	attr_edge1_read = new edge1Enum[1];
+	attr_edge2_read = new edge2Enum[1];
+	attr_edge3_read = new edge3Enum[1];
 	/*----- PROTECTED REGION ID(Dhyana::init_device) ENABLED START -----*/
 
 	Tango::Attribute &triggerout1 = get_device_attr()->get_attr_by_name("channel1");
@@ -460,7 +464,7 @@ void Dhyana::get_device_property()
 //--------------------------------------------------------
 void Dhyana::always_executed_hook()
 {
-	//DEBUG_STREAM << "Dhyana::always_executed_hook()  " << device_name << endl;
+	DEBUG_STREAM << "Dhyana::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -510,7 +514,7 @@ void Dhyana::always_executed_hook()
 //--------------------------------------------------------
 void Dhyana::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	//DEBUG_STREAM << "Dhyana::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	DEBUG_STREAM << "Dhyana::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Dhyana::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -526,7 +530,7 @@ void Dhyana::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void Dhyana::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	//DEBUG_STREAM << "Dhyana::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	DEBUG_STREAM << "Dhyana::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Dhyana::write_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
