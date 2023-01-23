@@ -82,27 +82,27 @@ using namespace yat4tango;
 
 namespace Dhyana_ns
 {
-enum _channel1Enum {
+enum _channel1Enum :short {
 } ;
 typedef _channel1Enum channel1Enum;
 
-enum _channel2Enum {
+enum _channel2Enum :short {
 } ;
 typedef _channel2Enum channel2Enum;
 
-enum _channel3Enum {
+enum _channel3Enum :short {
 } ;
 typedef _channel3Enum channel3Enum;
 
-enum _edge1Enum {
+enum _edge1Enum : short {
 } ;
 typedef _edge1Enum edge1Enum;
 
-enum _edge2Enum {
+enum _edge2Enum :short {
 } ;
 typedef _edge2Enum edge2Enum;
 
-enum _edge3Enum {
+enum _edge3Enum :short {
 } ;
 typedef _edge3Enum edge3Enum;
 
