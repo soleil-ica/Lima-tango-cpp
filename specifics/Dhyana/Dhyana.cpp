@@ -172,9 +172,6 @@ void Dhyana::delete_device()
 	//}
 
 	/*----- PROTECTED REGION END -----*/	//	Dhyana::delete_device
-	
-
-
 }
 
 //--------------------------------------------------------
@@ -189,15 +186,8 @@ void Dhyana::init_device()
 	/*----- PROTECTED REGION ID(Dhyana::init_device_before) ENABLED START -----*/
 	
 	//	Initialization before get_device_property() call
-	
 
-	/*----- PROTECTED REGION END -----*/	//	Dhyana::init_device_before
-	
-
-	//	Get the device properties from database
-	get_device_property();
-	
-    // Define the labels of the DevEnum attributes
+	// Define the labels of the DevEnum attributes
 	CREATE_SCALAR_ATTRIBUTE(attr_channel1_read, (channel1Enum)TriggeroutMode::kEXPOSURESTART);
 	CREATE_SCALAR_ATTRIBUTE(attr_channel2_read,(channel2Enum)TriggeroutMode::kEXPOSURESTART);
 	CREATE_SCALAR_ATTRIBUTE(attr_channel3_read, (channel3Enum)TriggeroutMode::kEXPOSURESTART);
@@ -214,6 +204,23 @@ void Dhyana::init_device()
 	CREATE_SCALAR_ATTRIBUTE(attr_edge1_read, (edge1Enum)EdgeMode::kRISING);
 	CREATE_SCALAR_ATTRIBUTE(attr_edge2_read, (edge2Enum)EdgeMode::kRISING);
 	CREATE_SCALAR_ATTRIBUTE(attr_edge3_read, (edge3Enum)EdgeMode::kRISING);
+
+	//	Initialize device
+
+	CREATE_DEVSTRING_ATTRIBUTE(attr_tucamVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
+	CREATE_DEVSTRING_ATTRIBUTE(attr_globalGain_read, MAX_ATTRIBUTE_STRING_LENGTH);
+	CREATE_SCALAR_ATTRIBUTE(attr_temperatureTarget_read, 0.0);
+	CREATE_SCALAR_ATTRIBUTE(attr_temperature_read, 0.0);
+	CREATE_SCALAR_ATTRIBUTE(attr_fanSpeed_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_fps_read);
+	
+
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::init_device_before
+	
+
+	//	Get the device properties from database
+	get_device_property();
+	
 	/*----- PROTECTED REGION ID(Dhyana::init_device) ENABLED START -----*/
 
 	Tango::Attribute &triggerout1 = get_device_attr()->get_attr_by_name("channel1");
@@ -262,16 +269,6 @@ void Dhyana::init_device()
 	multi_prop_edgeout3.enum_labels = {"Rising", "Failing"};
 	edgeout3.set_properties(multi_prop_edgeout3);
 
-	//	Initialize device
-
-	CREATE_DEVSTRING_ATTRIBUTE(attr_tucamVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
-	CREATE_DEVSTRING_ATTRIBUTE(attr_globalGain_read, MAX_ATTRIBUTE_STRING_LENGTH);
-	CREATE_SCALAR_ATTRIBUTE(attr_temperatureTarget_read, 0.0);
-	CREATE_SCALAR_ATTRIBUTE(attr_temperature_read, 0.0);
-	CREATE_SCALAR_ATTRIBUTE(attr_fanSpeed_read);
-	CREATE_SCALAR_ATTRIBUTE(attr_fps_read);
-
-
 	m_is_device_initialized = false;
 	set_state(Tango::INIT);
 	m_status_message.str("");
@@ -314,7 +311,7 @@ void Dhyana::init_device()
 	{
 		INFO_STREAM << "Write tango hardware at Init - temperatureTarget." << endl;
 		Tango::WAttribute &temperatureTarget = dev_attr->get_w_attr_by_name("temperatureTarget");
-		*attr_temperatureTarget_read = memorizedTemperatureTarget;
+		*attr_temperatureTarget_read = temperatureTargetAtInit;
 		temperatureTarget.set_write_value(*attr_temperatureTarget_read);
 		write_temperatureTarget(temperatureTarget);
 
@@ -377,7 +374,7 @@ void Dhyana::get_device_property()
 
 	//	Read device properties from database.
 	Tango::DbData	dev_prop;
-	dev_prop.push_back(Tango::DbDatum("MemorizedTemperatureTarget"));
+	dev_prop.push_back(Tango::DbDatum("TemperatureTargetAtInit"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedFanSpeed"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedGlobalGain"));
 	dev_prop.push_back(Tango::DbDatum("__ExpertTimerPeriod"));
@@ -395,16 +392,16 @@ void Dhyana::get_device_property()
 			(static_cast<DhyanaClass *>(get_device_class()));
 		int	i = -1;
 
-		//	Try to initialize MemorizedTemperatureTarget from class property
+		//	Try to initialize TemperatureTargetAtInit from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedTemperatureTarget;
+		if (cl_prop.is_empty()==false)	cl_prop  >>  temperatureTargetAtInit;
 		else {
-			//	Try to initialize MemorizedTemperatureTarget from default device value
+			//	Try to initialize TemperatureTargetAtInit from default device value
 			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  memorizedTemperatureTarget;
+			if (def_prop.is_empty()==false)	def_prop  >>  temperatureTargetAtInit;
 		}
-		//	And try to extract MemorizedTemperatureTarget value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedTemperatureTarget;
+		//	And try to extract TemperatureTargetAtInit value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  temperatureTargetAtInit;
 
 		//	Try to initialize MemorizedFanSpeed from class property
 		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -444,7 +441,7 @@ void Dhyana::get_device_property()
 	/*----- PROTECTED REGION ID(Dhyana::get_device_property_after) ENABLED START -----*/
 	
 	//	Check device property data members init
-	PropertyHelper::create_property_if_empty(this, dev_prop,"0","MemorizedTemperatureTarget");	
+	PropertyHelper::create_property_if_empty(this, dev_prop,"15","TemperatureTargetAtInit");	
 	PropertyHelper::create_property_if_empty(this, dev_prop,"1","MemorizedFanSpeed");	
 	PropertyHelper::create_property_if_empty(this, dev_prop,"LOW","MemorizedGlobalGain");	
 	PropertyHelper::create_property_if_empty(this, dev_prop,"1","__ExpertTimerPeriod");
@@ -460,7 +457,7 @@ void Dhyana::get_device_property()
 //--------------------------------------------------------
 void Dhyana::always_executed_hook()
 {
-	DEBUG_STREAM << "Dhyana::always_executed_hook()  " << device_name << endl;
+	//DEBUG_STREAM << "Dhyana::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -671,14 +668,16 @@ void Dhyana::write_temperatureTarget(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_temperatureTarget(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_temperatureTarget) ENABLED START -----*/
 	// the variable w_val will not be used !
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
-		attr.get_write_value(attr_temperatureTarget_write);
+		attr_temperatureTarget_write = w_val;
 		m_camera->setTemperatureTarget(attr_temperatureTarget_write);
-		yat4tango::PropertyHelper::set_property(this, "MemorizedTemperatureTarget", attr_temperatureTarget_write);
+		//yat4tango::PropertyHelper::set_property(this, "MemorizedTemperatureTarget", attr_temperatureTarget_write);
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -754,12 +753,14 @@ void Dhyana::write_fanSpeed(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_fanSpeed(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	Tango::DevUShort	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_fanSpeed) ENABLED START -----*/
 	// the variable w_val will not be used !
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
-		attr.get_write_value(attr_fanSpeed_write);
+		attr_fanSpeed_write = w_val;
 		m_camera->setFanSpeed(attr_fanSpeed_write);
 		yat4tango::PropertyHelper::set_property(this, "MemorizedFanSpeed", attr_fanSpeed_write);
 	}
@@ -837,13 +838,15 @@ void Dhyana::write_globalGain(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_globalGain(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	Tango::DevString	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_globalGain) ENABLED START -----*/
 	// the variable w_val will not be used !
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
 		m_global_gain = *attr_globalGain_read;//memorize previous valid value
-		attr.get_write_value(attr_globalGain_write);
+		attr_globalGain_write = w_val;
 		std::string current = attr_globalGain_write;
 		transform(current.begin(), current.end(), current.begin(), ::toupper);
 		if((current != "LOW") &&
@@ -996,11 +999,13 @@ void Dhyana::write_channel1(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_channel1(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	channel1Enum	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_channel1) ENABLED START -----*/
 
 	try
 	{
-		attr.get_write_value(attr_channel1_write);
+		attr_channel1_write = w_val;
 
 		switch (attr_channel1_write)
 		{
@@ -1108,10 +1113,12 @@ void Dhyana::write_channel2(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_channel2(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	channel2Enum	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_channel2) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_channel2_write);
+		attr_channel2_write = w_val;
 
 		switch (attr_channel2_write)
 		{
@@ -1219,11 +1226,13 @@ void Dhyana::write_channel3(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_channel3(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	channel3Enum	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_channel3) ENABLED START -----*/
 
 	try
 	{
-		attr.get_write_value(attr_channel3_write);
+		attr_channel3_write = w_val;
 
 		switch (attr_channel3_write)
 		{
@@ -1314,10 +1323,12 @@ void Dhyana::write_width1(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_width1(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_width1) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_width1_write);
+		attr_width1_write = w_val;
 		m_width_ch1 = (double)attr_width1_write;
 		m_camera->setOutputSignal(CHANNEL_1, m_signal1, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch1, m_delay_ch1, m_width_ch1);
 	}
@@ -1393,10 +1404,12 @@ void Dhyana::write_width2(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_width2(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_width2) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_width2_write);
+		attr_width2_write = w_val;
 		m_width_ch2 = (double)attr_width2_write;
 		m_camera->setOutputSignal(CHANNEL_2, m_signal2, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch2, m_delay_ch2, m_width_ch2);
 	}
@@ -1473,10 +1486,12 @@ void Dhyana::write_width3(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_width3(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_width3) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_width3_write);
+		attr_width3_write = w_val;
 		m_width_ch3 = (double)attr_width3_write;
 		m_camera->setOutputSignal(CHANNEL_3, m_signal3, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch3, m_delay_ch3, m_width_ch3);
 	}
@@ -1553,10 +1568,12 @@ void Dhyana::write_delay1(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_delay1(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_delay1) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_delay1_write);
+		attr_delay1_write = w_val;
 		m_delay_ch1 = (double)attr_delay1_write;
 		m_camera->setOutputSignal(CHANNEL_1, m_signal1, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch1, m_delay_ch1, m_width_ch1);
 	}
@@ -1633,10 +1650,12 @@ void Dhyana::write_delay2(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_delay2(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_delay2) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_delay2_write);
+		attr_delay2_write = w_val;
 		m_delay_ch2 = (double)attr_delay2_write;
 		m_camera->setOutputSignal(CHANNEL_2, m_signal2, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch2, m_delay_ch2, m_width_ch2);
 	}
@@ -1713,10 +1732,12 @@ void Dhyana::write_delay3(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_delay3(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_delay3) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_delay3_write);
+		attr_delay3_write = w_val;
 		m_delay_ch3 = (double)attr_delay3_write;
 		m_camera->setOutputSignal(CHANNEL_3, m_signal3, (lima::Dhyana::Camera::TucamSignalEdge)m_edge_ch3, m_delay_ch3, m_width_ch3);
 	}
@@ -1807,11 +1828,13 @@ void Dhyana::write_edge1(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_edge1(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	edge1Enum	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_edge1) ENABLED START -----*/
 	
 	try
 	{
-		attr.get_write_value(attr_edge1_write);
+		attr_edge1_write = w_val;
 
 		switch (attr_edge1_write)
 		{
@@ -1911,10 +1934,12 @@ void Dhyana::write_edge2(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_edge2(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	edge2Enum	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_edge2) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_edge2_write);
+		attr_edge2_write = w_val;
 
 		switch (attr_edge2_write)
 		{
@@ -2016,11 +2041,12 @@ void Dhyana::write_edge3(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "Dhyana::write_edge3(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
+	edge3Enum	w_val;
+	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Dhyana::write_edge3) ENABLED START -----*/
 	try
 	{
-		attr.get_write_value(attr_edge3_write);
-
+		attr_edge3_write = w_val;
 		switch (attr_edge3_write)
 		{
 		case EdgeMode::kFAILING:
@@ -2112,7 +2138,7 @@ Tango::DevState Dhyana::dev_state()
 	/*----- PROTECTED REGION END -----*/	//	Dhyana::dev_state
 	set_state(argout);    // Give the state to Tango.
 	if (argout!=Tango::ALARM)
-		DeviceImpl::dev_state();
+		Tango::DeviceImpl::dev_state();
 	return get_state();  // Return it after Tango management.
 }
 //--------------------------------------------------------

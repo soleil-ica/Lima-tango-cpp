@@ -82,33 +82,27 @@ using namespace yat4tango;
 
 namespace Dhyana_ns
 {
-enum _channel1Enum : short
-{
+enum _channel1Enum {
 } ;
 typedef _channel1Enum channel1Enum;
 
-enum _channel2Enum : short
-{
+enum _channel2Enum {
 } ;
 typedef _channel2Enum channel2Enum;
 
-enum _channel3Enum : short
-{
+enum _channel3Enum {
 } ;
 typedef _channel3Enum channel3Enum;
 
-enum _edge1Enum : short
-{
+enum _edge1Enum {
 } ;
 typedef _edge1Enum edge1Enum;
 
-enum _edge2Enum : short
-{
+enum _edge2Enum {
 } ;
 typedef _edge2Enum edge2Enum;
 
-enum _edge3Enum : short
-{
+enum _edge3Enum {
 } ;
 typedef _edge3Enum edge3Enum;
 
@@ -155,8 +149,8 @@ public:
 
 //	Device property data members
 public:
-	//	MemorizedTemperatureTarget:	Memorize/Define the temperatureTarget  attribute  at Init device<br>
-	Tango::DevDouble	memorizedTemperatureTarget;
+	//	TemperatureTargetAtInit:	Memorize/Define the temperatureTarget  attribute  at Init device<br>
+	Tango::DevDouble	temperatureTargetAtInit;
 	//	MemorizedFanSpeed:	Memorize/Define the fanSpeed  attribute  at Init device<br>
 	Tango::DevUShort	memorizedFanSpeed;
 	//	MemorizedGlobalGain:	Memorize/Define the globalGain  attribute  at Init device<br>
