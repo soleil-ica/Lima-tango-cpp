@@ -84,27 +84,27 @@ namespace Dhyana_ns
 {
 enum _channel1Enum {
 } ;
-typedef _channel1Enum channel1Enum;
+typedef _channel1Enum channel1Enum : short ;
 
 enum _channel2Enum {
 } ;
-typedef _channel2Enum channel2Enum;
+typedef _channel2Enum channel2Enum  : short;
 
 enum _channel3Enum {
 } ;
-typedef _channel3Enum channel3Enum;
+typedef _channel3Enum channel3Enum : short;
 
 enum _edge1Enum {
 } ;
-typedef _edge1Enum edge1Enum;
+typedef _edge1Enum edge1Enum : short;
 
 enum _edge2Enum {
 } ;
-typedef _edge2Enum edge2Enum;
+typedef _edge2Enum edge2Enum : short;
 
 enum _edge3Enum {
 } ;
-typedef _edge3Enum edge3Enum;
+typedef _edge3Enum edge3Enum : short;
 
 /*----- PROTECTED REGION ID(Dhyana::Additional Class Declarations) ENABLED START -----*/
 
