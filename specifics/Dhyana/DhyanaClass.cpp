@@ -492,8 +492,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	temperaturetarget->set_default_properties(temperaturetarget_prop);
 	//	Not Polled
 	temperaturetarget->set_disp_level(Tango::OPERATOR);
-	temperaturetarget->set_memorized();
-	temperaturetarget->set_memorized_init(false);
+	//	Not Memorized
 	att_list.push_back(temperaturetarget);
 
 	//	Attribute : fanSpeed
@@ -501,9 +500,9 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	fanspeed_prop;
 	fanspeed_prop.set_description("Define the fan speed of the detector [0..5]");
 	//	label	not set for fanSpeed
-	fanspeed_prop.set_unit(" ");
-	fanspeed_prop.set_standard_unit(" ");
-	fanspeed_prop.set_display_unit(" ");
+	//	unit	not set for fanSpeed
+	//	standard_unit	not set for fanSpeed
+	//	display_unit	not set for fanSpeed
 	//	format	not set for fanSpeed
 	//	max_value	not set for fanSpeed
 	//	min_value	not set for fanSpeed
@@ -517,8 +516,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	fanspeed->set_default_properties(fanspeed_prop);
 	//	Not Polled
 	fanspeed->set_disp_level(Tango::OPERATOR);
-	fanspeed->set_memorized();
-	fanspeed->set_memorized_init(false);
+	//	Not Memorized
 	att_list.push_back(fanspeed);
 
 	//	Attribute : globalGain
@@ -526,9 +524,9 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	globalgain_prop;
 	globalgain_prop.set_description("Define the gain of the detector [LOW, HIGH, HDR]");
 	//	label	not set for globalGain
-	globalgain_prop.set_unit(" ");
-	globalgain_prop.set_standard_unit(" ");
-	globalgain_prop.set_display_unit(" ");
+	//	unit	not set for globalGain
+	//	standard_unit	not set for globalGain
+	//	display_unit	not set for globalGain
 	//	format	not set for globalGain
 	//	max_value	not set for globalGain
 	//	min_value	not set for globalGain
@@ -542,8 +540,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	globalgain->set_default_properties(globalgain_prop);
 	//	Not Polled
 	globalgain->set_disp_level(Tango::OPERATOR);
-	globalgain->set_memorized();
-	globalgain->set_memorized_init(false);
+	//	Not Memorized
 	att_list.push_back(globalgain);
 
 	//	Attribute : fps
