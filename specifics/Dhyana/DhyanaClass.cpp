@@ -492,8 +492,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	temperaturetarget->set_default_properties(temperaturetarget_prop);
 	//	Not Polled
 	temperaturetarget->set_disp_level(Tango::OPERATOR);
-	temperaturetarget->set_memorized();
-	temperaturetarget->set_memorized_init(false);
+	//	Not Memorized
 	att_list.push_back(temperaturetarget);
 
 	//	Attribute : fanSpeed
@@ -517,8 +516,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	fanspeed->set_default_properties(fanspeed_prop);
 	//	Not Polled
 	fanspeed->set_disp_level(Tango::OPERATOR);
-	fanspeed->set_memorized();
-	fanspeed->set_memorized_init(false);
+	//	Not Memorized
 	att_list.push_back(fanspeed);
 
 	//	Attribute : globalGain
@@ -542,8 +540,7 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	globalgain->set_default_properties(globalgain_prop);
 	//	Not Polled
 	globalgain->set_disp_level(Tango::OPERATOR);
-	globalgain->set_memorized();
-	globalgain->set_memorized_init(false);
+	//	Not Memorized
 	att_list.push_back(globalgain);
 
 	//	Attribute : fps
