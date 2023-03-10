@@ -500,9 +500,9 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	fanspeed_prop;
 	fanspeed_prop.set_description("Define the fan speed of the detector [0..5]");
 	//	label	not set for fanSpeed
-	//	unit	not set for fanSpeed
-	//	standard_unit	not set for fanSpeed
-	//	display_unit	not set for fanSpeed
+	fanspeed_prop.set_unit(" ");
+	fanspeed_prop.set_standard_unit(" ");
+	fanspeed_prop.set_display_unit(" ");
 	//	format	not set for fanSpeed
 	//	max_value	not set for fanSpeed
 	//	min_value	not set for fanSpeed
@@ -524,9 +524,9 @@ void DhyanaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	globalgain_prop;
 	globalgain_prop.set_description("Define the gain of the detector [LOW, HIGH, HDR]");
 	//	label	not set for globalGain
-	//	unit	not set for globalGain
-	//	standard_unit	not set for globalGain
-	//	display_unit	not set for globalGain
+	globalgain_prop.set_unit(" ");
+	globalgain_prop.set_standard_unit(" ");
+	globalgain_prop.set_display_unit(" ");
 	//	format	not set for globalGain
 	//	max_value	not set for globalGain
 	//	min_value	not set for globalGain
