@@ -5,13 +5,18 @@ namespace Dhyana_ns
 
 AttrView::AttrView(Tango::DeviceImpl *dev)
 : Tango::LogAdapter(dev),
-m_device(dev),
-m_dim(dev)
+m_device(dev)
 {
+    m_dim = new yat4tango::DynamicInterfaceManager(dev);
 }
 
 AttrView::~AttrView()
 {
+}
+
+yat4tango::DynamicInterfaceManager* AttrView::get_dim()
+{
+    return m_dim;
 }
 
 } // namespace

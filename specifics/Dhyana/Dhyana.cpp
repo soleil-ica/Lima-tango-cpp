@@ -277,6 +277,8 @@ void Dhyana::init_device()
 		std::string model;
 		m_camera->getDetectorModel(model);
 		build_view(model);
+
+		//TODO write attr at init
 		
 	}
 	catch(Exception& e)
@@ -297,6 +299,8 @@ void Dhyana::init_device()
 	}
 
 	m_is_device_initialized = true;
+
+	write_attr_at_init();
 	
 
 	set_state(Tango::STANDBY);
@@ -521,7 +525,7 @@ lima::Dhyana::Camera* Dhyana::get_camera()
 
 void Dhyana::build_view(std::string model)
 {
-	if (model == "Dhyana 95 V1.0" || model == "Dhyana 95 V2.0")
+	if (model == "Dhyana 95" || model.find("Dhyana 95 V2.0") != std::string::npos)
 	{
 		m_attr_view.reset(new AttrViewDhyana95(this));
 	}
@@ -529,6 +533,103 @@ void Dhyana::build_view(std::string model)
 	{
 	}
 
+}
+
+void Dhyana::write_attr_at_init()
+{
+	try
+	{
+		INFO_STREAM << "Write tango hardware at Init - fanSpeed." << endl;
+		Tango::WAttribute &fanSpeed = dev_attr->get_w_attr_by_name("fanSpeed");
+		unsigned short speed = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevUShort>(this, "fanSpeed");
+		fanSpeed.set_write_value(speed);
+		yat4tango::DynamicAttributeWriteCallbackData cbd_fanSpeed;
+        cbd_fanSpeed.tga = &fanSpeed;
+		cbd_fanSpeed.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("fanSpeed");
+        m_attr_view->write_dynamic_attribute_callback(cbd_fanSpeed);
+
+		INFO_STREAM << "Write tango hardware at Init - globalGain." << endl;
+		Tango::WAttribute &globalGain = dev_attr->get_w_attr_by_name("globalGain");
+		Tango::DevEnum gain = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, "globalGain");
+		globalGain.set_write_value(gain);
+		yat4tango::DynamicAttributeWriteCallbackData cbd_globalGain;
+        cbd_globalGain.tga = &globalGain;
+		cbd_globalGain.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("globalGain");
+        m_attr_view->write_dynamic_attribute_callback(cbd_globalGain);
+		
+		for (int i = 1; i < 4; i++)
+        {
+            std::string name = "trigOutputKind" + std::to_string(i);
+            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;
+			Tango::WAttribute &trigOutputKind = dev_attr->get_w_attr_by_name(name.c_str());
+			Tango::DevEnum val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, name);
+			trigOutputKind.set_write_value(val);
+			yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputKind;
+			cbd_trigOutputKind.tga = &trigOutputKind;
+			cbd_trigOutputKind.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+			m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputKind);
+		}
+
+		for (int i = 1; i < 4; i++)
+        {
+            std::string name = "trigOutputWidth" + std::to_string(i);
+            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;
+			Tango::WAttribute &trigOutputWidth = dev_attr->get_w_attr_by_name(name.c_str());
+			double val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, name);
+			trigOutputWidth.set_write_value(val);
+			yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputWidth;
+			cbd_trigOutputWidth.tga = &trigOutputWidth;
+			cbd_trigOutputWidth.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+			m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputWidth);
+		}
+
+		for (int i = 1; i < 4; i++)
+        {
+            std::string name = "trigOutputDelay" + std::to_string(i);
+            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;
+			Tango::WAttribute &trigOutputDelay = dev_attr->get_w_attr_by_name(name.c_str());
+			double val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, name);
+			trigOutputDelay.set_write_value(val);
+			yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputDelay;
+			cbd_trigOutputDelay.tga = &trigOutputDelay;
+			cbd_trigOutputDelay.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+			m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputDelay);
+		}
+
+		for (int i = 1; i < 4; i++)
+        {
+            std::string name = "trigOutputEdge" + std::to_string(i);
+            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;
+			Tango::WAttribute &trigOutputEdge = dev_attr->get_w_attr_by_name(name.c_str());
+			Tango::DevEnum val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, name);
+			trigOutputEdge.set_write_value(val);
+			yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputEdge;
+			cbd_trigOutputEdge.tga = &trigOutputEdge;
+			cbd_trigOutputEdge.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+			m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputEdge);
+		}
+
+	}
+	catch(Tango::DevFailed& df)
+	{
+		ERROR_STREAM << df << endl;
+		m_status_message << "Initialization Failed : ";
+		for(unsigned i = 0;i < df.errors.length();i++)
+		{
+			m_status_message << df.errors[i].desc << endl;
+		}
+		m_is_device_initialized = false;
+		set_state(Tango::FAULT);
+		return;
+	}
+	catch(Exception& e)
+	{
+		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
+		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
+		m_is_device_initialized = false;
+		set_state(Tango::FAULT);
+		return;
+	}
 }
 
 

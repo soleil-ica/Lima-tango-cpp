@@ -221,6 +221,8 @@ public:
 
 	void build_view(std::string model);
 
+	void write_attr_at_init();
+
 	lima::Dhyana::Camera* get_camera();
 
 protected :	
