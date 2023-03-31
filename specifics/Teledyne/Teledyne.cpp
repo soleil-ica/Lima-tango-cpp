@@ -219,9 +219,15 @@ void Teledyne::init_device()
 
 		INFO_STREAM << "Write tango hardware at Init - gain." << endl;
 		Tango::WAttribute &gain = dev_attr->get_w_attr_by_name("gain");
-		*attr_gain_read = (gainEnum)yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevUShort>(this, "gain");
+		*attr_gain_read = (gainEnum)yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevUShort>(this, "gain", 0);
 		gain.set_write_value(*attr_gain_read);
 		write_gain(gain);
+
+		INFO_STREAM << "Write tango hardware at Init - adcRate." << endl;
+		Tango::WAttribute &adcRate = dev_attr->get_w_attr_by_name("adcRate");
+		*attr_adcRate_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, "adcRate", 0.0);
+		adcRate.set_write_value(*attr_adcRate_read);
+		write_adcRate(adcRate);
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -489,12 +495,11 @@ void Teledyne::read_temperature(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(Teledyne::read_temperature) ENABLED START -----*/
 	try
 	{
-		if( m_hw != 0)
+		if(get_state()!= Tango::RUNNING && m_hw != 0)
 		{
 			*attr_temperature_read  = m_hw->getSensorTemperature();
 			attr.set_value(attr_temperature_read);
-		}
-		
+		}		
 	}
 	catch(Tango::DevFailed& df)
     {
@@ -534,7 +539,7 @@ void Teledyne::read_temperatureTarget(Tango::Attribute &attr)
 	
 	try 
 	{
-		if( m_hw != 0)
+		if( get_state()!= Tango::RUNNING && m_hw != 0)
 		{
 			*attr_temperatureTarget_read  = m_hw->getSensorTemperatureSetpoint();   
 			attr.set_value(attr_temperatureTarget_read);
@@ -621,12 +626,10 @@ void Teledyne::read_gain(Tango::Attribute &attr)
 	
 	try
 	{
-		Tango::DevShort* devShortValue = (Tango::DevShort *)GainMode::LOW;
-		if( m_hw != 0)
+		if( get_state()!= Tango::RUNNING && m_hw != 0)
 		{
+			Tango::DevShort* devShortValue = (Tango::DevShort *)GainMode::LOW;
 			lima::Princeton::Interface::GainType gain = m_hw->getAdcAnalogGain();
-			//Tango::DevShort* devShortValue;
-
 			switch (gain)
 			{
 				case lima::Princeton::Interface::GainType::Gain_Low:
@@ -641,9 +644,9 @@ void Teledyne::read_gain(Tango::Attribute &attr)
 					devShortValue = (Tango::DevShort *)GainMode::HIGH;
 					break;
 			}
-		}
 
-		attr.set_value((Tango::DevShort*) &devShortValue);
+			attr.set_value((Tango::DevShort*) &devShortValue);
+		}
 	}
     catch(Tango::DevFailed & df)
     {
@@ -745,10 +748,6 @@ void Teledyne::read_adcRate(Tango::Attribute &attr)
 		{
 			*attr_adcRate_read = m_hw->getAdcSpeed();   
 		}
-		else
-		{
-			*attr_adcRate_read = 0.0;
-		}
 	}
 	catch(Tango::DevFailed& df)
     {
@@ -769,6 +768,51 @@ void Teledyne::read_adcRate(Tango::Attribute &attr)
                     "Teledyne::read_adcRate");
     }	 
 	/*----- PROTECTED REGION END -----*/	//	Teledyne::read_adcRate
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute adcRate related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Teledyne::write_adcRate(Tango::WAttribute &attr)
+{
+	INFO_STREAM << "Teledyne::write_adcRate(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Teledyne::write_adcRate) ENABLED START -----*/
+	try
+    {
+        attr.get_write_value(attr_adcRate_write);
+		if(!m_hw)
+		{
+        	m_hw->setAdcSpeed(attr_adcRate_write);  
+		}      
+    }
+	catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                    "TANGO_DEVICE_ERROR",
+                    string(df.errors[0].desc).c_str(),
+                    "Teledyne::write_adcRate");
+    }		
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception(
+                     "TANGO_DEVICE_ERROR",
+                     e.getErrMsg().c_str(),
+                     "Teledyne::write_adcRate");
+    }	 
+	
+	/*----- PROTECTED REGION END -----*/	//	Teledyne::write_adcRate
 }
 
 //--------------------------------------------------------

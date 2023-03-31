@@ -59,7 +59,21 @@ bool Teledyne::is_detector_model_allowed(TANGO_UNUSED(Tango::AttReqType type))
 
 	//	Not any excluded states for detector_model attribute in read access.
 	/*----- PROTECTED REGION ID(Teledyne::detector_modelStateAllowed_READ) ENABLED START -----*/
-	
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+		
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
+		return false;
+	}
 	/*----- PROTECTED REGION END -----*/	//	Teledyne::detector_modelStateAllowed_READ
 	return true;
 }
@@ -75,7 +89,21 @@ bool Teledyne::is_detector_type_allowed(TANGO_UNUSED(Tango::AttReqType type))
 
 	//	Not any excluded states for detector_type attribute in read access.
 	/*----- PROTECTED REGION ID(Teledyne::detector_typeStateAllowed_READ) ENABLED START -----*/
-	
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+		
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
+		return false;
+	}
 	/*----- PROTECTED REGION END -----*/	//	Teledyne::detector_typeStateAllowed_READ
 	return true;
 }
@@ -91,7 +119,21 @@ bool Teledyne::is_temperature_allowed(TANGO_UNUSED(Tango::AttReqType type))
 
 	//	Not any excluded states for temperature attribute in read access.
 	/*----- PROTECTED REGION ID(Teledyne::temperatureStateAllowed_READ) ENABLED START -----*/
-	
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+		
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
+		return false;
+	}
 	/*----- PROTECTED REGION END -----*/	//	Teledyne::temperatureStateAllowed_READ
 	return true;
 }
@@ -126,12 +168,38 @@ bool Teledyne::is_gain_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
 	//	Not any excluded states for gain attribute in Write access.
 	/*----- PROTECTED REGION ID(Teledyne::gainStateAllowed_WRITE) ENABLED START -----*/
-	
+	if ( type != Tango::READ_REQ )
+	{
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::INIT ||
+			get_state()==Tango::RUNNING)
+		{
+			if (get_state() == Tango::FAULT && is_device_initialized())
+			{
+				return true;
+			}
+			return false;
+		}
+		return true;
+	}
+
 	/*----- PROTECTED REGION END -----*/	//	Teledyne::gainStateAllowed_WRITE
 
 	//	Not any excluded states for gain attribute in read access.
 	/*----- PROTECTED REGION ID(Teledyne::gainStateAllowed_READ) ENABLED START -----*/
-	
+	if ( type == Tango::READ_REQ )
+	{
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::INIT)
+		{
+			if (get_state() == Tango::FAULT && is_device_initialized())
+			{
+				return true;
+			}
+			return false;
+		}
+		return true;
+	}
 	/*----- PROTECTED REGION END -----*/	//	Teledyne::gainStateAllowed_READ
 	return true;
 }
@@ -144,10 +212,28 @@ bool Teledyne::is_gain_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Teledyne::is_adcRate_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
+	//	Not any excluded states for adcRate attribute in Write access.
+	/*----- PROTECTED REGION ID(Teledyne::adcRateStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Teledyne::adcRateStateAllowed_WRITE
 
 	//	Not any excluded states for adcRate attribute in read access.
 	/*----- PROTECTED REGION ID(Teledyne::adcRateStateAllowed_READ) ENABLED START -----*/
-	
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		{
+           return true;
+		}
+		
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
+		return false;
+	}
 	/*----- PROTECTED REGION END -----*/	//	Teledyne::adcRateStateAllowed_READ
 	return true;
 }

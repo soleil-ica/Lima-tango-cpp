@@ -82,6 +82,8 @@ public :
     //-------------------------------------------------------------    
 		Tango::DevDouble	attr_temperatureTarget_write;
 		gainEnum	attr_gain_write;
+		Tango::DevDouble	attr_adcRate_write;
+
 /*----- PROTECTED REGION END -----*/	//	Teledyne::Data Members
 
 //	Device property data members
@@ -220,6 +222,7 @@ public:
  *	Attr type:	Scalar
  */
 	virtual void read_adcRate(Tango::Attribute &attr);
+	virtual void write_adcRate(Tango::WAttribute &attr);
 	virtual bool is_adcRate_allowed(Tango::AttReqType type);
 
 
@@ -254,7 +257,7 @@ public:
 	void add_dynamic_commands();
 
 /*----- PROTECTED REGION ID(Teledyne::Additional Method prototypes) ENABLED START -----*/
-
+	bool is_device_initialized(){return m_is_device_initialized;};
 //	Additional Method prototypes
 protected :	
 	//	Add your own data members here

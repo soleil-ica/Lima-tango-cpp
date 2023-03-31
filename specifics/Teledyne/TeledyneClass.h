@@ -130,10 +130,12 @@ class adcRateAttrib: public Tango::Attr
 {
 public:
 	adcRateAttrib():Attr("adcRate",
-			Tango::DEV_DOUBLE, Tango::READ) {};
+			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
 	~adcRateAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
 		{(static_cast<Teledyne *>(dev))->read_adcRate(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Teledyne *>(dev))->write_adcRate(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 		{return (static_cast<Teledyne *>(dev))->is_adcRate_allowed(ty);}
 };
