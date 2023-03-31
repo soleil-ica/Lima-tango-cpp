@@ -32,9 +32,7 @@ void AttrViewDhyana95::init()
             dai.tai.name = name;
             //- associate the dyn. attr. with its data 
             m_dyn_model = new StringUserData(name);
-            std::string model;
-            dynamic_cast<Dhyana*>(m_device)->get_camera()->getDetectorModel(model);
-            m_dyn_model->set_value(model);
+
             dai.set_user_data(m_dyn_model);
             //Describe the dynamic attr
             dai.tai.data_type = Tango::DEV_STRING;
@@ -61,9 +59,7 @@ void AttrViewDhyana95::init()
             dai.tai.name = name;
             //- associate the dyn. attr. with its data 
             m_dyn_version = new StringUserData(name);
-            std::string version;
-            dynamic_cast<Dhyana*>(m_device)->get_camera()->getTucamVersion(version);
-            m_dyn_version->set_value(version);
+
             dai.set_user_data(m_dyn_version);
             //Describe the dynamic attr
             dai.tai.data_type = Tango::DEV_STRING;
@@ -121,10 +117,6 @@ void AttrViewDhyana95::init()
             dai.tai.name = name;
             //- associate the dyn. attr. with its data 
             m_dyn_sensor_temperature_target = new DoubleUserData(name);
-            double target;
-            dynamic_cast<Dhyana*>(m_device)->get_camera()->setTemperatureTarget(15);
-            dynamic_cast<Dhyana*>(m_device)->get_camera()->getTemperatureTarget(target);
-            m_dyn_sensor_temperature_target->set_value(target);
             dai.set_user_data(m_dyn_sensor_temperature_target);
             //Describe the dynamic attr
             dai.tai.data_type = Tango::DEV_DOUBLE;
@@ -152,9 +144,7 @@ void AttrViewDhyana95::init()
             dai.tai.name = name;
             //- associate the dyn. attr. with its data 
             m_dyn_fan_speed = new ULongUserData(name);
-            unsigned speed;
-            dynamic_cast<Dhyana*>(m_device)->get_camera()->getFanSpeed(speed);
-            m_dyn_fan_speed->set_value(speed);
+
             dai.set_user_data(m_dyn_fan_speed);
             //Describe the dynamic attr
             dai.tai.data_type = Tango::DEV_USHORT;
@@ -183,9 +173,7 @@ void AttrViewDhyana95::init()
             dai.tai.name = name;
             //- associate the dyn. attr. with its data 
             m_dyn_global_gain = new EnumUserData(name);
-            unsigned gain;
-            dynamic_cast<Dhyana*>(m_device)->get_camera()->getGlobalGain(gain);
-            m_dyn_global_gain->set_value(static_cast<GlobalGain>(gain));
+
             dai.set_user_data(m_dyn_global_gain);
             //Describe the dynamic attr
             dai.tai.data_type = Tango::DEV_ENUM;
@@ -221,9 +209,7 @@ void AttrViewDhyana95::init()
             dai.tai.name = name;
             //- associate the dyn. attr. with its data 
             m_dyn_frame_rate = new DoubleUserData(name);
-            double frame_rate;
-            dynamic_cast<Dhyana*>(m_device)->get_camera()->getFPS(frame_rate);
-            m_dyn_frame_rate->set_value(frame_rate);
+
             dai.set_user_data(m_dyn_frame_rate);
             //Describe the dynamic attr
             dai.tai.data_type = Tango::DEV_DOUBLE;
@@ -399,8 +385,7 @@ void AttrViewDhyana95::read_dynamic_attribute_callback(yat4tango::DynamicAttribu
         Tango::DevState state = static_cast<Dhyana*>(m_device)->get_state();
         bool is_device_initialized = static_cast<Dhyana*>(m_device)->is_device_initialized();
         if ((state == Tango::FAULT && !is_device_initialized)
-            || state == Tango::INIT 
-            || state == Tango::DISABLE)
+            || state == Tango::INIT)
         {
             std::string reason = "It's currently not allowed to read attribute " + cbd.dya->get_name();
             Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
@@ -420,12 +405,20 @@ void AttrViewDhyana95::read_dynamic_attribute_callback(yat4tango::DynamicAttribu
         if(cbd.dya->get_name() == "model")
         {
             StringUserData* user_data = cbd.dya->get_user_data<StringUserData>();
+            //- set the attribute value
+            std::string model;
+            dynamic_cast<Dhyana*>(m_device)->get_camera()->getDetectorModel(model);
+            m_dyn_model->set_value(model);
             cbd.tga->set_value((Tango::DevString*)&user_data->get_value());
         }
         else
         if(cbd.dya->get_name() == "tucamVersion")
         {
             StringUserData* user_data = cbd.dya->get_user_data<StringUserData>();
+            //- set the attribute value
+            std::string version;
+            dynamic_cast<Dhyana*>(m_device)->get_camera()->getTucamVersion(version);
+            m_dyn_version->set_value(version);
             cbd.tga->set_value((Tango::DevString*)&user_data->get_value());
         }
         else
@@ -491,8 +484,8 @@ void AttrViewDhyana95::write_dynamic_attribute_callback(yat4tango::DynamicAttrib
         Tango::DevState state = static_cast<Dhyana*>(m_device)->get_state();
         bool is_device_initialized = static_cast<Dhyana*>(m_device)->is_device_initialized();
         if ((state == Tango::FAULT && !is_device_initialized)
-            || state == Tango::INIT 
-            || state == Tango::DISABLE)
+            || state == Tango::INIT
+            || state == Tango::RUNNING)
         {
             std::string reason = "It's currently not allowed to write attribute " + cbd.dya->get_name();
             Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
@@ -560,8 +553,7 @@ void AttrViewDhyana95::read_dynamic_trigger_attribute_callback(yat4tango::Dynami
         Tango::DevState state = static_cast<Dhyana*>(m_device)->get_state();
         bool is_device_initialized = static_cast<Dhyana*>(m_device)->is_device_initialized();
         if ((state == Tango::FAULT && !is_device_initialized)
-            || state == Tango::INIT 
-            || state == Tango::DISABLE)
+            || state == Tango::INIT)
         {
             std::string reason = "It's currently not allowed to read attribute " + cbd.dya->get_name();
             Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
@@ -610,7 +602,7 @@ void AttrViewDhyana95::write_dynamic_trigger_attribute_callback(yat4tango::Dynam
         bool is_device_initialized = static_cast<Dhyana*>(m_device)->is_device_initialized();
         if ((state == Tango::FAULT && !is_device_initialized)
             || state == Tango::INIT 
-            || state == Tango::DISABLE)
+            || state == Tango::RUNNING)
         {
             std::string reason = "It's currently not allowed to write attribute " + cbd.dya->get_name();
             Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
