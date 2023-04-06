@@ -86,9 +86,7 @@ void AttrViewDhyana95::init()
             dai.tai.name = name;
             //- associate the dyn. attr. with its data 
             m_dyn_sensor_temperature = new DoubleUserData(name);
-            double temperature;
-            dynamic_cast<Dhyana*>(m_device)->get_camera()->getTemperature(temperature);
-            m_dyn_sensor_temperature->set_value(temperature);
+
             dai.set_user_data(m_dyn_sensor_temperature);
             //Describe the dynamic attr
             dai.tai.data_type = Tango::DEV_DOUBLE;
@@ -235,8 +233,8 @@ void AttrViewDhyana95::init()
             //- specify the dyn. attr.  name
             dai.tai.name = name;
             //- associate the dyn. attr. with its data 
-            m_dyn_trigOutputKind[i - 1] = new EnumUserData(name);
-            dai.set_user_data(m_dyn_trigOutputKind[i - 1]);
+            m_dyn_trig_output_kind[i - 1] = new EnumUserData(name);
+            dai.set_user_data(m_dyn_trig_output_kind[i - 1]);
             //Describe the dynamic attr
             dai.tai.data_type = Tango::DEV_ENUM;
             dai.tai.data_format = Tango::SCALAR;
@@ -270,9 +268,9 @@ void AttrViewDhyana95::init()
             //- specify the dyn. attr.  name
             dai.tai.name = name;
             //- associate the dyn. attr. with its data 
-            m_dyn_trigOutputWidth[i - 1] = new DoubleUserData(name);
+            m_dyn_trig_output_width[i - 1] = new DoubleUserData(name);
 
-            dai.set_user_data(m_dyn_trigOutputWidth[i - 1]);
+            dai.set_user_data(m_dyn_trig_output_width[i - 1]);
             //Describe the dynamic attr
             dai.tai.data_type = Tango::DEV_DOUBLE;
             dai.tai.data_format = Tango::SCALAR;
@@ -299,9 +297,9 @@ void AttrViewDhyana95::init()
             //- specify the dyn. attr.  name
             dai.tai.name = name;
             //- associate the dyn. attr. with its data 
-            m_dyn_trigOutputDelay[i - 1] = new DoubleUserData(name);
+            m_dyn_trig_output_delay[i - 1] = new DoubleUserData(name);
 
-            dai.set_user_data(m_dyn_trigOutputDelay[i - 1]);
+            dai.set_user_data(m_dyn_trig_output_delay[i - 1]);
             //Describe the dynamic attr
             dai.tai.data_type = Tango::DEV_DOUBLE;
             dai.tai.data_format = Tango::SCALAR;
@@ -328,9 +326,9 @@ void AttrViewDhyana95::init()
             //- specify the dyn. attr.  name
             dai.tai.name = name;
             //- associate the dyn. attr. with its data 
-            m_dyn_trigOutputEdge[i - 1] = new EnumUserData(name);
+            m_dyn_trig_output_edge[i - 1] = new EnumUserData(name);
 
-            dai.set_user_data(m_dyn_trigOutputEdge[i - 1]);
+            dai.set_user_data(m_dyn_trig_output_edge[i - 1]);
             //Describe the dynamic attr
             dai.tai.data_type = Tango::DEV_ENUM;
             dai.tai.data_format = Tango::SCALAR;
@@ -354,18 +352,6 @@ void AttrViewDhyana95::init()
             m_dim->dynamic_attributes_manager().add_attribute(dai);
         }
 
-        for (int i = 0; i < 3; i++)
-        {
-            lima::Dhyana::Camera::TucamSignal signal;
-            lima::Dhyana::Camera::TucamSignalEdge edge;
-            int delay;
-            int width;
-            dynamic_cast<Dhyana*>(m_device)->get_camera()->getOutputSignal(i, signal, edge, delay, width);
-            m_dyn_trigOutputKind[i]->set_value(signal - 3);
-            m_dyn_trigOutputEdge[i]->set_value(edge);
-            m_dyn_trigOutputDelay[i]->set_value(delay);
-            m_dyn_trigOutputWidth[i]->set_value(width / 1000);
-        }
     }
     catch (Tango::DevFailed& df)
     {
@@ -436,6 +422,9 @@ void AttrViewDhyana95::read_dynamic_attribute_callback(yat4tango::DynamicAttribu
         {
             DoubleUserData* user_data = cbd.dya->get_user_data<DoubleUserData>();
             //- set the attribute value
+            double temperature;
+            dynamic_cast<Dhyana*>(m_device)->get_camera()->getTemperature(temperature);
+            m_dyn_sensor_temperature->set_value(temperature);
             cbd.tga->set_value((Tango::DevDouble*)&user_data->get_value());
         }
         else
@@ -632,9 +621,9 @@ void AttrViewDhyana95::write_dynamic_trigger_attribute_callback(yat4tango::Dynam
             EnumUserData* user_data = cbd.dya->get_user_data<EnumUserData>();
             user_data->set_value(val);
 
-            dynamic_cast<Dhyana*>(m_device)->get_camera()->setOutputSignal(index - 1, static_cast<lima::Dhyana::Camera::TucamSignal>(m_dyn_trigOutputKind[index - 1]->get_value() + 3),
-                                                                            static_cast<lima::Dhyana::Camera::TucamSignalEdge>(m_dyn_trigOutputEdge[index - 1]->get_value()),
-                                                                            m_dyn_trigOutputDelay[index - 1]->get_value(), m_dyn_trigOutputWidth[index - 1]->get_value());
+            dynamic_cast<Dhyana*>(m_device)->get_camera()->setOutputSignal(index - 1, static_cast<lima::Dhyana::Camera::TucamSignal>(m_dyn_trig_output_kind[index - 1]->get_value() + 3),
+                                                                            static_cast<lima::Dhyana::Camera::TucamSignalEdge>(m_dyn_trig_output_edge[index - 1]->get_value()),
+                                                                            m_dyn_trig_output_delay[index - 1]->get_value(), m_dyn_trig_output_width[index - 1]->get_value());
             yat4tango::PropertyHelper::set_memorized_attribute<Tango::DevEnum > (m_device, cbd.dya->get_name(), val);
         }
         else
@@ -646,9 +635,9 @@ void AttrViewDhyana95::write_dynamic_trigger_attribute_callback(yat4tango::Dynam
             DoubleUserData* user_data = cbd.dya->get_user_data<DoubleUserData>();
             user_data->set_value(val);
 
-            dynamic_cast<Dhyana*>(m_device)->get_camera()->setOutputSignal(index - 1, static_cast<lima::Dhyana::Camera::TucamSignal>(m_dyn_trigOutputKind[index - 1]->get_value() + 3),
-                                                                            static_cast<lima::Dhyana::Camera::TucamSignalEdge>(m_dyn_trigOutputEdge[index - 1]->get_value()),
-                                                                            m_dyn_trigOutputDelay[index - 1]->get_value(), m_dyn_trigOutputWidth[index - 1]->get_value());
+            dynamic_cast<Dhyana*>(m_device)->get_camera()->setOutputSignal(index - 1, static_cast<lima::Dhyana::Camera::TucamSignal>(m_dyn_trig_output_kind[index - 1]->get_value() + 3),
+                                                                            static_cast<lima::Dhyana::Camera::TucamSignalEdge>(m_dyn_trig_output_edge[index - 1]->get_value()),
+                                                                            m_dyn_trig_output_delay[index - 1]->get_value(), m_dyn_trig_output_width[index - 1]->get_value());
             yat4tango::PropertyHelper::set_memorized_attribute<Tango::DevDouble > (m_device, cbd.dya->get_name(), val);
         }
         else
@@ -660,9 +649,9 @@ void AttrViewDhyana95::write_dynamic_trigger_attribute_callback(yat4tango::Dynam
             DoubleUserData* user_data = cbd.dya->get_user_data<DoubleUserData>();
             user_data->set_value(val);
 
-            dynamic_cast<Dhyana*>(m_device)->get_camera()->setOutputSignal(index - 1, static_cast<lima::Dhyana::Camera::TucamSignal>(m_dyn_trigOutputKind[index - 1]->get_value() + 3),
-                                                                            static_cast<lima::Dhyana::Camera::TucamSignalEdge>(m_dyn_trigOutputEdge[index - 1]->get_value()),
-                                                                            m_dyn_trigOutputDelay[index - 1]->get_value(), m_dyn_trigOutputWidth[index - 1]->get_value());
+            dynamic_cast<Dhyana*>(m_device)->get_camera()->setOutputSignal(index - 1, static_cast<lima::Dhyana::Camera::TucamSignal>(m_dyn_trig_output_kind[index - 1]->get_value() + 3),
+                                                                            static_cast<lima::Dhyana::Camera::TucamSignalEdge>(m_dyn_trig_output_edge[index - 1]->get_value()),
+                                                                            m_dyn_trig_output_delay[index - 1]->get_value(), m_dyn_trig_output_width[index - 1]->get_value());
             yat4tango::PropertyHelper::set_memorized_attribute<Tango::DevDouble > (m_device, cbd.dya->get_name(), val);
         }
         else
@@ -674,9 +663,9 @@ void AttrViewDhyana95::write_dynamic_trigger_attribute_callback(yat4tango::Dynam
             EnumUserData* user_data = cbd.dya->get_user_data<EnumUserData>();
             user_data->set_value(val);
 
-            dynamic_cast<Dhyana*>(m_device)->get_camera()->setOutputSignal(index - 1, static_cast<lima::Dhyana::Camera::TucamSignal>(m_dyn_trigOutputKind[index - 1]->get_value() + 3),
-                                                                            static_cast<lima::Dhyana::Camera::TucamSignalEdge>(m_dyn_trigOutputEdge[index - 1]->get_value()),
-                                                                            m_dyn_trigOutputDelay[index - 1]->get_value(), m_dyn_trigOutputWidth[index - 1]->get_value());
+            dynamic_cast<Dhyana*>(m_device)->get_camera()->setOutputSignal(index - 1, static_cast<lima::Dhyana::Camera::TucamSignal>(m_dyn_trig_output_kind[index - 1]->get_value() + 3),
+                                                                            static_cast<lima::Dhyana::Camera::TucamSignalEdge>(m_dyn_trig_output_edge[index - 1]->get_value()),
+                                                                            m_dyn_trig_output_delay[index - 1]->get_value(), m_dyn_trig_output_width[index - 1]->get_value());
             yat4tango::PropertyHelper::set_memorized_attribute<Tango::DevEnum > (m_device, cbd.dya->get_name(), val);
         }
     }

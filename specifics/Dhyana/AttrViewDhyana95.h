@@ -48,10 +48,10 @@ private:
     ULongUserData*  m_dyn_fan_speed;
     EnumUserData*   m_dyn_global_gain;
     DoubleUserData* m_dyn_frame_rate;    
-    EnumUserData*   m_dyn_trigOutputKind[3];
-    DoubleUserData* m_dyn_trigOutputWidth[3];
-    DoubleUserData* m_dyn_trigOutputDelay[3];
-    EnumUserData*   m_dyn_trigOutputEdge[3];
+    EnumUserData*   m_dyn_trig_output_kind[3];
+    DoubleUserData* m_dyn_trig_output_width[3];
+    DoubleUserData* m_dyn_trig_output_delay[3];
+    EnumUserData*   m_dyn_trig_output_edge[3];
 };
 
 } //namespace
