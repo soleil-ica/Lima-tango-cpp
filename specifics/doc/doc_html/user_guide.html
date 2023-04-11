@@ -46,7 +46,7 @@
 <h1>
  <Br>
 User's Guide<Br>&nbsp;<Br> <Br><Br>
-Hamamatsu Class<Br>&nbsp;<Br></Td></Tr>
+Eiger Class<Br>&nbsp;<Br></Td></Tr>
 </h1>
 <Tr><Td>
 <b><Center>Revision:  - Author:  <Br>
@@ -69,9 +69,9 @@ Hamamatsu Class<Br>&nbsp;<Br></Td></Tr>
 <Br>
 <Br><h2>Class Identification:</h2>
 <ul>
-	<li><b>Contact      :</b>	 at synchrotron-soleil.fr - cedric.castel
-	<li><b>Class Family :</b>	Hamamatsu
-	<li><b>Platform     :</b>	All Platforms
+	<li><b>Contact      :</b>	 at synchrotron-soleil.fr - arafat.noureddine
+	<li><b>Class Family :</b>	Acquisition
+	<li><b>Platform     :</b>	Unix Like
 	<li><b>Bus          :</b>	Not Applicable
 	<li><b>Manufacturer :</b>	SOLEIL
 </ul><Br>&nbsp;<Br><Br>
@@ -79,7 +79,7 @@ Hamamatsu Class<Br>&nbsp;<Br></Td></Tr>
 	<ul>
 		<li> <a href="http://www.esrf.fr/computing/cs/tango/tango_doc/kernel_doc/cpp_doc/"> Tango::Device_4Impl</a></li>
 		<ul>
-			<li> Hamamatsu</li>
+			<li> Eiger</li>
 			</ul>
 		</ul>
 	</ul>
@@ -98,45 +98,117 @@ Hamamatsu Class<Br>&nbsp;<Br></Td></Tr>
 <Td><Center><b>Property name</b></td></Center>
 <Td><Center><b>Property type</b></td></Center>
 <Td><Center><b>Description</b></td></Center>
-<Tr><Td><b><a href=#Dev_DefaultValues>DetectorNum </a></b></Td>
-<Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
-<Td><Font Size=-1>id of the camera</Font></Td></Tr>
-
-<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedReadoutSpeed </a></b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>DetectorIP </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
-<Td><Font Size=-1>Memorize/Define the readoutSpeed attribute at Init device<br>
-Availables values :<br>
-NORMAL<br>
-SLOW<br></Font></Td></Tr>
+<Td><Font Size=-1>Eiger server IP address (ex: 192.168.0.1)</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>BlankOfSyncreadoutTrigger </a></b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>TimestampType </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
-<Td><Font Size=-1>Allows you to select the blank of synreadout:<BR>
-Availables values :<br>
-- STANDARD<BR>
-- MINIMUM<BR>
-</Font></Td></Tr>
+<Td><Font Size=-1>Define the timestamp type of each frame: <br>
+- RELATIVE : The time difference between the moment of reading the frame and the start acquisition time<br>
+- ABSOLUTE : The time at the moment of reading the frame from detector<br></Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedTopViewExposureTime </a></b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>CurlDelayMs </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
-<Td><Font Size=-1>Memorize/Define the Top View exposure time attribute at Init device<br></Font></Td></Tr>
+<Td><Font Size=-1>Curl delay in ms. this is used as a sleep delay for waiting the curl responses</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedBottomViewExposureTime </a></b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>DownloadDataFile </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Enable/Disable downloading data files from DCU.
+Do not download data files (master+data) [by default]</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>NbFramesPerTriggerIsMaster </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>If True: nbFrames = memorized values of NbTriggers * NbFramesPerTrigger (case on PX1 beamline)
+If False: nbFrames = memorized nbFrames (case on Swing, Sixs beamlines)</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedCountrateCorrection </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of countrateCorrection attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedFlatfieldCorrection </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of flatfieldCorrection attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedPixelMask </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of pixelMask attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedVirtualPixelCorrection </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
+<Td><Font Size=-1>Memorize the value of virtualPixelCorrection attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedPhotonEnergy </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
-<Td><Font Size=-1>Memorize/Define the Bottom View exposure time attribute at Init device<br></Font></Td></Tr>
+<Td><Font Size=-1>Memorize the value of photonEnergy attribute.</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedWViewEnabled </a></b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedAutoSummation </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
-<Td><Font Size=-1>Memorize/Define the W-VIEW mode attribute at Init device<br></Font></Td></Tr>
+<Td><Font Size=-1>Memorize the value of autoSummation attribute.</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedHighDynamicRangeEnabled </a></b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedCompression </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_BOOLEAN</Font></Td>
-<Td><Font Size=-1>Memorize/Define the HighDynamicRangeEnabled attribute at Init device<br></Font></Td></Tr>
+<Td><Font Size=-1>Memorize the value of compression attribute.</Font></Td></Tr>
 
-<Tr><Td><b><a href=#Dev_DefaultValues>ExpertFrameBufferSize </a></b></Td>
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedCompressionType </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>Memorize the value of compressionType attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedRoiMode </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>Memorize the value of roiMode attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedBeamCenterX </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of beamCenterX attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedBeamCenterY </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of beamCenterY attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedDetectorDistance </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of detectorDistance attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedChiIncrement </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of chiIncrement attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedChiStart </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of chiStart attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedKappaIncrement </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of kappaIncrement attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedKappaStart </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of kappaStart attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedOmegaIncrement </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of omegaIncrement attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedOmegaStart </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of omegaStart attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedPhiIncrement </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of phiIncrement attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedPhiStart </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_DOUBLE</Font></Td>
+<Td><Font Size=-1>Memorize the value of phiStart attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedNbTriggers </a></b></Td>
 <Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
-<Td><Font Size=-1>Only an expert User could change this property.<br>
-This is the DCAM frame buffer size used during the acquisition.<BR></Font></Td></Tr>
+<Td><Font Size=-1>Memorize the value of nbTriggers attribute.</Font></Td></Tr>
+
+<Tr><Td><b><a href=#Dev_DefaultValues>MemorizedNbFramesPerTrigger </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_LONG</Font></Td>
+<Td><Font Size=-1>Memorize the value of nbFramesPerTrigger attribute.</Font></Td></Tr>
 
 </Table>
 
@@ -152,36 +224,112 @@ This is the DCAM frame buffer size used during the acquisition.<BR></Font></Td><
         <td><b>Default Values</b></td>
     </Tr>
     <Tr>
-        <Td>DetectorNum</Td>
+        <Td>DetectorIP</Td>
+        <td>127.0.0.1</td>
+    </Tr>
+    <Tr>
+        <Td>TimestampType</Td>
+        <td>RELATIVE</td>
+    </Tr>
+    <Tr>
+        <Td>CurlDelayMs</Td>
+        <td>100</td>
+    </Tr>
+    <Tr>
+        <Td>DownloadDataFile</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>NbFramesPerTriggerIsMaster</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedCountrateCorrection</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedFlatfieldCorrection</Td>
+        <td>true</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedPixelMask</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedVirtualPixelCorrection</Td>
+        <td>false</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedPhotonEnergy</Td>
+        <td>8000.0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedAutoSummation</Td>
+        <td>true</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedCompression</Td>
+        <td>true</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedCompressionType</Td>
+        <td>LZ4</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedRoiMode</Td>
+        <td>DISABLED</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedBeamCenterX</Td>
         <td>0</td>
     </Tr>
     <Tr>
-        <Td>MemorizedReadoutSpeed</Td>
-        <td>NORMAL</td>
+        <Td>MemorizedBeamCenterY</Td>
+        <td>0</td>
     </Tr>
     <Tr>
-        <Td>BlankOfSyncreadoutTrigger</Td>
-        <td>STANDARD</td>
+        <Td>MemorizedDetectorDistance</Td>
+        <td>0</td>
     </Tr>
     <Tr>
-        <Td>MemorizedTopViewExposureTime</Td>
-        <td>1000</td>
+        <Td>MemorizedChiIncrement</Td>
+        <td>0</td>
     </Tr>
     <Tr>
-        <Td>MemorizedBottomViewExposureTime</Td>
-        <td>1000</td>
+        <Td>MemorizedChiStart</Td>
+        <td>0</td>
     </Tr>
     <Tr>
-        <Td>MemorizedWViewEnabled</Td>
-        <td>false</td>
+        <Td>MemorizedKappaIncrement</Td>
+        <td>0</td>
     </Tr>
     <Tr>
-        <Td>MemorizedHighDynamicRangeEnabled</Td>
-        <td>false</td>
+        <Td>MemorizedKappaStart</Td>
+        <td>0</td>
     </Tr>
     <Tr>
-        <Td>ExpertFrameBufferSize</Td>
-        <td>10</td>
+        <Td>MemorizedOmegaIncrement</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedOmegaStart</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedPhiIncrement</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedPhiStart</Td>
+        <td>0</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedNbTriggers</Td>
+        <td>1</td>
+    </Tr>
+    <Tr>
+        <Td>MemorizedNbFramesPerTrigger</Td>
+        <td>1</td>
     </Tr>
 </Table>
 
@@ -236,34 +384,95 @@ There is no Class properties.<Br><Br>
 <Td><Center><b>Data Type</b></td></Center>
 <Td><Center><b>R/W Type</b></td></Center>
 <Td><Center><b>Expert</b></td></Center>
-<Tr><Td><b>lostFrames</b>: <Font Size=-1>Number of frames lost during the current or last acquisition.</Font></Td>
-<Td><Center><Font Size=-1>DEV_LONG</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+<Tr><Td><b>countrateCorrection</b></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
-<Tr><Td><b>fps</b>: <Font Size=-1>The last computed frame per second (the value is computed every 100 frames only)</Font></Td>
-<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
-
-<Tr><Td><b>wViewEnabled</b></Td>
+<Tr><Td><b>flatfieldCorrection</b></Td>
 <Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>topViewExposureTime</b>: <Font Size=-1>Exposure time for W-VIEW n?1.</Font></Td>
+<Tr><Td><b>pixelMask</b></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>virtualPixelCorrection</b></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>managedMode</b>: <Font Size=-1>Available values of Managed Mode are : <br> - STREAMING: Image and header data are transferred via zeromq sockets & Nexus files could be generated into an user defined path. <br> - FILEWRITER: Image and the metadata are generated into the DCU in HDF5 format & data files are tranferred into an user defined path through the device & data files are deleted from DCU. <br> - LAZY : Image and the metadata are generated in DCU in HDF5 format .  </Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>dataCollectionDate</b></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>thresholdEnergy</b></Td>
 <Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>bottomViewExposureTime</b>: <Font Size=-1>Exposure time for W-VIEW n?2.</Font></Td>
+<Tr><Td><b>photonEnergy</b></Td>
 <Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-</Table>
-</Center>
-<Br><Br><Br><Br><Br>
-<Table Border=2 Cellpadding=3 CELLSPACING=0 WIDTH="100%">
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<Td COLSPAN=4> <Font Size=+2><Center><b>Spectrum Attributes</b></td></Font></Center>
-<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
-<Td><Center><b>Attribute name</b></td></Center>
-<Td><Center><b>Data Type</b></td></Center>
-<Td><Center><b>X Data Length</b></td></Center>
-<Td><Center><b>Expert</b></td></Center>
-<Tr><Td><b>outputTriggersStatus</b>: <Font Size=-1>Allow user to get current status of the output trigger(s) that may be available on the connected Hamamatsu sensor.</Font></Td>
-<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>4</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+<Tr><Td><b>wavelength</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>roiMode</b></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>beamCenterX</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>beamCenterY</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>detectorDistance</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>detectorReadoutTime</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>temperature</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>humidity</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>chiIncrement</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>chiStart</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>kappaIncrement</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>kappaStart</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>omegaIncrement</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>omegaStart</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>phiIncrement</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>phiStart</b></Td>
+<Td><Center><Font Size=-1>DEV_DOUBLE</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>autoSummation</b></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>compression</b>: <Font Size=-1>Controls the compression of images.[Default= ON]</Font></Td>
+<Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>compressionType</b>: <Font Size=-1>The compression type can be set as follows : - LZ4 - BSLZ4   </Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>softwareVersion</b></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>nbTriggers</b>: <Font Size=-1>Define the number of triggers expected by the detector to terminate the acquisition.<br> The detector stays armed until nbTriggers are received.<br> Available only for the triggers modes :<br> INTERNAL_SINGLE (ints).<br> EXTERNAL_SINGLE (exts)  triggers modes.<br></Font></Td>
+<Td><Center><Font Size=-1>DEV_LONG</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
+
+<Tr><Td><b>nbFramesPerTrigger</b>: <Font Size=-1>Define the number of frames acquired by the detector for each received trigger. Available only for the triggers modes :<br> INTERNAL_SINGLE (ints).<br> EXTERNAL_SINGLE (exts)  triggers modes.<br> </Font></Td>
+<Td><Center><Font Size=-1>DEV_LONG</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
 </Table>
 </Center>
@@ -294,11 +503,14 @@ There is no Class properties.<Br><Br>
 <Tr><Td><b>Status</b></Td>
 <Td><Font Size=-1>DEV_VOID</Font></Td>
 <Td><Font Size=-1>CONST_DEV_STRING</Font></Td>
-<Tr><Td><b>SetOutputTriggerKind</b></Td>
-<Td><Font Size=-1>DEVVAR_USHORTARRAY</Font></Td>
+<Tr><Td><b>Initialize</b></Td>
 <Td><Font Size=-1>DEV_VOID</Font></Td>
-<Tr><Td><b>SetOutputTriggersPolarity</b></Td>
-<Td><Font Size=-1>DEVVAR_USHORTARRAY</Font></Td>
+<Td><Font Size=-1>DEV_VOID</Font></Td>
+<Tr><Td><b>Disarm</b></Td>
+<Td><Font Size=-1>DEV_VOID</Font></Td>
+<Td><Font Size=-1>DEV_VOID</Font></Td>
+<Tr><Td><b>UpdateTH</b></Td>
+<Td><Font Size=-1>DEV_VOID</Font></Td>
 <Td><Font Size=-1>DEV_VOID</Font></Td>
 
 
@@ -357,43 +569,45 @@ The language device desctructor automatically calls the <i> delete_device() </i>
 <Br>&nbsp
 </ul><Br>
 <Br>
-<A NAME="SetOutputTriggerKind"><!-- --></A>
-<A NAME="SetOutputTriggerKind"><!-- --></A>
-<h2>4 - SetOutputTriggerKind</h2>
+<A NAME="Initialize"><!-- --></A>
+<A NAME="Initialize"><!-- --></A>
+<h2>4 - Initialize</h2>
 <ul>
-<Li><Strong>Description: </Strong> Some cameras can output several triggers. You can select each trigger kind by using this function.
-(LOW (default), EXPOSURE, PROGRAMABLE, TRIGGERREADY)<Br>&nbsp
-<Li><Strong>Argin:<Br>DEVVAR_USHORTARRAY</Strong>
- : arg0 : ID of the output to configure (1, 2 or 3 depending on the Sensor model, e.g. C11440-22CU has 3 outputs available)<Br>
-arg1 : Kind of output trigger to be set : <Br>
-              - 1 = LOW (default)<Br>
-              - 2 = EXPOSURE<Br>
-              - 3 = PROGRAMABLE (not implemented yet)<Br>
-              - 4 = TRIGGERREADY<Br>
-<Br>
-<Br>&nbsp
+<Li><Strong>Description: </Strong> <Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::INIT<Li>Tango::STANDBY<Li>Tango::FAULT<Li>Tango::RUNNING</Ul>
+<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
-<A NAME="SetOutputTriggersPolarity"><!-- --></A>
-<A NAME="SetOutputTriggersPolarity"><!-- --></A>
-<h2>5 - SetOutputTriggersPolarity</h2>
+<A NAME="Disarm"><!-- --></A>
+<A NAME="Disarm"><!-- --></A>
+<h2>5 - Disarm</h2>
 <ul>
-<Li><Strong>Description: </Strong> Some cameras can output several triggers. You can select each trigger polarity by using this function.
-(POSITIVE (default), NEGATIVE)<Br>&nbsp
-<Li><Strong>Argin:<Br>DEVVAR_USHORTARRAY</Strong>
- : arg0 : ID of the output to configure (1, 2 or 3 depending on the Sensor model, e.g. C11440-22CU has 3 outputs available)<Br>
-arg1 : Polarity of output trigger to be set : <Br>
-              - 1 = NEGATIVE (default)<Br>
-              - 2 = POSITIVE<Br>&nbsp
+<Li><Strong>Description: </Strong> <Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
 <Li><Strong>Argout:<Br>DEV_VOID</Strong>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
-<Li>Tango::INIT<Li>Tango::STANDBY<Li>Tango::FAULT<Li>Tango::RUNNING</Ul>
+<Li>Tango::RUNNING</Ul>
+<Br>&nbsp
+</ul><Br>
+<Br>
+<A NAME="UpdateTH"><!-- --></A>
+<A NAME="UpdateTH"><!-- --></A>
+<h2>6 - UpdateTH</h2>
+<ul>
+<Li><Strong>Description: </Strong> <Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Argout:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Command allowed for: </Strong><Ul>
+<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>

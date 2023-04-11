@@ -221,52 +221,15 @@ void Eiger::init_device()
     }
     catch(...)
     {
-        INFO_STREAM << "Initialization Failed : UNKNOWN" << endl;
-        m_status_message << "Initialization Failed : UNKNOWN" << endl;
+        INFO_STREAM << "Initialization Failed : Unknown Error" << endl;
+        m_status_message << "Initialization Failed : Unknown Error" << endl;
         set_state(Tango::FAULT);
         m_is_device_initialized = false;
         return;
     }
 
     //write at init, only if device is correctly initialized
-    try
-    {
-        INFO_STREAM << "- Write tango hardware at Init - compressionType" << endl;
-        Tango::WAttribute &compression_type = dev_attr->get_w_attr_by_name("compressionType");
-        attr_compressionType_write = const_cast<Tango::DevString> (memorizedCompressionType.c_str());
-        compression_type.set_write_value(attr_compressionType_write);
-        write_compressionType(compression_type);
-		
-        INFO_STREAM << "- Write tango hardware at Init - roiMode" << endl;
-        Tango::WAttribute &roi_mode = dev_attr->get_w_attr_by_name("roiMode");
-        attr_roiMode_write = const_cast<Tango::DevString> (memorizedRoiMode.c_str());
-        roi_mode.set_write_value(attr_roiMode_write);
-        write_roiMode(roi_mode);
-		
-        if (nbFramesPerTriggerIsMaster)
-        {
-            INFO_STREAM << "- Write tango hardware at Init - nbTriggers" << endl;
-            Tango::WAttribute &nb_triggers = dev_attr->get_w_attr_by_name("nbTriggers");
-            attr_nbTriggers_write = memorizedNbTriggers;
-            nb_triggers.set_write_value(attr_nbTriggers_write);
-            write_nbTriggers(nb_triggers);
-
-            INFO_STREAM << "- Write tango hardware at Init - nbFramesPerTrigger" << endl;
-            Tango::WAttribute &nb_frames_per_triggers = dev_attr->get_w_attr_by_name("nbFramesPerTrigger");
-            attr_nbFramesPerTrigger_write = memorizedNbFramesPerTrigger;
-            nb_frames_per_triggers.set_write_value(attr_nbFramesPerTrigger_write);
-            write_nbFramesPerTrigger(nb_frames_per_triggers);	
-        }
-		
-    }
-    catch (Tango::DevFailed& df)
-    {
-        ERROR_STREAM << df << endl;
-        m_status_message << "Initialization Failed.\n" << endl;
-        m_status_message << "Origin\t: " << df.errors[0].origin << endl;
-        m_status_message << "Desc\t: " << df.errors[0].desc << endl;
-        return;
-    }
+    write_at_init();
 
     m_is_device_initialized = true;
     set_state(Tango::STANDBY);
@@ -298,12 +261,10 @@ void Eiger::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedFlatfieldCorrection"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedPixelMask"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedVirtualPixelCorrection"));
-	dev_prop.push_back(Tango::DbDatum("MemorizedThresholdEnergy"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedPhotonEnergy"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedAutoSummation"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedCompression"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedCompressionType"));
-	dev_prop.push_back(Tango::DbDatum("MemorizedWavelength"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedRoiMode"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedBeamCenterX"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedBeamCenterY"));
@@ -427,17 +388,6 @@ void Eiger::get_device_property()
 	//	And try to extract MemorizedVirtualPixelCorrection value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedVirtualPixelCorrection;
 
-	//	Try to initialize MemorizedThresholdEnergy from class property
-	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedThresholdEnergy;
-	else {
-		//	Try to initialize MemorizedThresholdEnergy from default device value
-		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if (def_prop.is_empty()==false)	def_prop  >>  memorizedThresholdEnergy;
-	}
-	//	And try to extract MemorizedThresholdEnergy value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedThresholdEnergy;
-
 	//	Try to initialize MemorizedPhotonEnergy from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedPhotonEnergy;
@@ -481,17 +431,6 @@ void Eiger::get_device_property()
 	}
 	//	And try to extract MemorizedCompressionType value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedCompressionType;
-
-	//	Try to initialize MemorizedWavelength from class property
-	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedWavelength;
-	else {
-		//	Try to initialize MemorizedWavelength from default device value
-		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if (def_prop.is_empty()==false)	def_prop  >>  memorizedWavelength;
-	}
-	//	And try to extract MemorizedWavelength value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedWavelength;
 
 	//	Try to initialize MemorizedRoiMode from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -659,13 +598,12 @@ void Eiger::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	 "MemorizedFlatfieldCorrection");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false",	 "MemorizedPixelMask");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true",	     "MemorizedVirtualPixelCorrection");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "4000.0",    "MemorizedThresholdEnergy");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "8000.0", 	 "MemorizedPhotonEnergy");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	 "MemorizedAutoSummation");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	 "MemorizedCompression");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "LZ4",       "MemorizedCompressionType");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedBeamCenterX");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedBeamCenterY");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedWavelength");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "disabled",  "MemorizedRoiMode");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedDetectorDistance");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0.0",       "MemorizedChiIncrement");
@@ -682,6 +620,140 @@ void Eiger::get_device_property()
     
 
 }
+
+/*****************************************************************************
+ * \brief Update the attribute with the properties data
+ *****************************************************************************/
+void Eiger::write_at_init()
+{
+    INFO_STREAM << "Update the attributes with the Memorized properties:" << endl;
+    try
+    {
+        INFO_STREAM << "- Write tango attribute at Init - compressionType" << endl;
+        Tango::WAttribute &compression_type = dev_attr->get_w_attr_by_name("compressionType");
+        attr_compressionType_write = const_cast<Tango::DevString> (memorizedCompressionType.c_str());
+        compression_type.set_write_value(attr_compressionType_write);
+        write_compressionType(compression_type);
+		
+        INFO_STREAM << "- Write tango attribute at Init - roiMode" << endl;
+        Tango::WAttribute &roi_mode = dev_attr->get_w_attr_by_name("roiMode");
+        attr_roiMode_write = const_cast<Tango::DevString> (memorizedRoiMode.c_str());
+        roi_mode.set_write_value(attr_roiMode_write);
+        write_roiMode(roi_mode);
+
+        INFO_STREAM << "- Write tango attribute at Init - photonEnergy" << endl;
+        Tango::WAttribute &photon_energy = dev_attr->get_w_attr_by_name("photonEnergy");
+        photon_energy.set_write_value(memorizedPhotonEnergy);
+        write_photonEnergy(photon_energy);
+
+        INFO_STREAM << "- Write tango attribute at Init - countrateCorrection" << endl;
+        Tango::WAttribute &countrate_correction = dev_attr->get_w_attr_by_name("countrateCorrection");
+        countrate_correction.set_write_value(memorizedCountrateCorrection);
+        write_countrateCorrection(countrate_correction);
+
+        INFO_STREAM << "- Write tango attribute at Init - flatfieldCorrection" << endl;
+        Tango::WAttribute &flatfield_correction = dev_attr->get_w_attr_by_name("flatfieldCorrection");
+        flatfield_correction.set_write_value(memorizedFlatfieldCorrection);
+        write_flatfieldCorrection(flatfield_correction);
+
+        INFO_STREAM << "- Write tango attribute at Init - pixelMask" << endl;
+        Tango::WAttribute &pixel_mask = dev_attr->get_w_attr_by_name("pixelMask");
+        pixel_mask.set_write_value(memorizedPixelMask);
+        write_pixelMask(pixel_mask);
+
+        INFO_STREAM << "- Write tango attribute at Init - virtualPixelCorrection" << endl;
+        Tango::WAttribute &virtual_pixel_correction = dev_attr->get_w_attr_by_name("virtualPixelCorrection");
+        virtual_pixel_correction.set_write_value(memorizedVirtualPixelCorrection);
+        write_virtualPixelCorrection(virtual_pixel_correction);
+
+        INFO_STREAM << "- Write tango attribute at Init - autoSummation" << endl;
+        Tango::WAttribute &auto_summation = dev_attr->get_w_attr_by_name("autoSummation");
+        auto_summation.set_write_value(memorizedAutoSummation);
+        write_autoSummation(auto_summation);
+
+        INFO_STREAM << "- Write tango attribute at Init - compression" << endl;
+        Tango::WAttribute &compression = dev_attr->get_w_attr_by_name("compression");
+        compression.set_write_value(memorizedCompression);
+        write_compression(compression);
+
+        INFO_STREAM << "- Write tango attribute at Init - beamCenterX" << endl;
+        Tango::WAttribute &beam_centerX = dev_attr->get_w_attr_by_name("beamCenterX");
+        beam_centerX.set_write_value(memorizedBeamCenterX);
+        write_beamCenterX(beam_centerX);
+
+        INFO_STREAM << "- Write tango attribute at Init - beamCenterY" << endl;
+        Tango::WAttribute &beam_centerY = dev_attr->get_w_attr_by_name("beamCenterY");
+        beam_centerY.set_write_value(memorizedBeamCenterY);
+        write_beamCenterY(beam_centerY);
+
+        INFO_STREAM << "- Write tango attribute at Init - detectorDistance" << endl;
+        Tango::WAttribute &detector_distance = dev_attr->get_w_attr_by_name("detectorDistance");
+        detector_distance.set_write_value(memorizedDetectorDistance);
+        write_detectorDistance(detector_distance);
+
+        INFO_STREAM << "- Write tango attribute at Init - chiIncrement" << endl;
+        Tango::WAttribute &chi_increment = dev_attr->get_w_attr_by_name("chiIncrement");
+        chi_increment.set_write_value(memorizedChiIncrement);
+        write_chiIncrement(chi_increment);
+
+        INFO_STREAM << "- Write tango attribute at Init - chiStart" << endl;
+        Tango::WAttribute &chi_start = dev_attr->get_w_attr_by_name("chiStart");
+        chi_start.set_write_value(memorizedChiStart);
+        write_chiStart(chi_start);
+
+        INFO_STREAM << "- Write tango attribute at Init - kappaIncrement" << endl;
+        Tango::WAttribute &kappa_increment = dev_attr->get_w_attr_by_name("kappaIncrement");
+        kappa_increment.set_write_value(memorizedKappaIncrement);
+        write_kappaIncrement(kappa_increment);
+
+        INFO_STREAM << "- Write tango attribute at Init - kappaStart" << endl;
+        Tango::WAttribute &kappa_start = dev_attr->get_w_attr_by_name("kappaStart");
+        kappa_start.set_write_value(memorizedKappaStart);
+        write_kappaStart(kappa_start);
+
+        INFO_STREAM << "- Write tango attribute at Init - omegaIncrement" << endl;
+        Tango::WAttribute &omega_increment = dev_attr->get_w_attr_by_name("omegaIncrement");
+        omega_increment.set_write_value(memorizedOmegaIncrement);
+        write_omegaIncrement(omega_increment);
+
+        INFO_STREAM << "- Write tango attribute at Init - omegaStart" << endl;
+        Tango::WAttribute &omega_start = dev_attr->get_w_attr_by_name("omegaStart");
+        omega_start.set_write_value(memorizedOmegaStart);
+        write_omegaStart(omega_start);
+
+        INFO_STREAM << "- Write tango attribute at Init - phiIncrement" << endl;
+        Tango::WAttribute &phi_increment = dev_attr->get_w_attr_by_name("phiIncrement");
+        phi_increment.set_write_value(memorizedPhiIncrement);
+        write_phiIncrement(phi_increment);
+
+        INFO_STREAM << "- Write tango attribute at Init - phiStart" << endl;
+        Tango::WAttribute &phi_start = dev_attr->get_w_attr_by_name("phiStart");
+        phi_start.set_write_value(memorizedPhiStart);
+        write_phiStart(phi_start);
+
+        if (nbFramesPerTriggerIsMaster)
+        {
+            INFO_STREAM << "- Write tango attribute at Init - nbTriggers" << endl;
+            Tango::WAttribute &nb_triggers = dev_attr->get_w_attr_by_name("nbTriggers");
+            nb_triggers.set_write_value(memorizedNbTriggers);
+            write_nbTriggers(nb_triggers);
+
+            INFO_STREAM << "- Write tango attribute at Init - nbFramesPerTrigger" << endl;
+            Tango::WAttribute &nb_frames_per_triggers = dev_attr->get_w_attr_by_name("nbFramesPerTrigger");
+            nb_frames_per_triggers.set_write_value(memorizedNbFramesPerTrigger);
+            write_nbFramesPerTrigger(nb_frames_per_triggers);	
+        }
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        m_status_message << "Initialization Failed.\n" << endl;
+        m_status_message << "Origin\t: " << df.errors[0].origin << endl;
+        m_status_message << "Desc\t: " << df.errors[0].desc << endl;
+        return;
+    }
+}
+
 //+----------------------------------------------------------------------------
 //
 // method : 		Eiger::always_executed_hook()
@@ -2081,7 +2153,6 @@ void Eiger::write_wavelength(Tango::WAttribute &attr)
     {
         attr.get_write_value(attr_wavelength_write);
         m_camera->setWavelength(attr_wavelength_write);
-        yat4tango::PropertyHelper::set_property(this, "MemorizedWavelength", attr_wavelength_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -2407,9 +2478,11 @@ void Eiger::write_compression(Tango::WAttribute &attr)
     DEBUG_STREAM << "Eiger::write_compression(Tango::WAttribute &attr) entering... "<< endl;
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 
+    attr.get_write_value(attr_compression_write);
+
     lima::CtSaving::ManagedMode managed_mode;
     m_ct->saving()->getManagedMode(managed_mode);
-    if (managed_mode != lima::CtSaving::Hardware) //- ie Hardware == FileWriter
+    if (managed_mode == lima::CtSaving::Software && attr_compression_write == false) //- in Software mode (ie: Eiger Streaming), the compression is mandatory
     {
         Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
                                         "In Software Saving Managed mode (ie Eiger Streaming), compression is always enabled",
@@ -2418,7 +2491,6 @@ void Eiger::write_compression(Tango::WAttribute &attr)
 
     try
     {
-        attr.get_write_value(attr_compression_write);
         m_camera->setCompression(attr_compression_write);
         yat4tango::PropertyHelper::set_property(this, "MemorizedCompression", attr_compression_write);
     }
@@ -2741,7 +2813,6 @@ void Eiger::write_thresholdEnergy(Tango::WAttribute &attr)
     {
         attr.get_write_value(attr_thresholdEnergy_write);
         m_camera->setThresholdEnergy(attr_thresholdEnergy_write);
-        yat4tango::PropertyHelper::set_property(this, "MemorizedThresholdEnergy", attr_thresholdEnergy_write);
     }
     catch(Tango::DevFailed& df)
     {
@@ -3159,5 +3230,6 @@ void Eiger::update_th()
                                        "Eiger::update_th" );
     }		 
 }
+
 
 }	//	namespace

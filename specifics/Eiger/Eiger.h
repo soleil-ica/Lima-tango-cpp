@@ -222,10 +222,6 @@ public:
  */
 	Tango::DevBoolean	memorizedVirtualPixelCorrection;
 /**
- *	Memorize the value of thresholdEnergy attribute.
- */
-	Tango::DevDouble	memorizedThresholdEnergy;
-/**
  *	Memorize the value of photonEnergy attribute.
  */
 	Tango::DevDouble	memorizedPhotonEnergy;
@@ -241,10 +237,6 @@ public:
  *	Memorize the value of compressionType attribute.
  */
 	string	memorizedCompressionType;
-/**
- *	Memorize the value of wavelength attribute.
- */
-	Tango::DevDouble	memorizedWavelength;
 /**
  *	Memorize the value of roiMode attribute.
  */
@@ -765,6 +757,7 @@ protected:
     //-----------------------------------------
     bool m_is_device_initialized;
     stringstream m_status_message;
+    void write_at_init();
 
     //lima OBJECTS
     lima::Eiger::Interface* m_hw;

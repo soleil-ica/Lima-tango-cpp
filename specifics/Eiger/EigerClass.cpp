@@ -762,21 +762,6 @@ void EigerClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
-	prop_name = "MemorizedThresholdEnergy";
-	prop_desc = "Memorize the value of thresholdEnergy attribute.";
-	prop_def  = "4000.0";
-	vect_data.clear();
-	vect_data.push_back("4000.0");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
 	prop_name = "MemorizedPhotonEnergy";
 	prop_desc = "Memorize the value of photonEnergy attribute.";
 	prop_def  = "8000.0";
@@ -827,21 +812,6 @@ void EigerClass::set_default_property()
 	prop_def  = "LZ4";
 	vect_data.clear();
 	vect_data.push_back("LZ4");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "MemorizedWavelength";
-	prop_desc = "Memorize the value of wavelength attribute.";
-	prop_def  = "0";
-	vect_data.clear();
-	vect_data.push_back("0");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
