@@ -640,8 +640,6 @@ void Hamamatsu::always_executed_hook()
 {
     try
     {
-        m_status_message.str("");
-
         yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 
         //- get the singleton control objet used to pilot the lima framework
@@ -1497,6 +1495,9 @@ Tango::DevState Hamamatsu::dev_state()
 	{
 		Device_state  = Tango::FAULT;
 		Device_status << m_status_message.str();
+		//Update LimaDetector state and status
+        ControlFactory::instance().set_state(Device_state);
+        ControlFactory::instance().set_status(Device_status.str());
 	}
 	else
 	{

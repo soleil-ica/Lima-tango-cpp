@@ -1358,35 +1358,38 @@ Tango::DevState ControlFactory::get_state(void)
     CtControl::Status ctStatus;
     m_control->getStatus(ctStatus);
 
-    switch(ctStatus.AcquisitionStatus)
+    if(m_state != Tango::FAULT)
     {
-        case lima::AcqReady:
+        switch(ctStatus.AcquisitionStatus)
         {
-            set_state(Tango::STANDBY);
-            set_status("Waiting for a user request ...\n");
-        }
-            break;
+            case lima::AcqReady:
+            {
+                set_state(Tango::STANDBY);
+                set_status("Waiting for a user request ...\n");
+            }
+                break;
 
-        case lima::AcqRunning:
-        {
-            set_state(Tango::RUNNING);
-            set_status("Acquisition in Progress ...\n");
-        }
-            break;
+            case lima::AcqRunning:
+            {
+                set_state(Tango::RUNNING);
+                set_status("Acquisition in Progress ...\n");
+            }
+                break;
 
-        case lima::AcqConfig:
-        {
-            set_state(Tango::DISABLE);
-            set_status("Configuration/Calibration in Progress ...\n");
-        }
-            break;
+            case lima::AcqConfig:
+            {
+                set_state(Tango::DISABLE);
+                set_status("Configuration/Calibration in Progress ...\n");
+            }
+                break;
 
-        default:
-        {
-            set_state(Tango::FAULT);
-            set_status("Error has occured !\n");
+            default:
+            {
+                set_state(Tango::FAULT);
+                set_status("Error has occured !\n");
+            }
+                break;
         }
-            break;
     }
     return m_state;
 }
