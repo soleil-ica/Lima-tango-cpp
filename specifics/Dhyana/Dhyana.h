@@ -48,21 +48,12 @@
 #include <yat4tango/InnerAppender.h>
 #include "DhyanaInterface.h"
 
+#include <yat/memory/UniquePtr.h>
 
-#include "Factory.h"
-
-#include "lima/HwInterface.h"
-#include "lima/CtControl.h"
-#include "lima/CtAcquisition.h"
-#include "lima/CtImage.h"
-
-#include <yat4tango/PropertyHelper.h>
-#include <yat4tango/InnerAppender.h>
-
-#include "DhyanaInterface.h"
 #include "DhyanaCamera.h"
 
-#define MAX_ATTRIBUTE_STRING_LENGTH     256
+#include "AttrView.h"
+
 #define TUCAM_VERSION  "1.0.0"
 
 #define CHANNEL_1 0
@@ -82,30 +73,6 @@ using namespace yat4tango;
 
 namespace Dhyana_ns
 {
-enum _channel1Enum: short{
-} ;
-typedef _channel1Enum channel1Enum;
-
-enum _channel2Enum: short {
-} ;
-typedef _channel2Enum channel2Enum;
-
-enum _channel3Enum: short {
-} ;
-typedef _channel3Enum channel3Enum;
-
-enum _edge1Enum: short {
-} ;
-typedef _edge1Enum edge1Enum;
-
-enum _edge2Enum: short {
-} ;
-typedef _edge2Enum edge2Enum;
-
-enum _edge3Enum: short {
-} ;
-typedef _edge3Enum edge3Enum;
-
 /*----- PROTECTED REGION ID(Dhyana::Additional Class Declarations) ENABLED START -----*/
 
 enum class TriggeroutMode : short
@@ -130,7 +97,7 @@ class Dhyana : public TANGO_BASE_CLASS
 
 //	Add your own data members
 public:
-	Tango::DevString	attr_globalGain_write;
+	/*Tango::DevString	attr_globalGain_write;
 	Tango::DevUShort	attr_fanSpeed_write;
 	Tango::DevDouble	attr_temperatureTarget_write;
 	channel1Enum	attr_channel1_write;
@@ -144,41 +111,16 @@ public:
 	Tango::DevDouble	attr_delay3_write;
 	edge1Enum	attr_edge1_write;
 	edge2Enum	attr_edge2_write;
-	edge3Enum	attr_edge3_write;
+	edge3Enum	attr_edge3_write;*/
+	yat::UniquePtr<AttrView> m_attr_view;
 /*----- PROTECTED REGION END -----*/	//	Dhyana::Data Members
 
 //	Device property data members
 public:
-	//	TemperatureTargetAtInit:	Memorize/Define the temperatureTarget  attribute  at Init device<br>
-	Tango::DevDouble	temperatureTargetAtInit;
-	//	MemorizedFanSpeed:	Memorize/Define the fanSpeed  attribute  at Init device<br>
-	Tango::DevUShort	memorizedFanSpeed;
-	//	MemorizedGlobalGain:	Memorize/Define the globalGain  attribute  at Init device<br>
-	string	memorizedGlobalGain;
 	//	__ExpertTimerPeriod:	Timer period in ms.<cr>
 	//  useful only for Internal Trigger
 	Tango::DevUShort	__ExpertTimerPeriod;
 
-//	Attribute data members
-public:
-	Tango::DevString	*attr_tucamVersion_read;
-	Tango::DevDouble	*attr_temperature_read;
-	Tango::DevDouble	*attr_temperatureTarget_read;
-	Tango::DevUShort	*attr_fanSpeed_read;
-	Tango::DevString	*attr_globalGain_read;
-	Tango::DevDouble	*attr_fps_read;
-	channel1Enum	*attr_channel1_read;
-	channel2Enum	*attr_channel2_read;
-	channel3Enum	*attr_channel3_read;
-	Tango::DevDouble	*attr_width1_read;
-	Tango::DevDouble	*attr_width2_read;
-	Tango::DevDouble	*attr_width3_read;
-	Tango::DevDouble	*attr_delay1_read;
-	Tango::DevDouble	*attr_delay2_read;
-	Tango::DevDouble	*attr_delay3_read;
-	edge1Enum	*attr_edge1_read;
-	edge2Enum	*attr_edge2_read;
-	edge3Enum	*attr_edge3_read;
 
 //	Constructors and destructors
 public:
@@ -239,191 +181,6 @@ public:
 	 */
 	//--------------------------------------------------------
 	virtual void read_attr_hardware(vector<long> &attr_list);
-	//--------------------------------------------------------
-	/*
-	 *	Method      : Dhyana::write_attr_hardware()
-	 *	Description : Hardware writing for attributes.
-	 */
-	//--------------------------------------------------------
-	virtual void write_attr_hardware(vector<long> &attr_list);
-
-/**
- *	Attribute tucamVersion related methods
- *	Description: Dhyana Tucam Version.
- *
- *	Data type:	Tango::DevString
- *	Attr type:	Scalar
- */
-	virtual void read_tucamVersion(Tango::Attribute &attr);
-	virtual bool is_tucamVersion_allowed(Tango::AttReqType type);
-/**
- *	Attribute temperature related methods
- *	Description: Get Temperature of the detector (in Celsius)
- *
- *	Data type:	Tango::DevDouble
- *	Attr type:	Scalar
- */
-	virtual void read_temperature(Tango::Attribute &attr);
-	virtual bool is_temperature_allowed(Tango::AttReqType type);
-/**
- *	Attribute temperatureTarget related methods
- *	Description: Set the Temperature target of the detector (in Celsius)
- *
- *	Data type:	Tango::DevDouble
- *	Attr type:	Scalar
- */
-	virtual void read_temperatureTarget(Tango::Attribute &attr);
-	virtual void write_temperatureTarget(Tango::WAttribute &attr);
-	virtual bool is_temperatureTarget_allowed(Tango::AttReqType type);
-/**
- *	Attribute fanSpeed related methods
- *	Description: Define the fan speed of the detector [0..5]
- *
- *	Data type:	Tango::DevUShort
- *	Attr type:	Scalar
- */
-	virtual void read_fanSpeed(Tango::Attribute &attr);
-	virtual void write_fanSpeed(Tango::WAttribute &attr);
-	virtual bool is_fanSpeed_allowed(Tango::AttReqType type);
-/**
- *	Attribute globalGain related methods
- *	Description: Define the gain of the detector [LOW, HIGH, HDR]
- *
- *	Data type:	Tango::DevString
- *	Attr type:	Scalar
- */
-	virtual void read_globalGain(Tango::Attribute &attr);
-	virtual void write_globalGain(Tango::WAttribute &attr);
-	virtual bool is_globalGain_allowed(Tango::AttReqType type);
-/**
- *	Attribute fps related methods
- *	Description: The last computed frame per second (the value is computed every 100 frames only)
- *
- *	Data type:	Tango::DevDouble
- *	Attr type:	Scalar
- */
-	virtual void read_fps(Tango::Attribute &attr);
-	virtual bool is_fps_allowed(Tango::AttReqType type);
-/**
- *	Attribute channel1 related methods
- *	Description: 
- *
- *	Data type:	Tango::DevEnum
- *	Attr type:	Scalar
- */
-	virtual void read_channel1(Tango::Attribute &attr);
-	virtual void write_channel1(Tango::WAttribute &attr);
-	virtual bool is_channel1_allowed(Tango::AttReqType type);
-/**
- *	Attribute channel2 related methods
- *	Description: 
- *
- *	Data type:	Tango::DevEnum
- *	Attr type:	Scalar
- */
-	virtual void read_channel2(Tango::Attribute &attr);
-	virtual void write_channel2(Tango::WAttribute &attr);
-	virtual bool is_channel2_allowed(Tango::AttReqType type);
-/**
- *	Attribute channel3 related methods
- *	Description: 
- *
- *	Data type:	Tango::DevEnum
- *	Attr type:	Scalar
- */
-	virtual void read_channel3(Tango::Attribute &attr);
-	virtual void write_channel3(Tango::WAttribute &attr);
-	virtual bool is_channel3_allowed(Tango::AttReqType type);
-/**
- *	Attribute width1 related methods
- *	Description: 
- *
- *	Data type:	Tango::DevDouble
- *	Attr type:	Scalar
- */
-	virtual void read_width1(Tango::Attribute &attr);
-	virtual void write_width1(Tango::WAttribute &attr);
-	virtual bool is_width1_allowed(Tango::AttReqType type);
-/**
- *	Attribute width2 related methods
- *	Description: 
- *
- *	Data type:	Tango::DevDouble
- *	Attr type:	Scalar
- */
-	virtual void read_width2(Tango::Attribute &attr);
-	virtual void write_width2(Tango::WAttribute &attr);
-	virtual bool is_width2_allowed(Tango::AttReqType type);
-/**
- *	Attribute width3 related methods
- *	Description: 
- *
- *	Data type:	Tango::DevDouble
- *	Attr type:	Scalar
- */
-	virtual void read_width3(Tango::Attribute &attr);
-	virtual void write_width3(Tango::WAttribute &attr);
-	virtual bool is_width3_allowed(Tango::AttReqType type);
-/**
- *	Attribute delay1 related methods
- *	Description: 
- *
- *	Data type:	Tango::DevDouble
- *	Attr type:	Scalar
- */
-	virtual void read_delay1(Tango::Attribute &attr);
-	virtual void write_delay1(Tango::WAttribute &attr);
-	virtual bool is_delay1_allowed(Tango::AttReqType type);
-/**
- *	Attribute delay2 related methods
- *	Description: 
- *
- *	Data type:	Tango::DevDouble
- *	Attr type:	Scalar
- */
-	virtual void read_delay2(Tango::Attribute &attr);
-	virtual void write_delay2(Tango::WAttribute &attr);
-	virtual bool is_delay2_allowed(Tango::AttReqType type);
-/**
- *	Attribute delay3 related methods
- *	Description: 
- *
- *	Data type:	Tango::DevDouble
- *	Attr type:	Scalar
- */
-	virtual void read_delay3(Tango::Attribute &attr);
-	virtual void write_delay3(Tango::WAttribute &attr);
-	virtual bool is_delay3_allowed(Tango::AttReqType type);
-/**
- *	Attribute edge1 related methods
- *	Description: 
- *
- *	Data type:	Tango::DevEnum
- *	Attr type:	Scalar
- */
-	virtual void read_edge1(Tango::Attribute &attr);
-	virtual void write_edge1(Tango::WAttribute &attr);
-	virtual bool is_edge1_allowed(Tango::AttReqType type);
-/**
- *	Attribute edge2 related methods
- *	Description: 
- *
- *	Data type:	Tango::DevEnum
- *	Attr type:	Scalar
- */
-	virtual void read_edge2(Tango::Attribute &attr);
-	virtual void write_edge2(Tango::WAttribute &attr);
-	virtual bool is_edge2_allowed(Tango::AttReqType type);
-/**
- *	Attribute edge3 related methods
- *	Description: 
- *
- *	Data type:	Tango::DevEnum
- *	Attr type:	Scalar
- */
-	virtual void read_edge3(Tango::Attribute &attr);
-	virtual void write_edge3(Tango::WAttribute &attr);
-	virtual bool is_edge3_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------
@@ -460,7 +217,13 @@ public:
 
 //	Additional Method prototypes
 // return true if the device is correctly initialized in init_device
-	bool is_device_initialized(){return m_is_device_initialized;};
+	bool is_device_initialized();
+
+	void build_view(std::string model);
+
+	void write_attr_at_init();
+
+	lima::Dhyana::Camera* get_camera();
 
 protected :	
 	//	Add your own data members here
