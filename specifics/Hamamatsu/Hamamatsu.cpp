@@ -642,6 +642,11 @@ void Hamamatsu::always_executed_hook()
     {
         yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 
+        if(m_is_device_initialized)
+        {
+            m_status_message.str("");
+        }
+
         //- get the singleton control objet used to pilot the lima framework
 		m_ct = ControlFactory::instance().get_control("Hamamatsu");
 		
