@@ -152,6 +152,51 @@ public:
 		{return (static_cast<Lambda *>(dev))->is_temperature_allowed(ty);}
 };
 
+//	Attribute linearityCorrection class definition
+class linearityCorrectionAttrib: public Tango::Attr
+{
+public:
+	linearityCorrectionAttrib():Attr("linearityCorrection",
+			Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~linearityCorrectionAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Lambda *>(dev))->read_linearityCorrection(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Lambda *>(dev))->write_linearityCorrection(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Lambda *>(dev))->is_linearityCorrection_allowed(ty);}
+};
+
+//	Attribute saturationFlag class definition
+class saturationFlagAttrib: public Tango::Attr
+{
+public:
+	saturationFlagAttrib():Attr("saturationFlag",
+			Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~saturationFlagAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Lambda *>(dev))->read_saturationFlag(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Lambda *>(dev))->write_saturationFlag(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Lambda *>(dev))->is_saturationFlag_allowed(ty);}
+};
+
+//	Attribute saturationThreshold class definition
+class saturationThresholdAttrib: public Tango::Attr
+{
+public:
+	saturationThresholdAttrib():Attr("saturationThreshold",
+			Tango::DEV_LONG, Tango::READ_WRITE) {};
+	~saturationThresholdAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Lambda *>(dev))->read_saturationThreshold(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Lambda *>(dev))->write_saturationThreshold(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Lambda *>(dev))->is_saturationThreshold_allowed(ty);}
+};
+
 
 /**
  *	The LambdaClass singleton definition

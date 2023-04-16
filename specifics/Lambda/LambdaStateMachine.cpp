@@ -241,6 +241,129 @@ bool Lambda::is_temperature_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	return true;
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : Lambda::is_linearityCorrection_allowed()
+ *	Description : Execution allowed for linearityCorrection attribute
+ */
+//--------------------------------------------------------
+bool Lambda::is_linearityCorrection_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(Lambda::linearityCorrectionStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::linearityCorrectionStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(Lambda::linearityCorrectionStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::linearityCorrectionStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : Lambda::is_saturationFlag_allowed()
+ *	Description : Execution allowed for saturationFlag attribute
+ */
+//--------------------------------------------------------
+bool Lambda::is_saturationFlag_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(Lambda::saturationFlagStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::saturationFlagStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(Lambda::saturationFlagStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::saturationFlagStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : Lambda::is_saturationThreshold_allowed()
+ *	Description : Execution allowed for saturationThreshold attribute
+ */
+//--------------------------------------------------------
+bool Lambda::is_saturationThreshold_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(Lambda::saturationThresholdStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::saturationThresholdStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(Lambda::saturationThresholdStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::saturationThresholdStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
 
 //=================================================
 //		Commands Allowed Methods

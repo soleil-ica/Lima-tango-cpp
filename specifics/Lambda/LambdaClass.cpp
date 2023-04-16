@@ -543,6 +543,78 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Not Memorized
 	att_list.push_back(temperature);
 
+	//	Attribute : linearityCorrection
+	linearityCorrectionAttrib	*linearitycorrection = new linearityCorrectionAttrib();
+	Tango::UserDefaultAttrProp	linearitycorrection_prop;
+	//	description	not set for linearityCorrection
+	//	label	not set for linearityCorrection
+	//	unit	not set for linearityCorrection
+	//	standard_unit	not set for linearityCorrection
+	//	display_unit	not set for linearityCorrection
+	//	format	not set for linearityCorrection
+	//	max_value	not set for linearityCorrection
+	//	min_value	not set for linearityCorrection
+	//	max_alarm	not set for linearityCorrection
+	//	min_alarm	not set for linearityCorrection
+	//	max_warning	not set for linearityCorrection
+	//	min_warning	not set for linearityCorrection
+	//	delta_t	not set for linearityCorrection
+	//	delta_val	not set for linearityCorrection
+	
+	linearitycorrection->set_default_properties(linearitycorrection_prop);
+	//	Not Polled
+	linearitycorrection->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(linearitycorrection);
+
+	//	Attribute : saturationFlag
+	saturationFlagAttrib	*saturationflag = new saturationFlagAttrib();
+	Tango::UserDefaultAttrProp	saturationflag_prop;
+	//	description	not set for saturationFlag
+	//	label	not set for saturationFlag
+	//	unit	not set for saturationFlag
+	//	standard_unit	not set for saturationFlag
+	//	display_unit	not set for saturationFlag
+	//	format	not set for saturationFlag
+	//	max_value	not set for saturationFlag
+	//	min_value	not set for saturationFlag
+	//	max_alarm	not set for saturationFlag
+	//	min_alarm	not set for saturationFlag
+	//	max_warning	not set for saturationFlag
+	//	min_warning	not set for saturationFlag
+	//	delta_t	not set for saturationFlag
+	//	delta_val	not set for saturationFlag
+	
+	saturationflag->set_default_properties(saturationflag_prop);
+	//	Not Polled
+	saturationflag->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(saturationflag);
+
+	//	Attribute : saturationThreshold
+	saturationThresholdAttrib	*saturationthreshold = new saturationThresholdAttrib();
+	Tango::UserDefaultAttrProp	saturationthreshold_prop;
+	//	description	not set for saturationThreshold
+	//	label	not set for saturationThreshold
+	//	unit	not set for saturationThreshold
+	//	standard_unit	not set for saturationThreshold
+	//	display_unit	not set for saturationThreshold
+	//	format	not set for saturationThreshold
+	//	max_value	not set for saturationThreshold
+	//	min_value	not set for saturationThreshold
+	//	max_alarm	not set for saturationThreshold
+	//	min_alarm	not set for saturationThreshold
+	//	max_warning	not set for saturationThreshold
+	//	min_warning	not set for saturationThreshold
+	//	delta_t	not set for saturationThreshold
+	//	delta_val	not set for saturationThreshold
+	
+	saturationthreshold->set_default_properties(saturationthreshold_prop);
+	//	Not Polled
+	saturationthreshold->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(saturationthreshold);
+
 
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());

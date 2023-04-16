@@ -102,6 +102,9 @@ public:
 	Tango::DevDouble	*attr_highVoltage_read;
 	Tango::DevDouble	*attr_humidity_read;
 	Tango::DevDouble	*attr_temperature_read;
+	Tango::DevBoolean	*attr_linearityCorrection_read;
+	Tango::DevBoolean	*attr_saturationFlag_read;
+	Tango::DevLong	*attr_saturationThreshold_read;
 
 //	Constructors and destructors
 public:
@@ -239,6 +242,36 @@ public:
  */
 	virtual void read_temperature(Tango::Attribute &attr);
 	virtual bool is_temperature_allowed(Tango::AttReqType type);
+/**
+ *	Attribute linearityCorrection related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void read_linearityCorrection(Tango::Attribute &attr);
+	virtual void write_linearityCorrection(Tango::WAttribute &attr);
+	virtual bool is_linearityCorrection_allowed(Tango::AttReqType type);
+/**
+ *	Attribute saturationFlag related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void read_saturationFlag(Tango::Attribute &attr);
+	virtual void write_saturationFlag(Tango::WAttribute &attr);
+	virtual bool is_saturationFlag_allowed(Tango::AttReqType type);
+/**
+ *	Attribute saturationThreshold related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevLong
+ *	Attr type:	Scalar
+ */
+	virtual void read_saturationThreshold(Tango::Attribute &attr);
+	virtual void write_saturationThreshold(Tango::WAttribute &attr);
+	virtual bool is_saturationThreshold_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------
