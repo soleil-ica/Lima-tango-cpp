@@ -15,11 +15,6 @@
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>True</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="MemorizedEnergyThreshold" description="Only the device could modify this property &lt;br>&#xA;The User should never change this property&lt;br>">
-      <type xsi:type="pogoDsl:FloatType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>7</DefaultPropValue>
-    </deviceProperties>
     <commands name="State" description="This command gets the device state (stored in its device_state data member) and returns it to the caller." execMethod="dev_state" displayLevel="OPERATOR" polledPeriod="0">
       <argin description="none">
         <type xsi:type="pogoDsl:VoidType"/>
@@ -65,7 +60,7 @@
       <archiveEvent fire="false" libCheckCriteria="false"/>
       <dataReadyEvent fire="false" libCheckCriteria="true"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <properties description="energy threshold in KeV.&lt;br>&#xA;The photon is counted If the energy is above this threshold.&lt;br>" label="" unit="KeV" standardUnit="KeV" displayUnit="KeV" format="%6.2f" maxValue="300" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <properties description="energy threshold in KeV.&lt;br>&#xA;The photon is counted If the energy is above this threshold.&lt;br>&#xA;energyThreshold is a memorized attribute.&lt;br>" label="" unit="KeV" standardUnit="KeV" displayUnit="KeV" format="%6.2f" maxValue="300" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
       <readExcludedStates>FAULT</readExcludedStates>
       <readExcludedStates>RUNNING</readExcludedStates>
       <writeExcludedStates>FAULT</writeExcludedStates>
@@ -116,7 +111,7 @@
       <archiveEvent fire="false" libCheckCriteria="false"/>
       <dataReadyEvent fire="false" libCheckCriteria="true"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <properties description="" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <properties description="Enable/Disable countrate correction.&#xA;linearityCorrection is a memorized attribute" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
       <readExcludedStates>FAULT</readExcludedStates>
       <readExcludedStates>RUNNING</readExcludedStates>
       <writeExcludedStates>FAULT</writeExcludedStates>
@@ -128,7 +123,7 @@
       <archiveEvent fire="false" libCheckCriteria="false"/>
       <dataReadyEvent fire="false" libCheckCriteria="true"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <properties description="" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <properties description="Enable/Disable flagging of pixel saturation.&#xA;saturationFlag is a memorized attribute" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
       <readExcludedStates>FAULT</readExcludedStates>
       <readExcludedStates>RUNNING</readExcludedStates>
       <writeExcludedStates>FAULT</writeExcludedStates>
@@ -140,7 +135,7 @@
       <archiveEvent fire="false" libCheckCriteria="false"/>
       <dataReadyEvent fire="false" libCheckCriteria="true"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <properties description="" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <properties description="Saturation threshold in counts per second per pixel.&lt;br>&#xA;saturationThreshold is a memorized attribute.&lt;br>" label="" unit="counts" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
       <readExcludedStates>FAULT</readExcludedStates>
       <readExcludedStates>RUNNING</readExcludedStates>
       <writeExcludedStates>FAULT</writeExcludedStates>

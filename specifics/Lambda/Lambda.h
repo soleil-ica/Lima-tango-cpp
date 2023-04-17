@@ -89,9 +89,6 @@ public:
 	//  - The values of the pixels are rounded during division. <br>
 	//  - If pixel value is saturated, the division is not applied.<br>
 	Tango::DevBoolean	distortionCorrection;
-	//	MemorizedEnergyThreshold:	Only the device could modify this property <br>
-	//  The User should never change this property<br>
-	Tango::DevFloat	memorizedEnergyThreshold;
 
 //	Attribute data members
 public:
@@ -199,6 +196,7 @@ public:
  *	Attribute energyThreshold related methods
  *	Description: energy threshold in KeV.<br>
  *               The photon is counted If the energy is above this threshold.<br>
+ *               energyThreshold is a memorized attribute.<br>
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -244,7 +242,8 @@ public:
 	virtual bool is_temperature_allowed(Tango::AttReqType type);
 /**
  *	Attribute linearityCorrection related methods
- *	Description: 
+ *	Description: Enable/Disable countrate correction.
+ *               linearityCorrection is a memorized attribute
  *
  *	Data type:	Tango::DevBoolean
  *	Attr type:	Scalar
@@ -254,7 +253,8 @@ public:
 	virtual bool is_linearityCorrection_allowed(Tango::AttReqType type);
 /**
  *	Attribute saturationFlag related methods
- *	Description: 
+ *	Description: Enable/Disable flagging of pixel saturation.
+ *               saturationFlag is a memorized attribute
  *
  *	Data type:	Tango::DevBoolean
  *	Attr type:	Scalar
@@ -264,7 +264,8 @@ public:
 	virtual bool is_saturationFlag_allowed(Tango::AttReqType type);
 /**
  *	Attribute saturationThreshold related methods
- *	Description: 
+ *	Description: Saturation threshold in counts per second per pixel.<br>
+ *               saturationThreshold is a memorized attribute.<br>
  *
  *	Data type:	Tango::DevLong
  *	Attr type:	Scalar

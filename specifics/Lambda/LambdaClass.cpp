@@ -255,20 +255,6 @@ void LambdaClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "MemorizedEnergyThreshold";
-	prop_desc = "Only the device could modify this property <br>\nThe User should never change this property<br>";
-	prop_def  = "7";
-	vect_data.clear();
-	vect_data.push_back("7");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
 }
 
 //--------------------------------------------------------
@@ -426,7 +412,7 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : energyThreshold
 	energyThresholdAttrib	*energythreshold = new energyThresholdAttrib();
 	Tango::UserDefaultAttrProp	energythreshold_prop;
-	energythreshold_prop.set_description("energy threshold in KeV.<br>\nThe photon is counted If the energy is above this threshold.<br>");
+	energythreshold_prop.set_description("energy threshold in KeV.<br>\nThe photon is counted If the energy is above this threshold.<br>\nenergyThreshold is a memorized attribute.<br>");
 	//	label	not set for energyThreshold
 	energythreshold_prop.set_unit("KeV");
 	energythreshold_prop.set_standard_unit("KeV");
@@ -546,7 +532,7 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : linearityCorrection
 	linearityCorrectionAttrib	*linearitycorrection = new linearityCorrectionAttrib();
 	Tango::UserDefaultAttrProp	linearitycorrection_prop;
-	//	description	not set for linearityCorrection
+	linearitycorrection_prop.set_description("Enable/Disable countrate correction.\nlinearityCorrection is a memorized attribute");
 	//	label	not set for linearityCorrection
 	//	unit	not set for linearityCorrection
 	//	standard_unit	not set for linearityCorrection
@@ -570,7 +556,7 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : saturationFlag
 	saturationFlagAttrib	*saturationflag = new saturationFlagAttrib();
 	Tango::UserDefaultAttrProp	saturationflag_prop;
-	//	description	not set for saturationFlag
+	saturationflag_prop.set_description("Enable/Disable flagging of pixel saturation.\nsaturationFlag is a memorized attribute");
 	//	label	not set for saturationFlag
 	//	unit	not set for saturationFlag
 	//	standard_unit	not set for saturationFlag
@@ -594,9 +580,9 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : saturationThreshold
 	saturationThresholdAttrib	*saturationthreshold = new saturationThresholdAttrib();
 	Tango::UserDefaultAttrProp	saturationthreshold_prop;
-	//	description	not set for saturationThreshold
+	saturationthreshold_prop.set_description("Saturation threshold in counts per second per pixel.<br>\nsaturationThreshold is a memorized attribute.<br>");
 	//	label	not set for saturationThreshold
-	//	unit	not set for saturationThreshold
+	saturationthreshold_prop.set_unit("counts");
 	//	standard_unit	not set for saturationThreshold
 	//	display_unit	not set for saturationThreshold
 	//	format	not set for saturationThreshold
