@@ -221,9 +221,9 @@ void Lambda::init_device()
 		// Update the hardware with the properties data
 		write_at_init();
 		//- Set the distortion correction (from property)
-		m_camera->setDistortionCorrection(distortionCorrection);
+		//m_camera->setDistortionCorrection(distortionCorrection);
 		//- Get the distortion correction (from hardware), only once
-		m_camera->getDistortionCorrection(*attr_distortionCorrection_read);
+		//m_camera->getDistortionCorrection(*attr_distortionCorrection_read);
 		//- Get the lib version, only once
 		m_library_version = m_camera->getLibVersion();
 		strcpy(*attr_libraryVersion_read, m_library_version.c_str());
@@ -507,9 +507,10 @@ void Lambda::write_energyThreshold(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(Lambda::write_energyThreshold) ENABLED START -----*/
 	try
     {
+		// set the camera value
         m_camera->setEnergyThreshold(w_val);
 		//- Memorize the write value
-		yat4tango::PropertyHelper::set_property(this, "MemorizedEnergyThreshold", w_val);
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "energyThreshold", w_val);
     }
     catch (Tango::DevFailed& df)
     {
@@ -967,30 +968,51 @@ void Lambda::manage_lima_exception(lima::Exception & in_exception, const std::st
  *****************************************************************************/
 void Lambda::write_at_init(void)
 {
-    INFO_STREAM << "Write tango hardware at Init - energyThreshold." << endl;
-	Tango::WAttribute &energyThreshold = dev_attr->get_w_attr_by_name("energyThreshold");
-	*attr_energyThreshold_read = memorizedEnergyThreshold; // does the cast
-	energyThreshold.set_write_value(*attr_energyThreshold_read);
-	write_energyThreshold(energyThreshold);
+	try
+	{
+		INFO_STREAM << "Write tango hardware at Init - energyThreshold." << endl;
+		Tango::WAttribute &energyThreshold = dev_attr->get_w_attr_by_name("energyThreshold");
+		//*attr_energyThreshold_read = memorizedEnergyThreshold; // does the cast
+		double energy_threshold = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, "energyThreshold", 2.0);
+		//energyThreshold.set_write_value(*attr_energyThreshold_read);
+		energyThreshold.set_write_value(energy_threshold);
+		write_energyThreshold(energyThreshold);
 
-	//Init Correction attributes
-	INFO_STREAM << "Write tango attribute at Init - linearityCorrection." << endl;
-	Tango::WAttribute &linearityCorrection = dev_attr->get_w_attr_by_name("linearityCorrection");
-	bool is_linearity_correction = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "linearityCorrection", false);
-	linearityCorrection.set_write_value(is_linearity_correction);
-	write_linearityCorrection(linearityCorrection);
+		//Init Correction attributes
+		INFO_STREAM << "Write tango attribute at Init - linearityCorrection." << std::endl;
+		Tango::WAttribute &linearityCorrection = dev_attr->get_w_attr_by_name("linearityCorrection");
+		bool is_linearity_correction = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "linearityCorrection", false);
+		linearityCorrection.set_write_value(is_linearity_correction);
+		write_linearityCorrection(linearityCorrection);
 
-	INFO_STREAM << "Write tango attribute at Init - saturationFlag." << endl;
-	Tango::WAttribute &saturationFlag = dev_attr->get_w_attr_by_name("saturationFlag");
-	bool is_saturation_flag = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "saturationFlag", false);
-	saturationFlag.set_write_value(is_saturation_flag);
-	write_saturationFlag(saturationFlag);
+		INFO_STREAM << "Write tango attribute at Init - saturationFlag." << std::endl;
+		Tango::WAttribute &saturationFlag = dev_attr->get_w_attr_by_name("saturationFlag");
+		bool is_saturation_flag = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "saturationFlag", false);
+		saturationFlag.set_write_value(is_saturation_flag);
+		write_saturationFlag(saturationFlag);
 
-	INFO_STREAM << "Write tango attribute at Init - saturationThreshold." << endl;
-	Tango::WAttribute &saturationThreshold = dev_attr->get_w_attr_by_name("saturationThreshold");
-	bool saturation_threshold = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevLong>(this, "saturationThreshold", 0);
-	saturationThreshold.set_write_value(saturation_threshold);
-	write_saturationThreshold(saturationThreshold);
+		INFO_STREAM << "Write tango attribute at Init - saturationThreshold." << std::endl;
+		Tango::WAttribute &saturationThreshold = dev_attr->get_w_attr_by_name("saturationThreshold");
+		long saturation_threshold = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevLong>(this, "saturationThreshold", 0);
+		saturationThreshold.set_write_value(saturation_threshold);
+		write_saturationThreshold(saturationThreshold);
+
+		INFO_STREAM << "Write tango attribute at Init - distortionCorrection." << std::endl;
+		Tango::WAttribute &distortionCorrection = dev_attr->get_w_attr_by_name("distortionCorrection");
+		bool distortion_correction = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "saturationThreshold", true);
+		//- Set the distortion correction (from property)
+		m_camera->setDistortionCorrection(distortion_correction);
+		//- Get the distortion correction (from hardware), only once
+		m_camera->getDistortionCorrection(*attr_distortionCorrection_read);
+	}
+	catch (Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "read_energyThreshold");
+    }
+	catch (lima::Exception& le)
+    {						
+        manage_lima_exception(le, "read_energyThreshold");
+    }
 }
 /*----- PROTECTED REGION END -----*/	//	Lambda::namespace_ending
 } //	namespace
