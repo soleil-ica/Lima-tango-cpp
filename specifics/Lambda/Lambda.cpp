@@ -692,7 +692,7 @@ void Lambda::read_linearityCorrection(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_linearityCorrection(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Lambda::write_linearityCorrection(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Lambda::write_linearityCorrection(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
@@ -760,7 +760,7 @@ void Lambda::read_saturationFlag(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_saturationFlag(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Lambda::write_saturationFlag(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Lambda::write_saturationFlag(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
@@ -795,13 +795,13 @@ void Lambda::write_saturationFlag(Tango::WAttribute &attr)
 //--------------------------------------------------------
 void Lambda::read_saturationThreshold(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Lambda::read_saturationThreshold(Tango::Attribute &attr) entering... " << endl;
+	INFO_STREAM << "Lambda::read_saturationThreshold(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Lambda::read_saturationThreshold) ENABLED START -----*/
 	//	Set the attribute value
 	try
     {
 		m_camera->getSaturationThreshold(*attr_saturationThreshold_read);
-		attr.set_value(attr_saturationThreshold_read);
+		attr.set_value(attr_saturationThreshold_read);		
     }
     catch (Tango::DevFailed& df)
     {
@@ -826,7 +826,7 @@ void Lambda::read_saturationThreshold(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_saturationThreshold(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Lambda::write_saturationThreshold(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Lambda::write_saturationThreshold(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
@@ -969,27 +969,27 @@ void Lambda::write_at_init(void)
 	{
 		INFO_STREAM << "Write tango hardware at Init - energyThreshold." << endl;
 		Tango::WAttribute &energyThreshold = dev_attr->get_w_attr_by_name("energyThreshold");
-		double energy_threshold = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, "energyThreshold", 2.0);
-		energyThreshold.set_write_value(energy_threshold);
+		*attr_energyThreshold_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, "energyThreshold", 7.0);
+		energyThreshold.set_write_value(*attr_energyThreshold_read);
 		write_energyThreshold(energyThreshold);
 
 		//Init Correction attributes
 		INFO_STREAM << "Write tango attribute at Init - linearityCorrection." << std::endl;
 		Tango::WAttribute &linearityCorrection = dev_attr->get_w_attr_by_name("linearityCorrection");
-		bool is_linearity_correction = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "linearityCorrection", false);
-		linearityCorrection.set_write_value(is_linearity_correction);
+		*attr_linearityCorrection_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "linearityCorrection", false);
+		linearityCorrection.set_write_value(*attr_linearityCorrection_read);
 		write_linearityCorrection(linearityCorrection);
 
 		INFO_STREAM << "Write tango attribute at Init - saturationFlag." << std::endl;
 		Tango::WAttribute &saturationFlag = dev_attr->get_w_attr_by_name("saturationFlag");
-		bool is_saturation_flag = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "saturationFlag", false);
-		saturationFlag.set_write_value(is_saturation_flag);
+		*attr_saturationFlag_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "saturationFlag", false);
+		saturationFlag.set_write_value(*attr_saturationFlag_read);
 		write_saturationFlag(saturationFlag);
 
 		INFO_STREAM << "Write tango attribute at Init - saturationThreshold." << std::endl;
 		Tango::WAttribute &saturationThreshold = dev_attr->get_w_attr_by_name("saturationThreshold");
-		long saturation_threshold = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevLong>(this, "saturationThreshold", 0);
-		saturationThreshold.set_write_value(saturation_threshold);
+		*attr_saturationThreshold_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevLong>(this, "saturationThreshold", 0);
+		saturationThreshold.set_write_value(*attr_saturationThreshold_read);
 		write_saturationThreshold(saturationThreshold);
 	}
 	catch (Tango::DevFailed& df)
