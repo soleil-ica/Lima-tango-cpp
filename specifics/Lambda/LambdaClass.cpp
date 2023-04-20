@@ -582,7 +582,7 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	saturationthreshold_prop;
 	saturationthreshold_prop.set_description("Saturation threshold in counts per second per pixel.<br>\nsaturationThreshold is a memorized attribute.<br>");
 	//	label	not set for saturationThreshold
-	saturationthreshold_prop.set_unit("counts");
+	saturationthreshold_prop.set_unit("counts/sec/pixel");
 	//	standard_unit	not set for saturationThreshold
 	//	display_unit	not set for saturationThreshold
 	//	format	not set for saturationThreshold

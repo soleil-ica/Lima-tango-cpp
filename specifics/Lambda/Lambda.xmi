@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
   <classes name="Lambda" pogoRevision="9.6">
-    <description description="Device for Lambda detectors from XSpectrum." title="XSpectrum Lambda detector TANGO specific device." sourcePath="/home/informatique/ica/bahji/Repositories_Dev/Lima_Repo_GitHub/Lima-tango-cpp/specifics/Lambda" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions" license="GPL" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
+    <description description="Device for Lambda detectors from XSpectrum." title="XSpectrum Lambda detector TANGO specific device." sourcePath="/home/informatique/ica/bahji/Repositories_Dev/Lima_Repo_GitHub/Lima-tango-cpp/specifics/Lambda" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions,html Pages" license="GPL" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
       <inheritances classname="Device_Impl" sourcePath=""/>
       <identification contact="at synchrotron-soleil.fr - cedric.castel" author="cedric.castel" emailDomain="synchrotron-soleil.fr" classFamily="Acquisition" siteSpecific="" platform="Unix Like" bus="Ethernet" manufacturer="XSpectrum" reference="LAMBDA"/>
     </description>
@@ -135,7 +135,7 @@
       <archiveEvent fire="false" libCheckCriteria="false"/>
       <dataReadyEvent fire="false" libCheckCriteria="true"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <properties description="Saturation threshold in counts per second per pixel.&lt;br>&#xA;saturationThreshold is a memorized attribute.&lt;br>" label="" unit="counts" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <properties description="Saturation threshold in counts per second per pixel.&lt;br>&#xA;saturationThreshold is a memorized attribute.&lt;br>" label="" unit="counts/sec/pixel" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
       <readExcludedStates>FAULT</readExcludedStates>
       <readExcludedStates>RUNNING</readExcludedStates>
       <writeExcludedStates>FAULT</writeExcludedStates>

@@ -349,6 +349,8 @@ void Lambda::always_executed_hook()
 	//	code always executed before all requests
     try
     {
+		// During Device initialization we do not empty m_status_message to be able to display
+        // status message if error occured during the device intialization (m_is_device_initialized == false)
 		if(m_is_device_initialized)
 		{
         	m_status_message.str("");
@@ -664,9 +666,7 @@ void Lambda::read_linearityCorrection(Tango::Attribute &attr)
 	
 	try
 	{
-		bool enabled = false;
-        m_camera->getLinearityCorrection(enabled);
-		*attr_linearityCorrection_read = enabled;
+        m_camera->getLinearityCorrection(*attr_linearityCorrection_read);
 		attr.set_value(attr_linearityCorrection_read);
 	}
     catch(Tango::DevFailed & df)
@@ -700,7 +700,7 @@ void Lambda::write_linearityCorrection(Tango::WAttribute &attr)
 	try
     {
         // set the camera value
-        m_camera->setLinearityCorrection(static_cast<bool>(w_val));
+        m_camera->setLinearityCorrection(w_val);
 		//- Memorize the write value
 		yat4tango::PropertyHelper::set_memorized_attribute(this, "linearityCorrection", w_val);
     }
@@ -732,9 +732,7 @@ void Lambda::read_saturationFlag(Tango::Attribute &attr)
 	//	Set the attribute value
 	try
 	{
-		bool enabled = false;
-        m_camera->getSaturationFlag(enabled);
-		*attr_saturationFlag_read = enabled;
+        m_camera->getSaturationFlag(*attr_saturationFlag_read);
 		attr.set_value(attr_saturationFlag_read);
 	}
     catch(Tango::DevFailed & df)
@@ -768,7 +766,7 @@ void Lambda::write_saturationFlag(Tango::WAttribute &attr)
 	try
     {
         // set the camera value
-        m_camera->setSaturationFlag(static_cast<bool>(w_val));
+        m_camera->setSaturationFlag(w_val);
 		//- Memorize the write value
 		yat4tango::PropertyHelper::set_memorized_attribute(this, "saturationFlag", w_val);
     }
