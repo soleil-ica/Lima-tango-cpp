@@ -500,7 +500,6 @@ void Lambda::write_energyThreshold(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(Lambda::write_energyThreshold) ENABLED START -----*/
 	try
     {
-		// set the camera value
         m_camera->setEnergyThreshold(w_val);
 		//- Memorize the write value
 		yat4tango::PropertyHelper::set_memorized_attribute(this, "energyThreshold", w_val);
@@ -699,7 +698,6 @@ void Lambda::write_linearityCorrection(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(Lambda::write_linearityCorrection) ENABLED START -----*/
 	try
     {
-        // set the camera value
         m_camera->setLinearityCorrection(w_val);
 		//- Memorize the write value
 		yat4tango::PropertyHelper::set_memorized_attribute(this, "linearityCorrection", w_val);
@@ -765,7 +763,6 @@ void Lambda::write_saturationFlag(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(Lambda::write_saturationFlag) ENABLED START -----*/
 	try
     {
-        // set the camera value
         m_camera->setSaturationFlag(w_val);
 		//- Memorize the write value
 		yat4tango::PropertyHelper::set_memorized_attribute(this, "saturationFlag", w_val);
@@ -832,7 +829,6 @@ void Lambda::write_saturationThreshold(Tango::WAttribute &attr)
 
 	try
     {
-		// set the camera value
         m_camera->setSaturationThreshold(w_val);
 		//- Memorize the write value
 		yat4tango::PropertyHelper::set_memorized_attribute(this, "saturationThreshold", w_val);
