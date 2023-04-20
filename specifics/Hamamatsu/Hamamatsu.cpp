@@ -1556,7 +1556,8 @@ void Hamamatsu::manage_lima_exception(lima::Exception & in_exception, const std:
  *	method:	Hamamatsu::get_all_parameters
  *
  *	description:	method to execute "GetAllParameters"
- *	Return the list of all the camera properties
+ *	Return the list of all the camera properties in the following format:
+ *	ID = idNb; PropertyName = value
  *
  * @return	
  *
@@ -1572,7 +1573,18 @@ Tango::DevString Hamamatsu::get_all_parameters()
 	DEBUG_STREAM << "Hamamatsu::get_all_parameters(): entering... !" << endl;
 
 	//	Add your own code to control device here
-    return const_cast<char*>(m_camera->getAllParameters().c_str());
+    try
+    {
+        return const_cast<char*>(m_camera->getAllParameters().c_str());
+    }
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::get_all_parameters");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::get_all_parameters");
+    }
 }
 
 
@@ -1582,6 +1594,7 @@ Tango::DevString Hamamatsu::get_all_parameters()
  *	method:	Hamamatsu::get_parameter
  *
  *	description:	method to execute "GetParameter"
+ *	Return the name and value of a specific ID
  *
  * @param	argin	ID of the property
  * @return	
@@ -1618,6 +1631,7 @@ Tango::DevString Hamamatsu::get_parameter(Tango::DevULong argin)
  *	method:	Hamamatsu::set_parameter
  *
  *	description:	method to execute "SetParameter"
+ *	Set the value of a property using it's ID
  *
  * @param	argin	First argument is the ID, Second is the value
  *
@@ -1643,6 +1657,7 @@ void Hamamatsu::set_parameter(const Tango::DevVarDoubleArray *argin)
         manage_lima_exception(e, "Hamamatsu::set_parameter");
     }
 }
+
 
 
 
