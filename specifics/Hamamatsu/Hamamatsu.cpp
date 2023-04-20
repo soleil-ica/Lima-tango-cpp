@@ -641,7 +641,8 @@ void Hamamatsu::always_executed_hook()
     try
     {
         yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-
+        // During Device initialization we do not empty m_status_message (status handler) to be able to display
+        // status message if error occured during the device intialization
         if(m_is_device_initialized)
         {
             m_status_message.str("");

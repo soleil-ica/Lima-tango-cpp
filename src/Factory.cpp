@@ -1357,7 +1357,8 @@ Tango::DevState ControlFactory::get_state(void)
     yat::AutoMutex<> _lock(m_lock);
     CtControl::Status ctStatus;
     m_control->getStatus(ctStatus);
-
+    // In case of device state is FAULT we do not check/modify internal state to propagate 
+    // the Specific device state and status to the LimaDetector Device
     if(m_state != Tango::FAULT)
     {
         switch(ctStatus.AcquisitionStatus)
