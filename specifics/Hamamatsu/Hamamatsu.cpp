@@ -1575,7 +1575,7 @@ Tango::DevString Hamamatsu::get_all_parameters()
 	//	Add your own code to control device here
     try
     {
-        return const_cast<char*>(m_camera->getAllParameters().c_str());
+        return const_cast<Tango::DevString>(m_camera->getAllParameters().c_str());
     }
     catch(Tango::DevFailed & df)
     {
@@ -1613,7 +1613,7 @@ Tango::DevString Hamamatsu::get_parameter(Tango::DevULong argin)
 	//	Add your own code to control device here
     try
     {
-        return const_cast<char*>(m_camera->getParameter(argin).c_str());
+        return const_cast<Tango::DevString>(m_camera->getParameter(argin).c_str());
     }
     catch(Tango::DevFailed & df)
     {
