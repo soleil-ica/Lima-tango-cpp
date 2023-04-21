@@ -343,7 +343,7 @@ void Lambda::get_device_property()
 //--------------------------------------------------------
 void Lambda::always_executed_hook()
 {
-	DEBUG_STREAM << "Lambda::always_executed_hook()  " << device_name << endl;
+	//DEBUG_STREAM << "Lambda::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Lambda::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -790,7 +790,7 @@ void Lambda::write_saturationFlag(Tango::WAttribute &attr)
 //--------------------------------------------------------
 void Lambda::read_saturationThreshold(Tango::Attribute &attr)
 {
-	INFO_STREAM << "Lambda::read_saturationThreshold(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Lambda::read_saturationThreshold(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(Lambda::read_saturationThreshold) ENABLED START -----*/
 	//	Set the attribute value
 	try
@@ -893,7 +893,7 @@ void Lambda::add_dynamic_commands()
 Tango::DevState Lambda::dev_state()
 {
     Tango::DevState	argout = DeviceImpl::dev_state();
-    DEBUG_STREAM << "Lambda::dev_state(): entering... !" << endl;
+    //DEBUG_STREAM << "Lambda::dev_state(): entering... !" << endl;
 
     // Add your own code to control device here
     stringstream DeviceStatus;
@@ -904,6 +904,9 @@ Tango::DevState Lambda::dev_state()
     {
         DeviceState  = Tango::FAULT;
         DeviceStatus << m_status_message.str();
+
+		ControlFactory::instance().set_state(DeviceState);
+        ControlFactory::instance().set_status(DeviceStatus.str());
     }
     else
     {
