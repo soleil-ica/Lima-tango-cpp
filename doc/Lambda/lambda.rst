@@ -30,12 +30,15 @@ Attributes
 Attribute name          Read/Write Type       Description
 ======================= ========== ========== ==============================================================================================
 configFile              R          String     Configuration file used to initialize the detector.
-energyThreshold         R/W        Double     Get/Set the threshold settings in keV for the Lambda detector.
+energyThreshold         R/W        Double     Get/Set the threshold settings in keV for the Lambda detector. It's a memorized attribute.
 distortionCorrection    R          Boolean    Get whether interpolation of extra large pixels is enabled.
-highVoltage             R          Double     Get the measured high voltage value from a specific detector module. (Older detector firmware might not support this command. In this case, a value of 0.0 is returned).
+highVoltage             R          Double     Get the measured high voltage value from a specific detector module. (Older detector firmware might not support this command. In this case, a value of 0.0 is returned). It's a memorized attribute.
 humidity                R          Double     Get the measured humidity from a specific detector module. (Older detector firmware might not support this command. In this case, the valueof 0.0 is returned).
-libraryVersion          R          String     Get the version of the library as a string in the format "major.minor.patch".
+libraryVersion          R          String     Get the version of the library as a string in the format "major.minor.patch". Available only for expert user.
 temperature             R          Double     Get a vector of measured temperatures from a specific detector module. The number of values and their meaning depends on hardware revision of the detectorreadout board.For new readout boards, three values are returned: the board temperature, theFPGA temperature, and the temperature from the humidity sensor. (Older boardsdo not support this command, and an empty vector is returned).
+linearityCorrection     R/W        Boolean    Enable/Disable correction of counts. It's a memorized attribute.
+saturationFlag          R/W        Boolean    Enable/Disable flagging of saturated pixels. It's a memorized attribute.
+saturationThreshold     R/W        Long       Saturation threshold in counts/sec/pixel. It's a memorized attribute.
 ======================= ========== ========== ==============================================================================================
 
 
