@@ -255,20 +255,6 @@ void LambdaClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "MemorizedEnergyThreshold";
-	prop_desc = "Only the device could modify this property <br>\nThe User should never change this property<br>";
-	prop_def  = "7";
-	vect_data.clear();
-	vect_data.push_back("7");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
 }
 
 //--------------------------------------------------------
@@ -426,7 +412,7 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : energyThreshold
 	energyThresholdAttrib	*energythreshold = new energyThresholdAttrib();
 	Tango::UserDefaultAttrProp	energythreshold_prop;
-	energythreshold_prop.set_description("energy threshold in KeV.<br>\nThe photon is counted If the energy is above this threshold.<br>");
+	energythreshold_prop.set_description("energy threshold in KeV.<br>\nThe photon is counted If the energy is above this threshold.<br>\nenergyThreshold is a memorized attribute.<br>");
 	//	label	not set for energyThreshold
 	energythreshold_prop.set_unit("KeV");
 	energythreshold_prop.set_standard_unit("KeV");
@@ -542,6 +528,78 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	temperature->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
 	att_list.push_back(temperature);
+
+	//	Attribute : linearityCorrection
+	linearityCorrectionAttrib	*linearitycorrection = new linearityCorrectionAttrib();
+	Tango::UserDefaultAttrProp	linearitycorrection_prop;
+	linearitycorrection_prop.set_description("Enable/Disable countrate correction.\nlinearityCorrection is a memorized attribute");
+	//	label	not set for linearityCorrection
+	//	unit	not set for linearityCorrection
+	//	standard_unit	not set for linearityCorrection
+	//	display_unit	not set for linearityCorrection
+	//	format	not set for linearityCorrection
+	//	max_value	not set for linearityCorrection
+	//	min_value	not set for linearityCorrection
+	//	max_alarm	not set for linearityCorrection
+	//	min_alarm	not set for linearityCorrection
+	//	max_warning	not set for linearityCorrection
+	//	min_warning	not set for linearityCorrection
+	//	delta_t	not set for linearityCorrection
+	//	delta_val	not set for linearityCorrection
+	
+	linearitycorrection->set_default_properties(linearitycorrection_prop);
+	//	Not Polled
+	linearitycorrection->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(linearitycorrection);
+
+	//	Attribute : saturationFlag
+	saturationFlagAttrib	*saturationflag = new saturationFlagAttrib();
+	Tango::UserDefaultAttrProp	saturationflag_prop;
+	saturationflag_prop.set_description("Enable/Disable flagging of pixel saturation.\nsaturationFlag is a memorized attribute");
+	//	label	not set for saturationFlag
+	//	unit	not set for saturationFlag
+	//	standard_unit	not set for saturationFlag
+	//	display_unit	not set for saturationFlag
+	//	format	not set for saturationFlag
+	//	max_value	not set for saturationFlag
+	//	min_value	not set for saturationFlag
+	//	max_alarm	not set for saturationFlag
+	//	min_alarm	not set for saturationFlag
+	//	max_warning	not set for saturationFlag
+	//	min_warning	not set for saturationFlag
+	//	delta_t	not set for saturationFlag
+	//	delta_val	not set for saturationFlag
+	
+	saturationflag->set_default_properties(saturationflag_prop);
+	//	Not Polled
+	saturationflag->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(saturationflag);
+
+	//	Attribute : saturationThreshold
+	saturationThresholdAttrib	*saturationthreshold = new saturationThresholdAttrib();
+	Tango::UserDefaultAttrProp	saturationthreshold_prop;
+	saturationthreshold_prop.set_description("Saturation threshold in counts per second per pixel.<br>\nsaturationThreshold is a memorized attribute.<br>");
+	//	label	not set for saturationThreshold
+	saturationthreshold_prop.set_unit("counts/sec/pixel");
+	//	standard_unit	not set for saturationThreshold
+	//	display_unit	not set for saturationThreshold
+	//	format	not set for saturationThreshold
+	//	max_value	not set for saturationThreshold
+	//	min_value	not set for saturationThreshold
+	//	max_alarm	not set for saturationThreshold
+	//	min_alarm	not set for saturationThreshold
+	//	max_warning	not set for saturationThreshold
+	//	min_warning	not set for saturationThreshold
+	//	delta_t	not set for saturationThreshold
+	//	delta_val	not set for saturationThreshold
+	
+	saturationthreshold->set_default_properties(saturationthreshold_prop);
+	//	Not Polled
+	saturationthreshold->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(saturationthreshold);
 
 
 	//	Create a list of static attributes

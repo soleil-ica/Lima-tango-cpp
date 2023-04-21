@@ -79,6 +79,9 @@ namespace Lambda_ns
 //  highVoltage           |  Tango::DevDouble	Scalar
 //  humidity              |  Tango::DevDouble	Scalar
 //  temperature           |  Tango::DevDouble	Scalar
+//  linearityCorrection   |  Tango::DevBoolean	Scalar
+//  saturationFlag        |  Tango::DevBoolean	Scalar
+//  saturationThreshold   |  Tango::DevLong	Scalar
 //================================================================
 
 namespace Lambda_ns
@@ -140,6 +143,9 @@ void Lambda::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_temperature_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_libraryVersion_read);
 
+	DELETE_SCALAR_ATTRIBUTE(attr_linearityCorrection_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_saturationFlag_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_saturationThreshold_read);
 
     m_is_device_initialized = false;
 
@@ -174,6 +180,9 @@ void Lambda::init_device()
     CREATE_SCALAR_ATTRIBUTE(attr_humidity_read);
     CREATE_SCALAR_ATTRIBUTE(attr_temperature_read);
     CREATE_DEVSTRING_ATTRIBUTE(attr_libraryVersion_read, Lambda_ns::STR_ATTR_SIZE_MAX);
+	CREATE_SCALAR_ATTRIBUTE(attr_linearityCorrection_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_saturationFlag_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_saturationThreshold_read);
     
     m_is_device_initialized = false;
 	m_has_hv_feature 		= false;
@@ -209,12 +218,14 @@ void Lambda::init_device()
 	m_is_device_initialized = true;
     try
 	{
-		// Update the hardware with the properties data
+		// Update the hardware with the memorized attributes data
 		write_at_init();
+
 		//- Set the distortion correction (from property)
 		m_camera->setDistortionCorrection(distortionCorrection);
 		//- Get the distortion correction (from hardware), only once
 		m_camera->getDistortionCorrection(*attr_distortionCorrection_read);
+
 		//- Get the lib version, only once
 		m_library_version = m_camera->getLibVersion();
 		strcpy(*attr_libraryVersion_read, m_library_version.c_str());
@@ -278,7 +289,6 @@ void Lambda::get_device_property()
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("ConfigFile"));
 	dev_prop.push_back(Tango::DbDatum("DistortionCorrection"));
-	dev_prop.push_back(Tango::DbDatum("MemorizedEnergyThreshold"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -315,17 +325,6 @@ void Lambda::get_device_property()
 		//	And try to extract DistortionCorrection value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  distortionCorrection;
 
-		//	Try to initialize MemorizedEnergyThreshold from class property
-		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-		if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedEnergyThreshold;
-		else {
-			//	Try to initialize MemorizedEnergyThreshold from default device value
-			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-			if (def_prop.is_empty()==false)	def_prop  >>  memorizedEnergyThreshold;
-		}
-		//	And try to extract MemorizedEnergyThreshold value from database
-		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedEnergyThreshold;
-
 	}
 
 	/*----- PROTECTED REGION ID(Lambda::get_device_property_after) ENABLED START -----*/
@@ -333,7 +332,6 @@ void Lambda::get_device_property()
 	//	Check device property data members init
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "/opt/xsp/config/system.yml", "ConfigFile");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "True"  , "DistortionCorrection");
-	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "2.0", "MemorizedEnergyThreshold");
 	/*----- PROTECTED REGION END -----*/	//	Lambda::get_device_property_after
 }
 
@@ -345,13 +343,17 @@ void Lambda::get_device_property()
 //--------------------------------------------------------
 void Lambda::always_executed_hook()
 {
-	DEBUG_STREAM << "Lambda::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Lambda::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
     try
     {
-        m_status_message.str("");
+		// During Device initialization we do not empty m_status_message to be able to display
+        // status message if error occured during the device intialization (m_is_device_initialized == false)
+		if(m_is_device_initialized)
+		{
+        	m_status_message.str("");
+		}
 
         //update state
         dev_state();
@@ -451,6 +453,7 @@ void Lambda::read_distortionCorrection(Tango::Attribute &attr)
  *	Read attribute energyThreshold related method
  *	Description: energy threshold in KeV.<br>
  *               The photon is counted If the energy is above this threshold.<br>
+ *               energyThreshold is a memorized attribute.<br>
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -481,6 +484,7 @@ void Lambda::read_energyThreshold(Tango::Attribute &attr)
  *	Write attribute energyThreshold related method
  *	Description: energy threshold in KeV.<br>
  *               The photon is counted If the energy is above this threshold.<br>
+ *               energyThreshold is a memorized attribute.<br>
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -497,7 +501,7 @@ void Lambda::write_energyThreshold(Tango::WAttribute &attr)
     {
         m_camera->setEnergyThreshold(w_val);
 		//- Memorize the write value
-		yat4tango::PropertyHelper::set_property(this, "MemorizedEnergyThreshold", w_val);
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "energyThreshold", w_val);
     }
     catch (Tango::DevFailed& df)
     {
@@ -642,6 +646,202 @@ void Lambda::read_temperature(Tango::Attribute &attr)
 	
 	/*----- PROTECTED REGION END -----*/	//	Lambda::read_temperature
 }
+//--------------------------------------------------------
+/**
+ *	Read attribute linearityCorrection related method
+ *	Description: Enable/Disable countrate correction.
+ *               linearityCorrection is a memorized attribute
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::read_linearityCorrection(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Lambda::read_linearityCorrection(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Lambda::read_linearityCorrection) ENABLED START -----*/
+	//	Set the attribute value
+	
+	try
+	{
+        m_camera->getLinearityCorrection(*attr_linearityCorrection_read);
+		attr.set_value(attr_linearityCorrection_read);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Lambda::read_linearityCorrection");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Lambda::read_linearityCorrection");
+    }
+
+	/*----- PROTECTED REGION END -----*/	//	Lambda::read_linearityCorrection
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute linearityCorrection related method
+ *	Description: Enable/Disable countrate correction.
+ *               linearityCorrection is a memorized attribute
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::write_linearityCorrection(Tango::WAttribute &attr)
+{
+	INFO_STREAM << "Lambda::write_linearityCorrection(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevBoolean	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Lambda::write_linearityCorrection) ENABLED START -----*/
+	try
+    {
+        m_camera->setLinearityCorrection(w_val);
+		//- Memorize the write value
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "linearityCorrection", w_val);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "Lambda::write_linearityCorrection");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "Lambda::write_linearityCorrection");
+    }	
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::write_linearityCorrection
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute saturationFlag related method
+ *	Description: Enable/Disable flagging of pixel saturation.
+ *               saturationFlag is a memorized attribute
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::read_saturationFlag(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Lambda::read_saturationFlag(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Lambda::read_saturationFlag) ENABLED START -----*/
+	//	Set the attribute value
+	try
+	{
+        m_camera->getSaturationFlag(*attr_saturationFlag_read);
+		attr.set_value(attr_saturationFlag_read);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Lambda::read_saturationFlag");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Lambda::read_saturationFlag");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::read_saturationFlag
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute saturationFlag related method
+ *	Description: Enable/Disable flagging of pixel saturation.
+ *               saturationFlag is a memorized attribute
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::write_saturationFlag(Tango::WAttribute &attr)
+{
+	INFO_STREAM << "Lambda::write_saturationFlag(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevBoolean	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Lambda::write_saturationFlag) ENABLED START -----*/
+	try
+    {
+        m_camera->setSaturationFlag(w_val);
+		//- Memorize the write value
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "saturationFlag", w_val);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "Lambda::write_saturationFlag");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "Lambda::write_saturationFlag");
+    }	
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::write_saturationFlag
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute saturationThreshold related method
+ *	Description: Saturation threshold in counts per second per pixel.<br>
+ *               saturationThreshold is a memorized attribute.<br>
+ *
+ *	Data type:	Tango::DevLong
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::read_saturationThreshold(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Lambda::read_saturationThreshold(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Lambda::read_saturationThreshold) ENABLED START -----*/
+	//	Set the attribute value
+	try
+    {
+		m_camera->getSaturationThreshold(*attr_saturationThreshold_read);
+		attr.set_value(attr_saturationThreshold_read);		
+    }
+    catch (Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "read_saturationThreshold");
+    }
+	catch (lima::Exception& le)
+    {
+        manage_lima_exception(le, "read_saturationThreshold");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::read_saturationThreshold
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute saturationThreshold related method
+ *	Description: Saturation threshold in counts per second per pixel.<br>
+ *               saturationThreshold is a memorized attribute.<br>
+ *
+ *	Data type:	Tango::DevLong
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::write_saturationThreshold(Tango::WAttribute &attr)
+{
+	INFO_STREAM << "Lambda::write_saturationThreshold(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevLong	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Lambda::write_saturationThreshold) ENABLED START -----*/
+
+	try
+    {
+        m_camera->setSaturationThreshold(w_val);
+		//- Memorize the write value
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "saturationThreshold", w_val);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "write_saturationThreshold");
+    }
+	catch (lima::Exception& le)
+    {
+        manage_lima_exception(le, "write_saturationThreshold");
+    }
+	/*----- PROTECTED REGION END -----*/	//	Lambda::write_saturationThreshold
+}
 
 //--------------------------------------------------------
 /**
@@ -703,6 +903,9 @@ Tango::DevState Lambda::dev_state()
     {
         DeviceState  = Tango::FAULT;
         DeviceStatus << m_status_message.str();
+
+		ControlFactory::instance().set_state(DeviceState);
+        ControlFactory::instance().set_status(DeviceStatus.str());
     }
     else
     {
@@ -758,11 +961,41 @@ void Lambda::manage_lima_exception(lima::Exception & in_exception, const std::st
  *****************************************************************************/
 void Lambda::write_at_init(void)
 {
-    INFO_STREAM << "Write tango hardware at Init - energyThreshold." << endl;
-	Tango::WAttribute &energyThreshold = dev_attr->get_w_attr_by_name("energyThreshold");
-	*attr_energyThreshold_read = memorizedEnergyThreshold; // does the cast
-	energyThreshold.set_write_value(*attr_energyThreshold_read);
-	write_energyThreshold(energyThreshold);
+	try
+	{
+		INFO_STREAM << "Write tango hardware at Init - energyThreshold." << endl;
+		Tango::WAttribute &energyThreshold = dev_attr->get_w_attr_by_name("energyThreshold");
+		*attr_energyThreshold_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, "energyThreshold", 7.0);
+		energyThreshold.set_write_value(*attr_energyThreshold_read);
+		write_energyThreshold(energyThreshold);
+
+		//Init Correction attributes
+		INFO_STREAM << "Write tango attribute at Init - linearityCorrection." << std::endl;
+		Tango::WAttribute &linearityCorrection = dev_attr->get_w_attr_by_name("linearityCorrection");
+		*attr_linearityCorrection_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "linearityCorrection", false);
+		linearityCorrection.set_write_value(*attr_linearityCorrection_read);
+		write_linearityCorrection(linearityCorrection);
+
+		INFO_STREAM << "Write tango attribute at Init - saturationFlag." << std::endl;
+		Tango::WAttribute &saturationFlag = dev_attr->get_w_attr_by_name("saturationFlag");
+		*attr_saturationFlag_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "saturationFlag", false);
+		saturationFlag.set_write_value(*attr_saturationFlag_read);
+		write_saturationFlag(saturationFlag);
+
+		INFO_STREAM << "Write tango attribute at Init - saturationThreshold." << std::endl;
+		Tango::WAttribute &saturationThreshold = dev_attr->get_w_attr_by_name("saturationThreshold");
+		*attr_saturationThreshold_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevLong>(this, "saturationThreshold", 0);
+		saturationThreshold.set_write_value(*attr_saturationThreshold_read);
+		write_saturationThreshold(saturationThreshold);
+	}
+	catch (Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "read_energyThreshold");
+    }
+	catch (lima::Exception& le)
+    {						
+        manage_lima_exception(le, "read_energyThreshold");
+    }
 }
 /*----- PROTECTED REGION END -----*/	//	Lambda::namespace_ending
 } //	namespace

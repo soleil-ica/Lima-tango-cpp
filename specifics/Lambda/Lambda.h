@@ -89,9 +89,6 @@ public:
 	//  - The values of the pixels are rounded during division. <br>
 	//  - If pixel value is saturated, the division is not applied.<br>
 	Tango::DevBoolean	distortionCorrection;
-	//	MemorizedEnergyThreshold:	Only the device could modify this property <br>
-	//  The User should never change this property<br>
-	Tango::DevFloat	memorizedEnergyThreshold;
 
 //	Attribute data members
 public:
@@ -102,6 +99,9 @@ public:
 	Tango::DevDouble	*attr_highVoltage_read;
 	Tango::DevDouble	*attr_humidity_read;
 	Tango::DevDouble	*attr_temperature_read;
+	Tango::DevBoolean	*attr_linearityCorrection_read;
+	Tango::DevBoolean	*attr_saturationFlag_read;
+	Tango::DevLong	*attr_saturationThreshold_read;
 
 //	Constructors and destructors
 public:
@@ -196,6 +196,7 @@ public:
  *	Attribute energyThreshold related methods
  *	Description: energy threshold in KeV.<br>
  *               The photon is counted If the energy is above this threshold.<br>
+ *               energyThreshold is a memorized attribute.<br>
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -239,6 +240,39 @@ public:
  */
 	virtual void read_temperature(Tango::Attribute &attr);
 	virtual bool is_temperature_allowed(Tango::AttReqType type);
+/**
+ *	Attribute linearityCorrection related methods
+ *	Description: Enable/Disable countrate correction.
+ *               linearityCorrection is a memorized attribute
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void read_linearityCorrection(Tango::Attribute &attr);
+	virtual void write_linearityCorrection(Tango::WAttribute &attr);
+	virtual bool is_linearityCorrection_allowed(Tango::AttReqType type);
+/**
+ *	Attribute saturationFlag related methods
+ *	Description: Enable/Disable flagging of pixel saturation.
+ *               saturationFlag is a memorized attribute
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void read_saturationFlag(Tango::Attribute &attr);
+	virtual void write_saturationFlag(Tango::WAttribute &attr);
+	virtual bool is_saturationFlag_allowed(Tango::AttReqType type);
+/**
+ *	Attribute saturationThreshold related methods
+ *	Description: Saturation threshold in counts per second per pixel.<br>
+ *               saturationThreshold is a memorized attribute.<br>
+ *
+ *	Data type:	Tango::DevLong
+ *	Attr type:	Scalar
+ */
+	virtual void read_saturationThreshold(Tango::Attribute &attr);
+	virtual void write_saturationThreshold(Tango::WAttribute &attr);
+	virtual bool is_saturationThreshold_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------

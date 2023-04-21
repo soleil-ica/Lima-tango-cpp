@@ -26,6 +26,9 @@
 				<li> <a href="FullDocument.html#attrhighVoltage"> highVoltage </a>
 				<li> <a href="FullDocument.html#attrhumidity"> humidity </a>
 				<li> <a href="FullDocument.html#attrtemperature"> temperature </a>
+				<li> <a href="FullDocument.html#attrlinearityCorrection"> linearityCorrection </a>
+				<li> <a href="FullDocument.html#attrsaturationFlag"> saturationFlag </a>
+				<li> <a href="FullDocument.html#attrsaturationThreshold"> saturationThreshold </a>
 			</ul>
 			<li> <a href="FullDocument.html#states">       States       </a>
 		</ul>
@@ -78,25 +81,6 @@
 	<ul>
 		Device for Lambda detectors from XSpectrum.
 		
-		<Br>
-		<center>
-		<h1>
-				<Br>
-		Device Description 		<Br> <Br>
-		Eiger Class	<Br>
-		</h1>
-		<b>
-		Revision:  - Author: 
-		</b>
-		</center>
-		
-		
-		<Center>
-		
-		<Br>
-		<Br>
-		</Center>
-		
 		<!---  /*PROTECTED REGION ID(FullDocument.html) ENABLED START*/  --->
 			<!--- Add your own documentation, pictures, links,.... --->
 			
@@ -136,13 +120,6 @@
 			- If pixel value is saturated, the division is not applied.<br> </td>
 		<td> boolean </td>
 		<td> True <br> </td>
-	</tr>
-	<tr>
-		<td> MemorizedEnergyThreshold </td>
-		<td> Only the device could modify this property <br><Br>
-			The User should never change this property<br> </td>
-		<td> float </td>
-		<td> 7 <br> </td>
 	</tr>
 </table>
 <br><br>
@@ -322,7 +299,8 @@
 		<td> Tango::DEV_DOUBLE </td>
 		<td> OPERATOR </td>
 		<td> energy threshold in KeV.<br><Br>
-			The photon is counted If the energy is above this threshold.<br> </td>
+			The photon is counted If the energy is above this threshold.<br><Br>
+			energyThreshold is a memorized attribute.<br> </td>
 	</tr>
 	<tr>
 		<td> <a href="AttrlibraryVersion.html"> libraryVersion </a> </td>
@@ -363,6 +341,39 @@
 		<td> Tango::DEV_DOUBLE </td>
 		<td> OPERATOR </td>
 		<td> measured temperature in deg C </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrlinearityCorrection.html"> linearityCorrection </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_BOOLEAN </td>
+		<td> OPERATOR </td>
+		<td> Enable/Disable countrate correction.<Br>
+			linearityCorrection is a memorized attribute </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrsaturationFlag.html"> saturationFlag </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_BOOLEAN </td>
+		<td> OPERATOR </td>
+		<td> Enable/Disable flagging of pixel saturation.<Br>
+			saturationFlag is a memorized attribute </td>
+	</tr>
+	<tr>
+		<td> <a href="AttrsaturationThreshold.html"> saturationThreshold </a> </td>
+		<td> false </td>
+		<td> false </td>
+		<td> Scalar </td>
+		<td> READ_WRITE </td>
+		<td> Tango::DEV_LONG </td>
+		<td> OPERATOR </td>
+		<td> Saturation threshold in counts per second per pixel.<br><Br>
+			saturationThreshold is a memorized attribute.<br> </td>
 	</tr>
 </table>
 <br><br>
@@ -587,7 +598,7 @@
 			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
 				<tr>
 					<td> Read NOT allowed for </td>
-					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
+					<td> <font size="-1">  <li> FAULT </li> </font> </td>
 				</tr>
 			</table>
 		</td>
@@ -706,7 +717,8 @@
 <font size="+1"><u><b> Attribute energyThreshold : </b></u></font>
 <ul>
 	energy threshold in KeV.<br><Br>
-	The photon is counted If the energy is above this threshold.<br>
+	The photon is counted If the energy is above this threshold.<br><Br>
+	energyThreshold is a memorized attribute.<br>
 </ul>
 <br><br><br>
 <Table Border=0 Cellpadding=0 CELLSPACING=20>
@@ -746,11 +758,7 @@
 				</tr>
 				<tr>
 					<td> Memorized </td>
-					<td> true </td>
-				</tr>
-				<tr>
-					<td> Write hardware at init. </td>
-					<td> true </td>
+					<td> Not set </td>
 				</tr>
 			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
 				<tr>
@@ -922,7 +930,7 @@
 			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
 				<tr>
 					<td> Read NOT allowed for </td>
-					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
+					<td> <font size="-1">  <li> FAULT </li> </font> </td>
 				</tr>
 			</table>
 		</td>
@@ -1427,6 +1435,510 @@
 				<tr>
 					<td> unit </td>
 					<td> deg C </td>
+				</tr>
+				<tr>
+					<td> standard unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> display unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> format </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_time </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_val </td>
+					<td>  </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Right" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Event Criteria </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Archive Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Push Change event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push Archive event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push DataReady event by user code </td>
+					<td> false </td>
+				</tr>
+			</table>
+		</td>
+	</TR>
+</table>
+<br><br>
+<hr>
+<a name="attrlinearityCorrection"> </a>
+<br><br><br>
+<font size="+1"><u><b> Attribute linearityCorrection : </b></u></font>
+<ul>
+	Enable/Disable countrate correction.<Br>
+	linearityCorrection is a memorized attribute
+</ul>
+<br><br><br>
+<Table Border=0 Cellpadding=0 CELLSPACING=20>
+	<TR>
+		<TD ALIGN="left" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Definition </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Attribute Type </td>
+					<td> Scalar </td>
+				</tr>
+				<tr>
+					<td> R/W Type </td>
+					<td> READ_WRITE </td>
+				</tr>
+				<tr>
+					<td> Data Type </td>
+					<td> Tango::DEV_BOOLEAN </td>
+				</tr>
+				<tr>
+					<td> Display Level </td>
+					<td> OPERATOR </td>
+				</tr>
+				<tr>
+					<td> Inherited </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Abstract </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Polling Period </td>
+					<td> Not polled </td>
+				</tr>
+				<tr>
+					<td> Memorized </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Read NOT allowed for </td>
+					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
+				</tr>
+				<tr>
+					<td> Write NOT allowed for </td>
+					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Center" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Properties </b></font></center></td>
+				</tr>
+				<tr>
+					<td> label </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> standard unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> display unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> format </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_time </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_val </td>
+					<td>  </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Right" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Event Criteria </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Archive Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Push Change event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push Archive event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push DataReady event by user code </td>
+					<td> false </td>
+				</tr>
+			</table>
+		</td>
+	</TR>
+</table>
+<br><br>
+<hr>
+<a name="attrsaturationFlag"> </a>
+<br><br><br>
+<font size="+1"><u><b> Attribute saturationFlag : </b></u></font>
+<ul>
+	Enable/Disable flagging of pixel saturation.<Br>
+	saturationFlag is a memorized attribute
+</ul>
+<br><br><br>
+<Table Border=0 Cellpadding=0 CELLSPACING=20>
+	<TR>
+		<TD ALIGN="left" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Definition </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Attribute Type </td>
+					<td> Scalar </td>
+				</tr>
+				<tr>
+					<td> R/W Type </td>
+					<td> READ_WRITE </td>
+				</tr>
+				<tr>
+					<td> Data Type </td>
+					<td> Tango::DEV_BOOLEAN </td>
+				</tr>
+				<tr>
+					<td> Display Level </td>
+					<td> OPERATOR </td>
+				</tr>
+				<tr>
+					<td> Inherited </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Abstract </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Polling Period </td>
+					<td> Not polled </td>
+				</tr>
+				<tr>
+					<td> Memorized </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Read NOT allowed for </td>
+					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
+				</tr>
+				<tr>
+					<td> Write NOT allowed for </td>
+					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Center" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Properties </b></font></center></td>
+				</tr>
+				<tr>
+					<td> label </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> standard unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> display unit </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> format </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_value </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_alarm </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> max_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> min_warning </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_time </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> delta_val </td>
+					<td>  </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Right" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Event Criteria </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Archive Periodic </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Relative Change </td>
+					<td> Not set </td>
+				</tr>
+				<tr>
+					<td> Archive Absolute Change </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Push Change event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push Archive event by user code </td>
+					<td> false </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td> </Td><Td> </Td></Tr>
+				<tr>
+					<td> Push DataReady event by user code </td>
+					<td> false </td>
+				</tr>
+			</table>
+		</td>
+	</TR>
+</table>
+<br><br>
+<hr>
+<a name="attrsaturationThreshold"> </a>
+<br><br><br>
+<font size="+1"><u><b> Attribute saturationThreshold : </b></u></font>
+<ul>
+	Saturation threshold in counts per second per pixel.<br><Br>
+	saturationThreshold is a memorized attribute.<br>
+</ul>
+<br><br><br>
+<Table Border=0 Cellpadding=0 CELLSPACING=20>
+	<TR>
+		<TD ALIGN="left" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Definition </b></font></center></td>
+				</tr>
+				<tr>
+					<td> Attribute Type </td>
+					<td> Scalar </td>
+				</tr>
+				<tr>
+					<td> R/W Type </td>
+					<td> READ_WRITE </td>
+				</tr>
+				<tr>
+					<td> Data Type </td>
+					<td> Tango::DEV_LONG </td>
+				</tr>
+				<tr>
+					<td> Display Level </td>
+					<td> OPERATOR </td>
+				</tr>
+				<tr>
+					<td> Inherited </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Abstract </td>
+					<td> false </td>
+				</tr>
+				<tr>
+					<td> Polling Period </td>
+					<td> Not polled </td>
+				</tr>
+				<tr>
+					<td> Memorized </td>
+					<td> Not set </td>
+				</tr>
+			<Tr BGCOLOR="#CCCCFF"><Td><Hr></Td><Td><Hr></Td></Tr>
+				<tr>
+					<td> Read NOT allowed for </td>
+					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
+				</tr>
+				<tr>
+					<td> Write NOT allowed for </td>
+					<td> <font size="-1">  <li> FAULT </li>  <li> RUNNING </li> </font> </td>
+				</tr>
+			</table>
+		</td>
+		<TD ALIGN="Center" VALIGN=top>
+			<Table Border=2 Cellpadding=3 CELLSPACING=0>
+				<tr bgcolor="#CCCCFF" class="TableHeadingColor">
+				<td colspan=0> <font size=+1> <center><b> Attribute Properties </b></font></center></td>
+				</tr>
+				<tr>
+					<td> label </td>
+					<td>  </td>
+				</tr>
+				<tr>
+					<td> unit </td>
+					<td> counts/sec/pixel </td>
 				</tr>
 				<tr>
 					<td> standard unit </td>
