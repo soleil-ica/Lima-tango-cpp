@@ -343,7 +343,6 @@ void Lambda::get_device_property()
 //--------------------------------------------------------
 void Lambda::always_executed_hook()
 {
-	//DEBUG_STREAM << "Lambda::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Lambda::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -893,7 +892,7 @@ void Lambda::add_dynamic_commands()
 Tango::DevState Lambda::dev_state()
 {
     Tango::DevState	argout = DeviceImpl::dev_state();
-    //DEBUG_STREAM << "Lambda::dev_state(): entering... !" << endl;
+    DEBUG_STREAM << "Lambda::dev_state(): entering... !" << endl;
 
     // Add your own code to control device here
     stringstream DeviceStatus;
