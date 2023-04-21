@@ -27,9 +27,13 @@ Attribute name                  Read/Write               Type               Desc
 temperature                     R                        Double             The current temperature in deg Celsius.
 temperatureTarget               R/W                      Double             Define the target temperature in deg Celsius.
                                                                             It's a memorized attribute.
-gain                            R/W                      Ushort             Define the gain.It's a memorized attribute.
+gain                            R/W                      Enum               Define the gain.It's a memorized attribute.
+                                                                            Available values:
+                                                                            - LOW
+                                                                            - MEDIUM
+                                                                            - HIGH
                                                                             It's a memorized attribute.
-adcRate                         R/W                      String             Display the current ADC frequency in Mhz.
+adcRate                         R/W                      Double             Display the current ADC frequency in Mhz.
                                                                             It's a memorized attribute.
 =============================== ======================== ================== ===============================================
 
