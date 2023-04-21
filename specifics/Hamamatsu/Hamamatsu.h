@@ -372,21 +372,21 @@ public :
  */
 	virtual Tango::DevState	dev_state();
 /**
- * Return the list of all the camera properties in the following format:
- *	ID = idNb; PropertyName = value
+ * Return the list of all the camera parameters in the following format:
+ *	ID = idNb; ParameterName = value
  *	@return	
  *	@exception DevFailed
  */
 	Tango::DevString	get_all_parameters();
 /**
  * Return the name and value of a specific ID
- *	@param	argin	ID of the property
+ *	@param	argin	ID of the parameter
  *	@return	
  *	@exception DevFailed
  */
 	Tango::DevString	get_parameter(Tango::DevULong);
 /**
- * Set the value of a property using it's ID
+ * Set the value of a parameter using it's ID
  *	@param	argin	First argument is the ID, Second is the value
  *	@exception DevFailed
  */
