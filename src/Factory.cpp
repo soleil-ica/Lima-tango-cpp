@@ -848,8 +848,14 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 #ifdef DHYANA_ENABLED
         if (detector_type == "Dhyana")
         {
+            
             if (!ControlFactory::m_is_created)
             {
+                //- Set Serialisation mode
+				//- this allow dynamic attr in specific device
+				YAT_LOG_INFO("Set Serialisation Model : BY_PROCESS");
+				Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_PROCESS);
+                
 				unsigned short time_period = 1;
                 Tango::DbData db_data;
 				db_data.push_back(Tango::DbDatum("__ExpertTimerPeriod"));							
