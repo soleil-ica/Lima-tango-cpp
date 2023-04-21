@@ -45,10 +45,13 @@ static const char *RcsId = "$Id:  $";
 //	The following table gives the correspondence
 //	between commands and method name.
 //
-//  Command name|  Method name
+//  Command name      |  Method name
 //	----------------------------------------
-//  State   |  dev_state()
-//  Status  |  dev_status()
+//  State             |  dev_state()
+//  Status            |  dev_status()
+//  GetAllParameters  |  get_all_parameters()
+//  GetParameter      |  get_parameter()
+//  SetParameter      |  set_parameter()
 //
 //===================================================================
 
@@ -1545,6 +1548,118 @@ void Hamamatsu::manage_lima_exception(lima::Exception & in_exception, const std:
                                    in_exception.getErrMsg().c_str(),
                                    in_caller_method_name.c_str());
 }
+
+
+
+//+------------------------------------------------------------------
+/**
+ *	method:	Hamamatsu::get_all_parameters
+ *
+ *	description:	method to execute "GetAllParameters"
+ *	Return the list of all the camera properties in the following format:
+ *	ID = idNb; PropertyName = value
+ *
+ * @return	
+ *
+ */
+//+------------------------------------------------------------------
+Tango::DevString Hamamatsu::get_all_parameters()
+{
+	//	POGO has generated a method core with argout allocation.
+	//	If you would like to use a static reference without copying,
+	//	See "TANGO Device Server Programmer's Manual"
+	//		(chapter : Writing a TANGO DS / Exchanging data)
+	//------------------------------------------------------------
+	DEBUG_STREAM << "Hamamatsu::get_all_parameters(): entering... !" << endl;
+
+	//	Add your own code to control device here
+    try
+    {
+        return const_cast<Tango::DevString>(m_camera->getAllParameters().c_str());
+    }
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::get_all_parameters");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::get_all_parameters");
+    }
+}
+
+
+
+//+------------------------------------------------------------------
+/**
+ *	method:	Hamamatsu::get_parameter
+ *
+ *	description:	method to execute "GetParameter"
+ *	Return the name and value of a specific ID
+ *
+ * @param	argin	ID of the property
+ * @return	
+ *
+ */
+//+------------------------------------------------------------------
+Tango::DevString Hamamatsu::get_parameter(Tango::DevULong argin)
+{
+	//	POGO has generated a method core with argout allocation.
+	//	If you would like to use a static reference without copying,
+	//	See "TANGO Device Server Programmer's Manual"
+	//		(chapter : Writing a TANGO DS / Exchanging data)
+	//------------------------------------------------------------
+	INFO_STREAM << "Hamamatsu::get_parameter(): entering... !" << endl;
+
+	//	Add your own code to control device here
+    try
+    {
+        return const_cast<Tango::DevString>(m_camera->getParameter(argin).c_str());
+    }
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::get_parameter");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::get_parameter");
+    }
+
+}
+
+//+------------------------------------------------------------------
+/**
+ *	method:	Hamamatsu::set_parameter
+ *
+ *	description:	method to execute "SetParameter"
+ *	Set the value of a property using it's ID
+ *
+ * @param	argin	First argument is the ID, Second is the value
+ *
+ */
+//+------------------------------------------------------------------
+void Hamamatsu::set_parameter(const Tango::DevVarDoubleArray *argin)
+{
+	INFO_STREAM << "Hamamatsu::set_parameter(): entering... !" << endl;
+
+	//	Add your own code to control device here
+    int id_property = (*argin)[0];
+    double value = (*argin)[1];
+    try
+    {
+        m_camera->setParameter(id_property, value);
+    }
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::set_parameter");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::set_parameter");
+    }
+}
+
+
+
 
 
 }	//	namespace

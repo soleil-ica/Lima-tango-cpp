@@ -301,5 +301,47 @@ bool Hamamatsu::is_channel3Kind_allowed(Tango::AttReqType type)
 //=================================================
 //		Commands Allowed Methods
 //=================================================
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_GetAllParameters_allowed
+// 
+// description : 	Execution allowed for GetAllParameters command.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_GetAllParameters_allowed(const CORBA::Any &any)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_GetParameter_allowed
+// 
+// description : 	Execution allowed for GetParameter command.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_GetParameter_allowed(const CORBA::Any &any)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_SetParameter_allowed
+// 
+// description : 	Execution allowed for SetParameter command.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_SetParameter_allowed(const CORBA::Any &any)
+{
+		//	End of Generated Code
+
+		//	Re-Start of Generated Code
+	return true;
+}
 
 }	// namespace Hamamatsu_ns

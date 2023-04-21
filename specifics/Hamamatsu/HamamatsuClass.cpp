@@ -59,6 +59,79 @@ __declspec(dllexport)
 
 namespace Hamamatsu_ns
 {
+//+----------------------------------------------------------------------------
+//
+// method : 		SetParameterCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *SetParameterCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "SetParameterCmd::execute(): arrived" << endl;
+
+	const Tango::DevVarDoubleArray	*argin;
+	extract(in_any, argin);
+
+	((static_cast<Hamamatsu *>(device))->set_parameter(argin));
+	return new CORBA::Any();
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		GetParameterCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *GetParameterCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "GetParameterCmd::execute(): arrived" << endl;
+
+	Tango::DevULong	argin;
+	extract(in_any, argin);
+
+	return insert((static_cast<Hamamatsu *>(device))->get_parameter(argin));
+}
+
+
+
+//+----------------------------------------------------------------------------
+//
+// method : 		GetAllParametersCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *GetAllParametersCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "GetAllParametersCmd::execute(): arrived" << endl;
+
+	return insert((static_cast<Hamamatsu *>(device))->get_all_parameters());
+}
+
+
 
 
 //
@@ -147,6 +220,21 @@ HamamatsuClass *HamamatsuClass::instance()
 //-----------------------------------------------------------------------------
 void HamamatsuClass::command_factory()
 {
+	command_list.push_back(new GetAllParametersCmd("GetAllParameters",
+		Tango::DEV_VOID, Tango::DEV_STRING,
+		"",
+		"",
+		Tango::EXPERT));
+	command_list.push_back(new GetParameterCmd("GetParameter",
+		Tango::DEV_ULONG, Tango::DEV_STRING,
+		"ID of the property",
+		"",
+		Tango::EXPERT));
+	command_list.push_back(new SetParameterCmd("SetParameter",
+		Tango::DEVVAR_DOUBLEARRAY, Tango::DEV_VOID,
+		"First argument is the ID, Second is the value",
+		"",
+		Tango::EXPERT));
 
 	//	add polling if any
 	for (unsigned int i=0 ; i<command_list.size(); i++)
