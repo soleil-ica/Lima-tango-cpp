@@ -821,6 +821,9 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         {
             if (!ControlFactory::m_is_created)
             {
+                YAT_LOG_INFO("Set Serialisation Model : BY_PROCESS");
+				Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_PROCESS);
+                
                 Tango::DbData db_data;
                 std::string config_file = "/opt/xsp/config/system.yml";
                 bool distortion_correction = true;
