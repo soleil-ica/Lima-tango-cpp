@@ -1,13 +1,13 @@
-/*----- PROTECTED REGION ID(TeledyneClass.h) ENABLED START -----*/
+/*----- PROTECTED REGION ID(TeledynePIClass.h) ENABLED START -----*/
 //=============================================================================
 //
-// file :        TeledyneClass.h
+// file :        TeledynePIClass.h
 //
-// description : Include for the Teledyne root class.
+// description : Include for the TeledynePI root class.
 //               This class is the singleton class for
-//                the Teledyne device class.
+//                the TeledynePI device class.
 //               It contains all properties and methods which the 
-//               Teledyne requires only once e.g. the commands.
+//               TeledynePI requires only once e.g. the commands.
 //
 // project :     
 //
@@ -34,22 +34,22 @@
 //=============================================================================
 
 
-#ifndef TeledyneClass_H
-#define TeledyneClass_H
+#ifndef TeledynePIClass_H
+#define TeledynePIClass_H
 
 #include <tango.h>
-#include <Teledyne.h>
+#include <TeledynePI.h>
 
 
-/*----- PROTECTED REGION END -----*/	//	TeledyneClass.h
+/*----- PROTECTED REGION END -----*/	//	TeledynePIClass.h
 
 
-namespace Teledyne_ns
+namespace TeledynePI_ns
 {
-/*----- PROTECTED REGION ID(TeledyneClass::classes for dynamic creation) ENABLED START -----*/
+/*----- PROTECTED REGION ID(TeledynePIClass::classes for dynamic creation) ENABLED START -----*/
 
 
-/*----- PROTECTED REGION END -----*/	//	TeledyneClass::classes for dynamic creation
+/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::classes for dynamic creation
 
 //=========================================
 //	Define classes for attributes
@@ -62,9 +62,9 @@ public:
 			Tango::DEV_STRING, Tango::READ) {};
 	~detector_modelAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Teledyne *>(dev))->read_detector_model(att);}
+		{(static_cast<TeledynePI *>(dev))->read_detector_model(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Teledyne *>(dev))->is_detector_model_allowed(ty);}
+		{return (static_cast<TeledynePI *>(dev))->is_detector_model_allowed(ty);}
 };
 
 //	Attribute detector_type class definition
@@ -75,9 +75,9 @@ public:
 			Tango::DEV_STRING, Tango::READ) {};
 	~detector_typeAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Teledyne *>(dev))->read_detector_type(att);}
+		{(static_cast<TeledynePI *>(dev))->read_detector_type(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Teledyne *>(dev))->is_detector_type_allowed(ty);}
+		{return (static_cast<TeledynePI *>(dev))->is_detector_type_allowed(ty);}
 };
 
 //	Attribute temperature class definition
@@ -88,9 +88,9 @@ public:
 			Tango::DEV_DOUBLE, Tango::READ) {};
 	~temperatureAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Teledyne *>(dev))->read_temperature(att);}
+		{(static_cast<TeledynePI *>(dev))->read_temperature(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Teledyne *>(dev))->is_temperature_allowed(ty);}
+		{return (static_cast<TeledynePI *>(dev))->is_temperature_allowed(ty);}
 };
 
 //	Attribute temperatureTarget class definition
@@ -101,11 +101,11 @@ public:
 			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
 	~temperatureTargetAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Teledyne *>(dev))->read_temperatureTarget(att);}
+		{(static_cast<TeledynePI *>(dev))->read_temperatureTarget(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<Teledyne *>(dev))->write_temperatureTarget(att);}
+		{(static_cast<TeledynePI *>(dev))->write_temperatureTarget(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Teledyne *>(dev))->is_temperatureTarget_allowed(ty);}
+		{return (static_cast<TeledynePI *>(dev))->is_temperatureTarget_allowed(ty);}
 };
 
 //	Attribute gain class definition
@@ -116,11 +116,11 @@ public:
 			Tango::DEV_ENUM, Tango::READ_WRITE) {};
 	~gainAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Teledyne *>(dev))->read_gain(att);}
+		{(static_cast<TeledynePI *>(dev))->read_gain(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<Teledyne *>(dev))->write_gain(att);}
+		{(static_cast<TeledynePI *>(dev))->write_gain(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Teledyne *>(dev))->is_gain_allowed(ty);}
+		{return (static_cast<TeledynePI *>(dev))->is_gain_allowed(ty);}
 	virtual bool same_type(const type_info &in_type) {return typeid(gainEnum) == in_type;}
 	virtual string get_enum_type() {return string("gainEnum");}
 };
@@ -133,28 +133,28 @@ public:
 			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
 	~adcRateAttrib() {};
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Teledyne *>(dev))->read_adcRate(att);}
+		{(static_cast<TeledynePI *>(dev))->read_adcRate(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<Teledyne *>(dev))->write_adcRate(att);}
+		{(static_cast<TeledynePI *>(dev))->write_adcRate(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Teledyne *>(dev))->is_adcRate_allowed(ty);}
+		{return (static_cast<TeledynePI *>(dev))->is_adcRate_allowed(ty);}
 };
 
 
 /**
- *	The TeledyneClass singleton definition
+ *	The TeledynePIClass singleton definition
  */
 
 #ifdef _TG_WINDOWS_
-class __declspec(dllexport)  TeledyneClass : public Tango::DeviceClass
+class __declspec(dllexport)  TeledynePIClass : public Tango::DeviceClass
 #else
-class TeledyneClass : public Tango::DeviceClass
+class TeledynePIClass : public Tango::DeviceClass
 #endif
 {
-	/*----- PROTECTED REGION ID(TeledyneClass::Additionnal DServer data members) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePIClass::Additionnal DServer data members) ENABLED START -----*/
 	
 	
-	/*----- PROTECTED REGION END -----*/	//	TeledyneClass::Additionnal DServer data members
+	/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::Additionnal DServer data members
 
 	public:
 		//	write class properties data members
@@ -163,16 +163,16 @@ class TeledyneClass : public Tango::DeviceClass
 		Tango::DbData	dev_def_prop;
 	
 		//	Method prototypes
-		static TeledyneClass *init(const char *);
-		static TeledyneClass *instance();
-		~TeledyneClass();
+		static TeledynePIClass *init(const char *);
+		static TeledynePIClass *instance();
+		~TeledynePIClass();
 		Tango::DbDatum	get_class_property(string &);
 		Tango::DbDatum	get_default_device_property(string &);
 		Tango::DbDatum	get_default_class_property(string &);
 	
 	protected:
-		TeledyneClass(string &);
-		static TeledyneClass *_instance;
+		TeledynePIClass(string &);
+		static TeledynePIClass *_instance;
 		void command_factory();
 		void attribute_factory(vector<Tango::Attr *> &);
 		void pipe_factory();
@@ -192,4 +192,4 @@ class TeledyneClass : public Tango::DeviceClass
 
 }	//	End of namespace
 
-#endif   //	Teledyne_H
+#endif   //	TeledynePI_H

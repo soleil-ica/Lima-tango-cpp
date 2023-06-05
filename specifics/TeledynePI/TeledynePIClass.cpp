@@ -1,13 +1,13 @@
-/*----- PROTECTED REGION ID(TeledyneClass.cpp) ENABLED START -----*/
+/*----- PROTECTED REGION ID(TeledynePIClass.cpp) ENABLED START -----*/
 //=============================================================================
 //
-// file :        TeledyneClass.cpp
+// file :        TeledynePIClass.cpp
 //
-// description : C++ source for the TeledyneClass.
+// description : C++ source for the TeledynePIClass.
 //               A singleton class derived from DeviceClass.
 //               It implements the command and attribute list
 //               and all properties and methods required
-//               by the Teledyne once per process.
+//               by the TeledynePI once per process.
 //
 // project :     
 //
@@ -34,13 +34,13 @@
 //=============================================================================
 
 
-#include <TeledyneClass.h>
+#include <TeledynePIClass.h>
 
-/*----- PROTECTED REGION END -----*/	//	TeledyneClass.cpp
+/*----- PROTECTED REGION END -----*/	//	TeledynePIClass.cpp
 
 //-------------------------------------------------------------------
 /**
- *	Create TeledyneClass singleton and
+ *	Create TeledynePIClass singleton and
  *	return it in a C function for Python usage
  */
 //-------------------------------------------------------------------
@@ -51,50 +51,50 @@ __declspec(dllexport)
 
 #endif
 
-	Tango::DeviceClass *_create_Teledyne_class(const char *name) {
-		return Teledyne_ns::TeledyneClass::init(name);
+	Tango::DeviceClass *_create_TeledynePI_class(const char *name) {
+		return TeledynePI_ns::TeledynePIClass::init(name);
 	}
 }
 
-namespace Teledyne_ns
+namespace TeledynePI_ns
 {
 //===================================================================
 //	Initialize pointer for singleton pattern
 //===================================================================
-TeledyneClass *TeledyneClass::_instance = NULL;
+TeledynePIClass *TeledynePIClass::_instance = NULL;
 
 //--------------------------------------------------------
 /**
- * method : 		TeledyneClass::TeledyneClass(string &s)
- * description : 	constructor for the TeledyneClass
+ * method : 		TeledynePIClass::TeledynePIClass(string &s)
+ * description : 	constructor for the TeledynePIClass
  *
  * @param s	The class name
  */
 //--------------------------------------------------------
-TeledyneClass::TeledyneClass(string &s):Tango::DeviceClass(s)
+TeledynePIClass::TeledynePIClass(string &s):Tango::DeviceClass(s)
 {
-	cout2 << "Entering TeledyneClass constructor" << endl;
+	cout2 << "Entering TeledynePIClass constructor" << endl;
 	set_default_property();
 	write_class_property();
 
-	/*----- PROTECTED REGION ID(TeledyneClass::constructor) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePIClass::constructor) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	TeledyneClass::constructor
+	/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::constructor
 
-	cout2 << "Leaving TeledyneClass constructor" << endl;
+	cout2 << "Leaving TeledynePIClass constructor" << endl;
 }
 
 //--------------------------------------------------------
 /**
- * method : 		TeledyneClass::~TeledyneClass()
- * description : 	destructor for the TeledyneClass
+ * method : 		TeledynePIClass::~TeledynePIClass()
+ * description : 	destructor for the TeledynePIClass
  */
 //--------------------------------------------------------
-TeledyneClass::~TeledyneClass()
+TeledynePIClass::~TeledynePIClass()
 {
-	/*----- PROTECTED REGION ID(TeledyneClass::destructor) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePIClass::destructor) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	TeledyneClass::destructor
+	/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::destructor
 
 	_instance = NULL;
 }
@@ -102,21 +102,21 @@ TeledyneClass::~TeledyneClass()
 
 //--------------------------------------------------------
 /**
- * method : 		TeledyneClass::init
+ * method : 		TeledynePIClass::init
  * description : 	Create the object if not already done.
  *                  Otherwise, just return a pointer to the object
  *
  * @param	name	The class name
  */
 //--------------------------------------------------------
-TeledyneClass *TeledyneClass::init(const char *name)
+TeledynePIClass *TeledynePIClass::init(const char *name)
 {
 	if (_instance == NULL)
 	{
 		try
 		{
 			string s(name);
-			_instance = new TeledyneClass(s);
+			_instance = new TeledynePIClass(s);
 		}
 		catch (bad_alloc &)
 		{
@@ -128,12 +128,12 @@ TeledyneClass *TeledyneClass::init(const char *name)
 
 //--------------------------------------------------------
 /**
- * method : 		TeledyneClass::instance
+ * method : 		TeledynePIClass::instance
  * description : 	Check if object already created,
  *                  and return a pointer to the object
  */
 //--------------------------------------------------------
-TeledyneClass *TeledyneClass::instance()
+TeledynePIClass *TeledynePIClass::instance()
 {
 	if (_instance == NULL)
 	{
@@ -154,11 +154,11 @@ TeledyneClass *TeledyneClass::instance()
 //===================================================================
 //--------------------------------------------------------
 /**
- *	Method      : TeledyneClass::get_class_property()
+ *	Method      : TeledynePIClass::get_class_property()
  *	Description : Get the class property for specified name.
  */
 //--------------------------------------------------------
-Tango::DbDatum TeledyneClass::get_class_property(string &prop_name)
+Tango::DbDatum TeledynePIClass::get_class_property(string &prop_name)
 {
 	for (unsigned int i=0 ; i<cl_prop.size() ; i++)
 		if (cl_prop[i].name == prop_name)
@@ -169,11 +169,11 @@ Tango::DbDatum TeledyneClass::get_class_property(string &prop_name)
 
 //--------------------------------------------------------
 /**
- *	Method      : TeledyneClass::get_default_device_property()
+ *	Method      : TeledynePIClass::get_default_device_property()
  *	Description : Return the default value for device property.
  */
 //--------------------------------------------------------
-Tango::DbDatum TeledyneClass::get_default_device_property(string &prop_name)
+Tango::DbDatum TeledynePIClass::get_default_device_property(string &prop_name)
 {
 	for (unsigned int i=0 ; i<dev_def_prop.size() ; i++)
 		if (dev_def_prop[i].name == prop_name)
@@ -184,11 +184,11 @@ Tango::DbDatum TeledyneClass::get_default_device_property(string &prop_name)
 
 //--------------------------------------------------------
 /**
- *	Method      : TeledyneClass::get_default_class_property()
+ *	Method      : TeledynePIClass::get_default_class_property()
  *	Description : Return the default value for class property.
  */
 //--------------------------------------------------------
-Tango::DbDatum TeledyneClass::get_default_class_property(string &prop_name)
+Tango::DbDatum TeledynePIClass::get_default_class_property(string &prop_name)
 {
 	for (unsigned int i=0 ; i<cl_def_prop.size() ; i++)
 		if (cl_def_prop[i].name == prop_name)
@@ -200,14 +200,14 @@ Tango::DbDatum TeledyneClass::get_default_class_property(string &prop_name)
 
 //--------------------------------------------------------
 /**
- *	Method      : TeledyneClass::set_default_property()
+ *	Method      : TeledynePIClass::set_default_property()
  *	Description : Set default property (class and device) for wizard.
  *                For each property, add to wizard property name and description.
  *                If default value has been set, add it to wizard property and
  *                store it in a DbDatum.
  */
 //--------------------------------------------------------
-void TeledyneClass::set_default_property()
+void TeledynePIClass::set_default_property()
 {
 	string	prop_name;
 	string	prop_desc;
@@ -235,11 +235,11 @@ void TeledyneClass::set_default_property()
 
 //--------------------------------------------------------
 /**
- *	Method      : TeledyneClass::write_class_property()
+ *	Method      : TeledynePIClass::write_class_property()
  *	Description : Set class description fields as property in database
  */
 //--------------------------------------------------------
-void TeledyneClass::write_class_property()
+void TeledynePIClass::write_class_property()
 {
 	//	First time, check if database used
 	if (Tango::Util::_UseDb == false)
@@ -280,24 +280,24 @@ void TeledyneClass::write_class_property()
 
 //--------------------------------------------------------
 /**
- *	Method      : TeledyneClass::device_factory()
+ *	Method      : TeledynePIClass::device_factory()
  *	Description : Create the device object(s)
  *                and store them in the device list
  */
 //--------------------------------------------------------
-void TeledyneClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
+void TeledynePIClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 {
-	/*----- PROTECTED REGION ID(TeledyneClass::device_factory_before) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePIClass::device_factory_before) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	TeledyneClass::device_factory_before
+	/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::device_factory_before
 
 	//	Create devices and add it into the device list
 	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
 	{
 		cout4 << "Device name : " << (*devlist_ptr)[i].in() << endl;
-		device_list.push_back(new Teledyne(this, (*devlist_ptr)[i]));
+		device_list.push_back(new TeledynePI(this, (*devlist_ptr)[i]));
 	}
 
 	//	Manage dynamic attributes if any
@@ -307,7 +307,7 @@ void TeledyneClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 	for (unsigned long i=1 ; i<=devlist_ptr->length() ; i++)
 	{
 		//	Add dynamic attributes if any
-		Teledyne *dev = static_cast<Teledyne *>(device_list[device_list.size()-i]);
+		TeledynePI *dev = static_cast<TeledynePI *>(device_list[device_list.size()-i]);
 		dev->add_dynamic_attributes();
 
 		//	Check before if database used.
@@ -317,26 +317,26 @@ void TeledyneClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 			export_device(dev, dev->get_name().c_str());
 	}
 
-	/*----- PROTECTED REGION ID(TeledyneClass::device_factory_after) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePIClass::device_factory_after) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	TeledyneClass::device_factory_after
+	/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::device_factory_after
 }
 //--------------------------------------------------------
 /**
- *	Method      : TeledyneClass::attribute_factory()
+ *	Method      : TeledynePIClass::attribute_factory()
  *	Description : Create the attribute object(s)
  *                and store them in the attribute list
  */
 //--------------------------------------------------------
-void TeledyneClass::attribute_factory(vector<Tango::Attr *> &att_list)
+void TeledynePIClass::attribute_factory(vector<Tango::Attr *> &att_list)
 {
-	/*----- PROTECTED REGION ID(TeledyneClass::attribute_factory_before) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePIClass::attribute_factory_before) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	TeledyneClass::attribute_factory_before
+	/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::attribute_factory_before
 	//	Attribute : detector_model
 	detector_modelAttrib	*detector_model = new detector_modelAttrib();
 	Tango::UserDefaultAttrProp	detector_model_prop;
@@ -484,53 +484,53 @@ void TeledyneClass::attribute_factory(vector<Tango::Attr *> &att_list)
 
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());
-	/*----- PROTECTED REGION ID(TeledyneClass::attribute_factory_after) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePIClass::attribute_factory_after) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	TeledyneClass::attribute_factory_after
+	/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::attribute_factory_after
 }
 //--------------------------------------------------------
 /**
- *	Method      : TeledyneClass::pipe_factory()
+ *	Method      : TeledynePIClass::pipe_factory()
  *	Description : Create the pipe object(s)
  *                and store them in the pipe list
  */
 //--------------------------------------------------------
-void TeledyneClass::pipe_factory()
+void TeledynePIClass::pipe_factory()
 {
-	/*----- PROTECTED REGION ID(TeledyneClass::pipe_factory_before) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePIClass::pipe_factory_before) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	TeledyneClass::pipe_factory_before
-	/*----- PROTECTED REGION ID(TeledyneClass::pipe_factory_after) ENABLED START -----*/
+	/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::pipe_factory_before
+	/*----- PROTECTED REGION ID(TeledynePIClass::pipe_factory_after) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	TeledyneClass::pipe_factory_after
+	/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::pipe_factory_after
 }
 //--------------------------------------------------------
 /**
- *	Method      : TeledyneClass::command_factory()
+ *	Method      : TeledynePIClass::command_factory()
  *	Description : Create the command object(s)
  *                and store them in the command list
  */
 //--------------------------------------------------------
-void TeledyneClass::command_factory()
+void TeledynePIClass::command_factory()
 {
-	/*----- PROTECTED REGION ID(TeledyneClass::command_factory_before) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePIClass::command_factory_before) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	TeledyneClass::command_factory_before
+	/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::command_factory_before
 
 
-	/*----- PROTECTED REGION ID(TeledyneClass::command_factory_after) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePIClass::command_factory_after) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	TeledyneClass::command_factory_after
+	/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::command_factory_after
 }
 
 //===================================================================
@@ -539,13 +539,13 @@ void TeledyneClass::command_factory()
 
 //--------------------------------------------------------
 /**
- * method : 		TeledyneClass::create_static_attribute_list
+ * method : 		TeledynePIClass::create_static_attribute_list
  * description : 	Create the a list of static attributes
  *
  * @param	att_list	the ceated attribute list
  */
 //--------------------------------------------------------
-void TeledyneClass::create_static_attribute_list(vector<Tango::Attr *> &att_list)
+void TeledynePIClass::create_static_attribute_list(vector<Tango::Attr *> &att_list)
 {
 	for (unsigned long i=0 ; i<att_list.size() ; i++)
 	{
@@ -556,29 +556,29 @@ void TeledyneClass::create_static_attribute_list(vector<Tango::Attr *> &att_list
 
 	cout2 << defaultAttList.size() << " attributes in default list" << endl;
 
-	/*----- PROTECTED REGION ID(TeledyneClass::create_static_att_list) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePIClass::create_static_att_list) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	TeledyneClass::create_static_att_list
+	/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::create_static_att_list
 }
 
 
 //--------------------------------------------------------
 /**
- * method : 		TeledyneClass::erase_dynamic_attributes
+ * method : 		TeledynePIClass::erase_dynamic_attributes
  * description : 	delete the dynamic attributes if any.
  *
  * @param	devlist_ptr	the device list pointer
  * @param	list of all attributes
  */
 //--------------------------------------------------------
-void TeledyneClass::erase_dynamic_attributes(const Tango::DevVarStringArray *devlist_ptr, vector<Tango::Attr *> &att_list)
+void TeledynePIClass::erase_dynamic_attributes(const Tango::DevVarStringArray *devlist_ptr, vector<Tango::Attr *> &att_list)
 {
 	Tango::Util *tg = Tango::Util::instance();
 
 	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
 	{
 		Tango::DeviceImpl *dev_impl = tg->get_device_by_name(((string)(*devlist_ptr)[i]).c_str());
-		Teledyne *dev = static_cast<Teledyne *> (dev_impl);
+		TeledynePI *dev = static_cast<TeledynePI *> (dev_impl);
 
 		vector<Tango::Attribute *> &dev_att_list = dev->get_device_attr()->get_attribute_list();
 		vector<Tango::Attribute *>::iterator ite_att;
@@ -597,18 +597,18 @@ void TeledyneClass::erase_dynamic_attributes(const Tango::DevVarStringArray *dev
 			}
 		}
 	}
-	/*----- PROTECTED REGION ID(TeledyneClass::erase_dynamic_attributes) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePIClass::erase_dynamic_attributes) ENABLED START -----*/
 	
-	/*----- PROTECTED REGION END -----*/	//	TeledyneClass::erase_dynamic_attributes
+	/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::erase_dynamic_attributes
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : TeledyneClass::get_attr_object_by_name()
+ *	Method      : TeledynePIClass::get_attr_object_by_name()
  *	Description : returns Tango::Attr * object found by name
  */
 //--------------------------------------------------------
-Tango::Attr *TeledyneClass::get_attr_object_by_name(vector<Tango::Attr *> &att_list, string attname)
+Tango::Attr *TeledynePIClass::get_attr_object_by_name(vector<Tango::Attr *> &att_list, string attname)
 {
 	vector<Tango::Attr *>::iterator it;
 	for (it=att_list.begin() ; it<att_list.end() ; ++it)
@@ -619,7 +619,7 @@ Tango::Attr *TeledyneClass::get_attr_object_by_name(vector<Tango::Attr *> &att_l
 }
 
 
-/*----- PROTECTED REGION ID(TeledyneClass::Additional Methods) ENABLED START -----*/
+/*----- PROTECTED REGION ID(TeledynePIClass::Additional Methods) ENABLED START -----*/
 
-/*----- PROTECTED REGION END -----*/	//	TeledyneClass::Additional Methods
+/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::Additional Methods
 } //	namespace

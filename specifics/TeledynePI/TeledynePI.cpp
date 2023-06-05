@@ -1,13 +1,13 @@
-/*----- PROTECTED REGION ID(Teledyne.cpp) ENABLED START -----*/
+/*----- PROTECTED REGION ID(TeledynePI.cpp) ENABLED START -----*/
 //=============================================================================
 //
-// file :        Teledyne.cpp
+// file :        TeledynePI.cpp
 //
-// description : C++ source for the Teledyne class and its commands.
+// description : C++ source for the TeledynePI class and its commands.
 //               The class is derived from Device. It represents the
 //               CORBA servant object which will be accessed from the
 //               network. All commands which can be executed on the
-//               Teledyne are implemented in this file.
+//               TeledynePI are implemented in this file.
 //
 // project :     
 //
@@ -36,13 +36,13 @@
 #include <tango.h>
 #include <helpers/PogoHelper.h>
 
-#include <Teledyne.h>
-#include <TeledyneClass.h>
+#include <TeledynePI.h>
+#include <TeledynePIClass.h>
 
-/*----- PROTECTED REGION END -----*/	//	Teledyne.cpp
+/*----- PROTECTED REGION END -----*/	//	TeledynePI.cpp
 
 /**
- *  Teledyne class description:
+ *  TeledynePI class description:
  *    
  */
 
@@ -67,58 +67,58 @@
 //  adcRate            |  Tango::DevDouble	Scalar
 //================================================================
 
-namespace Teledyne_ns
+namespace TeledynePI_ns
 {
-/*----- PROTECTED REGION ID(Teledyne::namespace_starting) ENABLED START -----*/
+/*----- PROTECTED REGION ID(TeledynePI::namespace_starting) ENABLED START -----*/
 
 //	static initializations
 
-/*----- PROTECTED REGION END -----*/	//	Teledyne::namespace_starting
+/*----- PROTECTED REGION END -----*/	//	TeledynePI::namespace_starting
 
 //--------------------------------------------------------
 /**
- *	Method      : Teledyne::Teledyne()
+ *	Method      : TeledynePI::TeledynePI()
  *	Description : Constructors for a Tango device
- *                implementing the classTeledyne
+ *                implementing the classTeledynePI
  */
 //--------------------------------------------------------
-Teledyne::Teledyne(Tango::DeviceClass *cl, string &s)
+TeledynePI::TeledynePI(Tango::DeviceClass *cl, string &s)
  : TANGO_BASE_CLASS(cl, s.c_str())
 {
-	/*----- PROTECTED REGION ID(Teledyne::constructor_1) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePI::constructor_1) ENABLED START -----*/
 	init_device();
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::constructor_1
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::constructor_1
 }
 //--------------------------------------------------------
-Teledyne::Teledyne(Tango::DeviceClass *cl, const char *s)
+TeledynePI::TeledynePI(Tango::DeviceClass *cl, const char *s)
  : TANGO_BASE_CLASS(cl, s)
 {
-	/*----- PROTECTED REGION ID(Teledyne::constructor_2) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePI::constructor_2) ENABLED START -----*/
 	init_device();
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::constructor_2
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::constructor_2
 }
 //--------------------------------------------------------
-Teledyne::Teledyne(Tango::DeviceClass *cl, const char *s, const char *d)
+TeledynePI::TeledynePI(Tango::DeviceClass *cl, const char *s, const char *d)
  : TANGO_BASE_CLASS(cl, s, d)
 {
-	/*----- PROTECTED REGION ID(Teledyne::constructor_3) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePI::constructor_3) ENABLED START -----*/
 	init_device();
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::constructor_3
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::constructor_3
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Teledyne::delete_device()
+ *	Method      : TeledynePI::delete_device()
  *	Description : will be called at device destruction or at init command
  */
 //--------------------------------------------------------
-void Teledyne::delete_device()
+void TeledynePI::delete_device()
 {
-	DEBUG_STREAM << "Teledyne::delete_device() " << device_name << endl;
-	/*----- PROTECTED REGION ID(Teledyne::delete_device) ENABLED START -----*/
+	DEBUG_STREAM << "TeledynePI::delete_device() " << device_name << endl;
+	/*----- PROTECTED REGION ID(TeledynePI::delete_device) ENABLED START -----*/
 	INFO_STREAM << "Teledyne::delete_device() delete device " << device_name << endl;
 
 	DELETE_SCALAR_ATTRIBUTE(attr_temperature_read);	
@@ -128,24 +128,23 @@ void Teledyne::delete_device()
 
 	DELETE_DEVSTRING_ATTRIBUTE(attr_detector_model_read);	
 	DELETE_DEVSTRING_ATTRIBUTE(attr_detector_type_read);		
-
 	//	Delete device allocated objects
 	INFO_STREAM << "Remove the inner-appender." << endl;
     yat4tango::InnerAppender::release(this);
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::delete_device
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::delete_device
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Teledyne::init_device()
+ *	Method      : TeledynePI::init_device()
  *	Description : will be called at device initialization.
  */
 //--------------------------------------------------------
-void Teledyne::init_device()
+void TeledynePI::init_device()
 {
-	DEBUG_STREAM << "Teledyne::init_device() create device " << device_name << endl;
-	/*----- PROTECTED REGION ID(Teledyne::init_device_before) ENABLED START -----*/
+	DEBUG_STREAM << "TeledynePI::init_device() create device " << device_name << endl;
+	/*----- PROTECTED REGION ID(TeledynePI::init_device_before) ENABLED START -----*/
 	
 	//	Initialization before get_device_property() call
 	CREATE_SCALAR_ATTRIBUTE(attr_temperature_read, 0.0);
@@ -161,8 +160,7 @@ void Teledyne::init_device()
 	//	Get the device properties from database
 	get_device_property();
 	
-	/*----- PROTECTED REGION ID(Teledyne::init_device) ENABLED START -----*/
-
+	/*----- PROTECTED REGION ID(TeledynePI::init_device) ENABLED START -----*/
 	Tango::Attribute &gain_attribute = get_device_attr()->get_attr_by_name("gain");
 	Tango::MultiAttrProp<Tango::DevEnum> multi_prop_gain_attribute;
 	gain_attribute.get_properties(multi_prop_gain_attribute);
@@ -212,7 +210,6 @@ void Teledyne::init_device()
 	try
 	{
 		INFO_STREAM << "Write tango hardware at Init - temperatureTarget." << endl;
-		transform(temperatureTargetAtInit.begin(), temperatureTargetAtInit.end(), temperatureTargetAtInit.begin(), ::toupper);
 		Tango::WAttribute &temperatureTarget = dev_attr->get_w_attr_by_name("temperatureTarget");
         temperatureTarget.set_write_value(temperatureTargetAtInit);
 		write_temperatureTarget(temperatureTarget);
@@ -253,22 +250,22 @@ void Teledyne::init_device()
 	m_is_device_initialized = true;		
     set_state(Tango::STANDBY);
     dev_state();
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::init_device
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::init_device
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Teledyne::get_device_property()
+ *	Method      : TeledynePI::get_device_property()
  *	Description : Read database to initialize property data members.
  */
 //--------------------------------------------------------
-void Teledyne::get_device_property()
+void TeledynePI::get_device_property()
 {
-	/*----- PROTECTED REGION ID(Teledyne::get_device_property_before) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePI::get_device_property_before) ENABLED START -----*/
 	
 	//	Initialize property data members
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::get_device_property_before
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::get_device_property_before
 
 
 	//	Read device properties from database.
@@ -282,10 +279,10 @@ void Teledyne::get_device_property()
 		if (Tango::Util::instance()->_UseDb==true)
 			get_db_device()->get_property(dev_prop);
 	
-		//	get instance on TeledyneClass to get class property
+		//	get instance on TeledynePIClass to get class property
 		Tango::DbDatum	def_prop, cl_prop;
-		TeledyneClass	*ds_class =
-			(static_cast<TeledyneClass *>(get_device_class()));
+		TeledynePIClass	*ds_class =
+			(static_cast<TeledynePIClass *>(get_device_class()));
 		int	i = -1;
 
 		//	Try to initialize TemperatureTargetAtInit from class property
@@ -301,24 +298,25 @@ void Teledyne::get_device_property()
 
 	}
 
-	/*----- PROTECTED REGION ID(Teledyne::get_device_property_after) ENABLED START -----*/
-	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"-110","TemperatureTargetAtInit");	            
-
+	/*----- PROTECTED REGION ID(TeledynePI::get_device_property_after) ENABLED START -----*/
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"-60","TemperatureTargetAtInit");
+	
 	//	Check device property data members init
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::get_device_property_after
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::get_device_property_after
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Teledyne::always_executed_hook()
+ *	Method      : TeledynePI::always_executed_hook()
  *	Description : method always executed before any command is executed
  */
 //--------------------------------------------------------
-void Teledyne::always_executed_hook()
+void TeledynePI::always_executed_hook()
 {
-	//DEBUG_STREAM << "Teledyne::always_executed_hook()  " << device_name << endl;
-	/*----- PROTECTED REGION ID(Teledyne::always_executed_hook) ENABLED START -----*/
+	//DEBUG_STREAM << "TeledynePI::always_executed_hook()  " << device_name << endl;
+	/*----- PROTECTED REGION ID(TeledynePI::always_executed_hook) ENABLED START -----*/
+	
 	//	code always executed before all requests
 	try
 	{
@@ -349,38 +347,38 @@ void Teledyne::always_executed_hook()
 		set_state(Tango::FAULT);
 		return;
 	}
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::always_executed_hook
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::always_executed_hook
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Teledyne::read_attr_hardware()
+ *	Method      : TeledynePI::read_attr_hardware()
  *	Description : Hardware acquisition for attributes
  */
 //--------------------------------------------------------
-void Teledyne::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
+void TeledynePI::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	//DEBUG_STREAM << "Teledyne::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
-	/*----- PROTECTED REGION ID(Teledyne::read_attr_hardware) ENABLED START -----*/
+	//DEBUG_STREAM << "TeledynePI::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	/*----- PROTECTED REGION ID(TeledynePI::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::read_attr_hardware
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::read_attr_hardware
 }
 //--------------------------------------------------------
 /**
- *	Method      : Teledyne::write_attr_hardware()
+ *	Method      : TeledynePI::write_attr_hardware()
  *	Description : Hardware writing for attributes
  */
 //--------------------------------------------------------
-void Teledyne::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
+void TeledynePI::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "Teledyne::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
-	/*----- PROTECTED REGION ID(Teledyne::write_attr_hardware) ENABLED START -----*/
+	//DEBUG_STREAM << "TeledynePI::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	/*----- PROTECTED REGION ID(TeledynePI::write_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::write_attr_hardware
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::write_attr_hardware
 }
 
 //--------------------------------------------------------
@@ -392,10 +390,10 @@ void Teledyne::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Teledyne::read_detector_model(Tango::Attribute &attr)
+void TeledynePI::read_detector_model(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Teledyne::read_detector_model(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Teledyne::read_detector_model) ENABLED START -----*/
+	DEBUG_STREAM << "TeledynePI::read_detector_model(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(TeledynePI::read_detector_model) ENABLED START -----*/
 	try
 	{
 		HwDetInfoCtrlObj *hw_det_info;
@@ -429,7 +427,7 @@ void Teledyne::read_detector_model(Tango::Attribute &attr)
                     "Teledyne::read_detector_model");
     }	 
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::read_detector_model
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::read_detector_model
 }
 //--------------------------------------------------------
 /**
@@ -440,10 +438,10 @@ void Teledyne::read_detector_model(Tango::Attribute &attr)
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Teledyne::read_detector_type(Tango::Attribute &attr)
+void TeledynePI::read_detector_type(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Teledyne::read_detector_type(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Teledyne::read_detector_type) ENABLED START -----*/
+	DEBUG_STREAM << "TeledynePI::read_detector_type(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(TeledynePI::read_detector_type) ENABLED START -----*/
 	try
 	{
 		HwDetInfoCtrlObj *hw_det_info;
@@ -478,7 +476,7 @@ void Teledyne::read_detector_type(Tango::Attribute &attr)
                      "Teledyne::read_detector_type");
     }	 
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::read_detector_type
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::read_detector_type
 }
 //--------------------------------------------------------
 /**
@@ -489,10 +487,10 @@ void Teledyne::read_detector_type(Tango::Attribute &attr)
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Teledyne::read_temperature(Tango::Attribute &attr)
+void TeledynePI::read_temperature(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Teledyne::read_temperature(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Teledyne::read_temperature) ENABLED START -----*/
+	DEBUG_STREAM << "TeledynePI::read_temperature(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(TeledynePI::read_temperature) ENABLED START -----*/
 	try
 	{
 		if(get_state()!= Tango::RUNNING && m_hw != 0)
@@ -519,9 +517,8 @@ void Teledyne::read_temperature(Tango::Attribute &attr)
                     e.getErrMsg().c_str(),
                     "Teledyne::read_temperature");
     }	 
-
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::read_temperature
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::read_temperature
 }
 //--------------------------------------------------------
 /**
@@ -532,11 +529,11 @@ void Teledyne::read_temperature(Tango::Attribute &attr)
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Teledyne::read_temperatureTarget(Tango::Attribute &attr)
+void TeledynePI::read_temperatureTarget(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Teledyne::read_temperatureTarget(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Teledyne::read_temperatureTarget) ENABLED START -----*/
-	
+	DEBUG_STREAM << "TeledynePI::read_temperatureTarget(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(TeledynePI::read_temperatureTarget) ENABLED START -----*/
+	//	Set the attribute value
 	try 
 	{
 		if( get_state()!= Tango::RUNNING && m_hw != 0)
@@ -564,8 +561,7 @@ void Teledyne::read_temperatureTarget(Tango::Attribute &attr)
                     "Teledyne::read_temperatureTarget");
     }	 
 	
-	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::read_temperatureTarget
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::read_temperatureTarget
 }
 //--------------------------------------------------------
 /**
@@ -576,10 +572,13 @@ void Teledyne::read_temperatureTarget(Tango::Attribute &attr)
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Teledyne::write_temperatureTarget(Tango::WAttribute &attr)
+void TeledynePI::write_temperatureTarget(Tango::WAttribute &attr)
 {
-	INFO_STREAM << "Teledyne::write_temperatureTarget(Tango::WAttribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Teledyne::write_temperatureTarget) ENABLED START -----*/
+	INFO_STREAM << "TeledynePI::write_temperatureTarget(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(TeledynePI::write_temperatureTarget) ENABLED START -----*/
     try
     {
         attr.get_write_value(attr_temperatureTarget_write);
@@ -607,7 +606,7 @@ void Teledyne::write_temperatureTarget(Tango::WAttribute &attr)
                      "Teledyne::write_temperatureTarget");
     }	 
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::write_temperatureTarget
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::write_temperatureTarget
 }
 //--------------------------------------------------------
 /**
@@ -618,10 +617,10 @@ void Teledyne::write_temperatureTarget(Tango::WAttribute &attr)
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Teledyne::read_gain(Tango::Attribute &attr)
+void TeledynePI::read_gain(Tango::Attribute &attr)
 {
-	DEBUG_STREAM << "Teledyne::read_gain(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Teledyne::read_gain) ENABLED START -----*/
+	DEBUG_STREAM << "TeledynePI::read_gain(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(TeledynePI::read_gain) ENABLED START -----*/
 	//	Set the attribute value
 	
 	try
@@ -677,14 +676,13 @@ void Teledyne::read_gain(Tango::Attribute &attr)
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Teledyne::write_gain(Tango::WAttribute &attr)
+void TeledynePI::write_gain(Tango::WAttribute &attr)
 {
-	INFO_STREAM << "Teledyne::write_gain(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "TeledynePI::write_gain(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	gainEnum	w_val;
 	attr.get_write_value(w_val);
-	/*----- PROTECTED REGION ID(Teledyne::write_gain) ENABLED START -----*/
-
+	/*----- PROTECTED REGION ID(TeledynePI::write_gain) ENABLED START -----*/
 	try
 	{
 		attr_gain_write = w_val;
@@ -724,7 +722,7 @@ void Teledyne::write_gain(Tango::WAttribute &attr)
 					e.getErrMsg().c_str(),
 					"Teledyne::write_gain");
 	}
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::write_gain
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::write_gain
 }
 //--------------------------------------------------------
 /**
@@ -735,10 +733,10 @@ void Teledyne::write_gain(Tango::WAttribute &attr)
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Teledyne::read_adcRate(Tango::Attribute &attr)
+void TeledynePI::read_adcRate(Tango::Attribute &attr)
 {
-	//DEBUG_STREAM << "Teledyne::read_adcRate(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Teledyne::read_adcRate) ENABLED START -----*/
+	//DEBUG_STREAM << "TeledynePI::read_adcRate(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(TeledynePI::read_adcRate) ENABLED START -----*/
 	//	Set the attribute value
 	//attr.set_value(attr_adcRate_read);
 	
@@ -767,7 +765,7 @@ void Teledyne::read_adcRate(Tango::Attribute &attr)
                     e.getErrMsg().c_str(),
                     "Teledyne::read_adcRate");
     }	 
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::read_adcRate
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::read_adcRate
 }
 //--------------------------------------------------------
 /**
@@ -778,13 +776,13 @@ void Teledyne::read_adcRate(Tango::Attribute &attr)
  *	Attr type:	Scalar
  */
 //--------------------------------------------------------
-void Teledyne::write_adcRate(Tango::WAttribute &attr)
+void TeledynePI::write_adcRate(Tango::WAttribute &attr)
 {
-	INFO_STREAM << "Teledyne::write_adcRate(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "TeledynePI::write_adcRate(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevDouble	w_val;
 	attr.get_write_value(w_val);
-	/*----- PROTECTED REGION ID(Teledyne::write_adcRate) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePI::write_adcRate) ENABLED START -----*/
 	try
     {
         attr.get_write_value(attr_adcRate_write);
@@ -812,23 +810,23 @@ void Teledyne::write_adcRate(Tango::WAttribute &attr)
                      "Teledyne::write_adcRate");
     }	 
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::write_adcRate
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::write_adcRate
 }
 
 //--------------------------------------------------------
 /**
- *	Method      : Teledyne::add_dynamic_attributes()
+ *	Method      : TeledynePI::add_dynamic_attributes()
  *	Description : Create the dynamic attributes if any
  *                for specified device.
  */
 //--------------------------------------------------------
-void Teledyne::add_dynamic_attributes()
+void TeledynePI::add_dynamic_attributes()
 {
-	/*----- PROTECTED REGION ID(Teledyne::add_dynamic_attributes) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePI::add_dynamic_attributes) ENABLED START -----*/
 	
 	//	Add your own code to create and add dynamic attributes if any
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::add_dynamic_attributes
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::add_dynamic_attributes
 }
 
 //--------------------------------------------------------
@@ -839,10 +837,10 @@ void Teledyne::add_dynamic_attributes()
  *	@returns Device state
  */
 //--------------------------------------------------------
-Tango::DevState Teledyne::dev_state()
+Tango::DevState TeledynePI::dev_state()
 {
-	//DEBUG_STREAM << "Teledyne::State()  - " << device_name << endl;
-	/*----- PROTECTED REGION ID(Teledyne::dev_state) ENABLED START -----*/
+	//DEBUG_STREAM << "TeledynePI::State()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(TeledynePI::dev_state) ENABLED START -----*/
 	
 	Tango::DevState    argout = DeviceImpl::dev_state();
 
@@ -867,28 +865,27 @@ Tango::DevState Teledyne::dev_state()
     argout = DeviceState;
     return argout;
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::dev_state
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::dev_state
 }
 //--------------------------------------------------------
 /**
- *	Method      : Teledyne::add_dynamic_commands()
+ *	Method      : TeledynePI::add_dynamic_commands()
  *	Description : Create the dynamic commands if any
  *                for specified device.
  */
 //--------------------------------------------------------
-void Teledyne::add_dynamic_commands()
+void TeledynePI::add_dynamic_commands()
 {
-	/*----- PROTECTED REGION ID(Teledyne::add_dynamic_commands) ENABLED START -----*/
+	/*----- PROTECTED REGION ID(TeledynePI::add_dynamic_commands) ENABLED START -----*/
 	
 	//	Add your own code to create and add dynamic commands if any
 	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::add_dynamic_commands
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::add_dynamic_commands
 }
 
-/*----- PROTECTED REGION ID(Teledyne::namespace_ending) ENABLED START -----*/
+/*----- PROTECTED REGION ID(TeledynePI::namespace_ending) ENABLED START -----*/
 
 //	Additional Methods
-//+------------------------------------------------------------------
 
-/*----- PROTECTED REGION END -----*/	//	Teledyne::namespace_ending
+/*----- PROTECTED REGION END -----*/	//	TeledynePI::namespace_ending
 } //	namespace

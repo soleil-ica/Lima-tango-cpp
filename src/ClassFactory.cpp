@@ -88,7 +88,7 @@ static const char *RcsId = "$Id:  $";
 #endif
 
 #ifdef TELEDYNE_ENABLED
-#include <TeledyneClass.h>
+#include <TeledynePIClass.h>
 #endif
 
 #ifdef PCO_ENABLED
@@ -188,7 +188,7 @@ void Tango::DServer::class_factory()
 #endif
 
 #ifdef TELEDYNE_ENABLED
-    add_class(Teledyne_ns::TeledyneClass::init("Teledyne"));
+    add_class(TeledynePI_ns::TeledynePIClass::init("TeledynePI"));
 #endif
 
 #ifdef PCO_ENABLED

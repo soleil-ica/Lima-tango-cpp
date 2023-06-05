@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
-  <classes name="Teledyne" pogoRevision="9.6">
-    <description description="" title="" sourcePath="/home/informatique/ica/bahji/Repositories_Dev/Lima_Repo_GitHub/Lima-tango-cpp/specifics/Teledyne" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions" license="GPL" copyright="" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
+  <classes name="TeledynePI" pogoRevision="9.6">
+    <description description="" title="" sourcePath="/home/informatique/ica/bahji/Repositories_Dev/Lima_Repo_GitHub/Lima-tango-cpp/specifics/TeledynePI" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions" license="GPL" copyright="" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
       <inheritances classname="Device_Impl" sourcePath=""/>
       <identification contact="at synchrotron-soleil.fr - arafat.noureddine" author="arafat.noureddine" emailDomain="synchrotron-soleil.fr" classFamily="Acquisition" siteSpecific="" platform="Windows" bus="USB" manufacturer="none" reference=""/>
     </description>

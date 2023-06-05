@@ -466,7 +466,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 #endif
 
 #ifdef TELEDYNE_ENABLED
-        if (detector_type == "Teledyne")
+        if (detector_type == "TeledynePI")
         {
             if (!ControlFactory::m_is_created)
             {
@@ -1134,7 +1134,7 @@ void ControlFactory::reset(const std::string& detector_type)
 #endif         
 
 #ifdef TELEDYNE_ENABLED        
-                if (detector_type == "Teledyne")
+                if (detector_type == "TeledynePI")
                 {
                     //NOP: no Camera class , only an Interface class
                 }

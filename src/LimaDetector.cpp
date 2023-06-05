@@ -4630,7 +4630,7 @@ void LimaDetector::create_log_info_attributes(void)
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PCO_NAME), YAT_XSTR(PCO_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SPECTRUMONE_NAME), YAT_XSTR(SPECTRUMONE_VERSION) );
-    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(TELEDYNE_NAME), YAT_XSTR(TELEDYNE_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(TELEDYNEPI_NAME), YAT_XSTR(TELEDYNEPI_VERSION) );
 #elif defined(_WIN32) //- Win32
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(ANDOR_NAME), YAT_XSTR(ANDOR_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );

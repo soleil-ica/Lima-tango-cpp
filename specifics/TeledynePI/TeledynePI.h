@@ -1,9 +1,9 @@
-/*----- PROTECTED REGION ID(Teledyne.h) ENABLED START -----*/
+/*----- PROTECTED REGION ID(TeledynePI.h) ENABLED START -----*/
 //=============================================================================
 //
-// file :        Teledyne.h
+// file :        TeledynePI.h
 //
-// description : Include file for the Teledyne class
+// description : Include file for the TeledynePI class
 //
 // project :     
 //
@@ -30,8 +30,8 @@
 //=============================================================================
 
 
-#ifndef Teledyne_H
-#define Teledyne_H
+#ifndef TeledynePI_H
+#define TeledynePI_H
 
 #include <tango.h>
 #include "Factory.h"
@@ -51,26 +51,26 @@
 /*----- PROTECTED REGION END -----*/	//	Teledyne.h
 
 /**
- *  Teledyne class description:
+ *  TeledynePI class description:
  *    
  */
 
-namespace Teledyne_ns
+namespace TeledynePI_ns
 {
 enum _gainEnum : short{
 } ;
 typedef _gainEnum gainEnum;
 
-/*----- PROTECTED REGION ID(Teledyne::Additional Class Declarations) ENABLED START -----*/
+/*----- PROTECTED REGION ID(TeledynePI::Additional Class Declarations) ENABLED START -----*/
 
 //	Additional Class Declarations
 
-/*----- PROTECTED REGION END -----*/	//	Teledyne::Additional Class Declarations
+/*----- PROTECTED REGION END -----*/	//	TeledynePI::Additional Class Declarations
 
-class Teledyne : public TANGO_BASE_CLASS
+class TeledynePI : public TANGO_BASE_CLASS
 {
 
-/*----- PROTECTED REGION ID(Teledyne::Data Members) ENABLED START -----*/
+/*----- PROTECTED REGION ID(TeledynePI::Data Members) ENABLED START -----*/
 
 public :
     //    Add your own data members here
@@ -108,14 +108,14 @@ public:
 	 *	@param cl	Class.
 	 *	@param s 	Device Name
 	 */
-	Teledyne(Tango::DeviceClass *cl,string &s);
+	TeledynePI(Tango::DeviceClass *cl,string &s);
 	/**
 	 * Constructs a newly device object.
 	 *
 	 *	@param cl	Class.
 	 *	@param s 	Device Name
 	 */
-	Teledyne(Tango::DeviceClass *cl,const char *s);
+	TeledynePI(Tango::DeviceClass *cl,const char *s);
 	/**
 	 * Constructs a newly device object.
 	 *
@@ -123,11 +123,11 @@ public:
 	 *	@param s 	Device name
 	 *	@param d	Device description.
 	 */
-	Teledyne(Tango::DeviceClass *cl,const char *s,const char *d);
+	TeledynePI(Tango::DeviceClass *cl,const char *s,const char *d);
 	/**
 	 * The device object destructor.
 	 */
-	~Teledyne() {delete_device();};
+	~TeledynePI() {delete_device();};
 
 
 //	Miscellaneous methods
@@ -154,14 +154,14 @@ public:
 public:
 	//--------------------------------------------------------
 	/*
-	 *	Method      : Teledyne::read_attr_hardware()
+	 *	Method      : TeledynePI::read_attr_hardware()
 	 *	Description : Hardware acquisition for attributes.
 	 */
 	//--------------------------------------------------------
 	virtual void read_attr_hardware(vector<long> &attr_list);
 	//--------------------------------------------------------
 	/*
-	 *	Method      : Teledyne::write_attr_hardware()
+	 *	Method      : TeledynePI::write_attr_hardware()
 	 *	Description : Hardware writing for attributes.
 	 */
 	//--------------------------------------------------------
@@ -228,7 +228,7 @@ public:
 
 	//--------------------------------------------------------
 	/**
-	 *	Method      : Teledyne::add_dynamic_attributes()
+	 *	Method      : TeledynePI::add_dynamic_attributes()
 	 *	Description : Add dynamic attributes if any.
 	 */
 	//--------------------------------------------------------
@@ -250,13 +250,13 @@ public:
 
 	//--------------------------------------------------------
 	/**
-	 *	Method      : Teledyne::add_dynamic_commands()
+	 *	Method      : TeledynePI::add_dynamic_commands()
 	 *	Description : Add dynamic commands if any.
 	 */
 	//--------------------------------------------------------
 	void add_dynamic_commands();
 
-/*----- PROTECTED REGION ID(Teledyne::Additional Method prototypes) ENABLED START -----*/
+/*----- PROTECTED REGION ID(TeledynePI::Additional Method prototypes) ENABLED START -----*/
 	bool is_device_initialized(){return m_is_device_initialized;};
 //	Additional Method prototypes
 protected :	
@@ -273,7 +273,7 @@ protected :
 /*----- PROTECTED REGION END -----*/	//	Teledyne::Additional Method prototypes
 };
 
-/*----- PROTECTED REGION ID(Teledyne::Additional Classes Definitions) ENABLED START -----*/
+/*----- PROTECTED REGION ID(TeledynePI::Additional Classes Definitions) ENABLED START -----*/
 
 //	Additional Classes Definitions
 enum class GainMode : short
@@ -283,8 +283,8 @@ enum class GainMode : short
 	HIGH
 };
 
-/*----- PROTECTED REGION END -----*/	//	Teledyne::Additional Classes Definitions
+/*----- PROTECTED REGION END -----*/	//	TeledynePI::Additional Classes Definitions
 
 }	//	End of namespace
 
-#endif   //	Teledyne_H
+#endif   //	TeledynePI_H
