@@ -144,7 +144,7 @@ void UviewCCD::init_device()
   m_ivs_roi_data_3 = yat::IEEE_NAN;
   m_ivs_roi_data_4 = yat::IEEE_NAN;
 
-  INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
+  INFO_STREAM << " UviewCCD::UviewCCD() - Create the inner-appender in order to manage logs." << endl;  
   yat4tango::InnerAppender::initialize(this, 512);
 
   try
@@ -158,7 +158,7 @@ void UviewCCD::init_device()
       m_hw = dynamic_cast<Uview::Interface*>(m_ct->hwInterface());
       if(m_hw==0)
       {
-          INFO_STREAM<<"Initialization Failed : Unable to get the interface of camera plugin "<<"("<<"UviewCCD"<<") !"<< endl;
+          ERROR_STREAM<<"Initialization Failed : Unable to get the interface of camera plugin "<<"("<<"UviewCCD"<<") !"<< endl;
           m_status_message <<"Initialization Failed : Unable to get the interface of camera plugin "<<"("<<"UviewCCD"<<") !"<< endl;
           m_is_device_initialized = false;
           set_state(Tango::FAULT);
@@ -166,23 +166,23 @@ void UviewCCD::init_device()
           return;
       }
   
-  //- get camera to specific detector
-  m_camera = &(m_hw->getCamera());
-     
-  if(m_camera == 0)
-  {
-    INFO_STREAM<<"Initialization Failed : Unable to get the camera of plugin !"<<endl;
-    m_status_message <<"Initialization Failed : Unable to get the camera object !"<< endl;
-    m_is_device_initialized = false;
-    set_state(Tango::FAULT);
-          set_status(m_status_message.str());
-    return;			
-  }		
+    //- get camera to specific detector
+    m_camera = &(m_hw->getCamera());
+        
+    if(m_camera == 0)
+    {
+        ERROR_STREAM<<"Initialization Failed : Unable to get the camera of plugin !"<<endl;
+        m_status_message <<"Initialization Failed : Unable to get the camera object !"<< endl;
+        m_is_device_initialized = false;
+        set_state(Tango::FAULT);
+        set_status(m_status_message.str());
+        return;			
+    }		
 
   }
   catch(Exception& e)
   {
-      INFO_STREAM<<"Initialization Failed : "<<e.getErrMsg()<<endl;
+      ERROR_STREAM<<"Initialization Failed : "<<e.getErrMsg()<<endl;
       m_status_message <<"Initialization Failed : "<<e.getErrMsg( )<< endl;
       m_is_device_initialized = false;
       set_state(Tango::FAULT);
@@ -191,17 +191,17 @@ void UviewCCD::init_device()
   }
   catch(...)
   {
-      INFO_STREAM<<"Initialization Failed : UNKNOWN"<<endl;
+      ERROR_STREAM<<"Initialization Failed : UNKNOWN"<<endl;
       m_status_message <<"Initialization Failed : UNKNOWN"<< endl;
       set_state(Tango::FAULT);
       set_status(m_status_message.str());
       m_is_device_initialized = false;
       return;
   }
-
-  set_state(Tango::STANDBY);
-	set_status("Device initialized");
 	m_is_device_initialized = true;
+
+    set_state(Tango::STANDBY);
+	dev_state();
 }
 
 //+----------------------------------------------------------------------------
@@ -213,34 +213,61 @@ void UviewCCD::init_device()
 //-----------------------------------------------------------------------------
 void UviewCCD::always_executed_hook()
 {
-    if (m_is_device_initialized)
-    {      
-		//to set the running state 
-		if (m_camera->m_Acq_running)
-			set_state(Tango::RUNNING);
-		else
-		{
-			set_state(Tango::STANDBY);
-			set_status("Device is in idle state");
-		}
-		//To refresh ivs RoI values
-		if (m_camera->IsIvSRoiDataReady())
-		{
-            m_ivs_roi_data_1 = m_camera->checkIvsROIValues(ROIid1);
-            m_ivs_roi_data_2 = m_camera->checkIvsROIValues(ROIid2);
-            m_ivs_roi_data_3 = m_camera->checkIvsROIValues(ROIid3);
-            m_ivs_roi_data_4 = m_camera->checkIvsROIValues(ROIid4);
-			//Check if signal intensity versus time window is open
-			//Don't need to check on each values
-            if(m_ivs_roi_data_1 == IntensityWindowClosed)
-				set_status("Intensity window not open");
-			else 
-			{
-				set_status("Acquiring intensity data for actived ROI");
-				m_camera->IvSRoiDataImported();
-			}
-		}
-	}
+    try
+    {
+        if (m_is_device_initialized)
+        {      
+            m_status_message.str("");
+            
+            //to set the running state 
+            if (m_camera->m_Acq_running)
+            {
+                set_state(Tango::RUNNING);
+            }
+            else
+            {
+                set_state(Tango::STANDBY);
+                set_status("Device is in idle state");
+            }
+            //To refresh ivs RoI values
+            if (m_camera->IsIvSRoiDataReady())
+            {
+                m_ivs_roi_data_1 = m_camera->checkIvsROIValues(ROIid1);
+                m_ivs_roi_data_2 = m_camera->checkIvsROIValues(ROIid2);
+                m_ivs_roi_data_3 = m_camera->checkIvsROIValues(ROIid3);
+                m_ivs_roi_data_4 = m_camera->checkIvsROIValues(ROIid4);
+                //Check if signal intensity versus time window is open
+                //Don't need to check on each values
+                if(m_ivs_roi_data_1 == IntensityWindowClosed)
+                {
+                    set_status("Intensity window not open");
+                }
+                else 
+                {
+                    set_status("Acquiring intensity data for actived ROI");
+                    m_camera->IvSRoiDataImported();
+                }
+            }
+        }
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        m_status_message << "always_executed_hook Failed : " << e.getErrMsg() << endl;
+        //- throw exception
+        set_state(Tango::FAULT);
+        m_is_device_initialized = false;
+        return;
+    }
+    catch (...)
+    {
+        ERROR_STREAM << "always_executed_hook Failed : UNKNOWN" << endl;
+        m_status_message << "always_executed_hook Failed : UNKNOWN" << endl;
+        //- throw exception
+        set_state(Tango::FAULT);
+        m_is_device_initialized = false;
+        return;
+    }
 	
 }
 //+----------------------------------------------------------------------------
@@ -252,7 +279,7 @@ void UviewCCD::always_executed_hook()
 //-----------------------------------------------------------------------------
 void UviewCCD::read_attr_hardware(vector<long> &attr_list)
 {
-	DEBUG_STREAM << "UviewCCD::read_attr_hardware(vector<long> &attr_list) entering... "<< endl;
+	//DEBUG_STREAM << "UviewCCD::read_attr_hardware(vector<long> &attr_list) entering... "<< endl;
 	//	Add your own code here
 }
 //+----------------------------------------------------------------------------
@@ -346,7 +373,7 @@ void UviewCCD::read_ivsTRoi4(Tango::Attribute &attr)
 //+------------------------------------------------------------------
 void UviewCCD::set_average_images(Tango::DevLong argin)
 {
-	DEBUG_STREAM << "UviewCCD::set_average_images(): entering... !" << endl;
+	INFO_STREAM << "UviewCCD::set_average_images(): entering... !" << endl;
 
 	//	Add your own code to control device here
 
@@ -363,5 +390,34 @@ void UviewCCD::set_average_images(Tango::DevLong argin)
 	}
 }
 
+Tango::DevState UviewCCD::dev_state()
+{
+	Tango::DevState	argout = DeviceImpl::dev_state();
+
+	//	Add your own code to control device here
+	stringstream    Device_status;
+	Device_status     << "";
+	Tango::DevState Device_state = Tango::STANDBY;
+	if(!m_is_device_initialized )
+	{
+		Device_state  = Tango::FAULT;
+		Device_status << m_status_message.str();
+		
+		//Update LimaDetector state and status
+        ControlFactory::instance().set_state(Device_state);
+        ControlFactory::instance().set_status(Device_status.str());
+	}
+	else
+	{
+		// state & status are retrieved from Factory, Factory is updated by Generic device
+		Device_state = ControlFactory::instance().get_state();
+		Device_status << ControlFactory::instance().get_status();
+	}
+
+	set_state(Device_state);
+	set_status(Device_status.str());
+
+	return Device_state;
+}
 
 }	//	namespace

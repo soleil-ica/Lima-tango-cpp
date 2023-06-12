@@ -123,6 +123,10 @@ static const char *RcsId = "$Id:  $";
 #include <LambdaClass.h>
 #endif
 
+#ifdef UVIEW_ENABLED
+#include <UviewCCDClass.h>
+#endif
+
 #ifdef DHYANA_ENABLED
 #include <DhyanaClass.h>
 #endif
@@ -230,6 +234,10 @@ void Tango::DServer::class_factory()
 #ifdef LAMBDA_ENABLED        
     add_class(Lambda_ns::LambdaClass::init("Lambda"));
 #endif	
+
+#ifdef UVIEW_ENABLED        
+    add_class(UviewCCD_ns::UviewCCDClass::init("UviewCCD"));
+#endif
 
 #ifdef DHYANA_ENABLED        
     add_class(Dhyana_ns::DhyanaClass::init("Dhyana"));
