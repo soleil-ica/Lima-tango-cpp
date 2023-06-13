@@ -166,6 +166,62 @@ DhyanaClass *DhyanaClass::instance()
 //===================================================================
 //	Command execution method calls
 //===================================================================
+//--------------------------------------------------------
+/**
+ * method : 		GetAllParametersClass::execute()
+ * description : 	method to trigger the execution of the command.
+ *
+ * @param	device	The device on which the command must be executed
+ * @param	in_any	The command input data
+ *
+ *	returns The command output data (packed in the Any object)
+ */
+//--------------------------------------------------------
+CORBA::Any *GetAllParametersClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
+{
+	cout2 << "GetAllParametersClass::execute(): arrived" << endl;
+	return insert((static_cast<Dhyana *>(device))->get_all_parameters());
+}
+
+//--------------------------------------------------------
+/**
+ * method : 		GetParameterClass::execute()
+ * description : 	method to trigger the execution of the command.
+ *
+ * @param	device	The device on which the command must be executed
+ * @param	in_any	The command input data
+ *
+ *	returns The command output data (packed in the Any object)
+ */
+//--------------------------------------------------------
+CORBA::Any *GetParameterClass::execute(Tango::DeviceImpl *device, const CORBA::Any &in_any)
+{
+	cout2 << "GetParameterClass::execute(): arrived" << endl;
+	Tango::DevULong argin;
+	extract(in_any, argin);
+	return insert((static_cast<Dhyana *>(device))->get_parameter(argin));
+}
+
+//--------------------------------------------------------
+/**
+ * method : 		SetParameterClass::execute()
+ * description : 	method to trigger the execution of the command.
+ *
+ * @param	device	The device on which the command must be executed
+ * @param	in_any	The command input data
+ *
+ *	returns The command output data (packed in the Any object)
+ */
+//--------------------------------------------------------
+CORBA::Any *SetParameterClass::execute(Tango::DeviceImpl *device, const CORBA::Any &in_any)
+{
+	cout2 << "SetParameterClass::execute(): arrived" << endl;
+	const Tango::DevVarDoubleArray *argin;
+	extract(in_any, argin);
+	((static_cast<Dhyana *>(device))->set_parameter(argin));
+	return new CORBA::Any();
+}
+
 
 //===================================================================
 //	Properties management
@@ -461,6 +517,33 @@ void DhyanaClass::command_factory()
 	
 	/*----- PROTECTED REGION END -----*/	//	DhyanaClass::command_factory_before
 
+
+	//	Command GetAllParameters
+	GetAllParametersClass	*pGetAllParametersCmd =
+		new GetAllParametersClass("GetAllParameters",
+			Tango::DEV_VOID, Tango::DEV_STRING,
+			"",
+			"",
+			Tango::OPERATOR);
+	command_list.push_back(pGetAllParametersCmd);
+
+	//	Command GetParameter
+	GetParameterClass	*pGetParameterCmd =
+		new GetParameterClass("GetParameter",
+			Tango::DEV_ULONG, Tango::DEV_STRING,
+			"",
+			"",
+			Tango::OPERATOR);
+	command_list.push_back(pGetParameterCmd);
+
+	//	Command SetParameter
+	SetParameterClass	*pSetParameterCmd =
+		new SetParameterClass("SetParameter",
+			Tango::DEVVAR_DOUBLEARRAY, Tango::DEV_VOID,
+			"",
+			"",
+			Tango::OPERATOR);
+	command_list.push_back(pSetParameterCmd);
 
 	/*----- PROTECTED REGION ID(DhyanaClass::command_factory_after) ENABLED START -----*/
 	

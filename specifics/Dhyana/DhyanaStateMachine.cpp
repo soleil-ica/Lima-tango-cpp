@@ -59,6 +59,51 @@ namespace Dhyana_ns
 //		Commands Allowed Methods
 //=================================================
 
+//--------------------------------------------------------
+/**
+ *	Method      : Dhyana::is_GetAllParameters_allowed()
+ *	Description : Execution allowed for GetAllParameters attribute
+ */
+//--------------------------------------------------------
+bool Dhyana::is_GetAllParameters_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+	//	Not any excluded states for GetAllParameters command.
+	/*----- PROTECTED REGION ID(Dhyana::GetAllParametersStateAllowed) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::GetAllParametersStateAllowed
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : Dhyana::is_GetParameter_allowed()
+ *	Description : Execution allowed for GetParameter attribute
+ */
+//--------------------------------------------------------
+bool Dhyana::is_GetParameter_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+	//	Not any excluded states for GetParameter command.
+	/*----- PROTECTED REGION ID(Dhyana::GetParameterStateAllowed) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::GetParameterStateAllowed
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : Dhyana::is_SetParameter_allowed()
+ *	Description : Execution allowed for SetParameter attribute
+ */
+//--------------------------------------------------------
+bool Dhyana::is_SetParameter_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+	//	Not any excluded states for SetParameter command.
+	/*----- PROTECTED REGION ID(Dhyana::SetParameterStateAllowed) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::SetParameterStateAllowed
+	return true;
+}
+
 
 /*----- PROTECTED REGION ID(Dhyana::DhyanaStateAllowed.AdditionalMethods) ENABLED START -----*/
 

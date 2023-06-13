@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
   <classes name="Dhyana" pogoRevision="9.6">
-    <description description="Interface the camera Dhyana using  the TUCAM Library" title="Device specific for Dhyana detector" sourcePath="/home/informatique/ica/desgrangesm/workspace/Lima-tango-cpp/specifics/Dhyana" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
+    <description description="Interface the camera Dhyana using  the TUCAM Library" title="Device specific for Dhyana detector" sourcePath="/home/informatique/ica/bahji/Repositories_Dev/Lima_Repo_GitHub/Lima-tango-cpp/specifics/Dhyana" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
       <inheritances classname="Device_4Impl" sourcePath=""/>
       <identification contact="at synchrotron-soleil.fr - arafat.noureddine" author="arafat.noureddine" emailDomain="synchrotron-soleil.fr" classFamily="Acquisition" siteSpecific="" platform="Windows" bus="USB" manufacturer="" reference=""/>
     </description>
@@ -28,6 +28,33 @@
       </argout>
       <status abstract="true" inherited="true" concrete="true" concreteHere="false"/>
     </commands>
+    <commands name="GetAllParameters" description="Return the list of all the camera parameters and their values in the following format:&#xA;ID = idNb; ParameterName = value" execMethod="get_all_parameters" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:StringType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </commands>
+    <commands name="GetParameter" description="Return the name and value of a specific parameter" execMethod="get_parameter" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="">
+        <type xsi:type="pogoDsl:UIntType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:StringType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </commands>
+    <commands name="SetParameter" description="Set the value of a parameter. The parameter is identified by its ID" execMethod="set_parameter" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+      <argin description="">
+        <type xsi:type="pogoDsl:DoubleArrayType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </commands>
     <states name="FAULT" description="">
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </states>
@@ -40,6 +67,6 @@
     <states name="STANDBY" description="">
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </states>
-    <preferences docHome="../doc/doc_html" makefileHome="$(TANGO_HOME)"/>
+    <preferences docHome="./doc_html" makefileHome="/usr/share/pogo/preferences"/>
   </classes>
 </pogoDsl:PogoSystem>

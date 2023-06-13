@@ -203,6 +203,32 @@ public:
 	 *	@returns State Code
 	 */
 	virtual Tango::DevState dev_state();
+	/**
+	 *	Command GetAllParameters related method
+	 *	Description: Return the list of all the camera parameters and their values in the following format:
+	 *               ID = idNb; ParameterName = value
+	 *
+	 *	@returns 
+	 */
+	virtual Tango::DevString get_all_parameters();
+	virtual bool is_GetAllParameters_allowed(const CORBA::Any &any);
+	/**
+	 *	Command GetParameter related method
+	 *	Description: Return the name and value of a specific parameter
+	 *
+	 *	@param argin 
+	 *	@returns 
+	 */
+	virtual Tango::DevString get_parameter(Tango::DevULong argin);
+	virtual bool is_GetParameter_allowed(const CORBA::Any &any);
+	/**
+	 *	Command SetParameter related method
+	 *	Description: Set the value of a parameter. The parameter is identified by its ID
+	 *
+	 *	@param argin 
+	 */
+	virtual void set_parameter(const Tango::DevVarDoubleArray *argin);
+	virtual bool is_SetParameter_allowed(const CORBA::Any &any);
 
 
 	//--------------------------------------------------------

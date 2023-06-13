@@ -58,10 +58,13 @@ static const char *RcsId = "$Id:  $";
 //  The following table gives the correspondence
 //  between command and method names.
 //
-//  Command name  |  Method name
+//  Command name      |  Method name
 //================================================================
-//  State         |  dev_state
-//  Status        |  Inherited (no method)
+//  State             |  dev_state
+//  Status            |  Inherited (no method)
+//  GetAllParameters  |  get_all_parameters
+//  GetParameter      |  get_parameter
+//  SetParameter      |  set_parameter
 //================================================================
 
 //================================================================
@@ -493,6 +496,140 @@ Tango::DevState Dhyana::dev_state()
 	if (argout!=Tango::ALARM)
 		Tango::DeviceImpl::dev_state();
 	return get_state();  // Return it after Tango management.
+}
+//--------------------------------------------------------
+/**
+ *	Command GetAllParameters related method
+ *	Description: Return the list of all the camera parameters and their values in the following format:
+ *               ID = idNb; ParameterName = value
+ *
+ *	@returns 
+ */
+//--------------------------------------------------------
+Tango::DevString Dhyana::get_all_parameters()
+{
+	Tango::DevString argout;
+	DEBUG_STREAM << "Dhyana::GetAllParameters()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(Dhyana::get_all_parameters) ENABLED START -----*/
+	
+	//	Add your own code
+	try
+	{
+		//std::string res = m_camera->getAllParameters();
+		//std::cout << "SBA - Tango::DevString Dhyana::get_all_parameters() - res string = " << res << std::endl;
+		return const_cast<Tango::DevString>(m_camera->getAllParameters().c_str());
+
+	}
+	catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+		Tango::Except::re_throw_exception(df,
+					"TANGO_DEVICE_ERROR",
+                	std::string(df.errors[0].desc).c_str(),
+                	"Dhyana::get_all_parameters");
+    }		
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception(
+                    "TANGO_DEVICE_ERROR",
+                    e.getErrMsg().c_str(),
+                    "Dhyana::get_all_parameters");
+    }	 
+	
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::get_all_parameters
+	return argout;
+}
+//--------------------------------------------------------
+/**
+ *	Command GetParameter related method
+ *	Description: Return the name and value of a specific parameter
+ *
+ *	@param argin 
+ *	@returns 
+ */
+//--------------------------------------------------------
+Tango::DevString Dhyana::get_parameter(Tango::DevULong argin)
+{
+	Tango::DevString argout;
+	INFO_STREAM << "SBA - Dhyana::GetParameter(" << argin << ")" << endl;
+	/*----- PROTECTED REGION ID(Dhyana::get_parameter) ENABLED START -----*/
+	
+	//	Add your own code
+	try
+	{
+		//return const_cast<Tango::DevString>(m_camera->getParameter(argin).c_str());
+		std::string res = m_camera->getParameter(argin);
+		std::cout << "SBA - Tango::DevString Dhyana::get_parameter() - res en std::string = " << res << std::endl;
+		std::cout << "SBA - res.c_str() = " << res.c_str() << std::endl;
+ 		argout = const_cast<Tango::DevString>(res.c_str());
+		std::cout << "SBA - ARGOUT DONE: argout = " << argout << std::endl;
+	}
+	catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+		Tango::Except::re_throw_exception(df,
+					"TANGO_DEVICE_ERROR",
+                	std::string(df.errors[0].desc).c_str(),
+                	"Dhyana::get_parameter");
+    }		
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception(
+                    "TANGO_DEVICE_ERROR",
+                    e.getErrMsg().c_str(),
+                    "Dhyana::get_parameter");
+    }
+	
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::get_parameter
+	return argout;
+}
+//--------------------------------------------------------
+/**
+ *	Command SetParameter related method
+ *	Description: Set the value of a parameter. The parameter is identified by its ID
+ *
+ *	@param argin 
+ */
+//--------------------------------------------------------
+void Dhyana::set_parameter(const Tango::DevVarDoubleArray *argin)
+{
+	INFO_STREAM << "Dhyana::SetParameter()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(Dhyana::set_parameter) ENABLED START -----*/
+	
+	//	Add your own code
+	int id_property = (*argin)[0];
+    double value = (*argin)[1];
+    try
+    {
+        m_camera->setParameter(id_property, value);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+		Tango::Except::re_throw_exception(df,
+					"TANGO_DEVICE_ERROR",
+                	std::string(df.errors[0].desc).c_str(),
+                	"Dhyana::set_parameter");
+    }		
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception(
+                    "TANGO_DEVICE_ERROR",
+                    e.getErrMsg().c_str(),
+                    "Dhyana::set_parameter");
+    }	 
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::set_parameter
 }
 //--------------------------------------------------------
 /**
