@@ -197,7 +197,7 @@ CORBA::Any *GetAllParametersClass::execute(Tango::DeviceImpl *device, TANGO_UNUS
 CORBA::Any *GetParameterClass::execute(Tango::DeviceImpl *device, const CORBA::Any &in_any)
 {
 	cout2 << "GetParameterClass::execute(): arrived" << endl;
-	Tango::DevULong argin;
+	Tango::DevString argin;
 	extract(in_any, argin);
 	return insert((static_cast<Dhyana *>(device))->get_parameter(argin));
 }
@@ -216,7 +216,7 @@ CORBA::Any *GetParameterClass::execute(Tango::DeviceImpl *device, const CORBA::A
 CORBA::Any *SetParameterClass::execute(Tango::DeviceImpl *device, const CORBA::Any &in_any)
 {
 	cout2 << "SetParameterClass::execute(): arrived" << endl;
-	const Tango::DevVarDoubleArray *argin;
+	const Tango::DevVarDoubleStringArray *argin;
 	extract(in_any, argin);
 	((static_cast<Dhyana *>(device))->set_parameter(argin));
 	return new CORBA::Any();
@@ -524,25 +524,25 @@ void DhyanaClass::command_factory()
 			Tango::DEV_VOID, Tango::DEV_STRING,
 			"",
 			"",
-			Tango::OPERATOR);
+			Tango::EXPERT);
 	command_list.push_back(pGetAllParametersCmd);
 
 	//	Command GetParameter
 	GetParameterClass	*pGetParameterCmd =
 		new GetParameterClass("GetParameter",
-			Tango::DEV_ULONG, Tango::DEV_STRING,
+			Tango::DEV_STRING, Tango::DEV_STRING,
 			"",
 			"",
-			Tango::OPERATOR);
+			Tango::EXPERT);
 	command_list.push_back(pGetParameterCmd);
 
 	//	Command SetParameter
 	SetParameterClass	*pSetParameterCmd =
 		new SetParameterClass("SetParameter",
-			Tango::DEVVAR_DOUBLEARRAY, Tango::DEV_VOID,
+			Tango::DEVVAR_DOUBLESTRINGARRAY, Tango::DEV_VOID,
 			"",
 			"",
-			Tango::OPERATOR);
+			Tango::EXPERT);
 	command_list.push_back(pSetParameterCmd);
 
 	/*----- PROTECTED REGION ID(DhyanaClass::command_factory_after) ENABLED START -----*/

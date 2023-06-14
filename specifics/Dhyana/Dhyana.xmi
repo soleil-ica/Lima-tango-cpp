@@ -28,7 +28,7 @@
       </argout>
       <status abstract="true" inherited="true" concrete="true" concreteHere="false"/>
     </commands>
-    <commands name="GetAllParameters" description="Return the list of all the camera parameters and their values in the following format:&#xA;ID = idNb; ParameterName = value" execMethod="get_all_parameters" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+    <commands name="GetAllParameters" description="Return the list of all the camera possible parameters and their values in the following format:&#xA;GROUP_OF_PROPERTIES:ParameterName = value&#xA;Available values for GROUP_OF_PROPERTIES:&#xA;- PROP: TODO" execMethod="get_all_parameters" displayLevel="EXPERT" polledPeriod="0" isDynamic="false">
       <argin description="">
         <type xsi:type="pogoDsl:VoidType"/>
       </argin>
@@ -37,18 +37,18 @@
       </argout>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </commands>
-    <commands name="GetParameter" description="Return the name and value of a specific parameter" execMethod="get_parameter" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+    <commands name="GetParameter" description="Return the name and the curent value of a specific parameter in the following format:&#xA;GROUP_OF_PROPERT:parameter_name=parameter_value" execMethod="get_parameter" displayLevel="EXPERT" polledPeriod="0" isDynamic="false">
       <argin description="">
-        <type xsi:type="pogoDsl:UIntType"/>
+        <type xsi:type="pogoDsl:StringType"/>
       </argin>
       <argout description="">
         <type xsi:type="pogoDsl:StringType"/>
       </argout>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </commands>
-    <commands name="SetParameter" description="Set the value of a parameter. The parameter is identified by its ID" execMethod="set_parameter" displayLevel="OPERATOR" polledPeriod="0" isDynamic="false">
+    <commands name="SetParameter" description="Set the value of a parameter. The parameter is identified by its GROUP and name:&#xA;GROUP_OF_PROPERTY:parameter_name, value" execMethod="set_parameter" displayLevel="EXPERT" polledPeriod="0" isDynamic="false">
       <argin description="">
-        <type xsi:type="pogoDsl:DoubleArrayType"/>
+        <type xsi:type="pogoDsl:DoubleStringArrayType"/>
       </argin>
       <argout description="">
         <type xsi:type="pogoDsl:VoidType"/>
