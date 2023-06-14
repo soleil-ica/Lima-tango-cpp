@@ -394,10 +394,14 @@ Tango::DevState Dhyana::dev_state()
 //--------------------------------------------------------
 /**
  *	Command GetAllParameters related method
- *	Description: Return the list of all the camera possible parameters and their values in the following format:
+ *	Description: Return the list of all the camera available parameters and their values in the following format:
  *               GROUP_OF_PROPERTIES:ParameterName = value
- *               Available values for GROUP_OF_PROPERTIES:
- *               - PROP: TODO
+ *               
+ *               Available values for GROUP_OF_PROPERTIES are:
+ *               - PROP fo Control properties
+ *               - CAPA for Control capability properties
+ *               - VENDOR for Vendor control properties
+ *               - ROIS for Process image properties
  *
  *	@returns 
  */
@@ -439,8 +443,11 @@ Tango::DevString Dhyana::get_all_parameters()
 //--------------------------------------------------------
 /**
  *	Command GetParameter related method
- *	Description: Return the name and the curent value of a specific parameter in the following format:
- *               GROUP_OF_PROPERT:parameter_name=parameter_value
+ *	Description: Return the group, name and the current value of a specific parameter, in the following format:
+ *               GROUP_OF_PROPERTIES:parameter_name=parameter_value
+ *               
+ *               Input argument has to be in the following format:
+ *               GROUP_OF_PROPERTIES:parameter_name
  *
  *	@param argin 
  *	@returns 
@@ -449,7 +456,7 @@ Tango::DevString Dhyana::get_all_parameters()
 Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 {
 	Tango::DevString argout;
-	INFO_STREAM << "Dhyana::GetParameter(" << argin << ") - " << device_name << endl;
+	INFO_STREAM << "Dhyana::GetParameter()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::get_parameter) ENABLED START -----*/
 	
 	//	Add your own code
@@ -485,7 +492,10 @@ Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 //--------------------------------------------------------
 /**
  *	Command SetParameter related method
- *	Description: Set the value of a parameter. The parameter is identified by its GROUP and name:
+ *	Description: Set the value of a specific parameter. 
+ *               The parameter is identified by its GROUP and name.
+ *               
+ *               Input argument has to be in the following format:
  *               GROUP_OF_PROPERTY:parameter_name, value
  *
  *	@param argin 

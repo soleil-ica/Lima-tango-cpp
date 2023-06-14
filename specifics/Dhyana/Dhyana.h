@@ -205,10 +205,14 @@ public:
 	virtual Tango::DevState dev_state();
 	/**
 	 *	Command GetAllParameters related method
-	 *	Description: Return the list of all the camera possible parameters and their values in the following format:
+	 *	Description: Return the list of all the camera available parameters and their values in the following format:
 	 *               GROUP_OF_PROPERTIES:ParameterName = value
-	 *               Available values for GROUP_OF_PROPERTIES:
-	 *               - PROP: TODO
+	 *               
+	 *               Available values for GROUP_OF_PROPERTIES are:
+	 *               - PROP fo Control properties
+	 *               - CAPA for Control capability properties
+	 *               - VENDOR for Vendor control properties
+	 *               - ROIS for Process image properties
 	 *
 	 *	@returns 
 	 */
@@ -216,8 +220,11 @@ public:
 	virtual bool is_GetAllParameters_allowed(const CORBA::Any &any);
 	/**
 	 *	Command GetParameter related method
-	 *	Description: Return the name and the curent value of a specific parameter in the following format:
-	 *               GROUP_OF_PROPERT:parameter_name=parameter_value
+	 *	Description: Return the group, name and the current value of a specific parameter, in the following format:
+	 *               GROUP_OF_PROPERTIES:parameter_name=parameter_value
+	 *               
+	 *               Input argument has to be in the following format:
+	 *               GROUP_OF_PROPERTIES:parameter_name
 	 *
 	 *	@param argin 
 	 *	@returns 
@@ -226,7 +233,10 @@ public:
 	virtual bool is_GetParameter_allowed(const CORBA::Any &any);
 	/**
 	 *	Command SetParameter related method
-	 *	Description: Set the value of a parameter. The parameter is identified by its GROUP and name:
+	 *	Description: Set the value of a specific parameter. 
+	 *               The parameter is identified by its GROUP and name.
+	 *               
+	 *               Input argument has to be in the following format:
 	 *               GROUP_OF_PROPERTY:parameter_name, value
 	 *
 	 *	@param argin 

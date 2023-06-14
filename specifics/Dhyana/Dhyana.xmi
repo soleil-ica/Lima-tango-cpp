@@ -28,7 +28,7 @@
       </argout>
       <status abstract="true" inherited="true" concrete="true" concreteHere="false"/>
     </commands>
-    <commands name="GetAllParameters" description="Return the list of all the camera possible parameters and their values in the following format:&#xA;GROUP_OF_PROPERTIES:ParameterName = value&#xA;Available values for GROUP_OF_PROPERTIES:&#xA;- PROP: TODO" execMethod="get_all_parameters" displayLevel="EXPERT" polledPeriod="0" isDynamic="false">
+    <commands name="GetAllParameters" description="Return the list of all the camera available parameters and their values in the following format:&#xA;GROUP_OF_PROPERTIES:ParameterName = value&#xA;&#xA;Available values for GROUP_OF_PROPERTIES are:&#xA;- PROP fo Control properties&#xA;- CAPA for Control capability properties&#xA;- VENDOR for Vendor control properties&#xA;- ROIS for Process image properties" execMethod="get_all_parameters" displayLevel="EXPERT" polledPeriod="0" isDynamic="false">
       <argin description="">
         <type xsi:type="pogoDsl:VoidType"/>
       </argin>
@@ -37,7 +37,7 @@
       </argout>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </commands>
-    <commands name="GetParameter" description="Return the name and the curent value of a specific parameter in the following format:&#xA;GROUP_OF_PROPERT:parameter_name=parameter_value" execMethod="get_parameter" displayLevel="EXPERT" polledPeriod="0" isDynamic="false">
+    <commands name="GetParameter" description="Return the group, name and the current value of a specific parameter, in the following format:&#xA;GROUP_OF_PROPERTIES:parameter_name=parameter_value&#xA;&#xA;Input argument has to be in the following format:&#xA;GROUP_OF_PROPERTIES:parameter_name" execMethod="get_parameter" displayLevel="EXPERT" polledPeriod="0" isDynamic="false">
       <argin description="">
         <type xsi:type="pogoDsl:StringType"/>
       </argin>
@@ -46,7 +46,7 @@
       </argout>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </commands>
-    <commands name="SetParameter" description="Set the value of a parameter. The parameter is identified by its GROUP and name:&#xA;GROUP_OF_PROPERTY:parameter_name, value" execMethod="set_parameter" displayLevel="EXPERT" polledPeriod="0" isDynamic="false">
+    <commands name="SetParameter" description="Set the value of a specific parameter. &#xA;The parameter is identified by its GROUP and name.&#xA;&#xA;Input argument has to be in the following format:&#xA;GROUP_OF_PROPERTY:parameter_name, value" execMethod="set_parameter" displayLevel="EXPERT" polledPeriod="0" isDynamic="false">
       <argin description="">
         <type xsi:type="pogoDsl:DoubleStringArrayType"/>
       </argin>
