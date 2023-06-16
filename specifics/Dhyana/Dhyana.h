@@ -220,8 +220,7 @@ public:
 	virtual bool is_GetAllParameters_allowed(const CORBA::Any &any);
 	/**
 	 *	Command GetParameter related method
-	 *	Description: Return the group, name and the current value of a specific parameter, in the following format:
-	 *               GROUP_OF_PROPERTIES:parameter_name=parameter_value
+	 *	Description: Return the current value of a specified parameter
 	 *               
 	 *               Input argument has to be in the following format:
 	 *               GROUP_OF_PROPERTIES:parameter_name

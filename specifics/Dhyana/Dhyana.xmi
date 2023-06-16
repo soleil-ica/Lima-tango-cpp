@@ -37,7 +37,7 @@
       </argout>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </commands>
-    <commands name="GetParameter" description="Return the group, name and the current value of a specific parameter, in the following format:&#xA;GROUP_OF_PROPERTIES:parameter_name=parameter_value&#xA;&#xA;Input argument has to be in the following format:&#xA;GROUP_OF_PROPERTIES:parameter_name" execMethod="get_parameter" displayLevel="EXPERT" polledPeriod="0" isDynamic="false">
+    <commands name="GetParameter" description="Return the current value of a specified parameter&#xA;&#xA;Input argument has to be in the following format:&#xA;GROUP_OF_PROPERTIES:parameter_name" execMethod="get_parameter" displayLevel="EXPERT" polledPeriod="0" isDynamic="false">
       <argin description="">
         <type xsi:type="pogoDsl:StringType"/>
       </argin>

@@ -69,7 +69,8 @@ bool Dhyana::is_GetAllParameters_allowed(TANGO_UNUSED(const CORBA::Any &any))
 {
 	//	Not any excluded states for GetAllParameters command.
 	/*----- PROTECTED REGION ID(Dhyana::GetAllParametersStateAllowed) ENABLED START -----*/
-	if (get_state() == Tango::FAULT && !is_device_initialized())
+	if ((get_state() == Tango::FAULT && !is_device_initialized())
+		|| get_state()==Tango::RUNNING)
 	{
 		return false;
 	}
@@ -87,7 +88,8 @@ bool Dhyana::is_GetParameter_allowed(TANGO_UNUSED(const CORBA::Any &any))
 {
 	//	Not any excluded states for GetParameter command.
 	/*----- PROTECTED REGION ID(Dhyana::GetParameterStateAllowed) ENABLED START -----*/
-	if (get_state() == Tango::FAULT && !is_device_initialized())
+	if ((get_state() == Tango::FAULT && !is_device_initialized())
+		|| get_state()==Tango::RUNNING)
 	{
 		return false;
 	}
@@ -105,7 +107,8 @@ bool Dhyana::is_SetParameter_allowed(TANGO_UNUSED(const CORBA::Any &any))
 {
 	//	Not any excluded states for SetParameter command.
 	/*----- PROTECTED REGION ID(Dhyana::SetParameterStateAllowed) ENABLED START -----*/
-	if (get_state() == Tango::FAULT && !is_device_initialized())
+	if ((get_state() == Tango::FAULT && !is_device_initialized())
+		|| get_state()==Tango::RUNNING)
 	{
 		return false;
 	}

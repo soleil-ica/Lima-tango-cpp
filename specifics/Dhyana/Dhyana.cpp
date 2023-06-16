@@ -185,7 +185,7 @@ void Dhyana::init_device()
 		m_camera->getDetectorModel(model);
 		build_view(model);		
 	}
-	catch(Exception& e)
+	catch(lima::Exception& e)
 	{
 		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
@@ -262,6 +262,7 @@ void Dhyana::get_device_property()
 	/*----- PROTECTED REGION ID(Dhyana::get_device_property_after) ENABLED START -----*/
 	
 	//	Check device property data members init
+	PropertyHelper::create_property_if_empty(this, dev_prop,"15","TemperatureTargetAtInit");
 	PropertyHelper::create_property_if_empty(this, dev_prop,"1","__ExpertTimerPeriod");
 
 	/*----- PROTECTED REGION END -----*/	//	Dhyana::get_device_property_after
@@ -275,6 +276,7 @@ void Dhyana::get_device_property()
 //--------------------------------------------------------
 void Dhyana::always_executed_hook()
 {
+	DEBUG_STREAM << "Dhyana::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -294,7 +296,7 @@ void Dhyana::always_executed_hook()
 		//update state
 		dev_state();
 	}
-	catch(Exception& e)
+	catch(lima::Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
@@ -324,6 +326,7 @@ void Dhyana::always_executed_hook()
 //--------------------------------------------------------
 void Dhyana::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
+	DEBUG_STREAM << "Dhyana::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Dhyana::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -359,6 +362,7 @@ void Dhyana::add_dynamic_attributes()
 //--------------------------------------------------------
 Tango::DevState Dhyana::dev_state()
 {
+	DEBUG_STREAM << "Dhyana::State()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::dev_state) ENABLED START -----*/
 	
 	//	Add your own code
@@ -422,18 +426,17 @@ Tango::DevString Dhyana::get_all_parameters()
         ERROR_STREAM << df << endl;
         //- rethrow exception
 		Tango::Except::re_throw_exception(df,
-					"TANGO_DEVICE_ERROR",
-                	std::string(df.errors[0].desc).c_str(),
-                	"Dhyana::get_all_parameters");
+										"TANGO_DEVICE_ERROR",
+										std::string(df.errors[0].desc).c_str(),
+										"Dhyana::get_all_parameters");
     }		
-    catch(Exception& e)
+    catch(lima::Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception(
-                    "TANGO_DEVICE_ERROR",
-                    e.getErrMsg().c_str(),
-                    "Dhyana::get_all_parameters");
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+										e.getErrMsg().c_str(),
+										"Dhyana::get_all_parameters");
     }	 
 	
 	
@@ -443,8 +446,7 @@ Tango::DevString Dhyana::get_all_parameters()
 //--------------------------------------------------------
 /**
  *	Command GetParameter related method
- *	Description: Return the group, name and the current value of a specific parameter, in the following format:
- *               GROUP_OF_PROPERTIES:parameter_name=parameter_value
+ *	Description: Return the current value of a specified parameter
  *               
  *               Input argument has to be in the following format:
  *               GROUP_OF_PROPERTIES:parameter_name
@@ -456,6 +458,7 @@ Tango::DevString Dhyana::get_all_parameters()
 Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 {
 	Tango::DevString argout;
+
 	INFO_STREAM << "Dhyana::GetParameter()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::get_parameter) ENABLED START -----*/
 	
@@ -464,25 +467,26 @@ Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 	{
 		std::string result("");
 		result = m_camera->getParameter(std::string(argin));
- 		argout = const_cast<Tango::DevString>(result.c_str());
+		int pos_equal = result.find(":");		
+		argout = const_cast<Tango::DevString>((result.substr(pos_equal+1)).c_str());
 	}
 	catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
         //- rethrow exception
 		Tango::Except::re_throw_exception(df,
-					"TANGO_DEVICE_ERROR",
-                	std::string(df.errors[0].desc).c_str(),
-                	"Dhyana::get_parameter");
+										"TANGO_DEVICE_ERROR",
+										std::string(df.errors[0].desc).c_str(),
+										"Dhyana::get_parameter");
+					
     }		
-    catch(Exception& e)
+    catch(lima::Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception(
-                    "TANGO_DEVICE_ERROR",
-                    e.getErrMsg().c_str(),
-                    "Dhyana::get_parameter");
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+										e.getErrMsg().c_str(),
+										"Dhyana::get_parameter");
     }
 	
 	
@@ -509,10 +513,9 @@ void Dhyana::set_parameter(const Tango::DevVarDoubleStringArray *argin)
 	if(!argin->dvalue.length() || !argin->svalue.length())
 	{
 		//- throw exception
-		Tango::Except::throw_exception(
-										(const char*) ("TANGO_DEVICE_ERROR"),
-										(const char*) ("Invalid number of parameters. Check input parameters (parameter, value)\n"),
-										(const char*) ("Dhyana::set_parameter"));
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+										"Invalid number of parameters. Check input parameters (parameter, value)\n",
+										"Dhyana::set_parameter");
 	}
     try
     {
@@ -525,18 +528,17 @@ void Dhyana::set_parameter(const Tango::DevVarDoubleStringArray *argin)
         ERROR_STREAM << df << endl;
         //- rethrow exception
 		Tango::Except::re_throw_exception(df,
-						"TANGO_DEVICE_ERROR",
-                		std::string(df.errors[0].desc).c_str(),
-                		"Dhyana::set_parameter");
+										"TANGO_DEVICE_ERROR",
+										std::string(df.errors[0].desc).c_str(),
+										"Dhyana::set_parameter");
     }		
-    catch(Exception& e)
+    catch(lima::Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception(
-                    	"TANGO_DEVICE_ERROR",
-                    	e.getErrMsg().c_str(),
-                    	"Dhyana::set_parameter");
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+										e.getErrMsg().c_str(),
+										"Dhyana::set_parameter");
     }	 
 	/*----- PROTECTED REGION END -----*/	//	Dhyana::set_parameter
 }
@@ -677,7 +679,7 @@ void Dhyana::write_attr_at_init()
 		set_state(Tango::FAULT);
 		return;
 	}
-	catch(Exception& e)
+	catch(lima::Exception& e)
 	{
 		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;

@@ -442,6 +442,9 @@ void AttrViewDhyana95::read_dynamic_attribute_callback(yat4tango::DynamicAttribu
         {
             EnumUserData* user_data = cbd.dya->get_user_data<EnumUserData>();
             //- set the attribute value
+            unsigned global_gain;
+            dynamic_cast<Dhyana*>(m_device)->get_camera()->getGlobalGain(global_gain);
+            user_data->set_value(global_gain);
             cbd.tga->set_value((Tango::DevEnum*)&user_data->get_value());
         }
         else
