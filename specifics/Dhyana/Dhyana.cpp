@@ -325,7 +325,6 @@ void Dhyana::always_executed_hook()
 //--------------------------------------------------------
 void Dhyana::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	//DEBUG_STREAM << "Dhyana::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Dhyana::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
