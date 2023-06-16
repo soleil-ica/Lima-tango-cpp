@@ -276,7 +276,6 @@ void Dhyana::get_device_property()
 //--------------------------------------------------------
 void Dhyana::always_executed_hook()
 {
-	DEBUG_STREAM << "Dhyana::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -326,7 +325,7 @@ void Dhyana::always_executed_hook()
 //--------------------------------------------------------
 void Dhyana::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "Dhyana::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
+	//DEBUG_STREAM << "Dhyana::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Dhyana::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -362,7 +361,6 @@ void Dhyana::add_dynamic_attributes()
 //--------------------------------------------------------
 Tango::DevState Dhyana::dev_state()
 {
-	DEBUG_STREAM << "Dhyana::State()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::dev_state) ENABLED START -----*/
 	
 	//	Add your own code
