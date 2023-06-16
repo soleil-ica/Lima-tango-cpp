@@ -58,10 +58,13 @@ static const char *RcsId = "$Id:  $";
 //  The following table gives the correspondence
 //  between command and method names.
 //
-//  Command name  |  Method name
+//  Command name      |  Method name
 //================================================================
-//  State         |  dev_state
-//  Status        |  Inherited (no method)
+//  State             |  dev_state
+//  Status            |  Inherited (no method)
+//  GetAllParameters  |  get_all_parameters
+//  GetParameter      |  get_parameter
+//  SetParameter      |  set_parameter
 //================================================================
 
 //================================================================
@@ -123,26 +126,6 @@ void Dhyana::delete_device()
 	/*----- PROTECTED REGION ID(Dhyana::delete_device) ENABLED START -----*/
 	
 	//	Delete device allocated objects
-	/*DELETE_DEVSTRING_ATTRIBUTE(attr_tucamVersion_read);
-	DELETE_DEVSTRING_ATTRIBUTE(attr_globalGain_read);	
-	DELETE_SCALAR_ATTRIBUTE(attr_temperatureTarget_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_temperature_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_fanSpeed_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_fps_read);
-
-	DELETE_SCALAR_ATTRIBUTE(attr_channel1_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_channel2_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_channel3_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_width1_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_width2_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_width3_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_delay1_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_delay2_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_delay3_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_edge1_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_edge2_read);
-	DELETE_SCALAR_ATTRIBUTE(attr_edge3_read);*/
-	//	Delete device allocated objects
 
 	INFO_STREAM << "Remove the inner-appender." << endl;
     yat4tango::InnerAppender::release(this);
@@ -169,36 +152,6 @@ void Dhyana::init_device()
 {
 	DEBUG_STREAM << "Dhyana::init_device() create device " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::init_device_before) ENABLED START -----*/
-	
-	//	Initialization before get_device_property() call
-
-	// Define the labels of the DevEnum attributes
-	/*CREATE_SCALAR_ATTRIBUTE(attr_channel1_read, (channel1Enum)TriggeroutMode::kEXPOSURESTART);
-	CREATE_SCALAR_ATTRIBUTE(attr_channel2_read,(channel2Enum)TriggeroutMode::kEXPOSURESTART);
-	CREATE_SCALAR_ATTRIBUTE(attr_channel3_read, (channel3Enum)TriggeroutMode::kEXPOSURESTART);
-
-
-	CREATE_SCALAR_ATTRIBUTE(attr_width1_read, 5.0);
-	CREATE_SCALAR_ATTRIBUTE(attr_width2_read, 5.0);
-	CREATE_SCALAR_ATTRIBUTE(attr_width3_read, 5.0);
-	CREATE_SCALAR_ATTRIBUTE(attr_delay1_read, 0.0);
-	CREATE_SCALAR_ATTRIBUTE(attr_delay2_read, 0.0);
-	CREATE_SCALAR_ATTRIBUTE(attr_delay3_read, 0.0);
-
-	// Define the labels of the DevEnum attributes
-	CREATE_SCALAR_ATTRIBUTE(attr_edge1_read, (edge1Enum)EdgeMode::kRISING);
-	CREATE_SCALAR_ATTRIBUTE(attr_edge2_read, (edge2Enum)EdgeMode::kRISING);
-	CREATE_SCALAR_ATTRIBUTE(attr_edge3_read, (edge3Enum)EdgeMode::kRISING);
-
-	//	Initialize device
-
-	CREATE_DEVSTRING_ATTRIBUTE(attr_tucamVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
-	CREATE_DEVSTRING_ATTRIBUTE(attr_globalGain_read, MAX_ATTRIBUTE_STRING_LENGTH);
-	CREATE_SCALAR_ATTRIBUTE(attr_temperatureTarget_read, 0.0);
-	CREATE_SCALAR_ATTRIBUTE(attr_temperature_read, 0.0);
-	CREATE_SCALAR_ATTRIBUTE(attr_fanSpeed_read);
-	CREATE_SCALAR_ATTRIBUTE(attr_fps_read);*/
-	
 
 	/*----- PROTECTED REGION END -----*/	//	Dhyana::init_device_before
 	
@@ -207,52 +160,6 @@ void Dhyana::init_device()
 	get_device_property();
 	
 	/*----- PROTECTED REGION ID(Dhyana::init_device) ENABLED START -----*/
-
-	/*Tango::Attribute &triggerout1 = get_device_attr()->get_attr_by_name("channel1");
-	Tango::MultiAttrProp<Tango::DevEnum> multi_prop_triggerout1;
-	triggerout1.get_properties(multi_prop_triggerout1);
-
-	multi_prop_triggerout1.enum_labels = {"ExposureStart", "Readout", "Global"};
-	triggerout1.set_properties(multi_prop_triggerout1);
-
-
-	Tango::Attribute &triggerout2 = get_device_attr()->get_attr_by_name("channel2");
-	Tango::MultiAttrProp<Tango::DevEnum> multi_prop_triggerout2;
-	triggerout2.get_properties(multi_prop_triggerout2);
-
-	multi_prop_triggerout2.enum_labels = {"ExposureStart", "Readout", "Global"};
-	triggerout2.set_properties(multi_prop_triggerout2);
-
-	Tango::Attribute &triggerout3 = get_device_attr()->get_attr_by_name("channel3");
-	Tango::MultiAttrProp<Tango::DevEnum> multi_prop_triggerout3;
-	triggerout3.get_properties(multi_prop_triggerout3);
-
-	multi_prop_triggerout3.enum_labels = {"ExposureStart", "Readout", "Global"};
-	triggerout3.set_properties(multi_prop_triggerout3);
-
-
-	Tango::Attribute &edgeout1 = get_device_attr()->get_attr_by_name("edge1");
-	Tango::MultiAttrProp<Tango::DevEnum> multi_prop_edgeout1;
-	edgeout1.get_properties(multi_prop_edgeout1);
-
-	multi_prop_edgeout1.enum_labels = {"Rising", "Failing"};
-	edgeout1.set_properties(multi_prop_edgeout1);
-
-
-    Tango::Attribute &edgeout2 = get_device_attr()->get_attr_by_name("edge2");
-	Tango::MultiAttrProp<Tango::DevEnum> multi_prop_edgeout2;
-	edgeout2.get_properties(multi_prop_edgeout2);
-
-	multi_prop_edgeout2.enum_labels = {"Rising", "Failing"};
-	edgeout2.set_properties(multi_prop_edgeout2);
-
-
-	Tango::Attribute &edgeout3 = get_device_attr()->get_attr_by_name("edge3");
-	Tango::MultiAttrProp<Tango::DevEnum> multi_prop_edgeout3;
-	edgeout3.get_properties(multi_prop_edgeout3);
-
-	multi_prop_edgeout3.enum_labels = {"Rising", "Failing"};
-	edgeout3.set_properties(multi_prop_edgeout3);*/
 
 	m_is_device_initialized = false;
 	set_state(Tango::INIT);
@@ -276,12 +183,9 @@ void Dhyana::init_device()
 		
 		std::string model;
 		m_camera->getDetectorModel(model);
-		build_view(model);
-
-		//TODO write attr at init
-		
+		build_view(model);		
 	}
-	catch(Exception& e)
+	catch(lima::Exception& e)
 	{
 		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
@@ -358,9 +262,7 @@ void Dhyana::get_device_property()
 	/*----- PROTECTED REGION ID(Dhyana::get_device_property_after) ENABLED START -----*/
 	
 	//	Check device property data members init
-	/*PropertyHelper::create_property_if_empty(this, dev_prop,"15","TemperatureTargetAtInit");	
-	PropertyHelper::create_property_if_empty(this, dev_prop,"1","MemorizedFanSpeed");	
-	PropertyHelper::create_property_if_empty(this, dev_prop,"LOW","MemorizedGlobalGain");*/	
+	PropertyHelper::create_property_if_empty(this, dev_prop,"15","TemperatureTargetAtInit");
 	PropertyHelper::create_property_if_empty(this, dev_prop,"1","__ExpertTimerPeriod");
 
 	/*----- PROTECTED REGION END -----*/	//	Dhyana::get_device_property_after
@@ -374,7 +276,6 @@ void Dhyana::get_device_property()
 //--------------------------------------------------------
 void Dhyana::always_executed_hook()
 {
-	DEBUG_STREAM << "Dhyana::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -394,7 +295,7 @@ void Dhyana::always_executed_hook()
 		//update state
 		dev_state();
 	}
-	catch(Exception& e)
+	catch(lima::Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
@@ -424,7 +325,6 @@ void Dhyana::always_executed_hook()
 //--------------------------------------------------------
 void Dhyana::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "Dhyana::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Dhyana::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -460,12 +360,10 @@ void Dhyana::add_dynamic_attributes()
 //--------------------------------------------------------
 Tango::DevState Dhyana::dev_state()
 {
-	DEBUG_STREAM << "Dhyana::State()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::dev_state) ENABLED START -----*/
 	
 	//	Add your own code
 	Tango::DevState argout = DeviceImpl::dev_state();
-	DEBUG_STREAM << "Dhyana::dev_state(): entering... !" << endl;
 
 	//    Add your own code to control device here
 	stringstream DeviceStatus;
@@ -493,6 +391,153 @@ Tango::DevState Dhyana::dev_state()
 	if (argout!=Tango::ALARM)
 		Tango::DeviceImpl::dev_state();
 	return get_state();  // Return it after Tango management.
+}
+//--------------------------------------------------------
+/**
+ *	Command GetAllParameters related method
+ *	Description: Return the list of all the camera available parameters and their values in the following format:
+ *               GROUP_OF_PROPERTIES:ParameterName = value
+ *               
+ *               Available values for GROUP_OF_PROPERTIES are:
+ *               - PROP fo Control properties
+ *               - CAPA for Control capability properties
+ *               - VENDOR for Vendor control properties
+ *               - ROIS for Process image properties
+ *
+ *	@returns 
+ */
+//--------------------------------------------------------
+Tango::DevString Dhyana::get_all_parameters()
+{
+	Tango::DevString argout;
+	INFO_STREAM << "Dhyana::GetAllParameters()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(Dhyana::get_all_parameters) ENABLED START -----*/
+	
+	//	Add your own code
+	try
+	{
+		return const_cast<Tango::DevString>(m_camera->getAllParameters().c_str());
+	}
+	catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+		Tango::Except::re_throw_exception(df,
+										"TANGO_DEVICE_ERROR",
+										std::string(df.errors[0].desc).c_str(),
+										"Dhyana::get_all_parameters");
+    }		
+    catch(lima::Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+										e.getErrMsg().c_str(),
+										"Dhyana::get_all_parameters");
+    }	 
+	
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::get_all_parameters
+	return argout;
+}
+//--------------------------------------------------------
+/**
+ *	Command GetParameter related method
+ *	Description: Return the current value of a specified parameter
+ *               
+ *               Input argument has to be in the following format:
+ *               GROUP_OF_PROPERTIES:parameter_name
+ *
+ *	@param argin 
+ *	@returns 
+ */
+//--------------------------------------------------------
+Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
+{
+	Tango::DevString argout;
+
+	INFO_STREAM << "Dhyana::GetParameter()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(Dhyana::get_parameter) ENABLED START -----*/
+	
+	//	Add your own code
+	try
+	{
+		std::string result("");
+		result = m_camera->getParameter(std::string(argin));
+		int pos_equal = result.find(":");		
+		argout = const_cast<Tango::DevString>((result.substr(pos_equal+1)).c_str());
+	}
+	catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+		Tango::Except::re_throw_exception(df,
+										"TANGO_DEVICE_ERROR",
+										std::string(df.errors[0].desc).c_str(),
+										"Dhyana::get_parameter");
+					
+    }		
+    catch(lima::Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+										e.getErrMsg().c_str(),
+										"Dhyana::get_parameter");
+    }
+	
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::get_parameter
+	return argout;
+}
+//--------------------------------------------------------
+/**
+ *	Command SetParameter related method
+ *	Description: Set the value of a specific parameter. 
+ *               The parameter is identified by its GROUP and name.
+ *               
+ *               Input argument has to be in the following format:
+ *               GROUP_OF_PROPERTY:parameter_name, value
+ *
+ *	@param argin 
+ */
+//--------------------------------------------------------
+void Dhyana::set_parameter(const Tango::DevVarDoubleStringArray *argin)
+{
+	INFO_STREAM << "Dhyana::SetParameter()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(Dhyana::set_parameter) ENABLED START -----*/
+	
+	if(!argin->dvalue.length() || !argin->svalue.length())
+	{
+		//- throw exception
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+										"Invalid number of parameters. Check input parameters (parameter, value)\n",
+										"Dhyana::set_parameter");
+	}
+    try
+    {
+    	std::string parameter(argin->svalue[0].in());
+		Tango::DevDouble value = argin->dvalue[0];
+        m_camera->setParameter(parameter, value);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+		Tango::Except::re_throw_exception(df,
+										"TANGO_DEVICE_ERROR",
+										std::string(df.errors[0].desc).c_str(),
+										"Dhyana::set_parameter");
+    }		
+    catch(lima::Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+										e.getErrMsg().c_str(),
+										"Dhyana::set_parameter");
+    }	 
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::set_parameter
 }
 //--------------------------------------------------------
 /**
@@ -631,7 +676,7 @@ void Dhyana::write_attr_at_init()
 		set_state(Tango::FAULT);
 		return;
 	}
-	catch(Exception& e)
+	catch(lima::Exception& e)
 	{
 		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
