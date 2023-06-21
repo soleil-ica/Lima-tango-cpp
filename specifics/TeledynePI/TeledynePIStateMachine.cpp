@@ -56,8 +56,6 @@ namespace TeledynePI_ns
 //--------------------------------------------------------
 bool TeledynePI::is_detector_model_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-
-	//	Not any excluded states for detector_model attribute in read access.
 	/*----- PROTECTED REGION ID(TeledynePI::detector_modelStateAllowed_READ) ENABLED START -----*/
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
@@ -86,8 +84,6 @@ bool TeledynePI::is_detector_model_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool TeledynePI::is_detector_type_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-
-	//	Not any excluded states for detector_type attribute in read access.
 	/*----- PROTECTED REGION ID(TeledynePI::detector_typeStateAllowed_READ) ENABLED START -----*/
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
@@ -116,8 +112,6 @@ bool TeledynePI::is_detector_type_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool TeledynePI::is_temperature_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-
-	//	Not any excluded states for temperature attribute in read access.
 	/*----- PROTECTED REGION ID(TeledynePI::temperatureStateAllowed_READ) ENABLED START -----*/
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
@@ -146,15 +140,43 @@ bool TeledynePI::is_temperature_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool TeledynePI::is_temperatureTarget_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	//	Not any excluded states for temperatureTarget attribute in Write access.
-	/*----- PROTECTED REGION ID(TeledynePI::temperatureTargetStateAllowed_WRITE) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	TeledynePI::temperatureTargetStateAllowed_WRITE
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::INIT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(TeledynePI::temperatureTargetStateAllowed_WRITE) ENABLED START -----*/
+			if (get_state() == Tango::FAULT && is_device_initialized())
+			{
+				return true;
+			}
+		/*----- PROTECTED REGION END -----*/	//	TeledynePI::temperatureTargetStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
 
-	//	Not any excluded states for temperatureTarget attribute in read access.
-	/*----- PROTECTED REGION ID(TeledynePI::temperatureTargetStateAllowed_READ) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	TeledynePI::temperatureTargetStateAllowed_READ
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::INIT)
+		{
+		/*----- PROTECTED REGION ID(TeledynePI::temperatureTargetStateAllowed_READ) ENABLED START -----*/
+			if (get_state() == Tango::FAULT && is_device_initialized())
+			{
+				return true;
+			}
+		/*----- PROTECTED REGION END -----*/	//	TeledynePI::temperatureTargetStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
 	return true;
 }
 
@@ -166,40 +188,43 @@ bool TeledynePI::is_temperatureTarget_allowed(TANGO_UNUSED(Tango::AttReqType typ
 //--------------------------------------------------------
 bool TeledynePI::is_gain_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	//	Not any excluded states for gain attribute in Write access.
-	/*----- PROTECTED REGION ID(TeledynePI::gainStateAllowed_WRITE) ENABLED START -----*/
-	if ( type != Tango::READ_REQ )
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
 	{
+		//	Compare device state with not allowed states for WRITE 
 		if (get_state()==Tango::FAULT ||
 			get_state()==Tango::INIT ||
 			get_state()==Tango::RUNNING)
 		{
+		/*----- PROTECTED REGION ID(TeledynePI::gainStateAllowed_WRITE) ENABLED START -----*/
 			if (get_state() == Tango::FAULT && is_device_initialized())
 			{
 				return true;
 			}
+		/*----- PROTECTED REGION END -----*/	//	TeledynePI::gainStateAllowed_WRITE
 			return false;
 		}
 		return true;
 	}
-	/*----- PROTECTED REGION END -----*/	//	TeledynePI::gainStateAllowed_WRITE
+	else
 
-	//	Not any excluded states for gain attribute in read access.
-	/*----- PROTECTED REGION ID(TeledynePI::gainStateAllowed_READ) ENABLED START -----*/
-	if ( type == Tango::READ_REQ )
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
 	{
+		//	Compare device state with not allowed states for READ 
 		if (get_state()==Tango::FAULT ||
 			get_state()==Tango::INIT)
 		{
+		/*----- PROTECTED REGION ID(TeledynePI::gainStateAllowed_READ) ENABLED START -----*/
 			if (get_state() == Tango::FAULT && is_device_initialized())
 			{
 				return true;
 			}
+		/*----- PROTECTED REGION END -----*/	//	TeledynePI::gainStateAllowed_READ
 			return false;
 		}
 		return true;
 	}
-	/*----- PROTECTED REGION END -----*/	//	TeledynePI::gainStateAllowed_READ
 	return true;
 }
 
@@ -211,29 +236,43 @@ bool TeledynePI::is_gain_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool TeledynePI::is_adcRate_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	//	Not any excluded states for adcRate attribute in Write access.
-	/*----- PROTECTED REGION ID(TeledynePI::adcRateStateAllowed_WRITE) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	TeledynePI::adcRateStateAllowed_WRITE
-
-	//	Not any excluded states for adcRate attribute in read access.
-	/*----- PROTECTED REGION ID(TeledynePI::adcRateStateAllowed_READ) ENABLED START -----*/
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
 	{
-		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::INIT ||
+			get_state()==Tango::RUNNING)
 		{
-           return true;
+		/*----- PROTECTED REGION ID(TeledynePI::adcRateStateAllowed_WRITE) ENABLED START -----*/
+			if (get_state() == Tango::FAULT && is_device_initialized())
+			{
+				return true;
+			}
+		/*----- PROTECTED REGION END -----*/	//	TeledynePI::adcRateStateAllowed_WRITE
+			return false;
 		}
-		
-		if ( get_state()==Tango::FAULT && is_device_initialized() )
-		{
-           return true;
-		}
-		return false;
+		return true;
 	}
-	/*----- PROTECTED REGION END -----*/	//	TeledynePI::adcRateStateAllowed_READ
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::INIT)
+		{
+		/*----- PROTECTED REGION ID(TeledynePI::adcRateStateAllowed_READ) ENABLED START -----*/
+			if (get_state() == Tango::FAULT && is_device_initialized())
+			{
+				return true;
+			}
+		/*----- PROTECTED REGION END -----*/	//	TeledynePI::adcRateStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
 	return true;
 }
 

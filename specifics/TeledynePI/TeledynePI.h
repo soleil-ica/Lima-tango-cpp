@@ -48,7 +48,7 @@
 
 #define MAX_ATTRIBUTE_STRING_LENGTH     256
 
-/*----- PROTECTED REGION END -----*/	//	Teledyne.h
+/*----- PROTECTED REGION END -----*/	//	TeledynePI.h
 
 /**
  *  TeledynePI class description:
@@ -84,12 +84,12 @@ public :
 		gainEnum	attr_gain_write;
 		Tango::DevDouble	attr_adcRate_write;
 
-/*----- PROTECTED REGION END -----*/	//	Teledyne::Data Members
+/*----- PROTECTED REGION END -----*/	//	TeledynePI::Data Members
 
 //	Device property data members
 public:
 	//	TemperatureTargetAtInit:	Define which Temperature must be used at init device
-	string	temperatureTargetAtInit;
+	Tango::DevDouble	temperatureTargetAtInit;
 
 //	Attribute data members
 public:
@@ -270,7 +270,7 @@ protected :
 	//lima OBJECTS
 	lima::Princeton::Interface*		m_hw;
     lima::CtControl*                m_ct;
-/*----- PROTECTED REGION END -----*/	//	Teledyne::Additional Method prototypes
+/*----- PROTECTED REGION END -----*/	//	TeledynePI::Additional Method prototypes
 };
 
 /*----- PROTECTED REGION ID(TeledynePI::Additional Classes Definitions) ENABLED START -----*/

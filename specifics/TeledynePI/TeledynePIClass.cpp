@@ -219,9 +219,9 @@ void TeledynePIClass::set_default_property()
 	//	Set Default device Properties
 	prop_name = "TemperatureTargetAtInit";
 	prop_desc = "Define which Temperature must be used at init device";
-	prop_def  = "-110";
+	prop_def  = "-60";
 	vect_data.clear();
-	vect_data.push_back("-110");
+	vect_data.push_back("-60");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

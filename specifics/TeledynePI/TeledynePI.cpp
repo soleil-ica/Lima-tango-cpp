@@ -154,7 +154,7 @@ void TeledynePI::init_device()
 
 	CREATE_DEVSTRING_ATTRIBUTE(attr_detector_model_read,MAX_ATTRIBUTE_STRING_LENGTH);	
 	CREATE_DEVSTRING_ATTRIBUTE(attr_detector_type_read,MAX_ATTRIBUTE_STRING_LENGTH);	
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::init_device_before
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::init_device_before
 	
 
 	//	Get the device properties from database
@@ -181,15 +181,12 @@ void TeledynePI::init_device()
 		//- get the main object used to pilot the lima framework
 		//- in fact LimaDetector is create the singleton control objet
 		//so this call, will only return existing object, no need to give it the ip !!
-		m_ct = ControlFactory::instance().get_control("Teledyne");
+		m_ct = ControlFactory::instance().get_control("TeledynePI");
 		
-		if(m_ct)
-		{
-			//- get interface to specific camera
-			m_hw = dynamic_cast<lima::Princeton::Interface*>(m_ct->hwInterface());
-		}
+		//- get interface to specific camera
+		m_hw = dynamic_cast<lima::Princeton::Interface*>(m_ct->hwInterface());
     }
-    catch(Exception& e)
+    catch(lima::Exception& e)
     {
         INFO_STREAM<<"Initialization Failed : "<<e.getErrMsg()<<endl;
         m_status_message <<"Initialization Failed : "<<e.getErrMsg( )<< endl;
@@ -211,7 +208,8 @@ void TeledynePI::init_device()
 	{
 		INFO_STREAM << "Write tango hardware at Init - temperatureTarget." << endl;
 		Tango::WAttribute &temperatureTarget = dev_attr->get_w_attr_by_name("temperatureTarget");
-        temperatureTarget.set_write_value(temperatureTargetAtInit);
+		*attr_temperatureTarget_read = temperatureTargetAtInit; 
+        temperatureTarget.set_write_value(*attr_temperatureTarget_read);
 		write_temperatureTarget(temperatureTarget);
 
 		INFO_STREAM << "Write tango hardware at Init - gain." << endl;
@@ -238,7 +236,7 @@ void TeledynePI::init_device()
 		set_state(Tango::FAULT);
 		return;
 	}
-	catch(Exception& e)
+	catch(lima::Exception& e)
 	{
 		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
@@ -246,7 +244,15 @@ void TeledynePI::init_device()
 		set_state(Tango::FAULT);
 		return;
 	}
-
+	catch(...)
+    {
+        m_status_message << "Initialization Failed : Unknown error" << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
+        m_is_device_initialized = false;
+        set_state(Tango::FAULT);
+        return;
+    }
+	
 	m_is_device_initialized = true;		
     set_state(Tango::STANDBY);
     dev_state();
@@ -314,23 +320,25 @@ void TeledynePI::get_device_property()
 //--------------------------------------------------------
 void TeledynePI::always_executed_hook()
 {
-	//DEBUG_STREAM << "TeledynePI::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(TeledynePI::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
 	try
 	{
 		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-		m_status_message.str("");
+		if(m_is_device_initialized)
+		{
+			m_status_message.str("");
+		}
 		//- get the singleton control objet used to pilot the lima framework
-        m_ct = ControlFactory::instance().get_control("Teledyne");
+        m_ct = ControlFactory::instance().get_control("TeledynePI");
 
         //- get interface to specific camera
         m_hw = dynamic_cast<lima::Princeton::Interface*> (m_ct->hwInterface());
 
 		dev_state();
 	}
-	catch (Exception& e)
+	catch (lima::Exception& e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
@@ -347,6 +355,14 @@ void TeledynePI::always_executed_hook()
 		set_state(Tango::FAULT);
 		return;
 	}
+	catch (...)
+    {
+        ERROR_STREAM << "always_executed_hook Failed : UNKNOWN" << endl;
+        m_status_message << "always_executed_hook Failed : UNKNOWN" << endl;
+        m_is_device_initialized = false;
+		set_state(Tango::FAULT);
+        return;
+    }
 	/*----- PROTECTED REGION END -----*/	//	TeledynePI::always_executed_hook
 }
 
@@ -358,7 +374,6 @@ void TeledynePI::always_executed_hook()
 //--------------------------------------------------------
 void TeledynePI::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	//DEBUG_STREAM << "TeledynePI::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(TeledynePI::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -373,7 +388,6 @@ void TeledynePI::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void TeledynePI::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	//DEBUG_STREAM << "TeledynePI::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(TeledynePI::write_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -397,7 +411,6 @@ void TeledynePI::read_detector_model(Tango::Attribute &attr)
 	try
 	{
 		HwDetInfoCtrlObj *hw_det_info;
-		//lima::Princeton::DetInfoCtrlObj *hw_det_info;
 		std::string str_detector_model = "MODEL_TEST";
 		if( m_hw != 0)
 		{
@@ -415,16 +428,15 @@ void TeledynePI::read_detector_model(Tango::Attribute &attr)
 		Tango::Except::re_throw_exception(df,
 					"TANGO_DEVICE_ERROR",
                 	std::string(df.errors[0].desc).c_str(),
-                	"Teledyne::read_detector_model");
+                	"TeledynePI::read_detector_model");
     }		
-    catch(Exception& e)
+    catch(lima::Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception(
-                    "TANGO_DEVICE_ERROR",
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                     e.getErrMsg().c_str(),
-                    "Teledyne::read_detector_model");
+                    "TeledynePI::read_detector_model");
     }	 
 	
 	/*----- PROTECTED REGION END -----*/	//	TeledynePI::read_detector_model
@@ -445,10 +457,9 @@ void TeledynePI::read_detector_type(Tango::Attribute &attr)
 	try
 	{
 		HwDetInfoCtrlObj *hw_det_info;
-		//lima::Princeton::DetInfoCtrlObj *hw_det_info;
 		std::string str_detector_type = "TYPE_TEST";
 		
-		if( m_hw != 0)
+		if( m_hw != 0 && hw_det_info != 0)
 		{
 			m_hw->getHwCtrlObj(hw_det_info);
 			hw_det_info->getDetectorModel(str_detector_type);
@@ -464,16 +475,15 @@ void TeledynePI::read_detector_type(Tango::Attribute &attr)
         Tango::Except::re_throw_exception(df,
                     "TANGO_DEVICE_ERROR",
                     string(df.errors[0].desc).c_str(),
-                    "Teledyne::read_detector_type");
+                    "TeledynePI::read_detector_type");
     }		
-    catch(Exception& e)
+    catch(lima::Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception(
-                     "TANGO_DEVICE_ERROR",
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                      e.getErrMsg().c_str(),
-                     "Teledyne::read_detector_type");
+                     "TeledynePI::read_detector_type");
     }	 
 	
 	/*----- PROTECTED REGION END -----*/	//	TeledynePI::read_detector_type
@@ -493,7 +503,7 @@ void TeledynePI::read_temperature(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(TeledynePI::read_temperature) ENABLED START -----*/
 	try
 	{
-		if(get_state()!= Tango::RUNNING && m_hw != 0)
+		if(m_hw != 0)
 		{
 			*attr_temperature_read  = m_hw->getSensorTemperature();
 			attr.set_value(attr_temperature_read);
@@ -506,16 +516,15 @@ void TeledynePI::read_temperature(Tango::Attribute &attr)
 		Tango::Except::re_throw_exception(df,
 					"TANGO_DEVICE_ERROR",
                 	std::string(df.errors[0].desc).c_str(),
-                	"Teledyne::read_temperature");
+                	"TeledynePI::read_temperature");
     }		
-    catch(Exception& e)
+    catch(lima::Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception(
-                    "TANGO_DEVICE_ERROR",
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                     e.getErrMsg().c_str(),
-                    "Teledyne::read_temperature");
+                    "TeledynePI::read_temperature");
     }	 
 	
 	/*----- PROTECTED REGION END -----*/	//	TeledynePI::read_temperature
@@ -536,7 +545,7 @@ void TeledynePI::read_temperatureTarget(Tango::Attribute &attr)
 	//	Set the attribute value
 	try 
 	{
-		if( get_state()!= Tango::RUNNING && m_hw != 0)
+		if(m_hw != 0)
 		{
 			*attr_temperatureTarget_read  = m_hw->getSensorTemperatureSetpoint();   
 			attr.set_value(attr_temperatureTarget_read);
@@ -549,16 +558,15 @@ void TeledynePI::read_temperatureTarget(Tango::Attribute &attr)
 		Tango::Except::re_throw_exception(df,
 					"TANGO_DEVICE_ERROR",
                 	std::string(df.errors[0].desc).c_str(),
-                	"Teledyne::read_temperatureTarget");
+                	"TeledynePI::read_temperatureTarget");
     }		
-    catch(Exception& e)
+    catch(lima::Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
-        Tango::Except::throw_exception(
-                    "TANGO_DEVICE_ERROR",
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                     e.getErrMsg().c_str(),
-                    "Teledyne::read_temperatureTarget");
+                    "TeledynePI::read_temperatureTarget");
     }	 
 	
 	/*----- PROTECTED REGION END -----*/	//	TeledynePI::read_temperatureTarget
@@ -582,7 +590,7 @@ void TeledynePI::write_temperatureTarget(Tango::WAttribute &attr)
     try
     {
         attr.get_write_value(attr_temperatureTarget_write);
-		if(!m_hw)
+		if(m_hw != 0)
 		{
         	m_hw->setSensorTemperatureSetpoint(attr_temperatureTarget_write);  
 		}      
@@ -590,20 +598,17 @@ void TeledynePI::write_temperatureTarget(Tango::WAttribute &attr)
 	catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
-        //- rethrow exception
         Tango::Except::re_throw_exception(df,
                     "TANGO_DEVICE_ERROR",
                     string(df.errors[0].desc).c_str(),
-                    "Teledyne::write_temperatureTarget");
+                    "TeledynePI::write_temperatureTarget");
     }		
-    catch(Exception& e)
+    catch(lima::Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
-        //- throw exception
-        Tango::Except::throw_exception(
-                     "TANGO_DEVICE_ERROR",
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                      e.getErrMsg().c_str(),
-                     "Teledyne::write_temperatureTarget");
+                     "TeledynePI::write_temperatureTarget");
     }	 
 	
 	/*----- PROTECTED REGION END -----*/	//	TeledynePI::write_temperatureTarget
@@ -625,7 +630,7 @@ void TeledynePI::read_gain(Tango::Attribute &attr)
 	
 	try
 	{
-		if( get_state()!= Tango::RUNNING && m_hw != 0)
+		if(m_hw != 0)
 		{
 			Tango::DevShort* devShortValue = (Tango::DevShort *)GainMode::LOW;
 			lima::Princeton::Interface::GainType gain = m_hw->getAdcAnalogGain();
@@ -650,22 +655,20 @@ void TeledynePI::read_gain(Tango::Attribute &attr)
     catch(Tango::DevFailed & df)
     {
 		ERROR_STREAM << df << endl;
-		//- rethrow exception
         Tango::Except::re_throw_exception(df,
 					"TANGO_DEVICE_ERROR",
 					string(df.errors[0].desc).c_str(),
-					"Teledyne::read_gain");
+					"TeledynePI::read_gain");
     }
-    catch(Exception & e)
+    catch(lima::Exception & e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
-		//- throw exception
 		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
 					e.getErrMsg().c_str(),
-					"Teledyne::read_gain");
+					"TeledynePI::read_gain");
     }
 
-	/*----- PROTECTED REGION END -----*/	//	Teledyne::read_gain
+	/*----- PROTECTED REGION END -----*/	//	TeledynePI::read_gain
 }
 //--------------------------------------------------------
 /**
@@ -708,19 +711,17 @@ void TeledynePI::write_gain(Tango::WAttribute &attr)
 	catch (Tango::DevFailed &df)
 	{
 		ERROR_STREAM << df << endl;
-		//- rethrow exception
 		Tango::Except::re_throw_exception(df,
 					"TANGO_DEVICE_ERROR",
 					string(df.errors[0].desc).c_str(),
-					"Teledyne::write_gain");
+					"TeledynePI::write_gain");
 	}
-	catch (Exception &e)
+	catch (lima::Exception &e)
 	{
 		ERROR_STREAM << e.getErrMsg() << endl;
-		//- throw exception
 		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
 					e.getErrMsg().c_str(),
-					"Teledyne::write_gain");
+					"TeledynePI::write_gain");
 	}
 	/*----- PROTECTED REGION END -----*/	//	TeledynePI::write_gain
 }
@@ -735,11 +736,9 @@ void TeledynePI::write_gain(Tango::WAttribute &attr)
 //--------------------------------------------------------
 void TeledynePI::read_adcRate(Tango::Attribute &attr)
 {
-	//DEBUG_STREAM << "TeledynePI::read_adcRate(Tango::Attribute &attr) entering... " << endl;
+	DEBUG_STREAM << "TeledynePI::read_adcRate(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(TeledynePI::read_adcRate) ENABLED START -----*/
-	//	Set the attribute value
-	//attr.set_value(attr_adcRate_read);
-	
+	//	Set the attribute value	
 	try 
 	{
 		if( m_hw != 0)
@@ -750,20 +749,17 @@ void TeledynePI::read_adcRate(Tango::Attribute &attr)
 	catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
-        //- rethrow exception
 		Tango::Except::re_throw_exception(df,
-					"TANGO_DEVICE_ERROR",
-                	std::string(df.errors[0].desc).c_str(),
-                	"Teledyne::read_adcRate");
-    }		
-    catch(Exception& e)
+										"TANGO_DEVICE_ERROR",
+										std::string(df.errors[0].desc).c_str(),
+										"TeledynePI::read_adcRate");
+	}		
+    catch(lima::Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
-        //- throw exception
-        Tango::Except::throw_exception(
-                    "TANGO_DEVICE_ERROR",
-                    e.getErrMsg().c_str(),
-                    "Teledyne::read_adcRate");
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+									e.getErrMsg().c_str(),
+									"TeledynePI::read_adcRate");
     }	 
 	/*----- PROTECTED REGION END -----*/	//	TeledynePI::read_adcRate
 }
@@ -786,7 +782,7 @@ void TeledynePI::write_adcRate(Tango::WAttribute &attr)
 	try
     {
         attr.get_write_value(attr_adcRate_write);
-		if(!m_hw)
+		if( m_hw != 0)		
 		{
         	m_hw->setAdcSpeed(attr_adcRate_write);  
 		}      
@@ -794,20 +790,17 @@ void TeledynePI::write_adcRate(Tango::WAttribute &attr)
 	catch(Tango::DevFailed& df)
     {
         ERROR_STREAM << df << endl;
-        //- rethrow exception
         Tango::Except::re_throw_exception(df,
-                    "TANGO_DEVICE_ERROR",
-                    string(df.errors[0].desc).c_str(),
-                    "Teledyne::write_adcRate");
+                    					"TANGO_DEVICE_ERROR",
+										string(df.errors[0].desc).c_str(),
+										"TeledynePI::write_adcRate");
     }		
-    catch(Exception& e)
+    catch(lima::Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
-        //- throw exception
-        Tango::Except::throw_exception(
-                     "TANGO_DEVICE_ERROR",
-                     e.getErrMsg().c_str(),
-                     "Teledyne::write_adcRate");
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+									e.getErrMsg().c_str(),
+									"TeledynePI::write_adcRate");
     }	 
 	
 	/*----- PROTECTED REGION END -----*/	//	TeledynePI::write_adcRate
@@ -839,14 +832,14 @@ void TeledynePI::add_dynamic_attributes()
 //--------------------------------------------------------
 Tango::DevState TeledynePI::dev_state()
 {
-	//DEBUG_STREAM << "TeledynePI::State()  - " << device_name << endl;
+	DEBUG_STREAM << "TeledynePI::State()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(TeledynePI::dev_state) ENABLED START -----*/
 	
 	Tango::DevState    argout = DeviceImpl::dev_state();
-
     stringstream DeviceStatus;
     DeviceStatus << "";
     Tango::DevState DeviceState = Tango::STANDBY;
+   
     if(!m_is_device_initialized )
     {
         DeviceState = Tango::FAULT;
