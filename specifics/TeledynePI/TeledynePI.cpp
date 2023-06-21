@@ -59,8 +59,6 @@
 //================================================================
 //  Attributes managed are:
 //================================================================
-//  detector_model     |  Tango::DevString	Scalar
-//  detector_type      |  Tango::DevString	Scalar
 //  temperature        |  Tango::DevDouble	Scalar
 //  temperatureTarget  |  Tango::DevDouble	Scalar
 //  gain               |  Tango::DevEnum	Scalar
@@ -117,17 +115,14 @@ TeledynePI::TeledynePI(Tango::DeviceClass *cl, const char *s, const char *d)
 //--------------------------------------------------------
 void TeledynePI::delete_device()
 {
-	DEBUG_STREAM << "TeledynePI::delete_device() " << device_name << endl;
+	INFO_STREAM << "TeledynePI::delete_device() " << device_name << endl;
 	/*----- PROTECTED REGION ID(TeledynePI::delete_device) ENABLED START -----*/
-	INFO_STREAM << "Teledyne::delete_device() delete device " << device_name << endl;
 
 	DELETE_SCALAR_ATTRIBUTE(attr_temperature_read);	
 	DELETE_SCALAR_ATTRIBUTE(attr_temperatureTarget_read);	
     DELETE_SCALAR_ATTRIBUTE(attr_gain_read);    
 	DELETE_SCALAR_ATTRIBUTE(attr_adcRate_read);	
-
-	DELETE_DEVSTRING_ATTRIBUTE(attr_detector_model_read);	
-	DELETE_DEVSTRING_ATTRIBUTE(attr_detector_type_read);		
+	
 	//	Delete device allocated objects
 	INFO_STREAM << "Remove the inner-appender." << endl;
     yat4tango::InnerAppender::release(this);
@@ -143,7 +138,7 @@ void TeledynePI::delete_device()
 //--------------------------------------------------------
 void TeledynePI::init_device()
 {
-	DEBUG_STREAM << "TeledynePI::init_device() create device " << device_name << endl;
+	INFO_STREAM << "TeledynePI::init_device() create device " << device_name << endl;
 	/*----- PROTECTED REGION ID(TeledynePI::init_device_before) ENABLED START -----*/
 	
 	//	Initialization before get_device_property() call
@@ -151,9 +146,7 @@ void TeledynePI::init_device()
 	CREATE_SCALAR_ATTRIBUTE(attr_temperatureTarget_read, 0.0);		
     CREATE_SCALAR_ATTRIBUTE(attr_gain_read, (gainEnum)GainMode::LOW);
 	CREATE_SCALAR_ATTRIBUTE(attr_adcRate_read, 0.0);
-
-	CREATE_DEVSTRING_ATTRIBUTE(attr_detector_model_read,MAX_ATTRIBUTE_STRING_LENGTH);	
-	CREATE_DEVSTRING_ATTRIBUTE(attr_detector_type_read,MAX_ATTRIBUTE_STRING_LENGTH);	
+	
 	/*----- PROTECTED REGION END -----*/	//	TeledynePI::init_device_before
 	
 
@@ -397,101 +390,8 @@ void TeledynePI::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 
 //--------------------------------------------------------
 /**
- *	Read attribute detector_model related method
- *	Description: 
- *
- *	Data type:	Tango::DevString
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void TeledynePI::read_detector_model(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "TeledynePI::read_detector_model(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(TeledynePI::read_detector_model) ENABLED START -----*/
-	try
-	{
-		HwDetInfoCtrlObj *hw_det_info;
-		std::string str_detector_model = "MODEL_TEST";
-		if( m_hw != 0)
-		{
-			m_hw->getHwCtrlObj(hw_det_info);
-			hw_det_info->getDetectorModel(str_detector_model);
-		}
-		//	Set the attribute value
-		strcpy(*attr_detector_model_read, str_detector_model.c_str());
-		attr.set_value(attr_detector_model_read);
-	}
-	catch(Tango::DevFailed& df)
-    {
-        ERROR_STREAM << df << endl;
-        //- rethrow exception
-		Tango::Except::re_throw_exception(df,
-					"TANGO_DEVICE_ERROR",
-                	std::string(df.errors[0].desc).c_str(),
-                	"TeledynePI::read_detector_model");
-    }		
-    catch(lima::Exception& e)
-    {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        //- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                    e.getErrMsg().c_str(),
-                    "TeledynePI::read_detector_model");
-    }	 
-	
-	/*----- PROTECTED REGION END -----*/	//	TeledynePI::read_detector_model
-}
-//--------------------------------------------------------
-/**
- *	Read attribute detector_type related method
- *	Description: 
- *
- *	Data type:	Tango::DevString
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void TeledynePI::read_detector_type(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "TeledynePI::read_detector_type(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(TeledynePI::read_detector_type) ENABLED START -----*/
-	try
-	{
-		HwDetInfoCtrlObj *hw_det_info;
-		std::string str_detector_type = "TYPE_TEST";
-		
-		if( m_hw != 0 && hw_det_info != 0)
-		{
-			m_hw->getHwCtrlObj(hw_det_info);
-			hw_det_info->getDetectorModel(str_detector_type);
-		}
-		//	Set the attribute value
-		strcpy(*attr_detector_type_read, str_detector_type.c_str());
-		attr.set_value(attr_detector_type_read);
-	}
-	catch(Tango::DevFailed& df)
-    {
-        ERROR_STREAM << df << endl;
-        //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                    "TANGO_DEVICE_ERROR",
-                    string(df.errors[0].desc).c_str(),
-                    "TeledynePI::read_detector_type");
-    }		
-    catch(lima::Exception& e)
-    {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        //- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
-                     e.getErrMsg().c_str(),
-                     "TeledynePI::read_detector_type");
-    }	 
-	
-	/*----- PROTECTED REGION END -----*/	//	TeledynePI::read_detector_type
-}
-//--------------------------------------------------------
-/**
  *	Read attribute temperature related method
- *	Description: 
+ *	Description: The current temperature  (Degree Celsius)
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -503,11 +403,8 @@ void TeledynePI::read_temperature(Tango::Attribute &attr)
 	/*----- PROTECTED REGION ID(TeledynePI::read_temperature) ENABLED START -----*/
 	try
 	{
-		if(m_hw != 0)
-		{
-			*attr_temperature_read  = m_hw->getSensorTemperature();
-			attr.set_value(attr_temperature_read);
-		}		
+		*attr_temperature_read  = m_hw->getSensorTemperature();
+		attr.set_value(attr_temperature_read);		
 	}
 	catch(Tango::DevFailed& df)
     {
@@ -532,7 +429,7 @@ void TeledynePI::read_temperature(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute temperatureTarget related method
- *	Description: Set the Temperature target of the detector (in Celsius)
+ *	Description: Define the Temperature target of the detector (in deg Celsius)
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -545,11 +442,8 @@ void TeledynePI::read_temperatureTarget(Tango::Attribute &attr)
 	//	Set the attribute value
 	try 
 	{
-		if(m_hw != 0)
-		{
-			*attr_temperatureTarget_read  = m_hw->getSensorTemperatureSetpoint();   
-			attr.set_value(attr_temperatureTarget_read);
-		}
+		*attr_temperatureTarget_read  = m_hw->getSensorTemperatureSetpoint();   
+		attr.set_value(attr_temperatureTarget_read);
 	}
 	catch(Tango::DevFailed& df)
     {
@@ -574,7 +468,7 @@ void TeledynePI::read_temperatureTarget(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Write attribute temperatureTarget related method
- *	Description: Set the Temperature target of the detector (in Celsius)
+ *	Description: Define the Temperature target of the detector (in deg Celsius)
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -590,10 +484,7 @@ void TeledynePI::write_temperatureTarget(Tango::WAttribute &attr)
     try
     {
         attr.get_write_value(attr_temperatureTarget_write);
-		if(m_hw != 0)
-		{
-        	m_hw->setSensorTemperatureSetpoint(attr_temperatureTarget_write);  
-		}      
+        m_hw->setSensorTemperatureSetpoint(attr_temperatureTarget_write);     
     }
 	catch(Tango::DevFailed& df)
     {
@@ -630,27 +521,24 @@ void TeledynePI::read_gain(Tango::Attribute &attr)
 	
 	try
 	{
-		if(m_hw != 0)
+		Tango::DevShort* devShortValue = (Tango::DevShort *)GainMode::LOW;
+		lima::Princeton::Interface::GainType gain = m_hw->getAdcAnalogGain();
+		switch (gain)
 		{
-			Tango::DevShort* devShortValue = (Tango::DevShort *)GainMode::LOW;
-			lima::Princeton::Interface::GainType gain = m_hw->getAdcAnalogGain();
-			switch (gain)
-			{
-				case lima::Princeton::Interface::GainType::Gain_Low:
-					devShortValue = (Tango::DevShort *)GainMode::LOW;
-					break;
+			case lima::Princeton::Interface::GainType::Gain_Low:
+				devShortValue = (Tango::DevShort *)GainMode::LOW;
+				break;
 
-				case lima::Princeton::Interface::GainType::Gain_Medium:
-					devShortValue = (Tango::DevShort *)GainMode::MEDIUM;
-					break;
+			case lima::Princeton::Interface::GainType::Gain_Medium:
+				devShortValue = (Tango::DevShort *)GainMode::MEDIUM;
+				break;
 
-				case lima::Princeton::Interface::GainType::Gain_High:
-					devShortValue = (Tango::DevShort *)GainMode::HIGH;
-					break;
-			}
-
-			attr.set_value((Tango::DevShort*) &devShortValue);
+			case lima::Princeton::Interface::GainType::Gain_High:
+				devShortValue = (Tango::DevShort *)GainMode::HIGH;
+				break;
 		}
+
+		attr.set_value((Tango::DevShort*) &devShortValue);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -728,7 +616,7 @@ void TeledynePI::write_gain(Tango::WAttribute &attr)
 //--------------------------------------------------------
 /**
  *	Read attribute adcRate related method
- *	Description: 
+ *	Description: Define the speed at which pixels are digitized (MHz)
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -741,10 +629,7 @@ void TeledynePI::read_adcRate(Tango::Attribute &attr)
 	//	Set the attribute value	
 	try 
 	{
-		if( m_hw != 0)
-		{
-			*attr_adcRate_read = m_hw->getAdcSpeed();   
-		}
+		*attr_adcRate_read = m_hw->getAdcSpeed();   
 	}
 	catch(Tango::DevFailed& df)
     {
@@ -766,7 +651,7 @@ void TeledynePI::read_adcRate(Tango::Attribute &attr)
 //--------------------------------------------------------
 /**
  *	Write attribute adcRate related method
- *	Description: 
+ *	Description: Define the speed at which pixels are digitized (MHz)
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -782,10 +667,7 @@ void TeledynePI::write_adcRate(Tango::WAttribute &attr)
 	try
     {
         attr.get_write_value(attr_adcRate_write);
-		if( m_hw != 0)		
-		{
-        	m_hw->setAdcSpeed(attr_adcRate_write);  
-		}      
+        m_hw->setAdcSpeed(attr_adcRate_write);     
     }
 	catch(Tango::DevFailed& df)
     {
@@ -877,8 +759,6 @@ void TeledynePI::add_dynamic_commands()
 }
 
 /*----- PROTECTED REGION ID(TeledynePI::namespace_ending) ENABLED START -----*/
-
-//	Additional Methods
 
 /*----- PROTECTED REGION END -----*/	//	TeledynePI::namespace_ending
 } //	namespace

@@ -54,32 +54,6 @@ namespace TeledynePI_ns
 //=========================================
 //	Define classes for attributes
 //=========================================
-//	Attribute detector_model class definition
-class detector_modelAttrib: public Tango::Attr
-{
-public:
-	detector_modelAttrib():Attr("detector_model",
-			Tango::DEV_STRING, Tango::READ) {};
-	~detector_modelAttrib() {};
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<TeledynePI *>(dev))->read_detector_model(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<TeledynePI *>(dev))->is_detector_model_allowed(ty);}
-};
-
-//	Attribute detector_type class definition
-class detector_typeAttrib: public Tango::Attr
-{
-public:
-	detector_typeAttrib():Attr("detector_type",
-			Tango::DEV_STRING, Tango::READ) {};
-	~detector_typeAttrib() {};
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<TeledynePI *>(dev))->read_detector_type(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<TeledynePI *>(dev))->is_detector_type_allowed(ty);}
-};
-
 //	Attribute temperature class definition
 class temperatureAttrib: public Tango::Attr
 {

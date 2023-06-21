@@ -5,7 +5,7 @@
       <inheritances classname="Device_Impl" sourcePath=""/>
       <identification contact="at synchrotron-soleil.fr - arafat.noureddine" author="arafat.noureddine" emailDomain="synchrotron-soleil.fr" classFamily="Acquisition" siteSpecific="" platform="Windows" bus="USB" manufacturer="none" reference=""/>
     </description>
-    <deviceProperties name="TemperatureTargetAtInit" description="Define which Temperature must be used at init device">
+    <deviceProperties name="TemperatureTargetAtInit" description="Define the target temperature to be used at device initialization">
       <type xsi:type="pogoDsl:DoubleType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>-60</DefaultPropValue>
@@ -28,33 +28,13 @@
       </argout>
       <status abstract="true" inherited="true" concrete="true"/>
     </commands>
-    <attributes name="detector_model" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="false" isDynamic="false">
-      <dataType xsi:type="pogoDsl:StringType"/>
-      <changeEvent fire="false" libCheckCriteria="false"/>
-      <archiveEvent fire="false" libCheckCriteria="false"/>
-      <dataReadyEvent fire="false" libCheckCriteria="true"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <properties description="" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
-      <readExcludedStates>FAULT</readExcludedStates>
-      <readExcludedStates>INIT</readExcludedStates>
-    </attributes>
-    <attributes name="detector_type" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="false" isDynamic="false">
-      <dataType xsi:type="pogoDsl:StringType"/>
-      <changeEvent fire="false" libCheckCriteria="false"/>
-      <archiveEvent fire="false" libCheckCriteria="false"/>
-      <dataReadyEvent fire="false" libCheckCriteria="true"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <properties description="" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
-      <readExcludedStates>FAULT</readExcludedStates>
-      <readExcludedStates>INIT</readExcludedStates>
-    </attributes>
     <attributes name="temperature" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="false" isDynamic="false">
       <dataType xsi:type="pogoDsl:DoubleType"/>
       <changeEvent fire="false" libCheckCriteria="false"/>
       <archiveEvent fire="false" libCheckCriteria="false"/>
       <dataReadyEvent fire="false" libCheckCriteria="true"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <properties description="" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <properties description="The current temperature  (Degree Celsius)" label="" unit="deg C" standardUnit="" displayUnit="" format="%6.2f" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
       <readExcludedStates>FAULT</readExcludedStates>
       <readExcludedStates>INIT</readExcludedStates>
     </attributes>
@@ -64,7 +44,7 @@
       <archiveEvent fire="false" libCheckCriteria="false"/>
       <dataReadyEvent fire="false" libCheckCriteria="true"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <properties description="Set the Temperature target of the detector (in Celsius)" label="" unit="Celisius" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <properties description="Define the Temperature target of the detector (in deg Celsius)" label="" unit="deg C" standardUnit="" displayUnit="" format="%6.2f" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
       <readExcludedStates>FAULT</readExcludedStates>
       <readExcludedStates>INIT</readExcludedStates>
       <writeExcludedStates>FAULT</writeExcludedStates>
@@ -90,7 +70,7 @@
       <archiveEvent fire="false" libCheckCriteria="false"/>
       <dataReadyEvent fire="false" libCheckCriteria="true"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <properties description="" label="" unit="" standardUnit="" displayUnit="" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <properties description="Define the speed at which pixels are digitized (MHz)" label="" unit="" standardUnit="" displayUnit="MHz" format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
       <readExcludedStates>FAULT</readExcludedStates>
       <readExcludedStates>INIT</readExcludedStates>
       <writeExcludedStates>FAULT</writeExcludedStates>
@@ -109,6 +89,6 @@
     <states name="STANDBY" description="">
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </states>
-    <preferences docHome="../doc/doc_html" makefileHome="$(TANGO_HOME)"/>
+    <preferences docHome="./doc_html" makefileHome="/usr/share/pogo/preferences"/>
   </classes>
 </pogoDsl:PogoSystem>

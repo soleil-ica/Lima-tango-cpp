@@ -50,85 +50,30 @@ namespace TeledynePI_ns
 
 //--------------------------------------------------------
 /**
- *	Method      : TeledynePI::is_detector_model_allowed()
- *	Description : Execution allowed for detector_model attribute
- */
-//--------------------------------------------------------
-bool TeledynePI::is_detector_model_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	/*----- PROTECTED REGION ID(TeledynePI::detector_modelStateAllowed_READ) ENABLED START -----*/
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
-	{
-		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
-		{
-           return true;
-		}
-		
-		if ( get_state()==Tango::FAULT && is_device_initialized() )
-		{
-           return true;
-		}
-		return false;
-	}
-	/*----- PROTECTED REGION END -----*/	//	TeledynePI::detector_modelStateAllowed_READ
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : TeledynePI::is_detector_type_allowed()
- *	Description : Execution allowed for detector_type attribute
- */
-//--------------------------------------------------------
-bool TeledynePI::is_detector_type_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	/*----- PROTECTED REGION ID(TeledynePI::detector_typeStateAllowed_READ) ENABLED START -----*/
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
-	{
-		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
-		{
-           return true;
-		}
-		
-		if ( get_state()==Tango::FAULT && is_device_initialized() )
-		{
-           return true;
-		}
-		return false;
-	}
-	/*----- PROTECTED REGION END -----*/	//	TeledynePI::detector_typeStateAllowed_READ
-	return true;
-}
-
-//--------------------------------------------------------
-/**
  *	Method      : TeledynePI::is_temperature_allowed()
  *	Description : Execution allowed for temperature attribute
  */
 //--------------------------------------------------------
 bool TeledynePI::is_temperature_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-	/*----- PROTECTED REGION ID(TeledynePI::temperatureStateAllowed_READ) ENABLED START -----*/
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
 	{
-		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::INIT)
 		{
-           return true;
+		/*----- PROTECTED REGION ID(TeledynePI::temperatureStateAllowed_READ) ENABLED START -----*/		
+			if ( get_state()==Tango::FAULT && is_device_initialized() )
+			{
+				return true;
+			}
+		/*----- PROTECTED REGION END -----*/	//	TeledynePI::temperatureStateAllowed_READ
+			return false;
 		}
-		
-		if ( get_state()==Tango::FAULT && is_device_initialized() )
-		{
-           return true;
-		}
-		return false;
+		return true;
 	}
-	/*----- PROTECTED REGION END -----*/	//	TeledynePI::temperatureStateAllowed_READ
 	return true;
 }
 

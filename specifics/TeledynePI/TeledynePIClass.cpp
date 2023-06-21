@@ -218,7 +218,7 @@ void TeledynePIClass::set_default_property()
 
 	//	Set Default device Properties
 	prop_name = "TemperatureTargetAtInit";
-	prop_desc = "Define which Temperature must be used at init device";
+	prop_desc = "Define the target temperature to be used at device initialization";
 	prop_def  = "-60";
 	vect_data.clear();
 	vect_data.push_back("-60");
@@ -337,63 +337,15 @@ void TeledynePIClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Add your own code
 	
 	/*----- PROTECTED REGION END -----*/	//	TeledynePIClass::attribute_factory_before
-	//	Attribute : detector_model
-	detector_modelAttrib	*detector_model = new detector_modelAttrib();
-	Tango::UserDefaultAttrProp	detector_model_prop;
-	//	description	not set for detector_model
-	//	label	not set for detector_model
-	//	unit	not set for detector_model
-	//	standard_unit	not set for detector_model
-	//	display_unit	not set for detector_model
-	//	format	not set for detector_model
-	//	max_value	not set for detector_model
-	//	min_value	not set for detector_model
-	//	max_alarm	not set for detector_model
-	//	min_alarm	not set for detector_model
-	//	max_warning	not set for detector_model
-	//	min_warning	not set for detector_model
-	//	delta_t	not set for detector_model
-	//	delta_val	not set for detector_model
-	
-	detector_model->set_default_properties(detector_model_prop);
-	//	Not Polled
-	detector_model->set_disp_level(Tango::OPERATOR);
-	//	Not Memorized
-	att_list.push_back(detector_model);
-
-	//	Attribute : detector_type
-	detector_typeAttrib	*detector_type = new detector_typeAttrib();
-	Tango::UserDefaultAttrProp	detector_type_prop;
-	//	description	not set for detector_type
-	//	label	not set for detector_type
-	//	unit	not set for detector_type
-	//	standard_unit	not set for detector_type
-	//	display_unit	not set for detector_type
-	//	format	not set for detector_type
-	//	max_value	not set for detector_type
-	//	min_value	not set for detector_type
-	//	max_alarm	not set for detector_type
-	//	min_alarm	not set for detector_type
-	//	max_warning	not set for detector_type
-	//	min_warning	not set for detector_type
-	//	delta_t	not set for detector_type
-	//	delta_val	not set for detector_type
-	
-	detector_type->set_default_properties(detector_type_prop);
-	//	Not Polled
-	detector_type->set_disp_level(Tango::OPERATOR);
-	//	Not Memorized
-	att_list.push_back(detector_type);
-
 	//	Attribute : temperature
 	temperatureAttrib	*temperature = new temperatureAttrib();
 	Tango::UserDefaultAttrProp	temperature_prop;
-	//	description	not set for temperature
+	temperature_prop.set_description("The current temperature  (Degree Celsius)");
 	//	label	not set for temperature
-	//	unit	not set for temperature
+	temperature_prop.set_unit("deg C");
 	//	standard_unit	not set for temperature
 	//	display_unit	not set for temperature
-	//	format	not set for temperature
+	temperature_prop.set_format("%6.2f");
 	//	max_value	not set for temperature
 	//	min_value	not set for temperature
 	//	max_alarm	not set for temperature
@@ -412,12 +364,12 @@ void TeledynePIClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : temperatureTarget
 	temperatureTargetAttrib	*temperaturetarget = new temperatureTargetAttrib();
 	Tango::UserDefaultAttrProp	temperaturetarget_prop;
-	temperaturetarget_prop.set_description("Set the Temperature target of the detector (in Celsius)");
+	temperaturetarget_prop.set_description("Define the Temperature target of the detector (in deg Celsius)");
 	//	label	not set for temperatureTarget
-	temperaturetarget_prop.set_unit("Celisius");
+	temperaturetarget_prop.set_unit("deg C");
 	//	standard_unit	not set for temperatureTarget
 	//	display_unit	not set for temperatureTarget
-	//	format	not set for temperatureTarget
+	temperaturetarget_prop.set_format("%6.2f");
 	//	max_value	not set for temperatureTarget
 	//	min_value	not set for temperatureTarget
 	//	max_alarm	not set for temperatureTarget
@@ -460,11 +412,11 @@ void TeledynePIClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Attribute : adcRate
 	adcRateAttrib	*adcrate = new adcRateAttrib();
 	Tango::UserDefaultAttrProp	adcrate_prop;
-	//	description	not set for adcRate
+	adcrate_prop.set_description("Define the speed at which pixels are digitized (MHz)");
 	//	label	not set for adcRate
 	//	unit	not set for adcRate
 	//	standard_unit	not set for adcRate
-	//	display_unit	not set for adcRate
+	adcrate_prop.set_display_unit("MHz");
 	//	format	not set for adcRate
 	//	max_value	not set for adcRate
 	//	min_value	not set for adcRate

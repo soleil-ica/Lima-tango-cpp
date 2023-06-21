@@ -88,13 +88,11 @@ public :
 
 //	Device property data members
 public:
-	//	TemperatureTargetAtInit:	Define which Temperature must be used at init device
+	//	TemperatureTargetAtInit:	Define the target temperature to be used at device initialization
 	Tango::DevDouble	temperatureTargetAtInit;
 
 //	Attribute data members
 public:
-	Tango::DevString	*attr_detector_model_read;
-	Tango::DevString	*attr_detector_type_read;
 	Tango::DevDouble	*attr_temperature_read;
 	Tango::DevDouble	*attr_temperatureTarget_read;
 	gainEnum	*attr_gain_read;
@@ -168,26 +166,8 @@ public:
 	virtual void write_attr_hardware(vector<long> &attr_list);
 
 /**
- *	Attribute detector_model related methods
- *	Description: 
- *
- *	Data type:	Tango::DevString
- *	Attr type:	Scalar
- */
-	virtual void read_detector_model(Tango::Attribute &attr);
-	virtual bool is_detector_model_allowed(Tango::AttReqType type);
-/**
- *	Attribute detector_type related methods
- *	Description: 
- *
- *	Data type:	Tango::DevString
- *	Attr type:	Scalar
- */
-	virtual void read_detector_type(Tango::Attribute &attr);
-	virtual bool is_detector_type_allowed(Tango::AttReqType type);
-/**
  *	Attribute temperature related methods
- *	Description: 
+ *	Description: The current temperature  (Degree Celsius)
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -196,7 +176,7 @@ public:
 	virtual bool is_temperature_allowed(Tango::AttReqType type);
 /**
  *	Attribute temperatureTarget related methods
- *	Description: Set the Temperature target of the detector (in Celsius)
+ *	Description: Define the Temperature target of the detector (in deg Celsius)
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
@@ -216,7 +196,7 @@ public:
 	virtual bool is_gain_allowed(Tango::AttReqType type);
 /**
  *	Attribute adcRate related methods
- *	Description: 
+ *	Description: Define the speed at which pixels are digitized (MHz)
  *
  *	Data type:	Tango::DevDouble
  *	Attr type:	Scalar
