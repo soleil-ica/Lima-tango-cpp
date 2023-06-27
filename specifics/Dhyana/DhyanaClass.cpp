@@ -216,7 +216,7 @@ CORBA::Any *GetParameterClass::execute(Tango::DeviceImpl *device, const CORBA::A
 CORBA::Any *SetParameterClass::execute(Tango::DeviceImpl *device, const CORBA::Any &in_any)
 {
 	cout2 << "SetParameterClass::execute(): arrived" << endl;
-	const Tango::DevVarDoubleStringArray *argin;
+	const Tango::DevVarStringArray *argin;
 	extract(in_any, argin);
 	((static_cast<Dhyana *>(device))->set_parameter(argin));
 	return new CORBA::Any();
@@ -539,7 +539,7 @@ void DhyanaClass::command_factory()
 	//	Command SetParameter
 	SetParameterClass	*pSetParameterCmd =
 		new SetParameterClass("SetParameter",
-			Tango::DEVVAR_DOUBLESTRINGARRAY, Tango::DEV_VOID,
+			Tango::DEVVAR_STRINGARRAY, Tango::DEV_VOID,
 			"",
 			"",
 			Tango::EXPERT);
