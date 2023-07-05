@@ -77,7 +77,7 @@ CORBA::Any *SetParameterCmd::execute(Tango::DeviceImpl *device,const CORBA::Any 
 
 	cout2 << "SetParameterCmd::execute(): arrived" << endl;
 
-	const Tango::DevVarDoubleArray	*argin;
+	const Tango::DevVarStringArray	*argin;
 	extract(in_any, argin);
 
 	((static_cast<Hamamatsu *>(device))->set_parameter(argin));
@@ -102,7 +102,7 @@ CORBA::Any *GetParameterCmd::execute(Tango::DeviceImpl *device,const CORBA::Any 
 
 	cout2 << "GetParameterCmd::execute(): arrived" << endl;
 
-	Tango::DevULong	argin;
+	Tango::DevString	argin;
 	extract(in_any, argin);
 
 	return insert((static_cast<Hamamatsu *>(device))->get_parameter(argin));
@@ -226,13 +226,13 @@ void HamamatsuClass::command_factory()
 		"",
 		Tango::EXPERT));
 	command_list.push_back(new GetParameterCmd("GetParameter",
-		Tango::DEV_ULONG, Tango::DEV_STRING,
-		"ID of the property",
+		Tango::DEV_STRING, Tango::DEV_STRING,
+		"Name of the parameter",
 		"",
 		Tango::EXPERT));
 	command_list.push_back(new SetParameterCmd("SetParameter",
-		Tango::DEVVAR_DOUBLEARRAY, Tango::DEV_VOID,
-		"First argument is the ID, Second is the value",
+		Tango::DEVVAR_STRINGARRAY, Tango::DEV_VOID,
+		"First argument is the parameter's name, Second is the value",
 		"",
 		Tango::EXPERT));
 
@@ -742,7 +742,7 @@ void HamamatsuClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Tango::Device_4Impl");
+	inheritance.push_back("Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 
