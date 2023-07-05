@@ -360,7 +360,6 @@ void Dhyana::add_dynamic_attributes()
 //--------------------------------------------------------
 Tango::DevState Dhyana::dev_state()
 {
-	DEBUG_STREAM << "Dhyana::State()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::dev_state) ENABLED START -----*/
 	
 	//	Add your own code
