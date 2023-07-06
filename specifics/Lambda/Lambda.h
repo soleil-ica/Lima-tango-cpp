@@ -339,6 +339,9 @@ private:
      */
     void manage_lima_exception(lima::Exception & in_exception, const std::string & in_caller_method_name);
 
+	//-------------------------------------------------------------	
+    /// Return true if the device is correctly initialized in init_device
+	bool is_device_initialized();
 
 protected :	
     //- lima stuff
