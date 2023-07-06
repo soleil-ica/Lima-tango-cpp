@@ -348,12 +348,22 @@ void Lambda::always_executed_hook()
 	//	code always executed before all requests
     try
     {
+		yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 		// During Device initialization we do not empty m_status_message to be able to display
         // status message if error occured during the device intialization (m_is_device_initialized == false)
 		if(m_is_device_initialized)
 		{
         	m_status_message.str("");
 		}
+
+		//- get the main object used to pilot the lima framework		
+		m_ct = ControlFactory::instance().get_control("Lambda");
+		
+		//- get interface to specific camera
+		m_hw = dynamic_cast<lima::Lambda::Interface*>(m_ct->hwInterface());
+		
+		//- get camera to specific detector
+		m_camera = &(m_hw->getCamera());
 
         //update state
         dev_state();
@@ -386,7 +396,6 @@ void Lambda::always_executed_hook()
 //--------------------------------------------------------
 void Lambda::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "Lambda::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Lambda::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -401,7 +410,6 @@ void Lambda::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void Lambda::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "Lambda::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Lambda::write_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -492,7 +500,7 @@ void Lambda::read_energyThreshold(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_energyThreshold(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Lambda::write_energyThreshold(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Lambda::write_energyThreshold(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevDouble	w_val;
 	attr.get_write_value(w_val);
@@ -892,7 +900,6 @@ void Lambda::add_dynamic_commands()
 Tango::DevState Lambda::dev_state()
 {
     Tango::DevState	argout = DeviceImpl::dev_state();
-    DEBUG_STREAM << "Lambda::dev_state(): entering... !" << endl;
 
     // Add your own code to control device here
     stringstream DeviceStatus;
@@ -997,5 +1004,14 @@ void Lambda::write_at_init(void)
         manage_lima_exception(le, "read_energyThreshold");
     }
 }
+
+/*****************************************************************************
+ * \brief Return true if the device is correctly initialized in init_device
+ *****************************************************************************/
+bool Lambda::is_device_initialized()
+{
+	return m_is_device_initialized;
+}
+
 /*----- PROTECTED REGION END -----*/	//	Lambda::namespace_ending
 } //	namespace
