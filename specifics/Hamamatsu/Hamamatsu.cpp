@@ -1563,8 +1563,7 @@ void Hamamatsu::manage_lima_exception(lima::Exception & in_exception, const std:
  *	method:	Hamamatsu::get_all_parameters
  *
  *	description:	method to execute "GetAllParameters"
- *	Return the list of all the camera properties in the following format:
- *	ID = idNb; PropertyName = value
+ *	ParameterName = value
  *
  * @return	
  *
@@ -1578,11 +1577,11 @@ Tango::DevString Hamamatsu::get_all_parameters()
 	//		(chapter : Writing a TANGO DS / Exchanging data)
 	//------------------------------------------------------------
 	DEBUG_STREAM << "Hamamatsu::get_all_parameters(): entering... !" << endl;
-
+    Tango::DevString argout;
 	//	Add your own code to control device here
     try
     {
-        return const_cast<Tango::DevString>(m_camera->getAllParameters().c_str());
+        argout = CORBA::string_dup(m_camera->getAllParameters().c_str());
     }
     catch(Tango::DevFailed & df)
     {
@@ -1592,7 +1591,10 @@ Tango::DevString Hamamatsu::get_all_parameters()
     {
         manage_lima_exception(e, "Hamamatsu::get_all_parameters");
     }
+    return argout;
 }
+
+
 
 
 
@@ -1601,14 +1603,14 @@ Tango::DevString Hamamatsu::get_all_parameters()
  *	method:	Hamamatsu::get_parameter
  *
  *	description:	method to execute "GetParameter"
- *	Return the name and value of a specific ID
+ *	Return the name and value of a specific parameter
  *
- * @param	argin	ID of the property
+ * @param	argin	Name of the parameter
  * @return	
  *
  */
 //+------------------------------------------------------------------
-Tango::DevString Hamamatsu::get_parameter(Tango::DevULong argin)
+Tango::DevString Hamamatsu::get_parameter(Tango::DevString argin)
 {
 	//	POGO has generated a method core with argout allocation.
 	//	If you would like to use a static reference without copying,
@@ -1617,10 +1619,12 @@ Tango::DevString Hamamatsu::get_parameter(Tango::DevULong argin)
 	//------------------------------------------------------------
 	INFO_STREAM << "Hamamatsu::get_parameter(): entering... !" << endl;
 
+    Tango::DevString argout;
 	//	Add your own code to control device here
+
     try
     {
-        return const_cast<Tango::DevString>(m_camera->getParameter(argin).c_str());
+        argout = CORBA::string_dup(m_camera->getParameter(argin).c_str());        
     }
     catch(Tango::DevFailed & df)
     {
@@ -1630,30 +1634,34 @@ Tango::DevString Hamamatsu::get_parameter(Tango::DevULong argin)
     {
         manage_lima_exception(e, "Hamamatsu::get_parameter");
     }
-
+    return argout;
 }
+
+
+
+
 
 //+------------------------------------------------------------------
 /**
  *	method:	Hamamatsu::set_parameter
  *
  *	description:	method to execute "SetParameter"
- *	Set the value of a property using it's ID
+ *	Set the value of a parameter
  *
- * @param	argin	First argument is the ID, Second is the value
+ * @param	argin	First argument is the parameter's name, Second is the value
  *
  */
 //+------------------------------------------------------------------
-void Hamamatsu::set_parameter(const Tango::DevVarDoubleArray *argin)
+void Hamamatsu::set_parameter(const Tango::DevVarStringArray *argin)
 {
 	INFO_STREAM << "Hamamatsu::set_parameter(): entering... !" << endl;
 
 	//	Add your own code to control device here
-    int id_property = (*argin)[0];
-    double value = (*argin)[1];
+    std::string parameter_name = (*argin)[0];
+    std::string value = (*argin)[1];
     try
     {
-        m_camera->setParameter(id_property, value);
+        m_camera->setParameter(parameter_name, std::stod(value));
     }
     catch(Tango::DevFailed & df)
     {
@@ -1664,9 +1672,5 @@ void Hamamatsu::set_parameter(const Tango::DevVarDoubleArray *argin)
         manage_lima_exception(e, "Hamamatsu::set_parameter");
     }
 }
-
-
-
-
 
 }	//	namespace
