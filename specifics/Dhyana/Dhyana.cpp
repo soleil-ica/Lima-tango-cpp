@@ -396,13 +396,7 @@ Tango::DevState Dhyana::dev_state()
 /**
  *	Command GetAllParameters related method
  *	Description: Return the list of all the camera available parameters and their values in the following format:
- *               GROUP_OF_PROPERTIES:ParameterName = value
- *               
- *               Available values for GROUP_OF_PROPERTIES are:
- *               - PROP fo Control properties
- *               - CAPA for Control capability properties
- *               - VENDOR for Vendor control properties
- *               - ROIS for Process image properties
+ *               ParameterName=current_value
  *
  *	@returns 
  */
@@ -443,10 +437,7 @@ Tango::DevString Dhyana::get_all_parameters()
 //--------------------------------------------------------
 /**
  *	Command GetParameter related method
- *	Description: Return the current value of a specified parameter
- *               
- *               Input argument has to be in the following format:
- *               GROUP_OF_PROPERTIES:parameter_name
+ *	Description: Return the current value of the specified parameter
  *
  *	@param argin 
  *	@returns 
@@ -455,17 +446,19 @@ Tango::DevString Dhyana::get_all_parameters()
 Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 {
 	Tango::DevString argout;
-
 	INFO_STREAM << "Dhyana::GetParameter()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::get_parameter) ENABLED START -----*/
-	
 	//	Add your own code
 	try
 	{
-		std::string result("");
+		std::string result = "";
 		result = m_camera->getParameter(std::string(argin));
-		int pos_equal = result.find(":");		
-		argout = const_cast<Tango::DevString>((result.substr(pos_equal+1)).c_str());
+		argout = new char[result.size() + 1];
+		if (result.size() > 0)
+        {
+            result.copy(argout, result.size());
+        }
+		argout[result.size()] = '\0'; 
 	}
 	catch(Tango::DevFailed& df)
     {
@@ -493,21 +486,16 @@ Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 //--------------------------------------------------------
 /**
  *	Command SetParameter related method
- *	Description: Set the value of a specific parameter. 
- *               The parameter is identified by its GROUP and name.
- *               
- *               Input argument has to be in the following format:
- *               GROUP_OF_PROPERTY:parameter_name, value
+ *	Description: Set the value of the specified parameter.
  *
  *	@param argin 
  */
 //--------------------------------------------------------
-void Dhyana::set_parameter(const Tango::DevVarDoubleStringArray *argin)
+void Dhyana::set_parameter(const Tango::DevVarStringArray *argin)
 {
 	INFO_STREAM << "Dhyana::SetParameter()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::set_parameter) ENABLED START -----*/
-	
-	if(!argin->dvalue.length() || !argin->svalue.length())
+	if(argin->length() != 2)
 	{
 		//- throw exception
 		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
@@ -516,9 +504,9 @@ void Dhyana::set_parameter(const Tango::DevVarDoubleStringArray *argin)
 	}
     try
     {
-    	std::string parameter(argin->svalue[0].in());
-		Tango::DevDouble value = argin->dvalue[0];
-        m_camera->setParameter(parameter, value);
+		std::string parameter = static_cast<std::string>((*argin)[0]);
+		std::string value_str = static_cast<std::string>((*argin)[1]);
+		m_camera->setParameter(parameter, value_str);
     }
     catch(Tango::DevFailed& df)
     {

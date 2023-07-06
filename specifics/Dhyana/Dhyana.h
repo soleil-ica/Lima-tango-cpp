@@ -206,13 +206,7 @@ public:
 	/**
 	 *	Command GetAllParameters related method
 	 *	Description: Return the list of all the camera available parameters and their values in the following format:
-	 *               GROUP_OF_PROPERTIES:ParameterName = value
-	 *               
-	 *               Available values for GROUP_OF_PROPERTIES are:
-	 *               - PROP fo Control properties
-	 *               - CAPA for Control capability properties
-	 *               - VENDOR for Vendor control properties
-	 *               - ROIS for Process image properties
+	 *               ParameterName=current_value
 	 *
 	 *	@returns 
 	 */
@@ -220,10 +214,7 @@ public:
 	virtual bool is_GetAllParameters_allowed(const CORBA::Any &any);
 	/**
 	 *	Command GetParameter related method
-	 *	Description: Return the current value of a specified parameter
-	 *               
-	 *               Input argument has to be in the following format:
-	 *               GROUP_OF_PROPERTIES:parameter_name
+	 *	Description: Return the current value of the specified parameter
 	 *
 	 *	@param argin 
 	 *	@returns 
@@ -232,15 +223,11 @@ public:
 	virtual bool is_GetParameter_allowed(const CORBA::Any &any);
 	/**
 	 *	Command SetParameter related method
-	 *	Description: Set the value of a specific parameter. 
-	 *               The parameter is identified by its GROUP and name.
-	 *               
-	 *               Input argument has to be in the following format:
-	 *               GROUP_OF_PROPERTY:parameter_name, value
+	 *	Description: Set the value of the specified parameter.
 	 *
 	 *	@param argin 
 	 */
-	virtual void set_parameter(const Tango::DevVarDoubleStringArray *argin);
+	virtual void set_parameter(const Tango::DevVarStringArray *argin);
 	virtual bool is_SetParameter_allowed(const CORBA::Any &any);
 
 
