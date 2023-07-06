@@ -1617,6 +1617,7 @@ Tango::DevString Hamamatsu::get_parameter(Tango::DevString argin)
 	//	See "TANGO Device Server Programmer's Manual"
 	//		(chapter : Writing a TANGO DS / Exchanging data)
 	//------------------------------------------------------------
+	INFO_STREAM << "Hamamatsu::get_parameter(): entering... !" << endl;
 
     Tango::DevString argout;
 	//	Add your own code to control device here
@@ -1653,7 +1654,7 @@ Tango::DevString Hamamatsu::get_parameter(Tango::DevString argin)
 //+------------------------------------------------------------------
 void Hamamatsu::set_parameter(const Tango::DevVarStringArray *argin)
 {
-	DEBUG_STREAM << "Hamamatsu::set_parameter(): entering... !" << endl;
+	INFO_STREAM << "Hamamatsu::set_parameter(): entering... !" << endl;
 
 	//	Add your own code to control device here
     std::string parameter_name = (*argin)[0];
