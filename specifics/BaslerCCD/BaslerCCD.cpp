@@ -461,11 +461,8 @@ void BaslerCCD::read_bandwidthAssigned(Tango::Attribute &attr)
         {
             if (m_camera != 0)
             {
-                if(m_camera->isBandWidthAssigned())
-                {
-                    m_camera->getBandwidthAssigned((int&) *attr_bandwidthAssigned_read);
-                    attr.set_value(attr_bandwidthAssigned_read);
-                }
+                m_camera->getBandwidthAssigned((int&) *attr_bandwidthAssigned_read);
+                attr.set_value(attr_bandwidthAssigned_read);
             }
         }
         catch (Tango::DevFailed& df)
