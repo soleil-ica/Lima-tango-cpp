@@ -45,16 +45,19 @@ static const char *RcsId = "$Id:  $";
 //	The following table gives the correspondence
 //	between commands and method name.
 //
-//  Command name|  Method name
+//  Command name      |  Method name
 //	----------------------------------------
-//  State   |  dev_state()
-//  Status  |  dev_status()
+//  State             |  dev_state()
+//  Status            |  dev_status()
+//  GetAllParameters  |  get_all_parameters()
+//  GetParameter      |  get_parameter()
+//  SetParameter      |  set_parameter()
 //
 //===================================================================
 
 
 #include "tango.h"
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 #include <Hamamatsu.h>
 #include <HamamatsuClass.h>
 #include <string> 
@@ -342,37 +345,37 @@ void Hamamatsu::write_at_init(void)
     //------------------------------------------------------------------------------
     INFO_STREAM << "Write tango hardware at Init - channel1Polarity." << endl;
     Tango::WAttribute &channel1Polarity = dev_attr->get_w_attr_by_name("channel1Polarity");
-    attr_channel1Polarity_write = PropertyHelper::get_property<Tango::DevUShort>(this,"MemorizedChannel1Polarity");
+    attr_channel1Polarity_write = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevUShort>(this, "channel1Polarity", 1);
     channel1Polarity.set_write_value(attr_channel1Polarity_write);
     write_channel1Polarity(channel1Polarity);
 
     INFO_STREAM << "Write tango hardware at Init - channel2Polarity." << endl;
     Tango::WAttribute &channel2Polarity = dev_attr->get_w_attr_by_name("channel2Polarity");
-    attr_channel2Polarity_write = PropertyHelper::get_property<Tango::DevUShort>(this,"MemorizedChannel2Polarity");
+    attr_channel2Polarity_write = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevUShort>(this, "channel2Polarity", 1);
     channel2Polarity.set_write_value(attr_channel2Polarity_write);
     write_channel2Polarity(channel2Polarity);
 
     INFO_STREAM << "Write tango hardware at Init - channel3Polarity." << endl;
     Tango::WAttribute &channel3Polarity = dev_attr->get_w_attr_by_name("channel3Polarity");
-    attr_channel3Polarity_write = PropertyHelper::get_property<Tango::DevUShort>(this,"MemorizedChannel3Polarity");
+    attr_channel3Polarity_write = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevUShort>(this, "channel3Polarity", 1);
     channel3Polarity.set_write_value(attr_channel3Polarity_write);
     write_channel3Polarity(channel3Polarity);
 
     INFO_STREAM << "Write tango hardware at Init - channel1Kind." << endl;
     Tango::WAttribute &channel1Kind = dev_attr->get_w_attr_by_name("channel1Kind");
-    attr_channel1Kind_write = PropertyHelper::get_property<Tango::DevUShort>(this,"MemorizedChannel1Kind");
+    attr_channel1Kind_write = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevUShort>(this, "channel1Kind", 1);
     channel1Kind.set_write_value(attr_channel1Kind_write);
     write_channel1Kind(channel1Kind);
 
     INFO_STREAM << "Write tango hardware at Init - channel2Kind." << endl;
     Tango::WAttribute &channel2Kind = dev_attr->get_w_attr_by_name("channel2Kind");
-    attr_channel2Kind_write = PropertyHelper::get_property<Tango::DevUShort>(this,"MemorizedChannel2Kind");
+    attr_channel2Kind_write = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevUShort>(this, "channel2Kind", 1);
     channel2Kind.set_write_value(attr_channel2Kind_write);
     write_channel2Kind(channel2Kind);
 
     INFO_STREAM << "Write tango hardware at Init - channel3Kind." << endl;
     Tango::WAttribute &channel3Kind = dev_attr->get_w_attr_by_name("channel3Kind");
-    attr_channel3Kind_write = PropertyHelper::get_property<Tango::DevUShort>(this,"MemorizedChannel3Kind");
+    attr_channel3Kind_write = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevUShort>(this, "channel3Kind", 1);
     channel3Kind.set_write_value(attr_channel3Kind_write);
     write_channel3Kind(channel3Kind);
 }
@@ -627,14 +630,6 @@ void Hamamatsu::get_device_property()
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "MemorizedHighDynamicRangeEnabled");
 
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "10", "ExpertFrameBufferSize");
-
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "MemorizedChannel1Polarity");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "MemorizedChannel2Polarity");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "MemorizedChannel3Polarity");
-
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "MemorizedChannel1Kind");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "MemorizedChannel2Kind");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "MemorizedChannel3Kind");
 }
 
 //+----------------------------------------------------------------------------
@@ -648,9 +643,13 @@ void Hamamatsu::always_executed_hook()
 {
     try
     {
-        m_status_message.str("");
-
         yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+        // During Device initialization we do not empty m_status_message (status handler) to be able to display
+        // status message if error occured during the device intialization
+        if(m_is_device_initialized)
+        {
+            m_status_message.str("");
+        }
 
         //- get the singleton control objet used to pilot the lima framework
 		m_ct = ControlFactory::instance().get_control("Hamamatsu");
@@ -737,7 +736,7 @@ void Hamamatsu::write_channel1Polarity(Tango::WAttribute &attr)
         attr.get_write_value(attr_channel1Polarity_write);
         m_camera->setOutputTriggerPolarity(CHANNEL_1, (lima::Hamamatsu::Camera::Output_Trigger_Polarity)attr_channel1Polarity_write);
 
-        PropertyHelper::set_property(this, "MemorizedChannel1Polarity", attr_channel1Polarity_write);
+        yat4tango::PropertyHelper::set_memorized_attribute(this, "channel1Polarity", attr_channel1Polarity_write);
     }
     catch (Tango::DevFailed &df)
     {
@@ -791,7 +790,7 @@ void Hamamatsu::write_channel2Polarity(Tango::WAttribute &attr)
         attr.get_write_value(attr_channel2Polarity_write);
         m_camera->setOutputTriggerPolarity(CHANNEL_2, (lima::Hamamatsu::Camera::Output_Trigger_Polarity)attr_channel2Polarity_write);
 
-		PropertyHelper::set_property(this, "MemorizedChannel2Polarity",  attr_channel2Polarity_write);
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "channel2Polarity", attr_channel2Polarity_write);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -845,7 +844,7 @@ void Hamamatsu::write_channel3Polarity(Tango::WAttribute &attr)
         attr.get_write_value(attr_channel3Polarity_write);
         m_camera->setOutputTriggerPolarity(CHANNEL_3, (lima::Hamamatsu::Camera::Output_Trigger_Polarity)attr_channel3Polarity_write);
 
-		PropertyHelper::set_property(this, "MemorizedChannel3Polarity", attr_channel3Polarity_write);
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "channel3Polarity", attr_channel3Polarity_write);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -899,7 +898,7 @@ void Hamamatsu::write_channel1Kind(Tango::WAttribute &attr)
         attr.get_write_value(attr_channel1Kind_write);
         m_camera->setOutputTriggerKind(CHANNEL_1, (lima::Hamamatsu::Camera::Output_Trigger_Kind)attr_channel1Kind_write);
 
-		PropertyHelper::set_property(this, "MemorizedChannel1Kind", attr_channel1Kind_write);
+        yat4tango::PropertyHelper::set_memorized_attribute(this, "channel1Kind", attr_channel1Kind_write);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -953,7 +952,7 @@ void Hamamatsu::write_channel2Kind(Tango::WAttribute &attr)
         attr.get_write_value(attr_channel2Kind_write);
         m_camera->setOutputTriggerKind(CHANNEL_2, (lima::Hamamatsu::Camera::Output_Trigger_Kind)attr_channel2Kind_write);
 
-		PropertyHelper::set_property(this, "MemorizedChannel2Kind", attr_channel2Kind_write);
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "channel2Kind", attr_channel2Kind_write);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -1007,7 +1006,7 @@ void Hamamatsu::write_channel3Kind(Tango::WAttribute &attr)
         attr.get_write_value(attr_channel3Kind_write);
         m_camera->setOutputTriggerKind(CHANNEL_3, (lima::Hamamatsu::Camera::Output_Trigger_Kind)attr_channel3Kind_write);
 
-		PropertyHelper::set_property(this, "MemorizedChannel3Kind", attr_channel3Kind_write);
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "channel3Kind", attr_channel3Kind_write);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -1067,7 +1066,7 @@ void Hamamatsu::write_topViewExposureTime(Tango::WAttribute &attr)
         m_camera->setViewExpTime1((double) (attr_topViewExposureTime_write / 1000.0));
 
         m_top_view_exposure_time = (double)attr_topViewExposureTime_write;
-		PropertyHelper::set_property(this, "MemorizedTopViewExposureTime", m_top_view_exposure_time);
+		yat4tango::PropertyHelper::set_property(this, "MemorizedTopViewExposureTime", m_top_view_exposure_time);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -1125,7 +1124,7 @@ void Hamamatsu::write_bottomViewExposureTime(Tango::WAttribute &attr)
         m_camera->setViewExpTime2((double) (attr_bottomViewExposureTime_write / 1000.0));
 
         m_bottom_view_exposure_time = (double)attr_bottomViewExposureTime_write;
-		PropertyHelper::set_property(this, "MemorizedBottomViewExposureTime", m_bottom_view_exposure_time);
+		yat4tango::PropertyHelper::set_property(this, "MemorizedBottomViewExposureTime", m_bottom_view_exposure_time);
 	}
     catch(Tango::DevFailed & df)
     {
@@ -1220,7 +1219,7 @@ void Hamamatsu::write_wViewEnabled(Tango::WAttribute &attr)
 
         m_camera->setViewMode(attr_wViewEnabled_write);
         m_wView_enabled = attr_wViewEnabled_write;
-		PropertyHelper::set_property(this, "MemorizedWViewEnabled", m_wView_enabled);
+		yat4tango::PropertyHelper::set_property(this, "MemorizedWViewEnabled", m_wView_enabled);
 
         if(m_wView_enabled)
         {
@@ -1505,6 +1504,9 @@ Tango::DevState Hamamatsu::dev_state()
 	{
 		Device_state  = Tango::FAULT;
 		Device_status << m_status_message.str();
+		//Update LimaDetector state and status
+        ControlFactory::instance().set_state(Device_state);
+        ControlFactory::instance().set_status(Device_status.str());
 	}
 	else
 	{
@@ -1554,5 +1556,121 @@ void Hamamatsu::manage_lima_exception(lima::Exception & in_exception, const std:
                                    in_caller_method_name.c_str());
 }
 
+
+
+//+------------------------------------------------------------------
+/**
+ *	method:	Hamamatsu::get_all_parameters
+ *
+ *	description:	method to execute "GetAllParameters"
+ *	ParameterName = value
+ *
+ * @return	
+ *
+ */
+//+------------------------------------------------------------------
+Tango::DevString Hamamatsu::get_all_parameters()
+{
+	//	POGO has generated a method core with argout allocation.
+	//	If you would like to use a static reference without copying,
+	//	See "TANGO Device Server Programmer's Manual"
+	//		(chapter : Writing a TANGO DS / Exchanging data)
+	//------------------------------------------------------------
+	DEBUG_STREAM << "Hamamatsu::get_all_parameters(): entering... !" << endl;
+    Tango::DevString argout;
+	//	Add your own code to control device here
+    try
+    {
+        argout = CORBA::string_dup(m_camera->getAllParameters().c_str());
+    }
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::get_all_parameters");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::get_all_parameters");
+    }
+    return argout;
+}
+
+
+
+
+
+//+------------------------------------------------------------------
+/**
+ *	method:	Hamamatsu::get_parameter
+ *
+ *	description:	method to execute "GetParameter"
+ *	Return the name and value of a specific parameter
+ *
+ * @param	argin	Name of the parameter
+ * @return	
+ *
+ */
+//+------------------------------------------------------------------
+Tango::DevString Hamamatsu::get_parameter(Tango::DevString argin)
+{
+	//	POGO has generated a method core with argout allocation.
+	//	If you would like to use a static reference without copying,
+	//	See "TANGO Device Server Programmer's Manual"
+	//		(chapter : Writing a TANGO DS / Exchanging data)
+	//------------------------------------------------------------
+	INFO_STREAM << "Hamamatsu::get_parameter(): entering... !" << endl;
+
+    Tango::DevString argout;
+	//	Add your own code to control device here
+
+    try
+    {
+        argout = CORBA::string_dup(m_camera->getParameter(argin).c_str());        
+    }
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::get_parameter");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::get_parameter");
+    }
+    return argout;
+}
+
+
+
+
+
+//+------------------------------------------------------------------
+/**
+ *	method:	Hamamatsu::set_parameter
+ *
+ *	description:	method to execute "SetParameter"
+ *	Set the value of a parameter
+ *
+ * @param	argin	First argument is the parameter's name, Second is the value
+ *
+ */
+//+------------------------------------------------------------------
+void Hamamatsu::set_parameter(const Tango::DevVarStringArray *argin)
+{
+	INFO_STREAM << "Hamamatsu::set_parameter(): entering... !" << endl;
+
+	//	Add your own code to control device here
+    std::string parameter_name = (*argin)[0];
+    std::string value = (*argin)[1];
+    try
+    {
+        m_camera->setParameter(parameter_name, std::stod(value));
+    }
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::set_parameter");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::set_parameter");
+    }
+}
 
 }	//	namespace

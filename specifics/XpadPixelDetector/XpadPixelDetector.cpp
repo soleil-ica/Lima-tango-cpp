@@ -70,7 +70,7 @@ static const char *RcsId = "$Id:  $";
 //
 //===================================================================
 #include "tango.h"
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 
 #include <XpadPixelDetector.h>
 #include <XpadPixelDetectorClass.h>

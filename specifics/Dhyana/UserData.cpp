@@ -4,7 +4,7 @@
 //
 // description : 
 //
-// project :	XiaDxp Project
+// project :	Dhyana Project
 //
 // $Author: noureddine $
 //
@@ -15,9 +15,9 @@
 //=============================================================================
 
 #include "UserData.h"
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 
-namespace Xspress3_ns
+namespace Dhyana_ns
 {
 //----------------------------------------------------------------------------------------------------------------------
 //	
@@ -161,26 +161,51 @@ void BooleanUserData::set_value(Tango::DevBoolean value)
 /////////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------------------------------------------------
-//	
+// ctor
 //----------------------------------------------------------------------------------------------------------------------	
 StringUserData::StringUserData(const std::string& name)
 : m_name(name)
 {
-    CREATE_DEVSTRING_ATTRIBUTE(m_value, MAX_ATTRIBUTE_STRING_LENGTH);
+    m_value = new char[MAX_ATTRIBUTE_STRING_LENGTH];
+    std::memset(m_value, 0, MAX_ATTRIBUTE_STRING_LENGTH * sizeof(char));
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-//	
+// ctor copy
+//----------------------------------------------------------------------------------------------------------------------	
+StringUserData::StringUserData(const StringUserData& other)
+{
+    m_value = new char[MAX_ATTRIBUTE_STRING_LENGTH];
+    std::memcpy(m_value, other.m_value, MAX_ATTRIBUTE_STRING_LENGTH * sizeof(char));
+}
+    
+//----------------------------------------------------------------------------------------------------------------------
+// operator assignement
+//----------------------------------------------------------------------------------------------------------------------	
+StringUserData& StringUserData::operator=(const StringUserData& other) 
+{
+    if (this != &other) 
+    {
+        delete[] m_value;
+        m_value = other.m_value;
+        m_value = new char[MAX_ATTRIBUTE_STRING_LENGTH];
+        std::memcpy(m_value, other.m_value, MAX_ATTRIBUTE_STRING_LENGTH * sizeof(char));
+    }
+    return *this;
+}
+    
+//----------------------------------------------------------------------------------------------------------------------
+//	dtor
 //----------------------------------------------------------------------------------------------------------------------
 StringUserData::~StringUserData()
 {
-    DELETE_DEVSTRING_ATTRIBUTE(m_value);
+    delete[] m_value;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 //	
 //----------------------------------------------------------------------------------------------------------------------
-const Tango::DevString* StringUserData::get_value()
+const Tango::DevString& StringUserData::get_value()
 {
     yat::MutexLock scoped_lock(m_lock);
     return m_value;
@@ -192,8 +217,34 @@ const Tango::DevString* StringUserData::get_value()
 void StringUserData::set_value(std::string value)
 {
     yat::MutexLock scoped_lock(m_lock);
-    strcpy(*m_value, value.c_str());
+    strcpy(m_value, value.c_str());
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+
+EnumUserData::EnumUserData(const std::string& name)
+: m_name(name)
+{
+
+}
+
+EnumUserData::~EnumUserData()
+{
+
+}
+
+const Tango::DevEnum& EnumUserData::get_value()
+{
+    yat::MutexLock scoped_lock(m_lock);
+    return m_value;
+}
+
+void EnumUserData::set_value(Tango::DevEnum value)
+{
+    yat::MutexLock scoped_lock(m_lock);
+    m_value = value;
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////
 
@@ -234,4 +285,59 @@ void ChannelUserData::set_value(std::vector<Tango::DevULong> value)
 
 /////////////////////////////////////////////////////////////////////////////////
 
+//----------------------------------------------------------------------------------------------------------------------
+//	
+//----------------------------------------------------------------------------------------------------------------------
+RoiUserData::RoiUserData(const std::string& name, int channel, int roi_num)
+: m_name(name),
+  m_channel(channel),
+  m_roi_num(roi_num),
+  m_data(0)
+{
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------------------------------------------
+RoiUserData::~RoiUserData()
+{
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------------------------------------------
+const Tango::DevULong& RoiUserData::get_value()
+{
+    yat::MutexLock scoped_lock(m_lock);
+    return m_data;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+//----------------------------------------------------------------------------------------------------------------------
+void RoiUserData::set_value(Tango::DevULong value)
+{
+    yat::MutexLock scoped_lock(m_lock);
+    m_data = value;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------------
+//	
+//----------------------------------------------------------------------------------------------------------------------
+const int& RoiUserData::get_channel()
+{
+    return m_channel;
+}
+
+
+//----------------------------------------------------------------------------------------------------------------------
+//	
+//----------------------------------------------------------------------------------------------------------------------
+const int& RoiUserData::get_roi_num()
+{
+    return m_roi_num;
+}
+
+/////////////////////////////////////////////////////////////////////////////////
 } // namespace

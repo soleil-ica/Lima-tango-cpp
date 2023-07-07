@@ -354,11 +354,42 @@ public :
  */
 	virtual bool is_channel3Kind_allowed(Tango::AttReqType type);
 /**
+ *	Execution allowed for GetAllParameters command.
+ */
+	virtual bool is_GetAllParameters_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for GetParameter command.
+ */
+	virtual bool is_GetParameter_allowed(const CORBA::Any &any);
+/**
+ *	Execution allowed for SetParameter command.
+ */
+	virtual bool is_SetParameter_allowed(const CORBA::Any &any);
+/**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
  *	@exception DevFailed
  */
 	virtual Tango::DevState	dev_state();
+/**
+ * ParameterName = value
+ *	@return	
+ *	@exception DevFailed
+ */
+	Tango::DevString	get_all_parameters();
+/**
+ * Return the name and value of a specific parameter
+ *	@param	argin	Name of the parameter
+ *	@return	
+ *	@exception DevFailed
+ */
+	Tango::DevString	get_parameter(Tango::DevString);
+/**
+ * Set the value of a parameter
+ *	@param	argin	First argument is the parameter's name, Second is the value
+ *	@exception DevFailed
+ */
+	void	set_parameter(const Tango::DevVarStringArray *);
 
 /**
  *	Read the device properties from database

@@ -66,7 +66,7 @@ static const char *RcsId = "$Id:  $";
 //
 //===================================================================
 #include <tango.h>
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 
 #include <LimaDetector.h>
 #include <LimaDetectorClass.h>
@@ -4648,7 +4648,6 @@ void LimaDetector::create_log_info_attributes(void)
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION));
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSJUNGFRAU_NAME), YAT_XSTR(SLSJUNGFRAU_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSEIGER_NAME), YAT_XSTR(SLSEIGER_VERSION) );
-    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XSPRESS3_NAME), YAT_XSTR(XSPRESS3_VERSION));
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SPECTRAL_NAME), YAT_XSTR(SPECTRAL_VERSION));
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UFXC_NAME), YAT_XSTR(UFXC_VERSION) ); 
 #elif defined(UNIX_64_EL7) //- linux64-el7

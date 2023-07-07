@@ -42,8 +42,7 @@ DetectorType                        SimulatorCCD                String          
                                                                                         - SlsJungfrau
                                                                                         - Ufxc
                                                                                         - UviewCCD                                                                                          
-                                                                                        - XpadPixelDetector                                                                                 
-                                                                                        - Xspress3
+                                                                                        - XpadPixelDetector
 
 AutoSaveResetRoi                    false                       Boolean                 Memorize the "full frame" automatically at the call of "ResetRoi"                                    
 

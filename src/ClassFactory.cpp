@@ -123,16 +123,16 @@ static const char *RcsId = "$Id:  $";
 #include <LambdaClass.h>
 #endif
 
+#ifdef UVIEW_ENABLED
+#include <UviewCCDClass.h>
+#endif
+
 #ifdef DHYANA_ENABLED
 #include <DhyanaClass.h>
 #endif
 
 #ifdef UFXC_ENABLED
 #include <UfxcClass.h>
-#endif
-
-#ifdef XSPRESS3_ENABLED
-#include <Xspress3Class.h>
 #endif
 
 #ifdef SPECTRALINSTRUMENT_ENABLED  
@@ -235,17 +235,17 @@ void Tango::DServer::class_factory()
     add_class(Lambda_ns::LambdaClass::init("Lambda"));
 #endif	
 
+#ifdef UVIEW_ENABLED        
+    add_class(UviewCCD_ns::UviewCCDClass::init("UviewCCD"));
+#endif
+
 #ifdef DHYANA_ENABLED        
     add_class(Dhyana_ns::DhyanaClass::init("Dhyana"));
 #endif
 	
 #ifdef UFXC_ENABLED        
     add_class(Ufxc_ns::UfxcClass::init("Ufxc"));
-#endif	
-
-#ifdef XSPRESS3_ENABLED        
-    add_class(Xspress3_ns::Xspress3Class::init("Xspress3"));
-#endif	
+#endif
 
 #ifdef SPECTRALINSTRUMENT_ENABLED  
     add_class(SpectralInstrument_ns::SpectralInstrumentClass::init("SpectralInstrument"));

@@ -251,7 +251,6 @@ public:
  *	- Ufxc<BR>
  *	- UviewCCD<BR>
  *	- XpadPixelDetector<BR>
- *	- Xspress3<BR>
  */
 	string	detectorType;
 /**
