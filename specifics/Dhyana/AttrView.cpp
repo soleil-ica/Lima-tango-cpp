@@ -12,6 +12,7 @@ m_device(dev)
 
 AttrView::~AttrView()
 {
+	delete m_dim;
 }
 
 yat4tango::DynamicInterfaceManager* AttrView::get_dim()

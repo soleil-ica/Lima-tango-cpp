@@ -410,7 +410,7 @@ Tango::DevString Dhyana::get_all_parameters()
 	//	Add your own code
 	try
 	{
-		return const_cast<Tango::DevString>(m_camera->getAllParameters().c_str());
+        argout = CORBA::string_dup(m_camera->getAllParameters().c_str());
 	}
 	catch(Tango::DevFailed& df)
     {
@@ -451,14 +451,7 @@ Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 	//	Add your own code
 	try
 	{
-		std::string result = "";
-		result = m_camera->getParameter(std::string(argin));
-		argout = new char[result.size() + 1];
-		if (result.size() > 0)
-        {
-            result.copy(argout, result.size());
-        }
-		argout[result.size()] = '\0'; 
+        argout = CORBA::string_dup(m_camera->getParameter(argin).c_str());      
 	}
 	catch(Tango::DevFailed& df)
     {
