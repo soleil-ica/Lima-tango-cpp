@@ -491,8 +491,8 @@ void Layout::write_operationType(Tango::WAttribute &attr)
                                            "\n<<"
                                            "\nFLIP"
 										   "\nROTATION"
-										   "\CIRPAD_2X10"
-										   "\CIRPAD_4X5"										   
+										   "\nCIRPAD_2X10"
+										   "\nCIRPAD_4X5"										   
                                            "\nNONE",
                                            "Layout::write_operationType");
         }

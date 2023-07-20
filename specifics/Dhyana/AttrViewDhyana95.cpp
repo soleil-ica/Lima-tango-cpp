@@ -19,7 +19,6 @@ AttrViewDhyana95::~AttrViewDhyana95()
 
 void AttrViewDhyana95::init()
 {
-    m_dim->dynamic_attributes_manager().remove_attributes();
     try
     {
         //Create model attribute
