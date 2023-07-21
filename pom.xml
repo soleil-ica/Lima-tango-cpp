@@ -9,7 +9,7 @@
 
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-${aol}-${mode}</artifactId>
-    <version>1.12.1</version>
+    <version>1.12.2</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -44,11 +44,11 @@
 
             <properties>
                 <BASLER.name>Basler</BASLER.name>
-                <BASLER.version>1.6.2</BASLER.version>
+                <BASLER.version>1.6.3</BASLER.version>
                 <IMXPAD.name>ImXpad</IMXPAD.name>
                 <IMXPAD.version>1.2.0</IMXPAD.version>
                 <MARCCD.name>Marccd</MARCCD.name>
-                <MARCCD.version>1.3.19</MARCCD.version>
+                <MARCCD.version>1.3.20</MARCCD.version>
                 <MERLIN.name>Merlin</MERLIN.name>
                 <MERLIN.version>1.3.1</MERLIN.version>
                 <PILATUS.name>Pilatus</PILATUS.name>
@@ -253,7 +253,7 @@
                 <PRINCETON.name>Princeton</PRINCETON.name>
                 <PRINCETON.version>1.5.2</PRINCETON.version>
                 <UVIEW.name>Uview</UVIEW.name>
-                <UVIEW.version>1.1.2</UVIEW.version>
+                <UVIEW.version>1.1.3</UVIEW.version>
             </properties>
                 
             <dependencies>
