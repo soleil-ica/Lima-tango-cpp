@@ -881,16 +881,13 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 #ifdef UFXC_ENABLED
         if (detector_type == "Ufxc")
         {
+            unsigned long sfp_count         = 0;
             std::string   ufxc_model        = "U2C";
             unsigned long pixel_depth       = 14;
             std::string   config_ip_address = "127.0.0.1";
             unsigned long config_port       = 0;
-            std::string   SFP1_ip_address   = "127.0.0.1";
-            unsigned long SFP1_port         = 0;
-            std::string   SFP2_ip_address   = "127.0.0.1";
-            unsigned long SFP2_port         = 0;
-            std::string   SFP3_ip_address   = "127.0.0.1";
-            unsigned long SFP3_port         = 0;
+            std::vector<std::string>   SFP_ip_address;
+            std::vector<unsigned long> SFP_port;
             unsigned long timeout           = 0;
             unsigned long SFP_MTU           = 1500;
             std::string   counting_mode     = "DEFAULT";
@@ -924,14 +921,23 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 // specific device properties
                 {
                     Tango::DbData db_data;
+                    db_data.push_back(Tango::DbDatum("SFPCount"));
+                    (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                    db_data[0] >> sfp_count;
+
+                    db_data.clear();
                     db_data.push_back(Tango::DbDatum("ConfigIpAddress"));
                     db_data.push_back(Tango::DbDatum("ConfigPort"));
-                    db_data.push_back(Tango::DbDatum("SFP1IpAddress"));
-                    db_data.push_back(Tango::DbDatum("SFP1Port"));
-                    db_data.push_back(Tango::DbDatum("SFP2IpAddress"));
-                    db_data.push_back(Tango::DbDatum("SFP2Port"));
-                    db_data.push_back(Tango::DbDatum("SFP3IpAddress"));
-                    db_data.push_back(Tango::DbDatum("SFP3Port"));
+                    for(unsigned long i=0 ; i<sfp_count ; i++)
+                    {
+                        std::stringstream ssSFPi_ip_address;
+                        ssSFPi_ip_address << "SFP" << i+1 << "IpAddress";
+                        std::stringstream ssSFPi_port;
+                        ssSFPi_port << "SFP" << i+1 << "Port";
+
+                        db_data.push_back(Tango::DbDatum(ssSFPi_ip_address.str()));
+                        db_data.push_back(Tango::DbDatum(ssSFPi_port.str()));
+                    }
                     db_data.push_back(Tango::DbDatum("Timeout"));
                     db_data.push_back(Tango::DbDatum("SFPMTU"));
                     db_data.push_back(Tango::DbDatum("MemorizedCountingMode"));
@@ -943,12 +949,15 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                     
                     db_data[prop_index++] >> config_ip_address;
                     db_data[prop_index++] >> config_port;
-                    db_data[prop_index++] >> SFP1_ip_address;
-                    db_data[prop_index++] >> SFP1_port;
-                    db_data[prop_index++] >> SFP2_ip_address;
-                    db_data[prop_index++] >> SFP2_port;
-                    db_data[prop_index++] >> SFP3_ip_address;
-                    db_data[prop_index++] >> SFP3_port;
+                    for(unsigned long i=0 ; i<sfp_count ; i++)
+                    {
+                        std::string   SFPi_ip_address   = "127.0.0.1";
+                        unsigned long SFPi_port         = 0;
+                        db_data[prop_index++] >> SFPi_ip_address;
+                        db_data[prop_index++] >> SFPi_port;
+                        SFP_ip_address.push_back(SFPi_ip_address);
+                        SFP_port.push_back(SFPi_port);
+                    }
                     db_data[prop_index++] >> timeout;
                     db_data[prop_index++] >> SFP_MTU;
                     db_data[prop_index++] >> counting_mode;
@@ -957,9 +966,7 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
 
                 m_camera = static_cast<void*> (new Ufxc::Camera(ufxc_model,
                                                                 config_ip_address, config_port,
-                                                                SFP1_ip_address, SFP1_port,
-                                                                SFP2_ip_address, SFP2_port,
-                                                                SFP3_ip_address, SFP3_port,
+                                                                SFP_ip_address, SFP_port,
                                                                 SFP_MTU,
                                                                 timeout,
                                                                 pixel_depth,

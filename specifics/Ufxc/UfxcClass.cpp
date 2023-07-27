@@ -366,50 +366,6 @@ void UfxcClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	threshold_high->set_default_properties(threshold_high_prop);
 	att_list.push_back(threshold_high);
 
-	//	Attribute : thresholdLow1
-	thresholdLow1Attrib	*threshold_low1 = new thresholdLow1Attrib();
-	Tango::UserDefaultAttrProp	threshold_low1_prop;
-	threshold_low1_prop.set_unit("DAC");
-	threshold_low1_prop.set_standard_unit("DAC");
-	threshold_low1_prop.set_display_unit("DAC");
-	threshold_low1_prop.set_description("Get threshold Low  for the chip A");
-	threshold_low1->set_default_properties(threshold_low1_prop);
-	threshold_low1->set_disp_level(Tango::EXPERT);
-	att_list.push_back(threshold_low1);
-
-	//	Attribute : thresholdHigh1
-	thresholdHigh1Attrib	*threshold_high1 = new thresholdHigh1Attrib();
-	Tango::UserDefaultAttrProp	threshold_high1_prop;
-	threshold_high1_prop.set_unit("DAC");
-	threshold_high1_prop.set_standard_unit("DAC");
-	threshold_high1_prop.set_display_unit("DAC");
-	threshold_high1_prop.set_description("Get threshold High for the chip A");
-	threshold_high1->set_default_properties(threshold_high1_prop);
-	threshold_high1->set_disp_level(Tango::EXPERT);
-	att_list.push_back(threshold_high1);
-
-	//	Attribute : thresholdLow2
-	thresholdLow2Attrib	*threshold_low2 = new thresholdLow2Attrib();
-	Tango::UserDefaultAttrProp	threshold_low2_prop;
-	threshold_low2_prop.set_unit("DAC");
-	threshold_low2_prop.set_standard_unit("DAC");
-	threshold_low2_prop.set_display_unit("DAC");
-	threshold_low2_prop.set_description("Get threshold Low for the chip B");
-	threshold_low2->set_default_properties(threshold_low2_prop);
-	threshold_low2->set_disp_level(Tango::EXPERT);
-	att_list.push_back(threshold_low2);
-
-	//	Attribute : thresholdHigh2
-	thresholdHigh2Attrib	*threshold_high2 = new thresholdHigh2Attrib();
-	Tango::UserDefaultAttrProp	threshold_high2_prop;
-	threshold_high2_prop.set_unit("DAC");
-	threshold_high2_prop.set_standard_unit("DAC");
-	threshold_high2_prop.set_display_unit("DAC");
-	threshold_high2_prop.set_description("Get threshold High for the chip B");
-	threshold_high2->set_default_properties(threshold_high2_prop);
-	threshold_high2->set_disp_level(Tango::EXPERT);
-	att_list.push_back(threshold_high2);
-
 	//	Attribute : triggerAcquisitionFrequency
 	triggerAcquisitionFrequencyAttrib	*trigger_acquisition_frequency = new triggerAcquisitionFrequencyAttrib();
 	Tango::UserDefaultAttrProp	trigger_acquisition_frequency_prop;
@@ -534,96 +490,6 @@ void UfxcClass::set_default_property()
 
 	prop_name = "ConfigPort";
 	prop_desc = "Config Port";
-	prop_def  = "0";
-	vect_data.clear();
-	vect_data.push_back("0");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "SFP1IpAddress";
-	prop_desc = "SFP1 Ip Address";
-	prop_def  = "127.0.0.1";
-	vect_data.clear();
-	vect_data.push_back("127.0.0.1");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "SFP1Port";
-	prop_desc = "SFP1 Port";
-	prop_def  = "0";
-	vect_data.clear();
-	vect_data.push_back("0");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "SFP2IpAddress";
-	prop_desc = "SFP2 Ip Address";
-	prop_def  = "127.0.0.1";
-	vect_data.clear();
-	vect_data.push_back("127.0.0.1");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "SFP2Port";
-	prop_desc = "SFP2 Port";
-	prop_def  = "0";
-	vect_data.clear();
-	vect_data.push_back("0");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "SFP3IpAddress";
-	prop_desc = "SFP3 Ip Address";
-	prop_def  = "127.0.0.1";
-	vect_data.clear();
-	vect_data.push_back("127.0.0.1");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "SFP3Port";
-	prop_desc = "SFP3 Port";
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
@@ -772,6 +638,21 @@ void UfxcClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
+	prop_name = "SFPCount";
+	prop_desc = "Number of SFP adresses (ip & port)";
+	prop_def  = "1";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 }
 //+----------------------------------------------------------------------------
 //
@@ -909,7 +790,7 @@ void UfxcClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Tango::Device_4Impl");
+	inheritance.push_back("Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

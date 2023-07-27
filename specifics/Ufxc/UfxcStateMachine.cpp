@@ -202,62 +202,6 @@ bool Ufxc::is_thresholdHigh_allowed(Tango::AttReqType type)
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		Ufxc::is_thresholdHigh1_allowed
-// 
-// description : 	Read/Write allowed for thresholdHigh1 attribute.
-//
-//-----------------------------------------------------------------------------
-bool Ufxc::is_thresholdHigh1_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::FAULT	||
-		get_state() == Tango::INIT	||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
-		{
-           return true;
-		}
-		
-		if ( get_state()==Tango::FAULT && is_device_initialized() )
-		{
-           return true;
-		}	
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Ufxc::is_thresholdHigh2_allowed
-// 
-// description : 	Read/Write allowed for thresholdHigh2 attribute.
-//
-//-----------------------------------------------------------------------------
-bool Ufxc::is_thresholdHigh2_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::FAULT	||
-		get_state() == Tango::INIT	||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
-		{
-           return true;
-		}
-		
-		if ( get_state()==Tango::FAULT && is_device_initialized() )
-		{
-           return true;
-		}	
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
 // method : 		Ufxc::is_currentAlias_allowed
 // 
 // description : 	Read/Write allowed for currentAlias attribute.
@@ -348,62 +292,6 @@ bool Ufxc::is_geometricalCorrection_allowed(Tango::AttReqType type)
 //
 //-----------------------------------------------------------------------------
 bool Ufxc::is_currentConfigFile_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::FAULT	||
-		get_state() == Tango::INIT	||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
-		{
-           return true;
-		}
-		
-		if ( get_state()==Tango::FAULT && is_device_initialized() )
-		{
-           return true;
-		}	
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Ufxc::is_thresholdLow1_allowed
-// 
-// description : 	Read/Write allowed for thresholdLow1 attribute.
-//
-//-----------------------------------------------------------------------------
-bool Ufxc::is_thresholdLow1_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::FAULT	||
-		get_state() == Tango::INIT	||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
-		{
-           return true;
-		}
-		
-		if ( get_state()==Tango::FAULT && is_device_initialized() )
-		{
-           return true;
-		}	
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Ufxc::is_thresholdLow2_allowed
-// 
-// description : 	Read/Write allowed for thresholdLow2 attribute.
-//
-//-----------------------------------------------------------------------------
-bool Ufxc::is_thresholdLow2_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::FAULT	||
 		get_state() == Tango::INIT	||
