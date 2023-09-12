@@ -35,6 +35,7 @@
 
 #include <tango.h>
 #include <yat/memory/UniquePtr.h>
+#include <yat4tango/PropertyHelper.h>
 
 #include "AttrView.h"
 #include "Dhyana6060Camera.h"
