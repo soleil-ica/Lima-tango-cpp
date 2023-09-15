@@ -1504,9 +1504,6 @@ Tango::DevState Hamamatsu::dev_state()
 	{
 		Device_state  = Tango::FAULT;
 		Device_status << m_status_message.str();
-		//Update LimaDetector state and status
-        ControlFactory::instance().set_state(Device_state);
-        ControlFactory::instance().set_status(Device_status.str());
 	}
 	else
 	{
