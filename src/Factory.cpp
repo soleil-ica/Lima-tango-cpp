@@ -1370,41 +1370,38 @@ Tango::DevState ControlFactory::get_state(void)
     yat::AutoMutex<> _lock(m_lock);
     CtControl::Status ctStatus;
     m_control->getStatus(ctStatus);
-    // In case of device state is FAULT we do not check/modify internal state to propagate 
-    // the Specific device state and status to the LimaDetector Device
-    if(m_state != Tango::FAULT)
+
+    switch(ctStatus.AcquisitionStatus)
     {
-        switch(ctStatus.AcquisitionStatus)
+        case lima::AcqReady:
         {
-            case lima::AcqReady:
-            {
-                set_state(Tango::STANDBY);
-                set_status("Waiting for a user request ...\n");
-            }
-                break;
-
-            case lima::AcqRunning:
-            {
-                set_state(Tango::RUNNING);
-                set_status("Acquisition in Progress ...\n");
-            }
-                break;
-
-            case lima::AcqConfig:
-            {
-                set_state(Tango::DISABLE);
-                set_status("Configuration/Calibration in Progress ...\n");
-            }
-                break;
-
-            default:
-            {
-                set_state(Tango::FAULT);
-                set_status("Error has occured !\n");
-            }
-                break;
+            set_state(Tango::STANDBY);
+            set_status("Waiting for a user request ...\n");
         }
+            break;
+
+        case lima::AcqRunning:
+        {
+            set_state(Tango::RUNNING);
+            set_status("Acquisition in Progress ...\n");
+        }
+            break;
+
+        case lima::AcqConfig:
+        {
+            set_state(Tango::DISABLE);
+            set_status("Configuration/Calibration in Progress ...\n");
+        }
+            break;
+
+        default:
+        {
+            set_state(Tango::FAULT);
+            set_status("Error has occured !\n");
+        }
+            break;
     }
+    
     return m_state;
 }
 //-----------------------------------------------------------------------------------------
