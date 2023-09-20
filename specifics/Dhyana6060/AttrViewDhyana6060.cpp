@@ -6,17 +6,25 @@
 namespace Dhyana6060_ns
 {
 
-
+//---------------------------------------------------------------------------------------
+// AttrViewDhyana6060::AttrViewDhyana6060
+//---------------------------------------------------------------------------------------
 AttrViewDhyana6060::AttrViewDhyana6060(Tango::DeviceImpl *dev)
     : AttrView(dev)
 {
     init();
 }
 
+//---------------------------------------------------------------------------------------
+// AttrViewDhyana6060::~AttrViewDhyana6060
+//---------------------------------------------------------------------------------------
 AttrViewDhyana6060::~AttrViewDhyana6060()
 {
 }
 
+//---------------------------------------------------------------------------------------
+// AttrViewDhyana6060::init
+//---------------------------------------------------------------------------------------
 void AttrViewDhyana6060::init()
 {
     m_dim.dynamic_attributes_manager().remove_attributes();
@@ -236,6 +244,9 @@ void AttrViewDhyana6060::init()
     }
 }
 
+//---------------------------------------------------------------------------------------
+// AttrViewDhyana6060::read_dynamic_cooling_attribute_callback
+//---------------------------------------------------------------------------------------
 void AttrViewDhyana6060::read_dynamic_cooling_attribute_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
 {
     try
@@ -248,7 +259,7 @@ void AttrViewDhyana6060::read_dynamic_cooling_attribute_callback(yat4tango::Dyna
             std::string reason = "It's currently not allowed to read attribute " + cbd.dya->get_name();
             Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                                         reason.c_str(),
-                                        "AttrViewDhyana6060::read_dynamic_attribute_callback()");
+                                        "AttrViewDhyana6060::read_dynamic_cooling_attribute_callback()");
         }
 
 
@@ -257,7 +268,7 @@ void AttrViewDhyana6060::read_dynamic_cooling_attribute_callback(yat4tango::Dyna
         {
             Tango::Except::throw_exception("INTERNAL_ERROR",
                             "unexpected NULL pointer to dynamic attribute",
-                            "AttrViewDhyana6060::read_dynamique_attribute_callback");
+                            "AttrViewDhyana6060::read_dynamic_cooling_attribute_callback");
         }
 
         if(cbd.dya->get_name() == "sensorTemperature")
@@ -327,10 +338,13 @@ void AttrViewDhyana6060::read_dynamic_cooling_attribute_callback(yat4tango::Dyna
         Tango::Except::re_throw_exception(df,
                                         "TANGO_DEVICE_ERROR",
                                         std::string(df.errors[0].desc).c_str(),
-                                        "AttrViewDhyana6060::read_dynamique_attribute_callback()");
+                                        "AttrViewDhyana6060::read_dynamic_cooling_attribute_callback()");
     }
 }
 
+//---------------------------------------------------------------------------------------
+// AttrViewDhyana6060::write_dynamic_cooling_attribute_callback
+//---------------------------------------------------------------------------------------
 void AttrViewDhyana6060::write_dynamic_cooling_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
 {
     try
@@ -344,7 +358,7 @@ void AttrViewDhyana6060::write_dynamic_cooling_attribute_callback(yat4tango::Dyn
             std::string reason = "It's currently not allowed to write attribute " + cbd.dya->get_name();
             Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                                         reason.c_str(),
-                                        "AttrViewDhyana6060::write_dynamic_attribute_callback()");
+                                        "AttrViewDhyana6060::write_dynamic_cooling_attribute_callback()");
         }
 
         // be sure that the pointer to the dyn. attr. is valid
@@ -352,7 +366,7 @@ void AttrViewDhyana6060::write_dynamic_cooling_attribute_callback(yat4tango::Dyn
         {
             Tango::Except::throw_exception("INTERNAL_ERROR",
                             "unexpected NULL pointer to dynamic attribute",
-                            "AttrViewDhyana6060::write_dynamic_attribute_callback");
+                            "AttrViewDhyana6060::write_dynamic_cooling_attribute_callback");
         }
 
         if(cbd.dya->get_name() == "sensorTemperatureTarget")
@@ -408,10 +422,13 @@ void AttrViewDhyana6060::write_dynamic_cooling_attribute_callback(yat4tango::Dyn
         Tango::Except::re_throw_exception(df,
                                         "TANGO_DEVICE_ERROR",
                                         std::string(df.errors[0].desc).c_str(),
-                                        "AttrViewDhyana6060::write_dynamic_attribute_callback()");
+                                        "AttrViewDhyana6060::write_dynamic_cooling_attribute_callback()");
     }
 }
 
+//---------------------------------------------------------------------------------------
+// AttrViewDhyana6060::read_dynamic_attribute_callback
+//---------------------------------------------------------------------------------------
 void AttrViewDhyana6060::read_dynamic_attribute_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
 {
     try
@@ -424,7 +441,7 @@ void AttrViewDhyana6060::read_dynamic_attribute_callback(yat4tango::DynamicAttri
             std::string reason = "It's currently not allowed to read attribute " + cbd.dya->get_name();
             Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                                         reason.c_str(),
-                                        "AttrViewDhyana6060::read_dynamic_trigger_attribute_callback()");
+                                        "AttrViewDhyana6060::read_dynamic_attribute_callback()");
         }
 
         // be sure that the pointer to the dyn. attr. is valid
@@ -432,7 +449,7 @@ void AttrViewDhyana6060::read_dynamic_attribute_callback(yat4tango::DynamicAttri
         {
             Tango::Except::throw_exception("INTERNAL_ERROR",
                             "unexpected NULL pointer to dynamic attribute",
-                            "AttrViewDhyana6060::read_dynamic_trigger_attribute_callback");
+                            "AttrViewDhyana6060::read_dynamic_attribute_callback");
         }
 
         if(cbd.dya->get_name() == "globalGain")
@@ -453,10 +470,13 @@ void AttrViewDhyana6060::read_dynamic_attribute_callback(yat4tango::DynamicAttri
         Tango::Except::re_throw_exception(df,
                                         "TANGO_DEVICE_ERROR",
                                         std::string(df.errors[0].desc).c_str(),
-                                        "AttrViewDhyana6060::read_dynamic_trigger_attribute_callback()");
+                                        "AttrViewDhyana6060::read_dynamic_attribute_callback()");
     }
 }
 
+//---------------------------------------------------------------------------------------
+// AttrViewDhyana6060::write_dynamic_attribute_callback
+//---------------------------------------------------------------------------------------
 void AttrViewDhyana6060::write_dynamic_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
 {
      try
@@ -470,7 +490,7 @@ void AttrViewDhyana6060::write_dynamic_attribute_callback(yat4tango::DynamicAttr
             std::string reason = "It's currently not allowed to write attribute " + cbd.dya->get_name();
             Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                                         reason.c_str(),
-                                        "AttrViewDhyana6060::write_dynamic_trigger_attribute_callback()");
+                                        "AttrViewDhyana6060::write_dynamic_attribute_callback()");
         }
 
         // be sure that the pointer to the dyn. attr. is valid
@@ -478,7 +498,7 @@ void AttrViewDhyana6060::write_dynamic_attribute_callback(yat4tango::DynamicAttr
         {
             Tango::Except::throw_exception("INTERNAL_ERROR",
                             "unexpected NULL pointer to dynamic attribute",
-                            "AttrViewDhyana6060::read_dynamique_attribute_callback");
+                            "AttrViewDhyana6060::write_dynamic_attribute_callback");
         }
 
         if(cbd.dya->get_name() == "globalGain")
@@ -501,10 +521,13 @@ void AttrViewDhyana6060::write_dynamic_attribute_callback(yat4tango::DynamicAttr
         Tango::Except::re_throw_exception(df,
                                         "TANGO_DEVICE_ERROR",
                                         std::string(df.errors[0].desc).c_str(),
-                                        "AttrViewDhyana6060::read_dynamique_attribute_callback()");
+                                        "AttrViewDhyana6060::write_dynamic_attribute_callback()");
     }
 }
 
+//---------------------------------------------------------------------------------------
+// AttrViewDhyana6060::read_dynamic_trigger_attribute_callback
+//---------------------------------------------------------------------------------------
 void AttrViewDhyana6060::read_dynamic_trigger_attribute_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
 {
     try
@@ -540,6 +563,9 @@ void AttrViewDhyana6060::read_dynamic_trigger_attribute_callback(yat4tango::Dyna
     }
 }
 
+//---------------------------------------------------------------------------------------
+// AttrViewDhyana6060::write_dynamic_trigger_attribute_callback
+//---------------------------------------------------------------------------------------
 void AttrViewDhyana6060::write_dynamic_trigger_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
 {
      try
@@ -561,7 +587,7 @@ void AttrViewDhyana6060::write_dynamic_trigger_attribute_callback(yat4tango::Dyn
         {
             Tango::Except::throw_exception("INTERNAL_ERROR",
                             "unexpected NULL pointer to dynamic attribute",
-                            "AttrViewDhyana6060::read_dynamique_attribute_callback");
+                            "AttrViewDhyana6060::write_dynamic_trigger_attribute_callback");
         }
 
     }
@@ -572,7 +598,7 @@ void AttrViewDhyana6060::write_dynamic_trigger_attribute_callback(yat4tango::Dyn
         Tango::Except::re_throw_exception(df,
                                         "TANGO_DEVICE_ERROR",
                                         std::string(df.errors[0].desc).c_str(),
-                                        "AttrViewDhyana6060::read_dynamique_attribute_callback()");
+                                        "AttrViewDhyana6060::write_dynamic_trigger_attribute_callback()");
     }
 }
 
