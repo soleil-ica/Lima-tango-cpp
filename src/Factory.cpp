@@ -1368,9 +1368,10 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
 Tango::DevState ControlFactory::get_state(void)
 {    
     yat::AutoMutex<> _lock(m_lock);
+    
     CtControl::Status ctStatus;
     m_control->getStatus(ctStatus);
-
+    
     switch(ctStatus.AcquisitionStatus)
     {
         case lima::AcqReady:

@@ -100,6 +100,8 @@ void AttrViewDhyana95::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim->dynamic_attributes_manager().add_attribute(dai);
         }
@@ -128,6 +130,8 @@ void AttrViewDhyana95::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim->dynamic_attributes_manager().add_attribute(dai);
         }
@@ -156,6 +160,8 @@ void AttrViewDhyana95::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim->dynamic_attributes_manager().add_attribute(dai);
         }
@@ -192,6 +198,8 @@ void AttrViewDhyana95::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim->dynamic_attributes_manager().add_attribute(dai);
         }
@@ -254,6 +262,8 @@ void AttrViewDhyana95::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_trigger_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_trigger_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim->dynamic_attributes_manager().add_attribute(dai);
         }
@@ -283,6 +293,8 @@ void AttrViewDhyana95::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_trigger_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_trigger_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim->dynamic_attributes_manager().add_attribute(dai);
         }
@@ -312,6 +324,8 @@ void AttrViewDhyana95::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_trigger_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_trigger_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim->dynamic_attributes_manager().add_attribute(dai);
         }
@@ -347,10 +361,11 @@ void AttrViewDhyana95::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_trigger_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_trigger_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim->dynamic_attributes_manager().add_attribute(dai);
         }
-
     }
     catch (Tango::DevFailed& df)
     {
