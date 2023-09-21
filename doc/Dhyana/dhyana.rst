@@ -73,6 +73,6 @@ State                   Void            Long                    Return the devic
 Status                  Void            String                  Return the device state as a string
 setParamter             String Array    Void                    Set the value of a parameter
 getParameter            String          String                  Return the name and value of a specific parameter
-getAllParameter         Void            String                  Return all parameters and there value
+getAllParameter         Void            String                  Return all parameters and their value
 ======================= =============== ======================= ===========================================
 

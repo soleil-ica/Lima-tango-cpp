@@ -77,7 +77,7 @@ State                   Void            Long                    Return the devic
 Status                  Void            String                  Return the device state as a string
 setParamter             String Array    Void                    Set the value of a parameter
 getParameter            String          String                  Return the name and value of a specific parameter
-getAllParameter         Void            String                  Return all parameters and there value
+getAllParameter         Void            String                  Return all parameters and their value
 ======================= =============== ======================= ===========================================
 
 .. _Hamamatsu camera plugin: https://lima1.readthedocs.io/en/latest/camera/hamamatsu/doc/index.html
