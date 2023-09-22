@@ -563,18 +563,13 @@ void Dhyana::build_view(std::string model)
 	else if (model == "Dhyana 6060")
 	{
 	}
-	else
-	{
-
-	}
-
 }
 
 void Dhyana::write_attr_at_init()
 {
 	try
 	{
-		INFO_STREAM << "Write tango hardware at Init - sensorTemperatureTarget." << endl;
+		INFO_STREAM << "Write tango attribute at Init - sensorTemperatureTarget." << endl;
 		Tango::WAttribute &temperatureTarget = dev_attr->get_w_attr_by_name("sensorTemperatureTarget");
 		double temperature_target = yat4tango::PropertyHelper::get_property<Tango::DevDouble>(this, "TemperatureTargetAtInit");
 		temperatureTarget.set_write_value(temperature_target);
@@ -583,7 +578,7 @@ void Dhyana::write_attr_at_init()
 		cbd_temperatureTarget.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("sensorTemperatureTarget");
         m_attr_view->write_dynamic_attribute_callback(cbd_temperatureTarget);
 
-		INFO_STREAM << "Write tango hardware at Init - fanSpeed." << endl;
+		INFO_STREAM << "Write tango attribute at Init - fanSpeed." << endl;
 		Tango::WAttribute &fanSpeed = dev_attr->get_w_attr_by_name("fanSpeed");
 		unsigned short speed = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevUShort>(this, "fanSpeed", 1);
 		fanSpeed.set_write_value(speed);
@@ -592,7 +587,7 @@ void Dhyana::write_attr_at_init()
 		cbd_fanSpeed.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("fanSpeed");
         m_attr_view->write_dynamic_attribute_callback(cbd_fanSpeed);
 
-		INFO_STREAM << "Write tango hardware at Init - globalGain." << endl;
+		INFO_STREAM << "Write tango attribute at Init - globalGain." << endl;
 		Tango::WAttribute &globalGain = dev_attr->get_w_attr_by_name("globalGain");
 		Tango::DevEnum gain = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, "globalGain", 0);
 		globalGain.set_write_value(gain);
@@ -604,7 +599,7 @@ void Dhyana::write_attr_at_init()
 		for (int i = 1; i < 4; i++)
         {
             std::string name = "trigOutputKind" + std::to_string(i);
-            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;
+            INFO_STREAM << "Write tango attribute at Init - " << name << endl;
 			Tango::WAttribute &trigOutputKind = dev_attr->get_w_attr_by_name(name.c_str());
 			Tango::DevEnum val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, name, 0);
 			trigOutputKind.set_write_value(val);
@@ -617,7 +612,7 @@ void Dhyana::write_attr_at_init()
 		for (int i = 1; i < 4; i++)
         {
             std::string name = "trigOutputWidth" + std::to_string(i);
-            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;
+            INFO_STREAM << "Write tango attribute at Init - " << name << endl;
 			Tango::WAttribute &trigOutputWidth = dev_attr->get_w_attr_by_name(name.c_str());
 			double val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, name, 5);
 			trigOutputWidth.set_write_value(val);
@@ -630,7 +625,7 @@ void Dhyana::write_attr_at_init()
 		for (int i = 1; i < 4; i++)
         {
             std::string name = "trigOutputDelay" + std::to_string(i);
-            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;
+            INFO_STREAM << "Write tango attribute at Init - " << name << endl;
 			Tango::WAttribute &trigOutputDelay = dev_attr->get_w_attr_by_name(name.c_str());
 			double val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, name, 0);
 			trigOutputDelay.set_write_value(val);
@@ -643,7 +638,7 @@ void Dhyana::write_attr_at_init()
 		for (int i = 1; i < 4; i++)
         {
             std::string name = "trigOutputEdge" + std::to_string(i);
-            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;
+            INFO_STREAM << "Write tango attribute at Init - " << name << endl;
 			Tango::WAttribute &trigOutputEdge = dev_attr->get_w_attr_by_name(name.c_str());
 			Tango::DevEnum val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, name, 0);
 			trigOutputEdge.set_write_value(val);
