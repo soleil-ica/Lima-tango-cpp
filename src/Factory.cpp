@@ -1241,6 +1241,13 @@ void ControlFactory::reset(const std::string& detector_type)
                 }
 #endif
 
+#ifdef DHYANA6060_ENABLED        
+                if (detector_type == "Dhyana6060")
+                {
+					delete (static_cast<Dhyana6060::Camera*> (m_camera));				
+                }
+#endif
+
 #ifdef SPECTRUMONE_ENABLED        
                 if (detector_type == "SpectrumOneCCD")
                 {

@@ -156,22 +156,6 @@ void Dhyana6060::init_device()
 		m_camera = &(m_hw->getCamera());
 		
 		build_view();
-
-		double temp;
-		unsigned tmp;
-		m_camera->getCameraTemperature(temp);
-		std::cout << "MDE - CameraTemp : " << temp << std::endl;
-		m_camera->setSensorTemperatureTarget(20);
-		m_camera->getSensorTemperatureTarget(temp);
-		std::cout << "MDE - SensorTempTarget : " << temp << std::endl;
-		m_camera->getFanSpeed(tmp);
-		std::cout << "MDE - FanSpeed : " << tmp << std::endl;
-		m_camera->getFanType(tmp);
-		std::cout << "MDE - FanType : " << tmp << std::endl;
-		m_camera->getGlobalGain(tmp);
-		std::cout << "MDE - GloabGain : " << tmp << std::endl;
-		m_camera->getSensorCoolingType(tmp);
-		std::cout << "MDE - CoolingType : " << tmp << std::endl;
 	}
 	catch(lima::Exception& e)
 	{
