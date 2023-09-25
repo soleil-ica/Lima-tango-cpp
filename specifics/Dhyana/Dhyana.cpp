@@ -207,8 +207,13 @@ void Dhyana::init_device()
 
 	set_state(Tango::STANDBY);
 	dev_state();
-
-	write_attr_at_init();
+	
+	std::string model_temp;
+	m_camera->getDetectorModel(model_temp);
+	if (model_temp == "Dhyana 95"  || model_temp.find("Dhyana 95 V2") != std::string::npos)
+	{
+		write_attr_at_init();
+	}
 
 	/*----- PROTECTED REGION END -----*/	//	Dhyana::init_device
 }
@@ -551,14 +556,13 @@ lima::Dhyana::Camera* Dhyana::get_camera()
 
 void Dhyana::build_view(std::string model)
 {
-	if (model == "Dhyana 95" || model.find("Dhyana 95 V2") != std::string::npos)
+	if (model == "Dhyana 95"  || model.find("Dhyana 95 V2") != std::string::npos)
 	{
 		m_attr_view.reset(new AttrViewDhyana95(this));
 	}
 	else if (model == "Dhyana 6060")
 	{
 	}
-
 }
 
 void Dhyana::write_attr_at_init()
