@@ -878,6 +878,32 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 
+#ifdef DHYANA6060_ENABLED
+        if (detector_type == "Dhyana6060")
+        {
+            
+            if (!ControlFactory::m_is_created)
+            {
+                //- Set Serialisation mode
+				//- this allow dynamic attr in specific device
+				YAT_LOG_INFO("Set Serialisation Model : BY_PROCESS");
+				Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_PROCESS);
+                
+				unsigned short time_period = 1;
+                Tango::DbData db_data;
+				db_data.push_back(Tango::DbDatum("__ExpertTimerPeriod"));							
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                db_data[0] >> time_period   ;				
+                m_camera = static_cast<void*> (new Dhyana6060::Camera(time_period));
+                m_interface = static_cast<void*> (new Dhyana6060::Interface(*(static_cast<Dhyana6060::Camera*> (m_camera))));
+                m_control = new CtControl(static_cast<Dhyana6060::Interface*> (m_interface));
+
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
+#endif
+
 #ifdef UFXC_ENABLED
         if (detector_type == "Ufxc")
         {
@@ -1212,6 +1238,13 @@ void ControlFactory::reset(const std::string& detector_type)
                 if (detector_type == "Dhyana")
                 {
 					delete (static_cast<Dhyana::Camera*> (m_camera));				
+                }
+#endif
+
+#ifdef DHYANA6060_ENABLED        
+                if (detector_type == "Dhyana6060")
+                {
+					delete (static_cast<Dhyana6060::Camera*> (m_camera));				
                 }
 #endif
 
