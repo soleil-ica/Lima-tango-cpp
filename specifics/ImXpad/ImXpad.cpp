@@ -1706,6 +1706,14 @@ void ImXpad::load_calibration_file(Tango::DevString argin)
     {
         THROW_YAT_TO_TANGO_EXCEPTION(ex);
     }
+    catch (lima::Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                    e.getErrMsg().c_str(),
+                    "ImXpad::load_calibration_file");
+    }
     catch(...)
     {
         ERROR_STREAM << "ImXpad::load_calibration_file() : Unknown Error" << endl;
