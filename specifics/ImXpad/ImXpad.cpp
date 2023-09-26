@@ -68,6 +68,8 @@ static const char *RcsId = "$Id:  $";
 #include <ImXpad.h>
 #include <ImXpadClass.h>
 
+#include <yat/file/FileName.h>
+
 //-----------------------------------------------------
 //
 //-----------------------------------------------------
@@ -1654,18 +1656,68 @@ void ImXpad::load_calibration_file(Tango::DevString argin)
     try
     {
         std::string file_path_name = calibrationPath+"/"+argin;
-        m_camera->loadCalibrationFromFile(const_cast<char*>(file_path_name.c_str()));
-        strcpy(*attr_calibrationFileName_read, file_path_name.c_str());
+        std::string file_path_name_temp = file_path_name;
+        
+        //Verify if global calibration file is available
+        size_t pos = file_path_name_temp.find(".cf");
+        std::string file_cfg_path_name ="";
+        if (pos == std::string::npos)
+        {
+            file_cfg_path_name = file_path_name_temp.append(".cfg");
+            pos = file_cfg_path_name.length() - 4;
+        }
+
+        yat::File file_cfg_path_name_file(file_cfg_path_name);
+        std::string file_cfg_data;
+        file_cfg_path_name_file.load((std::string*) & file_cfg_data);
+
+        //Verify if local calibration file is available
+        std::string file_cfl_path_name = file_cfg_path_name.replace(pos, 4, ".cfl");        
+        yat::File file_cfl_path_name_file(file_cfl_path_name);
+        std::string file_cfl_data;        
+        file_cfl_path_name_file.load((std::string*) & file_cfl_data);
+       
+        if(file_cfg_data.size() > 0 && file_cfl_data.size() > 0)
+        {
+            m_camera->loadCalibrationFromFile(const_cast<char*>(file_path_name.c_str()));
+            strcpy(*attr_calibrationFileName_read, file_path_name.c_str());
+        }
+        else
+        {
+            if(!(file_cfg_data.size() > 0))
+            {
+                std::stringstream ss;
+                ss << "The file " << file_cfg_path_name << " is empty. " << std::endl;
+                Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                        (ss.str()).c_str(),
+                        "ImXpad::load_calibration_file");
+            }
+            else if(!(file_cfl_data.size() > 0))
+            {
+                std::stringstream ss;
+                ss << "The file " << file_cfl_path_name << " is empty. " << std::endl;
+                Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                        (ss.str()).c_str(),
+                        "ImXpad::load_calibration_file");
+            }
+        }
     }
-    catch (Exception& e)
+    catch(yat::Exception& ex)
+    {
+        THROW_YAT_TO_TANGO_EXCEPTION(ex);
+    }
+    catch (lima::Exception& e)
     {
         ERROR_STREAM << e.getErrMsg() << endl;
         //- throw exception
         Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
-                                        e.getErrMsg().c_str(),
-                                        "ImXpad::load_calibration_file" );
+                    e.getErrMsg().c_str(),
+                    "ImXpad::load_calibration_file");
     }
-
+    catch(...)
+    {
+        ERROR_STREAM << "ImXpad::load_calibration_file() : Unknown Error" << endl;
+    }
 }
 
 

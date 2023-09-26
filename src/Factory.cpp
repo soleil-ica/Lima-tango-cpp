@@ -1435,6 +1435,7 @@ Tango::DevState ControlFactory::get_state(void)
         }
             break;
     }
+    
     return m_state;
 }
 //-----------------------------------------------------------------------------------------
