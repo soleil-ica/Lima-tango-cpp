@@ -364,7 +364,6 @@ bool ImXpad::is_nbStackingImages_allowed(Tango::AttReqType type)
 //-----------------------------------------------------------------------------
 bool ImXpad::is_calibrationPath_allowed(Tango::AttReqType type)
 {
-		//	End of Generated Code
 	if (get_state() == Tango::FAULT	||
 		get_state() == Tango::INIT	||
 		get_state() == Tango::RUNNING)
@@ -382,7 +381,6 @@ bool ImXpad::is_calibrationPath_allowed(Tango::AttReqType type)
         //	Re-Start of Generated Code
 		return false;
 	}
-		//	Re-Start of Generated Code
 	return true;
 }
 
