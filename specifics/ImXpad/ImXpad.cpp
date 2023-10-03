@@ -134,6 +134,8 @@ void ImXpad::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_flatFieldCorrectionFlag_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_geometricalCorrectionFlag_read);
 
+    DELETE_DEVSTRING_ATTRIBUTE(attr_calibrationPath_read);
+
     INFO_STREAM << "Remove the inner-appender." << endl;
     yat4tango::InnerAppender::release(this);
 
@@ -168,6 +170,7 @@ void ImXpad::init_device()
     CREATE_DEVSTRING_ATTRIBUTE(attr_outputSignal_read, MAX_ATTRIBUTE_STRING_LENGTH);
 	CREATE_SCALAR_ATTRIBUTE(attr_flatFieldCorrectionFlag_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_geometricalCorrectionFlag_read);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_calibrationPath_read, MAX_ATTRIBUTE_STRING_LENGTH);
     
     m_is_device_initialized = false;
 	attr_calibrationMode_write ="OTN_PULSE";	
@@ -258,6 +261,8 @@ void ImXpad::init_device()
         attr_outputSignal_write = const_cast<Tango::DevString>(memorizedOutputSignal.c_str());
         outputSignal.set_write_value(attr_outputSignal_write);
         write_outputSignal(outputSignal);
+
+        strcpy(*attr_calibrationPath_read, calibrationPath.c_str());
 	}
     catch(Tango::DevFailed& df)
     {
@@ -540,6 +545,39 @@ void ImXpad::read_attr_hardware(vector<long> &attr_list)
     DEBUG_STREAM << "ImXpad::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
     //	Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::read_calibrationPath
+// 
+// description : 	Extract real attribute values for calibrationPath acquisition result.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::read_calibrationPath(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::read_calibrationPath(Tango::Attribute &attr) entering... "<< endl;
+    try
+    {
+        attr.set_value(attr_calibrationPath_read);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "ImXpad::read_calibrationPath");
+    }
+    catch (Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+                                       e.getErrMsg().c_str(),
+                                       "ImXpad::read_calibrationPath");
+    }
+}
+
 
 //+----------------------------------------------------------------------------
 //
@@ -1680,7 +1718,7 @@ void ImXpad::load_calibration_file(Tango::DevString argin)
         if(file_cfg_data.size() > 0 && file_cfl_data.size() > 0)
         {
             m_camera->loadCalibrationFromFile(const_cast<char*>(file_path_name.c_str()));
-            strcpy(*attr_calibrationFileName_read, file_path_name.c_str());
+            strcpy(*attr_calibrationFileName_read, argin);
         }
         else
         {
@@ -1784,6 +1822,7 @@ void ImXpad::ithldecrease()
     }
 
 }
+
 
 
 

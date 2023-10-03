@@ -355,6 +355,36 @@ bool ImXpad::is_nbStackingImages_allowed(Tango::AttReqType type)
 	}
 	return true;
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_calibrationPath_allowed
+// 
+// description : 	Read/Write allowed for calibrationPath attribute.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_calibrationPath_allowed(Tango::AttReqType type)
+{
+		//	End of Generated Code
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+        //	Re-Start of Generated Code
+		return false;
+	}
+		//	Re-Start of Generated Code
+	return true;
+}
 
 //=================================================
 //		Commands Allowed Methods

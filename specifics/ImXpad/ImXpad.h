@@ -111,6 +111,7 @@ public :
 		Tango::DevULong	attr_time_write;
 		Tango::DevULong	attr_iTHL_write;
 		Tango::DevString	attr_mode_write;
+		Tango::DevString	*attr_calibrationPath_read;
 //@}
 
 /**
@@ -169,7 +170,7 @@ public :
 /**
  *	Dfine the modules Mask. <BR>
  *	Each bit of this Mask fix if a specific module is enabled or disabled.<BR>
- *	Value must be in Hexadecimal format 
+ *	Value must be in Hexadecimal format
  */
 	string	moduleMask;
 //@}
@@ -325,6 +326,10 @@ public :
  */
 	virtual void write_mode(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for calibrationPath acquisition result.
+ */
+	virtual void read_calibrationPath(Tango::Attribute &attr);
+/**
  *	Read/Write allowed for serverVersion attribute.
  */
 	virtual bool is_serverVersion_allowed(Tango::AttReqType type);
@@ -368,6 +373,10 @@ public :
  *	Read/Write allowed for mode attribute.
  */
 	virtual bool is_mode_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for calibrationPath attribute.
+ */
+	virtual bool is_calibrationPath_allowed(Tango::AttReqType type);
 /**
  *	Execution allowed for StartCalibration command.
  */
