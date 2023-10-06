@@ -203,6 +203,8 @@ public :
  *	Execution allowed for SetAverageImages command.
  */
 	virtual bool is_SetAverageImages_allowed(const CORBA::Any &any);
+	
+	virtual Tango::DevState	dev_state();
 /**
  * Argin :
  *	0 no average,

@@ -54,7 +54,7 @@ static const char *RcsId = "$Id:  $";
 //
 //===================================================================
 #include <tango.h>
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 
 #include "PerkinElmer.h"
 #include <PerkinElmerClass.h>

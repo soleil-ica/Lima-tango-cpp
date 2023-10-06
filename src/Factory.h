@@ -169,14 +169,14 @@
 #include <DhyanaInterface.h>
 #endif
 
+#ifdef DHYANA6060_ENABLED
+#include <Dhyana6060Camera.h>
+#include <Dhyana6060Interface.h>
+#endif
+
 #ifdef UFXC_ENABLED
 #include <UfxcCamera.h>
 #include <UfxcInterface.h>
-#endif
-
-#ifdef XSPRESS3_ENABLED
-#include <Xspress3Camera.h>
-#include <Xspress3Interface.h>
 #endif
 
 //ProcessLib/Data : define dimensions of image

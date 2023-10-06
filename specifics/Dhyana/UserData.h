@@ -12,8 +12,10 @@
 
 #include <tango.h>
 #define MAX_ATTRIBUTE_STRING_LENGTH 255
-namespace Xspress3_ns
+
+namespace Dhyana_ns
 {
+
 class DoubleUserData
 {
 public:
@@ -82,13 +84,31 @@ class StringUserData
 {
 public:
     StringUserData(const std::string& stat_name);
+    StringUserData(const StringUserData& other);
+    StringUserData& operator=(const StringUserData& other); 
     ~StringUserData();
-    const Tango::DevString* get_value();
+    const Tango::DevString& get_value();
     void set_value(std::string value);
 private:
     yat::Mutex m_lock;
     std::string m_name;
-    Tango::DevString* m_value;
+    Tango::DevString m_value;
+};
+
+//----------------------------------------------------------------------------------------------------------------------
+//	
+//----------------------------------------------------------------------------------------------------------------------
+class EnumUserData
+{
+public:
+    EnumUserData(const std::string& stat_name);
+    ~EnumUserData();
+    const Tango::DevEnum& get_value();
+    void set_value(Tango::DevEnum value);
+private:
+    yat::Mutex m_lock;
+    std::string m_name;
+    Tango::DevEnum m_value;
 };
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -105,6 +125,27 @@ private:
     yat::Mutex m_lock;
     std::string m_name;
     std::vector<Tango::DevULong> m_data;
+};
+
+//----------------------------------------------------------------------------------------------------------------------
+//	
+//----------------------------------------------------------------------------------------------------------------------
+class RoiUserData
+{
+public:
+	RoiUserData(const std::string& name, int channel, int roi_num);
+	~RoiUserData();
+	const Tango::DevULong& get_value();
+	void set_value(Tango::DevULong value);
+	void clear();
+	const int& get_channel();
+	const int& get_roi_num();
+private:
+	yat::Mutex m_lock;
+	std::string m_name;
+	const int m_channel;
+	const int m_roi_num;
+	Tango::DevULong m_data;
 };
 
 } // namespace

@@ -54,517 +54,70 @@ namespace Dhyana_ns
 //		Attributes Allowed Methods
 //=================================================
 
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_tucamVersion_allowed()
- *	Description : Execution allowed for tucamVersion attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_tucamVersion_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_temperature_allowed()
- *	Description : Execution allowed for temperature attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_temperature_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_temperatureTarget_allowed()
- *	Description : Execution allowed for temperatureTarget attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_temperatureTarget_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_fanSpeed_allowed()
- *	Description : Execution allowed for fanSpeed attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_fanSpeed_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_globalGain_allowed()
- *	Description : Execution allowed for globalGain attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_globalGain_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_fps_allowed()
- *	Description : Execution allowed for fps attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_fps_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_channel1_allowed()
- *	Description : Execution allowed for channel1 attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_channel1_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_channel2_allowed()
- *	Description : Execution allowed for channel2 attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_channel2_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_channel3_allowed()
- *	Description : Execution allowed for channel3 attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_channel3_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_width1_allowed()
- *	Description : Execution allowed for width1 attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_width1_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_width2_allowed()
- *	Description : Execution allowed for width2 attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_width2_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_width3_allowed()
- *	Description : Execution allowed for width3 attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_width3_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_delay1_allowed()
- *	Description : Execution allowed for delay1 attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_delay1_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_delay2_allowed()
- *	Description : Execution allowed for delay2 attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_delay2_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_delay3_allowed()
- *	Description : Execution allowed for delay3 attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_delay3_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_edge1_allowed()
- *	Description : Execution allowed for edge1 attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_edge1_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_edge2_allowed()
- *	Description : Execution allowed for edge2 attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_edge2_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Dhyana::is_edge3_allowed()
- *	Description : Execution allowed for edge3 attribute
- */
-//--------------------------------------------------------
-bool Dhyana::is_edge3_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	if (get_state() == Tango::INIT ||
-		get_state() == Tango::FAULT ||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-		if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-		{
-			return true;
-		}
-
-		if (get_state() == Tango::FAULT && is_device_initialized())
-		{
-			return true;
-		}
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-
 
 //=================================================
 //		Commands Allowed Methods
 //=================================================
+
+//--------------------------------------------------------
+/**
+ *	Method      : Dhyana::is_GetAllParameters_allowed()
+ *	Description : Execution allowed for GetAllParameters attribute
+ */
+//--------------------------------------------------------
+bool Dhyana::is_GetAllParameters_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+	//	Not any excluded states for GetAllParameters command.
+	/*----- PROTECTED REGION ID(Dhyana::GetAllParametersStateAllowed) ENABLED START -----*/
+	if ((get_state() == Tango::FAULT && !is_device_initialized()) || 
+		get_state()==Tango::INIT || 
+		get_state()==Tango::RUNNING)
+	{
+		return false;
+	}
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::GetAllParametersStateAllowed
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : Dhyana::is_GetParameter_allowed()
+ *	Description : Execution allowed for GetParameter attribute
+ */
+//--------------------------------------------------------
+bool Dhyana::is_GetParameter_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+	//	Not any excluded states for GetParameter command.
+	/*----- PROTECTED REGION ID(Dhyana::GetParameterStateAllowed) ENABLED START -----*/
+	if ((get_state() == Tango::FAULT && !is_device_initialized())|| 
+		get_state()==Tango::INIT || 
+		get_state()==Tango::RUNNING)
+	{
+		return false;
+	}
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::GetParameterStateAllowed
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : Dhyana::is_SetParameter_allowed()
+ *	Description : Execution allowed for SetParameter attribute
+ */
+//--------------------------------------------------------
+bool Dhyana::is_SetParameter_allowed(TANGO_UNUSED(const CORBA::Any &any))
+{
+	//	Not any excluded states for SetParameter command.
+	/*----- PROTECTED REGION ID(Dhyana::SetParameterStateAllowed) ENABLED START -----*/
+	if ((get_state() == Tango::FAULT && !is_device_initialized()) || 
+		get_state()==Tango::INIT || 
+		get_state()==Tango::RUNNING)
+	{
+		return false;
+	}
+	/*----- PROTECTED REGION END -----*/	//	Dhyana::SetParameterStateAllowed
+	return true;
+}
 
 
 /*----- PROTECTED REGION ID(Dhyana::DhyanaStateAllowed.AdditionalMethods) ENABLED START -----*/

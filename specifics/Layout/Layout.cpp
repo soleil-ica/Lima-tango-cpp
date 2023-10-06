@@ -55,7 +55,7 @@ static const char *RcsId = "$Id:  $";
 //===================================================================
 #ifdef WIN32
 #include <tango.h>
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 #endif
 
 #include <Layout.h>
@@ -63,7 +63,7 @@ static const char *RcsId = "$Id:  $";
 
 #ifndef WIN32
 #include <tango.h>
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 #endif
 
 using namespace std;
@@ -491,8 +491,8 @@ void Layout::write_operationType(Tango::WAttribute &attr)
                                            "\n<<"
                                            "\nFLIP"
 										   "\nROTATION"
-										   "\CIRPAD_2X10"
-										   "\CIRPAD_4X5"										   
+										   "\nCIRPAD_2X10"
+										   "\nCIRPAD_4X5"										   
                                            "\nNONE",
                                            "Layout::write_operationType");
         }

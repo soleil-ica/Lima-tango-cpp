@@ -53,14 +53,14 @@ static const char *RcsId = "$Id:  $";
 //===================================================================
 #ifdef WIN32
 #include "tango.h"
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 #endif
 #include <AndorCCD.h>
 #include <AndorCCDClass.h>
 
 #ifndef WIN32
 #include "tango.h"
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 #endif
 
 namespace AndorCCD_ns

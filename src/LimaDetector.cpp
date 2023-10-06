@@ -66,7 +66,7 @@ static const char *RcsId = "$Id:  $";
 //
 //===================================================================
 #include <tango.h>
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 
 #include <LimaDetector.h>
 #include <LimaDetectorClass.h>
@@ -273,8 +273,8 @@ void LimaDetector::init_device()
         m_hw = dynamic_cast<HwInterface*> (m_ct->hwInterface());
         if(m_hw == 0)
         {
-            ERROR_STREAM << "Initialization Failed : Unable to get the interface of DetectorType (" << detectorType << ")!" << endl;
             m_status_message << "Initialization Failed : Unable to get the interface of DetectorType (" << detectorType << ")!" << endl;
+            ERROR_STREAM << m_status_message.str() << endl;
             m_is_device_initialized = false;
             set_state(Tango::FAULT);
             return;
@@ -287,11 +287,11 @@ void LimaDetector::init_device()
 		//check if event capability is available 
 		if(m_ct->event()->hasCapability())
 		{
-			INFO_STREAM<<"Events capability is available."<<endl;
+			INFO_STREAM << "Events capability is available." << endl;
 		}
 		else
 		{
-			INFO_STREAM<<"Events capability is Not available."<<endl;
+			INFO_STREAM << "Events capability is Not available." << endl;
 		}
 		
         //- define currentImageType of detector (16 bits, 32 bits, ...) according to "DetectorPixelDepth" device property
@@ -310,15 +310,15 @@ void LimaDetector::init_device()
         if(fileManagedMode != "HARDWARE")
         {
 			//- Define ImageOpMode for Roi/Binning/etc...  (HardOnly, SoftOnly or HardAndSoft)
-			INFO_STREAM<<"Define ImageOpMode for Roi/Binning  following the ImageOpMode property (" << imageOpMode << ")." << endl;
+			INFO_STREAM << "Define ImageOpMode for Roi/Binning  following the ImageOpMode property (" << imageOpMode << ")." << endl;
 			configure_image_op_mode();
             
 			//- reload Roi from property
 			//check validity of MemorizedRoi
 			if (memorizedRoi.size()!=4)
 			{
-				ERROR_STREAM << "Initialization Failed : Invalid number of parameters into MemorizedRoi. Check input parameters (x, y, width, height)"<< endl;
-				m_status_message << "Initialization Failed : Invalid number of parameters into MemorizedRoi. Check input parameters (x, y, width, height)"<< endl;
+				m_status_message << "Initialization Failed : Invalid number of parameters into MemorizedRoi. Check input parameters (x, y, width, height)" << endl;
+                ERROR_STREAM << m_status_message.str() << endl;
 				m_is_device_initialized = false;
 				set_state(Tango::FAULT);
 				return;				
@@ -391,28 +391,28 @@ void LimaDetector::init_device()
     }
     catch(Tango::DevFailed& df)
     {
-        ERROR_STREAM << df << endl;
         m_status_message << "Initialization Failed : ";
         for(unsigned i = 0; i < df.errors.length(); i++)
         {
             m_status_message << df.errors[i].desc << endl;
         }
+        ERROR_STREAM << m_status_message.str() << endl;
         m_is_device_initialized = false;
         set_state(Tango::FAULT);
         return;
     }
     catch(Exception& e)
     {
-        ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
         m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
         m_is_device_initialized = false;
         set_state(Tango::FAULT);
         return;
     }
     catch(...)
     {
-        ERROR_STREAM << "Initialization Failed : UNKNOWN" << endl;
-        m_status_message << "Initialization Failed : UNKNOWN" << endl;
+        m_status_message << "Initialization Failed : Unknown Error" << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
         m_is_device_initialized = false;
         set_state(Tango::FAULT);
         return;
@@ -959,9 +959,6 @@ void LimaDetector::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "FileTimestampEnabled");
 
     vec_init.clear();
-    vec_init.push_back("Hardware");
-    vec_init.push_back("Control");
-    vec_init.push_back("Common");
     vec_init.push_back("Camera");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, vec_init, "DebugModules");
 
@@ -969,6 +966,7 @@ void LimaDetector::get_device_property()
     vec_init.push_back("Fatal");
     vec_init.push_back("Error");
     vec_init.push_back("Warning");
+    vec_init.push_back("Trace");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, vec_init, "DebugLevels");
 
     vec_init.clear();
@@ -4212,23 +4210,23 @@ bool LimaDetector::create_acquisition_task(void)
         {
             m_status_message << ex.errors[i].desc << endl;
         }
-        ex.dump();
+        ERROR_STREAM << m_status_message.str() << endl;
         return false;
     }
     catch(Tango::DevFailed& df)
     {
-        ERROR_STREAM << df << endl;
         m_status_message << "Initialization Failed : " << endl;
         for(unsigned i = 0; i < df.errors.length(); i++)
         {
             m_status_message << df.errors[i].desc << endl;
         }
+        ERROR_STREAM << m_status_message.str() << endl;
         return false;
     }
     catch(...)
     {
-        ERROR_STREAM << "Initialization Failed : UNKNOWN" << endl;
-        m_status_message << "Initialization Failed : UNKNOWN" << endl;
+        m_status_message << "Initialization Failed : Unknown Error" << endl;
+        ERROR_STREAM << m_status_message.str() << endl;
         return false;
     }
 
@@ -4648,7 +4646,6 @@ void LimaDetector::create_log_info_attributes(void)
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(EIGER_NAME), YAT_XSTR(EIGER_VERSION));
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSJUNGFRAU_NAME), YAT_XSTR(SLSJUNGFRAU_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SLSEIGER_NAME), YAT_XSTR(SLSEIGER_VERSION) );
-    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(XSPRESS3_NAME), YAT_XSTR(XSPRESS3_VERSION));
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SPECTRAL_NAME), YAT_XSTR(SPECTRAL_VERSION));
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UFXC_NAME), YAT_XSTR(UFXC_VERSION) ); 
 #elif defined(UNIX_64_EL7) //- linux64-el7
