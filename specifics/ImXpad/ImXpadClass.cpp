@@ -393,12 +393,12 @@ void ImXpadClass::command_factory()
 		Tango::OPERATOR));
 	command_list.push_back(new SaveCalibrationFileCmd("SaveCalibrationFile",
 		Tango::DEV_STRING, Tango::DEV_VOID,
-		"Target calibration file name",
+		"A target calibration file name",
 		"",
 		Tango::OPERATOR));
 	command_list.push_back(new LoadCalibrationFileCmd("LoadCalibrationFile",
 		Tango::DEV_STRING, Tango::DEV_VOID,
-		"The calibration File Name ",
+		"The calibration file Name ",
 		"",
 		Tango::OPERATOR));
 	command_list.push_back(new CreateWhiteImageCmd("CreateWhiteImage",
@@ -625,7 +625,7 @@ void ImXpadClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	time_prop.set_unit("ms");
 	time_prop.set_standard_unit("ms");
 	time_prop.set_display_unit("%6.2f");
-	time_prop.set_description("Define the calbration exposure time");
+	time_prop.set_description("Define the calibration exposure time");
 	time->set_default_properties(time_prop);
 	time->set_memorized();
 	time->set_memorized_init(false);
@@ -637,7 +637,7 @@ void ImXpadClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	i_thl_prop.set_unit(" ");
 	i_thl_prop.set_standard_unit(" ");
 	i_thl_prop.set_display_unit(" ");
-	i_thl_prop.set_description("Define the limit of the threshold scan during calibration");
+	i_thl_prop.set_description("Define the limit of the threshold scan during a BEAM calibration ");
 	i_thl->set_default_properties(i_thl_prop);
 	i_thl->set_memorized();
 	i_thl->set_memorized_init(false);
