@@ -237,6 +237,7 @@ void Dhyana::get_device_property()
 	//	Read device properties from database.
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("__ExpertTimerPeriod"));
+	dev_prop.push_back(Tango::DbDatum("TemperatureTargetAtInit"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -262,6 +263,17 @@ void Dhyana::get_device_property()
 		//	And try to extract __ExpertTimerPeriod value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  __ExpertTimerPeriod;
 
+		//	Try to initialize TemperatureTargetAtInit from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  temperatureTargetAtInit;
+		else {
+			//	Try to initialize TemperatureTargetAtInit from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  temperatureTargetAtInit;
+		}
+		//	And try to extract TemperatureTargetAtInit value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  temperatureTargetAtInit;
+
 	}
 
 	/*----- PROTECTED REGION ID(Dhyana::get_device_property_after) ENABLED START -----*/
@@ -281,6 +293,7 @@ void Dhyana::get_device_property()
 //--------------------------------------------------------
 void Dhyana::always_executed_hook()
 {
+	DEBUG_STREAM << "Dhyana::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -330,6 +343,7 @@ void Dhyana::always_executed_hook()
 //--------------------------------------------------------
 void Dhyana::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
+	DEBUG_STREAM << "Dhyana::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Dhyana::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -365,6 +379,7 @@ void Dhyana::add_dynamic_attributes()
 //--------------------------------------------------------
 Tango::DevState Dhyana::dev_state()
 {
+	DEBUG_STREAM << "Dhyana::State()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::dev_state) ENABLED START -----*/
 	
 	//	Add your own code
@@ -409,7 +424,7 @@ Tango::DevState Dhyana::dev_state()
 Tango::DevString Dhyana::get_all_parameters()
 {
 	Tango::DevString argout;
-	INFO_STREAM << "Dhyana::GetAllParameters()  - " << device_name << endl;
+	DEBUG_STREAM << "Dhyana::GetAllParameters()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::get_all_parameters) ENABLED START -----*/
 	
 	//	Add your own code
@@ -451,7 +466,7 @@ Tango::DevString Dhyana::get_all_parameters()
 Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 {
 	Tango::DevString argout;
-	INFO_STREAM << "Dhyana::GetParameter()  - " << device_name << endl;
+	DEBUG_STREAM << "Dhyana::GetParameter()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::get_parameter) ENABLED START -----*/
 	//	Add your own code
 	try
@@ -491,7 +506,7 @@ Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 //--------------------------------------------------------
 void Dhyana::set_parameter(const Tango::DevVarStringArray *argin)
 {
-	INFO_STREAM << "Dhyana::SetParameter()  - " << device_name << endl;
+	DEBUG_STREAM << "Dhyana::SetParameter()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::set_parameter) ENABLED START -----*/
 	if(argin->length() != 2)
 	{
@@ -658,7 +673,6 @@ void Dhyana::write_attr_at_init()
 			m_status_message << df.errors[i].desc << endl;
 		}
 		m_is_device_initialized = false;
-		set_state(Tango::FAULT);
 		return;
 	}
 	catch(lima::Exception& e)
@@ -666,7 +680,6 @@ void Dhyana::write_attr_at_init()
 		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_is_device_initialized = false;
-		set_state(Tango::FAULT);
 		return;
 	}
 }
