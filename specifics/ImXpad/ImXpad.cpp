@@ -1695,26 +1695,25 @@ void ImXpad::load_calibration_file(Tango::DevString argin)
     {
         std::string file_path_name = calibrationPath+"/"+argin;
         std::string file_path_name_temp = file_path_name;
-        
+
         //Verify if global calibration file is available
         size_t pos = file_path_name_temp.find(".cf");
-        std::string file_cfg_path_name ="";
         if (pos == std::string::npos)
         {
-            file_cfg_path_name = file_path_name_temp.append(".cfg");
-            pos = file_cfg_path_name.length() - 4;
+            file_path_name_temp = file_path_name_temp.append(".cfg");
+            pos = file_path_name_temp.length() - 4;
         }
 
-        yat::File file_cfg_path_name_file(file_cfg_path_name);
+        yat::File file_cfg_path_name_file(file_path_name_temp);
         std::string file_cfg_data;
         file_cfg_path_name_file.load((std::string*) & file_cfg_data);
 
         //Verify if local calibration file is available
-        std::string file_cfl_path_name = file_cfg_path_name.replace(pos, 4, ".cfl");        
+        std::string file_cfl_path_name = file_path_name_temp.replace(pos, 4, ".cfl");        
         yat::File file_cfl_path_name_file(file_cfl_path_name);
         std::string file_cfl_data;        
         file_cfl_path_name_file.load((std::string*) & file_cfl_data);
-       
+
         if(file_cfg_data.size() > 0 && file_cfl_data.size() > 0)
         {
             m_camera->loadCalibrationFromFile(const_cast<char*>(file_path_name.c_str()));
@@ -1725,7 +1724,7 @@ void ImXpad::load_calibration_file(Tango::DevString argin)
             if(!(file_cfg_data.size() > 0))
             {
                 std::stringstream ss;
-                ss << "The file " << file_cfg_path_name << " is empty. " << std::endl;
+                ss << "The file " << file_path_name_temp << " is empty. " << std::endl;
                 Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                         (ss.str()).c_str(),
                         "ImXpad::load_calibration_file");
