@@ -30,6 +30,32 @@ void AttrViewDhyana6060::init()
     m_dim.dynamic_attributes_manager().remove_attributes();
     try
     {
+        //Create tucamVersion attribute
+        {
+            std::string name = "tucamVersion";
+            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;       
+            yat4tango::DynamicAttributeInfo dai;
+            dai.dev = m_device;
+            //- specify the dyn. attr.  name
+            dai.tai.name = name;
+            //- associate the dyn. attr. with its data 
+            m_dyn_version = new StringUserData(name);
+
+            dai.set_user_data(m_dyn_version);
+            //Describe the dynamic attr
+            dai.tai.data_type = Tango::DEV_STRING;
+            dai.tai.data_format = Tango::SCALAR;
+            dai.tai.writable = Tango::READ;
+            dai.tai.disp_level = Tango::OPERATOR;
+            dai.tai.unit = " ";
+            dai.tai.format = "%s";
+            dai.tai.description = "Tucam Library Version.";
+
+            //Instanciate the read callback (called when the dyn. attr. is read)    
+            dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_attribute_callback);
+            //Add the dyn. attr. to the device
+            m_dim.dynamic_attributes_manager().add_attribute(dai);
+        }
         //Create sensorTemperature attribute
         {
             std::string name = "sensorTemperature";
@@ -137,6 +163,38 @@ void AttrViewDhyana6060::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_cooling_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana6060::write_dynamic_cooling_attribute_callback);
+            //Add the dyn. attr. to the device
+            m_dim.dynamic_attributes_manager().add_attribute(dai);
+        }
+        //Create sensorCooling attribute
+        {
+            std::string name = "sensorCooling";
+            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;
+            yat4tango::DynamicAttributeInfo dai;
+            dai.dev = m_device;
+            //- specify the dyn. attr.  name
+            dai.tai.name = name;
+            //- associate the dyn. attr. with its data 
+            m_dyn_sensor_cooling = new EnumUserData(name);
+
+            dai.set_user_data(m_dyn_sensor_cooling);
+            //Describe the dynamic attr
+            dai.tai.data_type = Tango::DEV_ENUM;
+            dai.tai.data_format = Tango::SCALAR;
+            dai.tai.writable = Tango::READ_WRITE;
+            dai.tai.disp_level = Tango::OPERATOR;
+            dai.tai.unit = " ";
+            dai.tai.format = "%s";
+            dai.tai.enum_labels.push_back("Off");
+            dai.tai.enum_labels.push_back("On");
+            dai.tai.description = "Set the sensor cooling switch (ON/OFF)";
+
+            //Instanciate the read callback (called when the dyn. attr. is read)
+            dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_cooling_attribute_callback);
+            //Instanciate the write callback
+            dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana6060::write_dynamic_cooling_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
@@ -568,6 +626,16 @@ void AttrViewDhyana6060::read_dynamic_cooling_attribute_callback(yat4tango::Dyna
             user_data->set_value(type);
             cbd.tga->set_value((Tango::DevEnum*)&user_data->get_value());
         }
+        else
+        if(cbd.dya->get_name() == "sensorCooling")
+        {
+            EnumUserData* user_data = cbd.dya->get_user_data<EnumUserData>();
+            //- set the attribute value
+            unsigned type;
+            dynamic_cast<Dhyana6060*>(m_device)->get_camera()->getSensorCooling(type);
+            user_data->set_value(type);
+            cbd.tga->set_value((Tango::DevEnum*)&user_data->get_value());
+        }
     }
     catch (Tango::DevFailed& df)
     {
@@ -651,6 +719,18 @@ void AttrViewDhyana6060::write_dynamic_cooling_attribute_callback(yat4tango::Dyn
 
             dynamic_cast<Dhyana6060*>(m_device)->get_camera()->setFanType(val);
         }
+        else
+        if(cbd.dya->get_name() == "sensorCooling")
+        {
+            Tango::DevEnum val;
+            cbd.tga->get_write_value( val);
+
+            EnumUserData* user_data = cbd.dya->get_user_data<EnumUserData>();
+            user_data->set_value(val);
+
+            dynamic_cast<Dhyana6060*>(m_device)->get_camera()->setSensorCooling(val);
+            yat4tango::PropertyHelper::set_memorized_attribute<Tango::DevEnum>(m_device, "sensorCooling", val);
+        }
         
     }
     catch (Tango::DevFailed& df)
@@ -699,6 +779,17 @@ void AttrViewDhyana6060::read_dynamic_attribute_callback(yat4tango::DynamicAttri
             user_data->set_value(global_gain);
             cbd.tga->set_value((Tango::DevEnum*)&user_data->get_value());
         }
+        else
+        if(cbd.dya->get_name() == "tucamVersion")
+        {
+            StringUserData* user_data = cbd.dya->get_user_data<StringUserData>();
+            //- set the attribute value
+            std::string version;
+            dynamic_cast<Dhyana6060*>(m_device)->get_camera()->getTucamVersion(version);
+            m_dyn_version->set_value(version);
+            cbd.tga->set_value((Tango::DevString*)&user_data->get_value());
+        }
+
 
     }
     catch (Tango::DevFailed& df)

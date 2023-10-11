@@ -39,6 +39,8 @@ private:
     DoubleUserData* m_dyn_trig_output_width;
     DoubleUserData* m_dyn_trig_output_delay;
     EnumUserData* m_dyn_trig_output_edge;
+    StringUserData* m_dyn_version;
+    EnumUserData* m_dyn_sensor_cooling;
 };
 
 } //namespace
