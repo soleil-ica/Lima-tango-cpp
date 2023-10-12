@@ -358,7 +358,7 @@ void AttrViewDhyana95::init()
             dai.tai.unit = " ";
             dai.tai.format = "%s";
             dai.tai.enum_labels.push_back("RISING");
-            dai.tai.enum_labels.push_back("FAILING");
+            dai.tai.enum_labels.push_back("FALLING");
             dai.tai.description = "Set edge option value on channel " + std::to_string(i) + ":\n";
             for( size_t i=0 ; i<dai.tai.enum_labels.size() ; i++ )
             {
