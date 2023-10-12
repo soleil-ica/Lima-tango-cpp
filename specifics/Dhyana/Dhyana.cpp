@@ -586,8 +586,7 @@ void Dhyana::write_attr_at_init()
 	{
 		INFO_STREAM << "Write tango attribute at Init - sensorTemperatureTarget." << endl;
 		Tango::WAttribute &temperatureTarget = dev_attr->get_w_attr_by_name("sensorTemperatureTarget");
-		double temperature_target = yat4tango::PropertyHelper::get_property<Tango::DevDouble>(this, "TemperatureTargetAtInit");
-		temperatureTarget.set_write_value(temperature_target);
+		temperatureTarget.set_write_value(temperatureTargetAtInit);
 		yat4tango::DynamicAttributeWriteCallbackData cbd_temperatureTarget;
         cbd_temperatureTarget.tga = &temperatureTarget;
 		cbd_temperatureTarget.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("sensorTemperatureTarget");
@@ -672,14 +671,12 @@ void Dhyana::write_attr_at_init()
 		{
 			m_status_message << df.errors[i].desc << endl;
 		}
-		m_is_device_initialized = false;
 		return;
 	}
 	catch(lima::Exception& e)
 	{
 		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
-		m_is_device_initialized = false;
 		return;
 	}
 }

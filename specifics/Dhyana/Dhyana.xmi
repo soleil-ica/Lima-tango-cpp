@@ -11,7 +11,7 @@
       <DefaultPropValue>1</DefaultPropValue>
     </deviceProperties>
     <deviceProperties name="TemperatureTargetAtInit" description="TemperatureTarget at init (default is 15)">
-      <type xsi:type="pogoDsl:IntType"/>
+      <type xsi:type="pogoDsl:DoubleType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>15</DefaultPropValue>
     </deviceProperties>
