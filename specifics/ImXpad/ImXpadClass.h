@@ -45,6 +45,18 @@ namespace ImXpad_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class calibrationPathAttrib: public Tango::Attr
+{
+public:
+	calibrationPathAttrib():Attr("calibrationPath", Tango::DEV_STRING, Tango::READ) {};
+	~calibrationPathAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<ImXpad *>(dev))->read_calibrationPath(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<ImXpad *>(dev))->is_calibrationPath_allowed(ty);}
+};
+
 class modeAttrib: public Tango::Attr
 {
 public:
