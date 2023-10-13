@@ -237,6 +237,7 @@ void Dhyana::get_device_property()
 	//	Read device properties from database.
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("__ExpertTimerPeriod"));
+	dev_prop.push_back(Tango::DbDatum("TemperatureTargetAtInit"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -261,6 +262,17 @@ void Dhyana::get_device_property()
 		}
 		//	And try to extract __ExpertTimerPeriod value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  __ExpertTimerPeriod;
+
+		//	Try to initialize TemperatureTargetAtInit from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  temperatureTargetAtInit;
+		else {
+			//	Try to initialize TemperatureTargetAtInit from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  temperatureTargetAtInit;
+		}
+		//	And try to extract TemperatureTargetAtInit value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  temperatureTargetAtInit;
 
 	}
 
@@ -365,6 +377,7 @@ void Dhyana::add_dynamic_attributes()
 //--------------------------------------------------------
 Tango::DevState Dhyana::dev_state()
 {
+	DEBUG_STREAM << "Dhyana::State()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::dev_state) ENABLED START -----*/
 	
 	//	Add your own code
@@ -397,6 +410,7 @@ Tango::DevState Dhyana::dev_state()
 		Tango::DeviceImpl::dev_state();
 	return get_state();  // Return it after Tango management.
 }
+
 //--------------------------------------------------------
 /**
  *	Command GetAllParameters related method
@@ -409,7 +423,7 @@ Tango::DevState Dhyana::dev_state()
 Tango::DevString Dhyana::get_all_parameters()
 {
 	Tango::DevString argout;
-	INFO_STREAM << "Dhyana::GetAllParameters()  - " << device_name << endl;
+	DEBUG_STREAM << "Dhyana::GetAllParameters()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::get_all_parameters) ENABLED START -----*/
 	
 	//	Add your own code
@@ -451,7 +465,7 @@ Tango::DevString Dhyana::get_all_parameters()
 Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 {
 	Tango::DevString argout;
-	INFO_STREAM << "Dhyana::GetParameter()  - " << device_name << endl;
+	DEBUG_STREAM << "Dhyana::GetParameter()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::get_parameter) ENABLED START -----*/
 	//	Add your own code
 	try
@@ -491,7 +505,7 @@ Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 //--------------------------------------------------------
 void Dhyana::set_parameter(const Tango::DevVarStringArray *argin)
 {
-	INFO_STREAM << "Dhyana::SetParameter()  - " << device_name << endl;
+	DEBUG_STREAM << "Dhyana::SetParameter()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::set_parameter) ENABLED START -----*/
 	if(argin->length() != 2)
 	{
@@ -543,17 +557,25 @@ void Dhyana::add_dynamic_commands()
 
 /*----- PROTECTED REGION ID(Dhyana::namespace_ending) ENABLED START -----*/
 
+//-------------------------------------
+// Dhyana::is_device_initialized()
+//-------------------------------------
 bool Dhyana::is_device_initialized()
 {
 	return m_is_device_initialized;
 }
 
+//-------------------------------------
+// Dhyana::get_camera()
+//-------------------------------------
 lima::Dhyana::Camera* Dhyana::get_camera()
 {
 	return m_camera;
 }
 
-
+//-------------------------------------
+// Dhyana::build_view()
+//-------------------------------------
 void Dhyana::build_view(std::string model)
 {
 	if (model == "Dhyana 95"  || model.find("Dhyana 95 V2") != std::string::npos)
@@ -565,14 +587,16 @@ void Dhyana::build_view(std::string model)
 	}
 }
 
+//-------------------------------------
+// Dhyana::write_attr_at_init()
+//-------------------------------------
 void Dhyana::write_attr_at_init()
 {
 	try
 	{
 		INFO_STREAM << "Write tango attribute at Init - sensorTemperatureTarget." << endl;
 		Tango::WAttribute &temperatureTarget = dev_attr->get_w_attr_by_name("sensorTemperatureTarget");
-		double temperature_target = yat4tango::PropertyHelper::get_property<Tango::DevDouble>(this, "TemperatureTargetAtInit");
-		temperatureTarget.set_write_value(temperature_target);
+		temperatureTarget.set_write_value(temperatureTargetAtInit);
 		yat4tango::DynamicAttributeWriteCallbackData cbd_temperatureTarget;
         cbd_temperatureTarget.tga = &temperatureTarget;
 		cbd_temperatureTarget.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("sensorTemperatureTarget");
@@ -657,16 +681,12 @@ void Dhyana::write_attr_at_init()
 		{
 			m_status_message << df.errors[i].desc << endl;
 		}
-		m_is_device_initialized = false;
-		set_state(Tango::FAULT);
 		return;
 	}
 	catch(lima::Exception& e)
 	{
 		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
-		m_is_device_initialized = false;
-		set_state(Tango::FAULT);
 		return;
 	}
 }
