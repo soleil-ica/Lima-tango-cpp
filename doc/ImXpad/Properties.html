@@ -110,6 +110,12 @@ Revision:  - Author:
 <Td><Font Size=-1>Tango::DEV_ULONG</Font></Td>
 <Td><Font Size=-1>Define the number of images in the acquisition mode (STACKING_16 or STACKING_32)</Font></Td></Tr>
 
+<Tr><Td><b><a href=#Dev_DefaultValues>ModuleMask </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>Dfine the modules Mask. <BR>
+Each bit of this Mask fix if a specific module is enabled or disabled.<BR>
+Value must be in Hexadecimal format</Font></Td></Tr>
+
 </Table>
 
 </Center>
@@ -170,6 +176,10 @@ Revision:  - Author:
     <Tr>
         <Td>MemorizedNbStackingImages</Td>
         <td>1</td>
+    </Tr>
+    <Tr>
+        <Td>ModuleMask</Td>
+        <td>0</td>
     </Tr>
 </Table>
 
