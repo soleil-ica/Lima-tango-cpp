@@ -293,7 +293,6 @@ void Dhyana::get_device_property()
 //--------------------------------------------------------
 void Dhyana::always_executed_hook()
 {
-	DEBUG_STREAM << "Dhyana::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -343,7 +342,6 @@ void Dhyana::always_executed_hook()
 //--------------------------------------------------------
 void Dhyana::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "Dhyana::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Dhyana::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -412,6 +410,7 @@ Tango::DevState Dhyana::dev_state()
 		Tango::DeviceImpl::dev_state();
 	return get_state();  // Return it after Tango management.
 }
+
 //--------------------------------------------------------
 /**
  *	Command GetAllParameters related method
@@ -558,17 +557,25 @@ void Dhyana::add_dynamic_commands()
 
 /*----- PROTECTED REGION ID(Dhyana::namespace_ending) ENABLED START -----*/
 
+//-------------------------------------
+// Dhyana::is_device_initialized()
+//-------------------------------------
 bool Dhyana::is_device_initialized()
 {
 	return m_is_device_initialized;
 }
 
+//-------------------------------------
+// Dhyana::get_camera()
+//-------------------------------------
 lima::Dhyana::Camera* Dhyana::get_camera()
 {
 	return m_camera;
 }
 
-
+//-------------------------------------
+// Dhyana::build_view()
+//-------------------------------------
 void Dhyana::build_view(std::string model)
 {
 	if (model == "Dhyana 95"  || model.find("Dhyana 95 V2") != std::string::npos)
@@ -580,6 +587,9 @@ void Dhyana::build_view(std::string model)
 	}
 }
 
+//-------------------------------------
+// Dhyana::write_attr_at_init()
+//-------------------------------------
 void Dhyana::write_attr_at_init()
 {
 	try
