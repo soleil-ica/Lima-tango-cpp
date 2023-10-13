@@ -305,6 +305,20 @@ void DhyanaClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "TemperatureTargetAtInit";
+	prop_desc = "TemperatureTarget at init (default is 15)";
+	prop_def  = "15";
+	vect_data.clear();
+	vect_data.push_back("15");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
 }
 
 //--------------------------------------------------------
