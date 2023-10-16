@@ -58,7 +58,8 @@ outputSignal              R/W         String                  Define the activat
                                                               - RAM_READY_IMAGE_BUSY
                                                               - XPAD_TO_LOCAL_DDR
                                                               - LOCAL_DDR_TO_PC
-calibrationFileName       R/W         String                  Define the calibration file name
+calibrationFileName       R           String                  Define the loaded calibration file name
+calibrationPath           R           String                  Define where calibration files are stored
 calibrationMode           W           String                  Define the calibration mode :
 
                                                               - OTN

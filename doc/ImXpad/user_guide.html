@@ -77,7 +77,7 @@ ImXpad Class<Br>&nbsp;<Br></Td></Tr>
 </ul><Br>&nbsp;<Br><Br>
 <h2>Class Inheritance:</h2>
 	<ul>
-		<li> <a href="http://www.esrf.fr/computing/cs/tango/tango_doc/kernel_doc/cpp_doc/"> TANGO_BASE_CLASS</a></li>
+		<li> <a href="http://www.esrf.fr/computing/cs/tango/tango_doc/kernel_doc/cpp_doc/"> Tango::Device_4Impl</a></li>
 		<ul>
 			<li> ImXpad</li>
 			</ul>
@@ -146,6 +146,12 @@ ImXpad Class<Br>&nbsp;<Br></Td></Tr>
 <Td><Font Size=-1>Tango::DEV_ULONG</Font></Td>
 <Td><Font Size=-1>Define the number of images in the acquisition mode (STACKING_16 or STACKING_32)</Font></Td></Tr>
 
+<Tr><Td><b><a href=#Dev_DefaultValues>ModuleMask </a></b></Td>
+<Td><Font Size=-1>Tango::DEV_STRING</Font></Td>
+<Td><Font Size=-1>Dfine the modules Mask. <BR>
+Each bit of this Mask fix if a specific module is enabled or disabled.<BR>
+Value must be in Hexadecimal format</Font></Td></Tr>
+
 </Table>
 
 </Center>
@@ -207,6 +213,10 @@ ImXpad Class<Br>&nbsp;<Br></Td></Tr>
         <Td>MemorizedNbStackingImages</Td>
         <td>1</td>
     </Tr>
+    <Tr>
+        <Td>ModuleMask</Td>
+        <td>0</td>
+    </Tr>
 </Table>
 
 <Br><Br><Br>
@@ -263,19 +273,19 @@ There is no Class properties.<Br><Br>
 <Tr><Td><b>serverVersion</b>: <Font Size=-1>ImXpad Socket Server Version.</Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
-<Tr><Td><b>geometricalCorrectionFlag</b></Td>
+<Tr><Td><b>geometricalCorrectionFlag</b>: <Font Size=-1>Enable/Disable Geometrical correction</Font></Td>
 <Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>flatFieldCorrectionFlag</b></Td>
+<Tr><Td><b>flatFieldCorrectionFlag</b>: <Font Size=-1>Enable/Disable Flatfield correction</Font></Td>
 <Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>calibrationFileName</b></Td>
+<Tr><Td><b>calibrationFileName</b>: <Font Size=-1>Define the loaded calibration file name</Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 <Tr><Td><b>acquisitionMode</b>: <Font Size=-1>Acquisition mode type are :<BR> STANDARD<BR> COMPUTER_BURST<BR> DETECTOR_BURST<BR> SINGLE_BUNCH_16<BR> SINGLE_BUNCH_32<BR> STACKING_16<BR> STACKING_32<BR></Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>nbStackingImages</b></Td>
+<Tr><Td><b>nbStackingImages</b>: <Font Size=-1>Define the number of images to acquire in the acquisition mode :<BR> - STACKING_16<BR> - STACKING/32<BR></Font></Td>
 <Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 <Tr><Td><b>outputSignal</b>: <Font Size=-1>Avalaible output signals are :<br> EXPOSURE_BUSY<br> EXPOSURE_READ_DONE<br> SHUTTER_BUSY<br> UPDATE_OVERFLOW_BUSY<br> PIXEL_COUNTER_ENABLED<br> EXTERNAL_GATE<br> DATA_TRANSFER<br> RAM_READY_IMAGE_BUSY<br> XPAD_TO_LOCAL_DDR<br> LOCAL_DDR_TO_PC<br></Font></Td>
@@ -284,14 +294,17 @@ There is no Class properties.<Br><Br>
 <Tr><Td><b>calibrationMode</b>: <Font Size=-1>Calibration modes are :<BR> OTN<BR> OTN_PULSE<BR> BEAM<BR>  </Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>time</b></Td>
+<Tr><Td><b>time</b>: <Font Size=-1>Define the calbration exposure time</Font></Td>
 <Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>iTHL</b></Td>
+<Tr><Td><b>iTHL</b>: <Font Size=-1>Define the limit of the threshold scan during calibration</Font></Td>
 <Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 <Tr><Td><b>mode</b>: <Font Size=-1>Available config modes for a calibration are :<BR> SLOW<BR> MEDIUM<BR> FAST<BR></Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>calibrationPath</b>: <Font Size=-1>Define the calibration files path</Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 </Table>
 </Center>
@@ -344,6 +357,12 @@ There is no Class properties.<Br><Br>
 <Td><Font Size=-1>DEV_STRING</Font></Td>
 <Td><Font Size=-1>DEV_VOID</Font></Td>
 <Tr><Td><b>Abort</b></Td>
+<Td><Font Size=-1>DEV_VOID</Font></Td>
+<Td><Font Size=-1>DEV_VOID</Font></Td>
+<Tr><Td><b>ITHLIncrease</b></Td>
+<Td><Font Size=-1>DEV_VOID</Font></Td>
+<Td><Font Size=-1>DEV_VOID</Font></Td>
+<Tr><Td><b>ITHLDecrease</b></Td>
 <Td><Font Size=-1>DEV_VOID</Font></Td>
 <Td><Font Size=-1>DEV_VOID</Font></Td>
 
@@ -512,6 +531,34 @@ The language device desctructor automatically calls the <i> delete_device() </i>
  : <Br>&nbsp
 <Li><Strong>Command allowed for: </Strong><Ul>
 <Li>Tango::FAULT<Li>Tango::RUNNING<Li>Tango::STANDBY</Ul>
+<Br>&nbsp
+</ul><Br>
+<Br>
+<A NAME="ITHLIncrease"><!-- --></A>
+<A NAME="ITHLIncrease"><!-- --></A>
+<h2>12 - ITHLIncrease</h2>
+<ul>
+<Li><Strong>Description: </Strong> Increment of one unit of the global ITHL register<Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Argout:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Command allowed for: </Strong><Ul>
+<Li>Tango::STANDBY</Ul>
+<Br>&nbsp
+</ul><Br>
+<Br>
+<A NAME="ITHLDecrease"><!-- --></A>
+<A NAME="ITHLDecrease"><!-- --></A>
+<h2>13 - ITHLDecrease</h2>
+<ul>
+<Li><Strong>Description: </Strong> Decrement of one unit in the global ITHL register<Br>&nbsp
+<Li><Strong>Argin:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Argout:<Br>DEV_VOID</Strong>
+ : <Br>&nbsp
+<Li><Strong>Command allowed for: </Strong><Ul>
+<Li>Tango::STANDBY</Ul>
 <Br>&nbsp
 </ul><Br>
 <Br>
