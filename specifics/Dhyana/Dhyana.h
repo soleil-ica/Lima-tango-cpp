@@ -120,6 +120,8 @@ public:
 	//	__ExpertTimerPeriod:	Timer period in ms.<cr>
 	//  useful only for Internal Trigger
 	Tango::DevUShort	__ExpertTimerPeriod;
+	//	TemperatureTargetAtInit:	TemperatureTarget at init (default is 15)
+	Tango::DevDouble	temperatureTargetAtInit;
 
 
 //	Constructors and destructors

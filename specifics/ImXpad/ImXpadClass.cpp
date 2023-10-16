@@ -570,7 +570,7 @@ void ImXpadClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	calibrationFileNameAttrib	*calibration_file_name = new calibrationFileNameAttrib();
 	Tango::UserDefaultAttrProp	calibration_file_name_prop;
 	calibration_file_name_prop.set_unit(" ");
-	calibration_file_name_prop.set_description("Define the calibration file name");
+	calibration_file_name_prop.set_description("Define the loaded calibration file name");
 	calibration_file_name->set_default_properties(calibration_file_name_prop);
 	att_list.push_back(calibration_file_name);
 
@@ -654,6 +654,13 @@ void ImXpadClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	mode->set_memorized();
 	mode->set_memorized_init(false);
 	att_list.push_back(mode);
+
+	//	Attribute : calibrationPath
+	calibrationPathAttrib	*calibration_path = new calibrationPathAttrib();
+	Tango::UserDefaultAttrProp	calibration_path_prop;
+	calibration_path_prop.set_description("Define the calibration files path");
+	calibration_path->set_default_properties(calibration_path_prop);
+	att_list.push_back(calibration_path);
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------

@@ -6,17 +6,25 @@
 namespace Dhyana_ns
 {
 
-
+//-----------------------------------------------------
+//AttrViewDhyana95::AttrViewDhyana95()
+//-----------------------------------------------------
 AttrViewDhyana95::AttrViewDhyana95(Tango::DeviceImpl *dev)
     : AttrView(dev)
 {
     init();
 }
 
+//-----------------------------------------------------
+//AttrViewDhyana95::~AttrViewDhyana95()
+//-----------------------------------------------------
 AttrViewDhyana95::~AttrViewDhyana95()
 {
 }
 
+//-----------------------------------------------------
+//AttrViewDhyana95::init()
+//-----------------------------------------------------
 void AttrViewDhyana95::init()
 {
     try
@@ -350,7 +358,7 @@ void AttrViewDhyana95::init()
             dai.tai.unit = " ";
             dai.tai.format = "%s";
             dai.tai.enum_labels.push_back("RISING");
-            dai.tai.enum_labels.push_back("FAILING");
+            dai.tai.enum_labels.push_back("FALLING");
             dai.tai.description = "Set edge option value on channel " + std::to_string(i) + ":\n";
             for( size_t i=0 ; i<dai.tai.enum_labels.size() ; i++ )
             {
@@ -378,6 +386,9 @@ void AttrViewDhyana95::init()
     }
 }
 
+//-----------------------------------------------------
+//AttrViewDhyana95::read_dynamic_attribute_callback()
+//-----------------------------------------------------
 void AttrViewDhyana95::read_dynamic_attribute_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
 {
     try
@@ -483,6 +494,9 @@ void AttrViewDhyana95::read_dynamic_attribute_callback(yat4tango::DynamicAttribu
     }
 }
 
+//-----------------------------------------------------
+//AttrViewDhyana95::write_dynamic_attribute_callback()
+//-----------------------------------------------------
 void AttrViewDhyana95::write_dynamic_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
 {
     try
@@ -552,6 +566,9 @@ void AttrViewDhyana95::write_dynamic_attribute_callback(yat4tango::DynamicAttrib
     }
 }
 
+//-----------------------------------------------------
+//AttrViewDhyana95::read_dynamic_trigger_attribute_callback()
+//-----------------------------------------------------
 void AttrViewDhyana95::read_dynamic_trigger_attribute_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
 {
     try
@@ -600,6 +617,9 @@ void AttrViewDhyana95::read_dynamic_trigger_attribute_callback(yat4tango::Dynami
     }
 }
 
+//-----------------------------------------------------
+//AttrViewDhyana95::write_dynamic_trigger_attribute_callback()
+//-----------------------------------------------------
 void AttrViewDhyana95::write_dynamic_trigger_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
 {
      try
