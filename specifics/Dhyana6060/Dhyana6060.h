@@ -37,7 +37,7 @@
 #include <yat/memory/UniquePtr.h>
 #include <yat4tango/PropertyHelper.h>
 
-#include "AttrView.h"
+#include "IAttrViewDhyana6060.h"
 #include "Dhyana6060Camera.h"
 #include "Dhyana6060Interface.h"
 #include "Factory.h"

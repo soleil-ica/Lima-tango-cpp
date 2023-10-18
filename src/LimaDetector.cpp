@@ -4624,6 +4624,7 @@ void LimaDetector::create_log_info_attributes(void)
 
 #if defined(_WIN64) //- Win64
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(DHYANA_NAME), YAT_XSTR(DHYANA_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(DHYANA6060_NAME), YAT_XSTR(DHYANA6060_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PCO_NAME), YAT_XSTR(PCO_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );
