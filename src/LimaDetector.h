@@ -411,10 +411,6 @@ public:
  */
 	Tango::DevUShort	expertNbPoolThread;
 /**
- *	If enabled, a call of 'Prepare' command is necessary before each 'Start' command.
- */
-	Tango::DevBoolean	expertUsePrepareCmd;
-/**
  *	Define the Timeout (in ms) for some commands (snap/start/stop/prepare).<br>
  */
 	Tango::DevULong	expertTimeoutCmd;
@@ -1116,6 +1112,8 @@ protected:
 
     //- yat4tango Dynamic attributes & commands
     yat4tango::DynamicInterfaceManager	m_dim;
+	
+	bool 								m_use_prepare_command;
 
 } ;
 
