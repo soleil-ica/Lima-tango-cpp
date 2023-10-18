@@ -1017,7 +1017,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "DetectorType";
-	prop_desc = "Define the type of the connected Detector .<BR>\nAvailables types :<BR>\n- AndorCCD<BR>\n- BaslerCCD<BR>\n- Eiger<br>\n- Hamamatsu<br>\n- ImXpad<br>\n- MarCCD<BR>\n- Maxipix <BR>\n- Merlin <BR>\n- Pco<BR>\n- PerkinElmer<BR>\n- PilatusPixelDetector<BR>\n- PrincetonCCD<BR>\n- SimulatorCCD<BR>\n- UviewCCD<BR>\n- XpadPixelDetector<BR>\n\n";
+	prop_desc = "Define the type of the connected Detector .<BR>\nAvailables types :<BR>\n- AndorCCD<BR>\n- BaslerCCD<BR>\n- Dhyana<br>\n- Eiger<br>\n- Hamamatsu<br>\n- ImXpad<br>\n- Lambda<br>\n- MarCCD<BR>\n- Maxipix<BR>\n- Merlin<BR>\n- Pco<BR>\n- PerkinElmer<BR>\n- PilatusPixelDetector<BR>\n- PrincetonCCD<BR>\n- SimulatorCCD<BR>\n- SlsEiger<BR>\n- SlsJungfrau<BR>\n- SpectralInstrument<BR>\n- SpectrumOneCCD<BR>\n- Ufxc<BR>\n- UviewCCD<BR>\n- XpadPixelDetector<BR>";
 	prop_def  = "SimulatorCCD";
 	vect_data.clear();
 	vect_data.push_back("SimulatorCCD");
@@ -1314,21 +1314,6 @@ void LimaDetectorClass::set_default_property()
 	prop_def  = "4";
 	vect_data.clear();
 	vect_data.push_back("4");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-
-	prop_name = "ExpertUsePrepareCmd";
-	prop_desc = "If enabled, a call of 'Prepare' command is necessary before each 'Start' command.";
-	prop_def  = "false";
-	vect_data.clear();
-	vect_data.push_back("false");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -1718,7 +1703,7 @@ void LimaDetectorClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Tango::Device_4Impl");
+	inheritance.push_back("Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 
