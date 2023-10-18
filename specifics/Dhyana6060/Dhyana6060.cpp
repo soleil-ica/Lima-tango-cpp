@@ -172,11 +172,13 @@ void Dhyana6060::init_device()
 		return;
 	}
 
-	m_is_device_initialized = true;
-	
+	m_is_device_initialized = true;	
 
 	set_state(Tango::STANDBY);
 	dev_state();
+
+	write_attr_at_init();
+
 	
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::init_device
 }
@@ -248,20 +250,63 @@ void Dhyana6060::add_dynamic_commands()
 /*----- PROTECTED REGION ID(Dhyana6060::namespace_ending) ENABLED START -----*/
 
 //	Additional Methods
+
+//--------------------------------------------------------------
+// Dhyana6060::is_device_initialized()
+//--------------------------------------------------------------
 bool Dhyana6060::is_device_initialized()
 {
 	return m_is_device_initialized;
 }
 
+//--------------------------------------------------------------
+// Dhyana6060::get_camera()
+//--------------------------------------------------------------
 lima::Dhyana6060::Camera* Dhyana6060::get_camera()
 {
 	return m_camera;
 }
 
-
+//--------------------------------------------------------------
+// Dhyana6060::build_view()
+//--------------------------------------------------------------
 void Dhyana6060::build_view()
 {
 	m_attr_view.reset(new AttrViewDhyana6060(this));
+}
+
+//--------------------------------------------------------------
+// Dhyana6060::write_attr_at_init()
+//--------------------------------------------------------------
+void Dhyana6060::write_attr_at_init()
+{
+	try
+	{
+		INFO_STREAM << "Write tango attribute at Init - sensorCooling." << endl;
+		Tango::WAttribute &sensorCooling = dev_attr->get_w_attr_by_name("sensorCooling");
+		Tango::DevEnum sensorCoolingOff = 0;
+		sensorCooling.set_write_value(sensorCoolingOff);
+		yat4tango::DynamicAttributeWriteCallbackData cbd_sensorCooling;
+        cbd_sensorCooling.tga = &sensorCooling;
+		cbd_sensorCooling.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("sensorCooling");
+        m_attr_view->write_dynamic_cooling_attribute_callback(cbd_sensorCooling);
+	}
+	catch(Tango::DevFailed& df)
+	{
+		ERROR_STREAM << df << endl;
+		m_status_message << "Write attribute at init Failed : ";
+		for(unsigned i = 0;i < df.errors.length();i++)
+		{
+			m_status_message << df.errors[i].desc << endl;
+		}
+		return;
+	}
+	catch(lima::Exception& e)
+	{
+		ERROR_STREAM << "Write attribute at init Failed : " << e.getErrMsg() << endl;
+		m_status_message << "Write attribute at init Failed : " << e.getErrMsg() << endl;
+		return;
+	}
 }
 
 /*----- PROTECTED REGION END -----*/	//	Dhyana6060::namespace_ending
