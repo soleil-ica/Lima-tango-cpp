@@ -1,8 +1,8 @@
 #ifndef AttrViewDhyana6060_H
 #define AttrViewDhyana6060_H
 
-#include "AttrView.h"
-#include "UserData.h"
+#include "IAttrViewDhyana6060.h"
+#include "UserDataDhyana6060.h"
 
 namespace Dhyana6060_ns
 {

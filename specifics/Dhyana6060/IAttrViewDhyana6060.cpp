@@ -1,4 +1,4 @@
-#include "AttrView.h"
+#include "IAttrViewDhyana6060.h"
 
 namespace Dhyana6060_ns
 {

@@ -1,5 +1,5 @@
-#ifndef AttrView_H
-#define AttrView_H
+#ifndef AttrView6060_H
+#define AttrView6060_H
 
 #include <tango.h>
 

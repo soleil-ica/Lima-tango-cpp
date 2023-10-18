@@ -1,6 +1,6 @@
 //=============================================================================
 //
-// file :        UserData.cpp
+// file :        UserDataDhyana6060.cpp
 //
 // description : 
 //
@@ -14,7 +14,7 @@
 //               FRANCE
 //=============================================================================
 
-#include "UserData.h"
+#include "UserDataDhyana6060.h"
 #include <PogoHelper.h>
 
 namespace Dhyana6060_ns

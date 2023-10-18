@@ -1,13 +1,13 @@
 /*************************************************************************
 /*! 
- *  \file   UserData.h
+ *  \file   UserDataDhyana6060.h
  *  \brief  class UserData
  *  \author Arafat NOUREDDINE
  */
 /*************************************************************************/
 
-#ifndef USER_DATA_H
-#define USER_DATA_H
+#ifndef USER_DATA_6060_H
+#define USER_DATA_6060_H
 #include <yat/threading/Mutex.h>
 
 #include <tango.h>
