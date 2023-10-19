@@ -3338,6 +3338,8 @@ void LimaDetector::prepare()
             print_acq_conf();
             yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
             {
+                m_acq_conf.ct = m_ct;
+                m_acq_conf.use_prepare_cmd = m_use_prepare_command; 
                 yat::Message* msg = yat::Message::allocate(DEVICE_PREPARE_MSG, DEFAULT_MSG_PRIORITY, true);
                 msg->attach_data(m_acq_conf);
                 m_acquisition_task->wait_msg_handled(msg, expertTimeoutCmd);
@@ -3428,6 +3430,8 @@ void LimaDetector::snap()
 
         yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
         {
+            m_acq_conf.ct = m_ct;
+            m_acq_conf.use_prepare_cmd = m_use_prepare_command; 
             yat::Message* msg = yat::Message::allocate(DEVICE_SNAP_MSG, DEFAULT_MSG_PRIORITY, true);
             msg->attach_data(m_acq_conf);
             m_acquisition_task->wait_msg_handled(msg, expertTimeoutCmd);
@@ -4633,6 +4637,7 @@ void LimaDetector::create_log_info_attributes(void)
 
 #if defined(_WIN64) //- Win64
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(DHYANA_NAME), YAT_XSTR(DHYANA_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(DHYANA6060_NAME), YAT_XSTR(DHYANA6060_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PCO_NAME), YAT_XSTR(PCO_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );
