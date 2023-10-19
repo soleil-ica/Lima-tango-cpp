@@ -3338,6 +3338,8 @@ void LimaDetector::prepare()
             print_acq_conf();
             yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
             {
+                m_acq_conf.ct = m_ct;
+                m_acq_conf.use_prepare_cmd = m_use_prepare_command; 
                 yat::Message* msg = yat::Message::allocate(DEVICE_PREPARE_MSG, DEFAULT_MSG_PRIORITY, true);
                 msg->attach_data(m_acq_conf);
                 m_acquisition_task->wait_msg_handled(msg, expertTimeoutCmd);
@@ -3428,6 +3430,8 @@ void LimaDetector::snap()
 
         yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
         {
+            m_acq_conf.ct = m_ct;
+            m_acq_conf.use_prepare_cmd = m_use_prepare_command; 
             yat::Message* msg = yat::Message::allocate(DEVICE_SNAP_MSG, DEFAULT_MSG_PRIORITY, true);
             msg->attach_data(m_acq_conf);
             m_acquisition_task->wait_msg_handled(msg, expertTimeoutCmd);
