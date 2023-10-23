@@ -50,10 +50,13 @@
 //  The following table gives the correspondence
 //  between command and method names.
 //
-//  Command name  |  Method name
+//  Command name      |  Method name
 //================================================================
-//  State         |  Inherited (no method)
-//  Status        |  Inherited (no method)
+//  State             |  Inherited (no method)
+//  Status            |  Inherited (no method)
+//  GetAllParameters  |  get_all_parameters
+//  GetParameter      |  get_parameter
+//  SetParameter      |  set_parameter
 //================================================================
 
 //================================================================
@@ -190,6 +193,7 @@ void Dhyana6060::init_device()
 //--------------------------------------------------------
 void Dhyana6060::always_executed_hook()
 {
+	DEBUG_STREAM << "Dhyana6060::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana6060::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -205,6 +209,7 @@ void Dhyana6060::always_executed_hook()
 //--------------------------------------------------------
 void Dhyana6060::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
+	DEBUG_STREAM << "Dhyana6060::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Dhyana6060::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -229,6 +234,136 @@ void Dhyana6060::add_dynamic_attributes()
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::add_dynamic_attributes
 }
 
+//--------------------------------------------------------
+/**
+ *	Command GetAllParameters related method
+ *	Description: Return the list of all the camera available parameters and their values in the following format:
+ *               ParameterName=current_value
+ *
+ *	@returns 
+ */
+//--------------------------------------------------------
+Tango::DevString Dhyana6060::get_all_parameters()
+{
+	Tango::DevString argout;
+	DEBUG_STREAM << "Dhyana6060::GetAllParameters()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(Dhyana6060::get_all_parameters) ENABLED START -----*/
+	
+	//	Add your own code
+	try
+	{
+        argout = CORBA::string_dup(m_camera->getAllParameters().c_str());
+	}
+	catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+		Tango::Except::re_throw_exception(df,
+										"TANGO_DEVICE_ERROR",
+										std::string(df.errors[0].desc).c_str(),
+										"Dhyana::get_all_parameters");
+    }		
+    catch(lima::Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+										e.getErrMsg().c_str(),
+										"Dhyana::get_all_parameters");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::get_all_parameters
+	return argout;
+}
+//--------------------------------------------------------
+/**
+ *	Command GetParameter related method
+ *	Description: Return the current value of the specified parameter
+ *
+ *	@param argin 
+ *	@returns 
+ */
+//--------------------------------------------------------
+Tango::DevString Dhyana6060::get_parameter(Tango::DevString argin)
+{
+	Tango::DevString argout;
+	DEBUG_STREAM << "Dhyana6060::GetParameter()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(Dhyana6060::get_parameter) ENABLED START -----*/
+	
+	//	Add your own code
+	try
+	{
+        argout = CORBA::string_dup(m_camera->getParameter(argin).c_str());      
+	}
+	catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+		Tango::Except::re_throw_exception(df,
+										"TANGO_DEVICE_ERROR",
+										std::string(df.errors[0].desc).c_str(),
+										"Dhyana::get_parameter");
+					
+    }		
+    catch(lima::Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+										e.getErrMsg().c_str(),
+										"Dhyana::get_parameter");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::get_parameter
+	return argout;
+}
+//--------------------------------------------------------
+/**
+ *	Command SetParameter related method
+ *	Description: Set the value of the specified parameter.
+ *
+ *	@param argin 
+ */
+//--------------------------------------------------------
+void Dhyana6060::set_parameter(const Tango::DevVarStringArray *argin)
+{
+	DEBUG_STREAM << "Dhyana6060::SetParameter()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(Dhyana6060::set_parameter) ENABLED START -----*/
+	
+	//	Add your own code
+	if(argin->length() != 2)
+	{
+		//- throw exception
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+										"Invalid number of parameters. Check input parameters (parameter, value)\n",
+										"Dhyana::set_parameter");
+	}
+    try
+    {
+		std::string parameter = static_cast<std::string>((*argin)[0]);
+		std::string value_str = static_cast<std::string>((*argin)[1]);
+		m_camera->setParameter(parameter, std::stod(value_str));
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+		Tango::Except::re_throw_exception(df,
+										"TANGO_DEVICE_ERROR",
+										std::string(df.errors[0].desc).c_str(),
+										"Dhyana::set_parameter");
+    }		
+    catch(lima::Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+										e.getErrMsg().c_str(),
+										"Dhyana::set_parameter");
+    }
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::set_parameter
+}
 //--------------------------------------------------------
 /**
  *	Method      : Dhyana6060::add_dynamic_commands()
