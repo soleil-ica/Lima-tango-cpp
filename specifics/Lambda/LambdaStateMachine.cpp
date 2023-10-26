@@ -364,6 +364,31 @@ bool Lambda::is_saturationThreshold_allowed(TANGO_UNUSED(Tango::AttReqType type)
 	return true;
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : Lambda::is_chargeSumming_allowed()
+ *	Description : Execution allowed for chargeSumming attribute
+ */
+//--------------------------------------------------------
+bool Lambda::is_chargeSumming_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::FAULT && !is_device_initialized())
+		{
+		/*----- PROTECTED REGION ID(Lambda::distortionCorrectionStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	Lambda::distortionCorrectionStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
 
 //=================================================
 //		Commands Allowed Methods

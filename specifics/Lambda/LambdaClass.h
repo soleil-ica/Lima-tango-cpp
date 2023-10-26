@@ -197,6 +197,19 @@ public:
 		{return (static_cast<Lambda *>(dev))->is_saturationThreshold_allowed(ty);}
 };
 
+//	Attribute chargeSumming class definition
+class chargeSummingAttrib: public Tango::Attr
+{
+public:
+	chargeSummingAttrib():Attr("chargeSumming",
+			Tango::DEV_BOOLEAN, Tango::READ) {};
+	~chargeSummingAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Lambda *>(dev))->read_chargeSumming(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Lambda *>(dev))->is_chargeSumming_allowed(ty);}
+};
+
 
 /**
  *	The LambdaClass singleton definition

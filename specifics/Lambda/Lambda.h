@@ -89,6 +89,8 @@ public:
 	//  - The values of the pixels are rounded during division. <br>
 	//  - If pixel value is saturated, the division is not applied.<br>
 	Tango::DevBoolean	distortionCorrection;
+	//	ChargeSumming:	Indicates wether charge summing is used.
+	Tango::DevBoolean	chargeSumming;
 
 //	Attribute data members
 public:
@@ -102,6 +104,7 @@ public:
 	Tango::DevBoolean	*attr_linearityCorrection_read;
 	Tango::DevBoolean	*attr_saturationFlag_read;
 	Tango::DevLong	*attr_saturationThreshold_read;
+	Tango::DevBoolean	*attr_chargeSumming_read;
 
 //	Constructors and destructors
 public:
@@ -273,6 +276,15 @@ public:
 	virtual void read_saturationThreshold(Tango::Attribute &attr);
 	virtual void write_saturationThreshold(Tango::WAttribute &attr);
 	virtual bool is_saturationThreshold_allowed(Tango::AttReqType type);
+/**
+ *	Attribute chargeSumming related methods
+ *	Description: charge summing mode.
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void read_chargeSumming(Tango::Attribute &attr);
+	virtual bool is_chargeSumming_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------

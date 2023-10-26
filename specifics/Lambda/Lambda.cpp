@@ -82,6 +82,7 @@ namespace Lambda_ns
 //  linearityCorrection   |  Tango::DevBoolean	Scalar
 //  saturationFlag        |  Tango::DevBoolean	Scalar
 //  saturationThreshold   |  Tango::DevLong	Scalar
+//  chargeSumming         |  Tango::DevBoolean	Scalar
 //================================================================
 
 namespace Lambda_ns
@@ -146,6 +147,7 @@ void Lambda::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_linearityCorrection_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_saturationFlag_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_saturationThreshold_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_chargeSumming_read);
 
     m_is_device_initialized = false;
 
@@ -183,6 +185,7 @@ void Lambda::init_device()
 	CREATE_SCALAR_ATTRIBUTE(attr_linearityCorrection_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_saturationFlag_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_saturationThreshold_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_chargeSumming_read);
     
     m_is_device_initialized = false;
 	m_has_hv_feature 		= false;
@@ -225,6 +228,10 @@ void Lambda::init_device()
 		m_camera->setDistortionCorrection(distortionCorrection);
 		//- Get the distortion correction (from hardware), only once
 		m_camera->getDistortionCorrection(*attr_distortionCorrection_read);
+		//- Set charge summing mode (from property)
+		m_camera->setChargeSumming(chargeSumming);
+		//- Get the distortion correction (from hardware), only once
+		m_camera->getChargeSumming(*attr_chargeSumming_read);
 
 		//- Get the lib version, only once
 		m_library_version = m_camera->getLibVersion();
@@ -289,6 +296,7 @@ void Lambda::get_device_property()
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("ConfigFile"));
 	dev_prop.push_back(Tango::DbDatum("DistortionCorrection"));
+	dev_prop.push_back(Tango::DbDatum("ChargeSumming"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -325,6 +333,17 @@ void Lambda::get_device_property()
 		//	And try to extract DistortionCorrection value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  distortionCorrection;
 
+		//	Try to initialize ChargeSumming from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  chargeSumming;
+		else {
+			//	Try to initialize ChargeSumming from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  chargeSumming;
+		}
+		//	And try to extract ChargeSumming value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  chargeSumming;
+
 	}
 
 	/*----- PROTECTED REGION ID(Lambda::get_device_property_after) ENABLED START -----*/
@@ -332,6 +351,7 @@ void Lambda::get_device_property()
 	//	Check device property data members init
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "/opt/xsp/config/system.yml", "ConfigFile");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "True"  , "DistortionCorrection");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "False"  , "ChargeSumming");
 	/*----- PROTECTED REGION END -----*/	//	Lambda::get_device_property_after
 }
 
@@ -698,7 +718,7 @@ void Lambda::read_linearityCorrection(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_linearityCorrection(Tango::WAttribute &attr)
 {
-	INFO_STREAM << "Lambda::write_linearityCorrection(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Lambda::write_linearityCorrection(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
@@ -849,6 +869,24 @@ void Lambda::write_saturationThreshold(Tango::WAttribute &attr)
         manage_lima_exception(le, "write_saturationThreshold");
     }
 	/*----- PROTECTED REGION END -----*/	//	Lambda::write_saturationThreshold
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute chargeSumming related method
+ *	Description: charge summing mode.
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::read_chargeSumming(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Lambda::read_chargeSumming(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Lambda::read_chargeSumming) ENABLED START -----*/
+	//	Set the attribute value
+	attr.set_value(attr_chargeSumming_read);
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::read_chargeSumming
 }
 
 //--------------------------------------------------------

@@ -255,6 +255,20 @@ void LambdaClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ChargeSumming";
+	prop_desc = "Indicates wether charge summing is used.";
+	prop_def  = "False";
+	vect_data.clear();
+	vect_data.push_back("False");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
 }
 
 //--------------------------------------------------------
@@ -600,6 +614,30 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	saturationthreshold->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
 	att_list.push_back(saturationthreshold);
+
+	//	Attribute : chargeSumming
+	chargeSummingAttrib	*chargesumming = new chargeSummingAttrib();
+	Tango::UserDefaultAttrProp	chargesumming_prop;
+	chargesumming_prop.set_description("charge summing mode.");
+	//	label	not set for chargeSumming
+	//	unit	not set for chargeSumming
+	//	standard_unit	not set for chargeSumming
+	//	display_unit	not set for chargeSumming
+	//	format	not set for chargeSumming
+	//	max_value	not set for chargeSumming
+	//	min_value	not set for chargeSumming
+	//	max_alarm	not set for chargeSumming
+	//	min_alarm	not set for chargeSumming
+	//	max_warning	not set for chargeSumming
+	//	min_warning	not set for chargeSumming
+	//	delta_t	not set for chargeSumming
+	//	delta_val	not set for chargeSumming
+	
+	chargesumming->set_default_properties(chargesumming_prop);
+	//	Not Polled
+	chargesumming->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(chargesumming);
 
 
 	//	Create a list of static attributes
