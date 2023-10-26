@@ -85,21 +85,6 @@ public:
 		{return (static_cast<Lambda *>(dev))->is_distortionCorrection_allowed(ty);}
 };
 
-//	Attribute energyThreshold class definition
-class energyThresholdAttrib: public Tango::Attr
-{
-public:
-	energyThresholdAttrib():Attr("energyThreshold",
-			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
-	~energyThresholdAttrib() {};
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-		{(static_cast<Lambda *>(dev))->read_energyThreshold(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-		{(static_cast<Lambda *>(dev))->write_energyThreshold(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-		{return (static_cast<Lambda *>(dev))->is_energyThreshold_allowed(ty);}
-};
-
 //	Attribute libraryVersion class definition
 class libraryVersionAttrib: public Tango::Attr
 {
@@ -208,6 +193,36 @@ public:
 		{(static_cast<Lambda *>(dev))->read_chargeSumming(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 		{return (static_cast<Lambda *>(dev))->is_chargeSumming_allowed(ty);}
+};
+
+//	Attribute lowerThreshold class definition
+class lowerThresholdAttrib: public Tango::Attr
+{
+public:
+	lowerThresholdAttrib():Attr("lowerThreshold",
+			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~lowerThresholdAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Lambda *>(dev))->read_lowerThreshold(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Lambda *>(dev))->write_lowerThreshold(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Lambda *>(dev))->is_lowerThreshold_allowed(ty);}
+};
+
+//	Attribute upperThreshold class definition
+class upperThresholdAttrib: public Tango::Attr
+{
+public:
+	upperThresholdAttrib():Attr("upperThreshold",
+			Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~upperThresholdAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Lambda *>(dev))->read_upperThreshold(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Lambda *>(dev))->write_upperThreshold(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Lambda *>(dev))->is_upperThreshold_allowed(ty);}
 };
 
 

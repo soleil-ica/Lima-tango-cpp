@@ -60,7 +60,7 @@ bool Lambda::is_configFile_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	if ( type==Tango::READ_REQ )
 	{
 		//	Compare device state with not allowed states for READ 
-		if (get_state() == Tango::FAULT && !is_device_initialized())
+		if (get_state()==Tango::FAULT&& !is_device_initialized())
 		{
 		/*----- PROTECTED REGION ID(Lambda::configFileStateAllowed_READ) ENABLED START -----*/
 		
@@ -85,52 +85,11 @@ bool Lambda::is_distortionCorrection_allowed(TANGO_UNUSED(Tango::AttReqType type
 	if ( type==Tango::READ_REQ )
 	{
 		//	Compare device state with not allowed states for READ 
-		if (get_state()==Tango::FAULT && !is_device_initialized())
+		if (get_state()==Tango::FAULT&& !is_device_initialized())
 		{
 		/*----- PROTECTED REGION ID(Lambda::distortionCorrectionStateAllowed_READ) ENABLED START -----*/
 		
 		/*----- PROTECTED REGION END -----*/	//	Lambda::distortionCorrectionStateAllowed_READ
-			return false;
-		}
-		return true;
-	}
-	return true;
-}
-
-//--------------------------------------------------------
-/**
- *	Method      : Lambda::is_energyThreshold_allowed()
- *	Description : Execution allowed for energyThreshold attribute
- */
-//--------------------------------------------------------
-bool Lambda::is_energyThreshold_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	//	Check access type.
-	if ( type!=Tango::READ_REQ )
-	{
-		//	Compare device state with not allowed states for WRITE 
-		if ((get_state()==Tango::FAULT && !is_device_initialized()) ||
-			get_state()==Tango::RUNNING)
-		{
-		/*----- PROTECTED REGION ID(Lambda::energyThresholdStateAllowed_WRITE) ENABLED START -----*/
-		
-		/*----- PROTECTED REGION END -----*/	//	Lambda::energyThresholdStateAllowed_WRITE
-			return false;
-		}
-		return true;
-	}
-	else
-
-	//	Check access type.
-	if ( type==Tango::READ_REQ )
-	{
-		//	Compare device state with not allowed states for READ 
-		if ((get_state()==Tango::FAULT && !is_device_initialized()) ||
-			get_state()==Tango::RUNNING)
-		{
-		/*----- PROTECTED REGION ID(Lambda::energyThresholdStateAllowed_READ) ENABLED START -----*/
-		
-		/*----- PROTECTED REGION END -----*/	//	Lambda::energyThresholdStateAllowed_READ
 			return false;
 		}
 		return true;
@@ -228,7 +187,7 @@ bool Lambda::is_temperature_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	if ( type==Tango::READ_REQ )
 	{
 		//	Compare device state with not allowed states for READ 
-		if ((get_state()==Tango::FAULT && !is_device_initialized()) ||
+		if ((get_state()==Tango::FAULT && !is_device_initialized())||
 			get_state()==Tango::RUNNING)
 		{
 		/*----- PROTECTED REGION ID(Lambda::temperatureStateAllowed_READ) ENABLED START -----*/
@@ -294,7 +253,7 @@ bool Lambda::is_saturationFlag_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	if ( type!=Tango::READ_REQ )
 	{
 		//	Compare device state with not allowed states for WRITE 
-		if ((get_state()==Tango::FAULT && !is_device_initialized()) ||
+		if ((get_state()==Tango::FAULT && !is_device_initialized())||
 			get_state()==Tango::RUNNING)
 		{
 		/*----- PROTECTED REGION ID(Lambda::saturationFlagStateAllowed_WRITE) ENABLED START -----*/
@@ -335,7 +294,7 @@ bool Lambda::is_saturationThreshold_allowed(TANGO_UNUSED(Tango::AttReqType type)
 	if ( type!=Tango::READ_REQ )
 	{
 		//	Compare device state with not allowed states for WRITE 
-		if ((get_state()==Tango::FAULT && !is_device_initialized()) ||
+		if ((get_state()==Tango::FAULT && !is_device_initialized())||
 			get_state()==Tango::RUNNING)
 		{
 		/*----- PROTECTED REGION ID(Lambda::saturationThresholdStateAllowed_WRITE) ENABLED START -----*/
@@ -379,9 +338,92 @@ bool Lambda::is_chargeSumming_allowed(TANGO_UNUSED(Tango::AttReqType type))
 		//	Compare device state with not allowed states for READ 
 		if (get_state()==Tango::FAULT && !is_device_initialized())
 		{
-		/*----- PROTECTED REGION ID(Lambda::distortionCorrectionStateAllowed_READ) ENABLED START -----*/
+		/*----- PROTECTED REGION ID(Lambda::chargeSummingStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::chargeSummingStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : Lambda::is_lowerThreshold_allowed()
+ *	Description : Execution allowed for lowerThreshold attribute
+ */
+//--------------------------------------------------------
+bool Lambda::is_lowerThreshold_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if ((get_state()==Tango::FAULT && !is_device_initialized()) ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(Lambda::lowerThresholdStateAllowed_WRITE) ENABLED START -----*/
 		
-		/*----- PROTECTED REGION END -----*/	//	Lambda::distortionCorrectionStateAllowed_READ
+		/*----- PROTECTED REGION END -----*/	//	Lambda::lowerThresholdStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if ((get_state()==Tango::FAULT && !is_device_initialized()) ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(Lambda::lowerThresholdStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	Lambda::lowerThresholdStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+
+}
+
+//--------------------------------------------------------
+/**
+ *	Method      : Lambda::is_upperThreshold_allowed()
+ *	Description : Execution allowed for upperThreshold attribute
+ */
+//--------------------------------------------------------
+bool Lambda::is_upperThreshold_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if ((get_state()==Tango::FAULT && !is_device_initialized()) ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(Lambda::upperThresholdStateAllowed_WRITE) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	Lambda::upperThresholdStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if ((get_state()==Tango::FAULT && !is_device_initialized()) ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(Lambda::upperThresholdStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	Lambda::upperThresholdStateAllowed_READ
 			return false;
 		}
 		return true;
