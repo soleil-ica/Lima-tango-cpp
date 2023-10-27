@@ -256,7 +256,7 @@ void LambdaClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 	prop_name = "ChargeSumming";
-	prop_desc = "Indicates wether charge summing is used.";
+	prop_desc = "Indicates wether charge summing is used or not.";
 	prop_def  = "False";
 	vect_data.clear();
 	vect_data.push_back("False");
@@ -624,7 +624,7 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	lowerthreshold_prop.set_standard_unit("KeV");
 	lowerthreshold_prop.set_display_unit("KeV");
 	lowerthreshold_prop.set_format("%6.2f");
-	lowerthreshold_prop.set_max_value("300");
+	lowerthreshold_prop.set_max_value("100");
 	lowerthreshold_prop.set_min_value("0");
 	//	max_alarm	not set for lowerThreshold
 	//	min_alarm	not set for lowerThreshold
@@ -648,7 +648,7 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	upperthreshold_prop.set_standard_unit("KeV");
 	upperthreshold_prop.set_display_unit("KeV");
 	upperthreshold_prop.set_format("%6.2f");
-	upperthreshold_prop.set_max_value("300");
+	upperthreshold_prop.set_max_value("100");
 	upperthreshold_prop.set_min_value("0");
 	//	max_alarm	not set for upperThreshold
 	//	min_alarm	not set for upperThreshold

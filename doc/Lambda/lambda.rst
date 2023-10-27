@@ -20,6 +20,7 @@ DistortionCorrection    false                       Boolean         Set distorti
                                                                         - Large pixels are divided according to predefined denominator.
                                                                         - The values of the pixels are rounded during division.
                                                                         - If pixel value is saturated, the division is not applied.
+ChargeSumming			False						Boolean			Indicates wether charge summing mode is used or not.						
 ======================= =========================== =============== =========================================================================
 
 
@@ -30,7 +31,9 @@ Attributes
 Attribute name          Read/Write Type       Description
 ======================= ========== ========== ==============================================================================================
 configFile              R          String     Configuration file used to initialize the detector.
-energyThreshold         R/W        Double     Get/Set the threshold settings in keV for the Lambda detector. It's a memorized attribute.
+chargeSumming           R          Boolean    Indicates wether charge summing mode is used or not.
+lowerThreshold          R/W        Double     Get/Set the lower threshold settings in keV for the Lambda detector. It's a memorized attribute.
+upperThreshold          R/W        Double     Get/Set the upper threshold settings in keV for the Lambda detector. It's a memorized attribute.
 distortionCorrection    R          Boolean    Get whether interpolation of extra large pixels is enabled.
 highVoltage             R          Double     Get the measured high voltage value from a specific detector module. (Older detector firmware might not support this command. In this case, a value of 0.0 is returned). It's a memorized attribute.
 humidity                R          Double     Get the measured humidity from a specific detector module. (Older detector firmware might not support this command. In this case, the valueof 0.0 is returned).

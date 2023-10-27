@@ -15,7 +15,7 @@
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>True</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="ChargeSumming" description="Indicates wether charge summing is used.">
+    <deviceProperties name="ChargeSumming" description="Indicates wether charge summing is used or not.">
       <type xsi:type="pogoDsl:BooleanType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>False</DefaultPropValue>
@@ -149,7 +149,11 @@
       <archiveEvent fire="false" libCheckCriteria="false"/>
       <dataReadyEvent fire="false" libCheckCriteria="true"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <properties description="lower threshold in KeV.&lt;br>&#xA;The photon is counted If the energy is above this threshold.&lt;br>&#xA;lowerThreshold is a memorized attribute.&lt;br>" label="" unit="KeV" standardUnit="KeV" displayUnit="KeV" format="%6.2f" maxValue="300" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <properties description="lower threshold in KeV.&lt;br>&#xA;The photon is counted If the energy is above this threshold.&lt;br>&#xA;lowerThreshold is a memorized attribute.&lt;br>" label="" unit="KeV" standardUnit="KeV" displayUnit="KeV" format="%6.2f" maxValue="100" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <readExcludedStates>FAULT</readExcludedStates>
+      <readExcludedStates>RUNNING</readExcludedStates>
+      <writeExcludedStates>FAULT</writeExcludedStates>
+      <writeExcludedStates>RUNNING</writeExcludedStates>
     </attributes>
     <attributes name="upperThreshold" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="" maxY="" allocReadMember="false" isDynamic="false">
       <dataType xsi:type="pogoDsl:DoubleType"/>
@@ -157,7 +161,11 @@
       <archiveEvent fire="false" libCheckCriteria="false"/>
       <dataReadyEvent fire="false" libCheckCriteria="true"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <properties description="upper threshold in KeV.&lt;br>&#xA;The photon is counted If the energy is under this threshold.&lt;br>&#xA;upperThreshold is a memorized attribute.&lt;br>" label="" unit="KeV" standardUnit="KeV" displayUnit="KeV" format="%6.2f" maxValue="300" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <properties description="upper threshold in KeV.&lt;br>&#xA;The photon is counted If the energy is under this threshold.&lt;br>&#xA;upperThreshold is a memorized attribute.&lt;br>" label="" unit="KeV" standardUnit="KeV" displayUnit="KeV" format="%6.2f" maxValue="100" minValue="0" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <readExcludedStates>FAULT</readExcludedStates>
+      <readExcludedStates>RUNNING</readExcludedStates>
+      <writeExcludedStates>FAULT</writeExcludedStates>
+      <writeExcludedStates>RUNNING</writeExcludedStates>
     </attributes>
     <states name="STANDBY" description="">
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>

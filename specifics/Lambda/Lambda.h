@@ -89,7 +89,7 @@ public:
 	//  - The values of the pixels are rounded during division. <br>
 	//  - If pixel value is saturated, the division is not applied.<br>
 	Tango::DevBoolean	distortionCorrection;
-	//	ChargeSumming:	Indicates wether charge summing is used.
+	//	ChargeSumming:	Indicates wether charge summing is used or not.
 	Tango::DevBoolean	chargeSumming;
 
 //	Attribute data members

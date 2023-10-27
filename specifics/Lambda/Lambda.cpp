@@ -1087,12 +1087,13 @@ void Lambda::write_at_init(void)
 		Tango::WAttribute &lowerThreshold = dev_attr->get_w_attr_by_name("lowerThreshold");
 		*attr_lowerThreshold_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, "lowerThreshold", 7.0);
 		lowerThreshold.set_write_value(*attr_lowerThreshold_read);
-		write_lowerThreshold(lowerThreshold);
 
 		INFO_STREAM << "Write tango hardware at Init - upperThreshold." << endl;
 		Tango::WAttribute &upperThreshold = dev_attr->get_w_attr_by_name("upperThreshold");
-		*attr_upperThreshold_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, "upperThreshold", 7.0);//TODO SBA? combien au max par defaut?
+		*attr_upperThreshold_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, "upperThreshold", 40.0);
 		upperThreshold.set_write_value(*attr_upperThreshold_read);
+
+		write_lowerThreshold(lowerThreshold);
 		write_upperThreshold(upperThreshold);
 
 		//Init Correction attributes

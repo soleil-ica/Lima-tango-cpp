@@ -60,7 +60,7 @@ bool Lambda::is_configFile_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	if ( type==Tango::READ_REQ )
 	{
 		//	Compare device state with not allowed states for READ 
-		if (get_state()==Tango::FAULT&& !is_device_initialized())
+		if (get_state()==Tango::FAULT && !is_device_initialized())
 		{
 		/*----- PROTECTED REGION ID(Lambda::configFileStateAllowed_READ) ENABLED START -----*/
 		
@@ -85,7 +85,7 @@ bool Lambda::is_distortionCorrection_allowed(TANGO_UNUSED(Tango::AttReqType type
 	if ( type==Tango::READ_REQ )
 	{
 		//	Compare device state with not allowed states for READ 
-		if (get_state()==Tango::FAULT&& !is_device_initialized())
+		if (get_state()==Tango::FAULT && !is_device_initialized())
 		{
 		/*----- PROTECTED REGION ID(Lambda::distortionCorrectionStateAllowed_READ) ENABLED START -----*/
 		
@@ -135,7 +135,7 @@ bool Lambda::is_highVoltage_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	if ( type==Tango::READ_REQ )
 	{
 		//	Compare device state with not allowed states for READ 
-		if ((get_state()==Tango::FAULT && !is_device_initialized()) ||
+		if ((get_state()==Tango::FAULT && !is_device_initialized())||
 			get_state()==Tango::RUNNING)
 		{
 		/*----- PROTECTED REGION ID(Lambda::highVoltageStateAllowed_READ) ENABLED START -----*/
@@ -356,7 +356,7 @@ bool Lambda::is_chargeSumming_allowed(TANGO_UNUSED(Tango::AttReqType type))
 //--------------------------------------------------------
 bool Lambda::is_lowerThreshold_allowed(TANGO_UNUSED(Tango::AttReqType type))
 {
-//	Check access type.
+	//	Check access type.
 	if ( type!=Tango::READ_REQ )
 	{
 		//	Compare device state with not allowed states for WRITE 
@@ -365,7 +365,7 @@ bool Lambda::is_lowerThreshold_allowed(TANGO_UNUSED(Tango::AttReqType type))
 		{
 		/*----- PROTECTED REGION ID(Lambda::lowerThresholdStateAllowed_WRITE) ENABLED START -----*/
 		
-		/*----- PROTECTED REGION END -----*/	//	Lambda::lowerThresholdStateAllowed_READ
+		/*----- PROTECTED REGION END -----*/	//	Lambda::lowerThresholdStateAllowed_WRITE
 			return false;
 		}
 		return true;
@@ -387,7 +387,6 @@ bool Lambda::is_lowerThreshold_allowed(TANGO_UNUSED(Tango::AttReqType type))
 		return true;
 	}
 	return true;
-
 }
 
 //--------------------------------------------------------
