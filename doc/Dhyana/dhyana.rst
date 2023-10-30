@@ -95,6 +95,15 @@ trigOutputEdge3                 R/W                      Enum               | Av
                                                                             | Set edge option value on channel 3 mode [Rising, Falling]
 =============================== ======================== ================== =================================================================
 
+Dhyana4040 specific Attributes
+````````````````````````````````
+
+=============================== ======================== ================== =================================================================
+Attribute name                  Read/Write               Type               Description
+=============================== ======================== ================== =================================================================
+tecMode                         R/W                      Enum               Set the sensor cooling switch [ON, OFF]
+=============================== ======================== ================== =================================================================
+
 Common Commands
 ````````````````````
 
@@ -102,9 +111,9 @@ Common Commands
 Command name            Arg. in         Arg. out                Description
 ======================= =============== ======================= =============================================================================
 Init                    Void            Void                    Do not use (Use Init of the Generic device) 
-State                   Void            Long                    Return the device state
-Status                  Void            Long                    Return the device status
-setParamter             String Array    Void                    Set the value of a parameter
+State                   Void            Long                    Returns the device state
+Status                  Void            String                  Returns the device status
+setParamter             String Array    Void                    Sets the value of a parameter
 getParameter            String          String                  Returns the name and value of a specific parameter
 getAllParameter         Void            String                  Returns all parameters and their values
 ======================= =============== ======================= =============================================================================
