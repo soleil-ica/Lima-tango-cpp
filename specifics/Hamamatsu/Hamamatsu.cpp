@@ -1512,6 +1512,7 @@ Tango::DevState Hamamatsu::dev_state()
 		Device_status << ControlFactory::instance().get_status();
 	}
 
+	ControlFactory::instance().set_specific_state(Device_state);
 	set_state(Device_state);
 	set_status(Device_status.str());
 
