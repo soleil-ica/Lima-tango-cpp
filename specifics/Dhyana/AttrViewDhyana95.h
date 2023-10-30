@@ -47,6 +47,7 @@ private:
     DoubleUserData* m_dyn_sensor_temperature_target;
     ULongUserData*  m_dyn_fan_speed;
     EnumUserData*   m_dyn_global_gain;
+    EnumUserData*   m_dyn_tec_mode;
     DoubleUserData* m_dyn_frame_rate;    
     EnumUserData*   m_dyn_trig_output_kind[3];
     DoubleUserData* m_dyn_trig_output_width[3];

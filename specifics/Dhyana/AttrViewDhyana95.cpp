@@ -374,6 +374,37 @@ void AttrViewDhyana95::init()
             //Add the dyn. attr. to the device
             m_dim->dynamic_attributes_manager().add_attribute(dai);
         }
+        //Create tecMode attribute
+        {
+            std::string name = "tecMode";
+            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;       
+            yat4tango::DynamicAttributeInfo dai;
+            dai.dev = m_device;
+            //- specify the dyn. attr.  name
+            dai.tai.name = name;
+            //- associate the dyn. attr. with its data 
+            m_dyn_tec_mode = new EnumUserData(name);
+            dai.set_user_data(m_dyn_tec_mode);
+            //Describe the dynamic attr
+            dai.tai.data_type = Tango::DEV_ENUM;
+            dai.tai.data_format = Tango::SCALAR;
+            dai.tai.writable = Tango::READ_WRITE;
+            dai.tai.disp_level = Tango::OPERATOR;
+            dai.tai.unit = " ";
+            dai.tai.format = "%s";
+            dai.tai.enum_labels.push_back("OFF");
+            dai.tai.enum_labels.push_back("ON");
+            dai.tai.description = "Set tec mode OFF or ON (default is OFF) ";
+
+            //Instanciate the read callback (called when the dyn. attr. is read)    
+            dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_attribute_callback);
+            //Instanciate the write callback
+            dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
+            //Add the dyn. attr. to the device
+            m_dim->dynamic_attributes_manager().add_attribute(dai);
+        }
     }
     catch (Tango::DevFailed& df)
     {
@@ -482,6 +513,16 @@ void AttrViewDhyana95::read_dynamic_attribute_callback(yat4tango::DynamicAttribu
             user_data->set_value(frame_rate);
             cbd.tga->set_value((Tango::DevDouble*)&user_data->get_value());
         }
+        else
+        if(cbd.dya->get_name() == "tecMode")
+        {
+            EnumUserData* user_data = cbd.dya->get_user_data<EnumUserData>();
+            //- set the attribute value
+            unsigned tec_mode;
+            dynamic_cast<Dhyana*>(m_device)->get_camera()->getTecMode(tec_mode);
+            user_data->set_value(tec_mode);
+            cbd.tga->set_value((Tango::DevEnum*)&user_data->get_value());
+        }
     }
     catch (Tango::DevFailed& df)
     {
@@ -553,6 +594,18 @@ void AttrViewDhyana95::write_dynamic_attribute_callback(yat4tango::DynamicAttrib
 
             dynamic_cast<Dhyana*>(m_device)->get_camera()->setGlobalGain(static_cast<GlobalGain>(val));
             yat4tango::PropertyHelper::set_memorized_attribute<Tango::DevEnum>(m_device, "globalGain", val);
+        }
+        else
+        if(cbd.dya->get_name() == "tecMode")
+        {
+            Tango::DevEnum val;
+            cbd.tga->get_write_value( val);
+
+            EnumUserData* user_data = cbd.dya->get_user_data<EnumUserData>();
+            user_data->set_value(val);
+
+            dynamic_cast<Dhyana*>(m_device)->get_camera()->setTecMode(val);
+            yat4tango::PropertyHelper::set_memorized_attribute<Tango::DevEnum>(m_device, "tecMode", val);
         }
     }
     catch (Tango::DevFailed& df)
