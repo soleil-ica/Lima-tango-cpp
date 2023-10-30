@@ -55,21 +55,6 @@ TemperatureTargetAtInit                15                        Double         
 ====================================== ========================= ===================  ===========================================
 
 
-Common Commands
-````````````````````
-
-======================= =============== ======================= =============================================================================
-Command name            Arg. in         Arg. out                Description
-======================= =============== ======================= =============================================================================
-Init                    Void            Void                    Do not use (Use Init of the Generic device) 
-State                   Void            Long                    Return the device state
-Status                  Void            Long                    Return the device status
-setParamter             String Array    Void                    Set the value of a parameter
-getParameter            String          String                  Returns the name and value of a specific parameter
-getAllParameter         Void            String                  Returns all parameters and their values
-======================= =============== ======================= =============================================================================
-
-
 Common Attributes
 ````````````````````````````
 
@@ -87,9 +72,9 @@ frameRate                       R                        Double             Get 
 trigOutputKind1                 R/W                      Enum               | Available only for expert user
                                                                             | Set trigger output mode on channel 1 [ExposureStart, Readout, Global]
 trigOutputKind2                 R/W                      Enum               | Available only for expert user
-                                                                            | Set trigger output mode on channel 2 [ExposureStart, Readout, Global}
+                                                                            | Set trigger output mode on channel 2 [ExposureStart, Readout, Global]
 trigOutputKind3                 R/W                      Enum               | Available only for expert user
-                                                                            | Set trigger output mode on channel 3 [ExposureStart, Readout, Global}
+                                                                            | Set trigger output mode on channel 3 [ExposureStart, Readout, Global]
 trigOutputWidth1                R/W                      Double             | Available only for expert user
                                                                             | Set width value option on channel 1 mode
 trigOutputWidth2                R/W                      Double             | Available only for expert user
@@ -109,3 +94,17 @@ trigOutputEdge2                 R/W                      Enum               | Av
 trigOutputEdge3                 R/W                      Enum               | Available only for expert user
                                                                             | Set edge option value on channel 3 mode [Rising, Falling]
 =============================== ======================== ================== =================================================================
+
+Common Commands
+````````````````````
+
+======================= =============== ======================= =============================================================================
+Command name            Arg. in         Arg. out                Description
+======================= =============== ======================= =============================================================================
+Init                    Void            Void                    Do not use (Use Init of the Generic device) 
+State                   Void            Long                    Return the device state
+Status                  Void            Long                    Return the device status
+setParamter             String Array    Void                    Set the value of a parameter
+getParameter            String          String                  Returns the name and value of a specific parameter
+getAllParameter         Void            String                  Returns all parameters and their values
+======================= =============== ======================= =============================================================================
