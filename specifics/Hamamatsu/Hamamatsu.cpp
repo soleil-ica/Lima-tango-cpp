@@ -729,7 +729,7 @@ void Hamamatsu::read_channel1Polarity(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Hamamatsu::write_channel1Polarity(Tango::WAttribute &attr)
 {
-    DEBUG_STREAM << "Hamamatsu::write_channel1Polarity(Tango::WAttribute &attr) entering... " << endl;
+    INFO_STREAM << "Hamamatsu::write_channel1Polarity(Tango::WAttribute &attr) entering... " << endl;
 
     try
     {
@@ -783,7 +783,7 @@ void Hamamatsu::read_channel2Polarity(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Hamamatsu::write_channel2Polarity(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Hamamatsu::write_channel2Polarity(Tango::WAttribute &attr) entering... "<< endl;
+	INFO_STREAM << "Hamamatsu::write_channel2Polarity(Tango::WAttribute &attr) entering... "<< endl;
 
     try
 	{
@@ -837,7 +837,7 @@ void Hamamatsu::read_channel3Polarity(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Hamamatsu::write_channel3Polarity(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Hamamatsu::write_channel3Polarity(Tango::WAttribute &attr) entering... "<< endl;
+	INFO_STREAM << "Hamamatsu::write_channel3Polarity(Tango::WAttribute &attr) entering... "<< endl;
 
     try
 	{
@@ -891,7 +891,7 @@ void Hamamatsu::read_channel1Kind(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Hamamatsu::write_channel1Kind(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Hamamatsu::write_channel1Kind(Tango::WAttribute &attr) entering... "<< endl;
+	INFO_STREAM << "Hamamatsu::write_channel1Kind(Tango::WAttribute &attr) entering... "<< endl;
 
      try
 	{
@@ -945,7 +945,7 @@ void Hamamatsu::read_channel2Kind(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Hamamatsu::write_channel2Kind(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Hamamatsu::write_channel2Kind(Tango::WAttribute &attr) entering... "<< endl;
+	INFO_STREAM << "Hamamatsu::write_channel2Kind(Tango::WAttribute &attr) entering... "<< endl;
 
      try
 	{
@@ -999,7 +999,7 @@ void Hamamatsu::read_channel3Kind(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Hamamatsu::write_channel3Kind(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Hamamatsu::write_channel3Kind(Tango::WAttribute &attr) entering... "<< endl;
+	INFO_STREAM << "Hamamatsu::write_channel3Kind(Tango::WAttribute &attr) entering... "<< endl;
 
     try
 	{
@@ -1058,7 +1058,7 @@ void Hamamatsu::read_topViewExposureTime(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Hamamatsu::write_topViewExposureTime(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Hamamatsu::write_topViewExposureTime(Tango::WAttribute &attr) entering... "<< endl;
+	INFO_STREAM << "Hamamatsu::write_topViewExposureTime(Tango::WAttribute &attr) entering... "<< endl;
 
 	try
 	{
@@ -1116,7 +1116,7 @@ void Hamamatsu::read_bottomViewExposureTime(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Hamamatsu::write_bottomViewExposureTime(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Hamamatsu::write_bottomViewExposureTime(Tango::WAttribute &attr) entering... "<< endl;
+	INFO_STREAM << "Hamamatsu::write_bottomViewExposureTime(Tango::WAttribute &attr) entering... "<< endl;
 
 	try
 	{
@@ -1174,7 +1174,7 @@ void Hamamatsu::read_wViewEnabled(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Hamamatsu::write_wViewEnabled(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Hamamatsu::write_wViewEnabled(Tango::WAttribute &attr) entering... "<< endl;
+	INFO_STREAM << "Hamamatsu::write_wViewEnabled(Tango::WAttribute &attr) entering... "<< endl;
 
 	try
 	{
@@ -1494,7 +1494,6 @@ void Hamamatsu::write_highDynamicRangeEnabled_callback(yat4tango::DynamicAttribu
 Tango::DevState Hamamatsu::dev_state()
 {
 	Tango::DevState	argout = DeviceImpl::dev_state();
-	DEBUG_STREAM << "Hamamatsu::dev_state(): entering... !" << endl;
 
 	//	Add your own code to control device here
 	stringstream    Device_status;
