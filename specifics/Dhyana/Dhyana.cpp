@@ -620,56 +620,60 @@ void Dhyana::write_attr_at_init()
 		cbd_globalGain.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("globalGain");
         m_attr_view->write_dynamic_attribute_callback(cbd_globalGain);
 		
-		for (int i = 1; i < 4; i++)
-        {
-            std::string name = "trigOutputKind" + std::to_string(i);
-            INFO_STREAM << "Write tango attribute at Init - " << name << endl;
-			Tango::WAttribute &trigOutputKind = dev_attr->get_w_attr_by_name(name.c_str());
-			Tango::DevEnum val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, name, 0);
-			trigOutputKind.set_write_value(val);
-			yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputKind;
-			cbd_trigOutputKind.tga = &trigOutputKind;
-			cbd_trigOutputKind.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
-			m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputKind);
-		}
+		//We do not write at init trigger out attributes if they're not availbable for the current detector model
+		if(m_camera->is_trigOutput_available())
+		{
+			for (int i = 1; i < 4; i++)
+			{
+				std::string name = "trigOutputKind" + std::to_string(i);
+				INFO_STREAM << "Write tango attribute at Init - " << name << endl;
+				Tango::WAttribute &trigOutputKind = dev_attr->get_w_attr_by_name(name.c_str());
+				Tango::DevEnum val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, name, 0);
+				trigOutputKind.set_write_value(val);
+				yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputKind;
+				cbd_trigOutputKind.tga = &trigOutputKind;
+				cbd_trigOutputKind.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+				m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputKind);
+			}
 
-		for (int i = 1; i < 4; i++)
-        {
-            std::string name = "trigOutputWidth" + std::to_string(i);
-            INFO_STREAM << "Write tango attribute at Init - " << name << endl;
-			Tango::WAttribute &trigOutputWidth = dev_attr->get_w_attr_by_name(name.c_str());
-			double val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, name, 5);
-			trigOutputWidth.set_write_value(val);
-			yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputWidth;
-			cbd_trigOutputWidth.tga = &trigOutputWidth;
-			cbd_trigOutputWidth.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
-			m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputWidth);
-		}
+			for (int i = 1; i < 4; i++)
+			{
+				std::string name = "trigOutputWidth" + std::to_string(i);
+				INFO_STREAM << "Write tango attribute at Init - " << name << endl;
+				Tango::WAttribute &trigOutputWidth = dev_attr->get_w_attr_by_name(name.c_str());
+				double val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, name, 5);
+				trigOutputWidth.set_write_value(val);
+				yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputWidth;
+				cbd_trigOutputWidth.tga = &trigOutputWidth;
+				cbd_trigOutputWidth.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+				m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputWidth);
+			}
 
-		for (int i = 1; i < 4; i++)
-        {
-            std::string name = "trigOutputDelay" + std::to_string(i);
-            INFO_STREAM << "Write tango attribute at Init - " << name << endl;
-			Tango::WAttribute &trigOutputDelay = dev_attr->get_w_attr_by_name(name.c_str());
-			double val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, name, 0);
-			trigOutputDelay.set_write_value(val);
-			yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputDelay;
-			cbd_trigOutputDelay.tga = &trigOutputDelay;
-			cbd_trigOutputDelay.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
-			m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputDelay);
-		}
+			for (int i = 1; i < 4; i++)
+			{
+				std::string name = "trigOutputDelay" + std::to_string(i);
+				INFO_STREAM << "Write tango attribute at Init - " << name << endl;
+				Tango::WAttribute &trigOutputDelay = dev_attr->get_w_attr_by_name(name.c_str());
+				double val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, name, 0);
+				trigOutputDelay.set_write_value(val);
+				yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputDelay;
+				cbd_trigOutputDelay.tga = &trigOutputDelay;
+				cbd_trigOutputDelay.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+				m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputDelay);
+			}
 
-		for (int i = 1; i < 4; i++)
-        {
-            std::string name = "trigOutputEdge" + std::to_string(i);
-            INFO_STREAM << "Write tango attribute at Init - " << name << endl;
-			Tango::WAttribute &trigOutputEdge = dev_attr->get_w_attr_by_name(name.c_str());
-			Tango::DevEnum val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, name, 0);
-			trigOutputEdge.set_write_value(val);
-			yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputEdge;
-			cbd_trigOutputEdge.tga = &trigOutputEdge;
-			cbd_trigOutputEdge.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
-			m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputEdge);
+			for (int i = 1; i < 4; i++)
+			{
+				std::string name = "trigOutputEdge" + std::to_string(i);
+				INFO_STREAM << "Write tango attribute at Init - " << name << endl;
+				Tango::WAttribute &trigOutputEdge = dev_attr->get_w_attr_by_name(name.c_str());
+				Tango::DevEnum val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, name, 0);
+				trigOutputEdge.set_write_value(val);
+				yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputEdge;
+				cbd_trigOutputEdge.tga = &trigOutputEdge;
+				cbd_trigOutputEdge.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+				m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputEdge);
+			}
 		}
 
 	}
