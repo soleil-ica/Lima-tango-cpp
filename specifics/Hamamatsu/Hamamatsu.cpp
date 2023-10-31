@@ -1503,15 +1503,20 @@ Tango::DevState Hamamatsu::dev_state()
 	{
 		Device_state  = Tango::FAULT;
 		Device_status << m_status_message.str();
+        
+        //update specific_state state for Factory
+        ControlFactory::instance().set_specific_state(Device_state);
 	}
 	else
 	{
+        //update specific_state device before retrieving state from factory
+        ControlFactory::instance().set_specific_state(Device_state);
+
 		// state & status are retrieved from Factory, Factory is updated by Generic device
 		Device_state = ControlFactory::instance().get_state();
 		Device_status << ControlFactory::instance().get_status();
 	}
 
-	ControlFactory::instance().set_specific_state(Device_state);
 	set_state(Device_state);
 	set_status(Device_status.str());
 
