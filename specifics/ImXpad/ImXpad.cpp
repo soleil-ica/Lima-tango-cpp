@@ -219,21 +219,21 @@ void ImXpad::init_device()
     	calibrationMode.set_write_value(attr_calibrationMode_write);
     	write_calibrationMode(calibrationMode);
 
-    	Tango::WAttribute &mode = dev_attr->get_w_attr_by_name("mode");
+    	Tango::WAttribute &mode = dev_attr->get_w_attr_by_name("calibrationConfigMode");
     	m_mode = memorizedMode;
-    	attr_mode_write = const_cast<Tango::DevString>(memorizedMode.c_str());
-    	mode.set_write_value(attr_mode_write);
-    	write_mode(mode);
+    	attr_calibrationConfigMode_write = const_cast<Tango::DevString>(memorizedMode.c_str());
+    	mode.set_write_value(attr_calibrationConfigMode_write);
+    	write_calibrationConfigMode(mode);
 		
-    	Tango::WAttribute &time = dev_attr->get_w_attr_by_name("time");
-    	attr_time_write = memorizedTime;
-    	time.set_write_value(attr_time_write);
-    	write_time(time);
+    	Tango::WAttribute &time = dev_attr->get_w_attr_by_name("calibrationExposureTime");
+    	attr_calibrationExposureTime_write = memorizedTime;
+    	time.set_write_value(attr_calibrationExposureTime_write);
+    	write_calibrationExposureTime(time);
 
-    	Tango::WAttribute &iTHL = dev_attr->get_w_attr_by_name("iTHL");
-    	attr_iTHL_write = memorizedITHL;
-    	iTHL.set_write_value(attr_iTHL_write);
-    	write_iTHL(iTHL);
+    	Tango::WAttribute &iTHL = dev_attr->get_w_attr_by_name("calibrationBeamITHL");
+    	attr_CalibrationBeamITHL_write = memorizedITHL;
+    	iTHL.set_write_value(attr_CalibrationBeamITHL_write);
+    	write_CalibrationBeamITHL(iTHL);
 
     	Tango::WAttribute &nbStackingImages = dev_attr->get_w_attr_by_name("nbStackingImages");
     	attr_nbStackingImages_write = memorizedNbStackingImages;
@@ -547,6 +547,147 @@ void ImXpad::read_attr_hardware(vector<long> &attr_list)
 }
 //+----------------------------------------------------------------------------
 //
+// method : 		ImXpad::read_calibrationExposureTime
+// 
+// description : 	Extract real attribute values for calibrationExposureTime acquisition result.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::read_calibrationExposureTime(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::read_calibrationExposureTime(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::write_calibrationExposureTime
+// 
+// description : 	Write calibrationExposureTime attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::write_calibrationExposureTime(Tango::WAttribute &attr)
+{
+	INFO_STREAM << "ImXpad::write_calibrationExposureTime(Tango::WAttribute &attr) entering... "<< endl;
+    
+    try
+    {
+        attr.get_write_value(attr_calibrationExposureTime_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedTime", attr_calibrationExposureTime_write);//TODO SBA
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          std::string(df.errors[0].desc).c_str(),
+                                          "ImXpad::write_calibrationExposureTime");
+    }
+    
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::read_CalibrationBeamITHL
+// 
+// description : 	Extract real attribute values for CalibrationBeamITHL acquisition result.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::read_CalibrationBeamITHL(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::read_CalibrationBeamITHL(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::write_CalibrationBeamITHL
+// 
+// description : 	Write CalibrationBeamITHL attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::write_CalibrationBeamITHL(Tango::WAttribute &attr)
+{
+	INFO_STREAM << "ImXpad::write_CalibrationBeamITHL(Tango::WAttribute &attr) entering... "<< endl;
+    
+    try
+    {
+        attr.get_write_value(attr_CalibrationBeamITHL_write);
+        yat4tango::PropertyHelper::set_property(this, "MemorizedITHL", attr_CalibrationBeamITHL_write);//TODO SBA
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          std::string(df.errors[0].desc).c_str(),
+                                          "ImXpad::write_CalibrationBeamITHL");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::read_calibrationConfigMode
+// 
+// description : 	Extract real attribute values for calibrationConfigMode acquisition result.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::read_calibrationConfigMode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "ImXpad::read_calibrationConfigMode(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::write_calibrationConfigMode
+// 
+// description : 	Write calibrationConfigMode attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void ImXpad::write_calibrationConfigMode(Tango::WAttribute &attr)
+{
+	INFO_STREAM << "ImXpad::write_calibrationConfigMode(Tango::WAttribute &attr) entering... "<< endl;
+
+	try
+	{
+		m_mode = attr_calibrationConfigMode_write;
+		attr.get_write_value(attr_calibrationConfigMode_write);
+		string current = attr_calibrationConfigMode_write;
+		transform(current.begin(), current.end(), current.begin(), ::toupper);
+        if (current != "SLOW" &&
+            current != "MEDIUM" &&
+            current != "FAST")
+        {
+			attr_calibrationConfigMode_write = const_cast<Tango::DevString>(m_mode.c_str());
+			string userMsg;
+            userMsg = 	string("Available Mode are:\n- ") +   
+			string("SLOW") + string("\n- ") + 
+			string("MEDIUM")+ string("\n- ") + 
+			string("FAST") + string("\n"); 
+
+            Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
+                                            userMsg.c_str(),
+                                            "ImXpad::write_calibrationConfigMode");
+		}
+
+		//- THIS IS AN AVAILABLE CONFIGURATION MODE
+		m_mode = current;
+		attr_calibrationConfigMode_write = const_cast<Tango::DevString>(current.c_str());
+		//memorize it ...
+		PropertyHelper::set_property(this, "MemorizedMode", m_mode);
+	}
+	catch(Tango::DevFailed& df)
+	{
+		ERROR_STREAM << df << endl;
+		//- rethrow exception
+		Tango::Except::re_throw_exception(df,
+                                          "TANGO_DEVICE_ERROR",
+                                          string(df.errors[0].desc).c_str(),
+                                          "ImXpad::write_calibrationConfigMode");
+	}
+}
+
+//+----------------------------------------------------------------------------
+//
 // method : 		ImXpad::read_calibrationPath
 // 
 // description : 	Extract real attribute values for calibrationPath acquisition result.
@@ -659,7 +800,7 @@ void ImXpad::read_geometricalCorrectionFlag(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void ImXpad::write_geometricalCorrectionFlag(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "ImXpad::write_geometricalCorrectionFlag(Tango::WAttribute &attr) entering... "<< endl;
+	INFO_STREAM << "ImXpad::write_geometricalCorrectionFlag(Tango::WAttribute &attr) entering... "<< endl;
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
@@ -734,7 +875,7 @@ void ImXpad::read_flatFieldCorrectionFlag(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void ImXpad::write_flatFieldCorrectionFlag(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "ImXpad::write_flatFieldCorrectionFlag(Tango::WAttribute &attr) entering... "<< endl;
+	INFO_STREAM << "ImXpad::write_flatFieldCorrectionFlag(Tango::WAttribute &attr) entering... "<< endl;
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
     {
@@ -873,7 +1014,7 @@ void ImXpad::read_acquisitionMode(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void ImXpad::write_acquisitionMode(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "ImXpad::write_acquisitionMode(Tango::WAttribute &attr) entering... "<< endl;
+	INFO_STREAM << "ImXpad::write_acquisitionMode(Tango::WAttribute &attr) entering... "<< endl;
     try
     {
         m_acquisition_mode = attr_acquisitionMode_write;
@@ -961,7 +1102,7 @@ void ImXpad::read_nbStackingImages(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void ImXpad::write_nbStackingImages(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "ImXpad::write_nbStackingImages(Tango::WAttribute &attr) entering... "<< endl;
+	INFO_STREAM << "ImXpad::write_nbStackingImages(Tango::WAttribute &attr) entering... "<< endl;
     try
     {
         attr.get_write_value(attr_nbStackingImages_write);
@@ -1066,7 +1207,7 @@ void ImXpad::read_outputSignal(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void ImXpad::write_outputSignal(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "ImXpad::write_outputSignal(Tango::WAttribute &attr) entering... "<< endl;
+	INFO_STREAM << "ImXpad::write_outputSignal(Tango::WAttribute &attr) entering... "<< endl;
     try
     {
         m_output_signal = attr_outputSignal_write;
@@ -1165,7 +1306,7 @@ void ImXpad::read_calibrationMode(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void ImXpad::write_calibrationMode(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "ImXpad::write_calibrationMode(Tango::WAttribute &attr) entering... "<< endl;
+	INFO_STREAM << "ImXpad::write_calibrationMode(Tango::WAttribute &attr) entering... "<< endl;
 	try
 	{
 		m_calibration_mode = attr_calibrationMode_write;
@@ -1202,143 +1343,6 @@ void ImXpad::write_calibrationMode(Tango::WAttribute &attr)
                                           "TANGO_DEVICE_ERROR",
                                           string(df.errors[0].desc).c_str(),
                                           "ImXpad::write_calibrationMode");
-	}
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		ImXpad::read_time
-// 
-// description : 	Extract real attribute values for time acquisition result.
-//
-//-----------------------------------------------------------------------------
-void ImXpad::read_time(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "ImXpad::read_time(Tango::Attribute &attr) entering... "<< endl;
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		ImXpad::write_time
-// 
-// description : 	Write time attribute values to hardware.
-//
-//-----------------------------------------------------------------------------
-void ImXpad::write_time(Tango::WAttribute &attr)
-{
-	DEBUG_STREAM << "ImXpad::write_time(Tango::WAttribute &attr) entering... "<< endl;
-    try
-    {
-        attr.get_write_value(attr_time_write);
-        yat4tango::PropertyHelper::set_property(this, "MemorizedTime", attr_time_write);
-    }
-    catch(Tango::DevFailed& df)
-    {
-        ERROR_STREAM << df << endl;
-        //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "ImXpad::write_time");
-    }
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		ImXpad::read_iTHL
-// 
-// description : 	Extract real attribute values for iTHL acquisition result.
-//
-//-----------------------------------------------------------------------------
-void ImXpad::read_iTHL(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "ImXpad::read_iTHL(Tango::Attribute &attr) entering... "<< endl;
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		ImXpad::write_iTHL
-// 
-// description : 	Write iTHL attribute values to hardware.
-//
-//-----------------------------------------------------------------------------
-void ImXpad::write_iTHL(Tango::WAttribute &attr)
-{
-	DEBUG_STREAM << "ImXpad::write_iTHL(Tango::WAttribute &attr) entering... "<< endl;
-    try
-    {
-        attr.get_write_value(attr_iTHL_write);
-        yat4tango::PropertyHelper::set_property(this, "MemorizedITHL", attr_iTHL_write);
-    }
-    catch(Tango::DevFailed& df)
-    {
-        ERROR_STREAM << df << endl;
-        //- rethrow exception
-        Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          std::string(df.errors[0].desc).c_str(),
-                                          "ImXpad::write_iTHL");
-    }
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		ImXpad::read_mode
-// 
-// description : 	Extract real attribute values for mode acquisition result.
-//
-//-----------------------------------------------------------------------------
-void ImXpad::read_mode(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "ImXpad::read_mode(Tango::Attribute &attr) entering... "<< endl;
-}
-
-//+----------------------------------------------------------------------------
-//
-// method : 		ImXpad::write_mode
-// 
-// description : 	Write mode attribute values to hardware.
-//
-//-----------------------------------------------------------------------------
-void ImXpad::write_mode(Tango::WAttribute &attr)
-{
-	DEBUG_STREAM << "ImXpad::write_mode(Tango::WAttribute &attr) entering... "<< endl;
-	try
-	{
-		m_mode = attr_mode_write;
-		attr.get_write_value(attr_mode_write);
-		string current = attr_mode_write;
-		transform(current.begin(), current.end(), current.begin(), ::toupper);
-        if (current != "SLOW" &&
-            current != "MEDIUM" &&
-            current != "FAST")
-        {
-			attr_mode_write = const_cast<Tango::DevString>(m_mode.c_str());
-			string userMsg;
-            userMsg = 	string("Available Mode are:\n- ") +   
-			string("SLOW") + string("\n- ") + 
-			string("MEDIUM")+ string("\n- ") + 
-			string("FAST") + string("\n"); 
-
-            Tango::Except::throw_exception(	"CONFIGURATION_ERROR",
-                                            userMsg.c_str(),
-                                            "ImXpad::write_mode");
-		}
-
-		//- THIS IS AN AVAILABLE CONFIGURATION MODE
-		m_mode = current;
-		attr_mode_write = const_cast<Tango::DevString>(current.c_str());
-		//memorize it ...
-		PropertyHelper::set_property(this, "MemorizedMode", m_mode);
-	}
-	catch(Tango::DevFailed& df)
-	{
-		ERROR_STREAM << df << endl;
-		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-                                          "TANGO_DEVICE_ERROR",
-                                          string(df.errors[0].desc).c_str(),
-                                          "ImXpad::write_mode");
 	}
 }
 
@@ -1395,7 +1399,7 @@ Tango::DevState ImXpad::dev_state()
 //+------------------------------------------------------------------
 void ImXpad::start_calibration()
 {
-    DEBUG_STREAM << "ImXpad::start_calibration(): entering... !" << endl;
+    INFO_STREAM << "ImXpad::start_calibration(): entering... !" << endl;
 
     //	Add your own code to control device here
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
@@ -1421,7 +1425,7 @@ void ImXpad::start_calibration()
         }
         else if(m_calibration_mode == "BEAM")
         {
-            m_camera->calibrationBEAM(attr_time_write,attr_iTHL_write,static_cast<unsigned short>(mode_enum));
+            m_camera->calibrationBEAM(attr_calibrationExposureTime_write, attr_CalibrationBeamITHL_write ,static_cast<unsigned short>(mode_enum));
         }
         else
         {
@@ -1459,7 +1463,7 @@ void ImXpad::start_calibration()
 //+------------------------------------------------------------------
 void ImXpad::create_white_image(Tango::DevString argin)
 {
-	DEBUG_STREAM << "ImXpad::create_white_image(): entering... !" << endl;
+	INFO_STREAM << "ImXpad::create_white_image(): entering... !" << endl;
 	//	Add your own code to control device here
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
     try
@@ -1489,7 +1493,7 @@ void ImXpad::create_white_image(Tango::DevString argin)
 //+------------------------------------------------------------------
 void ImXpad::choose_white_image(Tango::DevString argin)
 {
-	DEBUG_STREAM << "ImXpad::choose_white_image(): entering... !" << endl;
+	INFO_STREAM << "ImXpad::choose_white_image(): entering... !" << endl;
 
 	//	Add your own code to control device here
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
@@ -1541,7 +1545,7 @@ Tango::DevVarStringArray *ImXpad::get_white_images_list()
 	//		(chapter : Writing a TANGO DS / Exchanging data)
 	//------------------------------------------------------------
 	Tango::DevVarStringArray	*argout  = new Tango::DevVarStringArray();
-	DEBUG_STREAM << "ImXpad::get_white_images_list(): entering... !" << endl;
+	INFO_STREAM << "ImXpad::get_white_images_list(): entering... !" << endl;
 
 	//	Add your own code to control device here
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
@@ -1591,7 +1595,7 @@ Tango::DevVarStringArray *ImXpad::get_white_images_list()
 //+------------------------------------------------------------------
 void ImXpad::delete_white_image(Tango::DevString argin)
 {
-	DEBUG_STREAM << "ImXpad::delete_white_image(): entering... !" << endl;
+	INFO_STREAM << "ImXpad::delete_white_image(): entering... !" << endl;
 
 	//	Add your own code to control device here
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
@@ -1621,7 +1625,7 @@ void ImXpad::delete_white_image(Tango::DevString argin)
 //+------------------------------------------------------------------
 void ImXpad::abort()
 {
-	DEBUG_STREAM << "ImXpad::abort(): entering... !" << endl;
+	INFO_STREAM << "ImXpad::abort(): entering... !" << endl;
 
 	//	Add your own code to control device here
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
@@ -1648,13 +1652,13 @@ void ImXpad::abort()
  *	description:	method to execute "SaveCalibrationFile"
  *	Save the calibration already done through the StartCalibartion in a file
  *
- * @param	argin	Target calibration file name
+ * @param	argin	A target calibration file name
  *
  */
 //+------------------------------------------------------------------
 void ImXpad::save_calibration_file(Tango::DevString argin)
 {
-	DEBUG_STREAM << "ImXpad::save_calibration_file(): entering... !" << endl;
+	INFO_STREAM << "ImXpad::save_calibration_file(): entering... !" << endl;
 
 	//	Add your own code to control device here
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
@@ -1681,13 +1685,13 @@ void ImXpad::save_calibration_file(Tango::DevString argin)
  *	description:	method to execute "LoadCalibrationFile"
  *	Load a calibration file<br>
  *
- * @param	argin	The calibration File Name 
+ * @param	argin	The calibration file Name 
  *
  */
 //+------------------------------------------------------------------
 void ImXpad::load_calibration_file(Tango::DevString argin)
 {
-	DEBUG_STREAM << "ImXpad::load_calibration_file(): entering... !" << endl;
+	INFO_STREAM << "ImXpad::load_calibration_file(): entering... !" << endl;
 
 	//	Add your own code to control device here
     yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
@@ -1770,7 +1774,7 @@ void ImXpad::load_calibration_file(Tango::DevString argin)
 //+------------------------------------------------------------------
 void ImXpad::ithlincrease()
 {
-	DEBUG_STREAM << "ImXpad::ithlincrease(): entering... !" << endl;
+	INFO_STREAM << "ImXpad::ithlincrease(): entering... !" << endl;
 
 	//	Add your own code to control device here
 
@@ -1802,7 +1806,7 @@ void ImXpad::ithlincrease()
 //+------------------------------------------------------------------
 void ImXpad::ithldecrease()
 {
-	DEBUG_STREAM << "ImXpad::ithldecrease(): entering... !" << endl;
+	INFO_STREAM << "ImXpad::ithldecrease(): entering... !" << endl;
 
 	//	Add your own code to control device here
 
@@ -1821,6 +1825,8 @@ void ImXpad::ithldecrease()
     }
 
 }
+
+
 
 
 
