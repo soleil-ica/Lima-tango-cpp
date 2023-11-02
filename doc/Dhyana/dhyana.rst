@@ -64,7 +64,6 @@ Attribute name                  Read/Write               Type               Desc
 tucamVersion                    R                        String             Get Tucam Library Version.
 sensorTemperature               R                        Double             Get Temperature of the detector (in Celsius)
 sensorTemperatureTarget         R/W                      Double             Set the Temperature target of the detector (in Celsius)
-sensorCooling                   R/W                      Enum               Set the sensor cooling switch [ON, OFF]
 fanSpeed                        R/W                      Enum               | Available only for expert user
                                                                             | Define the fan speed of the detector [0..5]                                                                    
 globalGain                      R/W                      Enum               Define the gain of the detector [LOW, HIGH, HDR]
