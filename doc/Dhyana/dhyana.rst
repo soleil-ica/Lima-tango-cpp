@@ -3,7 +3,7 @@ Dhyana
 
 Introduction
 ============
-| This device supports several camera model
+| This device supports several camera models
 | Currently, two kinds of camera are supported: 
 | - The Dhyana95/Dhyana95 V2
 | - The Dhyana4040
@@ -29,8 +29,8 @@ Dhyana95
 
 Introduction
 ============
-| This is the reference documentation of the Dhyana Tango C++ device.
-| This camera can manage 4 trigger modes : INTERNAL_SINGLE, EXTERNAL_MULTI, EXTERNAL_GATE, INTERNAL_MULTI 
+| This is the documentation of the Lima/Dhyana Tango C++ device.
+| This camera can manage 4 triggers modes : INTERNAL_SINGLE, EXTERNAL_MULTI, EXTERNAL_GATE, INTERNAL_MULTI 
 | This camera can manage ROI
 | This camera can't manage Binning.
 
@@ -114,5 +114,5 @@ State                   Void            Long                    Returns the devi
 Status                  Void            String                  Returns the device status
 setParamter             String Array    Void                    Sets the value of a parameter
 getParameter            String          String                  Returns the name and value of a specific parameter
-getAllParameter         Void            String                  Returns all parameters and their values
+getAllParameters        Void            String                  Returns all parameters and their values
 ======================= =============== ======================= =============================================================================
