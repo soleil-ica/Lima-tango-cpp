@@ -180,6 +180,7 @@ void Dhyana6060::init_device()
 
 	set_state(Tango::STANDBY);
 	dev_state();
+	write_attr_at_init();
 	
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::init_device
 }
@@ -397,6 +398,150 @@ lima::Dhyana6060::Camera* Dhyana6060::get_camera()
 void Dhyana6060::build_view()
 {
 	m_attr_view.reset(new AttrViewDhyana6060(this));
+}
+
+//-------------------------------------
+// Dhyana6060::write_attr_at_init()
+//-------------------------------------
+void Dhyana6060::write_attr_at_init()
+{
+	try
+	{
+
+		INFO_STREAM << "Write tango attribute at Init - sensorTemperatureTarget." << endl;
+		Tango::WAttribute &temperatureTarget = dev_attr->get_w_attr_by_name("sensorTemperatureTarget");
+		double target = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, "sensorTemperatureTarget", 0);
+		temperatureTarget.set_write_value(target);
+		yat4tango::DynamicAttributeWriteCallbackData cbd_temperatureTarget;
+		cbd_temperatureTarget.tga = &temperatureTarget;
+		cbd_temperatureTarget.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("sensorTemperatureTarget");
+		m_attr_view->write_dynamic_cooling_attribute_callback(cbd_temperatureTarget);
+
+		INFO_STREAM << "Write tango attribute at Init - sensorCoolingType." << endl;
+		Tango::WAttribute &sensorCoolingType = dev_attr->get_w_attr_by_name("sensorCoolingType");
+		Tango::DevEnum coolingType = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, "sensorCoolingType", 1);
+		sensorCoolingType.set_write_value(coolingType);
+		yat4tango::DynamicAttributeWriteCallbackData cbd_sensorCoolingType;
+		cbd_sensorCoolingType.tga = &sensorCoolingType;
+		cbd_sensorCoolingType.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("sensorCoolingType");
+		m_attr_view->write_dynamic_cooling_attribute_callback(cbd_sensorCoolingType);
+
+		INFO_STREAM << "Write tango attribute at Init - fanSpeed." << endl;
+		Tango::WAttribute &fanSpeed = dev_attr->get_w_attr_by_name("fanSpeed");
+		unsigned short speed = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevUShort>(this, "fanSpeed", 0);
+		fanSpeed.set_write_value(speed);
+		if (coolingType == 0) // if coolingType == FanCool
+		{
+			yat4tango::DynamicAttributeWriteCallbackData cbd_fanSpeed;
+			cbd_fanSpeed.tga = &fanSpeed;
+			cbd_fanSpeed.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("fanSpeed");
+			m_attr_view->write_dynamic_cooling_attribute_callback(cbd_fanSpeed);
+		}
+
+		INFO_STREAM << "Write tango attribute at Init - fanType." << endl;
+		Tango::WAttribute &fanType = dev_attr->get_w_attr_by_name("fanType");
+		short type = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevUShort>(this, "fanType", 0);
+		fanType.set_write_value(type);
+		if (coolingType == 0) // if coolingType == FanCool
+		{
+			yat4tango::DynamicAttributeWriteCallbackData cbd_fanType;
+			cbd_fanType.tga = &fanType;
+			cbd_fanType.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("fanType");
+			m_attr_view->write_dynamic_cooling_attribute_callback(cbd_fanType);
+		}
+
+
+		INFO_STREAM << "Write tango attribute at Init - globalGain." << endl;
+		Tango::WAttribute &globalGain = dev_attr->get_w_attr_by_name("globalGain");
+		Tango::DevEnum gain = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, "globalGain", 0);
+		globalGain.set_write_value(gain);
+		yat4tango::DynamicAttributeWriteCallbackData cbd_globalGain;
+		cbd_globalGain.tga = &globalGain;
+		cbd_globalGain.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("globalGain");
+		m_attr_view->write_dynamic_attribute_callback(cbd_globalGain);
+
+		std::string name = "trigOutputPort";
+		INFO_STREAM << "Write tango attribute at Init - " << name << endl;
+		Tango::WAttribute &trigOutputPort = dev_attr->get_w_attr_by_name(name.c_str());
+		Tango::DevEnum port = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, name, 0);
+		trigOutputPort.set_write_value(port);
+		yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputPort;
+		cbd_trigOutputPort.tga = &trigOutputPort;
+		cbd_trigOutputPort.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+		m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputPort);
+
+
+		name = "trigOutputKind";
+		INFO_STREAM << "Write tango attribute at Init - " << name << endl;
+		Tango::WAttribute &trigOutputKind = dev_attr->get_w_attr_by_name(name.c_str());
+		Tango::DevEnum kind = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, name, 0);
+		trigOutputKind.set_write_value(kind);
+		yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputKind;
+		cbd_trigOutputKind.tga = &trigOutputKind;
+		cbd_trigOutputKind.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+		m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputKind);
+
+		name = "trigOutputWidth";
+		INFO_STREAM << "Write tango attribute at Init - " << name << endl;
+		Tango::WAttribute &trigOutputWidth = dev_attr->get_w_attr_by_name(name.c_str());
+		double width = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, name, 5000);
+		trigOutputWidth.set_write_value(width);
+		if (kind == 2 || kind == 4) // kind = ExposureStart or kind = ReadoutEnd
+		{
+			yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputWidth;
+			cbd_trigOutputWidth.tga = &trigOutputWidth;
+			cbd_trigOutputWidth.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+			m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputWidth);
+		}
+
+		name = "trigOutputDelay";
+		INFO_STREAM << "Write tango attribute at Init - " << name << endl;
+		Tango::WAttribute &trigOutputDelay = dev_attr->get_w_attr_by_name(name.c_str());
+		double delay = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, name, 0);
+		trigOutputDelay.set_write_value(delay);
+		if (kind != 0 && kind != 1) //kind different from low and high
+		{
+			yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputDelay;
+			cbd_trigOutputDelay.tga = &trigOutputDelay;
+			cbd_trigOutputDelay.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+			m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputDelay);
+		}
+
+		name = "trigOutputEdge";
+		INFO_STREAM << "Write tango attribute at Init - " << name << endl;
+		Tango::WAttribute &trigOutputEdge = dev_attr->get_w_attr_by_name(name.c_str());
+		Tango::DevEnum edge = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, name, 0);
+		trigOutputEdge.set_write_value(edge);
+		if (kind != 0 && kind != 1) //kind different from low and high
+		{
+			yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputEdge;
+			cbd_trigOutputEdge.tga = &trigOutputEdge;
+			cbd_trigOutputEdge.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+			m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputEdge);
+		}
+
+
+		INFO_STREAM << "Write tango attribute at Init - sensorCooling." << endl;
+		Tango::WAttribute &sensorCooling = dev_attr->get_w_attr_by_name("sensorCooling");
+		Tango::DevEnum val = 0;
+		sensorCooling.set_write_value(val);
+		yat4tango::DynamicAttributeWriteCallbackData cbd_sensorCooling;
+		cbd_sensorCooling.tga = &sensorCooling;
+		cbd_sensorCooling.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("sensorCooling");
+		m_attr_view->write_dynamic_cooling_attribute_callback(cbd_sensorCooling);
+
+
+	}
+	catch(Tango::DevFailed& df)
+	{
+		ERROR_STREAM << df << endl;
+		return;
+	}
+	catch(lima::Exception& e)
+	{
+		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
+		return;
+	}
 }
 
 /*----- PROTECTED REGION END -----*/	//	Dhyana6060::namespace_ending

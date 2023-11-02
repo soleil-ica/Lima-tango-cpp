@@ -195,6 +195,8 @@ public:
 
 	lima::Dhyana6060::Camera* get_camera();
 
+	void write_attr_at_init();
+
 protected :
 
 	bool                      m_is_device_initialized;
