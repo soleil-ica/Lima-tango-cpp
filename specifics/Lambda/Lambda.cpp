@@ -366,7 +366,6 @@ void Lambda::get_device_property()
 //--------------------------------------------------------
 void Lambda::always_executed_hook()
 {
-	DEBUG_STREAM << "Lambda::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Lambda::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -420,7 +419,6 @@ void Lambda::always_executed_hook()
 //--------------------------------------------------------
 void Lambda::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "Lambda::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Lambda::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -435,7 +433,6 @@ void Lambda::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void Lambda::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "Lambda::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Lambda::write_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -658,7 +655,7 @@ void Lambda::read_linearityCorrection(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_linearityCorrection(Tango::WAttribute &attr)
 {
-	DEBUG_STREAM << "Lambda::write_linearityCorrection(Tango::WAttribute &attr) entering... " << endl;
+	INFO_STREAM << "Lambda::write_linearityCorrection(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
