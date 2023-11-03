@@ -194,7 +194,6 @@ void Dhyana6060::init_device()
 //--------------------------------------------------------
 void Dhyana6060::always_executed_hook()
 {
-	DEBUG_STREAM << "Dhyana6060::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana6060::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -210,7 +209,6 @@ void Dhyana6060::always_executed_hook()
 //--------------------------------------------------------
 void Dhyana6060::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
-	DEBUG_STREAM << "Dhyana6060::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Dhyana6060::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code

@@ -59,7 +59,12 @@ bool Dhyana6060::is_GetAllParameters_allowed(TANGO_UNUSED(const CORBA::Any &any)
 {
 	//	Not any excluded states for GetAllParameters command.
 	/*----- PROTECTED REGION ID(Dhyana6060::GetAllParametersStateAllowed) ENABLED START -----*/
-	
+	if ((get_state() == Tango::FAULT && !is_device_initialized()) || 
+		get_state()==Tango::INIT || 
+		get_state()==Tango::RUNNING)
+	{
+		return false;
+	}
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::GetAllParametersStateAllowed
 	return true;
 }
@@ -74,7 +79,12 @@ bool Dhyana6060::is_GetParameter_allowed(TANGO_UNUSED(const CORBA::Any &any))
 {
 	//	Not any excluded states for GetParameter command.
 	/*----- PROTECTED REGION ID(Dhyana6060::GetParameterStateAllowed) ENABLED START -----*/
-	
+	if ((get_state() == Tango::FAULT && !is_device_initialized())|| 
+		get_state()==Tango::INIT || 
+		get_state()==Tango::RUNNING)
+	{
+		return false;
+	}
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::GetParameterStateAllowed
 	return true;
 }
@@ -89,7 +99,12 @@ bool Dhyana6060::is_SetParameter_allowed(TANGO_UNUSED(const CORBA::Any &any))
 {
 	//	Not any excluded states for SetParameter command.
 	/*----- PROTECTED REGION ID(Dhyana6060::SetParameterStateAllowed) ENABLED START -----*/
-	
+	if ((get_state() == Tango::FAULT && !is_device_initialized()) || 
+		get_state()==Tango::INIT || 
+		get_state()==Tango::RUNNING)
+	{
+		return false;
+	}
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::SetParameterStateAllowed
 	return true;
 }
