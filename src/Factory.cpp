@@ -42,6 +42,7 @@ void ControlFactory::initialize()
 #endif
     m_status.str("");
     m_state = Tango::INIT;
+    m_specific_state = Tango::UNKNOWN;
 }
 
 //-----------------------------------------------------------------------------------------
@@ -1435,6 +1436,12 @@ Tango::DevState ControlFactory::get_state(void)
         }
             break;
     }
+
+    if(Tango::FAULT == m_specific_state)
+    {
+        set_state(Tango::FAULT);
+        set_status("Error has occured in specific device!\n");
+    }
     
     return m_state;
 }
@@ -1462,6 +1469,13 @@ void ControlFactory::set_status(const std::string& status)
     m_status << status.c_str() << endl;
 
 }
+
+//-----------------------------------------------------------------------------------------
+void ControlFactory::set_specific_state(Tango::DevState specific_state)
+{
+    m_specific_state = specific_state;
+}
+
 //-----------------------------------------------------------------------------------------
 void ControlFactory::set_event_status(const std::string& status)
 {
