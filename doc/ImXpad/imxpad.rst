@@ -65,13 +65,13 @@ calibrationMode           W           String                  Define the calibra
                                                               - OTN
                                                               - OTN_PULSE
                                                               - BEAM
-mode                      W           String                  Define the calibration configuration mode :
+calibrationConfigMode     W           String                  Define the calibration configuration mode :
 
                                                               - SLOW
                                                               - MEDIUM
                                                               - FAST
-time                      W           ULong                   Define the calbration exposure time
-iTHL                      W           ULong                   Define the limit of the threshold scan during calibration
+calibrationExposureTime   W           ULong                   Define the calbration exposure time
+calibrationBeamITHL       W           ULong                   Define the limit of the threshold scan during calibration
 ========================= =========== ======================= ======================================================================
 
 

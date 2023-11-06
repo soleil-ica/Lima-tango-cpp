@@ -619,41 +619,41 @@ void ImXpadClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	calibration_mode->set_memorized_init(false);
 	att_list.push_back(calibration_mode);
 
-	//	Attribute : time
-	timeAttrib	*time = new timeAttrib();
-	Tango::UserDefaultAttrProp	time_prop;
-	time_prop.set_unit("ms");
-	time_prop.set_standard_unit("ms");
-	time_prop.set_display_unit("%6.2f");
-	time_prop.set_description("Define the calibration exposure time");
-	time->set_default_properties(time_prop);
-	time->set_memorized();
-	time->set_memorized_init(false);
-	att_list.push_back(time);
+	//	Attribute : calibrationExposureTime
+	calibrationExposureTimeAttrib	*calibration_exposure_time = new calibrationExposureTimeAttrib();
+	Tango::UserDefaultAttrProp	calibration_exposure_time_prop;
+	calibration_exposure_time_prop.set_unit("ms");
+	calibration_exposure_time_prop.set_standard_unit("ms");
+	calibration_exposure_time_prop.set_display_unit("%6.2f");
+	calibration_exposure_time_prop.set_description("Define the calibration exposure time");
+	calibration_exposure_time->set_default_properties(calibration_exposure_time_prop);
+	calibration_exposure_time->set_memorized();
+	calibration_exposure_time->set_memorized_init(false);
+	att_list.push_back(calibration_exposure_time);
 
-	//	Attribute : iTHL
-	iTHLAttrib	*i_thl = new iTHLAttrib();
-	Tango::UserDefaultAttrProp	i_thl_prop;
-	i_thl_prop.set_unit(" ");
-	i_thl_prop.set_standard_unit(" ");
-	i_thl_prop.set_display_unit(" ");
-	i_thl_prop.set_description("Define the limit of the threshold scan during a BEAM calibration ");
-	i_thl->set_default_properties(i_thl_prop);
-	i_thl->set_memorized();
-	i_thl->set_memorized_init(false);
-	att_list.push_back(i_thl);
+	//	Attribute : CalibrationBeamITHL
+	CalibrationBeamITHLAttrib	*calibration_beam_ithl = new CalibrationBeamITHLAttrib();
+	Tango::UserDefaultAttrProp	calibration_beam_ithl_prop;
+	calibration_beam_ithl_prop.set_unit(" ");
+	calibration_beam_ithl_prop.set_standard_unit(" ");
+	calibration_beam_ithl_prop.set_display_unit(" ");
+	calibration_beam_ithl_prop.set_description("Define the limit of the threshold scan during a BEAM calibration ");
+	calibration_beam_ithl->set_default_properties(calibration_beam_ithl_prop);
+	calibration_beam_ithl->set_memorized();
+	calibration_beam_ithl->set_memorized_init(false);
+	att_list.push_back(calibration_beam_ithl);
 
-	//	Attribute : mode
-	modeAttrib	*mode = new modeAttrib();
-	Tango::UserDefaultAttrProp	mode_prop;
-	mode_prop.set_unit(" ");
-	mode_prop.set_standard_unit(" ");
-	mode_prop.set_display_unit(" ");
-	mode_prop.set_description("Available config modes for a calibration are :<BR>\nSLOW<BR>\nMEDIUM<BR>\nFAST<BR>");
-	mode->set_default_properties(mode_prop);
-	mode->set_memorized();
-	mode->set_memorized_init(false);
-	att_list.push_back(mode);
+	//	Attribute : calibrationConfigMode
+	calibrationConfigModeAttrib	*calibration_config_mode = new calibrationConfigModeAttrib();
+	Tango::UserDefaultAttrProp	calibration_config_mode_prop;
+	calibration_config_mode_prop.set_unit(" ");
+	calibration_config_mode_prop.set_standard_unit(" ");
+	calibration_config_mode_prop.set_display_unit(" ");
+	calibration_config_mode_prop.set_description("Available config modes for a calibration are :<BR>\nSLOW<BR>\nMEDIUM<BR>\nFAST<BR>");
+	calibration_config_mode->set_default_properties(calibration_config_mode_prop);
+	calibration_config_mode->set_memorized();
+	calibration_config_mode->set_memorized_init(false);
+	att_list.push_back(calibration_config_mode);
 
 	//	Attribute : calibrationPath
 	calibrationPathAttrib	*calibration_path = new calibrationPathAttrib();

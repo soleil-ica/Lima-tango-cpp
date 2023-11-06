@@ -140,62 +140,6 @@ bool ImXpad::is_calibrationMode_allowed(Tango::AttReqType type)
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		ImXpad::is_time_allowed
-// 
-// description : 	Read/Write allowed for time attribute.
-//
-//-----------------------------------------------------------------------------
-bool ImXpad::is_time_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::FAULT	||
-		get_state() == Tango::INIT	||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
-        {
-           return true;
-        }
-
-        if ( get_state()==Tango::FAULT && is_device_initialized() )
-        {
-           return true;
-        }
-        //	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		ImXpad::is_mode_allowed
-// 
-// description : 	Read/Write allowed for mode attribute.
-//
-//-----------------------------------------------------------------------------
-bool ImXpad::is_mode_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::FAULT	||
-		get_state() == Tango::INIT	||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
-        {
-           return true;
-        }
-
-        if ( get_state()==Tango::FAULT && is_device_initialized() )
-        {
-           return true;
-        }
-        //	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
 // method : 		ImXpad::is_serverVersion_allowed
 // 
 // description : 	Read/Write allowed for serverVersion attribute.
@@ -259,34 +203,6 @@ bool ImXpad::is_geometricalCorrectionFlag_allowed(Tango::AttReqType type)
 //
 //-----------------------------------------------------------------------------
 bool ImXpad::is_flatFieldCorrectionFlag_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::FAULT	||
-		get_state() == Tango::INIT	||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
-        {
-           return true;
-        }
-
-        if ( get_state()==Tango::FAULT && is_device_initialized() )
-        {
-           return true;
-        }
-        //	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		ImXpad::is_iTHL_allowed
-// 
-// description : 	Read/Write allowed for iTHL attribute.
-//
-//-----------------------------------------------------------------------------
-bool ImXpad::is_iTHL_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::FAULT	||
 		get_state() == Tango::INIT	||
@@ -379,6 +295,90 @@ bool ImXpad::is_calibrationPath_allowed(Tango::AttReqType type)
            return true;
         }
         //	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_calibrationExposureTime_allowed
+// 
+// description : 	Read/Write allowed for calibrationExposureTime attribute.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_calibrationExposureTime_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_CalibrationBeamITHL_allowed
+// 
+// description : 	Read/Write allowed for CalibrationBeamITHL attribute.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_CalibrationBeamITHL_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+ 		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		ImXpad::is_calibrationConfigMode_allowed
+// 
+// description : 	Read/Write allowed for calibrationConfigMode attribute.
+//
+//-----------------------------------------------------------------------------
+bool ImXpad::is_calibrationConfigMode_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::FAULT	||
+		get_state() == Tango::INIT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+		//	Re-Start of Generated Code
 		return false;
 	}
 	return true;

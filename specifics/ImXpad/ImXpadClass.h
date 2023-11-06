@@ -57,46 +57,46 @@ public:
 	{return (static_cast<ImXpad *>(dev))->is_calibrationPath_allowed(ty);}
 };
 
-class modeAttrib: public Tango::Attr
+class calibrationConfigModeAttrib: public Tango::Attr
 {
 public:
-	modeAttrib():Attr("mode", Tango::DEV_STRING, Tango::WRITE) {};
-	~modeAttrib() {};
+	calibrationConfigModeAttrib():Attr("calibrationConfigMode", Tango::DEV_STRING, Tango::WRITE) {};
+	~calibrationConfigModeAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<ImXpad *>(dev))->read_mode(att);}
+	{(static_cast<ImXpad *>(dev))->read_calibrationConfigMode(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<ImXpad *>(dev))->write_mode(att);}
+	{(static_cast<ImXpad *>(dev))->write_calibrationConfigMode(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<ImXpad *>(dev))->is_mode_allowed(ty);}
+	{return (static_cast<ImXpad *>(dev))->is_calibrationConfigMode_allowed(ty);}
 };
 
-class iTHLAttrib: public Tango::Attr
+class CalibrationBeamITHLAttrib: public Tango::Attr
 {
 public:
-	iTHLAttrib():Attr("iTHL", Tango::DEV_ULONG, Tango::WRITE) {};
-	~iTHLAttrib() {};
+	CalibrationBeamITHLAttrib():Attr("CalibrationBeamITHL", Tango::DEV_ULONG, Tango::WRITE) {};
+	~CalibrationBeamITHLAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<ImXpad *>(dev))->read_iTHL(att);}
+	{(static_cast<ImXpad *>(dev))->read_CalibrationBeamITHL(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<ImXpad *>(dev))->write_iTHL(att);}
+	{(static_cast<ImXpad *>(dev))->write_CalibrationBeamITHL(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<ImXpad *>(dev))->is_iTHL_allowed(ty);}
+	{return (static_cast<ImXpad *>(dev))->is_CalibrationBeamITHL_allowed(ty);}
 };
 
-class timeAttrib: public Tango::Attr
+class calibrationExposureTimeAttrib: public Tango::Attr
 {
 public:
-	timeAttrib():Attr("time", Tango::DEV_ULONG, Tango::WRITE) {};
-	~timeAttrib() {};
+	calibrationExposureTimeAttrib():Attr("calibrationExposureTime", Tango::DEV_ULONG, Tango::WRITE) {};
+	~calibrationExposureTimeAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<ImXpad *>(dev))->read_time(att);}
+	{(static_cast<ImXpad *>(dev))->read_calibrationExposureTime(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<ImXpad *>(dev))->write_time(att);}
+	{(static_cast<ImXpad *>(dev))->write_calibrationExposureTime(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<ImXpad *>(dev))->is_time_allowed(ty);}
+	{return (static_cast<ImXpad *>(dev))->is_calibrationExposureTime_allowed(ty);}
 };
 
 class calibrationModeAttrib: public Tango::Attr
