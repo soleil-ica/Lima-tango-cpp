@@ -46,6 +46,7 @@ static const char *RcsId = "$Id:  $";
 #include <DhyanaClass.h>
 
 #include "AttrViewDhyana95.h"
+#include "AttrViewDhyana4040.h"
 
 /*----- PROTECTED REGION END -----*/	//	Dhyana.cpp
 
@@ -582,8 +583,9 @@ void Dhyana::build_view(std::string model)
 	{
 		m_attr_view.reset(new AttrViewDhyana95(this));
 	}
-	else if (model == "Dhyana 6060")
+	else if (model.find("4040") != std::string::npos)
 	{
+		m_attr_view.reset(new AttrViewDhyana4040(this));
 	}
 }
 
