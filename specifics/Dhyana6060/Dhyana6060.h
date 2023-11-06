@@ -148,6 +148,32 @@ public:
 
 //	Command related methods
 public:
+	/**
+	 *	Command GetAllParameters related method
+	 *	Description: Return the list of all the camera available parameters and their values in the following format:
+	 *               ParameterName=current_value
+	 *
+	 *	@returns 
+	 */
+	virtual Tango::DevString get_all_parameters();
+	virtual bool is_GetAllParameters_allowed(const CORBA::Any &any);
+	/**
+	 *	Command GetParameter related method
+	 *	Description: Return the current value of the specified parameter
+	 *
+	 *	@param argin 
+	 *	@returns 
+	 */
+	virtual Tango::DevString get_parameter(Tango::DevString argin);
+	virtual bool is_GetParameter_allowed(const CORBA::Any &any);
+	/**
+	 *	Command SetParameter related method
+	 *	Description: Set the value of the specified parameter.
+	 *
+	 *	@param argin 
+	 */
+	virtual void set_parameter(const Tango::DevVarStringArray *argin);
+	virtual bool is_SetParameter_allowed(const CORBA::Any &any);
 
 
 	//--------------------------------------------------------
@@ -168,6 +194,8 @@ public:
 	void build_view();
 
 	lima::Dhyana6060::Camera* get_camera();
+
+	void write_attr_at_init();
 
 protected :
 

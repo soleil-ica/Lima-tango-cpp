@@ -148,6 +148,62 @@ Dhyana6060Class *Dhyana6060Class::instance()
 //===================================================================
 //	Command execution method calls
 //===================================================================
+//--------------------------------------------------------
+/**
+ * method : 		GetAllParametersClass::execute()
+ * description : 	method to trigger the execution of the command.
+ *
+ * @param	device	The device on which the command must be executed
+ * @param	in_any	The command input data
+ *
+ *	returns The command output data (packed in the Any object)
+ */
+//--------------------------------------------------------
+CORBA::Any *GetAllParametersClass::execute(Tango::DeviceImpl *device, TANGO_UNUSED(const CORBA::Any &in_any))
+{
+	cout2 << "GetAllParametersClass::execute(): arrived" << endl;
+	return insert((static_cast<Dhyana6060 *>(device))->get_all_parameters());
+}
+
+//--------------------------------------------------------
+/**
+ * method : 		GetParameterClass::execute()
+ * description : 	method to trigger the execution of the command.
+ *
+ * @param	device	The device on which the command must be executed
+ * @param	in_any	The command input data
+ *
+ *	returns The command output data (packed in the Any object)
+ */
+//--------------------------------------------------------
+CORBA::Any *GetParameterClass::execute(Tango::DeviceImpl *device, const CORBA::Any &in_any)
+{
+	cout2 << "GetParameterClass::execute(): arrived" << endl;
+	Tango::DevString argin;
+	extract(in_any, argin);
+	return insert((static_cast<Dhyana6060 *>(device))->get_parameter(argin));
+}
+
+//--------------------------------------------------------
+/**
+ * method : 		SetParameterClass::execute()
+ * description : 	method to trigger the execution of the command.
+ *
+ * @param	device	The device on which the command must be executed
+ * @param	in_any	The command input data
+ *
+ *	returns The command output data (packed in the Any object)
+ */
+//--------------------------------------------------------
+CORBA::Any *SetParameterClass::execute(Tango::DeviceImpl *device, const CORBA::Any &in_any)
+{
+	cout2 << "SetParameterClass::execute(): arrived" << endl;
+	const Tango::DevVarStringArray *argin;
+	extract(in_any, argin);
+	((static_cast<Dhyana6060 *>(device))->set_parameter(argin));
+	return new CORBA::Any();
+}
+
 
 //===================================================================
 //	Properties management
@@ -299,11 +355,12 @@ void Dhyana6060Class::device_factory(const Tango::DevVarStringArray *devlist_ptr
 		else
 			export_device(dev, dev->get_name().c_str());
 	}
+	return;
 	
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060Class::device_factory_before
 
 	//	Create devices and add it into the device list
-	/*for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
+	for (unsigned long i=0 ; i<devlist_ptr->length() ; i++)
 	{
 		cout4 << "Device name : " << (*devlist_ptr)[i].in() << endl;
 		device_list.push_back(new Dhyana6060(this, (*devlist_ptr)[i]));
@@ -324,7 +381,7 @@ void Dhyana6060Class::device_factory(const Tango::DevVarStringArray *devlist_ptr
 			export_device(dev);
 		else
 			export_device(dev, dev->get_name().c_str());
-	}*/
+	}
 
 	/*----- PROTECTED REGION ID(Dhyana6060Class::device_factory_after) ENABLED START -----*/
 	
@@ -390,6 +447,33 @@ void Dhyana6060Class::command_factory()
 	
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060Class::command_factory_before
 
+
+	//	Command GetAllParameters
+	GetAllParametersClass	*pGetAllParametersCmd =
+		new GetAllParametersClass("GetAllParameters",
+			Tango::DEV_VOID, Tango::DEV_STRING,
+			"",
+			"",
+			Tango::EXPERT);
+	command_list.push_back(pGetAllParametersCmd);
+
+	//	Command GetParameter
+	GetParameterClass	*pGetParameterCmd =
+		new GetParameterClass("GetParameter",
+			Tango::DEV_STRING, Tango::DEV_STRING,
+			"",
+			"",
+			Tango::EXPERT);
+	command_list.push_back(pGetParameterCmd);
+
+	//	Command SetParameter
+	SetParameterClass	*pSetParameterCmd =
+		new SetParameterClass("SetParameter",
+			Tango::DEVVAR_STRINGARRAY, Tango::DEV_VOID,
+			"",
+			"",
+			Tango::EXPERT);
+	command_list.push_back(pSetParameterCmd);
 
 	/*----- PROTECTED REGION ID(Dhyana6060Class::command_factory_after) ENABLED START -----*/
 	
