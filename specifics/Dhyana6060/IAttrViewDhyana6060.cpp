@@ -20,5 +20,12 @@ AttrView::~AttrView()
 {
 }
 
+//-----------------------------------------------------
+//AttrView::get_dim()
+//-----------------------------------------------------
+yat4tango::DynamicInterfaceManager* AttrView::get_dim()
+{
+    return &m_dim;
+}
 
 } // namespace

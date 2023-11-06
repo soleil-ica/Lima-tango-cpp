@@ -53,6 +53,8 @@ void AttrViewDhyana6060::init()
 
             //Instanciate the read callback (called when the dyn. attr. is read)    
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
@@ -79,6 +81,8 @@ void AttrViewDhyana6060::init()
 
             //Instanciate the read callback (called when the dyn. attr. is read)    
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_cooling_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
@@ -105,6 +109,8 @@ void AttrViewDhyana6060::init()
 
             //Instanciate the read callback (called when the dyn. attr. is read)    
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_cooling_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
@@ -133,6 +139,8 @@ void AttrViewDhyana6060::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_cooling_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana6060::write_dynamic_cooling_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
@@ -163,6 +171,8 @@ void AttrViewDhyana6060::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_cooling_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana6060::write_dynamic_cooling_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
@@ -195,6 +205,8 @@ void AttrViewDhyana6060::init()
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana6060::write_dynamic_cooling_attribute_callback);
             //Do not clear attribute properties
             dai.cdb = false;
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
@@ -223,6 +235,8 @@ void AttrViewDhyana6060::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_cooling_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana6060::write_dynamic_cooling_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
@@ -253,6 +267,8 @@ void AttrViewDhyana6060::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_cooling_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana6060::write_dynamic_cooling_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
@@ -287,6 +303,8 @@ void AttrViewDhyana6060::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana6060::write_dynamic_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
@@ -318,6 +336,8 @@ void AttrViewDhyana6060::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_trigger_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana6060::write_dynamic_trigger_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
@@ -351,6 +371,8 @@ void AttrViewDhyana6060::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_trigger_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana6060::write_dynamic_trigger_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
@@ -379,6 +401,8 @@ void AttrViewDhyana6060::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_trigger_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana6060::write_dynamic_trigger_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
@@ -407,6 +431,8 @@ void AttrViewDhyana6060::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_trigger_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana6060::write_dynamic_trigger_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
@@ -437,6 +463,8 @@ void AttrViewDhyana6060::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_trigger_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana6060::write_dynamic_trigger_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
@@ -596,6 +624,7 @@ void AttrViewDhyana6060::write_dynamic_cooling_attribute_callback(yat4tango::Dyn
             user_data->set_value(val);
 
             dynamic_cast<Dhyana6060*>(m_device)->get_camera()->setSensorTemperatureTarget(val);
+            yat4tango::PropertyHelper::set_memorized_attribute<Tango::DevUShort>(m_device, "sensorTemperatureTarget", val);
         }
         else
         if(cbd.dya->get_name() == "sensorCoolingType")
@@ -607,6 +636,7 @@ void AttrViewDhyana6060::write_dynamic_cooling_attribute_callback(yat4tango::Dyn
             user_data->set_value(val);
 
             dynamic_cast<Dhyana6060*>(m_device)->get_camera()->setSensorCoolingType(val);
+            yat4tango::PropertyHelper::set_memorized_attribute<Tango::DevUShort>(m_device, "sensorCoolingType", val);
         }
         else
         if(cbd.dya->get_name() == "fanSpeed")
@@ -630,6 +660,7 @@ void AttrViewDhyana6060::write_dynamic_cooling_attribute_callback(yat4tango::Dyn
             user_data->set_value(val);
 
             dynamic_cast<Dhyana6060*>(m_device)->get_camera()->setFanType(val);
+            yat4tango::PropertyHelper::set_memorized_attribute<Tango::DevUShort>(m_device, "fanType", val);
         }
         else
         if(cbd.dya->get_name() == "sensorCooling")
@@ -639,7 +670,6 @@ void AttrViewDhyana6060::write_dynamic_cooling_attribute_callback(yat4tango::Dyn
 
             EnumUserData* user_data = cbd.dya->get_user_data<EnumUserData>();
             user_data->set_value(val);
-
             dynamic_cast<Dhyana6060*>(m_device)->get_camera()->setSensorCooling(val);
             yat4tango::PropertyHelper::set_memorized_attribute<Tango::DevEnum>(m_device, "sensorCooling", val);
         }
@@ -792,36 +822,6 @@ void AttrViewDhyana6060::read_dynamic_trigger_attribute_callback(yat4tango::Dyna
                             "AttrViewDhyana6060::read_dynamic_trigger_attribute_callback");
         }
 
-        if(cbd.dya->get_name() == "trigInEdge")
-        {
-            EnumUserData* user_data = cbd.dya->get_user_data<EnumUserData>();
-            //- set the attribute value
-            unsigned edge;
-            dynamic_cast<Dhyana6060*>(m_device)->get_camera()->getTrigInEdge(edge);
-            user_data->set_value(edge);
-            cbd.tga->set_value((Tango::DevEnum*)&user_data->get_value());
-        }
-        else
-        if(cbd.dya->get_name() == "trigInExpType")
-        {
-            EnumUserData* user_data = cbd.dya->get_user_data<EnumUserData>();
-            //- set the attribute value
-            unsigned type;
-            dynamic_cast<Dhyana6060*>(m_device)->get_camera()->getTrigInExpType(type);
-            user_data->set_value(type);
-            cbd.tga->set_value((Tango::DevEnum*)&user_data->get_value());
-        }
-        else
-        if(cbd.dya->get_name() == "trigInDelay")
-        {
-            DoubleUserData* user_data = cbd.dya->get_user_data<DoubleUserData>();
-            //- set the attribute value
-            double delay;
-            dynamic_cast<Dhyana6060*>(m_device)->get_camera()->getTrigInDelay(delay);
-            user_data->set_value(delay);
-            cbd.tga->set_value((Tango::DevDouble*)&user_data->get_value());
-        }
-        else
         if(cbd.dya->get_name() == "trigOutputPort")
         {
             EnumUserData* user_data = cbd.dya->get_user_data<EnumUserData>();
@@ -911,42 +911,6 @@ void AttrViewDhyana6060::write_dynamic_trigger_attribute_callback(yat4tango::Dyn
                             "AttrViewDhyana6060::write_dynamic_trigger_attribute_callback");
         }
 
-        if(cbd.dya->get_name() == "trigInEdge")
-        {
-            Tango::DevEnum val;
-            cbd.tga->get_write_value( val);
-
-            EnumUserData* user_data = cbd.dya->get_user_data<EnumUserData>();
-            user_data->set_value(val);
-
-            dynamic_cast<Dhyana6060*>(m_device)->get_camera()->setTrigInEdge(val);
-            yat4tango::PropertyHelper::set_memorized_attribute<Tango::DevEnum>(m_device, "trigInEdge", val);
-        }
-        else
-        if(cbd.dya->get_name() == "trigInExpType")
-        {
-            Tango::DevEnum val;
-            cbd.tga->get_write_value( val);
-
-            EnumUserData* user_data = cbd.dya->get_user_data<EnumUserData>();
-            user_data->set_value(val);
-
-            dynamic_cast<Dhyana6060*>(m_device)->get_camera()->setTrigInExpType(val);
-            yat4tango::PropertyHelper::set_memorized_attribute<Tango::DevEnum>(m_device, "trigInExpType", val);
-        }
-        else
-        if(cbd.dya->get_name() == "trigInDelay")
-        {
-            Tango::DevDouble val;
-            cbd.tga->get_write_value( val);
-
-            DoubleUserData* user_data = cbd.dya->get_user_data<DoubleUserData>();
-            user_data->set_value(val);
-
-            dynamic_cast<Dhyana6060*>(m_device)->get_camera()->setTrigInDelay(val);
-            yat4tango::PropertyHelper::set_memorized_attribute<Tango::DevDouble>(m_device, "trigInDelay", val);
-        }
-        else
         if(cbd.dya->get_name() == "trigOutputPort")
         {
             Tango::DevEnum val;

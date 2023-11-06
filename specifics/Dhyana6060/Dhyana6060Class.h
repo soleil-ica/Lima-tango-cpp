@@ -51,6 +51,79 @@ namespace Dhyana6060_ns
 
 /*----- PROTECTED REGION END -----*/	//	Dhyana6060Class::classes for dynamic creation
 
+//=========================================
+//	Define classes for commands
+//=========================================
+//	Command GetAllParameters class definition
+class GetAllParametersClass : public Tango::Command
+{
+public:
+	GetAllParametersClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	GetAllParametersClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~GetAllParametersClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<Dhyana6060 *>(dev))->is_GetAllParameters_allowed(any);}
+};
+
+//	Command GetParameter class definition
+class GetParameterClass : public Tango::Command
+{
+public:
+	GetParameterClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	GetParameterClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~GetParameterClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<Dhyana6060 *>(dev))->is_GetParameter_allowed(any);}
+};
+
+//	Command SetParameter class definition
+class SetParameterClass : public Tango::Command
+{
+public:
+	SetParameterClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	SetParameterClass(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~SetParameterClass() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<Dhyana6060 *>(dev))->is_SetParameter_allowed(any);}
+};
+
+
 /**
  *	The Dhyana6060Class singleton definition
  */

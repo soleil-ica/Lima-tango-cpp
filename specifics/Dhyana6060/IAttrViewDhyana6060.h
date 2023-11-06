@@ -22,6 +22,10 @@ public:
     virtual void write_dynamic_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd) = 0;
     virtual void read_dynamic_trigger_attribute_callback(yat4tango::DynamicAttributeReadCallbackData& cbd) = 0;
     virtual void write_dynamic_trigger_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd) = 0;
+    virtual void read_dynamic_cooling_attribute_callback(yat4tango::DynamicAttributeReadCallbackData& cbd) = 0;
+    virtual void write_dynamic_cooling_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd) = 0;
+
+    yat4tango::DynamicInterfaceManager* get_dim();
 
 protected:
 
