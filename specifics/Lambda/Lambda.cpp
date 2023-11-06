@@ -74,7 +74,6 @@ namespace Lambda_ns
 //================================================================
 //  configFile            |  Tango::DevString	Scalar
 //  distortionCorrection  |  Tango::DevBoolean	Scalar
-//  energyThreshold       |  Tango::DevDouble	Scalar
 //  libraryVersion        |  Tango::DevString	Scalar
 //  highVoltage           |  Tango::DevDouble	Scalar
 //  humidity              |  Tango::DevDouble	Scalar
@@ -82,6 +81,9 @@ namespace Lambda_ns
 //  linearityCorrection   |  Tango::DevBoolean	Scalar
 //  saturationFlag        |  Tango::DevBoolean	Scalar
 //  saturationThreshold   |  Tango::DevLong	Scalar
+//  chargeSumming         |  Tango::DevBoolean	Scalar
+//  lowerThreshold        |  Tango::DevDouble	Scalar
+//  upperThreshold        |  Tango::DevDouble	Scalar
 //================================================================
 
 namespace Lambda_ns
@@ -136,7 +138,8 @@ void Lambda::delete_device()
 	
     //	Delete device allocated objects
     DELETE_SCALAR_ATTRIBUTE(attr_distortionCorrection_read);
-    DELETE_SCALAR_ATTRIBUTE(attr_energyThreshold_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_lowerThreshold_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_upperThreshold_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_configFile_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_highVoltage_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_humidity_read);
@@ -146,6 +149,7 @@ void Lambda::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_linearityCorrection_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_saturationFlag_read);
 	DELETE_SCALAR_ATTRIBUTE(attr_saturationThreshold_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_chargeSumming_read);
 
     m_is_device_initialized = false;
 
@@ -174,7 +178,8 @@ void Lambda::init_device()
 	/*----- PROTECTED REGION ID(Lambda::init_device) ENABLED START -----*/
     //	Initialize device
     CREATE_SCALAR_ATTRIBUTE(attr_distortionCorrection_read);
-    CREATE_SCALAR_ATTRIBUTE(attr_energyThreshold_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_lowerThreshold_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_upperThreshold_read);
     CREATE_DEVSTRING_ATTRIBUTE(attr_configFile_read,Lambda_ns::STR_ATTR_SIZE_MAX);
     CREATE_SCALAR_ATTRIBUTE(attr_highVoltage_read);
     CREATE_SCALAR_ATTRIBUTE(attr_humidity_read);
@@ -183,6 +188,7 @@ void Lambda::init_device()
 	CREATE_SCALAR_ATTRIBUTE(attr_linearityCorrection_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_saturationFlag_read);
 	CREATE_SCALAR_ATTRIBUTE(attr_saturationThreshold_read);
+	CREATE_SCALAR_ATTRIBUTE(attr_chargeSumming_read);
     
     m_is_device_initialized = false;
 	m_has_hv_feature 		= false;
@@ -225,6 +231,10 @@ void Lambda::init_device()
 		m_camera->setDistortionCorrection(distortionCorrection);
 		//- Get the distortion correction (from hardware), only once
 		m_camera->getDistortionCorrection(*attr_distortionCorrection_read);
+		//- Set charge summing mode (from property)
+		m_camera->setChargeSumming(chargeSumming);
+		//- Get the distortion correction (from hardware), only once
+		m_camera->getChargeSumming(*attr_chargeSumming_read);
 
 		//- Get the lib version, only once
 		m_library_version = m_camera->getLibVersion();
@@ -289,6 +299,7 @@ void Lambda::get_device_property()
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("ConfigFile"));
 	dev_prop.push_back(Tango::DbDatum("DistortionCorrection"));
+	dev_prop.push_back(Tango::DbDatum("ChargeSumming"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -325,6 +336,17 @@ void Lambda::get_device_property()
 		//	And try to extract DistortionCorrection value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  distortionCorrection;
 
+		//	Try to initialize ChargeSumming from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  chargeSumming;
+		else {
+			//	Try to initialize ChargeSumming from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  chargeSumming;
+		}
+		//	And try to extract ChargeSumming value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  chargeSumming;
+
 	}
 
 	/*----- PROTECTED REGION ID(Lambda::get_device_property_after) ENABLED START -----*/
@@ -332,6 +354,7 @@ void Lambda::get_device_property()
 	//	Check device property data members init
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "/opt/xsp/config/system.yml", "ConfigFile");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "True"  , "DistortionCorrection");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "False"  , "ChargeSumming");
 	/*----- PROTECTED REGION END -----*/	//	Lambda::get_device_property_after
 }
 
@@ -455,72 +478,6 @@ void Lambda::read_distortionCorrection(Tango::Attribute &attr)
     attr.set_value(attr_distortionCorrection_read);
     
 	/*----- PROTECTED REGION END -----*/	//	Lambda::read_distortionCorrection
-}
-//--------------------------------------------------------
-/**
- *	Read attribute energyThreshold related method
- *	Description: energy threshold in KeV.<br>
- *               The photon is counted If the energy is above this threshold.<br>
- *               energyThreshold is a memorized attribute.<br>
- *
- *	Data type:	Tango::DevDouble
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void Lambda::read_energyThreshold(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "Lambda::read_energyThreshold(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Lambda::read_energyThreshold) ENABLED START -----*/
-	try
-    {
-		m_camera->getEnergyThreshold(*attr_energyThreshold_read);
-		attr.set_value(attr_energyThreshold_read);
-    }
-    catch (Tango::DevFailed& df)
-    {
-        manage_devfailed_exception(df, "read_energyThreshold");
-    }
-	catch (lima::Exception& le)
-    {
-        manage_lima_exception(le, "read_energyThreshold");
-    }
-
-	/*----- PROTECTED REGION END -----*/	//	Lambda::read_energyThreshold
-}
-//--------------------------------------------------------
-/**
- *	Write attribute energyThreshold related method
- *	Description: energy threshold in KeV.<br>
- *               The photon is counted If the energy is above this threshold.<br>
- *               energyThreshold is a memorized attribute.<br>
- *
- *	Data type:	Tango::DevDouble
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void Lambda::write_energyThreshold(Tango::WAttribute &attr)
-{
-	INFO_STREAM << "Lambda::write_energyThreshold(Tango::WAttribute &attr) entering... " << endl;
-	//	Retrieve write value
-	Tango::DevDouble	w_val;
-	attr.get_write_value(w_val);
-	/*----- PROTECTED REGION ID(Lambda::write_energyThreshold) ENABLED START -----*/
-	try
-    {
-        m_camera->setEnergyThreshold(w_val);
-		//- Memorize the write value
-		yat4tango::PropertyHelper::set_memorized_attribute(this, "energyThreshold", w_val);
-    }
-    catch (Tango::DevFailed& df)
-    {
-        manage_devfailed_exception(df, "write_energyThreshold");
-    }
-	catch (lima::Exception& le)
-    {
-        manage_lima_exception(le, "write_energyThreshold");
-    }
-	
-	/*----- PROTECTED REGION END -----*/	//	Lambda::write_energyThreshold
 }
 //--------------------------------------------------------
 /**
@@ -850,6 +807,159 @@ void Lambda::write_saturationThreshold(Tango::WAttribute &attr)
     }
 	/*----- PROTECTED REGION END -----*/	//	Lambda::write_saturationThreshold
 }
+//--------------------------------------------------------
+/**
+ *	Read attribute chargeSumming related method
+ *	Description: charge summing mode.
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::read_chargeSumming(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Lambda::read_chargeSumming(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Lambda::read_chargeSumming) ENABLED START -----*/
+	//	Set the attribute value
+	attr.set_value(attr_chargeSumming_read);
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::read_chargeSumming
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute lowerThreshold related method
+ *	Description: lower threshold in KeV.<br>
+ *               The photon is counted If the energy is above this threshold.<br>
+ *               lowerThreshold is a memorized attribute.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::read_lowerThreshold(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Lambda::read_lowerThreshold(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Lambda::read_lowerThreshold) ENABLED START -----*/
+	//	Set the attribute value	
+	try
+	{
+		m_camera->getLowerEnergyThreshold(*attr_lowerThreshold_read);
+		attr.set_value(attr_lowerThreshold_read);
+	}
+	catch (Tango::DevFailed& df)
+	{
+		manage_devfailed_exception(df, "read_lowerThreshold");
+	}
+	catch (lima::Exception& le)
+	{
+		manage_lima_exception(le, "read_lowerThreshold");
+	}
+
+	/*----- PROTECTED REGION END -----*/	//	Lambda::read_lowerThreshold
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute lowerThreshold related method
+ *	Description: lower threshold in KeV.<br>
+ *               The photon is counted If the energy is above this threshold.<br>
+ *               lowerThreshold is a memorized attribute.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::write_lowerThreshold(Tango::WAttribute &attr)
+{
+	INFO_STREAM << "Lambda::write_lowerThreshold(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Lambda::write_lowerThreshold) ENABLED START -----*/
+
+	try
+	{
+		m_camera->setEnergyThresholds(w_val, *attr_upperThreshold_read);
+		//- Memorize the write value
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "lowerThreshold", w_val);
+	}
+	catch (Tango::DevFailed& df)
+	{
+		manage_devfailed_exception(df, "write_lowerThreshold");
+	}
+	catch (lima::Exception& le)
+	{
+		manage_lima_exception(le, "write_lowerThreshold");
+	}
+		
+	/*----- PROTECTED REGION END -----*/	//	Lambda::write_lowerThreshold
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute upperThreshold related method
+ *	Description: upper threshold in KeV.<br>
+ *               The photon is counted If the energy is under this threshold.<br>
+ *               upperThreshold is a memorized attribute.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::read_upperThreshold(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Lambda::read_upperThreshold(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Lambda::read_upperThreshold) ENABLED START -----*/
+	//	Set the attribute value
+	try
+	{
+		m_camera->getUpperEnergyThreshold(*attr_upperThreshold_read);
+		attr.set_value(attr_upperThreshold_read);
+	}
+	catch (Tango::DevFailed& df)
+	{
+		manage_devfailed_exception(df, "read_upperThreshold");
+	}
+	catch (lima::Exception& le)
+	{
+		manage_lima_exception(le, "read_upperThreshold");
+	}
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::read_upperThreshold
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute upperThreshold related method
+ *	Description: upper threshold in KeV.<br>
+ *               The photon is counted If the energy is under this threshold.<br>
+ *               upperThreshold is a memorized attribute.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::write_upperThreshold(Tango::WAttribute &attr)
+{
+	INFO_STREAM << "Lambda::write_upperThreshold(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Lambda::write_upperThreshold) ENABLED START -----*/
+	try
+	{
+		m_camera->setEnergyThresholds(*attr_lowerThreshold_read, w_val );
+		//- Memorize the write value
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "upperThreshold", w_val);
+	}
+	catch (Tango::DevFailed& df)
+	{
+		manage_devfailed_exception(df, "write_upperThreshold");
+	}
+	catch (lima::Exception& le)
+	{
+		manage_lima_exception(le, "write_upperThreshold");
+	}
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::write_upperThreshold
+}
 
 //--------------------------------------------------------
 /**
@@ -970,11 +1080,18 @@ void Lambda::write_at_init(void)
 {
 	try
 	{
-		INFO_STREAM << "Write tango hardware at Init - energyThreshold." << endl;
-		Tango::WAttribute &energyThreshold = dev_attr->get_w_attr_by_name("energyThreshold");
-		*attr_energyThreshold_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, "energyThreshold", 7.0);
-		energyThreshold.set_write_value(*attr_energyThreshold_read);
-		write_energyThreshold(energyThreshold);
+		INFO_STREAM << "Write tango hardware at Init - lowerThreshold." << endl;
+		Tango::WAttribute &lowerThreshold = dev_attr->get_w_attr_by_name("lowerThreshold");
+		*attr_lowerThreshold_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, "lowerThreshold", 7.0);
+		lowerThreshold.set_write_value(*attr_lowerThreshold_read);
+
+		INFO_STREAM << "Write tango hardware at Init - upperThreshold." << endl;
+		Tango::WAttribute &upperThreshold = dev_attr->get_w_attr_by_name("upperThreshold");
+		*attr_upperThreshold_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, "upperThreshold", 40.0);
+		upperThreshold.set_write_value(*attr_upperThreshold_read);
+
+		write_lowerThreshold(lowerThreshold);
+		write_upperThreshold(upperThreshold);
 
 		//Init Correction attributes
 		INFO_STREAM << "Write tango attribute at Init - linearityCorrection." << std::endl;
@@ -997,11 +1114,11 @@ void Lambda::write_at_init(void)
 	}
 	catch (Tango::DevFailed& df)
     {
-        manage_devfailed_exception(df, "read_energyThreshold");
+        manage_devfailed_exception(df, "write_at_init");
     }
 	catch (lima::Exception& le)
     {						
-        manage_lima_exception(le, "read_energyThreshold");
+        manage_lima_exception(le, "write_at_init");
     }
 }
 

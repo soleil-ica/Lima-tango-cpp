@@ -89,12 +89,13 @@ public:
 	//  - The values of the pixels are rounded during division. <br>
 	//  - If pixel value is saturated, the division is not applied.<br>
 	Tango::DevBoolean	distortionCorrection;
+	//	ChargeSumming:	Indicates wether charge summing is used or not.
+	Tango::DevBoolean	chargeSumming;
 
 //	Attribute data members
 public:
 	Tango::DevString	*attr_configFile_read;
 	Tango::DevBoolean	*attr_distortionCorrection_read;
-	Tango::DevDouble	*attr_energyThreshold_read;
 	Tango::DevString	*attr_libraryVersion_read;
 	Tango::DevDouble	*attr_highVoltage_read;
 	Tango::DevDouble	*attr_humidity_read;
@@ -102,6 +103,9 @@ public:
 	Tango::DevBoolean	*attr_linearityCorrection_read;
 	Tango::DevBoolean	*attr_saturationFlag_read;
 	Tango::DevLong	*attr_saturationThreshold_read;
+	Tango::DevBoolean	*attr_chargeSumming_read;
+	Tango::DevDouble	*attr_lowerThreshold_read;
+	Tango::DevDouble	*attr_upperThreshold_read;
 
 //	Constructors and destructors
 public:
@@ -193,18 +197,6 @@ public:
 	virtual void read_distortionCorrection(Tango::Attribute &attr);
 	virtual bool is_distortionCorrection_allowed(Tango::AttReqType type);
 /**
- *	Attribute energyThreshold related methods
- *	Description: energy threshold in KeV.<br>
- *               The photon is counted If the energy is above this threshold.<br>
- *               energyThreshold is a memorized attribute.<br>
- *
- *	Data type:	Tango::DevDouble
- *	Attr type:	Scalar
- */
-	virtual void read_energyThreshold(Tango::Attribute &attr);
-	virtual void write_energyThreshold(Tango::WAttribute &attr);
-	virtual bool is_energyThreshold_allowed(Tango::AttReqType type);
-/**
  *	Attribute libraryVersion related methods
  *	Description: Version of the xsp library
  *
@@ -273,6 +265,39 @@ public:
 	virtual void read_saturationThreshold(Tango::Attribute &attr);
 	virtual void write_saturationThreshold(Tango::WAttribute &attr);
 	virtual bool is_saturationThreshold_allowed(Tango::AttReqType type);
+/**
+ *	Attribute chargeSumming related methods
+ *	Description: charge summing mode.
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void read_chargeSumming(Tango::Attribute &attr);
+	virtual bool is_chargeSumming_allowed(Tango::AttReqType type);
+/**
+ *	Attribute lowerThreshold related methods
+ *	Description: lower threshold in KeV.<br>
+ *               The photon is counted If the energy is above this threshold.<br>
+ *               lowerThreshold is a memorized attribute.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+	virtual void read_lowerThreshold(Tango::Attribute &attr);
+	virtual void write_lowerThreshold(Tango::WAttribute &attr);
+	virtual bool is_lowerThreshold_allowed(Tango::AttReqType type);
+/**
+ *	Attribute upperThreshold related methods
+ *	Description: upper threshold in KeV.<br>
+ *               The photon is counted If the energy is under this threshold.<br>
+ *               upperThreshold is a memorized attribute.<br>
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+	virtual void read_upperThreshold(Tango::Attribute &attr);
+	virtual void write_upperThreshold(Tango::WAttribute &attr);
+	virtual bool is_upperThreshold_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------
