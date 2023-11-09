@@ -251,33 +251,6 @@ void AttrView::init_common_attributes()
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
 
-        //Create frameRateHW attribute
-        {
-            std::string name = "frameRateHW";
-            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;       
-            yat4tango::DynamicAttributeInfo dai;
-            dai.dev = m_device;
-            //- specify the dyn. attr.  name
-            dai.tai.name = name;
-            //- associate the dyn. attr. with its data 
-            m_dyn_frame_rate_hw = new DoubleUserData(name);
-
-            dai.set_user_data(m_dyn_frame_rate_hw);
-            //Describe the dynamic attr
-            dai.tai.data_type = Tango::DEV_DOUBLE;
-            dai.tai.data_format = Tango::SCALAR;
-            dai.tai.writable = Tango::READ;
-            dai.tai.disp_level = Tango::OPERATOR;
-            dai.tai.unit = " ";
-            dai.tai.format = "%6.2f";
-            dai.tai.description = "Get frame rate value";
-
-            //Instanciate the read callback (called when the dyn. attr. is read)    
-            dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrView::read_dynamic_attribute_callback);
-            //Add the dyn. attr. to the device
-            m_dim.dynamic_attributes_manager().add_attribute(dai);
-        }
-
         //We do not create trigger out attributes if they're not availbable for the current detector model
         if(dynamic_cast<Dhyana*>(m_device)->get_camera()->is_trigOutput_available())
         {
@@ -523,16 +496,6 @@ void AttrView::read_dynamic_attribute_callback(yat4tango::DynamicAttributeReadCa
             double frame_rate;
             dynamic_cast<Dhyana*>(m_device)->get_camera()->getFPS(frame_rate);
             user_data->set_value(frame_rate);
-            cbd.tga->set_value((Tango::DevDouble*)&user_data->get_value());
-        }
-        else
-        if(cbd.dya->get_name() == "frameRateHW")
-        {
-            DoubleUserData* user_data = cbd.dya->get_user_data<DoubleUserData>();
-            //- set the attribute value
-            double frame_rate_hw;
-            dynamic_cast<Dhyana*>(m_device)->get_camera()->getFPSHW(frame_rate_hw);
-            user_data->set_value(frame_rate_hw);
             cbd.tga->set_value((Tango::DevDouble*)&user_data->get_value());
         }
     }
