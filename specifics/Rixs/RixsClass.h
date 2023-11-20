@@ -54,7 +54,7 @@ namespace Rixs_ns
 class clusterCentroidYAttrib: public Tango::SpectrumAttr
 {
 public:
-	clusterCentroidYAttrib():SpectrumAttr("clusterCentroidY", Tango::DEV_DOUBLE, Tango::READ, 100000) {};
+	clusterCentroidYAttrib():SpectrumAttr("clusterCentroidY", Tango::DEV_DOUBLE, Tango::READ, 1000000) {};
 	~clusterCentroidYAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
@@ -66,7 +66,7 @@ public:
 class clusterCentroidXAttrib: public Tango::SpectrumAttr
 {
 public:
-	clusterCentroidXAttrib():SpectrumAttr("clusterCentroidX", Tango::DEV_DOUBLE, Tango::READ, 100000) {};
+	clusterCentroidXAttrib():SpectrumAttr("clusterCentroidX", Tango::DEV_DOUBLE, Tango::READ, 1000000) {};
 	~clusterCentroidXAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
@@ -78,7 +78,7 @@ public:
 class clusterSumAttrib: public Tango::SpectrumAttr
 {
 public:
-	clusterSumAttrib():SpectrumAttr("clusterSum", Tango::DEV_LONG, Tango::READ, 100000) {};
+	clusterSumAttrib():SpectrumAttr("clusterSum", Tango::DEV_LONG, Tango::READ, 1000000) {};
 	~clusterSumAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
@@ -90,7 +90,7 @@ public:
 class clusterAreaAttrib: public Tango::SpectrumAttr
 {
 public:
-	clusterAreaAttrib():SpectrumAttr("clusterArea", Tango::DEV_LONG, Tango::READ, 100000) {};
+	clusterAreaAttrib():SpectrumAttr("clusterArea", Tango::DEV_LONG, Tango::READ, 1000000) {};
 	~clusterAreaAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
@@ -177,6 +177,18 @@ public:
 	{(static_cast<Rixs *>(dev))->write_drawClusterEnabled(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
 	{return (static_cast<Rixs *>(dev))->is_drawClusterEnabled_allowed(ty);}
+};
+
+class nbClusterValidAttrib: public Tango::Attr
+{
+public:
+	nbClusterValidAttrib():Attr("nbClusterValid", Tango::DEV_LONG, Tango::READ) {};
+	~nbClusterValidAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Rixs *>(dev))->read_nbClusterValid(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Rixs *>(dev))->is_nbClusterValid_allowed(ty);}
 };
 
 class maxAreaClusterAttrib: public Tango::Attr

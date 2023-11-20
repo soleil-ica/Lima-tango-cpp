@@ -196,6 +196,14 @@ namespace Rixs_ns
         }		
 		
         //-----------------------------------------------
+		//define the ResetSpectrumsAtEachFrame Enabled
+		//-----------------------------------------------
+        void setDefaultValueInSpectrumsIfEmptyEnabled(const bool is_enabled)
+        {            
+			m_default_value_in_spectrums_enabled = is_enabled;
+        }
+		
+        //-----------------------------------------------
 		//define the Rixs Write Files Enabled
 		//-----------------------------------------------
         void setRixsWriteFilesEnabled(const bool is_enabled)
@@ -210,6 +218,18 @@ namespace Rixs_ns
         {            
 			m_rixs_write_files_path = path;
         }
+		
+        //-----------------------------------------------
+		//get get_nb_valid_cluster
+		//-----------------------------------------------		
+		const long get_nb_valid_cluster()
+		{
+			yat::MutexLock scoped_lock(m_data_lock);
+			if(!m_rixs_cluster_counter.empty())
+				return m_rixs_cluster_counter.back();
+			else
+				return 0;
+		}
 		
         //-----------------------------------------------
 		//get cluster counter
@@ -336,7 +356,7 @@ namespace Rixs_ns
 			YAT_INFO<<"-----------------------------"<<std::endl;
 			*/
 			YAT_INFO<<"Apply operation [ "<< m_operation_type << " ("<<m_operation_value<<") ]"<<std::endl;		
-			YAT_INFO<<"[min_area_cluster : "<<m_rixs_min_area_cluster	<<" , "<<"max_area_cluster : "<<m_rixs_max_area_cluster<<"]"<<std::endl;
+			//@YAT_INFO<<"[min_area_cluster : "<<m_rixs_min_area_cluster	<<" , "<<"max_area_cluster : "<<m_rixs_max_area_cluster<<"]"<<std::endl;
 			
 			
 			/*
@@ -358,7 +378,7 @@ namespace Rixs_ns
 			aDst.dimensions.push_back(aSrc.dimensions[0]/* *10 */);	//image src width  *  pixelisation rate (10 for example)
 			aDst.dimensions.push_back(aSrc.dimensions[1]/* *10 */);	//image src height *  pixelisation rate (10 for example)
 			int aNbPixel = aDst.dimensions[0] * aDst.dimensions[1];
-			YAT_INFO<<"[Elapsed time (aSrc.copy()): "<<t00.elapsed_msec()<< " (ms)]"<<std::endl;
+			//@YAT_INFO<<"[Elapsed time (aSrc.copy()): "<<t00.elapsed_msec()<< " (ms)]"<<std::endl;
 			
 			
 			//create cv::Mat from lima frame
@@ -394,14 +414,14 @@ namespace Rixs_ns
 			////std::cout << "Type de l'image mat_origin_draw : " << type_2_str(mat_origin_draw.type()) << std::endl;
 			
 			
-			YAT_INFO<<"[Elapsed time (mat_origin.clone()): "<<t02.elapsed_msec()<< " (ms)]"<<std::endl;
+			//@YAT_INFO<<"[Elapsed time (mat_origin.clone()): "<<t02.elapsed_msec()<< " (ms)]"<<std::endl;
 			
 			//convert from 8 or 16 bits to 32f bits
 			
 			yat::Timer t03;
 			cv::Mat mat_origin_32f;
 			mat_origin.convertTo(mat_origin_32f, CV_32F);
-			YAT_INFO<<"[Elapsed time (mat_origin.convertTo()): "<<t03.elapsed_msec()<< " (ms)]"<<std::endl;
+			//@YAT_INFO<<"[Elapsed time (mat_origin.convertTo()): "<<t03.elapsed_msec()<< " (ms)]"<<std::endl;
 			
 			if(m_rixs_write_files_enabled)
 			{		
@@ -413,7 +433,7 @@ namespace Rixs_ns
 			cv::Mat mat_threshold_32f;	
 			cv::threshold(mat_origin_32f, mat_threshold_32f, m_operation_value, 255, cv::THRESH_BINARY);
 			////std::cout << "Type de l'image mat_threshold_32f : " << mat_threshold_32f.type() << std::endl;
-			YAT_INFO<<"[Elapsed time (threshold): "<<t04.elapsed_msec()<< " (ms)]"<<std::endl;
+			//@YAT_INFO<<"[Elapsed time (threshold): "<<t04.elapsed_msec()<< " (ms)]"<<std::endl;
 			
 			if(m_rixs_write_files_enabled)
 			{				
@@ -426,13 +446,13 @@ namespace Rixs_ns
 			yat::Timer t05;
 			cv::Mat mat_morpho_32f;
 			cv::morphologyEx(mat_threshold_32f, mat_morpho_32f,cv::MORPH_DILATE,cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3), cv::Point( -1,-1 )) );	
-			YAT_INFO<<"[Elapsed time (morphologyEx): "<<t05.elapsed_msec()<< " (ms)]"<<std::endl;
+			//@YAT_INFO<<"[Elapsed time (morphologyEx): "<<t05.elapsed_msec()<< " (ms)]"<<std::endl;
 						
 			//convert from 32f bits to 8 bits
 			yat::Timer t06;
 			cv::Mat mat_morpho_8u;
 			mat_morpho_32f.convertTo(mat_morpho_8u, CV_8UC1);
-			YAT_INFO<<"[Elapsed time (mat_morpho_32f.convertTo): "<<t06.elapsed_msec()<< " (ms)]"<<std::endl;
+			//@YAT_INFO<<"[Elapsed time (mat_morpho_32f.convertTo): "<<t06.elapsed_msec()<< " (ms)]"<<std::endl;
 			
 			if(m_rixs_write_files_enabled)
 			{		
@@ -445,7 +465,7 @@ namespace Rixs_ns
 			cv::Mat mat_stats;
 			cv::Mat mat_centroids;			
 			int nb_labels = cv::connectedComponentsWithStats(mat_morpho_8u, mat_labels, mat_stats, mat_centroids);
-			YAT_INFO<<"[Elapsed time (connectedComponentsWithStats): "<<t07.elapsed_msec()<< " (ms)]"<<std::endl;
+			//@YAT_INFO<<"[Elapsed time (connectedComponentsWithStats): "<<t07.elapsed_msec()<< " (ms)]"<<std::endl;
 			
 			
 			//prepare spectrum data
@@ -539,7 +559,7 @@ namespace Rixs_ns
 				YAT_INFO<<" "<<std::endl;					
 				*/
 			}
-			YAT_INFO<<"[Elapsed time (all loop centroid): "<<t08 .elapsed_msec()<< " (ms)]"<<std::endl;
+			//@YAT_INFO<<"[Elapsed time (all loop centroid): "<<t08 .elapsed_msec()<< " (ms)]"<<std::endl;
 			
 
 			////
@@ -557,10 +577,21 @@ namespace Rixs_ns
 			//memcopy image draw into image origin 
 			yat::Timer t09;
 			memcpy(&((INPUT*) aDst.data())[0], &((INPUT*) mat_origin_draw.data)[0], aNbPixel*aDst.depth());
-			YAT_INFO<<"[Elapsed time (memcpy): "<<t09.elapsed_msec()<< " (ms)]"<<std::endl;
+			//@YAT_INFO<<"[Elapsed time (memcpy): "<<t09.elapsed_msec()<< " (ms)]"<<std::endl;
 			
 			//for each cluster (label) , compute the centroid using the origin image
 			YAT_INFO<< "[nb. valid labels : " << nb_labels_valid<<"]"<<std::endl;
+			if(nb_labels_valid==0 && m_default_value_in_spectrums_enabled)
+			{
+				//fill spectrum data
+				{
+				yat::MutexLock scoped_lock(m_data_lock);				
+				m_rixs_cluster_area.push_back(-1);
+				m_rixs_cluster_sum.push_back(-1);
+				m_rixs_centroid_x.push_back(-1);
+				m_rixs_centroid_y.push_back(-1);
+				}
+			}
 		
 
 			return aDst;
@@ -597,6 +628,7 @@ namespace Rixs_ns
 		std::vector<long> m_rixs_cluster_sum;
 		std::vector<double> m_rixs_label_colors;
 		bool m_reset_spectrums_at_each_frame_is_enabled;
+		bool m_default_value_in_spectrums_enabled;
 		bool m_rixs_draw_centroid_is_enabled;
 		bool m_rixs_draw_cluster_is_enabled;
 		int  m_rixs_max_area_cluster;
@@ -642,6 +674,7 @@ namespace Rixs_ns
 		Tango::DevString	attr_operationValue_write;
 		Tango::DevLong	attr_minAreaCluster_write;
 		Tango::DevLong	attr_maxAreaCluster_write;
+		Tango::DevLong	*attr_nbClusterValid_read;
 		Tango::DevBoolean	attr_drawClusterEnabled_write;
 		Tango::DevBoolean	attr_drawCentroidEnabled_write;
 		Tango::DevBoolean	attr_pngFilesEnabled_write;
@@ -675,6 +708,10 @@ namespace Rixs_ns
  *	All Spectrum data wil be reset at each new Frame
  */
 	Tango::DevBoolean	resetSpectrumsAtEachFrame;
+/**
+ *	Set default value (-1) in spectrums if there is 0 Valid Clusters
+ */
+	Tango::DevBoolean	defaultValueInSpectrumsIfEmpty;
 /**
  *	RIXS : Define Color of centroids
  */
@@ -796,6 +833,10 @@ namespace Rixs_ns
  */
 	virtual void write_maxAreaCluster(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for nbClusterValid acquisition result.
+ */
+	virtual void read_nbClusterValid(Tango::Attribute &attr);
+/**
  *	Extract real attribute values for drawClusterEnabled acquisition result.
  */
 	virtual void read_drawClusterEnabled(Tango::Attribute &attr);
@@ -871,6 +912,10 @@ namespace Rixs_ns
  *	Read/Write allowed for maxAreaCluster attribute.
  */
 	virtual bool is_maxAreaCluster_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for nbClusterValid attribute.
+ */
+	virtual bool is_nbClusterValid_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for drawClusterEnabled attribute.
  */

@@ -360,6 +360,14 @@ void RixsClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	max_area_cluster->set_default_properties(max_area_cluster_prop);
 	att_list.push_back(max_area_cluster);
 
+	//	Attribute : nbClusterValid
+	nbClusterValidAttrib	*nb_cluster_valid = new nbClusterValidAttrib();
+	Tango::UserDefaultAttrProp	nb_cluster_valid_prop;
+	nb_cluster_valid_prop.set_unit(" ");
+	nb_cluster_valid_prop.set_description("Nombre of valid clusters");
+	nb_cluster_valid->set_default_properties(nb_cluster_valid_prop);
+	att_list.push_back(nb_cluster_valid);
+
 	//	Attribute : drawClusterEnabled
 	drawClusterEnabledAttrib	*draw_cluster_enabled = new drawClusterEnabledAttrib();
 	Tango::UserDefaultAttrProp	draw_cluster_enabled_prop;
@@ -552,6 +560,21 @@ void RixsClass::set_default_property()
 	prop_def  = "True";
 	vect_data.clear();
 	vect_data.push_back("True");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "DefaultValueInSpectrumsIfEmpty";
+	prop_desc = "Set default value (-1) in spectrums if there is 0 Valid Clusters";
+	prop_def  = "False";
+	vect_data.clear();
+	vect_data.push_back("False");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
