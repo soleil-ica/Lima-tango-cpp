@@ -1416,6 +1416,8 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
         //@@@TODO and if not exist ?? get the tango device/instance for rixs
         if (!ControlFactory::m_is_created)
         {
+			YAT_LOG_INFO("Set Serialisation Model : BY_PROCESS");
+			Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_PROCESS);   			
             std::string rixs = "Rixs";
             Tango::DbDatum db_datum;
             m_device_name_generic = Tango::Util::instance()->get_ds_name();

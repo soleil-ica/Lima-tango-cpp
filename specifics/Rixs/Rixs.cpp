@@ -113,6 +113,7 @@ void Rixs::delete_device()
 	DELETE_SPECTRUM_ATTRIBUTE(attr_clusterSum_read);
 	DELETE_SPECTRUM_ATTRIBUTE(attr_clusterCentroidX_read);
 	DELETE_SPECTRUM_ATTRIBUTE(attr_clusterCentroidY_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_nbClusterValid_read);
 
 }
 
@@ -140,6 +141,7 @@ void Rixs::init_device()
 	CREATE_SPECTRUM_ATTRIBUTE(attr_clusterSum_read, 100000);
 	CREATE_SPECTRUM_ATTRIBUTE(attr_clusterCentroidX_read, 100000);
 	CREATE_SPECTRUM_ATTRIBUTE(attr_clusterCentroidY_read, 100000);
+	CREATE_SCALAR_ATTRIBUTE(attr_nbClusterValid_read);
     //By default INIT, need to ensure that all objets are OK before set the device to STANDBY
     set_state(Tango::INIT);
     m_is_device_initialized = false;
@@ -330,6 +332,7 @@ void Rixs::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedOperationValues"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedOperationLevels"));
 	dev_prop.push_back(Tango::DbDatum("ResetSpectrumsAtEachFrame"));
+	dev_prop.push_back(Tango::DbDatum("DefaultValueInSpectrumsIfEmpty"));
 	dev_prop.push_back(Tango::DbDatum("RixsDrawCentroidColor"));
 	dev_prop.push_back(Tango::DbDatum("RixsDrawClusterColor"));
 
@@ -386,6 +389,17 @@ void Rixs::get_device_property()
 	//	And try to extract ResetSpectrumsAtEachFrame value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  resetSpectrumsAtEachFrame;
 
+	//	Try to initialize DefaultValueInSpectrumsIfEmpty from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  defaultValueInSpectrumsIfEmpty;
+	else {
+		//	Try to initialize DefaultValueInSpectrumsIfEmpty from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  defaultValueInSpectrumsIfEmpty;
+	}
+	//	And try to extract DefaultValueInSpectrumsIfEmpty value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  defaultValueInSpectrumsIfEmpty;
+
 	//	Try to initialize RixsDrawCentroidColor from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  rixsDrawCentroidColor;
@@ -422,6 +436,7 @@ void Rixs::get_device_property()
     myVector.push_back("0");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, myVector, "MemorizedOperationLevels");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "True", "ResetSpectrumsAtEachFrame");	
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "False", "DefaultValueInSpectrumsIfEmpty");	
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "255;0;0", "RixsDrawCentroidColor");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "255;0;0", "RixsDrawClusterColor");
 	
@@ -480,6 +495,23 @@ void Rixs::read_attr_hardware(vector<long> &attr_list)
     //DEBUG_STREAM << "Rixs::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
     //	Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Rixs::read_nbClusterValid
+// 
+// description : 	Extract real attribute values for nbClusterValid acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Rixs::read_nbClusterValid(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Rixs::read_nbClusterValid(Tango::Attribute &attr) entering... "<< endl;
+	if(!m_rixs_tasks.empty())
+	{
+		*attr_nbClusterValid_read = m_rixs_tasks[0]->get_nb_valid_cluster();
+		attr.set_value(attr_nbClusterValid_read);	
+	}	
+}
+
 //+----------------------------------------------------------------------------
 //
 // method : 		Rixs::read_minAreaCluster
@@ -1010,6 +1042,7 @@ void Rixs::add_external_operation(long level)
                 task->setOperationType(attr_operationType_write);
                 task->setOperationValue(yat::XString<double>::to_num(m_operation_value));	
 				task->setResetSpectrumsAtEachFrameEnabled(resetSpectrumsAtEachFrame);
+				task->setDefaultValueInSpectrumsIfEmptyEnabled(defaultValueInSpectrumsIfEmpty);
 				task->setRixsDrawCentroidColor(rixsDrawCentroidColor);
 				task->setRixsDrawClusterColor(rixsDrawClusterColor);
 				task->setRixsDrawClusterEnabled(attr_drawClusterEnabled_write);
@@ -1195,6 +1228,14 @@ Tango::DevState Rixs::dev_state()
     argout = DeviceState;
     return argout;
 }
+
+
+
+
+
+
+
+
 
 
 
