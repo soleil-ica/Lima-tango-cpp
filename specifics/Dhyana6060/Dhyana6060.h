@@ -76,6 +76,13 @@ public:
 
 /*----- PROTECTED REGION END -----*/	//	Dhyana6060::Data Members
 
+//	Device property data members
+public:
+	//	ExpertTimerPeriod:	Timer period in ms.<cr>
+	//  useful only for Internal Trigger
+	Tango::DevUShort	expertTimerPeriod;
+	//	TemperatureTargetAtInit:	Temperature target at initialisation (default is 15)
+	Tango::DevDouble	temperatureTargetAtInit;
 
 
 //	Constructors and destructors
@@ -118,6 +125,10 @@ public:
 	 *	Initialize the device
 	 */
 	virtual void init_device();
+	/*
+	 *	Read the device properties from database
+	 */
+	void get_device_property();
 	/*
 	 *	Always executed method before execution command method.
 	 */

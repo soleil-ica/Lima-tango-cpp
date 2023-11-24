@@ -36,6 +36,7 @@
 
 #include <Dhyana6060.h>
 #include <Dhyana6060Class.h>
+#include <helpers/PogoHelper.h>
 
 #include "AttrViewDhyana6060.h"
 
@@ -137,7 +138,9 @@ void Dhyana6060::init_device()
 	
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::init_device_before
 	
-	//	No device property to be read from database
+
+	//	Get the device properties from database
+	get_device_property();
 	
 	/*----- PROTECTED REGION ID(Dhyana6060::init_device) ENABLED START -----*/
 	
@@ -185,6 +188,72 @@ void Dhyana6060::init_device()
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::init_device
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : Dhyana6060::get_device_property()
+ *	Description : Read database to initialize property data members.
+ */
+//--------------------------------------------------------
+void Dhyana6060::get_device_property()
+{
+	/*----- PROTECTED REGION ID(Dhyana6060::get_device_property_before) ENABLED START -----*/
+	
+	//	Initialize property data members
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::get_device_property_before
+
+
+	//	Read device properties from database.
+	Tango::DbData	dev_prop;
+	dev_prop.push_back(Tango::DbDatum("ExpertTimerPeriod"));
+	dev_prop.push_back(Tango::DbDatum("TemperatureTargetAtInit"));
+
+	//	is there at least one property to be read ?
+	if (dev_prop.size()>0)
+	{
+		//	Call database and extract values
+		if (Tango::Util::instance()->_UseDb==true)
+			get_db_device()->get_property(dev_prop);
+	
+		//	get instance on Dhyana6060Class to get class property
+		Tango::DbDatum	def_prop, cl_prop;
+		Dhyana6060Class	*ds_class =
+			(static_cast<Dhyana6060Class *>(get_device_class()));
+		int	i = -1;
+
+		//	Try to initialize ExpertTimerPeriod from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertTimerPeriod;
+		else {
+			//	Try to initialize ExpertTimerPeriod from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertTimerPeriod;
+		}
+		//	And try to extract ExpertTimerPeriod value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertTimerPeriod;
+
+		//	Try to initialize TemperatureTargetAtInit from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  temperatureTargetAtInit;
+		else {
+			//	Try to initialize TemperatureTargetAtInit from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  temperatureTargetAtInit;
+		}
+		//	And try to extract TemperatureTargetAtInit value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  temperatureTargetAtInit;
+
+	}
+
+	/*----- PROTECTED REGION ID(Dhyana6060::get_device_property_after) ENABLED START -----*/
+	
+	//	Check device property data members init
+	
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"15","TemperatureTargetAtInit");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"1","ExpertTimerPeriod");
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::get_device_property_after
+}
 
 //--------------------------------------------------------
 /**
@@ -408,8 +477,7 @@ void Dhyana6060::write_attr_at_init()
 
 		INFO_STREAM << "Write tango attribute at Init - sensorTemperatureTarget." << endl;
 		Tango::WAttribute &temperatureTarget = dev_attr->get_w_attr_by_name("sensorTemperatureTarget");
-		double target = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, "sensorTemperatureTarget", 0);
-		temperatureTarget.set_write_value(target);
+		temperatureTarget.set_write_value(temperatureTargetAtInit);
 		yat4tango::DynamicAttributeWriteCallbackData cbd_temperatureTarget;
 		cbd_temperatureTarget.tga = &temperatureTarget;
 		cbd_temperatureTarget.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("sensorTemperatureTarget");

@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="ASCII"?>
 <pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
   <classes name="Dhyana6060" pogoRevision="9.6">
-    <description description="" title="" sourcePath="/home/informatique/ica/desgrangesm/workspace/Lima/applications/tango/cpp/specifics/Dhyana6060" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions" license="GPL" copyright="" hasMandatoryProperty="false" hasConcreteProperty="false" hasAbstractCommand="false" hasAbstractAttribute="false">
+    <description description="" title="" sourcePath="/home/informatique/ica/desgrangesm/workspace/Lima/applications/tango/cpp/specifics/Dhyana6060" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions" license="GPL" copyright="" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
       <inheritances classname="Device_Impl" sourcePath=""/>
       <identification contact="at synchrotron-soleil.fr - marc.desgranges" author="marc.desgranges" emailDomain="synchrotron-soleil.fr" classFamily="Acquisition" siteSpecific="" platform="Windows" bus="Not Applicable" manufacturer="none" reference=""/>
     </description>
+    <deviceProperties name="ExpertTimerPeriod" description="Timer period in ms.&lt;cr>&#xA;useful only for Internal Trigger">
+      <type xsi:type="pogoDsl:UShortType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>1</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="TemperatureTargetAtInit" description="Temperature target at initialisation (default is 15)">
+      <type xsi:type="pogoDsl:DoubleType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>15</DefaultPropValue>
+    </deviceProperties>
     <commands name="State" description="This command gets the device state (stored in its device_state data member) and returns it to the caller." execMethod="dev_state" displayLevel="OPERATOR" polledPeriod="0">
       <argin description="none">
         <type xsi:type="pogoDsl:VoidType"/>

@@ -273,6 +273,34 @@ void Dhyana6060Class::set_default_property()
 	//	Set Default Class Properties
 
 	//	Set Default device Properties
+	prop_name = "ExpertTimerPeriod";
+	prop_desc = "Timer period in ms.<cr>\nuseful only for Internal Trigger";
+	prop_def  = "1";
+	vect_data.clear();
+	vect_data.push_back("1");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "TemperatureTargetAtInit";
+	prop_desc = "Temperature target at initialisation (default is 15)";
+	prop_def  = "15";
+	vect_data.clear();
+	vect_data.push_back("15");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
 }
 
 //--------------------------------------------------------
