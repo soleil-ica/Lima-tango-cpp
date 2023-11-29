@@ -52,13 +52,13 @@ void AttrViewDhyana4040::init()
             dai.tai.description = "Set tec mode OFF or ON (default is OFF) ";
 
             //Instanciate the read callback (called when the dyn. attr. is read)    
-            dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana4040::read_dynamic_attribute_callback);
+            dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana4040::read_dynamic_tec_attribute_callback);
             //Instanciate the write callback
-            dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana4040::write_dynamic_attribute_callback);
+            dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana4040::write_dynamic_tec_attribute_callback);
             //Do not clear attribute properties
             dai.cdb = false;
             //Add the dyn. attr. to the device
-            m_dim->dynamic_attributes_manager().add_attribute(dai);
+            m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
     }
     catch (Tango::DevFailed& df)
@@ -73,9 +73,9 @@ void AttrViewDhyana4040::init()
 }
 
 //-----------------------------------------------------
-//AttrViewDhyana4040::read_dynamic_attribute_callback()
+//AttrViewDhyana4040::read_dynamic_tec_attribute_callback()
 //-----------------------------------------------------
-void AttrViewDhyana4040::read_dynamic_attribute_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
+void AttrViewDhyana4040::read_dynamic_tec_attribute_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
 {
     try
     {
@@ -87,7 +87,7 @@ void AttrViewDhyana4040::read_dynamic_attribute_callback(yat4tango::DynamicAttri
             std::string reason = "It's currently not allowed to read attribute " + cbd.dya->get_name();
             Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                                         reason.c_str(),
-                                        "AttrViewDhyana4040::read_dynamic_attribute_callback()");
+                                        "AttrViewDhyana4040::read_dynamic_tec_attribute_callback()");
         }
 
         // be sure that the pointer to the dyn. attr. is valid
@@ -95,7 +95,7 @@ void AttrViewDhyana4040::read_dynamic_attribute_callback(yat4tango::DynamicAttri
         {
             Tango::Except::throw_exception("INTERNAL_ERROR",
                             "unexpected NULL pointer to dynamic attribute",
-                            "AttrViewDhyana4040::read_dynamique_attribute_callback");
+                            "AttrViewDhyana4040::read_dynamic_tec_attribute_callback");
         }
         if(cbd.dya->get_name() == "tecMode")
         {
@@ -121,9 +121,9 @@ void AttrViewDhyana4040::read_dynamic_attribute_callback(yat4tango::DynamicAttri
 }
 
 //-----------------------------------------------------
-//AttrViewDhyana4040::write_dynamic_attribute_callback()
+//AttrViewDhyana4040::write_dynamic_tec_attribute_callback()
 //-----------------------------------------------------
-void AttrViewDhyana4040::write_dynamic_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
+void AttrViewDhyana4040::write_dynamic_tec_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
 {
     try
     {
@@ -136,7 +136,7 @@ void AttrViewDhyana4040::write_dynamic_attribute_callback(yat4tango::DynamicAttr
             std::string reason = "It's currently not allowed to write attribute " + cbd.dya->get_name();
             Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
                                         reason.c_str(),
-                                        "AttrViewDhyana4040::write_dynamic_attribute_callback()");
+                                        "AttrViewDhyana4040::write_dynamic_tec_attribute_callback()");
         }
 
         // be sure that the pointer to the dyn. attr. is valid
@@ -144,7 +144,7 @@ void AttrViewDhyana4040::write_dynamic_attribute_callback(yat4tango::DynamicAttr
         {
             Tango::Except::throw_exception("INTERNAL_ERROR",
                             "unexpected NULL pointer to dynamic attribute",
-                            "AttrViewDhyana4040::write_dynamic_attribute_callback");
+                            "AttrViewDhyana4040::write_dynamic_tec_attribute_callback");
         }
         if(cbd.dya->get_name() == "tecMode")
         {
@@ -170,20 +170,5 @@ void AttrViewDhyana4040::write_dynamic_attribute_callback(yat4tango::DynamicAttr
     }
 }
 
-//-----------------------------------------------------
-//AttrViewDhyana4040::read_dynamic_trigger_attribute_callback()
-//-----------------------------------------------------
-void AttrViewDhyana4040::read_dynamic_trigger_attribute_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
-{
-
-}
-
-//-----------------------------------------------------
-//AttrViewDhyana4040::write_dynamic_trigger_attribute_callback()
-//-----------------------------------------------------
-void AttrViewDhyana4040::write_dynamic_trigger_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
-{
-
-}
 
 } //namespace
