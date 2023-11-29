@@ -131,6 +131,10 @@ static const char *RcsId = "$Id:  $";
 #include <DhyanaClass.h>
 #endif
 
+#ifdef DHYANA6060_ENABLED
+#include <Dhyana6060Class.h>
+#endif
+
 #ifdef UFXC_ENABLED
 #include <UfxcClass.h>
 #endif
@@ -241,6 +245,10 @@ void Tango::DServer::class_factory()
 
 #ifdef DHYANA_ENABLED        
     add_class(Dhyana_ns::DhyanaClass::init("Dhyana"));
+#endif
+
+#ifdef DHYANA6060_ENABLED        
+    add_class(Dhyana6060_ns::Dhyana6060Class::init("Dhyana6060"));
 #endif
 	
 #ifdef UFXC_ENABLED        

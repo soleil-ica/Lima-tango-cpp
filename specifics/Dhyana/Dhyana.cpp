@@ -46,6 +46,7 @@ static const char *RcsId = "$Id:  $";
 #include <DhyanaClass.h>
 
 #include "AttrViewDhyana95.h"
+#include "AttrViewDhyana4040.h"
 
 /*----- PROTECTED REGION END -----*/	//	Dhyana.cpp
 
@@ -207,8 +208,13 @@ void Dhyana::init_device()
 
 	set_state(Tango::STANDBY);
 	dev_state();
-
-	write_attr_at_init();
+	
+	std::string model_temp;
+	m_camera->getDetectorModel(model_temp);
+	if (model_temp == "Dhyana 95"  || model_temp.find("Dhyana 95 V2") != std::string::npos)
+	{
+		write_attr_at_init();
+	}
 
 	/*----- PROTECTED REGION END -----*/	//	Dhyana::init_device
 }
@@ -232,6 +238,7 @@ void Dhyana::get_device_property()
 	//	Read device properties from database.
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("__ExpertTimerPeriod"));
+	dev_prop.push_back(Tango::DbDatum("TemperatureTargetAtInit"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -256,6 +263,17 @@ void Dhyana::get_device_property()
 		}
 		//	And try to extract __ExpertTimerPeriod value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  __ExpertTimerPeriod;
+
+		//	Try to initialize TemperatureTargetAtInit from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  temperatureTargetAtInit;
+		else {
+			//	Try to initialize TemperatureTargetAtInit from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  temperatureTargetAtInit;
+		}
+		//	And try to extract TemperatureTargetAtInit value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  temperatureTargetAtInit;
 
 	}
 
@@ -360,6 +378,7 @@ void Dhyana::add_dynamic_attributes()
 //--------------------------------------------------------
 Tango::DevState Dhyana::dev_state()
 {
+	DEBUG_STREAM << "Dhyana::State()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::dev_state) ENABLED START -----*/
 	
 	//	Add your own code
@@ -392,6 +411,7 @@ Tango::DevState Dhyana::dev_state()
 		Tango::DeviceImpl::dev_state();
 	return get_state();  // Return it after Tango management.
 }
+
 //--------------------------------------------------------
 /**
  *	Command GetAllParameters related method
@@ -404,7 +424,7 @@ Tango::DevState Dhyana::dev_state()
 Tango::DevString Dhyana::get_all_parameters()
 {
 	Tango::DevString argout;
-	INFO_STREAM << "Dhyana::GetAllParameters()  - " << device_name << endl;
+	DEBUG_STREAM << "Dhyana::GetAllParameters()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::get_all_parameters) ENABLED START -----*/
 	
 	//	Add your own code
@@ -446,7 +466,7 @@ Tango::DevString Dhyana::get_all_parameters()
 Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 {
 	Tango::DevString argout;
-	INFO_STREAM << "Dhyana::GetParameter()  - " << device_name << endl;
+	DEBUG_STREAM << "Dhyana::GetParameter()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::get_parameter) ENABLED START -----*/
 	//	Add your own code
 	try
@@ -486,7 +506,7 @@ Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 //--------------------------------------------------------
 void Dhyana::set_parameter(const Tango::DevVarStringArray *argin)
 {
-	INFO_STREAM << "Dhyana::SetParameter()  - " << device_name << endl;
+	DEBUG_STREAM << "Dhyana::SetParameter()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::set_parameter) ENABLED START -----*/
 	if(argin->length() != 2)
 	{
@@ -538,43 +558,53 @@ void Dhyana::add_dynamic_commands()
 
 /*----- PROTECTED REGION ID(Dhyana::namespace_ending) ENABLED START -----*/
 
+//-------------------------------------
+// Dhyana::is_device_initialized()
+//-------------------------------------
 bool Dhyana::is_device_initialized()
 {
 	return m_is_device_initialized;
 }
 
+//-------------------------------------
+// Dhyana::get_camera()
+//-------------------------------------
 lima::Dhyana::Camera* Dhyana::get_camera()
 {
 	return m_camera;
 }
 
-
+//-------------------------------------
+// Dhyana::build_view()
+//-------------------------------------
 void Dhyana::build_view(std::string model)
 {
-	if (model == "Dhyana 95" || model.find("Dhyana 95 V2") != std::string::npos)
+	if (model == "Dhyana 95"  || model.find("Dhyana 95 V2") != std::string::npos)
 	{
 		m_attr_view.reset(new AttrViewDhyana95(this));
 	}
-	else if (model == "Dhyana 6060")
+	else if (model.find("4040") != std::string::npos)
 	{
+		m_attr_view.reset(new AttrViewDhyana4040(this));
 	}
-
 }
 
+//-------------------------------------
+// Dhyana::write_attr_at_init()
+//-------------------------------------
 void Dhyana::write_attr_at_init()
 {
 	try
 	{
-		INFO_STREAM << "Write tango hardware at Init - sensorTemperatureTarget." << endl;
+		INFO_STREAM << "Write tango attribute at Init - sensorTemperatureTarget." << endl;
 		Tango::WAttribute &temperatureTarget = dev_attr->get_w_attr_by_name("sensorTemperatureTarget");
-		double temperature_target = yat4tango::PropertyHelper::get_property<Tango::DevDouble>(this, "TemperatureTargetAtInit");
-		temperatureTarget.set_write_value(temperature_target);
+		temperatureTarget.set_write_value(temperatureTargetAtInit);
 		yat4tango::DynamicAttributeWriteCallbackData cbd_temperatureTarget;
         cbd_temperatureTarget.tga = &temperatureTarget;
 		cbd_temperatureTarget.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("sensorTemperatureTarget");
         m_attr_view->write_dynamic_attribute_callback(cbd_temperatureTarget);
 
-		INFO_STREAM << "Write tango hardware at Init - fanSpeed." << endl;
+		INFO_STREAM << "Write tango attribute at Init - fanSpeed." << endl;
 		Tango::WAttribute &fanSpeed = dev_attr->get_w_attr_by_name("fanSpeed");
 		unsigned short speed = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevUShort>(this, "fanSpeed", 1);
 		fanSpeed.set_write_value(speed);
@@ -583,7 +613,7 @@ void Dhyana::write_attr_at_init()
 		cbd_fanSpeed.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("fanSpeed");
         m_attr_view->write_dynamic_attribute_callback(cbd_fanSpeed);
 
-		INFO_STREAM << "Write tango hardware at Init - globalGain." << endl;
+		INFO_STREAM << "Write tango attribute at Init - globalGain." << endl;
 		Tango::WAttribute &globalGain = dev_attr->get_w_attr_by_name("globalGain");
 		Tango::DevEnum gain = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, "globalGain", 0);
 		globalGain.set_write_value(gain);
@@ -592,56 +622,60 @@ void Dhyana::write_attr_at_init()
 		cbd_globalGain.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("globalGain");
         m_attr_view->write_dynamic_attribute_callback(cbd_globalGain);
 		
-		for (int i = 1; i < 4; i++)
-        {
-            std::string name = "trigOutputKind" + std::to_string(i);
-            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;
-			Tango::WAttribute &trigOutputKind = dev_attr->get_w_attr_by_name(name.c_str());
-			Tango::DevEnum val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, name, 0);
-			trigOutputKind.set_write_value(val);
-			yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputKind;
-			cbd_trigOutputKind.tga = &trigOutputKind;
-			cbd_trigOutputKind.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
-			m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputKind);
-		}
+		//We do not write at init trigger out attributes if they're not availbable for the current detector model
+		if(m_camera->is_trigOutput_available())
+		{
+			for (int i = 1; i < 4; i++)
+			{
+				std::string name = "trigOutputKind" + std::to_string(i);
+				INFO_STREAM << "Write tango attribute at Init - " << name << endl;
+				Tango::WAttribute &trigOutputKind = dev_attr->get_w_attr_by_name(name.c_str());
+				Tango::DevEnum val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, name, 0);
+				trigOutputKind.set_write_value(val);
+				yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputKind;
+				cbd_trigOutputKind.tga = &trigOutputKind;
+				cbd_trigOutputKind.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+				m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputKind);
+			}
 
-		for (int i = 1; i < 4; i++)
-        {
-            std::string name = "trigOutputWidth" + std::to_string(i);
-            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;
-			Tango::WAttribute &trigOutputWidth = dev_attr->get_w_attr_by_name(name.c_str());
-			double val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, name, 5);
-			trigOutputWidth.set_write_value(val);
-			yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputWidth;
-			cbd_trigOutputWidth.tga = &trigOutputWidth;
-			cbd_trigOutputWidth.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
-			m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputWidth);
-		}
+			for (int i = 1; i < 4; i++)
+			{
+				std::string name = "trigOutputWidth" + std::to_string(i);
+				INFO_STREAM << "Write tango attribute at Init - " << name << endl;
+				Tango::WAttribute &trigOutputWidth = dev_attr->get_w_attr_by_name(name.c_str());
+				double val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, name, 5);
+				trigOutputWidth.set_write_value(val);
+				yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputWidth;
+				cbd_trigOutputWidth.tga = &trigOutputWidth;
+				cbd_trigOutputWidth.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+				m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputWidth);
+			}
 
-		for (int i = 1; i < 4; i++)
-        {
-            std::string name = "trigOutputDelay" + std::to_string(i);
-            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;
-			Tango::WAttribute &trigOutputDelay = dev_attr->get_w_attr_by_name(name.c_str());
-			double val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, name, 0);
-			trigOutputDelay.set_write_value(val);
-			yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputDelay;
-			cbd_trigOutputDelay.tga = &trigOutputDelay;
-			cbd_trigOutputDelay.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
-			m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputDelay);
-		}
+			for (int i = 1; i < 4; i++)
+			{
+				std::string name = "trigOutputDelay" + std::to_string(i);
+				INFO_STREAM << "Write tango attribute at Init - " << name << endl;
+				Tango::WAttribute &trigOutputDelay = dev_attr->get_w_attr_by_name(name.c_str());
+				double val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevDouble>(this, name, 0);
+				trigOutputDelay.set_write_value(val);
+				yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputDelay;
+				cbd_trigOutputDelay.tga = &trigOutputDelay;
+				cbd_trigOutputDelay.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+				m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputDelay);
+			}
 
-		for (int i = 1; i < 4; i++)
-        {
-            std::string name = "trigOutputEdge" + std::to_string(i);
-            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;
-			Tango::WAttribute &trigOutputEdge = dev_attr->get_w_attr_by_name(name.c_str());
-			Tango::DevEnum val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, name, 0);
-			trigOutputEdge.set_write_value(val);
-			yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputEdge;
-			cbd_trigOutputEdge.tga = &trigOutputEdge;
-			cbd_trigOutputEdge.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
-			m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputEdge);
+			for (int i = 1; i < 4; i++)
+			{
+				std::string name = "trigOutputEdge" + std::to_string(i);
+				INFO_STREAM << "Write tango attribute at Init - " << name << endl;
+				Tango::WAttribute &trigOutputEdge = dev_attr->get_w_attr_by_name(name.c_str());
+				Tango::DevEnum val = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, name, 0);
+				trigOutputEdge.set_write_value(val);
+				yat4tango::DynamicAttributeWriteCallbackData cbd_trigOutputEdge;
+				cbd_trigOutputEdge.tga = &trigOutputEdge;
+				cbd_trigOutputEdge.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
+				m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputEdge);
+			}
 		}
 
 	}
@@ -653,16 +687,12 @@ void Dhyana::write_attr_at_init()
 		{
 			m_status_message << df.errors[i].desc << endl;
 		}
-		m_is_device_initialized = false;
-		set_state(Tango::FAULT);
 		return;
 	}
 	catch(lima::Exception& e)
 	{
 		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
-		m_is_device_initialized = false;
-		set_state(Tango::FAULT);
 		return;
 	}
 }

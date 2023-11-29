@@ -112,11 +112,12 @@ def usage():
 #------------------------------------------------------------------------------
 # run
 #------------------------------------------------------------------------------
-def run(proxy_name = 'arafat/lima_basler/basler.2', exposure_time = 100, nb_frames = 10, file_generation = 'True', nb_loops = 1):
+def run(proxy_name = 'arafat/lima_basler/basler.2', exposure_time = 100, latency_time = 0, nb_frames = 10, file_generation = 'True', nb_loops = 1):
     # print arguments
     print '\nProgram inputs :\n--------------'
     print 'proxy_name\t = ', proxy_name
     print 'exposure_time\t =  %s (ms)' %(exposure_time)
+    print 'latency_time\t =  %s (ms)' %(latency_time)
     print 'nb_frames\t = ', nb_frames
     print 'file_generation\t = ', file_generation
     print 'nb_loops\t = ', nb_loops
@@ -125,8 +126,12 @@ def run(proxy_name = 'arafat/lima_basler/basler.2', exposure_time = 100, nb_fram
     print '\nConfigure Device attributes :\n--------------'
     nb_frames = int(nb_frames)
     proxy.Stop()
+    print 'write triggerMode\t = ', "INTERNAL_SINGLE"
+    proxy.triggerMode="INTERNAL_SINGLE"
     print 'write exposureTime'
     proxy.exposureTime = float(exposure_time)
+    print 'write latencyTime'
+    proxy.latencyTime = float(latency_time)
     print 'write nbFrames'
     proxy.nbFrames = int(nb_frames)
     print 'write fileGeneration'

@@ -65,19 +65,19 @@ Revision:  - Author:
 <Tr><Td><b>serverVersion</b>: <Font Size=-1>ImXpad Socket Server Version.</Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>Yes</Font></Center></Td></Tr>
 
-<Tr><Td><b>geometricalCorrectionFlag</b></Td>
+<Tr><Td><b>geometricalCorrectionFlag</b>: <Font Size=-1>Enable/Disable Geometrical correction</Font></Td>
 <Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>flatFieldCorrectionFlag</b></Td>
+<Tr><Td><b>flatFieldCorrectionFlag</b>: <Font Size=-1>Enable/Disable Flatfield correction</Font></Td>
 <Td><Center><Font Size=-1>DEV_BOOLEAN</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>calibrationFileName</b></Td>
+<Tr><Td><b>calibrationFileName</b>: <Font Size=-1>Define the loaded calibration file name</Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 <Tr><Td><b>acquisitionMode</b>: <Font Size=-1>Acquisition mode type are :<BR> STANDARD<BR> COMPUTER_BURST<BR> DETECTOR_BURST<BR> SINGLE_BUNCH_16<BR> SINGLE_BUNCH_32<BR> STACKING_16<BR> STACKING_32<BR></Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ_WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>nbStackingImages</b></Td>
+<Tr><Td><b>nbStackingImages</b>: <Font Size=-1>Define the number of images to acquire in the acquisition mode :<BR> - STACKING_16<BR> - STACKING/32<BR></Font></Td>
 <Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 <Tr><Td><b>outputSignal</b>: <Font Size=-1>Avalaible output signals are :<br> EXPOSURE_BUSY<br> EXPOSURE_READ_DONE<br> SHUTTER_BUSY<br> UPDATE_OVERFLOW_BUSY<br> PIXEL_COUNTER_ENABLED<br> EXTERNAL_GATE<br> DATA_TRANSFER<br> RAM_READY_IMAGE_BUSY<br> XPAD_TO_LOCAL_DDR<br> LOCAL_DDR_TO_PC<br></Font></Td>
@@ -86,14 +86,17 @@ Revision:  - Author:
 <Tr><Td><b>calibrationMode</b>: <Font Size=-1>Calibration modes are :<BR> OTN<BR> OTN_PULSE<BR> BEAM<BR>  </Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>time</b></Td>
+<Tr><Td><b>calibrationExposureTime</b>: <Font Size=-1>Define the calibration exposure time</Font></Td>
 <Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>iTHL</b></Td>
+<Tr><Td><b>CalibrationBeamITHL</b>: <Font Size=-1>Define the limit of the threshold scan during a BEAM calibration </Font></Td>
 <Td><Center><Font Size=-1>DEV_ULONG</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
-<Tr><Td><b>mode</b>: <Font Size=-1>Available config modes for a calibration are :<BR> SLOW<BR> MEDIUM<BR> FAST<BR></Font></Td>
+<Tr><Td><b>calibrationConfigMode</b>: <Font Size=-1>Available config modes for a calibration are :<BR> SLOW<BR> MEDIUM<BR> FAST<BR></Font></Td>
 <Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>WRITE</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
+
+<Tr><Td><b>calibrationPath</b>: <Font Size=-1>Define the calibration files path</Font></Td>
+<Td><Center><Font Size=-1>DEV_STRING</Font></Center></Td><Td><Center><Font Size=-1>READ</Font></Center></Td><Td><Center><Font Size=-1>No</Font></Center></Td></Tr>
 
 </Table>
 </Center>

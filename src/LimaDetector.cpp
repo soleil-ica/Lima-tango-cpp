@@ -194,6 +194,7 @@ void LimaDetector::init_device()
     m_hw = 0;
     m_is_device_initialized = false;
     m_status_message.str("");
+	m_use_prepare_command = false;
     m_saving_options = "SYNCHRONOUS|NO_COPY|TRUE";
     //By default INIT, need to ensure that all objets are OK before set the device to STANDBY
     set_state(Tango::INIT);
@@ -469,7 +470,6 @@ void LimaDetector::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("DebugFormats"));
 	dev_prop.push_back(Tango::DbDatum("ExpertBufferMaxMemoryPercent"));
 	dev_prop.push_back(Tango::DbDatum("ExpertNbPoolThread"));
-	dev_prop.push_back(Tango::DbDatum("ExpertUsePrepareCmd"));
 	dev_prop.push_back(Tango::DbDatum("ExpertTimeoutCmd"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedRoi"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedBinningH"));
@@ -749,17 +749,6 @@ void LimaDetector::get_device_property()
 	//	And try to extract ExpertNbPoolThread value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertNbPoolThread;
 
-	//	Try to initialize ExpertUsePrepareCmd from class property
-	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  expertUsePrepareCmd;
-	else {
-		//	Try to initialize ExpertUsePrepareCmd from default device value
-		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if (def_prop.is_empty()==false)	def_prop  >>  expertUsePrepareCmd;
-	}
-	//	And try to extract ExpertUsePrepareCmd value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertUsePrepareCmd;
-
 	//	Try to initialize ExpertTimeoutCmd from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  expertTimeoutCmd;
@@ -977,7 +966,6 @@ void LimaDetector::get_device_property()
 
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "70", "ExpertBufferMaxMemoryPercent");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "4", "ExpertNbPoolThread");	
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "ExpertUsePrepareCmd");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "5000", "ExpertTimeoutCmd");
     vec_init.clear();
     vec_init.push_back("-1");
@@ -1915,22 +1903,43 @@ void LimaDetector::write_triggerMode(Tango::WAttribute &attr)
                             std::string("Available Trigger Modes are:" + m_trig_mode_list_str).c_str(),
                             "LimaDetector::write_triggerMode");
         }
-
+		
         TrigMode trig_mode = IntTrig;
         if(current == "INTERNAL_SINGLE")
+		{
             trig_mode = IntTrig;
+			m_use_prepare_command = false;
+		}
         else if(current == "EXTERNAL_SINGLE")
+		{
             trig_mode = ExtTrigSingle;
+			m_use_prepare_command = false;
+		}
         else if(current == "EXTERNAL_MULTI")
+		{
             trig_mode = ExtTrigMult;
+			m_use_prepare_command = false;
+		}
         else if(current == "EXTERNAL_GATE")
+		{
             trig_mode = ExtGate;
+			m_use_prepare_command = false;
+		}
         else if(current == "INTERNAL_MULTI")
+		{
             trig_mode = IntTrigMult;
+			m_use_prepare_command = true;
+		}
         else if(current == "EXTERNAL_START_STOP")
+		{
             trig_mode = ExtStartStop;
+			m_use_prepare_command = false;
+		}
         else if(current == "EXTERNAL_READOUT")
+		{
             trig_mode = ExtTrigReadout;
+			m_use_prepare_command = false;
+		}
 
         //- THIS IS AN AVAILABLE TRIGGER MODE
         m_trigger_mode = current;
@@ -3302,9 +3311,9 @@ void LimaDetector::prepare()
     //	Add your own code to control device here
     try
     {
-		if(dev_state() == Tango::RUNNING && !expertUsePrepareCmd)//mantis #22238
+		if(dev_state() == Tango::RUNNING && !m_use_prepare_command)//mantis #22238
             return;
-        if(expertUsePrepareCmd)
+        if(m_use_prepare_command)
         {
             ////////////////////////////////////////////////////////
             //because start() force nbFrames = 0 & CtSaving::Manual
@@ -3329,6 +3338,8 @@ void LimaDetector::prepare()
             print_acq_conf();
             yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
             {
+                m_acq_conf.ct = m_ct;
+                m_acq_conf.use_prepare_cmd = m_use_prepare_command; 
                 yat::Message* msg = yat::Message::allocate(DEVICE_PREPARE_MSG, DEFAULT_MSG_PRIORITY, true);
                 msg->attach_data(m_acq_conf);
                 m_acquisition_task->wait_msg_handled(msg, expertTimeoutCmd);
@@ -3376,7 +3387,7 @@ void LimaDetector::snap()
     //    Add your own code to control device here
     try
     {
-        if(dev_state() == Tango::RUNNING && !expertUsePrepareCmd)//mantis #22238
+        if(dev_state() == Tango::RUNNING && !m_use_prepare_command)//mantis #22238
             return;
 
         if(attr_nbFrames_write == 0)
@@ -3388,7 +3399,7 @@ void LimaDetector::snap()
 							"LimaDetector::snap");
         }
 
-        if(!expertUsePrepareCmd)
+        if(!m_use_prepare_command)
         {
             ////////////////////////////////////////////////////////
             //because start() force nbFrames = 0 & CtSaving::Manual
@@ -3419,6 +3430,8 @@ void LimaDetector::snap()
 
         yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
         {
+            m_acq_conf.ct = m_ct;
+            m_acq_conf.use_prepare_cmd = m_use_prepare_command; 
             yat::Message* msg = yat::Message::allocate(DEVICE_SNAP_MSG, DEFAULT_MSG_PRIORITY, true);
             msg->attach_data(m_acq_conf);
             m_acquisition_task->wait_msg_handled(msg, expertTimeoutCmd);
@@ -4195,7 +4208,7 @@ bool LimaDetector::create_acquisition_task(void)
 
         //- prepare the conf to be passed to the task
         m_acq_conf.ct = m_ct;
-        m_acq_conf.use_prepare_cmd = expertUsePrepareCmd;
+        m_acq_conf.use_prepare_cmd = m_use_prepare_command;
 
         //- create an INIT msg to pass it some data (Conf)
         yat::Message* msg = yat::Message::allocate(yat::TASK_INIT, INIT_MSG_PRIORITY, true);
@@ -4624,6 +4637,7 @@ void LimaDetector::create_log_info_attributes(void)
 
 #if defined(_WIN64) //- Win64
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(DHYANA_NAME), YAT_XSTR(DHYANA_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(DHYANA6060_NAME), YAT_XSTR(DHYANA6060_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(HAMAMATSU_NAME), YAT_XSTR(HAMAMATSU_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PCO_NAME), YAT_XSTR(PCO_VERSION) );
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(PERKINELMER_NAME), YAT_XSTR(PERKINELMER_VERSION) );
@@ -5110,5 +5124,6 @@ void LimaDetector::init_interface()
 							"LimaDetector::manage_pixel_depth_change()");
     }
 }   
+
 
 }	//	namespace

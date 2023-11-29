@@ -108,9 +108,10 @@ public :
 		Tango::DevString	*attr_outputSignal_read;
 		Tango::DevString	attr_outputSignal_write;
 		Tango::DevString	attr_calibrationMode_write;
-		Tango::DevULong	attr_time_write;
-		Tango::DevULong	attr_iTHL_write;
-		Tango::DevString	attr_mode_write;
+		Tango::DevULong	attr_calibrationExposureTime_write;
+		Tango::DevULong	attr_CalibrationBeamITHL_write;
+		Tango::DevString	attr_calibrationConfigMode_write;
+		Tango::DevString	*attr_calibrationPath_read;
 //@}
 
 /**
@@ -169,7 +170,7 @@ public :
 /**
  *	Dfine the modules Mask. <BR>
  *	Each bit of this Mask fix if a specific module is enabled or disabled.<BR>
- *	Value must be in Hexadecimal format 
+ *	Value must be in Hexadecimal format
  */
 	string	moduleMask;
 //@}
@@ -301,29 +302,33 @@ public :
  */
 	virtual void write_calibrationMode(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for time acquisition result.
+ *	Extract real attribute values for calibrationExposureTime acquisition result.
  */
-	virtual void read_time(Tango::Attribute &attr);
+	virtual void read_calibrationExposureTime(Tango::Attribute &attr);
 /**
- *	Write time attribute values to hardware.
+ *	Write calibrationExposureTime attribute values to hardware.
  */
-	virtual void write_time(Tango::WAttribute &attr);
+	virtual void write_calibrationExposureTime(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for iTHL acquisition result.
+ *	Extract real attribute values for CalibrationBeamITHL acquisition result.
  */
-	virtual void read_iTHL(Tango::Attribute &attr);
+	virtual void read_CalibrationBeamITHL(Tango::Attribute &attr);
 /**
- *	Write iTHL attribute values to hardware.
+ *	Write CalibrationBeamITHL attribute values to hardware.
  */
-	virtual void write_iTHL(Tango::WAttribute &attr);
+	virtual void write_CalibrationBeamITHL(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for mode acquisition result.
+ *	Extract real attribute values for calibrationConfigMode acquisition result.
  */
-	virtual void read_mode(Tango::Attribute &attr);
+	virtual void read_calibrationConfigMode(Tango::Attribute &attr);
 /**
- *	Write mode attribute values to hardware.
+ *	Write calibrationConfigMode attribute values to hardware.
  */
-	virtual void write_mode(Tango::WAttribute &attr);
+	virtual void write_calibrationConfigMode(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for calibrationPath acquisition result.
+ */
+	virtual void read_calibrationPath(Tango::Attribute &attr);
 /**
  *	Read/Write allowed for serverVersion attribute.
  */
@@ -357,17 +362,21 @@ public :
  */
 	virtual bool is_calibrationMode_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for time attribute.
+ *	Read/Write allowed for calibrationExposureTime attribute.
  */
-	virtual bool is_time_allowed(Tango::AttReqType type);
+	virtual bool is_calibrationExposureTime_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for iTHL attribute.
+ *	Read/Write allowed for CalibrationBeamITHL attribute.
  */
-	virtual bool is_iTHL_allowed(Tango::AttReqType type);
+	virtual bool is_CalibrationBeamITHL_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for mode attribute.
+ *	Read/Write allowed for calibrationConfigMode attribute.
  */
-	virtual bool is_mode_allowed(Tango::AttReqType type);
+	virtual bool is_calibrationConfigMode_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for calibrationPath attribute.
+ */
+	virtual bool is_calibrationPath_allowed(Tango::AttReqType type);
 /**
  *	Execution allowed for StartCalibration command.
  */
@@ -421,13 +430,13 @@ public :
 	void	start_calibration();
 /**
  * Save the calibration already done through the StartCalibartion in a file
- *	@param	argin	Target calibration file name
+ *	@param	argin	A target calibration file name
  *	@exception DevFailed
  */
 	void	save_calibration_file(Tango::DevString);
 /**
  * Load a calibration file<br>
- *	@param	argin	The calibration File Name 
+ *	@param	argin	The calibration file Name 
  *	@exception DevFailed
  */
 	void	load_calibration_file(Tango::DevString);

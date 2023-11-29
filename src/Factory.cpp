@@ -42,6 +42,7 @@ void ControlFactory::initialize()
 #endif
     m_status.str("");
     m_state = Tango::INIT;
+    m_specific_state = Tango::UNKNOWN;
 }
 
 //-----------------------------------------------------------------------------------------
@@ -878,6 +879,32 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 
+#ifdef DHYANA6060_ENABLED
+        if (detector_type == "Dhyana6060")
+        {
+            
+            if (!ControlFactory::m_is_created)
+            {
+                //- Set Serialisation mode
+				//- this allow dynamic attr in specific device
+				YAT_LOG_INFO("Set Serialisation Model : BY_PROCESS");
+				Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_PROCESS);
+                
+				unsigned short time_period = 1;
+                Tango::DbData db_data;
+				db_data.push_back(Tango::DbDatum("__ExpertTimerPeriod"));							
+                (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
+                db_data[0] >> time_period   ;				
+                m_camera = static_cast<void*> (new Dhyana6060::Camera(time_period));
+                m_interface = static_cast<void*> (new Dhyana6060::Interface(*(static_cast<Dhyana6060::Camera*> (m_camera))));
+                m_control = new CtControl(static_cast<Dhyana6060::Interface*> (m_interface));
+
+                ControlFactory::m_is_created = true;
+                return m_control;
+            }
+        }
+#endif
+
 #ifdef UFXC_ENABLED
         if (detector_type == "Ufxc")
         {
@@ -1222,6 +1249,13 @@ void ControlFactory::reset(const std::string& detector_type)
                 }
 #endif
 
+#ifdef DHYANA6060_ENABLED        
+                if (detector_type == "Dhyana6060")
+                {
+					delete (static_cast<Dhyana6060::Camera*> (m_camera));				
+                }
+#endif
+
 #ifdef SPECTRUMONE_ENABLED        
                 if (detector_type == "SpectrumOneCCD")
                 {
@@ -1375,43 +1409,47 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
 Tango::DevState ControlFactory::get_state(void)
 {    
     yat::AutoMutex<> _lock(m_lock);
+    
     CtControl::Status ctStatus;
     m_control->getStatus(ctStatus);
-    // In case of device state is FAULT we do not check/modify internal state to propagate 
-    // the Specific device state and status to the LimaDetector Device
-    if(m_state != Tango::FAULT)
+    
+    switch(ctStatus.AcquisitionStatus)
     {
-        switch(ctStatus.AcquisitionStatus)
+        case lima::AcqReady:
         {
-            case lima::AcqReady:
-            {
-                set_state(Tango::STANDBY);
-                set_status("Waiting for a user request ...\n");
-            }
-                break;
-
-            case lima::AcqRunning:
-            {
-                set_state(Tango::RUNNING);
-                set_status("Acquisition in Progress ...\n");
-            }
-                break;
-
-            case lima::AcqConfig:
-            {
-                set_state(Tango::DISABLE);
-                set_status("Configuration/Calibration in Progress ...\n");
-            }
-                break;
-
-            default:
-            {
-                set_state(Tango::FAULT);
-                set_status("Error has occured !\n");
-            }
-                break;
+            set_state(Tango::STANDBY);
+            set_status("Waiting for a user request ...\n");
         }
+            break;
+
+        case lima::AcqRunning:
+        {
+            set_state(Tango::RUNNING);
+            set_status("Acquisition in Progress ...\n");
+        }
+            break;
+
+        case lima::AcqConfig:
+        {
+            set_state(Tango::DISABLE);
+            set_status("Configuration/Calibration in Progress ...\n");
+        }
+            break;
+
+        default:
+        {
+            set_state(Tango::FAULT);
+            set_status("Error has occured !\n");
+        }
+            break;
     }
+
+    if(Tango::FAULT == m_specific_state)
+    {
+        set_state(Tango::FAULT);
+        set_status("Error has occured in specific device!\n");
+    }
+    
     return m_state;
 }
 //-----------------------------------------------------------------------------------------
@@ -1438,6 +1476,13 @@ void ControlFactory::set_status(const std::string& status)
     m_status << status.c_str() << endl;
 
 }
+
+//-----------------------------------------------------------------------------------------
+void ControlFactory::set_specific_state(Tango::DevState specific_state)
+{
+    m_specific_state = specific_state;
+}
+
 //-----------------------------------------------------------------------------------------
 void ControlFactory::set_event_status(const std::string& status)
 {

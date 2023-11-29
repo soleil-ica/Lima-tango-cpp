@@ -58,19 +58,20 @@ outputSignal              R/W         String                  Define the activat
                                                               - RAM_READY_IMAGE_BUSY
                                                               - XPAD_TO_LOCAL_DDR
                                                               - LOCAL_DDR_TO_PC
-calibrationFileName       R/W         String                  Define the calibration file name
+calibrationFileName       R           String                  Define the loaded calibration file name
+calibrationPath           R           String                  Define where calibration files are stored
 calibrationMode           W           String                  Define the calibration mode :
 
                                                               - OTN
                                                               - OTN_PULSE
                                                               - BEAM
-mode                      W           String                  Define the calibration configuration mode :
+calibrationConfigMode     W           String                  Define the calibration configuration mode :
 
                                                               - SLOW
                                                               - MEDIUM
                                                               - FAST
-time                      W           ULong                   Define the calbration exposure time
-iTHL                      W           ULong                   Define the limit of the threshold scan during calibration
+calibrationExposureTime   W           ULong                   Define the calbration exposure time
+calibrationBeamITHL       W           ULong                   Define the limit of the threshold scan during calibration
 ========================= =========== ======================= ======================================================================
 
 

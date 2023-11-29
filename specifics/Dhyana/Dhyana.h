@@ -97,21 +97,6 @@ class Dhyana : public TANGO_BASE_CLASS
 
 //	Add your own data members
 public:
-	/*Tango::DevString	attr_globalGain_write;
-	Tango::DevUShort	attr_fanSpeed_write;
-	Tango::DevDouble	attr_temperatureTarget_write;
-	channel1Enum	attr_channel1_write;
-	channel2Enum	attr_channel2_write;
-	channel3Enum	attr_channel3_write;
-	Tango::DevDouble	attr_width1_write;
-	Tango::DevDouble	attr_width2_write;
-	Tango::DevDouble	attr_width3_write;
-	Tango::DevDouble	attr_delay1_write;
-	Tango::DevDouble	attr_delay2_write;
-	Tango::DevDouble	attr_delay3_write;
-	edge1Enum	attr_edge1_write;
-	edge2Enum	attr_edge2_write;
-	edge3Enum	attr_edge3_write;*/
 	yat::UniquePtr<AttrView> m_attr_view;
 /*----- PROTECTED REGION END -----*/	//	Dhyana::Data Members
 
@@ -120,6 +105,8 @@ public:
 	//	__ExpertTimerPeriod:	Timer period in ms.<cr>
 	//  useful only for Internal Trigger
 	Tango::DevUShort	__ExpertTimerPeriod;
+	//	TemperatureTargetAtInit:	TemperatureTarget at init (default is 15)
+	Tango::DevDouble	temperatureTargetAtInit;
 
 
 //	Constructors and destructors

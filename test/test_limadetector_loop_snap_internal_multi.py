@@ -41,7 +41,7 @@ def disable(self):
 #------------------------------------------------------------------------------
 def prepare(proxy):
 
-    print '\nprepare\n--------------'
+    print '\nprepare\n--------------------------'
     #Display time when state is STANDBY (just before Prepare())
     timeBegin = datetime.datetime.now()
     print timeBegin.isoformat(), ' - ', proxy.state()
@@ -65,34 +65,38 @@ def prepare(proxy):
 #------------------------------------------------------------------------------
 def snap(proxy):
 
-    print '\nsnap\n--------------'
-    #Configure the device    
+    print '\nsnap\n--------------------------'
+    #Configure the device   
+    acquired_frame = proxy.currentFrame 
+    nb_frames = proxy.nbFrames
+    
+    while(acquired_frame != nb_frames):
 
-    #Display time (just before Snap())
-    timeBegin = datetime.datetime.now()
-    print timeBegin.isoformat(), ' - ', proxy.state()
-    current_frame = proxy.currentFrame
+        #Display time (just before Snap())
+        
+        timeBegin = datetime.datetime.now()
+        print timeBegin.isoformat(), ' - ', proxy.state()
+        current_frame  = proxy.currentFrame
+    	
+        proxy.Snap()
 
-    proxy.Snap()
+        #Display time when state is RUNNING (just after Snap())
+        timeSnap = datetime.datetime.now()
+        print timeSnap.isoformat(), ' - ', proxy.state()
 
-    #Display time when state is RUNNING (just after Snap())
-    timeSnap = datetime.datetime.now()
-    print timeSnap.isoformat(), ' - ', proxy.state()
+        #Loop while current frame is not changed (acquisition in progress...)
+        while (acquired_frame == current_frame):
+	    acquired_frame = proxy.currentFrame
+	    print '\r', '...',
+	    time.sleep(0)
 
-    acquired_frame = proxy.currentFrame
-
-    #Loop while current frame is not changed (acquisition in progress...)
-    while (acquired_frame == current_frame):
-        acquired_frame = proxy.currentFrame
-        print '\r', '...',
-        time.sleep(0)
-
-    #Display time when state is STANDBY (just after acquisition is finish)
-    timeEnd = datetime.datetime.now()
-    print '\n', timeEnd.isoformat(), ' - ', proxy.state()
-    print '\nDuration = ', ((timeEnd-timeSnap).total_seconds()*1000),'(ms)'
-    return
-    #return proxy.image
+        #Display time when state is STANDBY (just after acquisition is finish)
+        timeEnd = datetime.datetime.now()
+        print '\n', timeEnd.isoformat(), ' - ', proxy.state()
+        print 'Current Frame = ', acquired_frame, ' : Duration = ', ((timeEnd-timeSnap).total_seconds()*1000),'(ms)\n'
+        print '--------------------------'
+        
+        #return proxy.image
 
 
 #------------------------------------------------------------------------------
@@ -120,13 +124,15 @@ def run(proxy_name = 'arafat/lima_basler/basler.2', exposure_time = 100, latency
     print '\nConfigure Device attributes :\n--------------'
     nb_frames = int(nb_frames)
     proxy.Stop()
-    print 'write exposureTime = ', float(exposure_time)
+    print 'write triggerMode\t = ', "INTERNAL_MULTI"
+    proxy.triggerMode="INTERNAL_MULTI"
+    print 'write exposureTime\t = ', float(exposure_time)
     proxy.exposureTime = float(exposure_time)
-    print 'write latencyTime = ', float(latency_time)
+    print 'write latencyTime\t = ', float(latency_time)
     proxy.latencyTime = float(latency_time)
-    print 'write nbFrames = ', int(nb_frames)
+    print 'write nbFrames\t\t = ', int(nb_frames)
     proxy.nbFrames = int(nb_frames)
-    print 'write fileGeneration = ', file_generation_str
+    print 'write fileGeneration\t = ', file_generation_str
     if file_generation_str == True:
         file_generation = True
     else:
@@ -145,16 +151,16 @@ def run(proxy_name = 'arafat/lima_basler/basler.2', exposure_time = 100, latency
             snap(proxy)
             current_loop=current_loop+1
             state = proxy.state()
-            if (state!=PyTango.DevState.RUNNING):
+            if (state!=PyTango.DevState.STANDBY):
                 raise Exception('FAIL : Acquisition is end with state (%s)' %(state))
-            print '\noutput :\n--------------'
-            print 'currentFrame = ', proxy.currentFrame
+            #print '\noutput :\n--------------'
+            #print 'currentFrame = ', proxy.currentFrame
 
             #if proxy.currentFrame!=nb_frames:
             #   raise Exception('FAIL : Acquired frames (%s) is different from requested nb_frames (%s)'  % (proxy.currentFrame, nb_frames))
-        print '\nProgram outputs :\n--------------'
-        print '\nimage = '
-        return proxy.image
+        #print '\nProgram outputs :\n--------------'
+        #print '\nimage = '
+        #return proxy.image
     except Exception as err:
 	   sys.stderr.write('--------------\nERROR :\n--------------\n%s\n' %err)
 

@@ -6,17 +6,25 @@
 namespace Dhyana_ns
 {
 
-
+//-----------------------------------------------------
+//AttrViewDhyana95::AttrViewDhyana95()
+//-----------------------------------------------------
 AttrViewDhyana95::AttrViewDhyana95(Tango::DeviceImpl *dev)
     : AttrView(dev)
 {
     init();
 }
 
+//-----------------------------------------------------
+//AttrViewDhyana95::~AttrViewDhyana95()
+//-----------------------------------------------------
 AttrViewDhyana95::~AttrViewDhyana95()
 {
 }
 
+//-----------------------------------------------------
+//AttrViewDhyana95::init()
+//-----------------------------------------------------
 void AttrViewDhyana95::init()
 {
     try
@@ -100,6 +108,8 @@ void AttrViewDhyana95::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim->dynamic_attributes_manager().add_attribute(dai);
         }
@@ -128,6 +138,8 @@ void AttrViewDhyana95::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim->dynamic_attributes_manager().add_attribute(dai);
         }
@@ -156,6 +168,8 @@ void AttrViewDhyana95::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim->dynamic_attributes_manager().add_attribute(dai);
         }
@@ -192,6 +206,8 @@ void AttrViewDhyana95::init()
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_attribute_callback);
             //Instanciate the write callback
             dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_attribute_callback);
+            //Do not clear attribute properties
+            dai.cdb = false;
             //Add the dyn. attr. to the device
             m_dim->dynamic_attributes_manager().add_attribute(dai);
         }
@@ -223,134 +239,145 @@ void AttrViewDhyana95::init()
             m_dim->dynamic_attributes_manager().add_attribute(dai);
         }
 
-        for (int i = 1; i < 4; i++)
+        //We do not create trigger out attributes if they're not availbable for the current detector model
+        if(dynamic_cast<Dhyana*>(m_device)->get_camera()->is_trigOutput_available())
         {
-            std::string name = "trigOutputKind" + std::to_string(i);
-            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;       
-            yat4tango::DynamicAttributeInfo dai;
-            dai.dev = m_device;
-            //- specify the dyn. attr.  name
-            dai.tai.name = name;
-            //- associate the dyn. attr. with its data 
-            m_dyn_trig_output_kind[i - 1] = new EnumUserData(name);
-            dai.set_user_data(m_dyn_trig_output_kind[i - 1]);
-            //Describe the dynamic attr
-            dai.tai.data_type = Tango::DEV_ENUM;
-            dai.tai.data_format = Tango::SCALAR;
-            dai.tai.writable = Tango::READ_WRITE;
-            dai.tai.disp_level = Tango::EXPERT;
-            dai.tai.unit = " ";
-            dai.tai.format = "%s";
-            dai.tai.enum_labels.push_back("ExposureStart");
-            dai.tai.enum_labels.push_back("Global");
-            dai.tai.enum_labels.push_back("Readout");
-            dai.tai.description = "Set trigger output mode on channel " + std::to_string(i) + ":\n";
-            for( size_t i=0 ; i<dai.tai.enum_labels.size() ; i++ )
+            for (int i = 1; i < 4; i++)
             {
-                dai.tai.description += "- " + dai.tai.enum_labels[i] + "\n";
+                std::string name = "trigOutputKind" + std::to_string(i);
+                INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;       
+                yat4tango::DynamicAttributeInfo dai;
+                dai.dev = m_device;
+                //- specify the dyn. attr.  name
+                dai.tai.name = name;
+                //- associate the dyn. attr. with its data 
+                m_dyn_trig_output_kind[i - 1] = new EnumUserData(name);
+                dai.set_user_data(m_dyn_trig_output_kind[i - 1]);
+                //Describe the dynamic attr
+                dai.tai.data_type = Tango::DEV_ENUM;
+                dai.tai.data_format = Tango::SCALAR;
+                dai.tai.writable = Tango::READ_WRITE;
+                dai.tai.disp_level = Tango::EXPERT;
+                dai.tai.unit = " ";
+                dai.tai.format = "%s";
+                dai.tai.enum_labels.push_back("ExposureStart");
+                dai.tai.enum_labels.push_back("Global");
+                dai.tai.enum_labels.push_back("Readout");
+                dai.tai.description = "Set trigger output mode on channel " + std::to_string(i) + ":\n";
+                for( size_t i=0 ; i<dai.tai.enum_labels.size() ; i++ )
+                {
+                    dai.tai.description += "- " + dai.tai.enum_labels[i] + "\n";
+                }
+
+                //Instanciate the read callback (called when the dyn. attr. is read)    
+                dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_trigger_attribute_callback);
+                //Instanciate the write callback
+                dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_trigger_attribute_callback);
+                //Do not clear attribute properties
+                dai.cdb = false;
+                //Add the dyn. attr. to the device
+                m_dim->dynamic_attributes_manager().add_attribute(dai);
             }
 
-            //Instanciate the read callback (called when the dyn. attr. is read)    
-            dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_trigger_attribute_callback);
-            //Instanciate the write callback
-            dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_trigger_attribute_callback);
-            //Add the dyn. attr. to the device
-            m_dim->dynamic_attributes_manager().add_attribute(dai);
-        }
-
-        for (int i = 1; i < 4; i++)
-        {
-            std::string name = "trigOutputWidth" + std::to_string(i);
-            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;       
-            yat4tango::DynamicAttributeInfo dai;
-            dai.dev = m_device;
-            //- specify the dyn. attr.  name
-            dai.tai.name = name;
-            //- associate the dyn. attr. with its data 
-            m_dyn_trig_output_width[i - 1] = new DoubleUserData(name);
-
-            dai.set_user_data(m_dyn_trig_output_width[i - 1]);
-            //Describe the dynamic attr
-            dai.tai.data_type = Tango::DEV_DOUBLE;
-            dai.tai.data_format = Tango::SCALAR;
-            dai.tai.writable = Tango::READ_WRITE;
-            dai.tai.disp_level = Tango::EXPERT;
-            dai.tai.unit = "ms";
-            dai.tai.format = "%s";
-            dai.tai.description = "Set width value option on channel " + std::to_string(i);
-
-            //Instanciate the read callback (called when the dyn. attr. is read)    
-            dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_trigger_attribute_callback);
-            //Instanciate the write callback
-            dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_trigger_attribute_callback);
-            //Add the dyn. attr. to the device
-            m_dim->dynamic_attributes_manager().add_attribute(dai);
-        }
-
-        for (int i = 1; i < 4; i++)
-        {
-            std::string name = "trigOutputDelay" + std::to_string(i);
-            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;       
-            yat4tango::DynamicAttributeInfo dai;
-            dai.dev = m_device;
-            //- specify the dyn. attr.  name
-            dai.tai.name = name;
-            //- associate the dyn. attr. with its data 
-            m_dyn_trig_output_delay[i - 1] = new DoubleUserData(name);
-
-            dai.set_user_data(m_dyn_trig_output_delay[i - 1]);
-            //Describe the dynamic attr
-            dai.tai.data_type = Tango::DEV_DOUBLE;
-            dai.tai.data_format = Tango::SCALAR;
-            dai.tai.writable = Tango::READ_WRITE;
-            dai.tai.disp_level = Tango::EXPERT;
-            dai.tai.unit = "ms";
-            dai.tai.format = "%s";
-            dai.tai.description = "Set delay value option on channel " + std::to_string(i);
-
-            //Instanciate the read callback (called when the dyn. attr. is read)    
-            dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_trigger_attribute_callback);
-            //Instanciate the write callback
-            dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_trigger_attribute_callback);
-            //Add the dyn. attr. to the device
-            m_dim->dynamic_attributes_manager().add_attribute(dai);
-        }
-
-        for (int i = 1; i < 4; i++)
-        {
-            std::string name = "trigOutputEdge" + std::to_string(i);
-            INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;       
-            yat4tango::DynamicAttributeInfo dai;
-            dai.dev = m_device;
-            //- specify the dyn. attr.  name
-            dai.tai.name = name;
-            //- associate the dyn. attr. with its data 
-            m_dyn_trig_output_edge[i - 1] = new EnumUserData(name);
-
-            dai.set_user_data(m_dyn_trig_output_edge[i - 1]);
-            //Describe the dynamic attr
-            dai.tai.data_type = Tango::DEV_ENUM;
-            dai.tai.data_format = Tango::SCALAR;
-            dai.tai.writable = Tango::READ_WRITE;
-            dai.tai.disp_level = Tango::EXPERT;
-            dai.tai.unit = " ";
-            dai.tai.format = "%s";
-            dai.tai.enum_labels.push_back("RISING");
-            dai.tai.enum_labels.push_back("FAILING");
-            dai.tai.description = "Set edge option value on channel " + std::to_string(i) + ":\n";
-            for( size_t i=0 ; i<dai.tai.enum_labels.size() ; i++ )
+            for (int i = 1; i < 4; i++)
             {
-                dai.tai.description += "- " + dai.tai.enum_labels[i] + "\n";
+                std::string name = "trigOutputWidth" + std::to_string(i);
+                INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;       
+                yat4tango::DynamicAttributeInfo dai;
+                dai.dev = m_device;
+                //- specify the dyn. attr.  name
+                dai.tai.name = name;
+                //- associate the dyn. attr. with its data 
+                m_dyn_trig_output_width[i - 1] = new DoubleUserData(name);
+
+                dai.set_user_data(m_dyn_trig_output_width[i - 1]);
+                //Describe the dynamic attr
+                dai.tai.data_type = Tango::DEV_DOUBLE;
+                dai.tai.data_format = Tango::SCALAR;
+                dai.tai.writable = Tango::READ_WRITE;
+                dai.tai.disp_level = Tango::EXPERT;
+                dai.tai.unit = "ms";
+                dai.tai.format = "%s";
+                dai.tai.description = "Set width value option on channel " + std::to_string(i);
+
+                //Instanciate the read callback (called when the dyn. attr. is read)    
+                dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_trigger_attribute_callback);
+                //Instanciate the write callback
+                dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_trigger_attribute_callback);
+                //Do not clear attribute properties
+                dai.cdb = false;
+                //Add the dyn. attr. to the device
+                m_dim->dynamic_attributes_manager().add_attribute(dai);
             }
 
-            //Instanciate the read callback (called when the dyn. attr. is read)    
-            dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_trigger_attribute_callback);
-            //Instanciate the write callback
-            dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_trigger_attribute_callback);
-            //Add the dyn. attr. to the device
-            m_dim->dynamic_attributes_manager().add_attribute(dai);
-        }
+            for (int i = 1; i < 4; i++)
+            {
+                std::string name = "trigOutputDelay" + std::to_string(i);
+                INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;       
+                yat4tango::DynamicAttributeInfo dai;
+                dai.dev = m_device;
+                //- specify the dyn. attr.  name
+                dai.tai.name = name;
+                //- associate the dyn. attr. with its data 
+                m_dyn_trig_output_delay[i - 1] = new DoubleUserData(name);
 
+                dai.set_user_data(m_dyn_trig_output_delay[i - 1]);
+                //Describe the dynamic attr
+                dai.tai.data_type = Tango::DEV_DOUBLE;
+                dai.tai.data_format = Tango::SCALAR;
+                dai.tai.writable = Tango::READ_WRITE;
+                dai.tai.disp_level = Tango::EXPERT;
+                dai.tai.unit = "ms";
+                dai.tai.format = "%s";
+                dai.tai.description = "Set delay value option on channel " + std::to_string(i);
+
+                //Instanciate the read callback (called when the dyn. attr. is read)    
+                dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_trigger_attribute_callback);
+                //Instanciate the write callback
+                dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_trigger_attribute_callback);
+                //Do not clear attribute properties
+                dai.cdb = false;
+                //Add the dyn. attr. to the device
+                m_dim->dynamic_attributes_manager().add_attribute(dai);
+            }
+
+            for (int i = 1; i < 4; i++)
+            {
+                std::string name = "trigOutputEdge" + std::to_string(i);
+                INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << std::endl;       
+                yat4tango::DynamicAttributeInfo dai;
+                dai.dev = m_device;
+                //- specify the dyn. attr.  name
+                dai.tai.name = name;
+                //- associate the dyn. attr. with its data 
+                m_dyn_trig_output_edge[i - 1] = new EnumUserData(name);
+
+                dai.set_user_data(m_dyn_trig_output_edge[i - 1]);
+                //Describe the dynamic attr
+                dai.tai.data_type = Tango::DEV_ENUM;
+                dai.tai.data_format = Tango::SCALAR;
+                dai.tai.writable = Tango::READ_WRITE;
+                dai.tai.disp_level = Tango::EXPERT;
+                dai.tai.unit = " ";
+                dai.tai.format = "%s";
+                dai.tai.enum_labels.push_back("RISING");
+                dai.tai.enum_labels.push_back("FALLING");
+                dai.tai.description = "Set edge option value on channel " + std::to_string(i) + ":\n";
+                for( size_t i=0 ; i<dai.tai.enum_labels.size() ; i++ )
+                {
+                    dai.tai.description += "- " + dai.tai.enum_labels[i] + "\n";
+                }
+
+                //Instanciate the read callback (called when the dyn. attr. is read)    
+                dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana95::read_dynamic_trigger_attribute_callback);
+                //Instanciate the write callback
+                dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, &AttrViewDhyana95::write_dynamic_trigger_attribute_callback);
+                //Do not clear attribute properties
+                dai.cdb = false;
+                //Add the dyn. attr. to the device
+                m_dim->dynamic_attributes_manager().add_attribute(dai);
+            }
+        }
     }
     catch (Tango::DevFailed& df)
     {
@@ -363,6 +390,9 @@ void AttrViewDhyana95::init()
     }
 }
 
+//-----------------------------------------------------
+//AttrViewDhyana95::read_dynamic_attribute_callback()
+//-----------------------------------------------------
 void AttrViewDhyana95::read_dynamic_attribute_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
 {
     try
@@ -468,6 +498,9 @@ void AttrViewDhyana95::read_dynamic_attribute_callback(yat4tango::DynamicAttribu
     }
 }
 
+//-----------------------------------------------------
+//AttrViewDhyana95::write_dynamic_attribute_callback()
+//-----------------------------------------------------
 void AttrViewDhyana95::write_dynamic_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
 {
     try
@@ -537,6 +570,9 @@ void AttrViewDhyana95::write_dynamic_attribute_callback(yat4tango::DynamicAttrib
     }
 }
 
+//-----------------------------------------------------
+//AttrViewDhyana95::read_dynamic_trigger_attribute_callback()
+//-----------------------------------------------------
 void AttrViewDhyana95::read_dynamic_trigger_attribute_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
 {
     try
@@ -585,6 +621,9 @@ void AttrViewDhyana95::read_dynamic_trigger_attribute_callback(yat4tango::Dynami
     }
 }
 
+//-----------------------------------------------------
+//AttrViewDhyana95::write_dynamic_trigger_attribute_callback()
+//-----------------------------------------------------
 void AttrViewDhyana95::write_dynamic_trigger_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
 {
      try

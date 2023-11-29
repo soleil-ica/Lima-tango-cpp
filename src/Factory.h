@@ -169,6 +169,11 @@
 #include <DhyanaInterface.h>
 #endif
 
+#ifdef DHYANA6060_ENABLED
+#include <Dhyana6060Camera.h>
+#include <Dhyana6060Interface.h>
+#endif
+
 #ifdef UFXC_ENABLED
 #include <UfxcCamera.h>
 #include <UfxcInterface.h>
@@ -216,6 +221,9 @@ public:
     ///return to the client the global mutex, in order to use ctControl in a scoped lock
     yat::Mutex& get_global_mutex();
 
+    ///fix the state of the specific device
+    void set_specific_state(Tango::DevState specific_state);
+
 private:
     ControlFactory(const ControlFactory&) { }
     ControlFactory(){}
@@ -251,6 +259,8 @@ private:
 
     //lock the singleton acess
     yat::Mutex                      m_lock;
+
+    Tango::DevState                 m_specific_state;
 
 } ;
 

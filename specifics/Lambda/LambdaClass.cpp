@@ -255,6 +255,20 @@ void LambdaClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ChargeSumming";
+	prop_desc = "Indicates wether charge summing is used or not.";
+	prop_def  = "False";
+	vect_data.clear();
+	vect_data.push_back("False");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
 }
 
 //--------------------------------------------------------
@@ -408,30 +422,6 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	distortioncorrection->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
 	att_list.push_back(distortioncorrection);
-
-	//	Attribute : energyThreshold
-	energyThresholdAttrib	*energythreshold = new energyThresholdAttrib();
-	Tango::UserDefaultAttrProp	energythreshold_prop;
-	energythreshold_prop.set_description("energy threshold in KeV.<br>\nThe photon is counted If the energy is above this threshold.<br>\nenergyThreshold is a memorized attribute.<br>");
-	//	label	not set for energyThreshold
-	energythreshold_prop.set_unit("KeV");
-	energythreshold_prop.set_standard_unit("KeV");
-	energythreshold_prop.set_display_unit("KeV");
-	energythreshold_prop.set_format("%6.2f");
-	energythreshold_prop.set_max_value("300");
-	energythreshold_prop.set_min_value("0");
-	//	max_alarm	not set for energyThreshold
-	//	min_alarm	not set for energyThreshold
-	//	max_warning	not set for energyThreshold
-	//	min_warning	not set for energyThreshold
-	//	delta_t	not set for energyThreshold
-	//	delta_val	not set for energyThreshold
-	
-	energythreshold->set_default_properties(energythreshold_prop);
-	//	Not Polled
-	energythreshold->set_disp_level(Tango::OPERATOR);
-	//	Not Memorized
-	att_list.push_back(energythreshold);
 
 	//	Attribute : libraryVersion
 	libraryVersionAttrib	*libraryversion = new libraryVersionAttrib();
@@ -600,6 +590,78 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	saturationthreshold->set_disp_level(Tango::OPERATOR);
 	//	Not Memorized
 	att_list.push_back(saturationthreshold);
+
+	//	Attribute : chargeSumming
+	chargeSummingAttrib	*chargesumming = new chargeSummingAttrib();
+	Tango::UserDefaultAttrProp	chargesumming_prop;
+	chargesumming_prop.set_description("charge summing mode.");
+	//	label	not set for chargeSumming
+	//	unit	not set for chargeSumming
+	//	standard_unit	not set for chargeSumming
+	//	display_unit	not set for chargeSumming
+	//	format	not set for chargeSumming
+	//	max_value	not set for chargeSumming
+	//	min_value	not set for chargeSumming
+	//	max_alarm	not set for chargeSumming
+	//	min_alarm	not set for chargeSumming
+	//	max_warning	not set for chargeSumming
+	//	min_warning	not set for chargeSumming
+	//	delta_t	not set for chargeSumming
+	//	delta_val	not set for chargeSumming
+	
+	chargesumming->set_default_properties(chargesumming_prop);
+	//	Not Polled
+	chargesumming->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(chargesumming);
+
+	//	Attribute : lowerThreshold
+	lowerThresholdAttrib	*lowerthreshold = new lowerThresholdAttrib();
+	Tango::UserDefaultAttrProp	lowerthreshold_prop;
+	lowerthreshold_prop.set_description("lower threshold in KeV.<br>\nThe photon is counted If the energy is above this threshold.<br>\nlowerThreshold is a memorized attribute.<br>");
+	//	label	not set for lowerThreshold
+	lowerthreshold_prop.set_unit("KeV");
+	lowerthreshold_prop.set_standard_unit("KeV");
+	lowerthreshold_prop.set_display_unit("KeV");
+	lowerthreshold_prop.set_format("%6.2f");
+	lowerthreshold_prop.set_max_value("100");
+	lowerthreshold_prop.set_min_value("0");
+	//	max_alarm	not set for lowerThreshold
+	//	min_alarm	not set for lowerThreshold
+	//	max_warning	not set for lowerThreshold
+	//	min_warning	not set for lowerThreshold
+	//	delta_t	not set for lowerThreshold
+	//	delta_val	not set for lowerThreshold
+	
+	lowerthreshold->set_default_properties(lowerthreshold_prop);
+	//	Not Polled
+	lowerthreshold->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(lowerthreshold);
+
+	//	Attribute : upperThreshold
+	upperThresholdAttrib	*upperthreshold = new upperThresholdAttrib();
+	Tango::UserDefaultAttrProp	upperthreshold_prop;
+	upperthreshold_prop.set_description("upper threshold in KeV.<br>\nThe photon is counted If the energy is under this threshold.<br>\nupperThreshold is a memorized attribute.<br>");
+	//	label	not set for upperThreshold
+	upperthreshold_prop.set_unit("KeV");
+	upperthreshold_prop.set_standard_unit("KeV");
+	upperthreshold_prop.set_display_unit("KeV");
+	upperthreshold_prop.set_format("%6.2f");
+	upperthreshold_prop.set_max_value("100");
+	upperthreshold_prop.set_min_value("0");
+	//	max_alarm	not set for upperThreshold
+	//	min_alarm	not set for upperThreshold
+	//	max_warning	not set for upperThreshold
+	//	min_warning	not set for upperThreshold
+	//	delta_t	not set for upperThreshold
+	//	delta_val	not set for upperThreshold
+	
+	upperthreshold->set_default_properties(upperthreshold_prop);
+	//	Not Polled
+	upperthreshold->set_disp_level(Tango::OPERATOR);
+	//	Not Memorized
+	att_list.push_back(upperthreshold);
 
 
 	//	Create a list of static attributes
