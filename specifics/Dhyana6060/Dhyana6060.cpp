@@ -53,7 +53,7 @@
 //
 //  Command name      |  Method name
 //================================================================
-//  State             |  Inherited (no method)
+//  State             |  dev_state
 //  Status            |  Inherited (no method)
 //  GetAllParameters  |  get_all_parameters
 //  GetParameter      |  get_parameter
@@ -119,6 +119,7 @@ void Dhyana6060::delete_device()
 	/*----- PROTECTED REGION ID(Dhyana6060::delete_device) ENABLED START -----*/
 	
 	//	Delete device allocated objects
+	m_attr_view.reset();
 	
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::delete_device
 }
@@ -166,6 +167,7 @@ void Dhyana6060::init_device()
 	catch(lima::Exception& e)
 	{
 		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
+		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_is_device_initialized = false;
 		set_state(Tango::FAULT);
 		return;
@@ -173,6 +175,7 @@ void Dhyana6060::init_device()
 	catch(...)
 	{
 		ERROR_STREAM << "Initialization Failed : UNKNOWN" << endl;
+		m_status_message << "Initialization Failed : UNKNOWN" << endl;
 		set_state(Tango::FAULT);
 		m_is_device_initialized = false;
 		return;
@@ -263,6 +266,7 @@ void Dhyana6060::get_device_property()
 //--------------------------------------------------------
 void Dhyana6060::always_executed_hook()
 {
+	DEBUG_STREAM << "Dhyana6060::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana6060::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -278,6 +282,7 @@ void Dhyana6060::always_executed_hook()
 //--------------------------------------------------------
 void Dhyana6060::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
+	DEBUG_STREAM << "Dhyana6060::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Dhyana6060::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -302,6 +307,49 @@ void Dhyana6060::add_dynamic_attributes()
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::add_dynamic_attributes
 }
 
+//--------------------------------------------------------
+/**
+ *	Command State related method
+ *	Description: This command gets the device state (stored in its device_state data member) and returns it to the caller.
+ *
+ *	@returns Device state
+ */
+//--------------------------------------------------------
+Tango::DevState Dhyana6060::dev_state()
+{
+	DEBUG_STREAM << "Dhyana6060::State()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(Dhyana::dev_state) ENABLED START -----*/
+	
+	//	Add your own code
+	Tango::DevState argout = DeviceImpl::dev_state();
+
+	//    Add your own code to control device here
+	stringstream DeviceStatus;
+	DeviceStatus << "";
+	Tango::DevState DeviceState = Tango::STANDBY;
+	if(!m_is_device_initialized)
+	{
+		DeviceState = Tango::FAULT;
+		DeviceStatus << m_status_message.str();
+	}
+	else
+	{
+		// state & status are retrieved from Factory, Factory is updated by Generic device
+		DeviceState = ControlFactory::instance().get_state();
+		DeviceStatus << ControlFactory::instance().get_status();
+	}
+
+	set_state(DeviceState);
+	set_status(DeviceStatus.str());
+
+	argout = DeviceState;
+	return argout;
+	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::dev_state
+	set_state(argout);    // Give the state to Tango.
+	if (argout!=Tango::ALARM)
+		Tango::DeviceImpl::dev_state();
+	return get_state();  // Return it after Tango management.
+}
 //--------------------------------------------------------
 /**
  *	Command GetAllParameters related method

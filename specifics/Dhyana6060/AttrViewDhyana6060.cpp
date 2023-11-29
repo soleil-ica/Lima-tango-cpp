@@ -20,6 +20,23 @@ AttrViewDhyana6060::AttrViewDhyana6060(Tango::DeviceImpl *dev)
 //---------------------------------------------------------------------------------------
 AttrViewDhyana6060::~AttrViewDhyana6060()
 {
+    /*delete m_dyn_sensor_temperature;
+    delete m_dyn_camera_temperature;
+    delete m_dyn_sensor_temperature_target;
+    delete m_dyn_sensor_cooling_type;
+    delete m_dyn_fan_speed;
+    delete m_dyn_fan_type;
+    delete m_dyn_global_gain;
+    delete m_dyn_trig_in_edge;
+    delete m_dyn_trig_in_exp_time;
+    delete m_dyn_trig_in_delay;
+    delete m_dyn_trig_output_port;
+    delete m_dyn_trig_output_kind;
+    delete m_dyn_trig_output_width;
+    delete m_dyn_trig_output_delay;
+    delete m_dyn_trig_output_edge;
+    delete m_dyn_version;
+    delete m_dyn_sensor_cooling;*/
 }
 
 //---------------------------------------------------------------------------------------
@@ -84,6 +101,7 @@ void AttrViewDhyana6060::init()
             //Do not clear attribute properties
             dai.cdb = false;
             //Add the dyn. attr. to the device
+
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
         //Create cameraTemperature attribute

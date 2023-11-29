@@ -160,6 +160,13 @@ public:
 //	Command related methods
 public:
 	/**
+	 *	Command State related method
+	 *	Description: This command gets the device state (stored in its device_state data member) and returns it to the caller.
+	 *
+	 *	@returns Device state
+	 */
+	virtual Tango::DevState dev_state();
+	/**
 	 *	Command GetAllParameters related method
 	 *	Description: Return the list of all the camera available parameters and their values in the following format:
 	 *               ParameterName=current_value
@@ -211,6 +218,7 @@ public:
 protected :
 
 	bool                      m_is_device_initialized;
+	stringstream              m_status_message;
 
 	//lima OBJECTS
     lima::Dhyana6060::Interface*  m_hw;
