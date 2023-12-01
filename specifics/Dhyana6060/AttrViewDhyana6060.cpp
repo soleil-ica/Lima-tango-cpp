@@ -310,12 +310,16 @@ void AttrViewDhyana6060::init()
             dai.tai.unit = " ";
             dai.tai.format = "%s";
             dai.tai.enum_labels.push_back("HDR_16bit");
+            dai.tai.enum_labels.push_back("HG_12bit");
+            dai.tai.enum_labels.push_back("LG_12bit");
+            dai.tai.enum_labels.push_back("HG_14bit");
+            dai.tai.enum_labels.push_back("HG_HS_12bit");
+            dai.tai.enum_labels.push_back("LG_HS_12bit");
             dai.tai.description = "Switch sensor gain mode, support:";
             for( size_t i=0 ; i<dai.tai.enum_labels.size() ; i++ )
             {
                 dai.tai.description += "- " + dai.tai.enum_labels[i] + "\n";
             }
-            dai.tai.description += "There exists more mode but there are not supported yet";
 
             //Instanciate the read callback (called when the dyn. attr. is read)    
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_attribute_callback);
