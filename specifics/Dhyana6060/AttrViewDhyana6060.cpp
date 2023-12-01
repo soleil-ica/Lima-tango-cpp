@@ -20,6 +20,23 @@ AttrViewDhyana6060::AttrViewDhyana6060(Tango::DeviceImpl *dev)
 //---------------------------------------------------------------------------------------
 AttrViewDhyana6060::~AttrViewDhyana6060()
 {
+    /*delete m_dyn_sensor_temperature;
+    delete m_dyn_camera_temperature;
+    delete m_dyn_sensor_temperature_target;
+    delete m_dyn_sensor_cooling_type;
+    delete m_dyn_fan_speed;
+    delete m_dyn_fan_type;
+    delete m_dyn_global_gain;
+    delete m_dyn_trig_in_edge;
+    delete m_dyn_trig_in_exp_time;
+    delete m_dyn_trig_in_delay;
+    delete m_dyn_trig_output_port;
+    delete m_dyn_trig_output_kind;
+    delete m_dyn_trig_output_width;
+    delete m_dyn_trig_output_delay;
+    delete m_dyn_trig_output_edge;
+    delete m_dyn_version;
+    delete m_dyn_sensor_cooling;*/
 }
 
 //---------------------------------------------------------------------------------------
@@ -84,6 +101,7 @@ void AttrViewDhyana6060::init()
             //Do not clear attribute properties
             dai.cdb = false;
             //Add the dyn. attr. to the device
+
             m_dim.dynamic_attributes_manager().add_attribute(dai);
         }
         //Create cameraTemperature attribute
@@ -292,12 +310,16 @@ void AttrViewDhyana6060::init()
             dai.tai.unit = " ";
             dai.tai.format = "%s";
             dai.tai.enum_labels.push_back("HDR_16bit");
+            dai.tai.enum_labels.push_back("HG_12bit");
+            dai.tai.enum_labels.push_back("LG_12bit");
+            dai.tai.enum_labels.push_back("HG_14bit");
+            dai.tai.enum_labels.push_back("HG_HS_12bit");
+            dai.tai.enum_labels.push_back("LG_HS_12bit");
             dai.tai.description = "Switch sensor gain mode, support:";
             for( size_t i=0 ; i<dai.tai.enum_labels.size() ; i++ )
             {
                 dai.tai.description += "- " + dai.tai.enum_labels[i] + "\n";
             }
-            dai.tai.description += "There exists more mode but there are not supported yet";
 
             //Instanciate the read callback (called when the dyn. attr. is read)    
             dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &AttrViewDhyana6060::read_dynamic_attribute_callback);

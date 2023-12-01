@@ -36,6 +36,7 @@
 
 #include <Dhyana6060.h>
 #include <Dhyana6060Class.h>
+#include <helpers/PogoHelper.h>
 
 #include "AttrViewDhyana6060.h"
 
@@ -52,7 +53,7 @@
 //
 //  Command name      |  Method name
 //================================================================
-//  State             |  Inherited (no method)
+//  State             |  dev_state
 //  Status            |  Inherited (no method)
 //  GetAllParameters  |  get_all_parameters
 //  GetParameter      |  get_parameter
@@ -118,6 +119,7 @@ void Dhyana6060::delete_device()
 	/*----- PROTECTED REGION ID(Dhyana6060::delete_device) ENABLED START -----*/
 	
 	//	Delete device allocated objects
+	m_attr_view.reset();
 	
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::delete_device
 }
@@ -137,7 +139,9 @@ void Dhyana6060::init_device()
 	
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::init_device_before
 	
-	//	No device property to be read from database
+
+	//	Get the device properties from database
+	get_device_property();
 	
 	/*----- PROTECTED REGION ID(Dhyana6060::init_device) ENABLED START -----*/
 	
@@ -163,6 +167,7 @@ void Dhyana6060::init_device()
 	catch(lima::Exception& e)
 	{
 		ERROR_STREAM << "Initialization Failed : " << e.getErrMsg() << endl;
+		m_status_message << "Initialization Failed : " << e.getErrMsg() << endl;
 		m_is_device_initialized = false;
 		set_state(Tango::FAULT);
 		return;
@@ -170,6 +175,7 @@ void Dhyana6060::init_device()
 	catch(...)
 	{
 		ERROR_STREAM << "Initialization Failed : UNKNOWN" << endl;
+		m_status_message << "Initialization Failed : UNKNOWN" << endl;
 		set_state(Tango::FAULT);
 		m_is_device_initialized = false;
 		return;
@@ -185,6 +191,72 @@ void Dhyana6060::init_device()
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::init_device
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : Dhyana6060::get_device_property()
+ *	Description : Read database to initialize property data members.
+ */
+//--------------------------------------------------------
+void Dhyana6060::get_device_property()
+{
+	/*----- PROTECTED REGION ID(Dhyana6060::get_device_property_before) ENABLED START -----*/
+	
+	//	Initialize property data members
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::get_device_property_before
+
+
+	//	Read device properties from database.
+	Tango::DbData	dev_prop;
+	dev_prop.push_back(Tango::DbDatum("ExpertTimerPeriod"));
+	dev_prop.push_back(Tango::DbDatum("TemperatureTargetAtInit"));
+
+	//	is there at least one property to be read ?
+	if (dev_prop.size()>0)
+	{
+		//	Call database and extract values
+		if (Tango::Util::instance()->_UseDb==true)
+			get_db_device()->get_property(dev_prop);
+	
+		//	get instance on Dhyana6060Class to get class property
+		Tango::DbDatum	def_prop, cl_prop;
+		Dhyana6060Class	*ds_class =
+			(static_cast<Dhyana6060Class *>(get_device_class()));
+		int	i = -1;
+
+		//	Try to initialize ExpertTimerPeriod from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  expertTimerPeriod;
+		else {
+			//	Try to initialize ExpertTimerPeriod from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  expertTimerPeriod;
+		}
+		//	And try to extract ExpertTimerPeriod value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertTimerPeriod;
+
+		//	Try to initialize TemperatureTargetAtInit from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  temperatureTargetAtInit;
+		else {
+			//	Try to initialize TemperatureTargetAtInit from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  temperatureTargetAtInit;
+		}
+		//	And try to extract TemperatureTargetAtInit value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  temperatureTargetAtInit;
+
+	}
+
+	/*----- PROTECTED REGION ID(Dhyana6060::get_device_property_after) ENABLED START -----*/
+	
+	//	Check device property data members init
+	
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"15","TemperatureTargetAtInit");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop,"1","ExpertTimerPeriod");
+	
+	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::get_device_property_after
+}
 
 //--------------------------------------------------------
 /**
@@ -233,6 +305,49 @@ void Dhyana6060::add_dynamic_attributes()
 	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::add_dynamic_attributes
 }
 
+//--------------------------------------------------------
+/**
+ *	Command State related method
+ *	Description: This command gets the device state (stored in its device_state data member) and returns it to the caller.
+ *
+ *	@returns Device state
+ */
+//--------------------------------------------------------
+Tango::DevState Dhyana6060::dev_state()
+{
+	DEBUG_STREAM << "Dhyana6060::State()  - " << device_name << endl;
+	/*----- PROTECTED REGION ID(Dhyana::dev_state) ENABLED START -----*/
+	
+	//	Add your own code
+	Tango::DevState argout = DeviceImpl::dev_state();
+
+	//    Add your own code to control device here
+	stringstream DeviceStatus;
+	DeviceStatus << "";
+	Tango::DevState DeviceState = Tango::STANDBY;
+	if(!m_is_device_initialized)
+	{
+		DeviceState = Tango::FAULT;
+		DeviceStatus << m_status_message.str();
+	}
+	else
+	{
+		// state & status are retrieved from Factory, Factory is updated by Generic device
+		DeviceState = ControlFactory::instance().get_state();
+		DeviceStatus << ControlFactory::instance().get_status();
+	}
+
+	set_state(DeviceState);
+	set_status(DeviceStatus.str());
+
+	argout = DeviceState;
+	return argout;
+	/*----- PROTECTED REGION END -----*/	//	Dhyana6060::dev_state
+	set_state(argout);    // Give the state to Tango.
+	if (argout!=Tango::ALARM)
+		Tango::DeviceImpl::dev_state();
+	return get_state();  // Return it after Tango management.
+}
 //--------------------------------------------------------
 /**
  *	Command GetAllParameters related method
@@ -408,8 +523,7 @@ void Dhyana6060::write_attr_at_init()
 
 		INFO_STREAM << "Write tango attribute at Init - sensorTemperatureTarget." << endl;
 		Tango::WAttribute &temperatureTarget = dev_attr->get_w_attr_by_name("sensorTemperatureTarget");
-		double target = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, "sensorTemperatureTarget", 0);
-		temperatureTarget.set_write_value(target);
+		temperatureTarget.set_write_value(temperatureTargetAtInit);
 		yat4tango::DynamicAttributeWriteCallbackData cbd_temperatureTarget;
 		cbd_temperatureTarget.tga = &temperatureTarget;
 		cbd_temperatureTarget.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("sensorTemperatureTarget");
