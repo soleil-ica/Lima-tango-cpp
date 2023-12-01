@@ -84,12 +84,12 @@ namespace Dhyana_ns
 //--------------------------------------------------------
 /**
  *	Method      : Dhyana::Dhyana()
- *	Description : Constructors for a Tango device
- *                implementing the classDhyana
- */
+*	Description : Constructors for a Tango device
+*                implementing the classDhyana
+*/
 //--------------------------------------------------------
 Dhyana::Dhyana(Tango::DeviceClass *cl, string &s)
- : TANGO_BASE_CLASS(cl, s.c_str())
+: TANGO_BASE_CLASS(cl, s.c_str())
 {
 	/*----- PROTECTED REGION ID(Dhyana::constructor_1) ENABLED START -----*/
 	init_device();
@@ -98,7 +98,7 @@ Dhyana::Dhyana(Tango::DeviceClass *cl, string &s)
 }
 //--------------------------------------------------------
 Dhyana::Dhyana(Tango::DeviceClass *cl, const char *s)
- : TANGO_BASE_CLASS(cl, s)
+: TANGO_BASE_CLASS(cl, s)
 {
 	/*----- PROTECTED REGION ID(Dhyana::constructor_2) ENABLED START -----*/
 	init_device();
@@ -107,7 +107,7 @@ Dhyana::Dhyana(Tango::DeviceClass *cl, const char *s)
 }
 //--------------------------------------------------------
 Dhyana::Dhyana(Tango::DeviceClass *cl, const char *s, const char *d)
- : TANGO_BASE_CLASS(cl, s, d)
+: TANGO_BASE_CLASS(cl, s, d)
 {
 	/*----- PROTECTED REGION ID(Dhyana::constructor_3) ENABLED START -----*/
 	init_device();
@@ -118,8 +118,8 @@ Dhyana::Dhyana(Tango::DeviceClass *cl, const char *s, const char *d)
 //--------------------------------------------------------
 /**
  *	Method      : Dhyana::delete_device()
- *	Description : will be called at device destruction or at init command
- */
+*	Description : will be called at device destruction or at init command
+*/
 //--------------------------------------------------------
 void Dhyana::delete_device()
 {
@@ -129,7 +129,7 @@ void Dhyana::delete_device()
 	//	Delete device allocated objects
 
 	INFO_STREAM << "Remove the inner-appender." << endl;
-    yat4tango::InnerAppender::release(this);
+	yat4tango::InnerAppender::release(this);
 
 	m_attr_view.reset();
 
@@ -146,8 +146,8 @@ void Dhyana::delete_device()
 //--------------------------------------------------------
 /**
  *	Method      : Dhyana::init_device()
- *	Description : will be called at device initialization.
- */
+*	Description : will be called at device initialization.
+*/
 //--------------------------------------------------------
 void Dhyana::init_device()
 {
@@ -167,7 +167,7 @@ void Dhyana::init_device()
 	m_status_message.str("");
 	
 	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
-    yat4tango::InnerAppender::initialize(this, 512);
+	yat4tango::InnerAppender::initialize(this, 512);
 
 	try
 	{
@@ -209,12 +209,7 @@ void Dhyana::init_device()
 	set_state(Tango::STANDBY);
 	dev_state();
 	
-	std::string model_temp;
-	m_camera->getDetectorModel(model_temp);
-	if (model_temp == "Dhyana 95"  || model_temp.find("Dhyana 95 V2") != std::string::npos)
-	{
-		write_attr_at_init();
-	}
+	write_attr_at_init();
 
 	/*----- PROTECTED REGION END -----*/	//	Dhyana::init_device
 }
@@ -222,8 +217,8 @@ void Dhyana::init_device()
 //--------------------------------------------------------
 /**
  *	Method      : Dhyana::get_device_property()
- *	Description : Read database to initialize property data members.
- */
+*	Description : Read database to initialize property data members.
+*/
 //--------------------------------------------------------
 void Dhyana::get_device_property()
 {
@@ -289,8 +284,8 @@ void Dhyana::get_device_property()
 //--------------------------------------------------------
 /**
  *	Method      : Dhyana::always_executed_hook()
- *	Description : method always executed before any command is executed
- */
+*	Description : method always executed before any command is executed
+*/
 //--------------------------------------------------------
 void Dhyana::always_executed_hook()
 {
@@ -338,8 +333,8 @@ void Dhyana::always_executed_hook()
 //--------------------------------------------------------
 /**
  *	Method      : Dhyana::read_attr_hardware()
- *	Description : Hardware acquisition for attributes
- */
+*	Description : Hardware acquisition for attributes
+*/
 //--------------------------------------------------------
 void Dhyana::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
@@ -355,9 +350,9 @@ void Dhyana::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 /**
  *	Method      : Dhyana::add_dynamic_attributes()
- *	Description : Create the dynamic attributes if any
- *                for specified device.
- */
+*	Description : Create the dynamic attributes if any
+*                for specified device.
+*/
 //--------------------------------------------------------
 void Dhyana::add_dynamic_attributes()
 {
@@ -371,14 +366,13 @@ void Dhyana::add_dynamic_attributes()
 //--------------------------------------------------------
 /**
  *	Command State related method
- *	Description: This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
- *
- *	@returns State Code
- */
+*	Description: This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
+*
+*	@returns State Code
+*/
 //--------------------------------------------------------
 Tango::DevState Dhyana::dev_state()
 {
-	DEBUG_STREAM << "Dhyana::State()  - " << device_name << endl;
 	/*----- PROTECTED REGION ID(Dhyana::dev_state) ENABLED START -----*/
 	
 	//	Add your own code
@@ -392,9 +386,13 @@ Tango::DevState Dhyana::dev_state()
 	{
 		DeviceState = Tango::FAULT;
 		DeviceStatus << m_status_message.str();
+		//update specific_state state for Factory
+		ControlFactory::instance().set_specific_state(DeviceState);
 	}
 	else
 	{
+		//update specific_state state for Factory
+		ControlFactory::instance().set_specific_state(DeviceState);
 		// state & status are retrieved from Factory, Factory is updated by Generic device
 		DeviceState = ControlFactory::instance().get_state();
 		DeviceStatus << ControlFactory::instance().get_status();
@@ -415,11 +413,11 @@ Tango::DevState Dhyana::dev_state()
 //--------------------------------------------------------
 /**
  *	Command GetAllParameters related method
- *	Description: Return the list of all the camera available parameters and their values in the following format:
- *               ParameterName=current_value
- *
- *	@returns 
- */
+*	Description: Return the list of all the camera available parameters and their values in the following format:
+*               ParameterName=current_value
+*
+*	@returns 
+*/
 //--------------------------------------------------------
 Tango::DevString Dhyana::get_all_parameters()
 {
@@ -430,25 +428,25 @@ Tango::DevString Dhyana::get_all_parameters()
 	//	Add your own code
 	try
 	{
-        argout = CORBA::string_dup(m_camera->getAllParameters().c_str());
+		argout = CORBA::string_dup(m_camera->getAllParameters().c_str());
 	}
 	catch(Tango::DevFailed& df)
-    {
-        ERROR_STREAM << df << endl;
-        //- rethrow exception
+	{
+		ERROR_STREAM << df << endl;
+		//- rethrow exception
 		Tango::Except::re_throw_exception(df,
 										"TANGO_DEVICE_ERROR",
 										std::string(df.errors[0].desc).c_str(),
 										"Dhyana::get_all_parameters");
-    }		
-    catch(lima::Exception& e)
-    {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        //- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+	}		
+	catch(lima::Exception& e)
+	{
+		ERROR_STREAM << e.getErrMsg() << endl;
+		//- throw exception
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
 										e.getErrMsg().c_str(),
 										"Dhyana::get_all_parameters");
-    }	 
+	}	 
 	
 	
 	/*----- PROTECTED REGION END -----*/	//	Dhyana::get_all_parameters
@@ -457,11 +455,11 @@ Tango::DevString Dhyana::get_all_parameters()
 //--------------------------------------------------------
 /**
  *	Command GetParameter related method
- *	Description: Return the current value of the specified parameter
- *
- *	@param argin 
- *	@returns 
- */
+*	Description: Return the current value of the specified parameter
+*
+*	@param argin 
+*	@returns 
+*/
 //--------------------------------------------------------
 Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 {
@@ -471,26 +469,26 @@ Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 	//	Add your own code
 	try
 	{
-        argout = CORBA::string_dup(m_camera->getParameter(argin).c_str());      
+		argout = CORBA::string_dup(m_camera->getParameter(argin).c_str());      
 	}
 	catch(Tango::DevFailed& df)
-    {
-        ERROR_STREAM << df << endl;
-        //- rethrow exception
+	{
+		ERROR_STREAM << df << endl;
+		//- rethrow exception
 		Tango::Except::re_throw_exception(df,
 										"TANGO_DEVICE_ERROR",
 										std::string(df.errors[0].desc).c_str(),
 										"Dhyana::get_parameter");
 					
-    }		
-    catch(lima::Exception& e)
-    {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        //- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+	}		
+	catch(lima::Exception& e)
+	{
+		ERROR_STREAM << e.getErrMsg() << endl;
+		//- throw exception
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
 										e.getErrMsg().c_str(),
 										"Dhyana::get_parameter");
-    }
+	}
 	
 	
 	/*----- PROTECTED REGION END -----*/	//	Dhyana::get_parameter
@@ -499,10 +497,10 @@ Tango::DevString Dhyana::get_parameter(Tango::DevString argin)
 //--------------------------------------------------------
 /**
  *	Command SetParameter related method
- *	Description: Set the value of the specified parameter.
- *
- *	@param argin 
- */
+*	Description: Set the value of the specified parameter.
+*
+*	@param argin 
+*/
 //--------------------------------------------------------
 void Dhyana::set_parameter(const Tango::DevVarStringArray *argin)
 {
@@ -515,37 +513,37 @@ void Dhyana::set_parameter(const Tango::DevVarStringArray *argin)
 										"Invalid number of parameters. Check input parameters (parameter, value)\n",
 										"Dhyana::set_parameter");
 	}
-    try
-    {
+	try
+	{
 		std::string parameter = static_cast<std::string>((*argin)[0]);
 		std::string value_str = static_cast<std::string>((*argin)[1]);
 		m_camera->setParameter(parameter, value_str);
-    }
-    catch(Tango::DevFailed& df)
-    {
-        ERROR_STREAM << df << endl;
-        //- rethrow exception
+	}
+	catch(Tango::DevFailed& df)
+	{
+		ERROR_STREAM << df << endl;
+		//- rethrow exception
 		Tango::Except::re_throw_exception(df,
 										"TANGO_DEVICE_ERROR",
 										std::string(df.errors[0].desc).c_str(),
 										"Dhyana::set_parameter");
-    }		
-    catch(lima::Exception& e)
-    {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        //- throw exception
-        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+	}		
+	catch(lima::Exception& e)
+	{
+		ERROR_STREAM << e.getErrMsg() << endl;
+		//- throw exception
+		Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
 										e.getErrMsg().c_str(),
 										"Dhyana::set_parameter");
-    }	 
+	}	 
 	/*----- PROTECTED REGION END -----*/	//	Dhyana::set_parameter
 }
 //--------------------------------------------------------
 /**
  *	Method      : Dhyana::add_dynamic_commands()
- *	Description : Create the dynamic commands if any
- *                for specified device.
- */
+*	Description : Create the dynamic commands if any
+*                for specified device.
+*/
 //--------------------------------------------------------
 void Dhyana::add_dynamic_commands()
 {
@@ -581,7 +579,7 @@ void Dhyana::build_view(std::string model)
 {
 	if (model == "Dhyana 95"  || model.find("Dhyana 95 V2") != std::string::npos)
 	{
-		m_attr_view.reset(new AttrViewDhyana95(this));
+		m_attr_view.reset(new AttrView(this));
 	}
 	else if (model.find("4040") != std::string::npos)
 	{
@@ -600,27 +598,27 @@ void Dhyana::write_attr_at_init()
 		Tango::WAttribute &temperatureTarget = dev_attr->get_w_attr_by_name("sensorTemperatureTarget");
 		temperatureTarget.set_write_value(temperatureTargetAtInit);
 		yat4tango::DynamicAttributeWriteCallbackData cbd_temperatureTarget;
-        cbd_temperatureTarget.tga = &temperatureTarget;
+		cbd_temperatureTarget.tga = &temperatureTarget;
 		cbd_temperatureTarget.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("sensorTemperatureTarget");
-        m_attr_view->write_dynamic_attribute_callback(cbd_temperatureTarget);
+		m_attr_view->write_dynamic_attribute_callback(cbd_temperatureTarget);
 
 		INFO_STREAM << "Write tango attribute at Init - fanSpeed." << endl;
 		Tango::WAttribute &fanSpeed = dev_attr->get_w_attr_by_name("fanSpeed");
 		unsigned short speed = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevUShort>(this, "fanSpeed", 1);
 		fanSpeed.set_write_value(speed);
 		yat4tango::DynamicAttributeWriteCallbackData cbd_fanSpeed;
-        cbd_fanSpeed.tga = &fanSpeed;
+		cbd_fanSpeed.tga = &fanSpeed;
 		cbd_fanSpeed.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("fanSpeed");
-        m_attr_view->write_dynamic_attribute_callback(cbd_fanSpeed);
+		m_attr_view->write_dynamic_attribute_callback(cbd_fanSpeed);
 
 		INFO_STREAM << "Write tango attribute at Init - globalGain." << endl;
 		Tango::WAttribute &globalGain = dev_attr->get_w_attr_by_name("globalGain");
 		Tango::DevEnum gain = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevEnum>(this, "globalGain", 0);
 		globalGain.set_write_value(gain);
 		yat4tango::DynamicAttributeWriteCallbackData cbd_globalGain;
-        cbd_globalGain.tga = &globalGain;
+		cbd_globalGain.tga = &globalGain;
 		cbd_globalGain.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("globalGain");
-        m_attr_view->write_dynamic_attribute_callback(cbd_globalGain);
+		m_attr_view->write_dynamic_attribute_callback(cbd_globalGain);
 		
 		//We do not write at init trigger out attributes if they're not availbable for the current detector model
 		if(m_camera->is_trigOutput_available())
@@ -676,6 +674,19 @@ void Dhyana::write_attr_at_init()
 				cbd_trigOutputEdge.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute(name);
 				m_attr_view->write_dynamic_trigger_attribute_callback(cbd_trigOutputEdge);
 			}
+		}
+		std::string model;
+		m_camera->getDetectorModel(model);
+		if (model.find("4040") != std::string::npos)
+		{
+			INFO_STREAM << "Write tango attribute at Init - tecMode." << endl;
+			Tango::WAttribute &tecMode = dev_attr->get_w_attr_by_name("tecMode");
+			Tango::DevEnum val = 0;
+			tecMode.set_write_value(val);
+			yat4tango::DynamicAttributeWriteCallbackData cbd_tecMode;
+			cbd_tecMode.tga = &tecMode;
+			cbd_tecMode.dya = &m_attr_view->get_dim()->dynamic_attributes_manager().get_attribute("tecMode");
+			m_attr_view->write_dynamic_tec_attribute_callback(cbd_tecMode);
 		}
 
 	}
