@@ -16,10 +16,8 @@ public:
 
     void init();
 
-    void read_dynamic_attribute_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
-    void write_dynamic_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
-    void read_dynamic_trigger_attribute_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
-    void write_dynamic_trigger_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
+    void read_dynamic_tec_attribute_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
+    void write_dynamic_tec_attribute_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
 
 private:
     EnumUserData*   m_dyn_tec_mode;
