@@ -9,7 +9,7 @@
 	
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64_Windows_msvc12-shared-release</artifactId>
-    <version>1.13.0-win64</version>
+    <version>1.12.3</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -52,9 +52,9 @@
         <SIMULATOR.version>1.4.2</SIMULATOR.version>
 		
 		<DHYANA.name>Dhyana</DHYANA.name>
-        <DHYANA.version>1.6.2</DHYANA.version>
-		<DHYANA6060.name>Dhyana6060</DHYANA6060.name>
-        <DHYANA6060.version>1.0.0</DHYANA6060.version>
+        <DHYANA.version>1.7.0</DHYANA.version>
+		<!-- <DHYANA6060.name>Dhyana6060</DHYANA6060.name>
+        <DHYANA6060.version>1.0.0</DHYANA6060.version> -->
         <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
         <HAMAMATSU.version>2.4.7</HAMAMATSU.version>
         <PCO.name>Pco</PCO.name>
