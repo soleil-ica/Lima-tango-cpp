@@ -76,6 +76,13 @@ public:
 
 /*----- PROTECTED REGION END -----*/	//	Dhyana6060::Data Members
 
+//	Device property data members
+public:
+	//	ExpertTimerPeriod:	Timer period in ms.<cr>
+	//  useful only for Internal Trigger
+	Tango::DevUShort	expertTimerPeriod;
+	//	TemperatureTargetAtInit:	Temperature target at initialisation (default is 15)
+	Tango::DevDouble	temperatureTargetAtInit;
 
 
 //	Constructors and destructors
@@ -119,6 +126,10 @@ public:
 	 */
 	virtual void init_device();
 	/*
+	 *	Read the device properties from database
+	 */
+	void get_device_property();
+	/*
 	 *	Always executed method before execution command method.
 	 */
 	virtual void always_executed_hook();
@@ -148,6 +159,13 @@ public:
 
 //	Command related methods
 public:
+	/**
+	 *	Command State related method
+	 *	Description: This command gets the device state (stored in its device_state data member) and returns it to the caller.
+	 *
+	 *	@returns Device state
+	 */
+	virtual Tango::DevState dev_state();
 	/**
 	 *	Command GetAllParameters related method
 	 *	Description: Return the list of all the camera available parameters and their values in the following format:
@@ -200,6 +218,7 @@ public:
 protected :
 
 	bool                      m_is_device_initialized;
+	stringstream              m_status_message;
 
 	//lima OBJECTS
     lima::Dhyana6060::Interface*  m_hw;

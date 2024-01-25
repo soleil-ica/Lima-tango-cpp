@@ -9,7 +9,7 @@
 	
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64_Windows_msvc12-shared-release</artifactId>
-    <version>1.12.3-win64</version>
+    <version>1.12.3</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -22,6 +22,7 @@
         
         <libs-64bits>//filer2.ica.synchrotron-soleil.fr/ica/LIB_VC12_64</libs-64bits>
 		
+		<opencv_path>${libs-64bits}\opencv\3.0.0</opencv_path>
 		<tango-lib>${libs-64bits}\tango\win64\lib\vc12_dll\</tango-lib>
 		<tango-include>${libs-64bits}\tango\win64\include\vc12\</tango-include>
 
@@ -51,9 +52,9 @@
         <SIMULATOR.version>1.4.2</SIMULATOR.version>
 		
 		<DHYANA.name>Dhyana</DHYANA.name>
-        <DHYANA.version>1.6.1</DHYANA.version>
-		<DHYANA6060.name>Dhyana6060</DHYANA6060.name>
-        <DHYANA6060.version>1.0.0</DHYANA6060.version>
+        <DHYANA.version>1.7.0</DHYANA.version>
+		<!-- <DHYANA6060.name>Dhyana6060</DHYANA6060.name>
+        <DHYANA6060.version>1.0.0</DHYANA6060.version> -->
         <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
         <HAMAMATSU.version>2.4.7</HAMAMATSU.version>
         <PCO.name>Pco</PCO.name>
@@ -62,6 +63,12 @@
         <PERKINELMER.version>1.5.1</PERKINELMER.version>
 		<SPECTRUMONE.name>SpectrumOne</SPECTRUMONE.name>
         <SPECTRUMONE.version>1.2.1</SPECTRUMONE.version>
+		<OPENCV_CORE.name>OpenCV-Core</OPENCV_CORE.name>
+        <OPENCV_CORE.version>3.0.0</OPENCV_CORE.version>
+		<OPENCV_HIGHGUI.name>OpenCV-HighGui</OPENCV_HIGHGUI.name>
+        <OPENCV_HIGHGUI.version>3.0.0</OPENCV_HIGHGUI.version>
+		<OPENCV_IMGPROC.name>OpenCV-ImgProc</OPENCV_IMGPROC.name>
+        <OPENCV_IMGPROC.version>3.0.0</OPENCV_IMGPROC.version>    
         
 	</properties>
 	
@@ -152,6 +159,7 @@
                             <include>specifics/Layout/*.cpp</include>
                             <include>specifics/RoiCounters/*.cpp</include>
 							<include>specifics/Mask/*.cpp</include>
+							<include>specifics/Rixs/*.cpp</include>
                         </includes>
                         <includePaths>                          
                             <includePath>src</includePath>                                   
@@ -166,6 +174,7 @@
                             <includePath>specifics/Layout</includePath>
                             <includePath>specifics/RoiCounters</includePath>
 							<includePath>specifics/Mask</includePath>
+							<includePath>specifics/Rixs</includePath>
 							
 							<includePath>${yat4tango-include}</includePath>
 							<includePath>${nexuscpp-include}</includePath>
@@ -174,6 +183,7 @@
 							<includePath>${tango-include}</includePath>
 							<includePath>${omniorb-include}</includePath>
 							<includePath>$(log4tango-include}</includePath>
+							<includePath>${opencv_path}/include</includePath>
                         </includePaths>
                        
                         <defines>
@@ -197,6 +207,12 @@
                             <define>DHYANA6060_VERSION=${DHYANA6060.version}</define>
 							<define>SPECTRUMONE_NAME=${SPECTRUMONE.name}</define>
                             <define>SPECTRUMONE_VERSION=${SPECTRUMONE.version}</define>
+                            <define>OPENCV_CORE_NAME=${OPENCV_CORE.name}</define>
+                            <define>OPENCV_CORE_VERSION=${OPENCV_CORE.version}</define>          
+                            <define>OPENCV_HIGHGUI_NAME=${OPENCV_HIGHGUI.name}</define>
+                            <define>OPENCV_HIGHGUI_VERSION=${OPENCV_HIGHGUI.version}</define>    
+                            <define>OPENCV_IMGPROC_NAME=${OPENCV_IMGPROC.name}</define>
+                            <define>OPENCV_IMGPROC_VERSION=${OPENCV_IMGPROC.version}</define>	
 
                             <!-- define which detector you need to ENABLE -->      
                             <define>SIMULATOR_ENABLED</define>
@@ -210,6 +226,7 @@
                             <define>LAYOUT_ENABLED</define>
                             <define>ROICOUNTERS_ENABLED</define>             
 							<define>MASK_ENABLED</define>
+							<define>RIXS_ENABLED</define>
                             <define>SOLEIL_YAT_STREAM</define>
 							
                             <define>WIN32</define> 						
@@ -298,6 +315,14 @@
 								<type>shared</type>
 								<directory>${zeromq-lib}</directory>
 							</lib>
+							
+							<!-- opencv 3.0.0-->
+                             <lib>
+                                <name>opencv_world300</name>
+								<type>shared</type>
+								<directory>${opencv_path}/lib/</directory>
+							</lib>  
+							
 						</libs>
 					</linker>
                 </configuration>

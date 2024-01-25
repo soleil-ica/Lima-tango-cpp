@@ -9,7 +9,7 @@
     
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.12.2-patch</version>
+    <version>1.12.3</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -29,12 +29,18 @@
       
         <EIGER.name>Eiger</EIGER.name>
         <EIGER.version>2.3.3</EIGER.version>
+		<IMXPAD.name>ImXpad</IMXPAD.name>
+		<IMXPAD.version>1.2.1</IMXPAD.version>
+		<MARCCD.name>Marccd</MARCCD.name>
+		<MARCCD.version>1.3.20</MARCCD.version>
+		<MERLIN.name>Merlin</MERLIN.name>
+		<MERLIN.version>1.3.1</MERLIN.version>
         <SLSJUNGFRAU.name>SlsJungfrau</SLSJUNGFRAU.name>
         <SLSJUNGFRAU.version>1.2.2</SLSJUNGFRAU.version>
         <SLSEIGER.name>SlsEiger</SLSEIGER.name>
         <SLSEIGER.version>1.0.3</SLSEIGER.version>
         <UFXC.name>Ufxc</UFXC.name>
-        <UFXC.version>2.0.4</UFXC.version>    
+        <UFXC.version>2.0.5</UFXC.version>    
         <SPECTRAL.name>SpectralInstrument</SPECTRAL.name>
         <SPECTRAL.version>1.1.1</SPECTRAL.version>   
 
@@ -67,6 +73,23 @@
             <artifactId>LimaEiger-amd64-Linux-gcc-shared-${mode}</artifactId>
             <version>${EIGER.version}</version>
         </dependency>
+		<dependency>
+			<groupId>fr.soleil.lib.Lima.Camera</groupId>
+			<artifactId>LimaImXpad-amd64-Linux-gcc-shared-${mode}</artifactId>
+			<version>${IMXPAD.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>fr.soleil.lib.Lima.Camera</groupId>
+			<artifactId>LimaMarccd-amd64-Linux-gcc-shared-${mode}</artifactId>
+			<version>${MARCCD.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>fr.soleil.lib.Lima.Camera</groupId>
+			<artifactId>LimaMerlin-amd64-Linux-gcc-shared-${mode}</artifactId>
+			<version>${MERLIN.version}</version>
+		</dependency>
         <dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaSlsEiger-amd64-Linux-gcc-shared-${mode}</artifactId>
@@ -102,6 +125,9 @@
                             <include>*.cpp</include>						
                             <include>specifics/SimulatorCCD/*.cpp</include>							
                             <include>specifics/Eiger/*.cpp</include>
+							<include>specifics/ImXpad/*.cpp</include>                                                              
+							<include>specifics/MarCCD/*.cpp</include>                                   
+							<include>specifics/Merlin/*.cpp</include>
                             <include>specifics/SlsJungfrau/*.cpp</include>
                             <include>specifics/SlsEiger/*.cpp</include>
                             <include>specifics/SpectralInstrument/*.cpp</include>
@@ -115,7 +141,10 @@
                         <includePaths>                          
                             <includePath>src</includePath>                                   
                             <includePath>specifics/SimulatorCCD</includePath>         
-                            <includePath>specifics/Eiger</includePath> 
+                            <includePath>specifics/Eiger</includePath>
+							<includePath>specifics/ImXpad</includePath>                                                                                 
+							<includePath>specifics/MarCCD</includePath>                              
+							<includePath>specifics/Merlin</includePath>
                             <includePath>specifics/SlsJungfrau</includePath>
                             <includePath>specifics/SlsEiger</includePath>  
                             <includePath>specifics/SpectralInstrument</includePath>   
@@ -150,6 +179,12 @@
                             <define>LIMACORE_VERSION=${LIMACORE.version}</define>
                             <define>EIGER_NAME=${EIGER.name}</define>
                             <define>EIGER_VERSION=${EIGER.version}</define>
+							<define>IMXPAD_NAME=${IMXPAD.name}</define>
+							<define>IMXPAD_VERSION=${IMXPAD.version}</define>
+							<define>MARCCD_NAME=${MARCCD.name}</define>
+							<define>MARCCD_VERSION=${MARCCD.version}</define>
+							<define>MERLIN_NAME=${MERLIN.name}</define>
+							<define>MERLIN_VERSION=${MERLIN.version}</define>
                             <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
                             <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
                             <define>SLSJUNGFRAU_NAME=${SLSJUNGFRAU.name}</define>
@@ -164,6 +199,9 @@
                             <!-- define which detector you need to ENABLE -->      
                             <define>SIMULATOR_ENABLED</define>                       
                             <define>EIGER_ENABLED</define>     
+							<define>IMXPAD_ENABLED</define>                                                                                      								 
+							<define>MARCCD_ENABLED</define>       
+							<define>MERLIN_ENABLED</define>
                             <define>SLSJUNGFRAU_ENABLED</define> 
                             <define>SLSEIGER_ENABLED</define>
                             <define>UFXC_ENABLED</define>
@@ -301,17 +339,7 @@
                                 <type>shared</type>
                                 <directory>${libs-64bits}/nexuscpp/${NexusCPP.version}/lib</directory>
                             </lib>   
-                            
-                            <!-- <lib>
-                                <name>gsl</name>
-                                <type>shared</type>
-                                <directory>${libs-64bits}/gsl-1.11/lib/</directory>
-                            </lib>
-                            <lib>
-                                <name>gslcblas</name>
-                                <type>shared</type>
-                                <directory>${libs-64bits}/gsl-1.11/lib/</directory>
-                            </lib> -->
+
 							<lib>
                                 <name>UfxcDecode-amd64-Linux-gcc-shared-release-1.2.0</name>
                                 <type>shared</type>

@@ -51,6 +51,10 @@ static const char *RcsId = "$Id:  $";
 #include <MaskClass.h>
 #endif
 
+#ifdef RIXS_ENABLED
+#include <RixsClass.h>
+#endif
+
 #ifdef SIMULATOR_ENABLED
 #include <SimulatorCCDClass.h>
 #endif
@@ -225,6 +229,10 @@ void Tango::DServer::class_factory()
 
 #ifdef MASK_ENABLED    
     add_class(Mask_ns::MaskClass::init("Mask"));
+#endif
+
+#ifdef RIXS_ENABLED    
+    add_class(Rixs_ns::RixsClass::init("Rixs"));
 #endif
 
 #ifdef SLSJUNGFRAU_ENABLED        

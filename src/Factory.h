@@ -253,6 +253,11 @@ private:
 #ifdef MASK_ENABLED    
     std::string                     m_device_name_mask;
 #endif      
+
+#ifdef RIXS_ENABLED    
+    std::string                     m_device_name_rixs;
+#endif 
+
     Tango::DevState                 m_state;
     stringstream                    m_status;
     stringstream                    m_event_status;	

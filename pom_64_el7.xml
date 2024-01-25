@@ -9,7 +9,7 @@
     
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.12.2-patch</version>
+    <version>1.12.3</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -29,7 +29,7 @@
         <SIMULATOR.version>1.4.2</SIMULATOR.version>
 		
 		<LAMBDA.name>Lambda</LAMBDA.name>
-        <LAMBDA.version>2.0.2</LAMBDA.version>
+        <LAMBDA.version>2.0.3</LAMBDA.version>
 
         <YAT.version>1.18.5</YAT.version> 
         <YAT4Tango.version>1.13.2</YAT4Tango.version> 
@@ -251,17 +251,6 @@
                                 <type>shared</type>
                                 <directory>${libs-64bits}/nexuscpp-${NexusCPP.version}/lib</directory>
                             </lib>   
-                            
-                            <!-- <lib>
-                                <name>gsl</name>
-                                <type>shared</type>
-                                <directory>${libs-64bits}/gsl-1.15-13.el7.x86_64/lib/</directory>
-                            </lib>
-                            <lib>
-                                <name>gslcblas</name>
-                                <type>shared</type>
-                                <directory>${libs-64bits}/gsl-1.15-13.el7.x86_64/lib/</directory>
-                            </lib>							 -->
                         </libs>
                     </linker>
 
