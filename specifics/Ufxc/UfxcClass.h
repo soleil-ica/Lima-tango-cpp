@@ -92,6 +92,54 @@ public:
 	{return (static_cast<Ufxc *>(dev))->is_triggerAcquisitionFrequency_allowed(ty);}
 };
 
+class thresholdHigh2Attrib: public Tango::Attr
+{
+public:
+	thresholdHigh2Attrib():Attr("thresholdHigh2", Tango::DEV_ULONG, Tango::READ) {};
+	~thresholdHigh2Attrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Ufxc *>(dev))->read_thresholdHigh2(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Ufxc *>(dev))->is_thresholdHigh2_allowed(ty);}
+};
+
+class thresholdLow2Attrib: public Tango::Attr
+{
+public:
+	thresholdLow2Attrib():Attr("thresholdLow2", Tango::DEV_ULONG, Tango::READ) {};
+	~thresholdLow2Attrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Ufxc *>(dev))->read_thresholdLow2(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Ufxc *>(dev))->is_thresholdLow2_allowed(ty);}
+};
+
+class thresholdHigh1Attrib: public Tango::Attr
+{
+public:
+	thresholdHigh1Attrib():Attr("thresholdHigh1", Tango::DEV_ULONG, Tango::READ) {};
+	~thresholdHigh1Attrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Ufxc *>(dev))->read_thresholdHigh1(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Ufxc *>(dev))->is_thresholdHigh1_allowed(ty);}
+};
+
+class thresholdLow1Attrib: public Tango::Attr
+{
+public:
+	thresholdLow1Attrib():Attr("thresholdLow1", Tango::DEV_ULONG, Tango::READ) {};
+	~thresholdLow1Attrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Ufxc *>(dev))->read_thresholdLow1(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Ufxc *>(dev))->is_thresholdLow1_allowed(ty);}
+};
+
 class thresholdHighAttrib: public Tango::Attr
 {
 public:

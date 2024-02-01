@@ -57,7 +57,6 @@
 #include <yat4tango/PropertyHelper.h>
 #include <yat4tango/InnerAppender.h>
 #include <yat4tango/DeviceTask.h>
-#include <yat4tango/DynamicInterfaceManager.h>
 
 #include "UfxcInterface.h"
 #include "UfxcCamera.h"
@@ -111,6 +110,10 @@ public :
 		Tango::DevFloat	attr_thresholdLow_write;
 		Tango::DevFloat	*attr_thresholdHigh_read;
 		Tango::DevFloat	attr_thresholdHigh_write;
+		Tango::DevULong	*attr_thresholdLow1_read;
+		Tango::DevULong	*attr_thresholdHigh1_read;
+		Tango::DevULong	*attr_thresholdLow2_read;
+		Tango::DevULong	*attr_thresholdHigh2_read;
 		Tango::DevFloat	*attr_triggerAcquisitionFrequency_read;
 		Tango::DevFloat	attr_triggerAcquisitionFrequency_write;
 		Tango::DevBoolean	*attr_geometricalCorrection_read;
@@ -140,6 +143,30 @@ public :
  *	Config Port
  */
 	Tango::DevULong	configPort;
+/**
+ *	SFP1 Ip Address
+ */
+	string	sFP1IpAddress;
+/**
+ *	SFP1 Port
+ */
+	Tango::DevULong	sFP1Port;
+/**
+ *	SFP2 Ip Address
+ */
+	string	sFP2IpAddress;
+/**
+ *	SFP2 Port
+ */
+	Tango::DevULong	sFP2Port;
+/**
+ *	SFP3 Ip Address
+ */
+	string	sFP3IpAddress;
+/**
+ *	SFP3 Port
+ */
+	Tango::DevULong	sFP3Port;
 /**
  *	Timeout in ms
  */
@@ -182,10 +209,6 @@ public :
  *	Allows to specify the UFXC model.
  */
 	string	ufxcModel;
-/**
- *	Number of SFP adresses (ip & port)
- */
-	Tango::DevUShort	sFPCount;
 //@}
 
 /**
@@ -295,6 +318,22 @@ public :
  */
 	virtual void write_thresholdHigh(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for thresholdLow1 acquisition result.
+ */
+	virtual void read_thresholdLow1(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for thresholdHigh1 acquisition result.
+ */
+	virtual void read_thresholdHigh1(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for thresholdLow2 acquisition result.
+ */
+	virtual void read_thresholdLow2(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for thresholdHigh2 acquisition result.
+ */
+	virtual void read_thresholdHigh2(Tango::Attribute &attr);
+/**
  *	Extract real attribute values for triggerAcquisitionFrequency acquisition result.
  */
 	virtual void read_triggerAcquisitionFrequency(Tango::Attribute &attr);
@@ -346,6 +385,22 @@ public :
  *	Read/Write allowed for thresholdHigh attribute.
  */
 	virtual bool is_thresholdHigh_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for thresholdLow1 attribute.
+ */
+	virtual bool is_thresholdLow1_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for thresholdHigh1 attribute.
+ */
+	virtual bool is_thresholdHigh1_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for thresholdLow2 attribute.
+ */
+	virtual bool is_thresholdLow2_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for thresholdHigh2 attribute.
+ */
+	virtual bool is_thresholdHigh2_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for triggerAcquisitionFrequency attribute.
  */
@@ -406,22 +461,6 @@ public :
  */
     void update_triggerAcquisitionFrequency();
 
-/**
- * @brief Create all threshold attributes
- * 
- */
-	void create_threshold_attributes();
-
-/**
- * @brief Create a threshold attribute
- * 
- */
-	void create_threshold_attribute(const string& name, const size_t& index, yat4tango::DynamicAttributeReadCallback& read_method);
-
-	void read_threshold_low_i(yat4tango::DynamicAttributeReadCallbackData &cbd);
-
-	void read_threshold_high_i(yat4tango::DynamicAttributeReadCallbackData &cbd);
-
 protected :	
 	//	Add your own data members here
 	//-----------------------------------------
@@ -439,28 +478,6 @@ protected :
     lima::Ufxc::Camera*         m_camera;	    
 	std::map<std::string, std::string>  m_map_alias_config_files;
     bool                        m_is_CountingMode_init; // to deal with a problem during the init process
-
-	std::vector<std::string>   m_SFP_ip_address;
-	std::vector<unsigned long> m_SFP_port;
-
-    /**
-     * @brief Object to manage dynamic attributes
-     * 
-     */
-	yat4tango::DynamicInterfaceManager m_dim;
-
-    /**
-     * @brief Tango attributes for persistence reading
-     * 
-     */
-    std::map<std::string, Tango::DevFloat*> m_threshold_read_map;
-
-    /**
-     * @brief Tango attributes for persistence reading
-     * 
-     */
-    std::map<std::string, size_t> m_threshold_idx_map;
-
 };
 
 }	// namespace_ns
