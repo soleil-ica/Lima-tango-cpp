@@ -9,7 +9,7 @@
     
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.12.3</version>
+    <version>1.12.4</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -40,7 +40,7 @@
         <SLSEIGER.name>SlsEiger</SLSEIGER.name>
         <SLSEIGER.version>1.0.3</SLSEIGER.version>
         <UFXC.name>Ufxc</UFXC.name>
-        <UFXC.version>2.0.5</UFXC.version>    
+        <UFXC.version>2.0.6</UFXC.version>    
         <SPECTRAL.name>SpectralInstrument</SPECTRAL.name>
         <SPECTRAL.version>1.1.1</SPECTRAL.version>   
 
