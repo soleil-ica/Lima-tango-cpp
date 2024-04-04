@@ -225,6 +225,23 @@ public:
 		{return (static_cast<Lambda *>(dev))->is_upperThreshold_allowed(ty);}
 };
 
+//	Attribute hwAcquisitionMode class definition
+class hwAcquisitionModeAttrib: public Tango::Attr
+{
+public:
+	hwAcquisitionModeAttrib():Attr("hwAcquisitionMode",
+			Tango::DEV_ENUM, Tango::READ_WRITE) {};
+	~hwAcquisitionModeAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Lambda *>(dev))->read_hwAcquisitionMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Lambda *>(dev))->write_hwAcquisitionMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Lambda *>(dev))->is_hwAcquisitionMode_allowed(ty);}
+	virtual bool same_type(const type_info &in_type) {return typeid(hwAcquisitionModeEnum) == in_type;}
+	virtual string get_enum_type() {return string("hwAcquisitionModeEnum");}
+};
+
 
 /**
  *	The LambdaClass singleton definition

@@ -64,6 +64,14 @@
 
 namespace Lambda_ns
 {
+enum _hwAcquisitionModeEnum {
+	_24_BITS,
+	_12_BITS,
+	_6_BITS,
+	_1_BIT,
+} ;
+typedef _hwAcquisitionModeEnum hwAcquisitionModeEnum;
+
 /*----- PROTECTED REGION ID(Lambda::Additional Class Declarations) ENABLED START -----*/
 
 //	Additional Class Declarations
@@ -106,6 +114,7 @@ public:
 	Tango::DevBoolean	*attr_chargeSumming_read;
 	Tango::DevDouble	*attr_lowerThreshold_read;
 	Tango::DevDouble	*attr_upperThreshold_read;
+	hwAcquisitionModeEnum	*attr_hwAcquisitionMode_read;
 
 //	Constructors and destructors
 public:
@@ -298,6 +307,16 @@ public:
 	virtual void read_upperThreshold(Tango::Attribute &attr);
 	virtual void write_upperThreshold(Tango::WAttribute &attr);
 	virtual bool is_upperThreshold_allowed(Tango::AttReqType type);
+/**
+ *	Attribute hwAcquisitionMode related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevEnum
+ *	Attr type:	Scalar
+ */
+	virtual void read_hwAcquisitionMode(Tango::Attribute &attr);
+	virtual void write_hwAcquisitionMode(Tango::WAttribute &attr);
+	virtual bool is_hwAcquisitionMode_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------
