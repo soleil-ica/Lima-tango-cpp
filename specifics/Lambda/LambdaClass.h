@@ -225,6 +225,32 @@ public:
 		{return (static_cast<Lambda *>(dev))->is_upperThreshold_allowed(ty);}
 };
 
+//	Attribute hwAccumulation class definition
+class hwAccumulationAttrib: public Tango::Attr
+{
+public:
+	hwAccumulationAttrib():Attr("hwAccumulation",
+			Tango::DEV_BOOLEAN, Tango::WRITE) {};
+	~hwAccumulationAttrib() {};
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Lambda *>(dev))->write_hwAccumulation(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Lambda *>(dev))->is_hwAccumulation_allowed(ty);}
+};
+
+//	Attribute exposureAccuTime class definition
+class exposureAccuTimeAttrib: public Tango::Attr
+{
+public:
+	exposureAccuTimeAttrib():Attr("exposureAccuTime",
+			Tango::DEV_DOUBLE, Tango::WRITE) {};
+	~exposureAccuTimeAttrib() {};
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Lambda *>(dev))->write_exposureAccuTime(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Lambda *>(dev))->is_exposureAccuTime_allowed(ty);}
+};
+
 
 /**
  *	The LambdaClass singleton definition

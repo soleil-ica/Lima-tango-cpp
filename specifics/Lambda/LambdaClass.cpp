@@ -663,6 +663,56 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Not Memorized
 	att_list.push_back(upperthreshold);
 
+	//	Attribute : hwAccumulation
+	hwAccumulationAttrib	*hwaccumulation = new hwAccumulationAttrib();
+	Tango::UserDefaultAttrProp	hwaccumulation_prop;
+	//	description	not set for hwAccumulation
+	//	label	not set for hwAccumulation
+	//	unit	not set for hwAccumulation
+	//	standard_unit	not set for hwAccumulation
+	//	display_unit	not set for hwAccumulation
+	//	format	not set for hwAccumulation
+	//	max_value	not set for hwAccumulation
+	//	min_value	not set for hwAccumulation
+	//	max_alarm	not set for hwAccumulation
+	//	min_alarm	not set for hwAccumulation
+	//	max_warning	not set for hwAccumulation
+	//	min_warning	not set for hwAccumulation
+	//	delta_t	not set for hwAccumulation
+	//	delta_val	not set for hwAccumulation
+	
+	hwaccumulation->set_default_properties(hwaccumulation_prop);
+	//	Not Polled
+	hwaccumulation->set_disp_level(Tango::OPERATOR);
+	hwaccumulation->set_memorized();
+	hwaccumulation->set_memorized_init(true);
+	att_list.push_back(hwaccumulation);
+
+	//	Attribute : exposureAccuTime
+	exposureAccuTimeAttrib	*exposureaccutime = new exposureAccuTimeAttrib();
+	Tango::UserDefaultAttrProp	exposureaccutime_prop;
+	//	description	not set for exposureAccuTime
+	//	label	not set for exposureAccuTime
+	//	unit	not set for exposureAccuTime
+	//	standard_unit	not set for exposureAccuTime
+	//	display_unit	not set for exposureAccuTime
+	//	format	not set for exposureAccuTime
+	//	max_value	not set for exposureAccuTime
+	//	min_value	not set for exposureAccuTime
+	//	max_alarm	not set for exposureAccuTime
+	//	min_alarm	not set for exposureAccuTime
+	//	max_warning	not set for exposureAccuTime
+	//	min_warning	not set for exposureAccuTime
+	//	delta_t	not set for exposureAccuTime
+	//	delta_val	not set for exposureAccuTime
+	
+	exposureaccutime->set_default_properties(exposureaccutime_prop);
+	//	Not Polled
+	exposureaccutime->set_disp_level(Tango::OPERATOR);
+	exposureaccutime->set_memorized();
+	exposureaccutime->set_memorized_init(true);
+	att_list.push_back(exposureaccutime);
+
 
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());
