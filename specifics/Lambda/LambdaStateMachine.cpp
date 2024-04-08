@@ -478,11 +478,28 @@ bool Lambda::is_exposureAccuTime_allowed(TANGO_UNUSED(Tango::AttReqType type))
 		}
 		return true;
 	}
-
 	return true;
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : Lambda::is_hwAcquisitionMode_allowed()
+ *	Description : Execution allowed for hwAcquisitionMode attribute
+ */
+//--------------------------------------------------------
+bool Lambda::is_hwAcquisitionMode_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Not any excluded states for hwAcquisitionMode attribute in Write access.
+	/*----- PROTECTED REGION ID(Lambda::hwAcquisitionModeStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::hwAcquisitionModeStateAllowed_WRITE
 
+	//	Not any excluded states for hwAcquisitionMode attribute in read access.
+	/*----- PROTECTED REGION ID(Lambda::hwAcquisitionModeStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::hwAcquisitionModeStateAllowed_READ
+}
+  
 //=================================================
 //		Commands Allowed Methods
 //=================================================

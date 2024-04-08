@@ -713,6 +713,39 @@ void LambdaClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	exposureaccutime->set_memorized_init(true);
 	att_list.push_back(exposureaccutime);
 
+  //	Attribute : hwAcquisitionMode
+	hwAcquisitionModeAttrib	*hwacquisitionmode = new hwAcquisitionModeAttrib();
+	Tango::UserDefaultAttrProp	hwacquisitionmode_prop;
+	//	description	not set for hwAcquisitionMode
+	//	label	not set for hwAcquisitionMode
+	//	unit	not set for hwAcquisitionMode
+	//	standard_unit	not set for hwAcquisitionMode
+	//	display_unit	not set for hwAcquisitionMode
+	//	format	not set for hwAcquisitionMode
+	//	max_value	not set for hwAcquisitionMode
+	//	min_value	not set for hwAcquisitionMode
+	//	max_alarm	not set for hwAcquisitionMode
+	//	min_alarm	not set for hwAcquisitionMode
+	//	max_warning	not set for hwAcquisitionMode
+	//	min_warning	not set for hwAcquisitionMode
+	//	delta_t	not set for hwAcquisitionMode
+	//	delta_val	not set for hwAcquisitionMode
+	
+	{
+		vector<string> labels;
+		labels.push_back("24 Bits");
+		labels.push_back("12 Bits");
+		labels.push_back("6 Bits");
+		labels.push_back("1 Bit");
+		hwacquisitionmode_prop.set_enum_labels(labels);
+	}
+	hwacquisitionmode->set_default_properties(hwacquisitionmode_prop);
+	//	Not Polled
+	hwacquisitionmode->set_disp_level(Tango::OPERATOR);
+	hwacquisitionmode->set_memorized();
+	hwacquisitionmode->set_memorized_init(true);
+	att_list.push_back(hwacquisitionmode);
+  
 
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());
