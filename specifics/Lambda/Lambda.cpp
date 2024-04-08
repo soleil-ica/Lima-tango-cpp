@@ -85,6 +85,8 @@ namespace Lambda_ns
 //  lowerThreshold        |  Tango::DevDouble	Scalar
 //  upperThreshold        |  Tango::DevDouble	Scalar
 //  hwAcquisitionMode     |  Tango::DevEnum	Scalar
+//  hwAccumulation        |  Tango::DevBoolean	Scalar
+//  exposureAccuTime      |  Tango::DevDouble	Scalar
 //================================================================
 
 namespace Lambda_ns
@@ -1033,6 +1035,70 @@ void Lambda::write_hwAcquisitionMode(Tango::WAttribute &attr)
 	}
 	
 	/*----- PROTECTED REGION END -----*/	//	Lambda::write_hwAcquisitionMode
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute hwAccumulation related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::write_hwAccumulation(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Lambda::write_hwAccumulation(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevBoolean	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Lambda::write_hwAccumulation) ENABLED START -----*/
+	try
+    {
+        m_camera->setAccumulationMode(w_val);
+		//- Memorize the write value
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "hwAccumulation", w_val);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "Lambda::write_hwAccumulation");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "Lambda::write_hwAccumulation");
+    }	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::write_hwAccumulation
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute exposureAccuTime related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::write_exposureAccuTime(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Lambda::write_exposureAccuTime(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Lambda::write_exposureAccuTime) ENABLED START -----*/
+	try
+    {
+        m_camera->setExposureAccuTime(w_val);
+		//- Memorize the write value
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "exposureAccuTime", w_val);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "Lambda::write_exposureAccuTime");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "Lambda::write_exposureAccuTime");
+    }
+	/*----- PROTECTED REGION END -----*/	//	Lambda::write_exposureAccuTime
 }
 
 //--------------------------------------------------------
