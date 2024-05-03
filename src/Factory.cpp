@@ -486,6 +486,21 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
         }
 #endif
 
+#ifdef TELEDYNE_ENABLED
+        if (detector_type == "TeledynePI")
+        {
+            if (!ControlFactory::m_is_created)
+            {
+                m_camera = 0;
+                m_interface = static_cast<void*> (new Princeton::Interface(""));
+                m_control = new CtControl(static_cast<Princeton::Interface*> (m_interface));
+              
+                ControlFactory::m_is_created = true;
+                return m_control;
+			}
+		}
+#endif
+
 #ifdef PCO_ENABLED
         if (detector_type == "Pco")
         {
@@ -1174,6 +1189,13 @@ void ControlFactory::reset(const std::string& detector_type)
                 }
 #endif         
 
+#ifdef TELEDYNE_ENABLED        
+                if (detector_type == "TeledynePI")
+                {
+                    //NOP: no Camera class , only an Interface class
+                }
+#endif 
+
 #ifdef PCO_ENABLED        
                 if (detector_type == "Pco")
                 {
@@ -1285,7 +1307,6 @@ void ControlFactory::reset(const std::string& detector_type)
                     delete (static_cast<SpectralInstrument::Camera*> (m_camera));
                 }
 #endif
-
 				
                 m_camera = 0;
             }
