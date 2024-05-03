@@ -82,6 +82,16 @@
 #include <RoperScientificInterface.h>
 #endif
 
+#ifdef TELEDYNE_ENABLED
+#include <PrincetonBinCtrlObj.h>
+#include <PrincetonDetInfoCtrlObj.h>
+#include <PrincetonRoiCtrlObj.h>
+#include <PrincetonSyncCtrlObj.h>
+#include <PrincetonShutterCtrlObj.h>
+#include <PrincetonException.h>
+#include <PrincetonInterface.h>
+#endif
+
 #ifdef PCO_ENABLED
 #include <Pco.h>
 #include <PcoBufferCtrlObj.h>

@@ -91,6 +91,10 @@ static const char *RcsId = "$Id:  $";
 #include <PrincetonCCDClass.h>
 #endif
 
+#ifdef TELEDYNE_ENABLED
+#include <TeledynePIClass.h>
+#endif
+
 #ifdef PCO_ENABLED
 #include <PcoClass.h>
 #endif
@@ -193,6 +197,10 @@ void Tango::DServer::class_factory()
 
 #ifdef PRINCETON_ENABLED
     add_class(PrincetonCCD_ns::PrincetonCCDClass::init("PrincetonCCD"));
+#endif
+
+#ifdef TELEDYNE_ENABLED
+    add_class(TeledynePI_ns::TeledynePIClass::init("TeledynePI"));
 #endif
 
 #ifdef PCO_ENABLED

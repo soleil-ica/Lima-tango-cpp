@@ -243,6 +243,7 @@ public:
  *	- PerkinElmer<BR>
  *	- PilatusPixelDetector<BR>
  *	- PrincetonCCD<BR>
+ *	- TeledynePI<BR>
  *	- SimulatorCCD<BR>
  *	- SlsEiger<BR>
  *	- SlsJungfrau<BR>
