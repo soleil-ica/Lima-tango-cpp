@@ -385,53 +385,141 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	bottom_view_exposure_time->set_memorized_init(false);
 	att_list.push_back(bottom_view_exposure_time);
 
-	//	Attribute : channel1Polarity
-	channel1PolarityAttrib	*channel1_polarity = new channel1PolarityAttrib();
-	Tango::UserDefaultAttrProp	channel1_polarity_prop;
-	channel1_polarity_prop.set_description("Polarity value : \n1 = Negative\n2 = Positive");
-	channel1_polarity->set_default_properties(channel1_polarity_prop);
-	channel1_polarity->set_disp_level(Tango::EXPERT);
-	att_list.push_back(channel1_polarity);
+	//	Attribute : sensorMode (// PNR=Photon Numver Resolving, not found)
+	sensorModeAttrib	*sensor_mode = new sensorModeAttrib();
+	Tango::UserDefaultAttrProp	sensor_mode_prop;
+	sensor_mode_prop.set_description("Sensor Mode values : \n1 = Area\n2 = Line\n3 = TDI\n4 = TDI Extended\n5 = Progressive"); 
+	sensor_mode->set_default_properties(sensor_mode_prop);
+	//sensor_mode->set_disp_level(Tango::EXPERT);
+	att_list.push_back(sensor_mode);
 
-	//	Attribute : channel2Polarity
-	channel2PolarityAttrib	*channel2_polarity = new channel2PolarityAttrib();
-	Tango::UserDefaultAttrProp	channel2_polarity_prop;
-	channel2_polarity_prop.set_description("Polarity value : \n1 = Negative\n2 = Positive");
-	channel2_polarity->set_default_properties(channel2_polarity_prop);
-	channel2_polarity->set_disp_level(Tango::EXPERT);
-	att_list.push_back(channel2_polarity);
+	//	Attribute : pixelType
+	pixelTypeAttrib	*pixel_type = new pixelTypeAttrib();
+	Tango::UserDefaultAttrProp	pixel_type_prop;
+	pixel_type_prop.set_description("Pixel Type values : \n1 = MONO8\n2 = MONO16\n3 = RGB24\n4 = RGB48\n5 = BGR24\n6 = BGR48");
+	pixel_type->set_default_properties(pixel_type_prop);
+	//pixel_type->set_disp_level(Tango::EXPERT);
+	att_list.push_back(pixel_type);
 
-	//	Attribute : channel3Polarity
-	channel3PolarityAttrib	*channel3_polarity = new channel3PolarityAttrib();
-	Tango::UserDefaultAttrProp	channel3_polarity_prop;
-	channel3_polarity_prop.set_description("Polarity value : \n1 = Negative\n2 = Positive");
-	channel3_polarity->set_default_properties(channel3_polarity_prop);
-	channel3_polarity->set_disp_level(Tango::EXPERT);
-	att_list.push_back(channel3_polarity);
+	//	Attribute : scanMode
+	scanModeAttrib	*scan_mode = new scanModeAttrib();
+	Tango::UserDefaultAttrProp	scan_mode_prop;
+	scan_mode_prop.set_description("Scan Mode values : \n1 = Ultra Quiet\n2 = Standard");
+	scan_mode->set_default_properties(scan_mode_prop);
+	//scan_mode->set_disp_level(Tango::EXPERT);
+	att_list.push_back(scan_mode);
 
-	//	Attribute : channel1Kind
-	channel1KindAttrib	*channel1_kind = new channel1KindAttrib();
-	Tango::UserDefaultAttrProp	channel1_kind_prop;
-	channel1_kind_prop.set_description("This element can contain 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 elements max\n\nKind value : \n1 = Output_Trigger_Kind_Low\n2 = Output_Trigger_Kind_Global_Exposure\n3 = Output_Trigger_Kind_Programmable\n4 = Output_Trigger_Kind_TriggerReady\n5 = Output_Trigger_Kind_High (may need SDK update)");
-	channel1_kind->set_default_properties(channel1_kind_prop);
-	channel1_kind->set_disp_level(Tango::EXPERT);
-	att_list.push_back(channel1_kind);
+	//	Attribute : inputTriggerActive
+	inputTriggerActiveAttrib	*input_trigger_active = new inputTriggerActiveAttrib();
+	Tango::UserDefaultAttrProp	input_trigger_active_prop;
+	input_trigger_active_prop.set_description("Active value : \n1 = Edge\n2 = Level\n3 = SyncReadout");
+	input_trigger_active->set_default_properties(input_trigger_active_prop);
+	input_trigger_active->set_disp_level(Tango::EXPERT);
+	att_list.push_back(input_trigger_active);
 
-	//	Attribute : channel2Kind
-	channel2KindAttrib	*channel2_kind = new channel2KindAttrib();
-	Tango::UserDefaultAttrProp	channel2_kind_prop;
-	channel2_kind_prop.set_description("This element can contain 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 elements max\n\nKind value : \n1 = Output_Trigger_Kind_Low\n2 = Output_Trigger_Kind_Global_Exposure\n3 = Output_Trigger_Kind_Programmable\n4 = Output_Trigger_Kind_TriggerReady\n5 = Output_Trigger_Kind_High (may need SDK update)");
-	channel2_kind->set_default_properties(channel2_kind_prop);
-	channel2_kind->set_disp_level(Tango::EXPERT);
-	att_list.push_back(channel2_kind);
+	//	Attribute : inputTriggerPolarity
+	inputTriggerPolarityAttrib	*input_trigger_polarity = new inputTriggerPolarityAttrib();
+	Tango::UserDefaultAttrProp	input_trigger_polarity_prop;
+	input_trigger_polarity_prop.set_description("Active value : \n1 = Negative\n2 = Positive");
+	input_trigger_polarity->set_default_properties(input_trigger_polarity_prop);
+	input_trigger_polarity->set_disp_level(Tango::EXPERT);
+	att_list.push_back(input_trigger_polarity);
 
-	//	Attribute : channel3Kind
-	channel3KindAttrib	*channel3_kind = new channel3KindAttrib();
-	Tango::UserDefaultAttrProp	channel3_kind_prop;
-	channel3_kind_prop.set_description("This element can contain 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 elements max\n\nKind value : \n1 = Output_Trigger_Kind_Low\n2 = Output_Trigger_Kind_Global_Exposure\n3 = Output_Trigger_Kind_Programmable\n4 = Output_Trigger_Kind_TriggerReady\n5 = Output_Trigger_Kind_High (may need SDK update)");
-	channel3_kind->set_default_properties(channel3_kind_prop);
-	channel3_kind->set_disp_level(Tango::EXPERT);
-	att_list.push_back(channel3_kind);
+	//	Attribute : channel1OutputTriggerPolarity
+	channel1OutputTriggerPolarityAttrib	*channel1_output_trigger_polarity = new channel1OutputTriggerPolarityAttrib();
+	Tango::UserDefaultAttrProp	channel1_output_trigger_polarity_prop;
+	channel1_output_trigger_polarity_prop.set_description("Polarity value : \n1 = Negative\n2 = Positive");
+	channel1_output_trigger_polarity->set_default_properties(channel1_output_trigger_polarity_prop);
+	channel1_output_trigger_polarity->set_disp_level(Tango::EXPERT);
+	att_list.push_back(channel1_output_trigger_polarity);
+
+	//	Attribute : channel2OutputTriggerPolarity
+	channel2OutputTriggerPolarityAttrib	*channel2_output_trigger_polarity = new channel2OutputTriggerPolarityAttrib();
+	Tango::UserDefaultAttrProp	channel2_output_trigger_polarity_prop;
+	channel2_output_trigger_polarity_prop.set_description("Polarity value : \n1 = Negative\n2 = Positive");
+	channel2_output_trigger_polarity->set_default_properties(channel2_output_trigger_polarity_prop);
+	channel2_output_trigger_polarity->set_disp_level(Tango::EXPERT);
+	att_list.push_back(channel2_output_trigger_polarity);
+
+	//	Attribute : channel3OutputTriggerPolarity
+	channel3OutputTriggerPolarityAttrib	*channel3_output_trigger_polarity = new channel3OutputTriggerPolarityAttrib();
+	Tango::UserDefaultAttrProp	channel3_output_trigger_polarity_prop;
+	channel3_output_trigger_polarity_prop.set_description("Polarity value : \n1 = Negative\n2 = Positive");
+	channel3_output_trigger_polarity->set_default_properties(channel3_output_trigger_polarity_prop);
+	channel3_output_trigger_polarity->set_disp_level(Tango::EXPERT);
+	att_list.push_back(channel3_output_trigger_polarity);
+
+	//	Attribute : channel1OutputTriggerKind
+	channel1OutputTriggerKindAttrib	*channel1_output_trigger_kind = new channel1OutputTriggerKindAttrib();
+	Tango::UserDefaultAttrProp	channel1_output_trigger_kind_prop;
+	channel1_output_trigger_kind_prop.set_description("This element can contain 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 elements max\n\nKind value : \n1 = Output_Trigger_Kind_Low\n2 = Output_Trigger_Kind_Global_Exposure\n3 = Output_Trigger_Kind_Programmable\n4 = Output_Trigger_Kind_TriggerReady\n5 = Output_Trigger_Kind_High (may need SDK update)");
+	channel1_output_trigger_kind->set_default_properties(channel1_output_trigger_kind_prop);
+	channel1_output_trigger_kind->set_disp_level(Tango::EXPERT);
+	att_list.push_back(channel1_output_trigger_kind);
+
+	//	Attribute : channel2OutputTriggerKind
+	channel2OutputTriggerKindAttrib	*channel2_output_trigger_kind = new channel2OutputTriggerKindAttrib();
+	Tango::UserDefaultAttrProp	channel2_output_trigger_kind_prop;
+	channel2_output_trigger_kind_prop.set_description("This element can contain 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 elements max\n\nKind value : \n1 = Output_Trigger_Kind_Low\n2 = Output_Trigger_Kind_Global_Exposure\n3 = Output_Trigger_Kind_Programmable\n4 = Output_Trigger_Kind_TriggerReady\n5 = Output_Trigger_Kind_High (may need SDK update)");
+	channel2_output_trigger_kind->set_default_properties(channel2_output_trigger_kind_prop);
+	channel2_output_trigger_kind->set_disp_level(Tango::EXPERT);
+	att_list.push_back(channel2_output_trigger_kind);
+
+	//	Attribute : channel3OutputTriggerKind
+	channel3OutputTriggerKindAttrib	*channel3_output_trigger_kind = new channel3OutputTriggerKindAttrib();
+	Tango::UserDefaultAttrProp	channel3_output_trigger_kind_prop;
+	channel3_output_trigger_kind_prop.set_description("This element can contain 3 elements because at 01/06/2021 on many hamamatsu camera there are 3 elements max\n\nKind value : \n1 = Output_Trigger_Kind_Low\n2 = Output_Trigger_Kind_Global_Exposure\n3 = Output_Trigger_Kind_Programmable\n4 = Output_Trigger_Kind_TriggerReady\n5 = Output_Trigger_Kind_High (may need SDK update)");
+	channel3_output_trigger_kind->set_default_properties(channel3_output_trigger_kind_prop);
+	channel3_output_trigger_kind->set_disp_level(Tango::EXPERT);
+	att_list.push_back(channel3_output_trigger_kind);
+
+	//	Attribute : channel1OutputTriggerDelay
+	channel1OutputTriggerDelayAttrib	*channel1_output_trigger_delay = new channel1OutputTriggerDelayAttrib();
+	Tango::UserDefaultAttrProp	channel1_output_trigger_delay_prop;
+	channel1_output_trigger_delay_prop.set_description("Delay value is real in seconds");
+	channel1_output_trigger_delay->set_default_properties(channel1_output_trigger_delay_prop);
+	channel1_output_trigger_delay->set_disp_level(Tango::EXPERT);
+	att_list.push_back(channel1_output_trigger_delay);
+
+	//	Attribute : channel2OutputTriggerDelay
+	channel2OutputTriggerDelayAttrib	*channel2_output_trigger_delay = new channel2OutputTriggerDelayAttrib();
+	Tango::UserDefaultAttrProp	channel2_output_trigger_delay_prop;
+	channel2_output_trigger_delay_prop.set_description("Delay value is real in seconds");
+	channel2_output_trigger_delay->set_default_properties(channel2_output_trigger_delay_prop);
+	channel2_output_trigger_delay->set_disp_level(Tango::EXPERT);
+	att_list.push_back(channel2_output_trigger_delay);
+
+	//	Attribute : channel3OutputTriggerDelay
+	channel3OutputTriggerDelayAttrib	*channel3_output_trigger_delay = new channel3OutputTriggerDelayAttrib();
+	Tango::UserDefaultAttrProp	channel3_output_trigger_delay_prop;
+	channel3_output_trigger_delay_prop.set_description("Delay value is real in seconds");
+	channel3_output_trigger_delay->set_default_properties(channel3_output_trigger_delay_prop);
+	channel3_output_trigger_delay->set_disp_level(Tango::EXPERT);
+	att_list.push_back(channel3_output_trigger_delay);
+
+	//	Attribute : channel1OutputTriggerSource
+	channel1OutputTriggerSourceAttrib	*channel1_output_trigger_source = new channel1OutputTriggerSourceAttrib();
+	Tango::UserDefaultAttrProp	channel1_output_trigger_source_prop;
+	channel1_output_trigger_source_prop.set_description("Source value :\n1 = Global Exposure\n2 = Readout End\n3 = VSync\n4 = HSync\n5 = Trigger");
+	channel1_output_trigger_source->set_default_properties(channel1_output_trigger_source_prop);
+	channel1_output_trigger_source->set_disp_level(Tango::EXPERT);
+	att_list.push_back(channel1_output_trigger_source);
+
+	//	Attribute : channel2OutputTriggerSource
+	channel2OutputTriggerSourceAttrib	*channel2_output_trigger_source = new channel2OutputTriggerSourceAttrib();
+	Tango::UserDefaultAttrProp	channel2_output_trigger_source_prop;
+	channel2_output_trigger_source_prop.set_description("Source value :\n1 = Global Exposure\n2 = Readout End\n3 = VSync\n4 = HSync\n5 = Trigger");
+	channel2_output_trigger_source->set_default_properties(channel2_output_trigger_source_prop);
+	channel2_output_trigger_source->set_disp_level(Tango::EXPERT);
+	att_list.push_back(channel2_output_trigger_source);
+
+	//	Attribute : channel3OutputTriggerSource
+	channel3OutputTriggerSourceAttrib	*channel3_output_trigger_source = new channel3OutputTriggerSourceAttrib();
+	Tango::UserDefaultAttrProp	channel3_output_trigger_source_prop;
+	channel3_output_trigger_source_prop.set_description("Source value :\n1 = Global Exposure\n2 = Readout End\n3 = VSync\n4 = HSync\n5 = Trigger");
+	channel3_output_trigger_source->set_default_properties(channel3_output_trigger_source_prop);
+	channel3_output_trigger_source->set_disp_level(Tango::EXPERT);
+	att_list.push_back(channel3_output_trigger_source);
 
 	//	End of Automatic code generation
 	//-------------------------------------------------------------

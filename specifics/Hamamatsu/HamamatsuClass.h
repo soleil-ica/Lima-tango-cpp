@@ -45,88 +45,242 @@ namespace Hamamatsu_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
-class channel3KindAttrib: public Tango::Attr
+class channel3OutputTriggerSourceAttrib: public Tango::Attr
 {
 public:
-	channel3KindAttrib():Attr("channel3Kind", Tango::DEV_USHORT, Tango::READ_WRITE) {};
-	~channel3KindAttrib() {};
+	channel3OutputTriggerSourceAttrib():Attr("channel3OutputTriggerSource", Tango::DEV_SHORT, Tango::READ_WRITE) {};
+	~channel3OutputTriggerSourceAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Hamamatsu *>(dev))->read_channel3Kind(att);}
+	{(static_cast<Hamamatsu *>(dev))->read_channel3OutputTriggerSource(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Hamamatsu *>(dev))->write_channel3Kind(att);}
+	{(static_cast<Hamamatsu *>(dev))->write_channel3OutputTriggerSource(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Hamamatsu *>(dev))->is_channel3Kind_allowed(ty);}
+	{return (static_cast<Hamamatsu *>(dev))->is_channel3OutputTriggerSource_allowed(ty);}
 };
 
-class channel2KindAttrib: public Tango::Attr
+class channel2OutputTriggerSourceAttrib: public Tango::Attr
 {
 public:
-	channel2KindAttrib():Attr("channel2Kind", Tango::DEV_USHORT, Tango::READ_WRITE) {};
-	~channel2KindAttrib() {};
+	channel2OutputTriggerSourceAttrib():Attr("channel2OutputTriggerSource", Tango::DEV_SHORT, Tango::READ_WRITE) {};
+	~channel2OutputTriggerSourceAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Hamamatsu *>(dev))->read_channel2Kind(att);}
+	{(static_cast<Hamamatsu *>(dev))->read_channel2OutputTriggerSource(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Hamamatsu *>(dev))->write_channel2Kind(att);}
+	{(static_cast<Hamamatsu *>(dev))->write_channel2OutputTriggerSource(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Hamamatsu *>(dev))->is_channel2Kind_allowed(ty);}
+	{return (static_cast<Hamamatsu *>(dev))->is_channel2OutputTriggerSource_allowed(ty);}
 };
 
-class channel1KindAttrib: public Tango::Attr
+class channel1OutputTriggerSourceAttrib: public Tango::Attr
 {
 public:
-	channel1KindAttrib():Attr("channel1Kind", Tango::DEV_USHORT, Tango::READ_WRITE) {};
-	~channel1KindAttrib() {};
+	channel1OutputTriggerSourceAttrib():Attr("channel1OutputTriggerSource", Tango::DEV_SHORT, Tango::READ_WRITE) {};
+	~channel1OutputTriggerSourceAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Hamamatsu *>(dev))->read_channel1Kind(att);}
+	{(static_cast<Hamamatsu *>(dev))->read_channel1OutputTriggerSource(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Hamamatsu *>(dev))->write_channel1Kind(att);}
+	{(static_cast<Hamamatsu *>(dev))->write_channel1OutputTriggerSource(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Hamamatsu *>(dev))->is_channel1Kind_allowed(ty);}
+	{return (static_cast<Hamamatsu *>(dev))->is_channel1OutputTriggerSource_allowed(ty);}
 };
 
-class channel3PolarityAttrib: public Tango::Attr
+class channel3OutputTriggerDelayAttrib: public Tango::Attr
 {
 public:
-	channel3PolarityAttrib():Attr("channel3Polarity", Tango::DEV_USHORT, Tango::READ_WRITE) {};
-	~channel3PolarityAttrib() {};
+	channel3OutputTriggerDelayAttrib():Attr("channel3OutputTriggerDelay", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~channel3OutputTriggerDelayAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Hamamatsu *>(dev))->read_channel3Polarity(att);}
+	{(static_cast<Hamamatsu *>(dev))->read_channel3OutputTriggerDelay(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Hamamatsu *>(dev))->write_channel3Polarity(att);}
+	{(static_cast<Hamamatsu *>(dev))->write_channel3OutputTriggerDelay(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Hamamatsu *>(dev))->is_channel3Polarity_allowed(ty);}
+	{return (static_cast<Hamamatsu *>(dev))->is_channel3OutputTriggerDelay_allowed(ty);}
 };
 
-class channel2PolarityAttrib: public Tango::Attr
+class channel2OutputTriggerDelayAttrib: public Tango::Attr
 {
 public:
-	channel2PolarityAttrib():Attr("channel2Polarity", Tango::DEV_USHORT, Tango::READ_WRITE) {};
-	~channel2PolarityAttrib() {};
+	channel2OutputTriggerDelayAttrib():Attr("channel2OutputTriggerDelay", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~channel2OutputTriggerDelayAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Hamamatsu *>(dev))->read_channel2Polarity(att);}
+	{(static_cast<Hamamatsu *>(dev))->read_channel2OutputTriggerDelay(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Hamamatsu *>(dev))->write_channel2Polarity(att);}
+	{(static_cast<Hamamatsu *>(dev))->write_channel2OutputTriggerDelay(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Hamamatsu *>(dev))->is_channel2Polarity_allowed(ty);}
+	{return (static_cast<Hamamatsu *>(dev))->is_channel2OutputTriggerDelay_allowed(ty);}
 };
 
-class channel1PolarityAttrib: public Tango::Attr
+class channel1OutputTriggerDelayAttrib: public Tango::Attr
 {
 public:
-	channel1PolarityAttrib():Attr("channel1Polarity", Tango::DEV_USHORT, Tango::READ_WRITE) {};
-	~channel1PolarityAttrib() {};
+	channel1OutputTriggerDelayAttrib():Attr("channel1OutputTriggerDelay", Tango::DEV_DOUBLE, Tango::READ_WRITE) {};
+	~channel1OutputTriggerDelayAttrib() {};
 	
 	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Hamamatsu *>(dev))->read_channel1Polarity(att);}
+	{(static_cast<Hamamatsu *>(dev))->read_channel1OutputTriggerDelay(att);}
 	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Hamamatsu *>(dev))->write_channel1Polarity(att);}
+	{(static_cast<Hamamatsu *>(dev))->write_channel1OutputTriggerDelay(att);}
 	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Hamamatsu *>(dev))->is_channel1Polarity_allowed(ty);}
+	{return (static_cast<Hamamatsu *>(dev))->is_channel1OutputTriggerDelay_allowed(ty);}
+};
+
+class channel3OutputTriggerKindAttrib: public Tango::Attr
+{
+public:
+	channel3OutputTriggerKindAttrib():Attr("channel3OutputTriggerKind", Tango::DEV_USHORT, Tango::READ_WRITE) {};
+	~channel3OutputTriggerKindAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_channel3OutputTriggerKind(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_channel3OutputTriggerKind(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_channel3OutputTriggerKind_allowed(ty);}
+};
+
+class channel2OutputTriggerKindAttrib: public Tango::Attr
+{
+public:
+	channel2OutputTriggerKindAttrib():Attr("channel2OutputTriggerKind", Tango::DEV_USHORT, Tango::READ_WRITE) {};
+	~channel2OutputTriggerKindAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_channel2OutputTriggerKind(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_channel2OutputTriggerKind(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_channel2OutputTriggerKind_allowed(ty);}
+};
+
+class channel1OutputTriggerKindAttrib: public Tango::Attr
+{
+public:
+	channel1OutputTriggerKindAttrib():Attr("channel1OutputTriggerKind", Tango::DEV_USHORT, Tango::READ_WRITE) {};
+	~channel1OutputTriggerKindAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_channel1OutputTriggerKind(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_channel1OutputTriggerKind(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_channel1OutputTriggerKind_allowed(ty);}
+};
+
+class channel3OutputTriggerPolarityAttrib: public Tango::Attr
+{
+public:
+	channel3OutputTriggerPolarityAttrib():Attr("channel3OutputTriggerPolarity", Tango::DEV_USHORT, Tango::READ_WRITE) {};
+	~channel3OutputTriggerPolarityAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_channel3OutputTriggerPolarity(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_channel3OutputTriggerPolarity(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_channel3OutputTriggerPolarity_allowed(ty);}
+};
+
+class channel2OutputTriggerPolarityAttrib: public Tango::Attr
+{
+public:
+	channel2OutputTriggerPolarityAttrib():Attr("channel2OutputTriggerPolarity", Tango::DEV_USHORT, Tango::READ_WRITE) {};
+	~channel2OutputTriggerPolarityAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_channel2OutputTriggerPolarity(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_channel2OutputTriggerPolarity(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_channel2OutputTriggerPolarity_allowed(ty);}
+};
+
+class channel1OutputTriggerPolarityAttrib: public Tango::Attr
+{
+public:
+	channel1OutputTriggerPolarityAttrib():Attr("channel1OutputTriggerPolarity", Tango::DEV_USHORT, Tango::READ_WRITE) {};
+	~channel1OutputTriggerPolarityAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_channel1OutputTriggerPolarity(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_channel1OutputTriggerPolarity(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_channel1OutputTriggerPolarity_allowed(ty);}
+};
+
+class inputTriggerPolarityAttrib: public Tango::Attr
+{
+public:
+	inputTriggerPolarityAttrib():Attr("inputTriggerPolarity", Tango::DEV_SHORT, Tango::READ_WRITE) {};
+	~inputTriggerPolarityAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_inputTriggerPolarity(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_inputTriggerPolarity(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_inputTriggerPolarity_allowed(ty);}
+};
+
+class inputTriggerActiveAttrib: public Tango::Attr
+{
+public:
+	inputTriggerActiveAttrib():Attr("inputTriggerActive", Tango::DEV_SHORT, Tango::READ_WRITE) {};
+	~inputTriggerActiveAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_inputTriggerActive(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_inputTriggerActive(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_inputTriggerActive_allowed(ty);}
+};
+
+class scanModeAttrib: public Tango::Attr
+{
+public:
+	scanModeAttrib():Attr("scanMode", Tango::DEV_USHORT, Tango::READ_WRITE) {};
+	~scanModeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_scanMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_scanMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_scanMode_allowed(ty);}
+};
+
+class pixelTypeAttrib: public Tango::Attr
+{
+public:
+	pixelTypeAttrib():Attr("pixelType", Tango::DEV_USHORT, Tango::READ_WRITE) {};
+	~pixelTypeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_pixelType(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_pixelType(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_pixelType_allowed(ty);}
+};
+
+class sensorModeAttrib: public Tango::Attr
+{
+public:
+	sensorModeAttrib():Attr("sensorMode", Tango::DEV_USHORT, Tango::READ_WRITE) {};
+	~sensorModeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Hamamatsu *>(dev))->read_sensorMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Hamamatsu *>(dev))->write_sensorMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Hamamatsu *>(dev))->is_sensorMode_allowed(ty);}
 };
 
 class bottomViewExposureTimeAttrib: public Tango::Attr

@@ -155,12 +155,12 @@ bool Hamamatsu::is_bottomViewExposureTime_allowed(Tango::AttReqType type)
 
 //+----------------------------------------------------------------------------
 //
-// method : 		Hamamatsu::is_channel1Polarity_allowed
+// method : 		Hamamatsu::is_inputTriggerActive_allowed
 // 
-// description : 	Read/Write allowed for channel1Polarity attribute.
+// description : 	Read/Write allowed for inputTriggerActive attribute.
 //
 //-----------------------------------------------------------------------------
-bool Hamamatsu::is_channel1Polarity_allowed(Tango::AttReqType type)
+bool Hamamatsu::is_inputTriggerActive_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
@@ -171,20 +171,43 @@ bool Hamamatsu::is_channel1Polarity_allowed(Tango::AttReqType type)
         {
             return true;
         }
-
-	//	Re-Start of Generated Code
+		//	Re-Start of Generated Code
 		return false;
 	}
 	return true;
 }
 //+----------------------------------------------------------------------------
 //
-// method : 		Hamamatsu::is_channel2Polarity_allowed
+// method : 		Hamamatsu::is_inputTriggerPolarity_allowed
 // 
-// description : 	Read/Write allowed for channel2Polarity attribute.
+// description : 	Read/Write allowed for inputTriggerPolarity attribute.
 //
 //-----------------------------------------------------------------------------
-bool Hamamatsu::is_channel2Polarity_allowed(Tango::AttReqType type)
+bool Hamamatsu::is_inputTriggerPolarity_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel1OutputTriggerPolarity_allowed
+// 
+// description : 	Read/Write allowed for channel1OutputTriggerPolarity attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel1OutputTriggerPolarity_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
@@ -201,62 +224,15 @@ bool Hamamatsu::is_channel2Polarity_allowed(Tango::AttReqType type)
 	}
 	return true;
 }
+
 //+----------------------------------------------------------------------------
 //
-// method : 		Hamamatsu::is_channel3Polarity_allowed
+// method : 		Hamamatsu::is_channel2OutputTriggerPolarity_allowed
 // 
-// description : 	Read/Write allowed for channel3Polarity attribute.
+// description : 	Read/Write allowed for channel2OutputTriggerPolarity attribute.
 //
 //-----------------------------------------------------------------------------
-bool Hamamatsu::is_channel3Polarity_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-        {
-            return true;
-        }
-	
-	//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Hamamatsu::is_channel1Kind_allowed
-// 
-// description : 	Read/Write allowed for channel1Kind attribute.
-//
-//-----------------------------------------------------------------------------
-bool Hamamatsu::is_channel1Kind_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-        {
-            return true;
-        }
-	
-	//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
-//+----------------------------------------------------------------------------
-//
-// method : 		Hamamatsu::is_channel2Kind_allowed
-// 
-// description : 	Read/Write allowed for channel2Kind attribute.
-//
-//-----------------------------------------------------------------------------
-bool Hamamatsu::is_channel2Kind_allowed(Tango::AttReqType type)
+bool Hamamatsu::is_channel2OutputTriggerPolarity_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
@@ -273,14 +249,65 @@ bool Hamamatsu::is_channel2Kind_allowed(Tango::AttReqType type)
 	}
 	return true;
 }
+
 //+----------------------------------------------------------------------------
 //
-// method : 		Hamamatsu::is_channel3Kind_allowed
+// method : 		Hamamatsu::is_channel3OutputTriggerPolarity_allowed
 // 
-// description : 	Read/Write allowed for channel3Kind attribute.
+// description : 	Read/Write allowed for channel3OutputTriggerPolarity attribute.
 //
 //-----------------------------------------------------------------------------
-bool Hamamatsu::is_channel3Kind_allowed(Tango::AttReqType type)
+bool Hamamatsu::is_channel3OutputTriggerPolarity_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+        
+	//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel1OutputTriggerKind_allowed
+// 
+// description : 	Read/Write allowed for channel1OutputTriggerKind attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel1OutputTriggerKind_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+	
+	//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel2OutputTriggerKind_allowed
+// 
+// description : 	Read/Write allowed for channel2OutputTriggerKind attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel2OutputTriggerKind_allowed(Tango::AttReqType type)
 {
 	if (get_state() == Tango::INIT	||
 		get_state() == Tango::FAULT	||
@@ -293,6 +320,239 @@ bool Hamamatsu::is_channel3Kind_allowed(Tango::AttReqType type)
         }
 
 	//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel3OutputTriggerKind_allowed
+// 
+// description : 	Read/Write allowed for channel3OutputTriggerKind attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel3OutputTriggerKind_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+
+	//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel1OutputTriggerDelay_allowed
+// 
+// description : 	Read/Write allowed for channel1OutputTriggerDelay attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel1OutputTriggerDelay_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel2OutputTriggerDelay_allowed
+// 
+// description : 	Read/Write allowed for channel2OutputTriggerDelay attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel2OutputTriggerDelay_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel3OutputTriggerDelay_allowed
+// 
+// description : 	Read/Write allowed for channel3OutputTriggerDelay attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel3OutputTriggerDelay_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel1OutputTriggerSource_allowed
+// 
+// description : 	Read/Write allowed for channel1OutputTriggerSource attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel1OutputTriggerSource_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel2OutputTriggerSource_allowed
+// 
+// description : 	Read/Write allowed for channel2OutputTriggerSource attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel2OutputTriggerSource_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_channel3OutputTriggerSource_allowed
+// 
+// description : 	Read/Write allowed for channel3OutputTriggerSource attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_channel3OutputTriggerSource_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_sensorMode_allowed
+// 
+// description : 	Read/Write allowed for sensorMode attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_sensorMode_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_pixelType_allowed
+// 
+// description : 	Read/Write allowed for pixelType attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_pixelType_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::is_scanMode_allowed
+// 
+// description : 	Read/Write allowed for scanMode attribute.
+//
+//-----------------------------------------------------------------------------
+bool Hamamatsu::is_scanMode_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
+        {
+            return true;
+        }
+		//	Re-Start of Generated Code
 		return false;
 	}
 	return true;

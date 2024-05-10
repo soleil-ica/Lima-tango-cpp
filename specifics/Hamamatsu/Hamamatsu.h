@@ -98,18 +98,40 @@ public :
 		Tango::DevDouble	attr_topViewExposureTime_write;
 		Tango::DevDouble	*attr_bottomViewExposureTime_read;
 		Tango::DevDouble	attr_bottomViewExposureTime_write;
-		Tango::DevUShort	*attr_channel1Polarity_read;
-		Tango::DevUShort	attr_channel1Polarity_write;
-		Tango::DevUShort	*attr_channel2Polarity_read;
-		Tango::DevUShort	attr_channel2Polarity_write;
-		Tango::DevUShort	*attr_channel3Polarity_read;
-		Tango::DevUShort	attr_channel3Polarity_write;
-		Tango::DevUShort	*attr_channel1Kind_read;
-		Tango::DevUShort	attr_channel1Kind_write;
-		Tango::DevUShort	*attr_channel2Kind_read;
-		Tango::DevUShort	attr_channel2Kind_write;
-		Tango::DevUShort	*attr_channel3Kind_read;
-		Tango::DevUShort	attr_channel3Kind_write;
+		Tango::DevUShort	*attr_sensorMode_read;
+		Tango::DevUShort	attr_sensorMode_write;
+		Tango::DevUShort	*attr_pixelType_read;
+		Tango::DevUShort	attr_pixelType_write;
+		Tango::DevUShort	*attr_scanMode_read;
+		Tango::DevUShort	attr_scanMode_write;
+		Tango::DevShort	*attr_inputTriggerActive_read;
+		Tango::DevShort	attr_inputTriggerActive_write;
+		Tango::DevShort	*attr_inputTriggerPolarity_read;
+		Tango::DevShort	attr_inputTriggerPolarity_write;
+		Tango::DevUShort	*attr_channel1OutputTriggerPolarity_read;
+		Tango::DevUShort	attr_channel1OutputTriggerPolarity_write;
+		Tango::DevUShort	*attr_channel2OutputTriggerPolarity_read;
+		Tango::DevUShort	attr_channel2OutputTriggerPolarity_write;
+		Tango::DevUShort	*attr_channel3OutputTriggerPolarity_read;
+		Tango::DevUShort	attr_channel3OutputTriggerPolarity_write;
+		Tango::DevUShort	*attr_channel1OutputTriggerKind_read;
+		Tango::DevUShort	attr_channel1OutputTriggerKind_write;
+		Tango::DevUShort	*attr_channel2OutputTriggerKind_read;
+		Tango::DevUShort	attr_channel2OutputTriggerKind_write;
+		Tango::DevUShort	*attr_channel3OutputTriggerKind_read;
+		Tango::DevUShort	attr_channel3OutputTriggerKind_write;
+		Tango::DevDouble	*attr_channel1OutputTriggerDelay_read;
+		Tango::DevDouble	attr_channel1OutputTriggerDelay_write;
+		Tango::DevDouble	*attr_channel2OutputTriggerDelay_read;
+		Tango::DevDouble	attr_channel2OutputTriggerDelay_write;
+		Tango::DevDouble	*attr_channel3OutputTriggerDelay_read;
+		Tango::DevDouble	attr_channel3OutputTriggerDelay_write;
+		Tango::DevShort	*attr_channel1OutputTriggerSource_read;
+		Tango::DevShort	attr_channel1OutputTriggerSource_write;
+		Tango::DevShort	*attr_channel2OutputTriggerSource_read;
+		Tango::DevShort	attr_channel2OutputTriggerSource_write;
+		Tango::DevShort	*attr_channel3OutputTriggerSource_read;
+		Tango::DevShort	attr_channel3OutputTriggerSource_write;
 //@}
 
 /**
@@ -204,6 +226,7 @@ public :
  *	will be called at device destruction or at init command.
  */
 	void delete_device();
+	void delete_orcaQuest_device();
 //@}
 
 	
@@ -213,6 +236,7 @@ public :
  *	Initialize the device
  */
 	virtual void init_device();
+	void create_orcaQuest_attributes();
 /**
  *	Always executed method before execution command method.
  */
@@ -262,53 +286,141 @@ public :
  */
 	virtual void write_bottomViewExposureTime(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for channel1Polarity acquisition result.
+ *	Extract real attribute values for sensorMode acquisition result.
  */
-	virtual void read_channel1Polarity(Tango::Attribute &attr);
+	virtual void read_sensorMode(Tango::Attribute &attr);
 /**
- *	Write channel1Polarity attribute values to hardware.
+ *	Write sensorMode attribute values to hardware.
  */
-	virtual void write_channel1Polarity(Tango::WAttribute &attr);
+	virtual void write_sensorMode(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for channel2Polarity acquisition result.
+ *	Extract real attribute values for pixelType acquisition result.
  */
-	virtual void read_channel2Polarity(Tango::Attribute &attr);
+	virtual void read_pixelType(Tango::Attribute &attr);
 /**
- *	Write channel2Polarity attribute values to hardware.
+ *	Write pixelType attribute values to hardware.
  */
-	virtual void write_channel2Polarity(Tango::WAttribute &attr);
+	virtual void write_pixelType(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for channel3Polarity acquisition result.
+ *	Extract real attribute values for scanMode acquisition result.
  */
-	virtual void read_channel3Polarity(Tango::Attribute &attr);
+	virtual void read_scanMode(Tango::Attribute &attr);
 /**
- *	Write channel3Polarity attribute values to hardware.
+ *	Write scanMode attribute values to hardware.
  */
-	virtual void write_channel3Polarity(Tango::WAttribute &attr);
+	virtual void write_scanMode(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for channel1Kind acquisition result.
+ *	Extract real attribute values for inputTriggerActive acquisition result.
  */
-	virtual void read_channel1Kind(Tango::Attribute &attr);
+	virtual void read_inputTriggerActive(Tango::Attribute &attr);
 /**
- *	Write channel1Kind attribute values to hardware.
+ *	Write inputTriggerActive attribute values to hardware.
  */
-	virtual void write_channel1Kind(Tango::WAttribute &attr);
+	virtual void write_inputTriggerActive(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for channel2Kind acquisition result.
+ *	Extract real attribute values for inputTriggerPolarity acquisition result.
  */
-	virtual void read_channel2Kind(Tango::Attribute &attr);
+	virtual void read_inputTriggerPolarity(Tango::Attribute &attr);
 /**
- *	Write channel2Kind attribute values to hardware.
+ *	Write inputTriggerPolarity attribute values to hardware.
  */
-	virtual void write_channel2Kind(Tango::WAttribute &attr);
+	virtual void write_inputTriggerPolarity(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for channel3Kind acquisition result.
+ *	Extract real attribute values for channel1OutputTriggerPolarity acquisition result.
  */
-	virtual void read_channel3Kind(Tango::Attribute &attr);
+	virtual void read_channel1OutputTriggerPolarity(Tango::Attribute &attr);
 /**
- *	Write channel3Kind attribute values to hardware.
+ *	Write channel1OutputTriggerPolarity attribute values to hardware.
  */
-	virtual void write_channel3Kind(Tango::WAttribute &attr);
+	virtual void write_channel1OutputTriggerPolarity(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel2OutputTriggerPolarity acquisition result.
+ */
+	virtual void read_channel2OutputTriggerPolarity(Tango::Attribute &attr);
+/**
+ *	Write channel2OutputTriggerPolarity attribute values to hardware.
+ */
+	virtual void write_channel2OutputTriggerPolarity(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel3OutputTriggerPolarity acquisition result.
+ */
+	virtual void read_channel3OutputTriggerPolarity(Tango::Attribute &attr);
+/**
+ *	Write channel3OutputTriggerPolarity attribute values to hardware.
+ */
+	virtual void write_channel3OutputTriggerPolarity(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel1OutputTriggerKind acquisition result.
+ */
+	virtual void read_channel1OutputTriggerKind(Tango::Attribute &attr);
+/**
+ *	Write channel1OutputTriggerKind attribute values to hardware.
+ */
+	virtual void write_channel1OutputTriggerKind(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel2OutputTriggerKind acquisition result.
+ */
+	virtual void read_channel2OutputTriggerKind(Tango::Attribute &attr);
+/**
+ *	Write channel2OutputTriggerKind attribute values to hardware.
+ */
+	virtual void write_channel2OutputTriggerKind(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel3OutputTriggerKind acquisition result.
+ */
+	virtual void read_channel3OutputTriggerKind(Tango::Attribute &attr);
+/**
+ *	Write channel3OutputTriggerKind attribute values to hardware.
+ */
+	virtual void write_channel3OutputTriggerKind(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel1OutputTriggerDelay acquisition result.
+ */
+	virtual void read_channel1OutputTriggerDelay(Tango::Attribute &attr);
+/**
+ *	Write channel1OutputTriggerDelay attribute values to hardware.
+ */
+	virtual void write_channel1OutputTriggerDelay(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel2OutputTriggerDelay acquisition result.
+ */
+	virtual void read_channel2OutputTriggerDelay(Tango::Attribute &attr);
+/**
+ *	Write channel2OutputTriggerDelay attribute values to hardware.
+ */
+	virtual void write_channel2OutputTriggerDelay(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel3OutputTriggerDelay acquisition result.
+ */
+	virtual void read_channel3OutputTriggerDelay(Tango::Attribute &attr);
+/**
+ *	Write channel3OutputTriggerDelay attribute values to hardware.
+ */
+	virtual void write_channel3OutputTriggerDelay(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel1OutputTriggerSource acquisition result.
+ */
+	virtual void read_channel1OutputTriggerSource(Tango::Attribute &attr);
+/**
+ *	Write channel1OutputTriggerSource attribute values to hardware.
+ */
+	virtual void write_channel1OutputTriggerSource(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel2OutputTriggerSource acquisition result.
+ */
+	virtual void read_channel2OutputTriggerSource(Tango::Attribute &attr);
+/**
+ *	Write channel2OutputTriggerSource attribute values to hardware.
+ */
+	virtual void write_channel2OutputTriggerSource(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for channel3OutputTriggerSource acquisition result.
+ */
+	virtual void read_channel3OutputTriggerSource(Tango::Attribute &attr);
+/**
+ *	Write channel3OutputTriggerSource attribute values to hardware.
+ */
+	virtual void write_channel3OutputTriggerSource(Tango::WAttribute &attr);
 /**
  *	Read/Write allowed for lostFrames attribute.
  */
@@ -330,29 +442,73 @@ public :
  */
 	virtual bool is_bottomViewExposureTime_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for channel1Polarity attribute.
+ *	Read/Write allowed for sensorMode attribute.
  */
-	virtual bool is_channel1Polarity_allowed(Tango::AttReqType type);
+	virtual bool is_sensorMode_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for channel2Polarity attribute.
+ *	Read/Write allowed for pixelType attribute.
  */
-	virtual bool is_channel2Polarity_allowed(Tango::AttReqType type);
+	virtual bool is_pixelType_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for channel3Polarity attribute.
+ *	Read/Write allowed for scanMode attribute.
  */
-	virtual bool is_channel3Polarity_allowed(Tango::AttReqType type);
+	virtual bool is_scanMode_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for channel1Kind attribute.
+ *	Read/Write allowed for inputTriggerActive attribute.
  */
-	virtual bool is_channel1Kind_allowed(Tango::AttReqType type);
+	virtual bool is_inputTriggerActive_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for channel2Kind attribute.
+ *	Read/Write allowed for inputTriggerPolarity attribute.
  */
-	virtual bool is_channel2Kind_allowed(Tango::AttReqType type);
+	virtual bool is_inputTriggerPolarity_allowed(Tango::AttReqType type);
 /**
- *	Read/Write allowed for channel3Kind attribute.
+ *	Read/Write allowed for channel1OutputTriggerPolarity attribute.
  */
-	virtual bool is_channel3Kind_allowed(Tango::AttReqType type);
+	virtual bool is_channel1OutputTriggerPolarity_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel2OutputTriggerPolarity attribute.
+ */
+	virtual bool is_channel2OutputTriggerPolarity_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel3OutputTriggerPolarity attribute.
+ */
+	virtual bool is_channel3OutputTriggerPolarity_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel1OutputTriggerKind attribute.
+ */
+	virtual bool is_channel1OutputTriggerKind_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel2OutputTriggerKind attribute.
+ */
+	virtual bool is_channel2OutputTriggerKind_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel3OutputTriggerKind attribute.
+ */
+	virtual bool is_channel3OutputTriggerKind_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel1OutputTriggerDelay attribute.
+ */
+	virtual bool is_channel1OutputTriggerDelay_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel2OutputTriggerDelay attribute.
+ */
+	virtual bool is_channel2OutputTriggerDelay_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel3OutputTriggerDelay attribute.
+ */
+	virtual bool is_channel3OutputTriggerDelay_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel1OutputTriggerSource attribute.
+ */
+	virtual bool is_channel1OutputTriggerSource_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel2OutputTriggerSource attribute.
+ */
+	virtual bool is_channel2OutputTriggerSource_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for channel3OutputTriggerSource attribute.
+ */
+	virtual bool is_channel3OutputTriggerSource_allowed(Tango::AttReqType type);
 /**
  *	Execution allowed for GetAllParameters command.
  */
