@@ -534,29 +534,6 @@ bool Hamamatsu::is_pixelType_allowed(Tango::AttReqType type)
 	}
 	return true;
 }
-//+----------------------------------------------------------------------------
-//
-// method : 		Hamamatsu::is_scanMode_allowed
-// 
-// description : 	Read/Write allowed for scanMode attribute.
-//
-//-----------------------------------------------------------------------------
-bool Hamamatsu::is_scanMode_allowed(Tango::AttReqType type)
-{
-	if (get_state() == Tango::INIT	||
-		get_state() == Tango::FAULT	||
-		get_state() == Tango::RUNNING)
-	{
-		//	End of Generated Code
-        if (get_state() == Tango::RUNNING && type == Tango::READ_REQ)
-        {
-            return true;
-        }
-		//	Re-Start of Generated Code
-		return false;
-	}
-	return true;
-}
 
 //=================================================
 //		Commands Allowed Methods

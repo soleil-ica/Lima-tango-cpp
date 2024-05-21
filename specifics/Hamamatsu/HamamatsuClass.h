@@ -241,20 +241,6 @@ public:
 	{return (static_cast<Hamamatsu *>(dev))->is_inputTriggerActive_allowed(ty);}
 };
 
-class scanModeAttrib: public Tango::Attr
-{
-public:
-	scanModeAttrib():Attr("scanMode", Tango::DEV_USHORT, Tango::READ_WRITE) {};
-	~scanModeAttrib() {};
-	
-	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
-	{(static_cast<Hamamatsu *>(dev))->read_scanMode(att);}
-	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
-	{(static_cast<Hamamatsu *>(dev))->write_scanMode(att);}
-	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
-	{return (static_cast<Hamamatsu *>(dev))->is_scanMode_allowed(ty);}
-};
-
 class pixelTypeAttrib: public Tango::Attr
 {
 public:

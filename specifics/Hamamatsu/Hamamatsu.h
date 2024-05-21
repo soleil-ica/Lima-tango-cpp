@@ -102,8 +102,6 @@ public :
 		Tango::DevUShort	attr_sensorMode_write;
 		Tango::DevUShort	*attr_pixelType_read;
 		Tango::DevUShort	attr_pixelType_write;
-		Tango::DevUShort	*attr_scanMode_read;
-		Tango::DevUShort	attr_scanMode_write;
 		Tango::DevShort	*attr_inputTriggerActive_read;
 		Tango::DevShort	attr_inputTriggerActive_write;
 		Tango::DevShort	*attr_inputTriggerPolarity_read;
@@ -302,14 +300,6 @@ public :
  */
 	virtual void write_pixelType(Tango::WAttribute &attr);
 /**
- *	Extract real attribute values for scanMode acquisition result.
- */
-	virtual void read_scanMode(Tango::Attribute &attr);
-/**
- *	Write scanMode attribute values to hardware.
- */
-	virtual void write_scanMode(Tango::WAttribute &attr);
-/**
  *	Extract real attribute values for inputTriggerActive acquisition result.
  */
 	virtual void read_inputTriggerActive(Tango::Attribute &attr);
@@ -449,10 +439,6 @@ public :
  *	Read/Write allowed for pixelType attribute.
  */
 	virtual bool is_pixelType_allowed(Tango::AttReqType type);
-/**
- *	Read/Write allowed for scanMode attribute.
- */
-	virtual bool is_scanMode_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for inputTriggerActive attribute.
  */
@@ -765,6 +751,9 @@ protected :
     lima::Hamamatsu::Interface * m_hw    ;
     CtControl                  * m_ct    ;
     lima::Hamamatsu::Camera    * m_camera;
+	
+	//ICATHALES-587
+	bool                       m_raise_ex;
 };
 
 }	// namespace_ns

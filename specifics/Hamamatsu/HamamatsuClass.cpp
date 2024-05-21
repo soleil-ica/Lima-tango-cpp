@@ -385,12 +385,12 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	bottom_view_exposure_time->set_memorized_init(false);
 	att_list.push_back(bottom_view_exposure_time);
 
-	//	Attribute : sensorMode (// PNR=Photon Numver Resolving, not found)
+	//	Attribute : sensorMode
 	sensorModeAttrib	*sensor_mode = new sensorModeAttrib();
 	Tango::UserDefaultAttrProp	sensor_mode_prop;
-	sensor_mode_prop.set_description("Sensor Mode values : \n1 = Area\n2 = Line\n3 = TDI\n4 = TDI Extended\n5 = Progressive"); 
+	sensor_mode_prop.set_description("Sensor Mode values : \n1 = Area\n2 = Line\n3 = TDI\n4 = TDI Extended\n5 = Progressive");
 	sensor_mode->set_default_properties(sensor_mode_prop);
-	//sensor_mode->set_disp_level(Tango::EXPERT);
+	sensor_mode->set_disp_level(Tango::EXPERT);
 	att_list.push_back(sensor_mode);
 
 	//	Attribute : pixelType
@@ -398,16 +398,8 @@ void HamamatsuClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	pixel_type_prop;
 	pixel_type_prop.set_description("Pixel Type values : \n1 = MONO8\n2 = MONO16\n3 = RGB24\n4 = RGB48\n5 = BGR24\n6 = BGR48");
 	pixel_type->set_default_properties(pixel_type_prop);
-	//pixel_type->set_disp_level(Tango::EXPERT);
+	pixel_type->set_disp_level(Tango::EXPERT);
 	att_list.push_back(pixel_type);
-
-	//	Attribute : scanMode
-	scanModeAttrib	*scan_mode = new scanModeAttrib();
-	Tango::UserDefaultAttrProp	scan_mode_prop;
-	scan_mode_prop.set_description("Scan Mode values : \n1 = Ultra Quiet\n2 = Standard");
-	scan_mode->set_default_properties(scan_mode_prop);
-	//scan_mode->set_disp_level(Tango::EXPERT);
-	att_list.push_back(scan_mode);
 
 	//	Attribute : inputTriggerActive
 	inputTriggerActiveAttrib	*input_trigger_active = new inputTriggerActiveAttrib();
