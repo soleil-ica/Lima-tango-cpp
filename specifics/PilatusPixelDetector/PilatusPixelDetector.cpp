@@ -45,15 +45,16 @@ static const char *RcsId = "$Id:  $";
 //	The following table gives the correspondence
 //	between commands and method name.
 //
-//  Command name         |  Method name
+//  Command name          |  Method name
 //	----------------------------------------
-//  State                |  dev_state()
-//  Status               |  dev_status()
-//  SetEnergy            |  set_energy()
-//  SetThresholdAndGain  |  set_threshold_and_gain()
-//  SetMxSettings        |  set_mx_settings()
-//  SendAnyCommand       |  send_any_command()
-//  GetTH                |  get_th()
+//  State                 |  dev_state()
+//  Status                |  dev_status()
+//  SetEnergy             |  set_energy()
+//  SetThresholdAndGain   |  set_threshold_and_gain()
+//  SetMxSettings         |  set_mx_settings()
+//  SendAnyCommand        |  send_any_command()
+//  GetTH                 |  get_th()
+//  DeleteRemainingFiles  |  delete_remaining_files()
 //
 //===================================================================
 #include "tango.h"
@@ -248,7 +249,8 @@ void PilatusPixelDetector::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("DetectorIP"));
 	dev_prop.push_back(Tango::DbDatum("DetectorCameraDefFileName"));
 	dev_prop.push_back(Tango::DbDatum("UseReader"));
-	dev_prop.push_back(Tango::DbDatum("ReaderTimeout"));
+	dev_prop.push_back(Tango::DbDatum("ReaderTimeoutMs"));
+	dev_prop.push_back(Tango::DbDatum("ReaderPeriodicMs"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedEnergy"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedThreshold"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedGain"));
@@ -308,16 +310,27 @@ void PilatusPixelDetector::get_device_property()
 	//	And try to extract UseReader value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  useReader;
 
-	//	Try to initialize ReaderTimeout from class property
+	//	Try to initialize ReaderTimeoutMs from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  readerTimeout;
+	if (cl_prop.is_empty()==false)	cl_prop  >>  readerTimeoutMs;
 	else {
-		//	Try to initialize ReaderTimeout from default device value
+		//	Try to initialize ReaderTimeoutMs from default device value
 		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if (def_prop.is_empty()==false)	def_prop  >>  readerTimeout;
+		if (def_prop.is_empty()==false)	def_prop  >>  readerTimeoutMs;
 	}
-	//	And try to extract ReaderTimeout value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  readerTimeout;
+	//	And try to extract ReaderTimeoutMs value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  readerTimeoutMs;
+
+	//	Try to initialize ReaderPeriodicMs from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  readerPeriodicMs;
+	else {
+		//	Try to initialize ReaderPeriodicMs from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  readerPeriodicMs;
+	}
+	//	And try to extract ReaderPeriodicMs value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  readerPeriodicMs;
 
 	//	Try to initialize MemorizedEnergy from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -383,7 +396,8 @@ void PilatusPixelDetector::get_device_property()
     PropertyHelper::create_property_if_empty(this, dev_prop, "6666", "DetectorPort");
     PropertyHelper::create_property_if_empty(this, dev_prop, "NONE", "DetectorCameraDefFileName");
     PropertyHelper::create_property_if_empty(this, dev_prop, "false", "UseReader");
-    PropertyHelper::create_property_if_empty(this, dev_prop, "10000", "ReaderTimeout");
+    PropertyHelper::create_property_if_empty(this, dev_prop, "10000", "ReaderTimeoutMs");
+    PropertyHelper::create_property_if_empty(this, dev_prop, "1000", "ReaderPeriodicMs");
 
     PropertyHelper::create_property_if_empty(this, dev_prop, "3000", "MemorizedThreshold");
     PropertyHelper::create_property_if_empty(this, dev_prop, "HIGH", "MemorizedGain");
@@ -1157,5 +1171,46 @@ Tango::DevVarDoubleArray *PilatusPixelDetector::get_th()
 }
 
 
+
+
+
+//+------------------------------------------------------------------
+/**
+ *	method:	PilatusPixelDetector::delete_remaining_files
+ *
+ *	description:	method to execute "DeleteRemainingFiles"
+ *	Delete Tif remaining Files
+ *
+ *
+ */
+//+------------------------------------------------------------------
+void PilatusPixelDetector::delete_remaining_files()
+{
+	DEBUG_STREAM << "PilatusPixelDetector::delete_remaining_files(): entering... !" << endl;
+
+	//	Add your own code to control device here
+    try
+    {
+           m_hw->deleteRemainingFiles();
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        Tango::Except::re_throw_exception(df,
+                                          static_cast<const char*> ("TANGO_DEVICE_ERROR"),
+                                          static_cast<const char*> (string(df.errors[0].desc).c_str()),
+                                          static_cast<const char*> ("PilatusPixelDetector::delete_remaining_files"));
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception(
+                                       static_cast<const char*> ("TANGO_DEVICE_ERROR"),
+                                       static_cast<const char*> (e.getErrMsg().c_str()),
+                                       static_cast<const char*> ("PilatusPixelDetector::delete_remaining_files"));
+    }
+}
 
 }	//	namespace

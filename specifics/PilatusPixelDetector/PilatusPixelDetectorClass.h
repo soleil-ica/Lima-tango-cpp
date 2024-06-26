@@ -125,6 +125,30 @@ public:
 //=========================================
 //	Define classes for commands
 //=========================================
+class DeleteRemainingFilesCmd : public Tango::Command
+{
+public:
+	DeleteRemainingFilesCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out,
+				   const char        *in_desc,
+				   const char        *out_desc,
+				   Tango::DispLevel  level)
+	:Command(name,in,out,in_desc,out_desc, level)	{};
+
+	DeleteRemainingFilesCmd(const char   *name,
+	               Tango::CmdArgType in,
+				   Tango::CmdArgType out)
+	:Command(name,in,out)	{};
+	~DeleteRemainingFilesCmd() {};
+	
+	virtual CORBA::Any *execute (Tango::DeviceImpl *dev, const CORBA::Any &any);
+	virtual bool is_allowed (Tango::DeviceImpl *dev, const CORBA::Any &any)
+	{return (static_cast<PilatusPixelDetector *>(dev))->is_DeleteRemainingFiles_allowed(any);}
+};
+
+
+
 class GetTHCmd : public Tango::Command
 {
 public:
