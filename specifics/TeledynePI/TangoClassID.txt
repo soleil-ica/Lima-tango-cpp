@@ -1,0 +1,11 @@
+/**
+ * Device Class Identification:
+ * 
+ * Class Name   :	TeledynePI
+ * Contact      :	edgard.mfoumoune@synchrotron-soleil.fr
+ * Class Family :	AbstractClasses
+ * Platform     :	All Platforms
+ * Bus          :	Not Applicable
+ * Manufacturer :	none
+ * Reference    :	
+ */
