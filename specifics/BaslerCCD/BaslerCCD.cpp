@@ -97,6 +97,7 @@ void BaslerCCD::delete_device()
 {
     INFO_STREAM << "BaslerCCD::BaslerCCD() delete device " << device_name << endl;
     //    Delete device allocated objects
+    DELETE_DEVSTRING_ATTRIBUTE(attr_exposureMode_read);
     DELETE_SCALAR_ATTRIBUTE(attr_frameRate_read);
     DELETE_SCALAR_ATTRIBUTE(attr_dataRate_read);
     DELETE_SCALAR_ATTRIBUTE(attr_temperature_read);
@@ -128,6 +129,7 @@ void BaslerCCD::init_device()
     //--------------------------------------------
 
     get_device_property();
+    CREATE_DEVSTRING_ATTRIBUTE(attr_exposureMode_read, 255);
     CREATE_SCALAR_ATTRIBUTE(attr_frameRate_read, 0.0);
     CREATE_SCALAR_ATTRIBUTE(attr_dataRate_read, 0.0);
     CREATE_SCALAR_ATTRIBUTE(attr_temperature_read, 0.0);
@@ -221,6 +223,13 @@ void BaslerCCD::init_device()
             gain.set_write_value(*attr_gain_read);
             write_gain(gain);
         }
+        
+        INFO_STREAM << "Write tango hardware at Init - exposureMode." << endl;
+        Tango::WAttribute &exposureMode = dev_attr->get_w_attr_by_name("exposureMode");
+        m_exposure_mode = memorizedExposureMode;
+        strcpy(*attr_exposureMode_read, memorizedExposureMode.c_str());
+        exposureMode.set_write_value(m_exposure_mode);
+        write_exposureMode(exposureMode);        
     }
 
     set_state(Tango::STANDBY);
@@ -242,94 +251,100 @@ void BaslerCCD::get_device_property()
 
     //    Read device properties from database.(Automatic code generation)
     //------------------------------------------------------------------
-    Tango::DbData	dev_prop;
-    dev_prop.push_back(Tango::DbDatum("DetectorIP"));
-    dev_prop.push_back(Tango::DbDatum("DetectorTimeout"));
-    dev_prop.push_back(Tango::DbDatum("DetectorPacketSize"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedInterPacketDelay"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedGain"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedAutoGain"));
+	Tango::DbData	dev_prop;
+	dev_prop.push_back(Tango::DbDatum("DetectorIP"));
+	dev_prop.push_back(Tango::DbDatum("DetectorTimeout"));
+	dev_prop.push_back(Tango::DbDatum("DetectorPacketSize"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedInterPacketDelay"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedGain"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedAutoGain"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedExposureMode"));
 
-    //	Call database and extract values
-    //--------------------------------------------
-    if (Tango::Util::instance()->_UseDb == true)
-        get_db_device()->get_property(dev_prop);
-    Tango::DbDatum	def_prop, cl_prop;
-    BaslerCCDClass	*ds_class =
-     (static_cast<BaslerCCDClass *> (get_device_class()));
-    int	i = -1;
+	//	Call database and extract values
+	//--------------------------------------------
+	if (Tango::Util::instance()->_UseDb==true)
+		get_db_device()->get_property(dev_prop);
+	Tango::DbDatum	def_prop, cl_prop;
+	BaslerCCDClass	*ds_class =
+		(static_cast<BaslerCCDClass *>(get_device_class()));
+	int	i = -1;
 
-    //	Try to initialize DetectorIP from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty() == false)	cl_prop  >>  detectorIP;
-    else
-    {
-        //	Try to initialize DetectorIP from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty() == false)	def_prop  >>  detectorIP;
-    }
-    //	And try to extract DetectorIP value from database
-    if (dev_prop[i].is_empty() == false)	dev_prop[i]  >>  detectorIP;
+	//	Try to initialize DetectorIP from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  detectorIP;
+	else {
+		//	Try to initialize DetectorIP from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  detectorIP;
+	}
+	//	And try to extract DetectorIP value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  detectorIP;
 
-    //	Try to initialize DetectorTimeout from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty() == false)	cl_prop  >>  detectorTimeout;
-    else
-    {
-        //	Try to initialize DetectorTimeout from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty() == false)	def_prop  >>  detectorTimeout;
-    }
-    //	And try to extract DetectorTimeout value from database
-    if (dev_prop[i].is_empty() == false)	dev_prop[i]  >>  detectorTimeout;
+	//	Try to initialize DetectorTimeout from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  detectorTimeout;
+	else {
+		//	Try to initialize DetectorTimeout from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  detectorTimeout;
+	}
+	//	And try to extract DetectorTimeout value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  detectorTimeout;
 
-    //	Try to initialize DetectorPacketSize from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty() == false)	cl_prop  >>  detectorPacketSize;
-    else
-    {
-        //	Try to initialize DetectorPacketSize from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty() == false)	def_prop  >>  detectorPacketSize;
-    }
-    //	And try to extract DetectorPacketSize value from database
-    if (dev_prop[i].is_empty() == false)	dev_prop[i]  >>  detectorPacketSize;
+	//	Try to initialize DetectorPacketSize from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  detectorPacketSize;
+	else {
+		//	Try to initialize DetectorPacketSize from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  detectorPacketSize;
+	}
+	//	And try to extract DetectorPacketSize value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  detectorPacketSize;
 
-    //	Try to initialize MemorizedInterPacketDelay from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty() == false)	cl_prop  >>  memorizedInterPacketDelay;
-    else
-    {
-        //	Try to initialize MemorizedInterPacketDelay from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty() == false)	def_prop  >>  memorizedInterPacketDelay;
-    }
-    //	And try to extract MemorizedInterPacketDelay value from database
-    if (dev_prop[i].is_empty() == false)	dev_prop[i]  >>  memorizedInterPacketDelay;
+	//	Try to initialize MemorizedInterPacketDelay from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedInterPacketDelay;
+	else {
+		//	Try to initialize MemorizedInterPacketDelay from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedInterPacketDelay;
+	}
+	//	And try to extract MemorizedInterPacketDelay value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedInterPacketDelay;
 
-    //	Try to initialize MemorizedGain from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty() == false)	cl_prop  >>  memorizedGain;
-    else
-    {
-        //	Try to initialize MemorizedGain from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty() == false)	def_prop  >>  memorizedGain;
-    }
-    //	And try to extract MemorizedGain value from database
-    if (dev_prop[i].is_empty() == false)	dev_prop[i]  >>  memorizedGain;
+	//	Try to initialize MemorizedGain from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedGain;
+	else {
+		//	Try to initialize MemorizedGain from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedGain;
+	}
+	//	And try to extract MemorizedGain value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedGain;
 
-    //	Try to initialize MemorizedAutoGain from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty() == false)	cl_prop  >>  memorizedAutoGain;
-    else
-    {
-        //	Try to initialize MemorizedAutoGain from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty() == false)	def_prop  >>  memorizedAutoGain;
-    }
-    //	And try to extract MemorizedAutoGain value from database
-    if (dev_prop[i].is_empty() == false)	dev_prop[i]  >>  memorizedAutoGain;
+	//	Try to initialize MemorizedAutoGain from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedAutoGain;
+	else {
+		//	Try to initialize MemorizedAutoGain from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedAutoGain;
+	}
+	//	And try to extract MemorizedAutoGain value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedAutoGain;
+
+	//	Try to initialize MemorizedExposureMode from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedExposureMode;
+	else {
+		//	Try to initialize MemorizedExposureMode from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedExposureMode;
+	}
+	//	And try to extract MemorizedExposureMode value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedExposureMode;
 
 
 
@@ -341,6 +356,7 @@ void BaslerCCD::get_device_property()
     PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedGain");
     PropertyHelper::create_property_if_empty(this, dev_prop, "False", "MemorizedAutoGain");
     PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedInterPacketDelay");
+    PropertyHelper::create_property_if_empty(this, dev_prop, "STANDARD", "MemorizedExposureMode");
 }
 
 
@@ -402,6 +418,104 @@ void BaslerCCD::read_attr_hardware(vector<long> &attr_list)
     DEBUG_STREAM << "BaslerCCD::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
     //    Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		BaslerCCD::read_exposureMode
+// 
+// description : 	Extract real attribute values for exposureMode acquisition result.
+//
+//-----------------------------------------------------------------------------
+void BaslerCCD::read_exposureMode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "BaslerCCD::read_exposureMode(Tango::Attribute &attr) entering... "<< endl;
+    try
+    {
+        BslExposureTimeModeEnums e;
+        m_camera->getExposureMode(e);
+        std::string exposureModeName = "";
+        switch(e)
+        {
+            case BslExposureTimeMode_Standard: exposureModeName = "STANDARD";
+                break;
+            case BslExposureTimeMode_UltraShort: exposureModeName = "SHORT";                 
+                break;
+            default : exposureModeName = "ERROR";
+                break;
+                
+        }
+
+        strcpy(*attr_exposureMode_read, exposureModeName.c_str());
+        attr.set_value(attr_exposureMode_read);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        ERROR_STREAM << df << endl;
+        //- rethrow exception
+        RETHROW_DEVFAILED(	df,
+							"TANGO_DEVICE_ERROR",
+							std::string(df.errors[0].desc).c_str(),
+							"BaslerCCD::read_exposureMode");
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+                        e.getErrMsg().c_str(),
+                        "BaslerCCD::read_exposureMode");
+    }    
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		BaslerCCD::write_exposureMode
+// 
+// description : 	Write exposureMode attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void BaslerCCD::write_exposureMode(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "BaslerCCD::write_exposureMode(Tango::WAttribute &attr) entering... "<< endl;
+    try
+    {
+        string previous = m_exposure_mode;
+        attr.get_write_value(attr_exposureMode_write);
+        string current = attr_exposureMode_write;
+        std::transform(current.begin(), current.end(), current.begin(), ::toupper);
+        if((current != "STANDARD") && (current != "SHORT"))
+        {
+            m_exposure_mode = previous;
+            attr_exposureMode_write = const_cast<Tango::DevString>(m_exposure_mode.c_str());
+            THROW_DEVFAILED("CONFIGURATION_ERROR",
+                            "Available Acquisition Modes are: "
+                            "\n- STANDARD"
+                            "\n- SHORT",
+                            "BaslerCCD::write_exposureMode");
+        }       
+        
+        //- THIS IS AN AVAILABLE EXPOSURE MODE        
+        if(current == "STANDARD")
+		{
+            m_camera->setExposureMode(BslExposureTimeMode_Standard);
+		}
+        else if(current == "SHORT")
+		{
+            m_camera->setExposureMode(BslExposureTimeMode_UltraShort);          
+		}
+
+        m_exposure_mode = current;
+        yat4tango::PropertyHelper::set_property(this, "MemorizedExposureMode", m_exposure_mode);
+    }
+    catch(Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+                        e.getErrMsg().c_str(),
+                        "BaslerCCD::write_exposureMode");
+    }    
+}
+
 //+----------------------------------------------------------------------------
 //
 // method : 		BaslerCCD::read_packetSize
@@ -1058,6 +1172,9 @@ Tango::DevState BaslerCCD::dev_state()
     argout = DeviceState;
     return argout;
 }
+
+
+
 
 
 }	//	namespace

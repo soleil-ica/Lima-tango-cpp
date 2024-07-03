@@ -9,7 +9,7 @@
     
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.12.0</version>
+    <version>1.12.4-pylon6</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -24,11 +24,11 @@
 
 
         <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
-        <PROCESSLIB.version>1.3.9</PROCESSLIB.version>
+        <PROCESSLIB.version>1.3.10</PROCESSLIB.version>
         <LIMACORE.name>LimaCore</LIMACORE.name>
-        <LIMACORE.version>1.7.9</LIMACORE.version>
+        <LIMACORE.version>1.7.11</LIMACORE.version>
 		<SIMULATOR.name>Simulator</SIMULATOR.name>
-        <SIMULATOR.version>1.4.0</SIMULATOR.version>
+        <SIMULATOR.version>1.4.2</SIMULATOR.version>
 		<BASLER.name>Basler</BASLER.name>
         <BASLER.version>1.6.1-el7-SNAPSHOT</BASLER.version>
 
@@ -120,7 +120,10 @@
 							<define>UNIX_64_EL7</define>
                             <define>__LINUX__</define>
                             <define>linux</define>                            
-                        </defines>                        
+                        </defines>        
+                        <options>
+                            <option>-Wsign-compare</option>
+                        </options>                        
                     </cpp>        
                     
                     <linker>

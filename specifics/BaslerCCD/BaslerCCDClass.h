@@ -188,6 +188,20 @@ public:
 	{return (static_cast<BaslerCCD *>(dev))->is_frameRate_allowed(ty);}
 };
 
+class exposureModeAttrib: public Tango::Attr
+{
+public:
+	exposureModeAttrib():Attr("exposureMode", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~exposureModeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<BaslerCCD *>(dev))->read_exposureMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<BaslerCCD *>(dev))->write_exposureMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<BaslerCCD *>(dev))->is_exposureMode_allowed(ty);}
+};
+
 //=========================================
 //	Define classes for commands
 //=========================================
