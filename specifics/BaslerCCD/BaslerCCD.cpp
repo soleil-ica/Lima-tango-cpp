@@ -56,7 +56,8 @@ static const char *RcsId = "$Id:  $";
 #include <math.h>
 #include <BaslerCCD.h>
 #include <BaslerCCDClass.h>
-
+#include <yat4tango/ExceptionHelper.h>
+#include <yat4tango/DeviceProxyHelper.h>
 
 namespace BaslerCCD_ns
 {
@@ -505,6 +506,32 @@ void BaslerCCD::write_exposureMode(Tango::WAttribute &attr)
 
         m_exposure_mode = current;
         yat4tango::PropertyHelper::set_property(this, "MemorizedExposureMode", m_exposure_mode);
+        
+        m_hw->getSyncCtrl().updateValidRanges();
+        // get the generic device name
+        std::string    device_name ;
+        std::string    class_name  = "LimaDetector";
+        std::string    server_name = Tango::Util::instance()->get_ds_name();
+        Tango::DbDatum db_datum = (Tango::Util::instance()->get_database())->get_device_name(server_name, class_name);
+        db_datum >> device_name;      
+        
+        //get current exposure
+        double exposure;
+        m_ct->acquisition()->getAcqExpoTime(exposure);
+        
+        //get current range
+        double min_exp=0;
+        double max_exp=0;
+        m_camera->getExposureTimeRange(min_exp,max_exp);
+        
+        //if exposure is outside range, adapt it to the min_exp
+        if(exposure<=min_exp || exposure>=max_exp)
+        {
+            // call the init interface command of LimaDetector to re-create the image and baseimage attributes
+            yat4tango::DeviceProxyHelper * device_proxy = new yat4tango::DeviceProxyHelper(device_name);   
+            Tango::DeviceAttribute exptime("exposureTime", (Tango::DevDouble)min_exp*1000);
+            device_proxy->write_attribute(exptime);
+        }
     }
     catch(Exception& e)
     {
