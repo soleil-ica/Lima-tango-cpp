@@ -4,7 +4,7 @@
 //
 // description : Include for templates of the Hamamatsu class.
 //
-// project :	
+// project :    
 //
 // $Author:  Cedric Castel
 //
@@ -20,7 +20,7 @@
 //
 // copyleft :    Synchrotron SOLEIL 
 //               L'Orme des merisiers - Saint Aubin
-//		 BP48 - 91192 Gif sur Yvette
+//       BP48 - 91192 Gif sur Yvette
 //               FRANCE
 //
 //=============================================================================
@@ -34,8 +34,8 @@
 #include <yat4tango/InnerAppender.h>
 
 /**
- * @author	$Author:  Cedric Castel
- * @version	$Revision:  $
+ * @author  $Author:  Cedric Castel
+ * @version $Revision:  $
  */
 
 //using namespace lima::Hamamatsu;
@@ -62,50 +62,50 @@ void Hamamatsu::create_dynamic_attribute(const std::string &   name             
                                          F2                    write_callback      ,
                                          yat::Any              user_data           )
 {
-	DEBUG_STREAM << "Hamamatsu::create_dynamic_attribute() - [BEGIN]" << endl;
-	INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << endl;
+    DEBUG_STREAM << "Hamamatsu::create_dynamic_attribute() - [BEGIN]" << endl;
+    INFO_STREAM << "\t- Create dynamic attribute [" << name << "]" << endl;
 
     ////////////////////////////////////////////////////////////////////////////////////////    
-	yat4tango::DynamicAttributeInfo dai;
-	dai.dev = this;
-	//- specify the dyn. attr.  name
-	dai.tai.name = name;
+    yat4tango::DynamicAttributeInfo dai;
+    dai.dev = this;
+    //- specify the dyn. attr.  name
+    dai.tai.name = name;
 
     //- associate the dyn. attr. with its data
     if(!user_data.empty())
     {
-    	dai.set_user_data(user_data);
+        dai.set_user_data(user_data);
     }
     
-	//- describe the dynamic attr we want...
-	dai.tai.data_type        = data_type;
-	dai.tai.data_format      = data_format;
-	dai.tai.writable         = access_type;
-	dai.tai.disp_level       = disp_level;
-	dai.tai.unit             = unit;
-	dai.tai.format           = format;
-	dai.tai.description      = desc;
+    //- describe the dynamic attr we want...
+    dai.tai.data_type        = data_type;
+    dai.tai.data_format      = data_format;
+    dai.tai.writable         = access_type;
+    dai.tai.disp_level       = disp_level;
+    dai.tai.unit             = unit;
+    dai.tai.format           = format;
+    dai.tai.description      = desc;
     dai.polling_period_in_ms = polling_period_in_ms;
     dai.cdb                  = false;
 
-	//- cleanup tango db option: cleanup tango db when removing this dyn. attr. (i.e. erase its properties fom db)
-	//	dai.cdb = true;
-	
-	//- instanciate the read callback (called when the dyn. attr. is read)    
-	if(access_type == Tango::READ ||access_type == Tango::READ_WRITE)
-	{
-		dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, read_callback);
-	}
+    //- cleanup tango db option: cleanup tango db when removing this dyn. attr. (i.e. erase its properties fom db)
+    //  dai.cdb = true;
+    
+    //- instanciate the read callback (called when the dyn. attr. is read)    
+    if(access_type == Tango::READ ||access_type == Tango::READ_WRITE)
+    {
+        dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, read_callback);
+    }
 
-	//- instanciate the write callback (called when the dyn. attr. is read)    
-	if(access_type == Tango::WRITE ||access_type == Tango::READ_WRITE)
-	{
-		dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, write_callback);
-	}
-	
-	//- add the dyn. attr. to the device
-	m_dim.dynamic_attributes_manager().add_attribute(dai);
-	DEBUG_STREAM << "Hamamatsu::create_dynamic_attribute() - [END]" << endl;
+    //- instanciate the write callback (called when the dyn. attr. is read)    
+    if(access_type == Tango::WRITE ||access_type == Tango::READ_WRITE)
+    {
+        dai.wcb = yat4tango::DynamicAttributeWriteCallback::instanciate(*this, write_callback);
+    }
+    
+    //- add the dyn. attr. to the device
+    m_dim.dynamic_attributes_manager().add_attribute(dai);
+    DEBUG_STREAM << "Hamamatsu::create_dynamic_attribute() - [END]" << endl;
 }
 
 /********************************************************************************************
@@ -432,7 +432,7 @@ void Hamamatsu::write_property_in_dynamic_attribute(const std::string & in_attri
     T1 memorizedValue = yat4tango::PropertyHelper::get_property<T1 >(this, property_name.c_str());
 
     // retrieve the attribute using its name
-	Tango::WAttribute           & attribute     = dev_attr->get_w_attr_by_name(attribute_name.c_str());
+    Tango::WAttribute           & attribute     = dev_attr->get_w_attr_by_name(attribute_name.c_str());
     yat4tango::DynamicAttribute & dyn_attribute = m_dim.dynamic_attributes_manager().get_attribute(attribute_name);
 
     // get the user data
@@ -483,7 +483,7 @@ void Hamamatsu::write_property_in_dynamic_string_attribute(const std::string & i
     std::string memorizedValue = yat4tango::PropertyHelper::get_property<std::string >(this, property_name.c_str());
 
     // retrieve the attribute using its name
-	Tango::WAttribute           & attribute     = dev_attr->get_w_attr_by_name(attribute_name.c_str());
+    Tango::WAttribute           & attribute     = dev_attr->get_w_attr_by_name(attribute_name.c_str());
     yat4tango::DynamicAttribute & dyn_attribute = m_dim.dynamic_attributes_manager().get_attribute(attribute_name);
 
     // get the user data
@@ -503,6 +503,6 @@ void Hamamatsu::write_property_in_dynamic_string_attribute(const std::string & i
     (this->*in_write_method)(cbd);
 }
 
-}	// namespace_ns
+}   // namespace_ns
 
-#endif	// _HAMAMATSU_H
+#endif  // _HAMAMATSU_H
