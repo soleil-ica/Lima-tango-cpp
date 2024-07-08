@@ -124,6 +124,20 @@ public:
 	{return (static_cast<BaslerCCD *>(dev))->is_packetSize_allowed(ty);}
 };
 
+class triggerDelayAttrib: public Tango::Attr
+{
+public:
+	triggerDelayAttrib():Attr("triggerDelay", Tango::DEV_ULONG, Tango::READ_WRITE) {};
+	~triggerDelayAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<BaslerCCD *>(dev))->read_triggerDelay(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<BaslerCCD *>(dev))->write_triggerDelay(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<BaslerCCD *>(dev))->is_triggerDelay_allowed(ty);}
+};
+
 class gainAttrib: public Tango::Attr
 {
 public:

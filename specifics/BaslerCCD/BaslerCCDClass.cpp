@@ -304,6 +304,10 @@ void BaslerCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	gain->set_default_properties(gain_prop);
 	att_list.push_back(gain);
 
+	//	Attribute : triggerDelay
+	triggerDelayAttrib	*trigger_delay = new triggerDelayAttrib();
+	att_list.push_back(trigger_delay);
+
 	//	Attribute : packetSize
 	packetSizeAttrib	*packet_size = new packetSizeAttrib();
 	Tango::UserDefaultAttrProp	packet_size_prop;
@@ -517,6 +521,21 @@ void BaslerCCDClass::set_default_property()
 	prop_def  = "STANDARD";
 	vect_data.clear();
 	vect_data.push_back("STANDARD");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedTriggerDelay";
+	prop_desc = "Memorize/Define the  attribute  triggerDelay at Init device<br>";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

@@ -99,6 +99,7 @@ void BaslerCCD::delete_device()
     INFO_STREAM << "BaslerCCD::BaslerCCD() delete device " << device_name << endl;
     //    Delete device allocated objects
     DELETE_DEVSTRING_ATTRIBUTE(attr_exposureMode_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_triggerDelay_read);
     DELETE_SCALAR_ATTRIBUTE(attr_frameRate_read);
     DELETE_SCALAR_ATTRIBUTE(attr_dataRate_read);
     DELETE_SCALAR_ATTRIBUTE(attr_temperature_read);
@@ -131,6 +132,7 @@ void BaslerCCD::init_device()
 
     get_device_property();
     CREATE_DEVSTRING_ATTRIBUTE(attr_exposureMode_read, 255);
+    CREATE_SCALAR_ATTRIBUTE(attr_triggerDelay_read);
     CREATE_SCALAR_ATTRIBUTE(attr_frameRate_read, 0.0);
     CREATE_SCALAR_ATTRIBUTE(attr_dataRate_read, 0.0);
     CREATE_SCALAR_ATTRIBUTE(attr_temperature_read, 0.0);
@@ -260,6 +262,7 @@ void BaslerCCD::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedGain"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedAutoGain"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedExposureMode"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedTriggerDelay"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -347,6 +350,17 @@ void BaslerCCD::get_device_property()
 	//	And try to extract MemorizedExposureMode value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedExposureMode;
 
+	//	Try to initialize MemorizedTriggerDelay from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedTriggerDelay;
+	else {
+		//	Try to initialize MemorizedTriggerDelay from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedTriggerDelay;
+	}
+	//	And try to extract MemorizedTriggerDelay value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedTriggerDelay;
+
 
 
     //    End of Automatic code generation
@@ -358,6 +372,7 @@ void BaslerCCD::get_device_property()
     PropertyHelper::create_property_if_empty(this, dev_prop, "False", "MemorizedAutoGain");
     PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedInterPacketDelay");
     PropertyHelper::create_property_if_empty(this, dev_prop, "STANDARD", "MemorizedExposureMode");
+    PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedTriggerDelay");
 }
 
 
@@ -419,6 +434,89 @@ void BaslerCCD::read_attr_hardware(vector<long> &attr_list)
     DEBUG_STREAM << "BaslerCCD::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
     //    Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		BaslerCCD::read_triggerDelay
+// 
+// description : 	Extract real attribute values for triggerDelay acquisition result.
+//
+//-----------------------------------------------------------------------------
+void BaslerCCD::read_triggerDelay(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "BaslerCCD::read_triggerDelay(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    if (m_ct != 0)
+    {
+        try
+        {
+            if (m_camera != 0)
+            {
+                m_camera->getTrigDelay((unsigned int&) *attr_triggerDelay_read);
+                attr.set_value(attr_triggerDelay_read);
+            }
+        }
+        catch (Tango::DevFailed& df)
+        {
+            ERROR_STREAM << df << endl;
+            //- rethrow exception
+            Tango::Except::re_throw_exception(  df,
+                                              "TANGO_DEVICE_ERROR",
+                                              string(df.errors[0].desc).c_str(),
+                                              "BaslerCCD::read_triggerDelay" );
+        }
+        catch (Exception& e)
+        {
+            ERROR_STREAM << e.getErrMsg() << endl;
+            //- throw exception
+            Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                           e.getErrMsg().c_str(),
+                                           "BaslerCCD::read_triggerDelay" );
+        }
+    }    
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		BaslerCCD::write_triggerDelay
+// 
+// description : 	Write triggerDelay attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void BaslerCCD::write_triggerDelay(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "BaslerCCD::write_triggerDelay(Tango::WAttribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    if (m_ct != 0)
+    {
+        try
+        {
+            if (m_camera != 0)
+            {
+                attr.get_write_value(attr_triggerDelay_write);
+                m_camera->setTrigDelay(attr_triggerDelay_write);
+                PropertyHelper::set_property(this, "MemorizedTriggerDelay", attr_triggerDelay_write);
+            }
+        }
+        catch (Tango::DevFailed& df)
+        {
+            ERROR_STREAM << df << endl;
+            //- rethrow exception
+            Tango::Except::re_throw_exception(  df,
+                                              "TANGO_DEVICE_ERROR",
+                                              string(df.errors[0].desc).c_str(),
+                                              "BaslerCCD::write_triggerDelay" );
+        }
+        catch (Exception& e)
+        {
+            ERROR_STREAM << e.getErrMsg() << endl;
+            //- throw exception
+            Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                           e.getErrMsg().c_str(),
+                                           "BaslerCCD::write_triggerDelay" );
+        }
+    }    
+}
+
 //+----------------------------------------------------------------------------
 //
 // method : 		BaslerCCD::read_exposureMode
@@ -1199,6 +1297,9 @@ Tango::DevState BaslerCCD::dev_state()
     argout = DeviceState;
     return argout;
 }
+
+
+
 
 
 

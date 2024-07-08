@@ -105,6 +105,8 @@ public :
 		Tango::DevBoolean	attr_autoGain_write;
 		Tango::DevDouble	*attr_gain_read;
 		Tango::DevDouble	attr_gain_write;
+		Tango::DevULong	*attr_triggerDelay_read;
+		Tango::DevULong	attr_triggerDelay_write;
 		Tango::DevLong	*attr_packetSize_read;
 		Tango::DevLong	*attr_interPacketDelay_read;
 		Tango::DevLong	attr_interPacketDelay_write;
@@ -147,6 +149,10 @@ public :
  *	Memorize/Define the  attribute  exposureMode at Init device<br>
  */
 	string	memorizedExposureMode;
+/**
+ *	Memorize/Define the  attribute  triggerDelay at Init device<br>
+ */
+	Tango::DevULong	memorizedTriggerDelay;
 //@}
 
 /**
@@ -256,6 +262,14 @@ public :
  */
 	virtual void write_gain(Tango::WAttribute &attr);
 /**
+ *	Extract real attribute values for triggerDelay acquisition result.
+ */
+	virtual void read_triggerDelay(Tango::Attribute &attr);
+/**
+ *	Write triggerDelay attribute values to hardware.
+ */
+	virtual void write_triggerDelay(Tango::WAttribute &attr);
+/**
  *	Extract real attribute values for packetSize acquisition result.
  */
 	virtual void read_packetSize(Tango::Attribute &attr);
@@ -307,6 +321,10 @@ public :
  *	Read/Write allowed for gain attribute.
  */
 	virtual bool is_gain_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for triggerDelay attribute.
+ */
+	virtual bool is_triggerDelay_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for packetSize attribute.
  */
