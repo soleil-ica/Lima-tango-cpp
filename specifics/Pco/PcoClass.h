@@ -46,6 +46,34 @@ namespace Pco_ns
 {//=====================================
 //	Define classes for attributes
 //=====================================
+class ringBufferAttrib: public Tango::Attr
+{
+public:
+	ringBufferAttrib():Attr("ringBuffer", Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~ringBufferAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Pco *>(dev))->read_ringBuffer(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Pco *>(dev))->write_ringBuffer(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Pco *>(dev))->is_ringBuffer_allowed(ty);}
+};
+
+class storageModeAttrib: public Tango::Attr
+{
+public:
+	storageModeAttrib():Attr("storageMode", Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~storageModeAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<Pco *>(dev))->read_storageMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<Pco *>(dev))->write_storageMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<Pco *>(dev))->is_storageMode_allowed(ty);}
+};
+
 class dllVersionAttrib: public Tango::Attr
 {
 public:
