@@ -65,6 +65,28 @@ namespace PilatusPixelDetector_ns
 {
 //+----------------------------------------------------------------------------
 //
+// method : 		DeleteRemainingFilesCmd::execute()
+// 
+// description : 	method to trigger the execution of the command.
+//                PLEASE DO NOT MODIFY this method core without pogo   
+//
+// in : - device : The device on which the command must be executed
+//		- in_any : The command input data
+//
+// returns : The command output data (packed in the Any object)
+//
+//-----------------------------------------------------------------------------
+CORBA::Any *DeleteRemainingFilesCmd::execute(Tango::DeviceImpl *device,const CORBA::Any &in_any)
+{
+
+	cout2 << "DeleteRemainingFilesCmd::execute(): arrived" << endl;
+
+	((static_cast<PilatusPixelDetector *>(device))->delete_remaining_files());
+	return new CORBA::Any();
+}
+
+//+----------------------------------------------------------------------------
+//
 // method : 		GetTHCmd::execute()
 // 
 // description : 	method to trigger the execution of the command.
@@ -307,6 +329,11 @@ void PilatusPixelDetectorClass::command_factory()
 		Tango::OPERATOR));
 	command_list.push_back(new GetTHCmd("GetTH",
 		Tango::DEV_VOID, Tango::DEVVAR_DOUBLEARRAY,
+		"",
+		"",
+		Tango::OPERATOR));
+	command_list.push_back(new DeleteRemainingFilesCmd("DeleteRemainingFiles",
+		Tango::DEV_VOID, Tango::DEV_VOID,
 		"",
 		"",
 		Tango::OPERATOR));
@@ -581,11 +608,26 @@ void PilatusPixelDetectorClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
-	prop_name = "ReaderTimeout";
-	prop_desc = "This is the elapsed time before declaring that is no available image returned by CamServer during the Acquisition. ";
+	prop_name = "ReaderTimeoutMs";
+	prop_desc = "This is the elapsed time before declaring that is no available image returned by CamServer during the Acquisition.<br>\n[default = 10000 ms]";
 	prop_def  = "10000";
 	vect_data.clear();
 	vect_data.push_back("10000");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "ReaderPeriodicMs";
+	prop_desc = "This is the periodic time Of Reader.<br>\n[default = 1000 ms]";
+	prop_def  = "1000";
+	vect_data.clear();
+	vect_data.push_back("1000");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -808,7 +850,7 @@ void PilatusPixelDetectorClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Tango::Device_4Impl");
+	inheritance.push_back("Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 

@@ -130,9 +130,15 @@ public :
  */
 	Tango::DevBoolean	useReader;
 /**
- *	This is the elapsed time before declaring that is no available image returned by CamServer during the Acquisition. 
+ *	This is the elapsed time before declaring that is no available image returned by CamServer during the Acquisition.<br>
+ *	[default = 10000 ms]
  */
-	Tango::DevULong	readerTimeout;
+	Tango::DevULong	readerTimeoutMs;
+/**
+ *	This is the periodic time Of Reader.<br>
+ *	[default = 1000 ms]
+ */
+	Tango::DevULong	readerPeriodicMs;
 /**
  *	Memorize/Define the energy value<br>
  */
@@ -306,6 +312,10 @@ public :
  */
 	virtual bool is_GetTH_allowed(const CORBA::Any &any);
 /**
+ *	Execution allowed for DeleteRemainingFiles command.
+ */
+	virtual bool is_DeleteRemainingFiles_allowed(const CORBA::Any &any);
+/**
  * This command gets the device state (stored in its <i>device_state</i> data member) and returns it to the caller.
  *	@return	State Code
  *	@exception DevFailed
@@ -351,6 +361,11 @@ public :
  *	@exception DevFailed
  */
 	Tango::DevVarDoubleArray	*get_th();
+/**
+ * Delete Tif remaining Files
+ *	@exception DevFailed
+ */
+	void	delete_remaining_files();
 
 /**
  *	Read the device properties from database

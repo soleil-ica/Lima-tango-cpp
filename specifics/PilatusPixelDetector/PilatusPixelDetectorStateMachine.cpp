@@ -312,7 +312,34 @@ bool PilatusPixelDetector::is_GetTH_allowed(const CORBA::Any &any)
 		get_state() == Tango::RUNNING)
 	{
 		//	End of Generated Code
-
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		PilatusPixelDetector::is_DeleteRemainingFiles_allowed
+// 
+// description : 	Execution allowed for DeleteRemainingFiles command.
+//
+//-----------------------------------------------------------------------------
+bool PilatusPixelDetector::is_DeleteRemainingFiles_allowed(const CORBA::Any &any)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+		if ( get_state()==Tango::FAULT && is_device_initialized() )
+		{
+           return true;
+		}
 		//	Re-Start of Generated Code
 		return false;
 	}
