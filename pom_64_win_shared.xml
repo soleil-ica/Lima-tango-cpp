@@ -9,7 +9,7 @@
 	
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64_Windows_msvc12-shared-release</artifactId>
-    <version>1.12.3</version>
+    <version>1.13.0</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -52,7 +52,7 @@
         <SIMULATOR.version>1.4.2</SIMULATOR.version>
 		
 		<DHYANA.name>Dhyana</DHYANA.name>
-        <DHYANA.version>1.7.0</DHYANA.version>
+        <DHYANA.version>1.7.1</DHYANA.version>
 		<!-- <DHYANA6060.name>Dhyana6060</DHYANA6060.name>
         <DHYANA6060.version>1.0.0</DHYANA6060.version> -->
         <HAMAMATSU.name>Hamamatsu</HAMAMATSU.name>
@@ -63,6 +63,8 @@
         <PERKINELMER.version>1.5.1</PERKINELMER.version>
 		<SPECTRUMONE.name>SpectrumOne</SPECTRUMONE.name>
         <SPECTRUMONE.version>1.2.1</SPECTRUMONE.version>
+		<TELEDYNEPI.name>TeledynePI</TELEDYNEPI.name>
+        <TELEDYNEPI.version>1.0.0</TELEDYNEPI.version>
 		<OPENCV_CORE.name>OpenCV-Core</OPENCV_CORE.name>
         <OPENCV_CORE.version>3.0.0</OPENCV_CORE.version>
 		<OPENCV_HIGHGUI.name>OpenCV-HighGui</OPENCV_HIGHGUI.name>
@@ -134,6 +136,14 @@
             <artifactId>LimaSpectrumOne-amd64-Windows-msvc12-shared-${mode}</artifactId>
             <version>${SPECTRUMONE.version}</version>
         </dependency>
+		
+		<dependency>
+            <groupId>fr.soleil.lib.Lima.Camera</groupId>
+            <artifactId>LimaTeledynePI-amd64-Windows-msvc12-shared-${mode}</artifactId>
+            <version>${TELEDYNEPI.version}</version>
+        </dependency>
+		
+		
     </dependencies>
         
     <build>
@@ -155,6 +165,7 @@
                             <include>specifics/Pco/*.cpp</include>
 							<include>specifics/PerkinElmer/*.cpp</include>
 							<include>specifics/SpectrumOneCCD/*.cpp</include>
+							<include>specifics/TeledynePI/*.cpp</include>
                             
                             <include>specifics/Layout/*.cpp</include>
                             <include>specifics/RoiCounters/*.cpp</include>
@@ -170,6 +181,7 @@
                             <includePath>specifics/Pco</includePath>
 							<includePath>specifics/PerkinElmer</includePath>
 							<includePath>specifics/SpectrumOneCCD</includePath>
+							<includePath>specifics/TeledynePI</includePath>
                             
                             <includePath>specifics/Layout</includePath>
                             <includePath>specifics/RoiCounters</includePath>
@@ -207,6 +219,8 @@
                             <define>DHYANA6060_VERSION=${DHYANA6060.version}</define>
 							<define>SPECTRUMONE_NAME=${SPECTRUMONE.name}</define>
                             <define>SPECTRUMONE_VERSION=${SPECTRUMONE.version}</define>
+							<define>TELEDYNEPI_NAME=${TELEDYNEPI.name}</define>
+                            <define>TELEDYNEPI_VERSION=${TELEDYNEPI.version}</define>
                             <define>OPENCV_CORE_NAME=${OPENCV_CORE.name}</define>
                             <define>OPENCV_CORE_VERSION=${OPENCV_CORE.version}</define>          
                             <define>OPENCV_HIGHGUI_NAME=${OPENCV_HIGHGUI.name}</define>
@@ -222,6 +236,7 @@
                             <define>DHYANA_ENABLED</define>
 							<!-- <define>DHYANA6060_ENABLED</define> -->
 							<define>SPECTRUMONE_ENABLED</define>
+							<define>TELEDYNEPI_ENABLED</define>
 
                             <define>LAYOUT_ENABLED</define>
                             <define>ROICOUNTERS_ENABLED</define>             
