@@ -216,6 +216,18 @@ public:
 	{return (static_cast<BaslerCCD *>(dev))->is_exposureMode_allowed(ty);}
 };
 
+class userIDAttrib: public Tango::Attr
+{
+public:
+	userIDAttrib():Attr("userID", Tango::DEV_STRING, Tango::READ) {};
+	~userIDAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<BaslerCCD *>(dev))->read_userID(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<BaslerCCD *>(dev))->is_userID_allowed(ty);}
+};
+
 //=========================================
 //	Define classes for commands
 //=========================================

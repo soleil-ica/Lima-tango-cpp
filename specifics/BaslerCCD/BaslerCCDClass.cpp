@@ -246,6 +246,10 @@ void BaslerCCDClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 //-----------------------------------------------------------------------------
 void BaslerCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 {
+	//	Attribute : userID
+	userIDAttrib	*user_id = new userIDAttrib();
+	att_list.push_back(user_id);
+
 	//	Attribute : exposureMode
 	exposureModeAttrib	*exposure_mode = new exposureModeAttrib();
 	Tango::UserDefaultAttrProp	exposure_mode_prop;

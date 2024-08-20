@@ -98,6 +98,7 @@ void BaslerCCD::delete_device()
 {
     INFO_STREAM << "BaslerCCD::BaslerCCD() delete device " << device_name << endl;
     //    Delete device allocated objects
+    DELETE_DEVSTRING_ATTRIBUTE(attr_userID_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_exposureMode_read);
     DELETE_SCALAR_ATTRIBUTE(attr_triggerDelay_read);
     DELETE_SCALAR_ATTRIBUTE(attr_frameRate_read);
@@ -131,6 +132,7 @@ void BaslerCCD::init_device()
     //--------------------------------------------
 
     get_device_property();
+    CREATE_DEVSTRING_ATTRIBUTE(attr_userID_read, 255);
     CREATE_DEVSTRING_ATTRIBUTE(attr_exposureMode_read, 255);
     CREATE_SCALAR_ATTRIBUTE(attr_triggerDelay_read);
     CREATE_SCALAR_ATTRIBUTE(attr_frameRate_read, 0.0);
@@ -207,11 +209,12 @@ void BaslerCCD::init_device()
         *attr_interPacketDelay_read = memorizedInterPacketDelay;
         interPacketDelay.set_write_value(*attr_interPacketDelay_read);
         write_interPacketDelay(interPacketDelay);
+                
         m_is_autogain_available = m_camera->isAutoGainAvailable();
         m_is_gain_available = m_camera->isGainAvailable();
         if (m_is_autogain_available)
         {
-            INFO_STREAM << "Write tango hardware at Init - autoGain." << endl;
+            INFO_STREAM << "Write tango hardware at Init - autoGain." << endl;        
             Tango::WAttribute &autoGain = dev_attr->get_w_attr_by_name("autoGain");
             *attr_autoGain_read = memorizedAutoGain;
             autoGain.set_write_value(*attr_autoGain_read);
@@ -232,7 +235,14 @@ void BaslerCCD::init_device()
         m_exposure_mode = memorizedExposureMode;
         strcpy(*attr_exposureMode_read, memorizedExposureMode.c_str());
         exposureMode.set_write_value(m_exposure_mode);
-        write_exposureMode(exposureMode);        
+        write_exposureMode(exposureMode);      
+
+        INFO_STREAM << "Write tango hardware at Init - triggerDelay." << endl;
+        Tango::WAttribute &triggerDelay = dev_attr->get_w_attr_by_name("triggerDelay");
+        *attr_triggerDelay_read = attr_triggerDelay_write = memorizedTriggerDelay;
+        triggerDelay.set_write_value(*attr_triggerDelay_read);
+        write_triggerDelay(triggerDelay);
+        
     }
 
     set_state(Tango::STANDBY);
@@ -436,6 +446,50 @@ void BaslerCCD::read_attr_hardware(vector<long> &attr_list)
 }
 //+----------------------------------------------------------------------------
 //
+// method : 		BaslerCCD::read_userID
+// 
+// description : 	Extract real attribute values for userID acquisition result.
+//
+//-----------------------------------------------------------------------------
+void BaslerCCD::read_userID(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "BaslerCCD::read_userID(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    if (m_ct != 0)
+    {
+        try
+        {
+            if (m_camera != 0)
+            {
+                std::string userID;
+                m_camera->getDeviceUserID(userID);   
+                strcpy(*attr_userID_read, userID.c_str());
+                attr.set_value(attr_userID_read);
+            }
+        }
+        catch (Tango::DevFailed& df)
+        {
+            ERROR_STREAM << df << endl;
+            //- rethrow exception
+            Tango::Except::re_throw_exception(  df,
+                                              "TANGO_DEVICE_ERROR",
+                                              string(df.errors[0].desc).c_str(),
+                                              "BaslerCCD::read_userID" );
+        }
+        catch (Exception& e)
+        {
+            ERROR_STREAM << e.getErrMsg() << endl;
+            //- throw exception
+            Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                           e.getErrMsg().c_str(),
+                                           "BaslerCCD::read_userID" );
+        }
+    }       
+ 
+}
+
+//+----------------------------------------------------------------------------
+//
 // method : 		BaslerCCD::read_triggerDelay
 // 
 // description : 	Extract real attribute values for triggerDelay acquisition result.
@@ -527,42 +581,49 @@ void BaslerCCD::write_triggerDelay(Tango::WAttribute &attr)
 void BaslerCCD::read_exposureMode(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "BaslerCCD::read_exposureMode(Tango::Attribute &attr) entering... "<< endl;
-    try
-    {
-        BslExposureTimeModeEnums e;
-        m_camera->getExposureMode(e);
-        std::string exposureModeName = "";
-        switch(e)
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());    
+    if (m_ct != 0)
+    {    
+        try
         {
-            case BslExposureTimeMode_Standard: exposureModeName = "STANDARD";
-                break;
-            case BslExposureTimeMode_UltraShort: exposureModeName = "SHORT";                 
-                break;
-            default : exposureModeName = "ERROR";
-                break;
-                
-        }
+            if (m_camera != 0)
+            {
+                BslExposureTimeModeEnums e;
+                m_camera->getExposureMode(e);
+                std::string exposureModeName = "";
+                switch(e)
+                {
+                    case BslExposureTimeMode_Standard: exposureModeName = "STANDARD";
+                        break;
+                    case BslExposureTimeMode_UltraShort: exposureModeName = "SHORT";                 
+                        break;
+                    default : exposureModeName = "ERROR";
+                        break;
+                        
+                }
 
-        strcpy(*attr_exposureMode_read, exposureModeName.c_str());
-        attr.set_value(attr_exposureMode_read);
+                strcpy(*attr_exposureMode_read, exposureModeName.c_str());
+                attr.set_value(attr_exposureMode_read);
+            }
+        }
+        catch(Tango::DevFailed& df)
+        {
+            ERROR_STREAM << df << endl;
+            //- rethrow exception
+            RETHROW_DEVFAILED(	df,
+                                "TANGO_DEVICE_ERROR",
+                                std::string(df.errors[0].desc).c_str(),
+                                "BaslerCCD::read_exposureMode");
+        }
+        catch(Exception& e)
+        {
+            ERROR_STREAM << e.getErrMsg() << endl;
+            //- throw exception
+            THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+                            e.getErrMsg().c_str(),
+                            "BaslerCCD::read_exposureMode");
+        }    
     }
-    catch(Tango::DevFailed& df)
-    {
-        ERROR_STREAM << df << endl;
-        //- rethrow exception
-        RETHROW_DEVFAILED(	df,
-							"TANGO_DEVICE_ERROR",
-							std::string(df.errors[0].desc).c_str(),
-							"BaslerCCD::read_exposureMode");
-    }
-    catch(Exception& e)
-    {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        //- throw exception
-        THROW_DEVFAILED("TANGO_DEVICE_ERROR",
-                        e.getErrMsg().c_str(),
-                        "BaslerCCD::read_exposureMode");
-    }    
 }
 
 //+----------------------------------------------------------------------------
@@ -575,70 +636,77 @@ void BaslerCCD::read_exposureMode(Tango::Attribute &attr)
 void BaslerCCD::write_exposureMode(Tango::WAttribute &attr)
 {
 	DEBUG_STREAM << "BaslerCCD::write_exposureMode(Tango::WAttribute &attr) entering... "<< endl;
-    try
-    {
-        string previous = m_exposure_mode;
-        attr.get_write_value(attr_exposureMode_write);
-        string current = attr_exposureMode_write;
-        std::transform(current.begin(), current.end(), current.begin(), ::toupper);
-        if((current != "STANDARD") && (current != "SHORT"))
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());    
+    if (m_ct != 0)
+    {     
+        try
         {
-            m_exposure_mode = previous;
-            attr_exposureMode_write = const_cast<Tango::DevString>(m_exposure_mode.c_str());
-            THROW_DEVFAILED("CONFIGURATION_ERROR",
-                            "Available Acquisition Modes are: "
-                            "\n- STANDARD"
-                            "\n- SHORT",
-                            "BaslerCCD::write_exposureMode");
-        }       
-        
-        //- THIS IS AN AVAILABLE EXPOSURE MODE        
-        if(current == "STANDARD")
-		{
-            m_camera->setExposureMode(BslExposureTimeMode_Standard);
-		}
-        else if(current == "SHORT")
-		{
-            m_camera->setExposureMode(BslExposureTimeMode_UltraShort);          
-		}
+            if (m_camera != 0)
+            {
+                string previous = m_exposure_mode;
+                attr.get_write_value(attr_exposureMode_write);
+                string current = attr_exposureMode_write;
+                std::transform(current.begin(), current.end(), current.begin(), ::toupper);
+                if((current != "STANDARD") && (current != "SHORT"))
+                {
+                    m_exposure_mode = previous;
+                    attr_exposureMode_write = const_cast<Tango::DevString>(m_exposure_mode.c_str());
+                    THROW_DEVFAILED("CONFIGURATION_ERROR",
+                                    "Available Acquisition Modes are: "
+                                    "\n- STANDARD"
+                                    "\n- SHORT",
+                                    "BaslerCCD::write_exposureMode");
+                }       
+                
+                //- THIS IS AN AVAILABLE EXPOSURE MODE        
+                if(current == "STANDARD")
+                {
+                    m_camera->setExposureMode(BslExposureTimeMode_Standard);
+                }
+                else if(current == "SHORT")
+                {
+                    m_camera->setExposureMode(BslExposureTimeMode_UltraShort);          
+                }
 
-        m_exposure_mode = current;
-        yat4tango::PropertyHelper::set_property(this, "MemorizedExposureMode", m_exposure_mode);
-        
-        m_hw->getSyncCtrl().updateValidRanges();
-        // get the generic device name
-        std::string    device_name ;
-        std::string    class_name  = "LimaDetector";
-        std::string    server_name = Tango::Util::instance()->get_ds_name();
-        Tango::DbDatum db_datum = (Tango::Util::instance()->get_database())->get_device_name(server_name, class_name);
-        db_datum >> device_name;      
-        
-        //get current exposure
-        double exposure;
-        m_ct->acquisition()->getAcqExpoTime(exposure);
-        
-        //get current range
-        double min_exp=0;
-        double max_exp=0;
-        m_camera->getExposureTimeRange(min_exp,max_exp);
-        
-        //if exposure is outside range, adapt it to the min_exp
-        if(exposure<=min_exp || exposure>=max_exp)
-        {
-            // call the init interface command of LimaDetector to re-create the image and baseimage attributes
-            yat4tango::DeviceProxyHelper * device_proxy = new yat4tango::DeviceProxyHelper(device_name);   
-            Tango::DeviceAttribute exptime("exposureTime", (Tango::DevDouble)min_exp*1000);
-            device_proxy->write_attribute(exptime);
+                m_exposure_mode = current;
+                yat4tango::PropertyHelper::set_property(this, "MemorizedExposureMode", m_exposure_mode);
+                
+                m_hw->getSyncCtrl().updateValidRanges();
+                // get the generic device name
+                std::string    device_name ;
+                std::string    class_name  = "LimaDetector";
+                std::string    server_name = Tango::Util::instance()->get_ds_name();
+                Tango::DbDatum db_datum = (Tango::Util::instance()->get_database())->get_device_name(server_name, class_name);
+                db_datum >> device_name;      
+                
+                //get current exposure
+                double exposure;
+                m_ct->acquisition()->getAcqExpoTime(exposure);
+                
+                //get current range
+                double min_exp=0;
+                double max_exp=0;
+                m_camera->getExposureTimeRange(min_exp,max_exp);
+                
+                //if exposure is outside range, adapt it to the min_exp
+                if(exposure<=min_exp || exposure>=max_exp)
+                {
+                    // call the init interface command of LimaDetector to re-create the image and baseimage attributes
+                    yat4tango::DeviceProxyHelper * device_proxy = new yat4tango::DeviceProxyHelper(device_name);   
+                    Tango::DeviceAttribute exptime("exposureTime", (Tango::DevDouble)min_exp*1000);
+                    device_proxy->write_attribute(exptime);
+                }
+            }
         }
+        catch(Exception& e)
+        {
+            ERROR_STREAM << e.getErrMsg() << endl;
+            //- throw exception
+            THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+                            e.getErrMsg().c_str(),
+                            "BaslerCCD::write_exposureMode");
+        }    
     }
-    catch(Exception& e)
-    {
-        ERROR_STREAM << e.getErrMsg() << endl;
-        //- throw exception
-        THROW_DEVFAILED("TANGO_DEVICE_ERROR",
-                        e.getErrMsg().c_str(),
-                        "BaslerCCD::write_exposureMode");
-    }    
 }
 
 //+----------------------------------------------------------------------------
@@ -1237,7 +1305,6 @@ void BaslerCCD::write_autoGain(Tango::WAttribute &attr)
                 attr.get_write_value(attr_autoGain_write);
                 m_camera->setAutoGain(attr_autoGain_write);
                 PropertyHelper::set_property(this, "MemorizedAutoGain", attr_autoGain_write);
-
             }
         }
         catch (Tango::DevFailed& df)
@@ -1297,12 +1364,5 @@ Tango::DevState BaslerCCD::dev_state()
     argout = DeviceState;
     return argout;
 }
-
-
-
-
-
-
-
 
 }	//	namespace

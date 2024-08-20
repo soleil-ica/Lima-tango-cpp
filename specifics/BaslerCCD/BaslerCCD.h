@@ -96,6 +96,7 @@ public :
  *    Attribute member data.
  */
 //@{
+		Tango::DevString	*attr_userID_read;
 		Tango::DevString	*attr_exposureMode_read;
 		Tango::DevString	attr_exposureMode_write;
 		Tango::DevDouble	*attr_frameRate_read;
@@ -226,6 +227,10 @@ public :
  */
 	virtual void read_attr_hardware(vector<long> &attr_list);
 /**
+ *	Extract real attribute values for userID acquisition result.
+ */
+	virtual void read_userID(Tango::Attribute &attr);
+/**
  *	Extract real attribute values for exposureMode acquisition result.
  */
 	virtual void read_exposureMode(Tango::Attribute &attr);
@@ -297,6 +302,10 @@ public :
  *	Extract real attribute values for statisticsFailedBufferCount acquisition result.
  */
 	virtual void read_statisticsFailedBufferCount(Tango::Attribute &attr);
+/**
+ *	Read/Write allowed for userID attribute.
+ */
+	virtual bool is_userID_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for exposureMode attribute.
  */
