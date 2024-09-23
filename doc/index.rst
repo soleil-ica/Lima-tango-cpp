@@ -4,7 +4,7 @@ Lima C++ TANGO device server
 This is the C++ **LimaDetector** Tango device server developped at SOLEIL.
 
 .. image:: Soleil_Lima_Device.png
-   :scale: 60 %
+   :scale: 20 %
    :alt: LimaDetector device server structure
    :align: right
 
