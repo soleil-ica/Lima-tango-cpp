@@ -9,7 +9,7 @@
     
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.12.4-pylon6</version>
+    <version>1.13.0-pylon6</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -30,7 +30,7 @@
 		<SIMULATOR.name>Simulator</SIMULATOR.name>
         <SIMULATOR.version>1.4.2</SIMULATOR.version>
 		<BASLER.name>Basler</BASLER.name>
-        <BASLER.version>1.6.1-el7-SNAPSHOT</BASLER.version>
+        <BASLER.version>1.6.2-el7-SNAPSHOT</BASLER.version>
 
         <YAT.version>1.18.5</YAT.version>
         <YAT4Tango.version>1.13.2</YAT4Tango.version> 

@@ -688,13 +688,23 @@ void BaslerCCD::write_exposureMode(Tango::WAttribute &attr)
                 double max_exp=0;
                 m_camera->getExposureTimeRange(min_exp,max_exp);
                 
-                //if exposure is outside range, adapt it to the min_exp
+                //if exposure is outside range, adapt it to the max_exp
                 if(exposure<=min_exp || exposure>=max_exp)
                 {
                     // call the init interface command of LimaDetector to re-create the image and baseimage attributes
+
                     yat4tango::DeviceProxyHelper * device_proxy = new yat4tango::DeviceProxyHelper(device_name);   
-                    Tango::DeviceAttribute exptime("exposureTime", (Tango::DevDouble)min_exp*1000);
-                    device_proxy->write_attribute(exptime);
+                    if(current == "STANDARD")
+                    {
+                        Tango::DeviceAttribute exptime("exposureTime", (Tango::DevDouble)min_exp*1000);
+                        device_proxy->write_attribute(exptime);
+                    }
+                    else if(current == "SHORT")
+                    {
+                        Tango::DeviceAttribute exptime("exposureTime", (Tango::DevDouble)max_exp*1000);
+                        device_proxy->write_attribute(exptime);
+                    }
+                    
                 }
             }
         }
