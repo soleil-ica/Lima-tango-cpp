@@ -84,6 +84,8 @@ namespace Lambda_ns
 //  chargeSumming         |  Tango::DevBoolean	Scalar
 //  lowerThreshold        |  Tango::DevDouble	Scalar
 //  upperThreshold        |  Tango::DevDouble	Scalar
+//  hwAccumulation        |  Tango::DevBoolean	Scalar
+//  exposureAccuTime      |  Tango::DevDouble	Scalar
 //================================================================
 
 namespace Lambda_ns
@@ -366,6 +368,7 @@ void Lambda::get_device_property()
 //--------------------------------------------------------
 void Lambda::always_executed_hook()
 {
+	DEBUG_STREAM << "Lambda::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Lambda::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -419,6 +422,7 @@ void Lambda::always_executed_hook()
 //--------------------------------------------------------
 void Lambda::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
+	DEBUG_STREAM << "Lambda::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Lambda::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -433,6 +437,7 @@ void Lambda::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void Lambda::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
+	DEBUG_STREAM << "Lambda::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Lambda::write_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -655,7 +660,7 @@ void Lambda::read_linearityCorrection(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_linearityCorrection(Tango::WAttribute &attr)
 {
-	INFO_STREAM << "Lambda::write_linearityCorrection(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Lambda::write_linearityCorrection(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
@@ -720,7 +725,7 @@ void Lambda::read_saturationFlag(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_saturationFlag(Tango::WAttribute &attr)
 {
-	INFO_STREAM << "Lambda::write_saturationFlag(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Lambda::write_saturationFlag(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
@@ -785,7 +790,7 @@ void Lambda::read_saturationThreshold(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_saturationThreshold(Tango::WAttribute &attr)
 {
-	INFO_STREAM << "Lambda::write_saturationThreshold(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Lambda::write_saturationThreshold(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
@@ -870,7 +875,7 @@ void Lambda::read_lowerThreshold(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_lowerThreshold(Tango::WAttribute &attr)
 {
-	INFO_STREAM << "Lambda::write_lowerThreshold(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Lambda::write_lowerThreshold(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevDouble	w_val;
 	attr.get_write_value(w_val);
@@ -938,7 +943,7 @@ void Lambda::read_upperThreshold(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_upperThreshold(Tango::WAttribute &attr)
 {
-	INFO_STREAM << "Lambda::write_upperThreshold(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Lambda::write_upperThreshold(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevDouble	w_val;
 	attr.get_write_value(w_val);
@@ -959,6 +964,70 @@ void Lambda::write_upperThreshold(Tango::WAttribute &attr)
 	}
 	
 	/*----- PROTECTED REGION END -----*/	//	Lambda::write_upperThreshold
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute hwAccumulation related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::write_hwAccumulation(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Lambda::write_hwAccumulation(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevBoolean	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Lambda::write_hwAccumulation) ENABLED START -----*/
+	try
+    {
+        m_camera->setAccumulationMode(w_val);
+		//- Memorize the write value
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "hwAccumulation", w_val);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "Lambda::write_hwAccumulation");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "Lambda::write_hwAccumulation");
+    }	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::write_hwAccumulation
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute exposureAccuTime related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::write_exposureAccuTime(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Lambda::write_exposureAccuTime(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Lambda::write_exposureAccuTime) ENABLED START -----*/
+	try
+    {
+        m_camera->setExposureAccuTime(w_val);
+		//- Memorize the write value
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "exposureAccuTime", w_val);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "Lambda::write_exposureAccuTime");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "Lambda::write_exposureAccuTime");
+    }
+	/*----- PROTECTED REGION END -----*/	//	Lambda::write_exposureAccuTime
 }
 
 //--------------------------------------------------------
