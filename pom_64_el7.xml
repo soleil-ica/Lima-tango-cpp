@@ -9,7 +9,7 @@
     
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.13.0</version>
+    <version>1.14.0-SNAPSHOT</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -29,7 +29,7 @@
         <SIMULATOR.version>1.4.2</SIMULATOR.version>
 		
 		<LAMBDA.name>Lambda</LAMBDA.name>
-        <LAMBDA.version>2.0.3</LAMBDA.version>
+        <LAMBDA.version>2.1.0-SNAPSHOT</LAMBDA.version>
 
         <YAT.version>1.18.5</YAT.version> 
         <YAT4Tango.version>1.13.2</YAT4Tango.version> 
