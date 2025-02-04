@@ -298,6 +298,24 @@ public:
 	virtual void read_upperThreshold(Tango::Attribute &attr);
 	virtual void write_upperThreshold(Tango::WAttribute &attr);
 	virtual bool is_upperThreshold_allowed(Tango::AttReqType type);
+/**
+ *	Attribute hwAccumulation related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void write_hwAccumulation(Tango::WAttribute &attr);
+	virtual bool is_hwAccumulation_allowed(Tango::AttReqType type);
+/**
+ *	Attribute exposureAccuTime related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+	virtual void write_exposureAccuTime(Tango::WAttribute &attr);
+	virtual bool is_exposureAccuTime_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------
