@@ -482,6 +482,46 @@ bool Lambda::is_exposureAccuTime_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	return true;
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : Lambda::is_hwAcquisitionMode_allowed()
+ *	Description : Execution allowed for hwAcquisitionMode attribute
+ */
+//--------------------------------------------------------
+bool Lambda::is_hwAcquisitionMode_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Check access type.
+	if ( type!=Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for WRITE 
+		if (get_state()==Tango::FAULT ||
+			get_state()==Tango::RUNNING)
+		{
+		/*----- PROTECTED REGION ID(Lambda::hwAcquisitionModeStateAllowed_WRITE) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	Lambda::hwAcquisitionModeStateAllowed_WRITE
+			return false;
+		}
+		return true;
+	}
+	else
+
+	//	Check access type.
+	if ( type==Tango::READ_REQ )
+	{
+		//	Compare device state with not allowed states for READ 
+		if (get_state()==Tango::FAULT)
+		{
+		/*----- PROTECTED REGION ID(Lambda::hwAcquisitionModeStateAllowed_READ) ENABLED START -----*/
+		
+		/*----- PROTECTED REGION END -----*/	//	Lambda::hwAcquisitionModeStateAllowed_READ
+			return false;
+		}
+		return true;
+	}
+	return true;
+}
+
 
 //=================================================
 //		Commands Allowed Methods

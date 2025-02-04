@@ -86,6 +86,8 @@ namespace Lambda_ns
 //  upperThreshold        |  Tango::DevDouble	Scalar
 //  hwAccumulation        |  Tango::DevBoolean	Scalar
 //  exposureAccuTime      |  Tango::DevDouble	Scalar
+//  hwAcquisitionMode     |  Tango::DevEnum	Scalar
+
 //================================================================
 
 namespace Lambda_ns
@@ -156,6 +158,7 @@ void Lambda::delete_device()
     m_is_device_initialized = false;
 
 	/*----- PROTECTED REGION END -----*/	//	Lambda::delete_device
+	delete[] attr_hwAcquisitionMode_read;
 }
 
 //--------------------------------------------------------
@@ -177,6 +180,7 @@ void Lambda::init_device()
 	//	Get the device properties from database
 	get_device_property();
 	
+	attr_hwAcquisitionMode_read = new hwAcquisitionModeEnum[1];
 	/*----- PROTECTED REGION ID(Lambda::init_device) ENABLED START -----*/
     //	Initialize device
     CREATE_SCALAR_ATTRIBUTE(attr_distortionCorrection_read);
@@ -1025,6 +1029,75 @@ void Lambda::write_exposureAccuTime(Tango::WAttribute &attr)
         manage_lima_exception(e, "Lambda::write_exposureAccuTime");
     }
 	/*----- PROTECTED REGION END -----*/	//	Lambda::write_exposureAccuTime
+}
+
+//--------------------------------------------------------
+/**	
+ *	Read attribute hwAcquisitionMode related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevEnum (hwAcquisitionModeEnum)
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::read_hwAcquisitionMode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Lambda::read_hwAcquisitionMode(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Lambda::read_hwAcquisitionMode) ENABLED START -----*/
+	//	Set the attribute value
+	int acqMode = -1;
+	m_camera->getAcquisitionMode(acqMode);
+	switch(acqMode) {
+		case  1: *attr_hwAcquisitionMode_read = Lambda_ns::_1_BIT;   break;
+		case  6: *attr_hwAcquisitionMode_read = Lambda_ns::_6_BITS;  break;
+		case 12: *attr_hwAcquisitionMode_read = Lambda_ns::_12_BITS; break;
+		case 24: *attr_hwAcquisitionMode_read = Lambda_ns::_24_BITS; break;
+		default: break;
+	}
+	attr.set_value(attr_hwAcquisitionMode_read);
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::read_hwAcquisitionMode
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute hwAcquisitionMode related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevEnum (hwAcquisitionModeEnum)
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::write_hwAcquisitionMode(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Lambda::write_hwAcquisitionMode(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	hwAcquisitionModeEnum	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Lambda::write_hwAcquisitionMode) ENABLED START -----*/
+	try
+	{
+		int acqMode = 24;
+		switch(w_val) {
+			case   Lambda_ns::_1_BIT: acqMode = 1;  break;
+			case  Lambda_ns::_6_BITS: acqMode = 6;  break;
+			case Lambda_ns::_12_BITS: acqMode = 12; break;
+			case Lambda_ns::_24_BITS: acqMode = 24; break;
+			default: break;
+		}
+		m_camera->setAcquisitionMode(acqMode);
+		//- Memorize the write value
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "hwAcquisitionMode", w_val);
+	}
+	catch (Tango::DevFailed& df)
+	{
+		manage_devfailed_exception(df, "write_hwAcquisitionMode");
+	}
+	catch (lima::Exception& le)
+	{
+		manage_lima_exception(le, "write_hwAcquisitionMode");
+	}
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::write_hwAcquisitionMode
 }
 
 //--------------------------------------------------------

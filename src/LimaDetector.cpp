@@ -4350,6 +4350,10 @@ void LimaDetector::configure_image_type(void)
 {
     HwDetInfoCtrlObj *hw_det_info;
     m_hw->getHwCtrlObj(hw_det_info);
+    if(detectorPixelDepth == "1")
+    {
+        hw_det_info->setCurrImageType(Bpp1);
+    }    
     if(detectorPixelDepth == "2")
     {
         hw_det_info->setCurrImageType(Bpp2);
@@ -4358,6 +4362,10 @@ void LimaDetector::configure_image_type(void)
     {
         hw_det_info->setCurrImageType(Bpp4);
     }	
+    else if(detectorPixelDepth == "6")
+    {
+        hw_det_info->setCurrImageType(Bpp6);
+    }	    
     else if(detectorPixelDepth == "8")
     {
         hw_det_info->setCurrImageType(Bpp8);
@@ -4819,7 +4827,7 @@ void LimaDetector::add_image_dynamic_attribute(const std::string& attr_name)
     dai.tai.max_dim_x = 100000; //- arbitrary big value
     dai.tai.max_dim_y = 100000; //- arbitrary big value
 
-    if(detectorPixelDepth == "8" || detectorPixelDepth == "4" || detectorPixelDepth == "2")
+    if(detectorPixelDepth == "8" || detectorPixelDepth == "6" || detectorPixelDepth == "4" || detectorPixelDepth == "2" || detectorPixelDepth == "1")
     {
         dai.tai.data_type = Tango::DEV_UCHAR;
     }
