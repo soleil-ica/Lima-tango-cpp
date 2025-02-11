@@ -40,6 +40,8 @@ DetectorType                        SimulatorCCD                String          
                                                                                         - SimulatorCCD    
                                                                                         - SlsEiger
                                                                                         - SlsJungfrau
+                                                                                        - SpectralInstrument
+                                                                                        - SpectrumOne
                                                                                         - Ufxc
                                                                                         - UviewCCD                                                                                          
                                                                                         - XpadPixelDetector
@@ -130,13 +132,15 @@ DetectorVideoMode                   NONE                        String          
                                                                                         - YUV422
                                                                                         - YUV444
 
-ExpertBufferMaxMemoryPercent        70                          UShort                  Define the Percent of available system memory reserved to Lima buffer control :
+ExpertBufferMaxMemoryPercent        70                          UShort                  Define the Percent of available system memory reserved to Lima buffer control
 
-ExpertNbPoolThread                  4                           UShort                  Defines the number of threads dedicated to process images in the PricessLib
+ExpertNbPoolThread                  4                           UShort                  Defines the number of threads dedicated to process images in the ProcessLib
 
-ExpertUsePrepareCmd                 false                       Boolean                 If true, a call of 'Prepare' command is necessary before each 'Snap' or 'Start' command.
+ExpertUsePrepareCmd                 false                       Boolean                 If true, a call of 'Prepare' command is necessary before each 'Snap' or 'Start' command
 
-FileIndexPattern                    %06d                        String                  Define the pattern of the index used for image files names.
+ExpertTimeoutCmd                    5000                        ULong                   Timeout (in ms) for some commands (snap/start/stop/prepare)
+
+FileIndexPattern                    %06d                        String                  Define the pattern of the index used for image files names
 
                                                                                         Nota : %04d mean that file name index will be end with exactly 4 digits filled by '0' if necessary
 
@@ -160,7 +164,7 @@ FileTimestampEnabled                true                        Boolean         
 
 FileWriteMode                       SYNCHRONOUS                 String                  Available only for Nexus format
 
-                                                                                        Set the SetWriteMode(). 
+                                                                                        Set the SetWriteMode()
                                                                                         
                                                                                         Available values : (one of these)      
                                                                                         
@@ -191,7 +195,7 @@ Attributes
 ===============================     ========================    ==================      ===============================================
 Attribute name                      Read/Write                  Type                    Description                                                                                
 ===============================     ========================    ==================      ===============================================
-detectorDescription                 R                           String                  Detector user-defined text to identify the engine.                                                   
+detectorDescription                 R                           String                  Detector user-defined text to identify the engine                                               
                                                                 
 detectorType                        R                           String                  type of the Detector                                                                                 
                                                                 
