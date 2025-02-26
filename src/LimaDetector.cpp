@@ -4664,7 +4664,8 @@ void LimaDetector::create_log_info_attributes(void)
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(SPECTRAL_NAME), YAT_XSTR(SPECTRAL_VERSION));
     yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(UFXC_NAME), YAT_XSTR(UFXC_VERSION) ); 
 #elif defined(UNIX_64_EL7) //- linux64-el7
-    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(LAMBDA_NAME), YAT_XSTR(LAMBDA_VERSION_DEVICE));//- name conflict with lambda sdk
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(BASLER_NAME), YAT_XSTR(BASLER_VERSION) );
+    yat4tango::DeviceInfo::add_dependency(this, YAT_XSTR(LAMBDA_NAME), YAT_XSTR(LAMBDA_VERSION_DEVICE));//- name conflict with lambda sdk 
 #endif
 
     //- instanciate the log Adapter

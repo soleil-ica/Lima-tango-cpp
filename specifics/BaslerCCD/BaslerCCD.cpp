@@ -1017,7 +1017,7 @@ void BaslerCCD::read_dataRate(Tango::Attribute &attr)
             Tango::Except::re_throw_exception(  df,
                                               "TANGO_DEVICE_ERROR",
                                               string(df.errors[0].desc).c_str(),
-                                              "BaslerCCD::read_frameRate" );
+                                              "BaslerCCD::read_dataRate" );
         }
         catch (Exception& e)
         {
@@ -1025,7 +1025,7 @@ void BaslerCCD::read_dataRate(Tango::Attribute &attr)
             //- throw exception
             Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
                                            e.getErrMsg().c_str(),
-                                           "BaslerCCD::read_frameRate" );
+                                           "BaslerCCD::read_dataRate" );
         }
     }
 }
