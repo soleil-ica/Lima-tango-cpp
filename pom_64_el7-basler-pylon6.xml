@@ -76,13 +76,20 @@
                         <includes>
                             <include>*.cpp</include>						
                             <include>specifics/SimulatorCCD/*.cpp</include>
-							<include>specifics/BaslerCCD/*.cpp</include>                   							
+							<include>specifics/BaslerCCD/*.cpp</include>    
+                            <include>specifics/Layout/*.cpp</include>               
+                            <include>specifics/Mask/*.cpp</include>                            
+                            <include>specifics/RoiCounters/*.cpp</include>                             							
                         </includes>
 
                         <includePaths>                          
                             <includePath>src</includePath>                                   
                             <includePath>specifics/SimulatorCCD</includePath>
-                            <includePath>specifics/BaslerCCD</includePath>        
+                            <includePath>specifics/BaslerCCD</includePath>   
+
+                            <includePath>specifics/Layout</includePath>         
+                            <includePath>specifics/Mask</includePath>
+                            <includePath>specifics/RoiCounters</includePath>     
 
                             <includePath>${libs-64bits}/my_breakpad/include</includePath>         
                             <includePath>${libs-64bits}/gsl-1.15-13.el7.x86_64/include</includePath>       
@@ -112,6 +119,10 @@
                             <!-- define which detector you need to ENABLE -->      
                             <define>SIMULATOR_ENABLED</define>
 							<define>BASLER_ENABLED</define>
+
+                            <define>LAYOUT_ENABLED</define>    
+                            <define>MASK_ENABLED</define>
+                            <define>ROICOUNTERS_ENABLED</define>
 
 							<define>USE_GIGE</define>
 
