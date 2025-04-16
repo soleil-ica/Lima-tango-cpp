@@ -118,6 +118,10 @@ namespace Pco_ns
 		Tango::DevString	*attr_cameraModel_read;
 		Tango::DevFloat	*attr_sensorTemperature_read;
 		Tango::DevString	*attr_dllVersion_read;
+		Tango::DevString	*attr_storageMode_read;
+		Tango::DevString	attr_storageMode_write;
+		Tango::DevBoolean	*attr_ringBuffer_read;
+		Tango::DevBoolean	attr_ringBuffer_write;
 //@}
 
         /**
@@ -226,6 +230,22 @@ namespace Pco_ns
  */
 	virtual void read_dllVersion(Tango::Attribute &attr);
 /**
+ *	Extract real attribute values for storageMode acquisition result.
+ */
+	virtual void read_storageMode(Tango::Attribute &attr);
+/**
+ *	Write storageMode attribute values to hardware.
+ */
+	virtual void write_storageMode(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for ringBuffer acquisition result.
+ */
+	virtual void read_ringBuffer(Tango::Attribute &attr);
+/**
+ *	Write ringBuffer attribute values to hardware.
+ */
+	virtual void write_ringBuffer(Tango::WAttribute &attr);
+/**
  *	Read/Write allowed for pixelRate attribute.
  */
 	virtual bool is_pixelRate_allowed(Tango::AttReqType type);
@@ -241,6 +261,14 @@ namespace Pco_ns
  *	Read/Write allowed for dllVersion attribute.
  */
 	virtual bool is_dllVersion_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for storageMode attribute.
+ */
+	virtual bool is_storageMode_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for ringBuffer attribute.
+ */
+	virtual bool is_ringBuffer_allowed(Tango::AttReqType type);
 /**
  *	Execution allowed for Talk command.
  */
