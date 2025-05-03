@@ -84,6 +84,9 @@ namespace Lambda_ns
 //  chargeSumming         |  Tango::DevBoolean	Scalar
 //  lowerThreshold        |  Tango::DevDouble	Scalar
 //  upperThreshold        |  Tango::DevDouble	Scalar
+//  hwAcquisitionMode     |  Tango::DevEnum	Scalar
+//  hwAccumulation        |  Tango::DevBoolean	Scalar
+//  exposureAccuTime      |  Tango::DevDouble	Scalar
 //================================================================
 
 namespace Lambda_ns
@@ -154,6 +157,7 @@ void Lambda::delete_device()
     m_is_device_initialized = false;
 
 	/*----- PROTECTED REGION END -----*/	//	Lambda::delete_device
+	delete[] attr_hwAcquisitionMode_read;
 }
 
 //--------------------------------------------------------
@@ -175,6 +179,7 @@ void Lambda::init_device()
 	//	Get the device properties from database
 	get_device_property();
 	
+	attr_hwAcquisitionMode_read = new hwAcquisitionModeEnum[1];
 	/*----- PROTECTED REGION ID(Lambda::init_device) ENABLED START -----*/
     //	Initialize device
     CREATE_SCALAR_ATTRIBUTE(attr_distortionCorrection_read);
@@ -366,6 +371,7 @@ void Lambda::get_device_property()
 //--------------------------------------------------------
 void Lambda::always_executed_hook()
 {
+	DEBUG_STREAM << "Lambda::always_executed_hook()  " << device_name << endl;
 	/*----- PROTECTED REGION ID(Lambda::always_executed_hook) ENABLED START -----*/
 	
 	//	code always executed before all requests
@@ -419,6 +425,7 @@ void Lambda::always_executed_hook()
 //--------------------------------------------------------
 void Lambda::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
+	DEBUG_STREAM << "Lambda::read_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Lambda::read_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -433,6 +440,7 @@ void Lambda::read_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 //--------------------------------------------------------
 void Lambda::write_attr_hardware(TANGO_UNUSED(vector<long> &attr_list))
 {
+	DEBUG_STREAM << "Lambda::write_attr_hardware(vector<long> &attr_list) entering... " << endl;
 	/*----- PROTECTED REGION ID(Lambda::write_attr_hardware) ENABLED START -----*/
 	
 	//	Add your own code
@@ -655,7 +663,7 @@ void Lambda::read_linearityCorrection(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_linearityCorrection(Tango::WAttribute &attr)
 {
-	INFO_STREAM << "Lambda::write_linearityCorrection(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Lambda::write_linearityCorrection(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
@@ -720,7 +728,7 @@ void Lambda::read_saturationFlag(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_saturationFlag(Tango::WAttribute &attr)
 {
-	INFO_STREAM << "Lambda::write_saturationFlag(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Lambda::write_saturationFlag(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
@@ -785,7 +793,7 @@ void Lambda::read_saturationThreshold(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_saturationThreshold(Tango::WAttribute &attr)
 {
-	INFO_STREAM << "Lambda::write_saturationThreshold(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Lambda::write_saturationThreshold(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevLong	w_val;
 	attr.get_write_value(w_val);
@@ -870,7 +878,7 @@ void Lambda::read_lowerThreshold(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_lowerThreshold(Tango::WAttribute &attr)
 {
-	INFO_STREAM << "Lambda::write_lowerThreshold(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Lambda::write_lowerThreshold(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevDouble	w_val;
 	attr.get_write_value(w_val);
@@ -938,7 +946,7 @@ void Lambda::read_upperThreshold(Tango::Attribute &attr)
 //--------------------------------------------------------
 void Lambda::write_upperThreshold(Tango::WAttribute &attr)
 {
-	INFO_STREAM << "Lambda::write_upperThreshold(Tango::WAttribute &attr) entering... " << endl;
+	DEBUG_STREAM << "Lambda::write_upperThreshold(Tango::WAttribute &attr) entering... " << endl;
 	//	Retrieve write value
 	Tango::DevDouble	w_val;
 	attr.get_write_value(w_val);
@@ -959,6 +967,138 @@ void Lambda::write_upperThreshold(Tango::WAttribute &attr)
 	}
 	
 	/*----- PROTECTED REGION END -----*/	//	Lambda::write_upperThreshold
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute hwAcquisitionMode related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevEnum (hwAcquisitionModeEnum)
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::read_hwAcquisitionMode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Lambda::read_hwAcquisitionMode(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Lambda::read_hwAcquisitionMode) ENABLED START -----*/
+	//	Set the attribute value
+	int acqMode = -1;
+	m_camera->getAcquisitionMode(acqMode);
+	switch(acqMode) {
+		case  1: *attr_hwAcquisitionMode_read = Lambda_ns::_1_BIT;   break;
+		case  6: *attr_hwAcquisitionMode_read = Lambda_ns::_6_BITS;  break;
+		case 12: *attr_hwAcquisitionMode_read = Lambda_ns::_12_BITS; break;
+		case 24: *attr_hwAcquisitionMode_read = Lambda_ns::_24_BITS; break;
+		default: break;
+	}
+	attr.set_value(attr_hwAcquisitionMode_read);
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::read_hwAcquisitionMode
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute hwAcquisitionMode related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevEnum (hwAcquisitionModeEnum)
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::write_hwAcquisitionMode(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Lambda::write_hwAcquisitionMode(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	hwAcquisitionModeEnum	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Lambda::write_hwAcquisitionMode) ENABLED START -----*/
+	try
+	{
+		int acqMode = 24;
+		switch(w_val) {
+			case   Lambda_ns::_1_BIT: acqMode = 1;  break;
+			case  Lambda_ns::_6_BITS: acqMode = 6;  break;
+			case Lambda_ns::_12_BITS: acqMode = 12; break;
+			case Lambda_ns::_24_BITS: acqMode = 24; break;
+			default: break;
+		}
+		m_camera->setAcquisitionMode(acqMode);
+		//- Memorize the write value
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "hwAcquisitionMode", w_val);
+	}
+	catch (Tango::DevFailed& df)
+	{
+		manage_devfailed_exception(df, "write_hwAcquisitionMode");
+	}
+	catch (lima::Exception& le)
+	{
+		manage_lima_exception(le, "write_hwAcquisitionMode");
+	}
+	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::write_hwAcquisitionMode
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute hwAccumulation related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::write_hwAccumulation(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Lambda::write_hwAccumulation(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevBoolean	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Lambda::write_hwAccumulation) ENABLED START -----*/
+	try
+    {
+        m_camera->setAccumulationMode(w_val);
+		//- Memorize the write value
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "hwAccumulation", w_val);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "Lambda::write_hwAccumulation");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "Lambda::write_hwAccumulation");
+    }	
+	/*----- PROTECTED REGION END -----*/	//	Lambda::write_hwAccumulation
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute exposureAccuTime related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevDouble
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Lambda::write_exposureAccuTime(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Lambda::write_exposureAccuTime(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevDouble	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Lambda::write_exposureAccuTime) ENABLED START -----*/
+	try
+    {
+        m_camera->setExposureAccuTime(w_val);
+		//- Memorize the write value
+		yat4tango::PropertyHelper::set_memorized_attribute(this, "exposureAccuTime", w_val);
+    }
+    catch(Tango::DevFailed& df)
+    {
+        manage_devfailed_exception(df, "Lambda::write_exposureAccuTime");
+    }
+    catch(Exception& e)
+    {
+        manage_lima_exception(e, "Lambda::write_exposureAccuTime");
+    }
+	/*----- PROTECTED REGION END -----*/	//	Lambda::write_exposureAccuTime
 }
 
 //--------------------------------------------------------
