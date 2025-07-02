@@ -370,6 +370,90 @@ bool BaslerCCD::is_gain_allowed(Tango::AttReqType type)
 	}
 	return true;
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		BaslerCCD::is_exposureMode_allowed
+// 
+// description : 	Read/Write allowed for exposureMode attribute.
+//
+//-----------------------------------------------------------------------------
+bool BaslerCCD::is_exposureMode_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		BaslerCCD::is_triggerDelay_allowed
+// 
+// description : 	Read/Write allowed for triggerDelay attribute.
+//
+//-----------------------------------------------------------------------------
+bool BaslerCCD::is_triggerDelay_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
+//+----------------------------------------------------------------------------
+//
+// method : 		BaslerCCD::is_userID_allowed
+// 
+// description : 	Read/Write allowed for userID attribute.
+//
+//-----------------------------------------------------------------------------
+bool BaslerCCD::is_userID_allowed(Tango::AttReqType type)
+{
+	if (get_state() == Tango::INIT	||
+		get_state() == Tango::FAULT	||
+		get_state() == Tango::RUNNING)
+	{
+		//	End of Generated Code
+        if ( get_state()==Tango::RUNNING && type==Tango::READ_REQ )
+        {
+           return true;
+        }
+
+        if ( get_state()==Tango::FAULT && is_device_initialized() )
+        {
+           return true;
+        }
+		//	Re-Start of Generated Code
+		return false;
+	}
+	return true;
+}
 
 //=================================================
 //		Commands Allowed Methods

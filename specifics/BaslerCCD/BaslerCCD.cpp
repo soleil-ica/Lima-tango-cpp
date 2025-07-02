@@ -56,7 +56,8 @@ static const char *RcsId = "$Id:  $";
 #include <math.h>
 #include <BaslerCCD.h>
 #include <BaslerCCDClass.h>
-
+#include <yat4tango/ExceptionHelper.h>
+#include <yat4tango/DeviceProxyHelper.h>
 
 namespace BaslerCCD_ns
 {
@@ -97,6 +98,9 @@ void BaslerCCD::delete_device()
 {
     INFO_STREAM << "BaslerCCD::BaslerCCD() delete device " << device_name << endl;
     //    Delete device allocated objects
+    DELETE_DEVSTRING_ATTRIBUTE(attr_userID_read);
+    DELETE_DEVSTRING_ATTRIBUTE(attr_exposureMode_read);
+    DELETE_SCALAR_ATTRIBUTE(attr_triggerDelay_read);
     DELETE_SCALAR_ATTRIBUTE(attr_frameRate_read);
     DELETE_SCALAR_ATTRIBUTE(attr_dataRate_read);
     DELETE_SCALAR_ATTRIBUTE(attr_temperature_read);
@@ -128,6 +132,9 @@ void BaslerCCD::init_device()
     //--------------------------------------------
 
     get_device_property();
+    CREATE_DEVSTRING_ATTRIBUTE(attr_userID_read, 255);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_exposureMode_read, 255);
+    CREATE_SCALAR_ATTRIBUTE(attr_triggerDelay_read);
     CREATE_SCALAR_ATTRIBUTE(attr_frameRate_read, 0.0);
     CREATE_SCALAR_ATTRIBUTE(attr_dataRate_read, 0.0);
     CREATE_SCALAR_ATTRIBUTE(attr_temperature_read, 0.0);
@@ -202,11 +209,12 @@ void BaslerCCD::init_device()
         *attr_interPacketDelay_read = memorizedInterPacketDelay;
         interPacketDelay.set_write_value(*attr_interPacketDelay_read);
         write_interPacketDelay(interPacketDelay);
+                
         m_is_autogain_available = m_camera->isAutoGainAvailable();
         m_is_gain_available = m_camera->isGainAvailable();
         if (m_is_autogain_available)
         {
-            INFO_STREAM << "Write tango hardware at Init - autoGain." << endl;
+            INFO_STREAM << "Write tango hardware at Init - autoGain." << endl;        
             Tango::WAttribute &autoGain = dev_attr->get_w_attr_by_name("autoGain");
             *attr_autoGain_read = memorizedAutoGain;
             autoGain.set_write_value(*attr_autoGain_read);
@@ -221,6 +229,20 @@ void BaslerCCD::init_device()
             gain.set_write_value(*attr_gain_read);
             write_gain(gain);
         }
+        
+        INFO_STREAM << "Write tango hardware at Init - exposureMode." << endl;
+        Tango::WAttribute &exposureMode = dev_attr->get_w_attr_by_name("exposureMode");
+        m_exposure_mode = memorizedExposureMode;
+        strcpy(*attr_exposureMode_read, memorizedExposureMode.c_str());
+        exposureMode.set_write_value(m_exposure_mode);
+        write_exposureMode(exposureMode);      
+
+        INFO_STREAM << "Write tango hardware at Init - triggerDelay." << endl;
+        Tango::WAttribute &triggerDelay = dev_attr->get_w_attr_by_name("triggerDelay");
+        *attr_triggerDelay_read = attr_triggerDelay_write = memorizedTriggerDelay;
+        triggerDelay.set_write_value(*attr_triggerDelay_read);
+        write_triggerDelay(triggerDelay);
+        
     }
 
     set_state(Tango::STANDBY);
@@ -242,94 +264,112 @@ void BaslerCCD::get_device_property()
 
     //    Read device properties from database.(Automatic code generation)
     //------------------------------------------------------------------
-    Tango::DbData	dev_prop;
-    dev_prop.push_back(Tango::DbDatum("DetectorIP"));
-    dev_prop.push_back(Tango::DbDatum("DetectorTimeout"));
-    dev_prop.push_back(Tango::DbDatum("DetectorPacketSize"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedInterPacketDelay"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedGain"));
-    dev_prop.push_back(Tango::DbDatum("MemorizedAutoGain"));
+	Tango::DbData	dev_prop;
+	dev_prop.push_back(Tango::DbDatum("DetectorIP"));
+	dev_prop.push_back(Tango::DbDatum("DetectorTimeout"));
+	dev_prop.push_back(Tango::DbDatum("DetectorPacketSize"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedInterPacketDelay"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedGain"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedAutoGain"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedExposureMode"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedTriggerDelay"));
 
-    //	Call database and extract values
-    //--------------------------------------------
-    if (Tango::Util::instance()->_UseDb == true)
-        get_db_device()->get_property(dev_prop);
-    Tango::DbDatum	def_prop, cl_prop;
-    BaslerCCDClass	*ds_class =
-     (static_cast<BaslerCCDClass *> (get_device_class()));
-    int	i = -1;
+	//	Call database and extract values
+	//--------------------------------------------
+	if (Tango::Util::instance()->_UseDb==true)
+		get_db_device()->get_property(dev_prop);
+	Tango::DbDatum	def_prop, cl_prop;
+	BaslerCCDClass	*ds_class =
+		(static_cast<BaslerCCDClass *>(get_device_class()));
+	int	i = -1;
 
-    //	Try to initialize DetectorIP from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty() == false)	cl_prop  >>  detectorIP;
-    else
-    {
-        //	Try to initialize DetectorIP from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty() == false)	def_prop  >>  detectorIP;
-    }
-    //	And try to extract DetectorIP value from database
-    if (dev_prop[i].is_empty() == false)	dev_prop[i]  >>  detectorIP;
+	//	Try to initialize DetectorIP from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  detectorIP;
+	else {
+		//	Try to initialize DetectorIP from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  detectorIP;
+	}
+	//	And try to extract DetectorIP value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  detectorIP;
 
-    //	Try to initialize DetectorTimeout from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty() == false)	cl_prop  >>  detectorTimeout;
-    else
-    {
-        //	Try to initialize DetectorTimeout from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty() == false)	def_prop  >>  detectorTimeout;
-    }
-    //	And try to extract DetectorTimeout value from database
-    if (dev_prop[i].is_empty() == false)	dev_prop[i]  >>  detectorTimeout;
+	//	Try to initialize DetectorTimeout from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  detectorTimeout;
+	else {
+		//	Try to initialize DetectorTimeout from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  detectorTimeout;
+	}
+	//	And try to extract DetectorTimeout value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  detectorTimeout;
 
-    //	Try to initialize DetectorPacketSize from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty() == false)	cl_prop  >>  detectorPacketSize;
-    else
-    {
-        //	Try to initialize DetectorPacketSize from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty() == false)	def_prop  >>  detectorPacketSize;
-    }
-    //	And try to extract DetectorPacketSize value from database
-    if (dev_prop[i].is_empty() == false)	dev_prop[i]  >>  detectorPacketSize;
+	//	Try to initialize DetectorPacketSize from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  detectorPacketSize;
+	else {
+		//	Try to initialize DetectorPacketSize from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  detectorPacketSize;
+	}
+	//	And try to extract DetectorPacketSize value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  detectorPacketSize;
 
-    //	Try to initialize MemorizedInterPacketDelay from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty() == false)	cl_prop  >>  memorizedInterPacketDelay;
-    else
-    {
-        //	Try to initialize MemorizedInterPacketDelay from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty() == false)	def_prop  >>  memorizedInterPacketDelay;
-    }
-    //	And try to extract MemorizedInterPacketDelay value from database
-    if (dev_prop[i].is_empty() == false)	dev_prop[i]  >>  memorizedInterPacketDelay;
+	//	Try to initialize MemorizedInterPacketDelay from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedInterPacketDelay;
+	else {
+		//	Try to initialize MemorizedInterPacketDelay from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedInterPacketDelay;
+	}
+	//	And try to extract MemorizedInterPacketDelay value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedInterPacketDelay;
 
-    //	Try to initialize MemorizedGain from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty() == false)	cl_prop  >>  memorizedGain;
-    else
-    {
-        //	Try to initialize MemorizedGain from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty() == false)	def_prop  >>  memorizedGain;
-    }
-    //	And try to extract MemorizedGain value from database
-    if (dev_prop[i].is_empty() == false)	dev_prop[i]  >>  memorizedGain;
+	//	Try to initialize MemorizedGain from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedGain;
+	else {
+		//	Try to initialize MemorizedGain from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedGain;
+	}
+	//	And try to extract MemorizedGain value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedGain;
 
-    //	Try to initialize MemorizedAutoGain from class property
-    cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-    if (cl_prop.is_empty() == false)	cl_prop  >>  memorizedAutoGain;
-    else
-    {
-        //	Try to initialize MemorizedAutoGain from default device value
-        def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-        if (def_prop.is_empty() == false)	def_prop  >>  memorizedAutoGain;
-    }
-    //	And try to extract MemorizedAutoGain value from database
-    if (dev_prop[i].is_empty() == false)	dev_prop[i]  >>  memorizedAutoGain;
+	//	Try to initialize MemorizedAutoGain from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedAutoGain;
+	else {
+		//	Try to initialize MemorizedAutoGain from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedAutoGain;
+	}
+	//	And try to extract MemorizedAutoGain value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedAutoGain;
+
+	//	Try to initialize MemorizedExposureMode from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedExposureMode;
+	else {
+		//	Try to initialize MemorizedExposureMode from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedExposureMode;
+	}
+	//	And try to extract MemorizedExposureMode value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedExposureMode;
+
+	//	Try to initialize MemorizedTriggerDelay from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedTriggerDelay;
+	else {
+		//	Try to initialize MemorizedTriggerDelay from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedTriggerDelay;
+	}
+	//	And try to extract MemorizedTriggerDelay value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedTriggerDelay;
 
 
 
@@ -341,6 +381,8 @@ void BaslerCCD::get_device_property()
     PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedGain");
     PropertyHelper::create_property_if_empty(this, dev_prop, "False", "MemorizedAutoGain");
     PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedInterPacketDelay");
+    PropertyHelper::create_property_if_empty(this, dev_prop, "STANDARD", "MemorizedExposureMode");
+    PropertyHelper::create_property_if_empty(this, dev_prop, "0", "MemorizedTriggerDelay");
 }
 
 
@@ -404,6 +446,281 @@ void BaslerCCD::read_attr_hardware(vector<long> &attr_list)
 }
 //+----------------------------------------------------------------------------
 //
+// method : 		BaslerCCD::read_userID
+// 
+// description : 	Extract real attribute values for userID acquisition result.
+//
+//-----------------------------------------------------------------------------
+void BaslerCCD::read_userID(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "BaslerCCD::read_userID(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    if (m_ct != 0)
+    {
+        try
+        {
+            if (m_camera != 0)
+            {
+                std::string userID;
+                m_camera->getDeviceUserID(userID);   
+                strcpy(*attr_userID_read, userID.c_str());
+                attr.set_value(attr_userID_read);
+            }
+        }
+        catch (Tango::DevFailed& df)
+        {
+            ERROR_STREAM << df << endl;
+            //- rethrow exception
+            Tango::Except::re_throw_exception(  df,
+                                              "TANGO_DEVICE_ERROR",
+                                              string(df.errors[0].desc).c_str(),
+                                              "BaslerCCD::read_userID" );
+        }
+        catch (Exception& e)
+        {
+            ERROR_STREAM << e.getErrMsg() << endl;
+            //- throw exception
+            Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                           e.getErrMsg().c_str(),
+                                           "BaslerCCD::read_userID" );
+        }
+    }       
+ 
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		BaslerCCD::read_triggerDelay
+// 
+// description : 	Extract real attribute values for triggerDelay acquisition result.
+//
+//-----------------------------------------------------------------------------
+void BaslerCCD::read_triggerDelay(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "BaslerCCD::read_triggerDelay(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    if (m_ct != 0)
+    {
+        try
+        {
+            if (m_camera != 0)
+            {
+                m_camera->getTrigDelay((unsigned int&) *attr_triggerDelay_read);
+                attr.set_value(attr_triggerDelay_read);
+            }
+        }
+        catch (Tango::DevFailed& df)
+        {
+            ERROR_STREAM << df << endl;
+            //- rethrow exception
+            Tango::Except::re_throw_exception(  df,
+                                              "TANGO_DEVICE_ERROR",
+                                              string(df.errors[0].desc).c_str(),
+                                              "BaslerCCD::read_triggerDelay" );
+        }
+        catch (Exception& e)
+        {
+            ERROR_STREAM << e.getErrMsg() << endl;
+            //- throw exception
+            Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                           e.getErrMsg().c_str(),
+                                           "BaslerCCD::read_triggerDelay" );
+        }
+    }    
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		BaslerCCD::write_triggerDelay
+// 
+// description : 	Write triggerDelay attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void BaslerCCD::write_triggerDelay(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "BaslerCCD::write_triggerDelay(Tango::WAttribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    if (m_ct != 0)
+    {
+        try
+        {
+            if (m_camera != 0)
+            {
+                attr.get_write_value(attr_triggerDelay_write);
+                m_camera->setTrigDelay(attr_triggerDelay_write);
+                PropertyHelper::set_property(this, "MemorizedTriggerDelay", attr_triggerDelay_write);
+            }
+        }
+        catch (Tango::DevFailed& df)
+        {
+            ERROR_STREAM << df << endl;
+            //- rethrow exception
+            Tango::Except::re_throw_exception(  df,
+                                              "TANGO_DEVICE_ERROR",
+                                              string(df.errors[0].desc).c_str(),
+                                              "BaslerCCD::write_triggerDelay" );
+        }
+        catch (Exception& e)
+        {
+            ERROR_STREAM << e.getErrMsg() << endl;
+            //- throw exception
+            Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
+                                           e.getErrMsg().c_str(),
+                                           "BaslerCCD::write_triggerDelay" );
+        }
+    }    
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		BaslerCCD::read_exposureMode
+// 
+// description : 	Extract real attribute values for exposureMode acquisition result.
+//
+//-----------------------------------------------------------------------------
+void BaslerCCD::read_exposureMode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "BaslerCCD::read_exposureMode(Tango::Attribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());    
+    if (m_ct != 0)
+    {    
+        try
+        {
+            if (m_camera != 0)
+            {
+                BslExposureTimeModeEnums e;
+                m_camera->getExposureMode(e);
+                std::string exposureModeName = "";
+                switch(e)
+                {
+                    case BslExposureTimeMode_Standard: exposureModeName = "STANDARD";
+                        break;
+                    case BslExposureTimeMode_UltraShort: exposureModeName = "SHORT";                 
+                        break;
+                    default : exposureModeName = "ERROR";
+                        break;
+                        
+                }
+
+                strcpy(*attr_exposureMode_read, exposureModeName.c_str());
+                attr.set_value(attr_exposureMode_read);
+            }
+        }
+        catch(Tango::DevFailed& df)
+        {
+            ERROR_STREAM << df << endl;
+            //- rethrow exception
+            RETHROW_DEVFAILED(	df,
+                                "TANGO_DEVICE_ERROR",
+                                std::string(df.errors[0].desc).c_str(),
+                                "BaslerCCD::read_exposureMode");
+        }
+        catch(Exception& e)
+        {
+            ERROR_STREAM << e.getErrMsg() << endl;
+            //- throw exception
+            THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+                            e.getErrMsg().c_str(),
+                            "BaslerCCD::read_exposureMode");
+        }    
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		BaslerCCD::write_exposureMode
+// 
+// description : 	Write exposureMode attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void BaslerCCD::write_exposureMode(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "BaslerCCD::write_exposureMode(Tango::WAttribute &attr) entering... "<< endl;
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());    
+    if (m_ct != 0)
+    {     
+        try
+        {
+            if (m_camera != 0)
+            {
+                string previous = m_exposure_mode;
+                attr.get_write_value(attr_exposureMode_write);
+                string current = attr_exposureMode_write;
+                std::transform(current.begin(), current.end(), current.begin(), ::toupper);
+                if((current != "STANDARD") && (current != "SHORT"))
+                {
+                    m_exposure_mode = previous;
+                    attr_exposureMode_write = const_cast<Tango::DevString>(m_exposure_mode.c_str());
+                    THROW_DEVFAILED("CONFIGURATION_ERROR",
+                                    "Available Acquisition Modes are: "
+                                    "\n- STANDARD"
+                                    "\n- SHORT",
+                                    "BaslerCCD::write_exposureMode");
+                }       
+                
+                //- THIS IS AN AVAILABLE EXPOSURE MODE        
+                if(current == "STANDARD")
+                {
+                    m_camera->setExposureMode(BslExposureTimeMode_Standard);
+                }
+                else if(current == "SHORT")
+                {
+                    m_camera->setExposureMode(BslExposureTimeMode_UltraShort);          
+                }
+
+                m_exposure_mode = current;
+                yat4tango::PropertyHelper::set_property(this, "MemorizedExposureMode", m_exposure_mode);
+                
+                m_hw->getSyncCtrl().updateValidRanges();
+                // get the generic device name
+                std::string    device_name ;
+                std::string    class_name  = "LimaDetector";
+                std::string    server_name = Tango::Util::instance()->get_ds_name();
+                Tango::DbDatum db_datum = (Tango::Util::instance()->get_database())->get_device_name(server_name, class_name);
+                db_datum >> device_name;      
+                
+                //get current exposure
+                double exposure;
+                m_ct->acquisition()->getAcqExpoTime(exposure);
+                
+                //get current range
+                double min_exp=0;
+                double max_exp=0;
+                m_camera->getExposureTimeRange(min_exp,max_exp);
+                
+                //if exposure is outside range, adapt it to the max_exp
+                if(exposure<=min_exp || exposure>=max_exp)
+                {
+                    // call the init interface command of LimaDetector to re-create the image and baseimage attributes
+
+                    yat4tango::DeviceProxyHelper * device_proxy = new yat4tango::DeviceProxyHelper(device_name);   
+                    if(current == "STANDARD")
+                    {
+                        Tango::DeviceAttribute exptime("exposureTime", (Tango::DevDouble)min_exp*1000);
+                        device_proxy->write_attribute(exptime);
+                    }
+                    else if(current == "SHORT")
+                    {
+                        Tango::DeviceAttribute exptime("exposureTime", (Tango::DevDouble)max_exp*1000);
+                        device_proxy->write_attribute(exptime);
+                    }
+                    
+                }
+            }
+        }
+        catch(Exception& e)
+        {
+            ERROR_STREAM << e.getErrMsg() << endl;
+            //- throw exception
+            THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+                            e.getErrMsg().c_str(),
+                            "BaslerCCD::write_exposureMode");
+        }    
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
 // method : 		BaslerCCD::read_packetSize
 // 
 // description : 	Extract real attribute values for packetSize acquisition result.
@@ -461,8 +778,11 @@ void BaslerCCD::read_bandwidthAssigned(Tango::Attribute &attr)
         {
             if (m_camera != 0)
             {
-                m_camera->getBandwidthAssigned((int&) *attr_bandwidthAssigned_read);
-                attr.set_value(attr_bandwidthAssigned_read);
+                if(m_camera->isBandWidthAssigned())
+                {
+                    m_camera->getBandwidthAssigned((int&) *attr_bandwidthAssigned_read);
+                    attr.set_value(attr_bandwidthAssigned_read);
+                }
             }
         }
         catch (Tango::DevFailed& df)
@@ -697,7 +1017,7 @@ void BaslerCCD::read_dataRate(Tango::Attribute &attr)
             Tango::Except::re_throw_exception(  df,
                                               "TANGO_DEVICE_ERROR",
                                               string(df.errors[0].desc).c_str(),
-                                              "BaslerCCD::read_frameRate" );
+                                              "BaslerCCD::read_dataRate" );
         }
         catch (Exception& e)
         {
@@ -705,7 +1025,7 @@ void BaslerCCD::read_dataRate(Tango::Attribute &attr)
             //- throw exception
             Tango::Except::throw_exception( "TANGO_DEVICE_ERROR",
                                            e.getErrMsg().c_str(),
-                                           "BaslerCCD::read_frameRate" );
+                                           "BaslerCCD::read_dataRate" );
         }
     }
 }
@@ -995,7 +1315,6 @@ void BaslerCCD::write_autoGain(Tango::WAttribute &attr)
                 attr.get_write_value(attr_autoGain_write);
                 m_camera->setAutoGain(attr_autoGain_write);
                 PropertyHelper::set_property(this, "MemorizedAutoGain", attr_autoGain_write);
-
             }
         }
         catch (Tango::DevFailed& df)
@@ -1055,6 +1374,5 @@ Tango::DevState BaslerCCD::dev_state()
     argout = DeviceState;
     return argout;
 }
-
 
 }	//	namespace

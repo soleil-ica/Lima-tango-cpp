@@ -96,6 +96,9 @@ public :
  *    Attribute member data.
  */
 //@{
+		Tango::DevString	*attr_userID_read;
+		Tango::DevString	*attr_exposureMode_read;
+		Tango::DevString	attr_exposureMode_write;
 		Tango::DevDouble	*attr_frameRate_read;
 		Tango::DevDouble	*attr_dataRate_read;
 		Tango::DevDouble	*attr_temperature_read;
@@ -103,6 +106,8 @@ public :
 		Tango::DevBoolean	attr_autoGain_write;
 		Tango::DevDouble	*attr_gain_read;
 		Tango::DevDouble	attr_gain_write;
+		Tango::DevULong	*attr_triggerDelay_read;
+		Tango::DevULong	attr_triggerDelay_write;
 		Tango::DevLong	*attr_packetSize_read;
 		Tango::DevLong	*attr_interPacketDelay_read;
 		Tango::DevLong	attr_interPacketDelay_write;
@@ -141,6 +146,14 @@ public :
  *	Memorize/Define the  attribute  autoGain at Init device<br>
  */
 	Tango::DevBoolean	memorizedAutoGain;
+/**
+ *	Memorize/Define the  attribute  exposureMode at Init device<br>
+ */
+	string	memorizedExposureMode;
+/**
+ *	Memorize/Define the  attribute  triggerDelay at Init device<br>
+ */
+	Tango::DevULong	memorizedTriggerDelay;
 //@}
 
 /**
@@ -214,6 +227,18 @@ public :
  */
 	virtual void read_attr_hardware(vector<long> &attr_list);
 /**
+ *	Extract real attribute values for userID acquisition result.
+ */
+	virtual void read_userID(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for exposureMode acquisition result.
+ */
+	virtual void read_exposureMode(Tango::Attribute &attr);
+/**
+ *	Write exposureMode attribute values to hardware.
+ */
+	virtual void write_exposureMode(Tango::WAttribute &attr);
+/**
  *	Extract real attribute values for frameRate acquisition result.
  */
 	virtual void read_frameRate(Tango::Attribute &attr);
@@ -241,6 +266,14 @@ public :
  *	Write gain attribute values to hardware.
  */
 	virtual void write_gain(Tango::WAttribute &attr);
+/**
+ *	Extract real attribute values for triggerDelay acquisition result.
+ */
+	virtual void read_triggerDelay(Tango::Attribute &attr);
+/**
+ *	Write triggerDelay attribute values to hardware.
+ */
+	virtual void write_triggerDelay(Tango::WAttribute &attr);
 /**
  *	Extract real attribute values for packetSize acquisition result.
  */
@@ -270,6 +303,14 @@ public :
  */
 	virtual void read_statisticsFailedBufferCount(Tango::Attribute &attr);
 /**
+ *	Read/Write allowed for userID attribute.
+ */
+	virtual bool is_userID_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for exposureMode attribute.
+ */
+	virtual bool is_exposureMode_allowed(Tango::AttReqType type);
+/**
  *	Read/Write allowed for frameRate attribute.
  */
 	virtual bool is_frameRate_allowed(Tango::AttReqType type);
@@ -289,6 +330,10 @@ public :
  *	Read/Write allowed for gain attribute.
  */
 	virtual bool is_gain_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for triggerDelay attribute.
+ */
+	virtual bool is_triggerDelay_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for packetSize attribute.
  */
@@ -340,6 +385,7 @@ protected :
     stringstream        m_status_message;
     bool                m_is_autogain_available;
     bool                m_is_gain_available;
+    std::string         m_exposure_mode;
     
     //lima OBJECTS
     Basler::Camera*       m_camera;    

@@ -246,6 +246,19 @@ void BaslerCCDClass::device_factory(const Tango::DevVarStringArray *devlist_ptr)
 //-----------------------------------------------------------------------------
 void BaslerCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 {
+	//	Attribute : userID
+	userIDAttrib	*user_id = new userIDAttrib();
+	att_list.push_back(user_id);
+
+	//	Attribute : exposureMode
+	exposureModeAttrib	*exposure_mode = new exposureModeAttrib();
+	Tango::UserDefaultAttrProp	exposure_mode_prop;
+	exposure_mode_prop.set_unit(" ");
+	exposure_mode_prop.set_standard_unit(" ");
+	exposure_mode_prop.set_description("Available Exposure Modes :<br>\nSTANDARD<br>\nSHORT<br>\n");
+	exposure_mode->set_default_properties(exposure_mode_prop);
+	att_list.push_back(exposure_mode);
+
 	//	Attribute : frameRate
 	frameRateAttrib	*frame_rate = new frameRateAttrib();
 	Tango::UserDefaultAttrProp	frame_rate_prop;
@@ -271,7 +284,7 @@ void BaslerCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	Tango::UserDefaultAttrProp	temperature_prop;
 	temperature_prop.set_unit("Celcius");
 	temperature_prop.set_standard_unit("Celsius");
-	temperature_prop.set_display_unit("°");
+	temperature_prop.set_display_unit("??");
 	temperature_prop.set_format("%4.1f");
 	temperature_prop.set_description("Display the current temperature of the BoardSensor.");
 	temperature->set_default_properties(temperature_prop);
@@ -294,6 +307,10 @@ void BaslerCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	gain_prop.set_display_unit(" ");
 	gain->set_default_properties(gain_prop);
 	att_list.push_back(gain);
+
+	//	Attribute : triggerDelay
+	triggerDelayAttrib	*trigger_delay = new triggerDelayAttrib();
+	att_list.push_back(trigger_delay);
 
 	//	Attribute : packetSize
 	packetSizeAttrib	*packet_size = new packetSizeAttrib();
@@ -503,6 +520,36 @@ void BaslerCCDClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
+	prop_name = "MemorizedExposureMode";
+	prop_desc = "Memorize/Define the  attribute  exposureMode at Init device<br>";
+	prop_def  = "STANDARD";
+	vect_data.clear();
+	vect_data.push_back("STANDARD");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedTriggerDelay";
+	prop_desc = "Memorize/Define the  attribute  triggerDelay at Init device<br>";
+	prop_def  = "0";
+	vect_data.clear();
+	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 }
 //+----------------------------------------------------------------------------
 //
@@ -640,7 +687,7 @@ void BaslerCCDClass::write_class_property()
 	//  Put inheritance
 	Tango::DbDatum	inher_datum("InheritedFrom");
 	vector<string> inheritance;
-	inheritance.push_back("Tango::Device_4Impl");
+	inheritance.push_back("Device_4Impl");
 	inher_datum << inheritance;
 	data.push_back(inher_datum);
 
