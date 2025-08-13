@@ -9,7 +9,7 @@
     
     <groupId>fr.soleil.device</groupId>
     <artifactId>LimaDetector-amd64-Linux-gcc-${mode}</artifactId>
-    <version>1.13.0</version>
+    <version>1.13.1</version>
 	
     <packaging>nar</packaging>
     <name>LimaDetector</name>
@@ -20,6 +20,8 @@
 
         <libs-64bits>/home/informatique/ica/ica/LIB_EL7_64</libs-64bits>
         <libs-lambda>../../../camera/lambda/sdk/bin</libs-lambda>
+		<libs-basler>../../../camera/basler</libs-basler>
+		<libs-pylon>/usr/Local/pylonSDK/pylon6-6.3.0-23157</libs-pylon>
 
         <PROCESSLIB.name>ProcessLib</PROCESSLIB.name>
         <PROCESSLIB.version>1.3.10</PROCESSLIB.version>
@@ -28,6 +30,8 @@
         <SIMULATOR.name>Simulator</SIMULATOR.name>
         <SIMULATOR.version>1.4.2</SIMULATOR.version>
 		
+		<BASLER.name>Basler</BASLER.name>
+        <BASLER.version>1.7.0</BASLER.version>
 		<LAMBDA.name>Lambda</LAMBDA.name>
         <LAMBDA.version>2.0.3</LAMBDA.version>
 
@@ -55,6 +59,11 @@
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
             <artifactId>LimaSimulator-amd64-Linux-gcc-el7-shared-${mode}</artifactId>
             <version>${SIMULATOR.version}</version>
+		</dependency>
+		<dependency>
+            <groupId>fr.soleil.lib.Lima.Camera</groupId>
+            <artifactId>LimaBasler-amd64-Linux-gcc-el7-shared-${mode}</artifactId>
+            <version>${BASLER.version}</version>
         </dependency>
 		<dependency>
             <groupId>fr.soleil.lib.Lima.Camera</groupId>
@@ -75,6 +84,7 @@
                         <includes>
                             <include>*.cpp</include>						
                             <include>specifics/SimulatorCCD/*.cpp</include>
+							<include>specifics/BaslerCCD/*.cpp</include>
 							<include>specifics/Lambda/*.cpp</include>
 							
                             <include>specifics/Layout/*.cpp</include>               
@@ -84,7 +94,8 @@
 
                         <includePaths>                          
                             <includePath>src</includePath>                                   
-                            <includePath>specifics/SimulatorCCD</includePath>         
+                            <includePath>specifics/SimulatorCCD</includePath> 
+							<includePath>specifics/BaslerCCD</includePath> 
                             <includePath>specifics/Lambda</includePath>        
 
                             <includePath>specifics/Layout</includePath>         
@@ -100,7 +111,8 @@
                             <includePath>${libs-64bits}/hdf5-1.8.16/include</includePath>
                             <includePath>${libs-64bits}/yat-${YAT.version}/include</includePath>
                             <includePath>${libs-64bits}/yat4tango-${YAT4Tango.version}/include</includePath>
-                            <includePath>${libs-64bits}/nexuscpp-${NexusCPP.version}/include</includePath>                 
+                            <includePath>${libs-64bits}/nexuscpp-${NexusCPP.version}/include</includePath>     
+							<includePath>${libs-basler}/include/</includePath>
                         </includePaths>
                        
                         <defines>
@@ -112,11 +124,14 @@
                             <define>LIMACORE_VERSION=${LIMACORE.version}</define>
                             <define>SIMULATOR_NAME=${SIMULATOR.name}</define>
                             <define>SIMULATOR_VERSION=${SIMULATOR.version}</define>
+							<define>BASLER_NAME=${BALSER.name}</define>
+                            <define>BASLER_VERSION=${BALSER.version}</define>
 							<define>LAMBDA_NAME=${LAMBDA.name}</define>
                             <define>LAMBDA_VERSION_DEVICE=${LAMBDA.version}</define> <!-- name conflict with lambda sdk --> 
                             
                             <!-- define which detector you need to ENABLE -->      
-                            <define>SIMULATOR_ENABLED</define>   
+                            <define>SIMULATOR_ENABLED</define>  
+							<define>BASLER_ENABLED</define>
 							<define>LAMBDA_ENABLED</define>
                                                                            
                             <define>LAYOUT_ENABLED</define>    
@@ -250,7 +265,29 @@
                                 <name>NexusCPP-amd64-Linux-gcc-el7-shared-${mode}-${NexusCPP.version}</name>
                                 <type>shared</type>
                                 <directory>${libs-64bits}/nexuscpp-${NexusCPP.version}/lib</directory>
-                            </lib>   
+                            </lib>  
+							
+							<!-- pylon (6.3.0) 64-->
+							<lib>
+								<name>pylonbase-6.3.0</name>
+								<type>shared</type>
+							<directory>${libs-pylon}/lib/</directory>
+							</lib>
+							<lib>
+								<name>GenApi_gcc_v3_1_Basler_pylon</name>
+								<type>shared</type>
+								<directory>${libs-pylon}/lib/</directory>
+							</lib>
+							<lib>
+								<name>GCBase_gcc_v3_1_Basler_pylon</name>
+								<type>shared</type>
+								<directory>${libs-pylon}/lib/</directory>
+							</lib>
+							<lib>
+								<name>Log_gcc_v3_1_Basler_pylon</name>
+								<type>shared</type>
+								<directory>${libs-pylon}/lib/</directory>
+							</lib>
                         </libs>
                     </linker>
 
