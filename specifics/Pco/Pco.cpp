@@ -105,6 +105,9 @@ void Pco::delete_device()
     DELETE_DEVSTRING_ATTRIBUTE(attr_cameraModel_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_dllVersion_read);
     DELETE_SCALAR_ATTRIBUTE(attr_sensorTemperature_read);
+	
+	DELETE_DEVSTRING_ATTRIBUTE(attr_storageMode_read);
+	DELETE_SCALAR_ATTRIBUTE(attr_ringBuffer_read);
 
     //- For dyn attr
     DELETE_SCALAR_ATTRIBUTE(attr_maxNbImage_read);
@@ -151,6 +154,9 @@ void Pco::init_device()
     CREATE_DEVSTRING_ATTRIBUTE(attr_cameraModel_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dllVersion_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_SCALAR_ATTRIBUTE(attr_sensorTemperature_read);
+	
+	CREATE_DEVSTRING_ATTRIBUTE(attr_storageMode_read, MAX_ATTRIBUTE_STRING_LENGTH);
+	CREATE_SCALAR_ATTRIBUTE(attr_ringBuffer_read);
     
     //- For dyn attr
     CREATE_SCALAR_ATTRIBUTE(attr_maxNbImage_read); 
@@ -168,6 +174,8 @@ void Pco::init_device()
     m_dll_version = "Not Initialised";
     set_state(Tango::INIT);
     m_status_message.str("");
+	
+	strcpy(*attr_storageMode_read, "Not Initialised");
 
     INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;  
     yat4tango::InnerAppender::initialize(this, 512);
@@ -208,6 +216,21 @@ void Pco::init_device()
             ERROR_STREAM << "Failed to write memorized attribute - pixelRate." << endl;
         }
         
+		INFO_STREAM << "Write tango hardware at Init - storageMode." << endl;
+        Tango::WAttribute &storageMode = dev_attr->get_w_attr_by_name("storageMode");
+        try
+        {
+            std::string storageMode_str = yat4tango::PropertyHelper::get_memorized_attribute<std::string>(this, "storageMode");
+            attr_storageMode_write = const_cast<Tango::DevString>(storageMode_str.c_str());
+            storageMode.set_write_value(attr_storageMode_write);
+            write_storageMode(storageMode);
+        }
+        catch(Tango::DevFailed&) 
+        {
+            ERROR_STREAM << "Failed to write memorized attribute - storageMode." << endl;
+        }
+		
+		
     }
     catch(lima::Exception& e)
     {
@@ -668,6 +691,140 @@ void Pco::read_attr_hardware(vector<long> &attr_list)
     DEBUG_STREAM << "Pco::read_attr_hardware(vector<long> &attr_list) entering... "<< endl;
     //	Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		Pco::read_storageMode
+// 
+// description : 	Extract real attribute values for storageMode acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Pco::read_storageMode(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Pco::read_storageMode(Tango::Attribute &attr) entering... "<< endl;
+
+	try
+    {
+        //const char* storage_mode_str = talk("storageMode");
+		//strcpy(*attr_storageMode_read, storage_mode_str);
+		//strcpy(*attr_storageMode_read, storage_mode_str);
+		std::string storage_mode;
+		m_camera->getStorageMode(storage_mode);
+        strcpy(*attr_storageMode_read, storage_mode.c_str());
+        attr.set_value(attr_storageMode_read);
+    }
+    catch (yat::Exception& ex)
+    {
+        THROW_YAT_TO_TANGO_EXCEPTION(ex);
+    }
+    catch (lima::Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("LIMA_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "Pco::read_storageMode");
+    }
+
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Pco::write_storageMode
+// 
+// description : 	Write storageMode attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Pco::write_storageMode(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Pco::write_storageMode(Tango::WAttribute &attr) entering... "<< endl;
+	
+    try
+    {
+        std::string previous = *attr_storageMode_read;
+        attr.get_write_value(attr_storageMode_write);
+        std::string current = attr_storageMode_write;
+
+        if (!m_camera->isStorageModeValidValue(current))
+        {
+            Tango::Except::throw_exception( "CONFIGURATION_ERROR",
+                                            "Available storageMode values are: RECORDER, FIFO\n",
+                                            "Pco::write_storageMode");
+        }
+        m_camera->setStorageMode(current);
+    }
+    catch (yat::Exception& ex)
+    {
+        THROW_YAT_TO_TANGO_EXCEPTION(ex);
+    }
+    catch (lima::Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("LIMA_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "Pco::write_storageMode");
+    }	
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Pco::read_ringBuffer
+// 
+// description : 	Extract real attribute values for ringBuffer acquisition result.
+//
+//-----------------------------------------------------------------------------
+void Pco::read_ringBuffer(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Pco::read_ringBuffer(Tango::Attribute &attr) entering... "<< endl;
+    try
+    {
+        bool ringBuffer;
+        m_camera->getRingBuffer(ringBuffer);
+        *attr_ringBuffer_read = ringBuffer; //yat::StringUtil::to_num<bool>(ringBuffer);;
+        attr.set_value(attr_ringBuffer_read);
+    }
+    catch (lima::Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception(
+                                        "LIMA_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "Pco::read_ringBuffer");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Pco::write_ringBuffer
+// 
+// description : 	Write ringBuffer attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void Pco::write_ringBuffer(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Pco::write_ringBuffer(Tango::WAttribute &attr) entering... "<< endl;
+	
+    try
+    {
+        attr.get_write_value(attr_ringBuffer_write);
+		bool ringBuffer = attr_ringBuffer_write;
+        m_camera->setRingBuffer(ringBuffer);
+    }
+    catch (yat::Exception& ex)
+    {
+        THROW_YAT_TO_TANGO_EXCEPTION(ex);
+    }
+    catch (lima::Exception& e)
+    {
+        ERROR_STREAM << e.getErrMsg() << endl;
+        //- throw exception
+        Tango::Except::throw_exception("LIMA_ERROR",
+                                        e.getErrMsg().c_str(),
+                                        "Pco::write_ringBuffer");
+    }		
+}
+
 
 //+----------------------------------------------------------------------------
 //
@@ -1529,6 +1686,7 @@ Tango::DevState Pco::dev_state()
     argout = DeviceState;
     return argout;
 }
+
 
 
 

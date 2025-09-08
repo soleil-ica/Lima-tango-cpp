@@ -339,6 +339,23 @@ void PcoClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	dll_version->set_disp_level(Tango::EXPERT);
 	att_list.push_back(dll_version);
 
+	//	Attribute : storageMode
+	storageModeAttrib	*storage_mode = new storageModeAttrib();
+	Tango::UserDefaultAttrProp	storage_mode_prop;
+	storage_mode_prop.set_label("Storage Mode");
+	storage_mode_prop.set_unit("");
+	storage_mode_prop.set_description("Set/Get the storage mode. Values :\n RECORDER\n FIFO\n");
+	storage_mode->set_default_properties(storage_mode_prop);
+	storage_mode->set_memorized();
+	storage_mode->set_memorized_init(false);
+	att_list.push_back(storage_mode);
+
+	//	Attribute : ringBuffer
+	ringBufferAttrib	*ring_buffer = new ringBufferAttrib();
+	ring_buffer->set_memorized();
+	ring_buffer->set_memorized_init(false);
+	att_list.push_back(ring_buffer);
+
 	//	End of Automatic code generation
 	//-------------------------------------------------------------
 }
