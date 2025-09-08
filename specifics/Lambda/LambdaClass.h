@@ -225,7 +225,49 @@ public:
 		{return (static_cast<Lambda *>(dev))->is_upperThreshold_allowed(ty);}
 };
 
+//	Attribute hwAccumulation class definition
+class hwAccumulationAttrib: public Tango::Attr
+{
+public:
+	hwAccumulationAttrib():Attr("hwAccumulation",
+			Tango::DEV_BOOLEAN, Tango::WRITE) {};
+	~hwAccumulationAttrib() {};
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Lambda *>(dev))->write_hwAccumulation(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Lambda *>(dev))->is_hwAccumulation_allowed(ty);}
+};
 
+//	Attribute exposureAccuTime class definition
+class exposureAccuTimeAttrib: public Tango::Attr
+{
+public:
+	exposureAccuTimeAttrib():Attr("exposureAccuTime",
+			Tango::DEV_DOUBLE, Tango::WRITE) {};
+	~exposureAccuTimeAttrib() {};
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Lambda *>(dev))->write_exposureAccuTime(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Lambda *>(dev))->is_exposureAccuTime_allowed(ty);}
+};
+
+//	Attribute hwAcquisitionMode class definition
+class hwAcquisitionModeAttrib: public Tango::Attr
+{
+public:
+	hwAcquisitionModeAttrib():Attr("hwAcquisitionMode",
+			Tango::DEV_ENUM, Tango::READ_WRITE) {};
+	~hwAcquisitionModeAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Lambda *>(dev))->read_hwAcquisitionMode(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Lambda *>(dev))->write_hwAcquisitionMode(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Lambda *>(dev))->is_hwAcquisitionMode_allowed(ty);}
+	virtual bool same_type(const type_info &in_type) {return typeid(hwAcquisitionModeEnum) == in_type;}
+	virtual string get_enum_type() {return string("hwAcquisitionModeEnum");}
+};
+  
 /**
  *	The LambdaClass singleton definition
  */
