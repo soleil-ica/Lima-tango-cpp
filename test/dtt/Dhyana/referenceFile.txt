@@ -1,0 +1,1193 @@
+---------------------------------------------------------------------
+device name: codra/test/dhyana1
+action file: dtt_dhyana_config.cfg
+options    : verbose: True 
+             timeout: not set, use default [10] 
+             stop on fail: not set, use default [False] 
+             stop on check ko: not set, use default [False]
+---------------------------------------------------------------------
+
+------------------------ BEGINNING OF TEST --------------------------
+------------------------
+Change device proxy to test/lima/dhyana.1
+------------------------
+------------------------------------
+Prepare all Dhyana-generic properties for tests
+------------------------------------
+Action: WRITE_PROP AutoSaveResetRoi param: false - No check
+  raw result: OK
+
+Action: WRITE_PROP AutoStartVideo param: false - No check
+  raw result: OK
+
+Action: WRITE_PROP DebugFormats param: DateTime,Type,Funct - No check
+  raw result: OK
+
+Action: WRITE_PROP DebugLevels param: Fatal,Error,Warning,Trace - No check
+  raw result: OK
+
+Action: WRITE_PROP DebugModules param: Camera - No check
+  raw result: OK
+
+Action: WRITE_PROP DetectorDescription param: Dhyana @ Labo Detecteurs - No check
+  raw result: OK
+
+Action: WRITE_PROP DetectorPixelDepth param: 16 - No check
+  raw result: OK
+
+Action: WRITE_PROP DetectorType param: Dhyana - No check
+  raw result: OK
+
+Action: WRITE_PROP DetectorVideoMode param: NONE - No check
+  raw result: OK
+
+Action: WRITE_PROP ExpertBufferMaxMem param: 10 - No check
+  raw result: OK
+
+Action: WRITE_PROP ExpertNbPoolThread param: 8 - No check
+  raw result: OK
+
+Action: WRITE_PROP ExpertTimeoutCmd param: 5000 - No check
+  raw result: OK
+
+Action: WRITE_PROP ExpertUsePrepareCmd param: true - No check
+  raw result: OK
+
+Action: WRITE_PROP FileFormat param: NXS - No check
+  raw result: OK
+
+Action: WRITE_PROP FileIndexPattern param: %08d - No check
+  raw result: OK
+
+Action: WRITE_PROP FileManagedMode param: SOFTWARE - No check
+  raw result: OK
+
+Action: WRITE_PROP FileMemoryMode param: NO_COPY - No check
+  raw result: OK
+
+Action: WRITE_PROP FileNbFrames param: 1 - No check
+  raw result: OK
+
+Action: WRITE_PROP FilePrefix param: Image - No check
+  raw result: OK
+
+Action: WRITE_PROP FileTargetPath param: D:\TestDevice - No check
+  raw result: OK
+
+Action: WRITE_PROP FileTimestampEnabled param: true - No check
+  raw result: OK
+
+Action: WRITE_PROP FileWriteMode param: SYNCHRONOUS - No check
+  raw result: OK
+
+Action: WRITE_PROP ImageOpMode param: SoftOnly - No check
+  raw result: OK
+
+Action: WRITE_PROP ImageSource param: VIDEO - No check
+  raw result: OK
+
+Action: WRITE_PROP MemorizedAcquisitionMode param: SINGLE - No check
+  raw result: OK
+
+Action: WRITE_PROP MemorizedBinningH param: 1 - No check
+  raw result: OK
+
+Action: WRITE_PROP MemorizedBinningV param: 1 - No check
+  raw result: OK
+
+Action: WRITE_PROP MemorizedExposureAccTime param: 1000 - No check
+  raw result: OK
+
+Action: WRITE_PROP MemorizedExposureTime param: 1000 - No check
+  raw result: OK
+
+Action: WRITE_PROP MemorizedFileGeneration param: false - No check
+  raw result: OK
+
+Action: WRITE_PROP MemorizedLatencyTime param: 0 - No check
+  raw result: OK
+
+Action: WRITE_PROP MemorizedNbFrames param: 5 - No check
+  raw result: OK
+
+Action: WRITE_PROP MemorizedRoi param: 0,0,0,0 - No check
+  raw result: OK
+
+Action: WRITE_PROP MemorizedShutterCloseTime param: 1000 - No check
+  raw result: OK
+
+Action: WRITE_PROP MemorizedShutterMode param: MANUAL - No check
+  raw result: OK
+
+Action: WRITE_PROP MemorizedShutterOpenTime param: 1000 - No check
+  raw result: OK
+
+Action: WRITE_PROP MemorizedTriggerMode param: INTERNAL_MULTI - No check
+  raw result: OK
+
+Action: WRITE_PROP SpoolID param: TO_BE_DEFINED - No check
+  raw result: OK
+
+------------------------
+Change device proxy to test/lima/dhyana.1-specific
+------------------------
+------------------------------------
+Prepare all Dhyana-specific properties for tests
+------------------------------------
+Action: WRITE_PROP TemperatureTargetAtInit param: 15 - No check
+  raw result: OK
+
+Action: WRITE_PROP __ExpertTimerPeriod param: 5 - No check
+  raw result: OK
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+ PART I - Read/Write attributes values (Dhyana-specific)
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+------------------------
+Change device proxy to test/lima/dhyana.1
+------------------------
+------------------------
+Init device 
+------------------------
+Action: CMD Init - Check: KO value:  delta:  
+  raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = Connection::command_inout()
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1, command Init
+  origin = Connection::command_inout()
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+  check result: True
+
+------------------------
+Wait (while state is UNKNOWN due to Init)
+------------------------
+Action: WAIT state param: ['8'] - Check: DIFF value: UNKNOWN delta:  
+  last raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = DeviceProxy:read_attribute
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1
+  origin = DeviceProxy:read_attribute
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+  last check result: True
+
+------------------------
+Wait (while state is INIT due to Init)
+------------------------
+Action: WAIT state param: ['0.2'] - Check: DIFF value: INIT delta:  
+  last raw result: STANDBY
+  last check result: True
+
+------------------------
+Change device proxy to test/lima/dhyana.1-specific
+------------------------
+---------------------------------
+Read and check TemperatureTarget
+---------------------------------
+Action: READ sensorTemperatureTarget param: [''] - Check: EQUAL value: 15.0 delta:  
+  raw result: 15.0
+  check result: True
+
+------------------------
+Write all attributes
+------------------------
+Action: WRITE sensorTemperatureTarget param: ['12.0'] - No check
+  raw result: OK
+
+Action: WRITE fanSpeed param: ['4'] - No check
+  raw result: OK
+
+Action: WRITE globalGain param: ['2'] - No check
+  raw result: OK
+
+Action: WRITE trigOutputKind1 param: ['2'] - No check
+  raw result: OK
+
+Action: WRITE trigOutputKind2 param: ['2'] - No check
+  raw result: OK
+
+Action: WRITE trigOutputKind3 param: ['2'] - No check
+  raw result: OK
+
+Action: WRITE trigOutputWidth1 param: ['2.0'] - No check
+  raw result: OK
+
+Action: WRITE trigOutputWidth2 param: ['2.0'] - No check
+  raw result: OK
+
+Action: WRITE trigOutputWidth3 param: ['2.0'] - No check
+  raw result: OK
+
+Action: WRITE trigOutputDelay1 param: ['2.0'] - No check
+  raw result: OK
+
+Action: WRITE trigOutputDelay2 param: ['2.0'] - No check
+  raw result: OK
+
+Action: WRITE trigOutputDelay3 param: ['2.0'] - No check
+  raw result: OK
+
+Action: WRITE trigOutputEdge1 param: ['1'] - No check
+  raw result: OK
+
+Action: WRITE trigOutputEdge2 param: ['1'] - No check
+  raw result: OK
+
+Action: WRITE trigOutputEdge3 param: ['1'] - No check
+  raw result: OK
+
+---------------------------------
+Read and check scalar attributes
+---------------------------------
+Action: READ sensorTemperatureTarget param: [''] - Check: EQUAL value: 12 delta:  
+  raw result: 12.0
+  check result: True
+
+Action: READ fanSpeed param: [''] - Check: EQUAL value: 4 delta:  
+  raw result: 4
+  check result: True
+
+Action: READ globalGain param: [''] - Check: EQUAL value: 2 delta:  
+  raw result: 2
+  check result: True
+
+Action: READ trigOutputKind1 param: [''] - Check: EQUAL value: 2 delta:  
+  raw result: 2
+  check result: True
+
+Action: READ trigOutputKind2 param: [''] - Check: EQUAL value: 2 delta:  
+  raw result: 2
+  check result: True
+
+Action: READ trigOutputKind3 param: [''] - Check: EQUAL value: 2 delta:  
+  raw result: 2
+  check result: True
+
+Action: READ trigOutputWidth1 param: [''] - Check: EQUAL value: 2 delta:  
+  raw result: 2.0
+  check result: True
+
+Action: READ trigOutputWidth2 param: [''] - Check: EQUAL value: 2 delta:  
+  raw result: 2.0
+  check result: True
+
+Action: READ trigOutputWidth3 param: [''] - Check: EQUAL value: 2 delta:  
+  raw result: 2.0
+  check result: True
+
+Action: READ trigOutputDelay1 param: [''] - Check: EQUAL value: 2 delta:  
+  raw result: 2.0
+  check result: True
+
+Action: READ trigOutputDelay2 param: [''] - Check: EQUAL value: 2 delta:  
+  raw result: 2.0
+  check result: True
+
+Action: READ trigOutputDelay3 param: [''] - Check: EQUAL value: 2 delta:  
+  raw result: 2.0
+  check result: True
+
+Action: READ trigOutputEdge1 param: [''] - Check: EQUAL value: 1 delta:  
+  raw result: 1
+  check result: True
+
+Action: READ trigOutputEdge2 param: [''] - Check: EQUAL value: 1 delta:  
+  raw result: 1
+  check result: True
+
+Action: READ trigOutputEdge3 param: [''] - Check: EQUAL value: 1 delta:  
+  raw result: 1
+  check result: True
+
+------------------------
+Sleep 15 sec (Execute a system command) to let the sensor cool
+------------------------
+Action: EXEC sleep param: ['15.0'] - No check
+  raw result: OK
+
+---------------------------------
+Read and check sensorTemperature
+---------------------------------
+Action: READ sensorTemperature param: [''] - Check: EQUAL value: 12 delta: 1 
+  raw result: 12.5
+  check result: True
+
+---------------------------------
+Set fan speed to 3
+---------------------------------
+Action: WRITE fanSpeed param: ['3'] - No check
+  raw result: OK
+
+Action: READ fanSpeed param: [''] - Check: EQUAL value: 3 delta:  
+  raw result: 3
+  check result: True
+
+------------------------
+Change device proxy to test/lima/dhyana.1
+------------------------
+------------------------
+Init device 
+------------------------
+Action: CMD Init - Check: KO value:  delta:  
+  raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = Connection::command_inout()
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1, command Init
+  origin = Connection::command_inout()
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+  check result: True
+
+------------------------
+Wait (while state is UNKNOWN due to Init)
+------------------------
+Action: WAIT state param: ['8'] - Check: DIFF value: UNKNOWN delta:  
+  last raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = DeviceProxy:read_attribute
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1
+  origin = DeviceProxy:read_attribute
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+  last check result: True
+
+------------------------
+Wait (while state is INIT due to Init)
+------------------------
+Action: WAIT state param: ['0.2'] - Check: DIFF value: INIT delta:  
+  last raw result: STANDBY
+  last check result: True
+
+------------------------
+Change device proxy to test/lima/dhyana.1-specific
+------------------------
+---------------------------------
+Read and check scalar attributes
+---------------------------------
+Action: READ sensorTemperatureTarget param: [''] - Check: EQUAL value: 15 delta:  
+  raw result: 15.0
+  check result: True
+
+Action: READ fanSpeed param: [''] - Check: EQUAL value: 1 delta:  
+  raw result: 3
+  check result: False
+
+Action: READ globalGain param: [''] - Check: EQUAL value: 0 delta:  
+  raw result: 2
+  check result: False
+
+Action: READ trigOutputKind1 param: [''] - Check: EQUAL value: 0 delta:  
+  raw result: 2
+  check result: False
+
+Action: READ trigOutputKind2 param: [''] - Check: EQUAL value: 0 delta:  
+  raw result: 2
+  check result: False
+
+Action: READ trigOutputKind3 param: [''] - Check: EQUAL value: 0 delta:  
+  raw result: 2
+  check result: False
+
+Action: READ trigOutputWidth1 param: [''] - Check: EQUAL value: 5.0 delta:  
+  raw result: 2.0
+  check result: False
+
+Action: READ trigOutputWidth2 param: [''] - Check: EQUAL value: 5.0 delta:  
+  raw result: 2.0
+  check result: False
+
+Action: READ trigOutputWidth3 param: [''] - Check: EQUAL value: 5.0 delta:  
+  raw result: 2.0
+  check result: False
+
+Action: READ trigOutputDelay1 param: [''] - Check: EQUAL value: 0 delta:  
+  raw result: 2.0
+  check result: False
+
+Action: READ trigOutputDelay2 param: [''] - Check: EQUAL value: 0 delta:  
+  raw result: 2.0
+  check result: False
+
+Action: READ trigOutputDelay3 param: [''] - Check: EQUAL value: 0 delta:  
+  raw result: 2.0
+  check result: False
+
+Action: READ trigOutputEdge1 param: [''] - Check: EQUAL value: 0 delta:  
+  raw result: 1
+  check result: False
+
+Action: READ trigOutputEdge2 param: [''] - Check: EQUAL value: 0 delta:  
+  raw result: 1
+  check result: False
+
+Action: READ trigOutputEdge3 param: [''] - Check: EQUAL value: 0 delta:  
+  raw result: 1
+  check result: False
+
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+ PART II - Snap/Stop N frames with DetectorType = Dhyana and triggerMode = INTERNAL_MULTI
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+------------------------
+Change device proxy to test/lima/dhyana.1
+------------------------
+---------------------------------------------------------------
+Set nbFrames (5) - triggerMode (INTERNAL_MULTI) - exposureTime (2.0)
+--------------------------------------------------------------
+Action: WRITE nbFrames param: ['5'] - No check
+  raw result: OK
+
+Action: WRITE triggerMode param: ['internal_multi'] - No check
+  raw result: OK
+
+Action: WRITE exposureTime param: ['1000.0'] - No check
+  raw result: OK
+
+------------------------------------------------------
+Check nbFrames - triggerMode - triggerMode attributes
+------------------------------------------------------
+Action: READ nbFrames param: [''] - Check: EQUAL value: 5 delta:  
+  raw result: 5
+  check result: True
+
+Action: READ exposureTime param: [''] - Check: EQUAL value: 1000.0 delta:  
+  raw result: 1000.0
+  check result: True
+
+Action: READ triggerMode param: [''] - Check: EQUAL value: INTERNAL_MULTI delta:  
+  raw result: INTERNAL_MULTI
+  check result: True
+
+----------------------------------
+Prepare
+----------------------------------
+Action: CMD Prepare - No check
+  raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = Connection::command_inout()
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1, command Prepare
+  origin = Connection::command_inout()
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+
+----------------------------------
+Snap with triggerMode = INTERNAL_MULTI
+----------------------------------
+Action: CMD Snap - No check
+  raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = Connection::command_inout()
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1, command Snap
+  origin = Connection::command_inout()
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+
+-------------------------------
+Wait (while state is STANDBY)
+-------------------------------
+Action: WAIT state param: ['0.1'] - Check: DIFF value: STANDBY delta:  
+  last raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = DeviceProxy:read_attribute
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1
+  origin = DeviceProxy:read_attribute
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+  last check result: True
+
+---------------------------------------------------
+Check State is RUNNING when Capture is in progress
+---------------------------------------------------
+Action: READ state param: [''] - Check: EQUAL value: RUNNING delta:  
+  raw result: RUNNING
+  check result: True
+
+------------------------
+Change device proxy to test/lima/dhyana.1-specific
+------------------------
+---------------------------------------------------
+Check State is RUNNING when Capture is in progress
+---------------------------------------------------
+Action: READ state param: [''] - Check: EQUAL value: RUNNING delta:  
+  raw result: RUNNING
+  check result: True
+
+------------------------
+Change device proxy to test/lima/dhyana.1
+------------------------
+--------------------------------------
+Sleep 2.5 sec (Execute a system command)
+--------------------------------------
+Action: EXEC sleep param: ['2.5'] - No check
+  raw result: OK
+
+----------------------------
+Check currentFrame value
+----------------------------
+Action: READ currentFrame param: [''] - Check: EQUAL value: 1 delta:  
+  raw result: 0
+  check result: False
+
+----------------------------------
+Snap with triggerMode = INTERNAL_MULTI
+----------------------------------
+Action: CMD Snap - No check
+  raw result: OK
+
+--------------------------------------
+Sleep 2.5 sec (Execute a system command)
+--------------------------------------
+Action: EXEC sleep param: ['2.5'] - No check
+  raw result: OK
+
+----------------------------
+Check currentFrame value
+----------------------------
+Action: READ currentFrame param: [''] - Check: EQUAL value: 2 delta:  
+  raw result: 1
+  check result: False
+
+----------------------------------------
+Stop while capture is still in progress
+----------------------------------------
+Action: CMD Stop - No check
+  raw result: OK
+
+------------------------
+Wait (while state is RUNNING due to Snap)
+------------------------
+Action: WAIT state param: ['0.1'] - Check: DIFF value: RUNNING delta:  
+  last raw result: STANDBY
+  last check result: True
+
+---------------------------------------------------
+Check State is STANDBY when Snap stopped
+---------------------------------------------------
+Action: READ state param: [''] - Check: EQUAL value: STANDBY delta:  
+  raw result: STANDBY
+  check result: True
+
+---------------------------------------------------------------
+Set nbFrames (2) - triggerMode (INTERNAL_MULTI) - exposureTime (1.0)
+--------------------------------------------------------------
+Action: WRITE nbFrames param: ['2'] - No check
+  raw result: OK
+
+Action: WRITE triggerMode param: ['INTERNAL_MULTI'] - No check
+  raw result: OK
+
+Action: WRITE exposureTime param: ['1000.0'] - No check
+  raw result: OK
+
+------------------------------------------------------
+Check nbFrames - triggerMode - triggerMode attributes
+------------------------------------------------------
+Action: READ nbFrames param: [''] - Check: EQUAL value: 2 delta:  
+  raw result: 2
+  check result: True
+
+Action: READ exposureTime param: [''] - Check: EQUAL value: 1000.0 delta:  
+  raw result: 1000.0
+  check result: True
+
+Action: READ triggerMode param: [''] - Check: EQUAL value: INTERNAL_MULTI delta:  
+  raw result: INTERNAL_MULTI
+  check result: True
+
+----------------------------------
+Prepare
+----------------------------------
+Action: CMD Prepare - No check
+  raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = Connection::command_inout()
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1, command Prepare
+  origin = Connection::command_inout()
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+
+----------------------------------
+Snap with triggerMode = INTERNAL_MULTI
+----------------------------------
+Action: CMD Snap - No check
+  raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = Connection::command_inout()
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1, command Snap
+  origin = Connection::command_inout()
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+
+-------------------------------
+Wait (while state is STANDBY)
+-------------------------------
+Action: WAIT state param: ['0.1'] - Check: DIFF value: STANDBY delta:  
+  last raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = DeviceProxy:read_attribute
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1
+  origin = DeviceProxy:read_attribute
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+  last check result: True
+
+---------------------------------------------------
+Check State is RUNNING when Capture is in progress
+---------------------------------------------------
+Action: READ state param: [''] - Check: EQUAL value: RUNNING delta:  
+  raw result: RUNNING
+  check result: True
+
+--------------------------------------
+Sleep 1.5 sec (Execute a system command)
+--------------------------------------
+Action: EXEC sleep param: ['1.5'] - No check
+  raw result: OK
+
+----------------------------
+Check currentFrame value
+----------------------------
+Action: READ currentFrame param: [''] - Check: EQUAL value: 1 delta:  
+  raw result: 1
+  check result: True
+
+----------------------------------
+Snap with triggerMode = INTERNAL_MULTI
+----------------------------------
+Action: CMD Snap - No check
+  raw result: OK
+
+--------------------------------------
+Sleep 1.5 sec (Execute a system command)
+--------------------------------------
+Action: EXEC sleep param: ['1.5'] - No check
+  raw result: OK
+
+----------------------------
+Check currentFrame value
+----------------------------
+Action: READ currentFrame param: [''] - Check: EQUAL value: 2 delta:  
+  raw result: 2
+  check result: True
+
+---------------------------------------------------
+Check State is STANDBY at the end of Snap
+---------------------------------------------------
+Action: READ state param: [''] - Check: EQUAL value: STANDBY delta:  
+  raw result: STANDBY
+  check result: True
+
+------------------------
+Change device proxy to test/lima/dhyana.1-specific
+------------------------
+---------------------------------------------------
+Check State is RUNNING when Capture is in progress
+---------------------------------------------------
+Action: READ state param: [''] - Check: EQUAL value: STANDBY delta:  
+  raw result: STANDBY
+  check result: True
+
+------------------------
+Change device proxy to test/lima/dhyana.1
+------------------------
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+ PART III - Snap/Stop N frames with DetectorType = Dhyana and triggerMode = INTERNAL_SINGLE
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------
+Set nbFrames (5) - triggerMode (INTERNAL_SINGLE) - exposureTime (1.0)
+--------------------------------------------------------------
+Action: WRITE nbFrames param: ['5'] - No check
+  raw result: OK
+
+Action: WRITE triggerMode param: ['internal_single'] - No check
+  raw result: OK
+
+Action: WRITE exposureTime param: ['1000.0'] - No check
+  raw result: OK
+
+------------------------------------------------------
+Check nbFrames - triggerMode - triggerMode attributes
+------------------------------------------------------
+Action: READ nbFrames param: [''] - Check: EQUAL value: 5 delta:  
+  raw result: 5
+  check result: True
+
+Action: READ exposureTime param: [''] - Check: EQUAL value: 1000.0 delta:  
+  raw result: 1000.0
+  check result: True
+
+Action: READ triggerMode param: [''] - Check: EQUAL value: INTERNAL_SINGLE delta:  
+  raw result: INTERNAL_SINGLE
+  check result: True
+
+----------------------------------
+Prepare Acquisition
+----------------------------------
+Action: CMD Prepare - No check
+  raw result: OK
+
+----------------------------------
+Snap with triggerMode = INTERNAL_SINGLE
+----------------------------------
+Action: CMD Snap - No check
+  raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = Connection::command_inout()
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1, command Snap
+  origin = Connection::command_inout()
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+
+-------------------------------
+Wait (while state is STANDBY)
+-------------------------------
+Action: WAIT state param: ['0.1'] - Check: DIFF value: STANDBY delta:  
+  last raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = DeviceProxy:read_attribute
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1
+  origin = DeviceProxy:read_attribute
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+  last check result: True
+
+---------------------------------------------------
+Check State is RUNNING when Capture is in progress
+---------------------------------------------------
+Action: READ state param: [''] - Check: EQUAL value: RUNNING delta:  
+  raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = DeviceProxy:read_attribute
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1
+  origin = DeviceProxy:read_attribute
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+  check result: False
+
+------------------------
+Wait (while state is RUNNING due to Snap)
+------------------------
+Action: WAIT state param: ['9'] - Check: DIFF value: RUNNING delta:  
+  last raw result: RUNNING
+  last check result: False
+  WAIT ended on timeout!
+
+---------------------------------------------------
+Check State is STANDBY at the end of Snap
+---------------------------------------------------
+Action: READ state param: [''] - Check: EQUAL value: STANDBY delta:  
+  raw result: STANDBY
+  check result: True
+
+--------------------------------------
+Sleep 1 sec (Execute a system command)
+--------------------------------------
+Action: EXEC sleep param: ['1.0'] - No check
+  raw result: OK
+
+----------------------------
+Check currentFrame value
+----------------------------
+Action: READ currentFrame param: [''] - Check: EQUAL value: 5 delta:  
+  raw result: 5
+  check result: True
+
+------------------------
+Sleep 3 sec (Execute a system command)
+------------------------
+Action: EXEC sleep param: ['3.0'] - No check
+  raw result: OK
+
+--------------------------------------------------
+Set nbFrames attribute value to: 7
+--------------------------------------------------
+Action: WRITE nbFrames param: ['7'] - No check
+  raw result: OK
+
+------------------------
+Check nbFrames value
+------------------------
+Action: READ nbFrames param: [''] - Check: EQUAL value: 7 delta:  
+  raw result: 7
+  check result: True
+
+----------------------------------
+Prepare
+----------------------------------
+Action: CMD Prepare - No check
+  raw result: OK
+
+------------------------
+Snap with triggerMode = INTERNAL_SINGLE
+------------------------
+Action: CMD Snap - No check
+  raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = Connection::command_inout()
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1, command Snap
+  origin = Connection::command_inout()
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+
+-------------------------------
+Wait (while state is STANDBY)
+-------------------------------
+Action: WAIT state param: ['0.1'] - Check: DIFF value: STANDBY delta:  
+  last raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = DeviceProxy:read_attribute
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1
+  origin = DeviceProxy:read_attribute
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+  last check result: True
+
+---------------------------------------------------
+Check State is RUNNING when Capture is in progress
+---------------------------------------------------
+Action: READ state param: [''] - Check: EQUAL value: RUNNING delta:  
+  raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = DeviceProxy:read_attribute
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1
+  origin = DeviceProxy:read_attribute
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+  check result: False
+
+-------------------------------
+Wait (until currentFrame is 4)
+-------------------------------
+Action: WAIT currentFrame param: ['5'] - Check: EQUAL value: 4 delta:  
+  last raw result: 4
+  last check result: True
+
+----------------------------------------
+Stop while capture is still in progress
+----------------------------------------
+Action: CMD Stop - No check
+  raw result: OK
+
+------------------------
+Wait (while state is RUNNING due to Snap)
+------------------------
+Action: WAIT state param: ['0.1'] - Check: DIFF value: RUNNING delta:  
+  last raw result: STANDBY
+  last check result: True
+
+----------------------------------------------
+Check State is STANDBY due to Stop
+----------------------------------------------
+Action: READ state param: [''] - Check: EQUAL value: STANDBY delta:  
+  raw result: STANDBY
+  check result: True
+
+------------------------
+Sleep 1 sec (Execute a system command)
+------------------------
+Action: EXEC sleep param: ['1.0'] - No check
+  raw result: OK
+
+------------------------
+Check scalar attributes
+------------------------
+READ
+------------------------
+Sleep 5 sec (Execute a system command)
+------------------------
+Action: EXEC sleep param: ['5.0'] - No check
+  raw result: OK
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+ PART IV - Test Rois with DetectorType = Dhyana
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+----------------------------------------
+Set Roi
+----------------------------------------
+Action: CMD SetRoi param: ['256,256,42,42'] - No check
+  raw result: OK
+
+------------------------------------------------------
+Check x - y - width - height attributes
+------------------------------------------------------
+Action: READ roiX param: [''] - Check: EQUAL value: 256 delta:  
+  raw result: 256
+  check result: True
+
+Action: READ roiY param: [''] - Check: EQUAL value: 256 delta:  
+  raw result: 256
+  check result: True
+
+Action: READ roiWidth param: [''] - Check: EQUAL value: 42 delta:  
+  raw result: 42
+  check result: True
+
+Action: READ roiHeight param: [''] - Check: EQUAL value: 42 delta:  
+  raw result: 42
+  check result: True
+
+---------------------------------------------------------------
+Set nbFrames (1) - triggerMode (INTERNAL_SINGLE) - exposureTime (2.0)
+--------------------------------------------------------------
+Action: WRITE nbFrames param: ['1'] - No check
+  raw result: OK
+
+Action: WRITE triggerMode param: ['INTERNAL_SINGLE'] - No check
+  raw result: OK
+
+Action: WRITE exposureTime param: ['1000.0'] - No check
+  raw result: OK
+
+------------------------------------------------------
+Check nbFrames - triggerMode - triggerMode attributes
+------------------------------------------------------
+Action: READ nbFrames param: [''] - Check: EQUAL value: 1 delta:  
+  raw result: 1
+  check result: True
+
+Action: READ exposureTime param: [''] - Check: EQUAL value: 1000.0 delta:  
+  raw result: 1000.0
+  check result: True
+
+Action: READ triggerMode param: [''] - Check: EQUAL value: INTERNAL_SINGLE delta:  
+  raw result: INTERNAL_SINGLE
+  check result: True
+
+----------------------------------
+Prepare
+----------------------------------
+Action: CMD Prepare - No check
+  raw result: OK
+
+----------------------------------
+Snap with triggerMode = INTERNAL_SINGLE
+----------------------------------
+Action: CMD Snap - No check
+  raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = Connection::command_inout()
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1, command Snap
+  origin = Connection::command_inout()
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+
+-------------------------------
+Wait (while state is STANDBY)
+-------------------------------
+Action: WAIT state param: ['0.1'] - Check: DIFF value: STANDBY delta:  
+  last raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = DeviceProxy:read_attribute
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1
+  origin = DeviceProxy:read_attribute
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+  last check result: True
+
+---------------------------------------------------
+Check State is RUNNING when Capture is in progress
+---------------------------------------------------
+Action: READ state param: [''] - Check: EQUAL value: RUNNING delta:  
+  raw result: KO
+Caught DevFailed: DevFailed[
+DevError[
+    desc = TRANSIENT CORBA system exception: TRANSIENT_CallTimedout
+  origin = DeviceProxy:read_attribute
+  reason = API_CorbaException
+severity = ERR]
+
+DevError[
+    desc = Timeout (3000 mS) exceeded on device codra/test/dhyana1
+  origin = DeviceProxy:read_attribute
+  reason = API_DeviceTimedOut
+severity = ERR]
+]
+  check result: False
+
+------------------------
+Wait (while state is RUNNING due to Snap)
+------------------------
+Action: WAIT state param: ['0.1'] - Check: DIFF value: RUNNING delta:  
+  last raw result: STANDBY
+  last check result: True
+
+---------------------------------------------------
+Check State is STANDBY at the end of Snap
+---------------------------------------------------
+Action: READ state param: [''] - Check: EQUAL value: STANDBY delta:  
+  raw result: STANDBY
+  check result: True
+
+----------------------------------------
+Reset Roi
+----------------------------------------
+Action: CMD ResetROI - No check
+  raw result: OK
+
+------------------------------------------------------
+Check x - y - width - height attributes
+------------------------------------------------------
+Action: READ roiX param: [''] - Check: EQUAL value: 0 delta:  
+  raw result: 0
+  check result: True
+
+Action: READ roiY param: [''] - Check: EQUAL value: 0 delta:  
+  raw result: 0
+  check result: True
+
+Action: READ roiWidth param: [''] - Check: EQUAL value: 2048 delta:  
+  raw result: 2048
+  check result: True
+
+Action: READ roiHeight param: [''] - Check: EQUAL value: 2048 delta:  
+  raw result: 2048
+  check result: True
+
+Action: READ detectorWidthMax param: [''] - Check: EQUAL value: 2048 delta:  
+  raw result: 2048
+  check result: True
+
+Action: READ detectorHeightMax param: [''] - Check: EQUAL value: 2048 delta:  
+  raw result: 2048
+  check result: True
+
+------------------------ END OF TEST --------------------------
+
+---------------------------------------------------------------------
+#### FINAL REPORT ####
+Checks OK: 69 -- checks KO: 20
+---------------------------------------------------------------------
