@@ -86,9 +86,9 @@ set(EXTRA_SOURCES "")
 set(EXTRA_INCLUDES "")
 set(EXTRA_LIBS "")
 
-if (WIN32)
+if (WIN32 AND MSVC AND MSVC_VERSION LESS_EQUAL 1900)
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        message(STATUS "Extra sources and includes for Windows 64 bits")
+        message(STATUS "Extra sources and includes for Windows 64 bits with Visual Studio 2015 or older (MSVC14)")
         file(GLOB_RECURSE plaform_sources
             specifics/Rixs/*.cpp
         )
@@ -176,10 +176,16 @@ if (WIN32)
         message(STATUS "Compile definitions for Windows 64 bits")
         target_compile_definitions(${EXECUTABLE_NAME}
             PRIVATE
-                RIXS_ENABLED
                 USE_NX_FINALIZER
                 _WIN64
         )
+        if (WIN32 AND MSVC AND MSVC_VERSION LESS_EQUAL 1900)
+            # Windows 64 bits with Visual Studio 2015 or older (MSVC14)
+            target_compile_definitions(${EXECUTABLE_NAME}
+                PRIVATE
+                    RIXS_ENABLED
+            )
+        endif()
     endif()
 else()
     target_compile_definitions(${EXECUTABLE_NAME}
