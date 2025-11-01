@@ -97,7 +97,6 @@ using namespace std;
 //    Add your own constant definitions here.
 //-----------------------------------------------
 
-const size_t MAX_ATTRIBUTE_STRING_LENGTH = 256;
 
 namespace LimaDetector_ns
 {
