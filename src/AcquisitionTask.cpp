@@ -50,7 +50,7 @@ AcquisitionTask::~AcquisitionTask()
 // Process the message queue of the Task
 // ============================================================================    
 
-void AcquisitionTask::process_message(yat::Message& msg) throw(Tango::DevFailed)
+void AcquisitionTask::process_message(yat::Message& msg)
 {
     try
     {
