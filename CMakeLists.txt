@@ -10,7 +10,6 @@ find_package(yat4tango CONFIG REQUIRED)
 
 file(GLOB_RECURSE sources
     src/*.cpp
-    specifics/SimulatorCCD/*.cpp
     specifics/Layout/*.cpp
     specifics/Mask/*.cpp
     specifics/RoiCounters/*.cpp
@@ -18,7 +17,6 @@ file(GLOB_RECURSE sources
 
 set(includedirs
     src/
-    specifics/SimulatorCCD/
     specifics/Layout/
     specifics/Mask/
     specifics/RoiCounters/
@@ -42,6 +40,7 @@ set(CAMERA_INFO
     "perkinelmer:PerkinElmer:limaperkinelmer"
     "pilatus:PilatusPixelDetector:limapilatus"
     "roperscientific:PrincetonCCD:limaroperscientific"
+    "simulator:SimulatorCCD:limasimulator"
     "slsjungfrau:SlsJungfrau:limaslsjungfrau"
     "slseiger:SlsEiger:limaslseiger"
     "spectralinstrument:SpectralInstrument:limaspectralinstrument"
@@ -86,21 +85,19 @@ set(EXTRA_SOURCES "")
 set(EXTRA_INCLUDES "")
 set(EXTRA_LIBS "")
 
-if (WIN32 AND MSVC AND MSVC_VERSION LESS_EQUAL 1900)
-    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        message(STATUS "Extra sources and includes for Windows 64 bits with Visual Studio 2015 or older (MSVC14)")
-        file(GLOB_RECURSE plaform_sources
-            specifics/Rixs/*.cpp
-        )
-        list(APPEND EXTRA_SOURCES ${plaform_sources})
-        list(APPEND EXTRA_INCLUDES
-            specifics/Rixs/
-        )
-        find_package(opencv_world)
-        list(APPEND EXTRA_LIBS
-            opencv_world::opencv_world
-        )
-    endif()
+if (WITH_RIXS)
+    message(STATUS "RIXS enabled")
+
+    file(GLOB_RECURSE plaform_sources
+        specifics/Rixs/*.cpp
+    )
+    list(APPEND EXTRA_SOURCES ${plaform_sources})
+    list(APPEND EXTRA_INCLUDES specifics/Rixs/)
+
+    find_package(OpenCV CONFIG REQUIRED)
+    list(APPEND EXTRA_LIBS opencv::opencv)
+else()
+    message(STATUS "RIXS disabled")
 endif()
 
 # --------------------------------------------------------------------------
@@ -124,7 +121,6 @@ target_link_libraries(${EXECUTABLE_NAME}
     PRIVATE 
         yat4tango::yat4tango
         nexuscpp::nexuscpp
-        limasimulator
         ${EXTRA_CAMERA_LIBS}
         ${EXTRA_LIBS}
 )
@@ -145,11 +141,17 @@ target_compile_definitions(${EXECUTABLE_NAME}
 # Enabling features
 target_compile_definitions(${EXECUTABLE_NAME}
     PRIVATE
-        SIMULATOR_ENABLED
         LAYOUT_ENABLED
         MASK_ENABLED
         ROICOUNTERS_ENABLED
 )
+
+if (WITH_RIXS)
+    target_compile_definitions(${EXECUTABLE_NAME}
+        PRIVATE
+            RIXS_ENABLED
+    )
+endif()
 
 target_compile_definitions(${EXECUTABLE_NAME}
     PRIVATE
@@ -179,13 +181,6 @@ if (WIN32)
                 USE_NX_FINALIZER
                 _WIN64
         )
-        if (WIN32 AND MSVC AND MSVC_VERSION LESS_EQUAL 1900)
-            # Windows 64 bits with Visual Studio 2015 or older (MSVC14)
-            target_compile_definitions(${EXECUTABLE_NAME}
-                PRIVATE
-                    RIXS_ENABLED
-            )
-        endif()
     endif()
 else()
     target_compile_definitions(${EXECUTABLE_NAME}
