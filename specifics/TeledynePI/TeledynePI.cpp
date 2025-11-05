@@ -34,7 +34,7 @@
 //=============================================================================
 
 #include <tango.h>
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 
 #include <TeledynePI.h>
 #include <TeledynePIClass.h>
