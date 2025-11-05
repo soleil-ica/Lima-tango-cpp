@@ -36,7 +36,7 @@
 
 #include <Dhyana6060.h>
 #include <Dhyana6060Class.h>
-#include <helpers/PogoHelper.h>
+#include <PogoHelper.h>
 
 #include "AttrViewDhyana6060.h"
 
