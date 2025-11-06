@@ -45,6 +45,9 @@ void ControlFactory::initialize()
     m_device_name_rixs = "none";
 #endif
 
+#ifdef FITGAUSSIAN_ENABLED    
+    m_device_name_fitgaussian = "none";
+#endif
 
     m_status.str("");
     m_state = Tango::INIT;
@@ -122,6 +125,15 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
             }
 #endif  
 			
+#ifdef FITGAUSSIAN_ENABLED
+            {
+                std::string fit = "FitGaussian";
+                Tango::DbDatum db_datum;
+                m_device_name_generic = Tango::Util::instance()->get_ds_name();
+                db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, fit);
+                db_datum >> m_device_name_fitgaussian;
+            }
+#endif  
         }
 
 #ifdef SIMULATOR_ENABLED
@@ -1456,6 +1468,30 @@ void ControlFactory::init_specific_device(const std::string& detector_type)
         }
         (Tango::Util::instance()->get_device_by_name(m_device_name_rixs))->delete_device();
         (Tango::Util::instance()->get_device_by_name(m_device_name_rixs))->init_device();
+    }
+    catch (Tango::DevFailed& df)
+    {
+        //- rethrow exception
+        ////throw LIMA_HW_EXC(Error, std::string(df.errors[0].desc).c_str());
+    }
+#endif
+
+#ifdef FITGAUSSIAN_ENABLED        
+    try
+    {
+        //@@@TODO and if not exist ?? get the tango device/instance for rixs
+        if (!ControlFactory::m_is_created)
+        {
+			YAT_LOG_INFO("Set Serialisation Model : BY_PROCESS");
+			Tango::Util::instance()->set_serial_model(Tango::SerialModel::BY_PROCESS);   			
+            std::string fit = "FitGaussian";
+            Tango::DbDatum db_datum;
+            m_device_name_generic = Tango::Util::instance()->get_ds_name();
+            db_datum = (Tango::Util::instance()->get_database())->get_device_name(m_device_name_generic, fit);
+            db_datum >> m_device_name_fitgaussian;
+        }
+        (Tango::Util::instance()->get_device_by_name(m_device_name_fitgaussian))->delete_device();
+        (Tango::Util::instance()->get_device_by_name(m_device_name_fitgaussian))->init_device();
     }
     catch (Tango::DevFailed& df)
     {

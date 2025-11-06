@@ -1,0 +1,638 @@
+%PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document http://www.reportlab.com
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R /F4 5 0 R /F5 6 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Times-Roman /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F3 /Subtype /Type1 /Type /Font
+>>
+endobj
+5 0 obj
+<<
+/BaseFont /Courier /Encoding /WinAnsiEncoding /Name /F4 /Subtype /Type1 /Type /Font
+>>
+endobj
+6 0 obj
+<<
+/BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding /Name /F5 /Subtype /Type1 /Type /Font
+>>
+endobj
+7 0 obj
+<<
+/Contents 16 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 15 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+8 0 obj
+<<
+/Outlines 10 0 R /PageLabels 17 0 R /PageMode /UseNone /Pages 15 0 R /Type /Catalog
+>>
+endobj
+9 0 obj
+<<
+/Author () /CreationDate (D:20251031150153-01'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20251031150153-01'00') /Producer (ReportLab PDF Library - www.reportlab.com) 
+  /Subject (\(unspecified\)) /Title (Lima FitGaussian Specific device Documentation) /Trapped /False
+>>
+endobj
+10 0 obj
+<<
+/Count 4 /First 11 0 R /Last 14 0 R /Type /Outlines
+>>
+endobj
+11 0 obj
+<<
+/Dest [ 7 0 R /XYZ 57.02362 705.0236 0 ] /Next 12 0 R /Parent 10 0 R /Title (1. General Purpose)
+>>
+endobj
+12 0 obj
+<<
+/Dest [ 7 0 R /XYZ 57.02362 582.0236 0 ] /Next 13 0 R /Parent 10 0 R /Prev 11 0 R /Title (2. Overall Architecture)
+>>
+endobj
+13 0 obj
+<<
+/Dest [ 7 0 R /XYZ 57.02362 459.0236 0 ] /Next 14 0 R /Parent 10 0 R /Prev 12 0 R /Title (3. Processing Pipeline)
+>>
+endobj
+14 0 obj
+<<
+/Dest [ 7 0 R /XYZ 57.02362 330.0236 0 ] /Parent 10 0 R /Prev 13 0 R /Title (4. Code Organization)
+>>
+endobj
+15 0 obj
+<<
+/Count 1 /Kids [ 7 0 R ] /Type /Pages
+>>
+endobj
+16 0 obj
+<<
+/Length 7693
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 57.02362 741.0236 cm
+q
+.133333 .133333 .133333 rg
+BT 1 0 0 1 0 4 Tm /F2 20 Tf 24 TL 41.19417 0 Td (Lima FitGaussian Specific device Documentation) Tj T* -41.19417 0 Td ET
+Q
+Q
+q
+1 0 0 1 57.02362 684.0236 cm
+q
+BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf .133333 .133333 .133333 rg (1. General Purpose) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 666.0236 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (The ) Tj /F3 10 Tf (FitGaussian) Tj /F1 10 Tf ( Lima specific device is designed to) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 660.0236 cm
+Q
+q
+1 0 0 1 57.02362 660.0236 cm
+Q
+q
+1 0 0 1 57.02362 648.0236 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL 2 0 Td (1.) Tj T* -2 0 Td ET
+Q
+Q
+q
+1 0 0 1 26 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Automatically extract Regions of Interest \(ROIs\) from acquired image) Tj T* ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 57.02362 642.0236 cm
+Q
+q
+1 0 0 1 57.02362 630.0236 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL 2 0 Td (2.) Tj T* -2 0 Td ET
+Q
+Q
+q
+1 0 0 1 26 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Computing the horizontal and vertical profiles) Tj T* ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 57.02362 624.0236 cm
+Q
+q
+1 0 0 1 57.02362 612.0236 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL 2 0 Td (3.) Tj T* -2 0 Td ET
+Q
+Q
+q
+1 0 0 1 26 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Fit these profiles using a Gaussian model) Tj T* ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 57.02362 606.0236 cm
+Q
+q
+1 0 0 1 57.02362 594.0236 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL 2 0 Td (4.) Tj T* -2 0 Td ET
+Q
+Q
+q
+1 0 0 1 26 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Providing Tango attributes describing the Center, Magnitude, Sigma, FWHM, ... of the beam.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 57.02362 594.0236 cm
+Q
+q
+1 0 0 1 57.02362 561.0236 cm
+q
+BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf .133333 .133333 .133333 rg (2. Overall Architecture) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 543.0236 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (The project is based on four main classes:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 537.0236 cm
+Q
+q
+1 0 0 1 57.02362 537.0236 cm
+Q
+q
+1 0 0 1 57.02362 525.0236 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL 8 0 Td (\177) Tj T* -8 0 Td ET
+Q
+Q
+q
+1 0 0 1 26 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F3 10 Tf 0 0 0 rg (FitGaussian) Tj /F1 10 Tf (: Main Tango class that orchestrates processing and publishes results.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 57.02362 519.0236 cm
+Q
+q
+1 0 0 1 57.02362 507.0236 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL 8 0 Td (\177) Tj T* -8 0 Td ET
+Q
+Q
+q
+1 0 0 1 26 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F3 10 Tf 0 0 0 rg (FitTask) Tj /F1 10 Tf (: Image processing unit that coordinates ROI detection and Gaussian fits.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 57.02362 501.0236 cm
+Q
+q
+1 0 0 1 57.02362 489.0236 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL 8 0 Td (\177) Tj T* -8 0 Td ET
+Q
+Q
+q
+1 0 0 1 26 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F3 10 Tf 0 0 0 rg (AutoROI) Tj /F1 10 Tf (: Automatically detects the region of interest from the image intensity distribution.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 57.02362 483.0236 cm
+Q
+q
+1 0 0 1 57.02362 471.0236 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL 8 0 Td (\177) Tj T* -8 0 Td ET
+Q
+Q
+q
+1 0 0 1 26 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F3 10 Tf 0 0 0 rg (FitGaussLM) Tj /F1 10 Tf (: Implements the Levenberg\226Marquardt algorithm to fit Gaussian profiles.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 57.02362 471.0236 cm
+Q
+q
+1 0 0 1 57.02362 438.0236 cm
+q
+BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf .133333 .133333 .133333 rg (3. Processing Pipeline) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 426.0236 cm
+Q
+q
+1 0 0 1 57.02362 426.0236 cm
+Q
+q
+1 0 0 1 57.02362 414.0236 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL 2 0 Td (1.) Tj T* -2 0 Td ET
+Q
+Q
+q
+1 0 0 1 26 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Image acquisition from camera through Lima) Tj T* ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 57.02362 408.0236 cm
+Q
+q
+1 0 0 1 57.02362 396.0236 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL 2 0 Td (2.) Tj T* -2 0 Td ET
+Q
+Q
+q
+1 0 0 1 26 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (Automatic ROI detection \() Tj /F5 10 Tf (AutoROI) Tj /F1 10 Tf (\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 57.02362 390.0236 cm
+Q
+q
+1 0 0 1 57.02362 378.0236 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL 2 0 Td (3.) Tj T* -2 0 Td ET
+Q
+Q
+q
+1 0 0 1 26 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (Extraction of horizontal and vertical projections \() Tj /F5 10 Tf (FitTask) Tj /F1 10 Tf (\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 57.02362 372.0236 cm
+Q
+q
+1 0 0 1 57.02362 360.0236 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL 2 0 Td (4.) Tj T* -2 0 Td ET
+Q
+Q
+q
+1 0 0 1 26 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (Gaussian fitting of profiles using ) Tj /F5 10 Tf (FitGaussLM) Tj T* ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 57.02362 354.0236 cm
+Q
+q
+1 0 0 1 57.02362 342.0236 cm
+q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F4 10 Tf 12 TL 2 0 Td (5.) Tj T* -2 0 Td ET
+Q
+Q
+q
+1 0 0 1 26 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (Publishing results to the Tango server \() Tj /F5 10 Tf (FitGaussian) Tj /F1 10 Tf (\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+Q
+q
+1 0 0 1 57.02362 342.0236 cm
+Q
+q
+1 0 0 1 57.02362 309.0236 cm
+q
+BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf .133333 .133333 .133333 rg (4. Code Organization) Tj T* ET
+Q
+Q
+q
+1 0 0 1 57.02362 297.0236 cm
+Q
+q
+1 0 0 1 57.02362 207.0236 cm
+q
+1 1 1 rg
+n 0 90 481.2283 -18 re f*
+.878431 .878431 .878431 rg
+n 0 72 481.2283 -18 re f*
+1 1 1 rg
+n 0 54 481.2283 -18 re f*
+.878431 .878431 .878431 rg
+n 0 36 481.2283 -18 re f*
+1 1 1 rg
+n 0 18 481.2283 -18 re f*
+0 0 0 rg
+BT /F3 10 Tf 12 TL ET
+q
+1 0 0 1 6 75 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F3 10 Tf 12 TL 64.44394 0 Td (File) Tj T* -64.44394 0 Td ET
+Q
+Q
+q
+1 0 0 1 164.1179 75 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F3 10 Tf 12 TL 128.0502 0 Td (Description) Tj T* -128.0502 0 Td ET
+Q
+Q
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 57 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (AutoROI.h / .cpp) Tj T* ET
+Q
+Q
+q
+1 0 0 1 164.1179 57 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Automatic ROI detection) Tj T* ET
+Q
+Q
+q
+1 0 0 1 6 39 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (FitGaussLM.h / .cpp) Tj T* ET
+Q
+Q
+q
+1 0 0 1 164.1179 39 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Gaussian fitting algorithm \(Levenberg\226Marquardt\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 6 21 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (FitTask.h / .cpp) Tj T* ET
+Q
+Q
+q
+1 0 0 1 164.1179 21 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Coordinates processing, stores spectra and ROIs) Tj T* ET
+Q
+Q
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (FitGaussian.h / .cpp) Tj T* ET
+Q
+Q
+q
+1 0 0 1 164.1179 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Tango interface and overall orchestration) Tj T* ET
+Q
+Q
+q
+1 J
+1 j
+0 0 0 RG
+.25 w
+n 0 72 m 481.2283 72 l S
+n 0 54 m 481.2283 54 l S
+n 0 36 m 481.2283 36 l S
+n 0 18 m 481.2283 18 l S
+n 158.1179 0 m 158.1179 90 l S
+n 0 90 m 481.2283 90 l S
+n 0 0 m 481.2283 0 l S
+n 0 0 m 0 90 l S
+n 481.2283 0 m 481.2283 90 l S
+Q
+Q
+Q
+q
+1 0 0 1 57.02362 207.0236 cm
+Q
+ 
+endstream
+endobj
+17 0 obj
+<<
+/Nums [ 0 18 0 R ]
+>>
+endobj
+18 0 obj
+<<
+/S /D /St 1
+>>
+endobj
+xref
+0 19
+0000000000 65535 f 
+0000000073 00000 n 
+0000000144 00000 n 
+0000000251 00000 n 
+0000000360 00000 n 
+0000000472 00000 n 
+0000000577 00000 n 
+0000000692 00000 n 
+0000000897 00000 n 
+0000001002 00000 n 
+0000001305 00000 n 
+0000001379 00000 n 
+0000001498 00000 n 
+0000001635 00000 n 
+0000001771 00000 n 
+0000001892 00000 n 
+0000001952 00000 n 
+0000009697 00000 n 
+0000009738 00000 n 
+trailer
+<<
+/ID 
+[<ffe3a21f9fd9bb2cd62273dedd53fb4a><ffe3a21f9fd9bb2cd62273dedd53fb4a>]
+% ReportLab generated PDF document -- digest (http://www.reportlab.com)
+
+/Info 9 0 R
+/Root 8 0 R
+/Size 19
+>>
+startxref
+9772
+%%EOF
