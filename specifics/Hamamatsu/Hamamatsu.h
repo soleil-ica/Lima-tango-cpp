@@ -129,6 +129,13 @@ public :
  */
 	string	memorizedReadoutSpeed;
 /**
+ *	Memorize/Define the sensorMode attribute at Init device<br>
+ *	Availables values :<br>
+ *	AREA<br>
+ *	PROGRESSIVE<br>
+ */
+	string	memorizedSensorMode;
+/**
  *	Allows you to select the blank of synreadout:<BR>
  *	Availables values :<br>
  *	- STANDARD<BR>
@@ -578,6 +585,20 @@ private :
  */
     void write_readoutSpeed_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
 
+/**
+ *	method:	Hamamatsu::read_sensorMode_callback
+ *
+ *	description: Extract real attribute values for sensorMode.
+ */
+    void read_sensorMode_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
+
+/**
+ *	method:	Hamamatsu::write_sensorMode_callback
+ *
+ *	description: Set real attribute values for sensorMode.
+ */
+    void write_sensorMode_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
+
     // method for tango dyn attributes WHEN no write part is available - NULL
     void write_callback_null(yat4tango::DynamicAttributeWriteCallbackData& cbd){/*nop*/}
 
@@ -604,6 +625,7 @@ protected :
     Tango::DevString  *attr_dyn_temperatureStatus_read;
     Tango::DevBoolean *attr_dyn_highDynamicRangeEnabled_read;
     Tango::DevString  *attr_dyn_readoutSpeed_read;
+    Tango::DevString  *attr_dyn_sensorMode_read;
 
     /// lima OBJECTS
     lima::Hamamatsu::Interface * m_hw    ;

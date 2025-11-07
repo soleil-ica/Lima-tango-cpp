@@ -63,10 +63,6 @@ static const char *RcsId = "$Id:  $";
 #include <string> 
 
 #define MAX_ATTRIBUTE_STRING_LENGTH 256
-#define READOUTSPEED_NORMAL_VALUE		2
-#define READOUTSPEED_SLOW_VALUE			1
-#define READOUTSPEED_NORMAL_NAME	"NORMAL"
-#define READOUTSPEED_SLOW_NAME		"SLOW"
 
 #define SYNCREADOUT_BLANKMODE_STANDARD	"STANDARD"
 #define SYNCREADOUT_BLANKMODE_MINIMUM	"MINIMUM"
@@ -141,6 +137,7 @@ void Hamamatsu::delete_device()
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerStatus_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_temperatureStatus_read);
 	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_readoutSpeed_read);
+	DELETE_DEVSTRING_ATTRIBUTE(attr_dyn_sensorMode_read);
 
     DELETE_SCALAR_ATTRIBUTE(attr_channel1Kind_read);
     DELETE_SCALAR_ATTRIBUTE(attr_channel2Kind_read);
@@ -190,6 +187,7 @@ void Hamamatsu::init_device()
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_coolerStatus_read     , MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_temperatureStatus_read, MAX_ATTRIBUTE_STRING_LENGTH);
     CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_readoutSpeed_read     , MAX_ATTRIBUTE_STRING_LENGTH);
+    CREATE_DEVSTRING_ATTRIBUTE(attr_dyn_sensorMode_read       , MAX_ATTRIBUTE_STRING_LENGTH);
 
     m_is_device_initialized = false;
     set_state(Tango::INIT);
@@ -270,6 +268,14 @@ void Hamamatsu::write_at_init(void)
     if(m_camera->isReadoutSpeedSupported())
     {
         write_property_in_dynamic_string_attribute<Tango::DevString>("readoutSpeed", "MemorizedReadoutSpeed", &Hamamatsu::write_readoutSpeed_callback);
+    }
+
+    //------------------------------------------------------------------------------
+    // Sensor Mode
+    //------------------------------------------------------------------------------
+    if(m_camera->isSensorModeSupported())
+    {
+        write_property_in_dynamic_string_attribute<Tango::DevString>("sensorMode", "MemorizedSensorMode", &Hamamatsu::write_sensorMode_callback);
     }
 
     //------------------------------------------------------------------------------
@@ -403,6 +409,22 @@ void Hamamatsu::create_dynamics_attributes(void)
                                  attr_dyn_readoutSpeed_read);
     }
 
+    if(m_camera->isSensorModeSupported())
+    {
+        create_dynamic_attribute("sensorMode",
+                                 Tango::DEV_STRING,
+                                 Tango::SCALAR,
+                                 Tango::READ_WRITE,
+                                 Tango::OPERATOR,
+                                 0, // no polling
+                                 "",
+                                 "",
+                                 "Current readout sensor mode (AREA, PROGRESSIVE).",
+                                 &Hamamatsu::read_sensorMode_callback,
+                                 &Hamamatsu::write_sensorMode_callback,
+                                 attr_dyn_sensorMode_read);
+    }
+
     if(m_camera->isSensorTemperatureSupported())
     {
         create_dynamic_attribute("temperature",
@@ -512,6 +534,7 @@ void Hamamatsu::get_device_property()
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("DetectorNum"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedReadoutSpeed"));
+	dev_prop.push_back(Tango::DbDatum("MemorizedSensorMode"));
 	dev_prop.push_back(Tango::DbDatum("BlankOfSyncreadoutTrigger"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedTopViewExposureTime"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedBottomViewExposureTime"));
@@ -549,6 +572,17 @@ void Hamamatsu::get_device_property()
 	}
 	//	And try to extract MemorizedReadoutSpeed value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedReadoutSpeed;
+
+    //	Try to initialize MemorizedSensorMode from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedSensorMode;
+	else {
+		//	Try to initialize MemorizedSensorMode from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  memorizedSensorMode;
+	}
+	//	And try to extract MemorizedSensorMode value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  memorizedSensorMode;
 
 	//	Try to initialize BlankOfSyncreadoutTrigger from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -621,7 +655,8 @@ void Hamamatsu::get_device_property()
 	//	End of Automatic code generation
 	//------------------------------------------------------------------
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", "DetectorNum");
-    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "NORMAL", "MemorizedReadoutSpeed");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "STANDARD", "MemorizedReadoutSpeed");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "AREA", "MemorizedSensorMode");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, SYNCREADOUT_BLANKMODE_STANDARD, "BlankOfSyncreadoutTrigger");
 
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "MemorizedWViewEnabled"          );
@@ -1339,6 +1374,52 @@ void Hamamatsu::write_readoutSpeed_callback(yat4tango::DynamicAttributeWriteCall
     catch(lima::Exception & e)
     {
         manage_lima_exception(e, "Hamamatsu::write_readoutSpeed_callback");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::read_sensorMode_callback
+// 
+// description : 	Extract real attribute values for sensorMode.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::read_sensorMode_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
+{
+	try
+	{
+        read_dynamic_string_attribute<Tango::DevString>(cbd, &lima::Hamamatsu::Camera::getSensorModeLabel, "Hamamatsu::read_sensorMode_callback", true);
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::read_sensorMode_callback");
+    }
+    catch(Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::read_sensorMode_callback");
+    }
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		Hamamatsu::write_sensorMode_callback
+// 
+// description : 	Set real attribute values for sensorMode.
+//
+//-----------------------------------------------------------------------------
+void Hamamatsu::write_sensorMode_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
+{
+	try
+	{
+        write_dynamic_string_attribute<Tango::DevString>(cbd, &lima::Hamamatsu::Camera::setSensorModeLabel, "MemorizedSensorMode", "Hamamatsu::write_sensorMode_callback");
+	}
+    catch(Tango::DevFailed & df)
+    {
+        manage_devfailed_exception(df, "Hamamatsu::write_sensorMode_callback");
+    }
+    catch(lima::Exception & e)
+    {
+        manage_lima_exception(e, "Hamamatsu::write_sensorMode_callback");
     }
 }
 
