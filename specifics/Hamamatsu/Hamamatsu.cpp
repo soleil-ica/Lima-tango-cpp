@@ -403,7 +403,7 @@ void Hamamatsu::create_dynamics_attributes(void)
                                  0, // no polling
                                  "",
                                  "",
-                                 "Current readout speed mode (NORMAL, SLOW).",
+                                 "Current readout speed mode (STANDARD, ULTRA QUIET).",
                                  &Hamamatsu::read_readoutSpeed_callback,
                                  &Hamamatsu::write_readoutSpeed_callback,
                                  attr_dyn_readoutSpeed_read);
