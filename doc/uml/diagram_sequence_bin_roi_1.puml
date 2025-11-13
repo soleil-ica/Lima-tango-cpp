@@ -1,0 +1,119 @@
+@startuml binning_roi_mapping
+
+box "Tango" #LightGray
+participant Tango
+end box
+
+box "LimaDetector" #LightBlue
+participant LimaDetector
+participant Factory
+participant AcquisitionTask
+end box
+
+box "LimaCore" #Orange
+participant CtControl
+participant CtImage
+participant CtHwBinRoiFlip
+end box
+
+box "Plugin" #LightGreen
+participant HwBinCtrlObj
+participant HwRoiCtrlObj 
+participant Camera order 100
+end box
+
+group Device init
+Tango -> LimaDetector : init_device()
+LimaDetector -> Factory : create_control()
+Factory -> CtControl : new CtControl()
+CtControl -> CtImage : new CtImage()
+CtImage -> CtHwBinRoiFlip : new CtHwBinRoiFlip()
+
+CtHwBinRoiFlip -> HwBinCtrlObj : setBin()
+HwBinCtrlObj -> Camera : setBin()
+
+CtHwBinRoiFlip -> HwRoiCtrlObj : setRoi()
+HwRoiCtrlObj -> Camera : checkRoi()
+HwRoiCtrlObj -> Camera : setRoi()
+
+LimaDetector -> LimaDetector : configure_roi()
+LimaDetector -> CtImage : setRoi()
+CtImage -> CtHwBinRoiFlip : getBin()
+note right of CtHwBinRoiFlip
+Ce getBin() n'appelle rien au 
+niveau du plugin de la caméra, et 
+remonte juste la dernière valeur 
+envoyée par un setBin()
+endnote
+CtHwBinRoiFlip -> CtImage : m_bin
+CtImage -> CtHwBinRoiFlip : setRoi()
+CtHwBinRoiFlip -> HwRoiCtrlObj : checkRoi()
+HwRoiCtrlObj -> Camera : checkRoi()
+CtHwBinRoiFlip -> HwRoiCtrlObj : setRoi()
+HwRoiCtrlObj -> Camera : checkRoi()
+HwRoiCtrlObj -> Camera : setRoi()
+CtHwBinRoiFlip -> CtHwBinRoiFlip : _updateSize()
+CtHwBinRoiFlip -> HwRoiCtrlObj : checkRoi()
+HwRoiCtrlObj -> Camera : checkRoi()
+
+LimaDetector -> LimaDetector : configure_binning()
+LimaDetector -> CtImage : setBin()
+CtImage -> CtHwBinRoiFlip : setBin()
+CtHwBinRoiFlip -> HwBinCtrlObj : checkBin()
+HwBinCtrlObj -> Camera : checkBin()
+CtHwBinRoiFlip -> HwBinCtrlObj : setBin()
+HwBinCtrlObj -> Camera : setBin()
+CtHwBinRoiFlip -> CtHwBinRoiFlip : _updateSize()
+CtHwBinRoiFlip -> HwRoiCtrlObj : checkRoi()
+note right of CtHwBinRoiFlip
+Les valeur de ROI ajustées 
+au binning sont vérifiées ici
+puis appliquées à la caméra
+au prochain prepare
+endnote
+HwRoiCtrlObj -> Camera : checkRoi()
+end
+
+group User sets ROI values
+Tango -> LimaDetector : set_roi()
+LimaDetector -> CtImage : setRoi()
+CtImage -> CtHwBinRoiFlip : getBin()
+CtHwBinRoiFlip -> CtImage : m_bin
+CtImage -> CtHwBinRoiFlip : setRoi()
+CtHwBinRoiFlip -> HwRoiCtrlObj : checkRoi()
+HwRoiCtrlObj -> Camera : checkRoi()
+CtHwBinRoiFlip -> HwRoiCtrlObj : setRoi()
+HwRoiCtrlObj -> Camera : checkRoi()
+HwRoiCtrlObj -> Camera : setRoi()
+CtHwBinRoiFlip -> CtHwBinRoiFlip : _updateSize()
+CtHwBinRoiFlip -> HwRoiCtrlObj : checkRoi()
+HwRoiCtrlObj -> Camera : checkRoi()
+end
+
+group User sets binning values
+Tango -> LimaDetector : set_binning()
+LimaDetector -> CtImage : setBin()
+CtImage -> CtHwBinRoiFlip : setBin()
+CtHwBinRoiFlip -> HwBinCtrlObj : checkBin()
+HwBinCtrlObj -> Camera : checkBin()
+CtHwBinRoiFlip -> HwBinCtrlObj : setBin()
+HwBinCtrlObj -> Camera : setBin()
+CtHwBinRoiFlip -> CtHwBinRoiFlip : _updateSize()
+CtHwBinRoiFlip -> HwRoiCtrlObj : checkRoi()
+HwRoiCtrlObj -> Camera : checkRoi()
+end
+
+group User triggers SNAP
+Tango -> LimaDetector : snap()
+LimaDetector -> AcquisitionTask : process_message()
+AcquisitionTask -> CtControl : prepareAcq()
+CtControl -> CtImage : applyHard()
+CtImage -> CtHwBinRoiFlip : apply()
+CtHwBinRoiFlip -> HwBinCtrlObj : setBin(m_bin)
+HwBinCtrlObj -> Camera : setBin()
+CtHwBinRoiFlip -> HwRoiCtrlObj : setRoi(m_set_roi)
+HwRoiCtrlObj -> Camera : checkRoi()
+HwRoiCtrlObj -> Camera : setRoi()
+end
+
+@enduml
