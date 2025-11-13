@@ -501,10 +501,25 @@ void HamamatsuClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedReadoutSpeed";
-	prop_desc = "Memorize/Define the readoutSpeed attribute at Init device<br>\nAvailables values :<br>\nNORMAL<br>\nSLOW<br>";
-	prop_def  = "NORMAL";
+	prop_desc = "Memorize/Define the readoutSpeed attribute at Init device<br>\nAvailables values :<br>\nSTANDARD<br>\nULTRA QUIET<br>";
+	prop_def  = "STANDARD";
 	vect_data.clear();
-	vect_data.push_back("NORMAL");
+	vect_data.push_back("STANDARD");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "MemorizedSensorMode";
+	prop_desc = "Memorize/Define the sensorMode attribute at Init device<br>\nAvailables values :<br>\nAREA<br>\nPROGRESSIVE<br>";
+	prop_def  = "AREA";
+	vect_data.clear();
+	vect_data.push_back("AREA");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
