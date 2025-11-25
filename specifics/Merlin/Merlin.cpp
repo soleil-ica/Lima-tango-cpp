@@ -267,6 +267,8 @@ void Merlin::init_device()
 			return;
 		}
 
+        m_camera->setFramesPerTrigger(1);
+
     }
     catch (Exception& e)
     {
