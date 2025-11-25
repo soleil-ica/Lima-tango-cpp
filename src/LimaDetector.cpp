@@ -324,6 +324,9 @@ void LimaDetector::init_device()
 				set_state(Tango::FAULT);
 				return;				
 			}			
+
+			//- check ability to apply a ROI and a binning simultaneously
+            check_bin_roi_init_allowed();
 			
             INFO_STREAM << "Reload ROI of detector from Roi property (" << memorizedRoi.at(0)<<","<<memorizedRoi.at(1)<<","<<memorizedRoi.at(2)<<","<<memorizedRoi.at(3)<< ")." << endl;
             configure_roi();
@@ -360,7 +363,7 @@ void LimaDetector::init_device()
         //- Set nb thread
         INFO_STREAM << "Set Nb. Pool Thread Manager to ("<<expertNbPoolThread<<")." << endl;
         PoolThreadMgr::get().setNumberOfThread(expertNbPoolThread);
-		
+
 		//----------------------------------------------------------------------------------
 		//- Create acquisition Task, State = INIT if Task could not be created !
 		INFO_STREAM << "Create acquisition yat::DeviceTask." << endl;
@@ -486,6 +489,7 @@ void LimaDetector::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedFileGeneration"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedFileNbFrames"));
 	dev_prop.push_back(Tango::DbDatum("SpoolID"));
+	dev_prop.push_back(Tango::DbDatum("ExpertAllowMixedRoiBinning"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -760,6 +764,17 @@ void LimaDetector::get_device_property()
 	//	And try to extract ExpertTimeoutCmd value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertTimeoutCmd;
 
+    //	Try to initialize ExpertAllowMixedRoiBinning from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  expertAllowMixedRoiBinning;
+	else {
+		//	Try to initialize ExpertAllowMixedRoiBinning from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  expertAllowMixedRoiBinning;
+	}
+	//	And try to extract ExpertAllowMixedRoiBinning value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertAllowMixedRoiBinning;
+
 	//	Try to initialize MemorizedRoi from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedRoi;
@@ -967,6 +982,7 @@ void LimaDetector::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "70", "ExpertBufferMaxMemoryPercent");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "4", "ExpertNbPoolThread");	
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "5000", "ExpertTimeoutCmd");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", "ExpertAllowMixedRoiBinning");
     vec_init.clear();
     vec_init.push_back("-1");
     vec_init.push_back("-1");
@@ -3611,6 +3627,16 @@ void LimaDetector::set_roi(const Tango::DevVarULongArray *argin)
 							"LimaDetector::set_roi");
         }
 
+        // Mixed use of binning and ROI is not allowed
+        Bin currentBin;
+        m_ct->image()->getBin(currentBin);
+        if(!expertAllowMixedRoiBinning && !currentBin.isOne())
+        {
+            THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+							"Cannot set a ROI if binning is not set to 1x1\n",
+							"LimaDetector::set_roi");
+        }
+
         unsigned long x = (*argin)[0];
         unsigned long y = (*argin)[1];
         unsigned long width = (*argin)[2];
@@ -3678,6 +3704,22 @@ void LimaDetector::set_binning(const Tango::DevVarULongArray *argin)
             THROW_DEVFAILED("TANGO_DEVICE_ERROR",
 							"Invalid number of parameters\n"
 							"Check input parameters (binning H, binning V)\n",
+							"LimaDetector::set_binning");
+        }
+
+        Size detectorSize;
+        m_ct->image()->getMaxImageSize(detectorSize);
+
+        Roi fullFrameRoi(0, 0, detectorSize.getWidth(), detectorSize.getHeight());
+
+        Roi currentRoi;
+        m_ct->image()->getRoi(currentRoi);
+
+        // Mixed use of binning and ROI is not allowed
+        if(!expertAllowMixedRoiBinning && currentRoi != fullFrameRoi)
+        {
+            THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+							"Cannot apply binning parameters if an ROI is set\n",
 							"LimaDetector::set_binning");
         }
 
@@ -4802,6 +4844,29 @@ void LimaDetector::configure_attributes_hardware_at_init(void)
     attr_fileGeneration_write = memorizedFileGeneration;
     fileGeneration.set_write_value(attr_fileGeneration_write);
     write_fileGeneration(fileGeneration);
+}
+
+//+----------------------------------------------------------------------------
+//
+// method :         LimaDetector::check_bin_roi_init_allowed
+// 
+//-----------------------------------------------------------------------------
+void LimaDetector::check_bin_roi_init_allowed(void)
+{
+    if(expertAllowMixedRoiBinning)
+    {
+        return;
+    }
+
+    Bin memorized_bin(memorizedBinningH, memorizedBinningV);
+
+    // Check if memorized ROI and memorized binning are both set
+    if((memorizedRoi.at(0) >= 0) && (memorizedRoi.at(1) >= 0) & (memorizedRoi.at(2) > 0) && (memorizedRoi.at(3) > 0) && !memorized_bin.isOne())
+    {
+        THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+                    "Cannot initialize device with both an ROI and a binning geater than 1x1\n",
+                    "LimaDetector::check_bin_roi_init_allowed");
+    }
 }
 
 //+----------------------------------------------------------------------------
