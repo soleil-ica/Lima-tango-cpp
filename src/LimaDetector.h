@@ -416,7 +416,7 @@ public:
  */
 	Tango::DevULong	expertTimeoutCmd;
 /**
- *	Define wether the simultaneous use of binning and ROI is allowed
+ *	Define whether the simultaneous use of binning and ROI is allowed
  */
 	Tango::DevBoolean	expertAllowMixedRoiBinning;
 /**

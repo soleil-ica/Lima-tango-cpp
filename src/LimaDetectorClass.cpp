@@ -1340,7 +1340,7 @@ void LimaDetectorClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "ExpertAllowMixedRoiBinning";
-	prop_desc = "Define wether the simultaneous use of binning and ROI is allowed.<br>";
+	prop_desc = "Define whether the simultaneous use of binning and ROI is allowed.<br>";
 	prop_def  = "true";
 	vect_data.clear();
 	vect_data.push_back("true");
