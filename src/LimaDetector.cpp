@@ -4864,7 +4864,7 @@ void LimaDetector::check_bin_roi_init_allowed(void)
     if((memorizedRoi.at(0) >= 0) && (memorizedRoi.at(1) >= 0) & (memorizedRoi.at(2) > 0) && (memorizedRoi.at(3) > 0) && !memorized_bin.isOne())
     {
         THROW_DEVFAILED("TANGO_DEVICE_ERROR",
-                    "Cannot initialize device with both an ROI and a binning geater than 1x1\n",
+                    "Cannot initialize device with both an ROI and a binning greater than 1x1\n",
                     "LimaDetector::check_bin_roi_init_allowed");
     }
 }
