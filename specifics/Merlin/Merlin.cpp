@@ -267,7 +267,17 @@ void Merlin::init_device()
 			return;
 		}
 
-        m_camera->setFramesPerTrigger(1);
+        int cameraFramesPerTrigger;
+        m_camera->setFramesPerTrigger(framesPerTriggerAtInit);
+        m_camera->getFramesPerTrigger(cameraFramesPerTrigger);
+        if(cameraFramesPerTrigger != framesPerTriggerAtInit)
+        {
+            INFO_STREAM<<"Initialization Failed : Unable to set framesPerTrigger to 1 !"<<endl;
+			m_status_message <<"Initialization Failed : Unable to set framesPerTrigger to 1 !"<< endl;
+			m_is_device_initialized = false;
+			set_state(Tango::FAULT);
+			return;
+        }
 
     }
     catch (Exception& e)
@@ -319,6 +329,7 @@ void Merlin::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("ImageWidth"));
 	dev_prop.push_back(Tango::DbDatum("ImageHeight"));
 	dev_prop.push_back(Tango::DbDatum("Simulate"));
+	dev_prop.push_back(Tango::DbDatum("FramesPerTriggerAtInit"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -410,6 +421,17 @@ void Merlin::get_device_property()
 		//	And try to extract Simulate value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  simulate;
 
+        //	Try to initialize FramesPerTriggerAtInit from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  framesPerTriggerAtInit;
+		else {
+			//	Try to initialize FramesPerTriggerAtInit from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  framesPerTriggerAtInit;
+		}
+		//	And try to extract FramesPerTriggerAtInit value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  framesPerTriggerAtInit;
+
 	}
 
 	/*----- PROTECTED REGION ID(Merlin::get_device_property_after) ENABLED START -----*/
@@ -422,6 +444,7 @@ void Merlin::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "512", "ImageWidth");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "512", "ImageHeight");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "Simulate");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "FramesPerTriggerAtInit");
 	
 	/*----- PROTECTED REGION END -----*/	//	Merlin::get_device_property_after
 }
