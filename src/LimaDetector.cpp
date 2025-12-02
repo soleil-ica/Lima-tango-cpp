@@ -4858,14 +4858,29 @@ void LimaDetector::check_bin_roi_init_allowed(void)
         return;
     }
 
+    Size detectorSize;
+    m_ct->image()->getMaxImageSize(detectorSize);
+    Roi fullFrameRoi(0, 0, detectorSize.getWidth(), detectorSize.getHeight());
+
     Bin memorized_bin(memorizedBinningH, memorizedBinningV);
 
     // Check if memorized ROI and memorized binning are both set
-    if((memorizedRoi.at(0) >= 0) && (memorizedRoi.at(1) >= 0) & (memorizedRoi.at(2) > 0) && (memorizedRoi.at(3) > 0) && !memorized_bin.isOne())
+    // Roi is full frame if :
+    //      - ROI = (0, 0, 0, 0)
+    //      - ROI = (0, 0, frameMaxWidth, frameMaxHeight)
+    //      - ROI = (a, b, c, d) with a < 0 or b < 0 or c <= 0 or d <= 0
+
+    if (!memorized_bin.isOne())
     {
-        THROW_DEVFAILED("TANGO_DEVICE_ERROR",
+        if(!(
+            (memorizedRoi.at(0) < 0 || memorizedRoi.at(1) < 0 || memorizedRoi.at(2) <= 0 || memorizedRoi.at(3) <= 0) ||
+            (memorizedRoi.at(0) == 0 && memorizedRoi.at(1) == 0 && memorizedRoi.at(2) == detectorSize.getWidth() && memorizedRoi.at(3) == detectorSize.getHeight())
+          ))
+        {
+            THROW_DEVFAILED("TANGO_DEVICE_ERROR",
                     "Cannot initialize device with both an ROI and a binning greater than 1x1\n",
                     "LimaDetector::check_bin_roi_init_allowed");
+        }
     }
 }
 
