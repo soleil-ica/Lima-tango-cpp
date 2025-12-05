@@ -100,6 +100,8 @@ public:
 	Tango::DevLong	imageHeight;
 	//	Simulate:	Simulate the Merlin commands.
 	Tango::DevBoolean	simulate;
+	//	FramesPerTriggerAtInit:	FramesPerTrigger configured at device initialization.
+	Tango::DevLong	framesPerTriggerAtInit;
 
 //	Attribute data members
 public:
