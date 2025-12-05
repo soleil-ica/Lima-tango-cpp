@@ -416,6 +416,10 @@ public:
  */
 	Tango::DevULong	expertTimeoutCmd;
 /**
+ *	Define whether the simultaneous use of binning and ROI is allowed
+ */
+	Tango::DevBoolean	expertAllowMixedRoiBinning;
+/**
  *	Memorize/Define the Region of Interest of the Acquisition: <br>
  *	origin X<br>
  *	origin Y<br>
@@ -1067,6 +1071,7 @@ public:
     void    configure_binning(void); 
     void    configure_image_op_mode(void);    
     void    configure_attributes_hardware_at_init(void);
+	void 	check_bin_roi_init_allowed(void);
     
     // return true if the device is correctly initialized in init_device
     bool    is_device_initialized()
