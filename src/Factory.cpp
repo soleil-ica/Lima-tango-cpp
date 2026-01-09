@@ -373,6 +373,8 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data.push_back(Tango::DbDatum("ImageHeight"));
                 db_data.push_back(Tango::DbDatum("Chips"));
                 db_data.push_back(Tango::DbDatum("Simulate"));
+                db_data.push_back(Tango::DbDatum("SocketRcvTimeout"));
+                db_data.push_back(Tango::DbDatum("SocketSndTimeout"));
 
                 (Tango::Util::instance()->get_database())->get_device_property(m_device_name_specific, db_data);
                 std::string hostName;
@@ -382,6 +384,8 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 long imageWidth;
                 long imageHeight;
                 bool simulate;
+                long socketRcvTimeout;
+                long socketSndTimeout;
                 db_data[0] >> hostName;
                 db_data[1] >> cmdPort;
                 db_data[2] >> dataPort;
@@ -389,8 +393,10 @@ CtControl* ControlFactory::create_control(const std::string& detector_type)
                 db_data[4] >> imageHeight;
                 db_data[5] >> chips;
                 db_data[6] >> simulate;
+                db_data[7] >> socketRcvTimeout;
+                db_data[8] >> socketSndTimeout;
 
-                m_camera = static_cast<void*> (new Merlin::Camera(hostName, cmdPort, dataPort, imageWidth, imageHeight, chips, simulate));
+                m_camera = static_cast<void*> (new Merlin::Camera(hostName, cmdPort, dataPort, imageWidth, imageHeight, chips, simulate, socketRcvTimeout, socketSndTimeout));
                 m_interface = static_cast<void*> (new Merlin::Interface(*static_cast<Merlin::Camera*> (m_camera)));
                 m_control = new CtControl(static_cast<Merlin::Interface*> (m_interface));
                 ControlFactory::m_is_created = true;

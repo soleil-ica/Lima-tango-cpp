@@ -272,8 +272,8 @@ void Merlin::init_device()
         m_camera->getFramesPerTrigger(cameraFramesPerTrigger);
         if(cameraFramesPerTrigger != framesPerTriggerAtInit)
         {
-            INFO_STREAM<<"Initialization Failed : Unable to set framesPerTrigger to 1 !"<<endl;
-			m_status_message <<"Initialization Failed : Unable to set framesPerTrigger to 1 !"<< endl;
+            INFO_STREAM<<"Initialization Failed : Unable to set framesPerTrigger !"<<endl;
+			m_status_message <<"Initialization Failed : Unable to set framesPerTrigger !"<< endl;
 			m_is_device_initialized = false;
 			set_state(Tango::FAULT);
 			return;
@@ -330,6 +330,8 @@ void Merlin::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("ImageHeight"));
 	dev_prop.push_back(Tango::DbDatum("Simulate"));
 	dev_prop.push_back(Tango::DbDatum("FramesPerTriggerAtInit"));
+	dev_prop.push_back(Tango::DbDatum("SocketRcvTimeout"));
+	dev_prop.push_back(Tango::DbDatum("SocketSndTimeout"));
 
 	//	is there at least one property to be read ?
 	if (dev_prop.size()>0)
@@ -432,6 +434,28 @@ void Merlin::get_device_property()
 		//	And try to extract FramesPerTriggerAtInit value from database
 		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  framesPerTriggerAtInit;
 
+        //	Try to initialize SocketRcvTimeout from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  socketRcvTimeout;
+		else {
+			//	Try to initialize SocketRcvTimeout from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  socketRcvTimeout;
+		}
+		//	And try to extract SocketRcvTimeout value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  socketRcvTimeout;
+
+        //	Try to initialize SocketSndTimeout from class property
+		cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+		if (cl_prop.is_empty()==false)	cl_prop  >>  socketSndTimeout;
+		else {
+			//	Try to initialize SocketSndTimeout from default device value
+			def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+			if (def_prop.is_empty()==false)	def_prop  >>  socketSndTimeout;
+		}
+		//	And try to extract SocketSndTimeout value from database
+		if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  socketSndTimeout;
+
 	}
 
 	/*----- PROTECTED REGION ID(Merlin::get_device_property_after) ENABLED START -----*/
@@ -445,6 +469,8 @@ void Merlin::get_device_property()
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "512", "ImageHeight");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "Simulate");
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1", "FramesPerTriggerAtInit");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "5", "SocketRcvTimeout");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "5", "SocketSndTimeout");
 	
 	/*----- PROTECTED REGION END -----*/	//	Merlin::get_device_property_after
 }

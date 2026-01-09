@@ -303,17 +303,11 @@ public:
         Tango::DEV_LONG, Tango::READ_WRITE) {};
     ~framesPerTriggerAttrib() {};
     virtual void read(Tango::DeviceImpl *dev, Tango::Attribute &att)
-    {
-        (static_cast<Merlin *>(dev))->read_framesPerTrigger(att);
-    }
+    	{(static_cast<Merlin *>(dev))->read_framesPerTrigger(att);}
     virtual void write(Tango::DeviceImpl *dev, Tango::WAttribute &att)
-    {
-        (static_cast<Merlin *>(dev))->write_framesPerTrigger(att);
-    }
+    	{(static_cast<Merlin *>(dev))->write_framesPerTrigger(att);}
     virtual bool is_allowed(Tango::DeviceImpl *dev, Tango::AttReqType ty)
-    {
-        return (static_cast<Merlin *>(dev))->is_framesPerTrigger_allowed(ty);
-    }
+    	{return (static_cast<Merlin *>(dev))->is_framesPerTrigger_allowed(ty);}
 };
 
 

@@ -102,6 +102,10 @@ public:
 	Tango::DevBoolean	simulate;
 	//	FramesPerTriggerAtInit:	FramesPerTrigger configured at device initialization.
 	Tango::DevLong	framesPerTriggerAtInit;
+	//	SocketRcvTimeout:	Timeout to read socket data
+	Tango::DevLong	socketRcvTimeout;
+	//	SocketSndTimeout:	Timeout to write socket data
+	Tango::DevLong	socketSndTimeout;
 
 //	Attribute data members
 public:
