@@ -100,6 +100,21 @@ else()
     message(STATUS "RIXS disabled")
 endif()
 
+if (WITH_FITGAUSSIAN)
+    message(STATUS "FitGaussian enabled")
+
+    file(GLOB_RECURSE fitgaussian_sources
+        specifics/FitGaussian/*.cpp
+    )
+    list(APPEND EXTRA_SOURCES ${fitgaussian_sources})
+    list(APPEND EXTRA_INCLUDES specifics/FitGaussian/)
+
+    find_package(OpenCV CONFIG REQUIRED)
+    list(APPEND EXTRA_LIBS opencv::opencv)
+else()
+    message(STATUS "FitGaussian disabled")
+endif()
+
 # --------------------------------------------------------------------------
 # Target
 # --------------------------------------------------------------------------
@@ -150,6 +165,13 @@ if (WITH_RIXS)
     target_compile_definitions(${EXECUTABLE_NAME}
         PRIVATE
             RIXS_ENABLED
+    )
+endif()
+
+if (WITH_FITGAUSSIAN)
+    target_compile_definitions(${EXECUTABLE_NAME}
+        PRIVATE
+            FITGAUSSIAN_ENABLED
     )
 endif()
 

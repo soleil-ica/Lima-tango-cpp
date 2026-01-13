@@ -55,6 +55,10 @@ static const char *RcsId = "$Id:  $";
 #include <RixsClass.h>
 #endif
 
+#ifdef FITGAUSSIAN_ENABLED
+#include <FitGaussianClass.h>
+#endif
+
 #ifdef SIMULATOR_ENABLED
 #include <SimulatorCCDClass.h>
 #endif
@@ -241,6 +245,10 @@ void Tango::DServer::class_factory()
 
 #ifdef RIXS_ENABLED    
     add_class(Rixs_ns::RixsClass::init("Rixs"));
+#endif
+
+#ifdef FITGAUSSIAN_ENABLED    
+    add_class(FitGaussian_ns::FitGaussianClass::init("FitGaussian"));
 #endif
 
 #ifdef SLSJUNGFRAU_ENABLED        
