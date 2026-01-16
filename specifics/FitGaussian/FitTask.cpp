@@ -392,7 +392,7 @@ namespace FitGaussian_ns
             yat::MutexLock scoped_lock(m_data_lock);
             m_time_ns_to_human                      = get_time_ns_to_human_time(get_time_ns());
             m_map_params[axis + "ProjFitConverged"] = yat::Any(fit.has_converged());
-            m_map_params[axis + "ProjFitCenter"]    = yat::Any((fit.get_mu() + yat::any_cast<int>(m_map_params["AutoROIOrigin"+axis])*pixel_size));
+            m_map_params[axis + "ProjFitCenter"]    = yat::Any((fit.get_mu() + yat::any_cast<int>(m_map_params["AutoROIOrigin"+axis]))*pixel_size);
             m_map_params[axis + "ProjFitMag"]       = yat::Any(fit.get_amplitude());
             m_map_params[axis + "ProjFitMu"]        = yat::Any(fit.get_mu());
             m_map_params[axis + "ProjFitSigma"]     = yat::Any(fit.get_sigma());
