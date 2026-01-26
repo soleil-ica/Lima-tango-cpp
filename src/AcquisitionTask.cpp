@@ -174,7 +174,6 @@ void AcquisitionTask::process_message(yat::Message& msg)
                     m_acq_conf.ct->stopAcq();
                     m_acq_conf.ct->abortAcq();
                     m_acq_conf.ct->video()->stopLive();
-
                     // Ensure the plugin has finished acquiring to continue.
                     INFO_STREAM << "Waiting for acquisition end ...";
                     CtControl::Status ctStatus;

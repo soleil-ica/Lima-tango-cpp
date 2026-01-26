@@ -77,13 +77,6 @@ namespace FitGaussian_ns
             // Get spectrum values
             const std::vector<double>& get_spectrum(const std::string& name);      
 
-            // Get the image of the ROI as cv::Mat
-            const cv::Mat& get_img_roi();
-
-
-            // Get the image of the ROI as vector of unsigned short
-            const std::vector<unsigned short>& get_img_roi_data();
-
             // Check if parameter exists
             bool is_param_exist(const std::string param_name);
 
@@ -125,25 +118,25 @@ namespace FitGaussian_ns
             std::string m_operation_type;
 
             //map of parameters
-            std::map<std::string, yat::Any> m_map_params;//map of parameters 
-            std::vector<double>             m_x; // x data points
-            std::vector<double>             m_fitted_x; // x fitted data points
-            std::vector<double>             m_y; // y data points
-            std::vector<double>             m_fitted_y; // y fitted data points              
-            cv::Mat                         m_mat_img_roi; // image of the ROI
-            std::vector<unsigned short>     m_mat_img_roi_data; // image of the ROI as vector of unsigned short
-            bool                            m_auto_roi_enabled; // AutoROI enabled or not
-            double                          m_auto_roi_factor_x; // AutoROI factor along X
-            double                          m_auto_roi_factor_y; // AutoROI factor along Y            
-            double                          m_pixel_size_x; // pixel size in microns along X
-            double                          m_pixel_size_y; // pixel size in microns along Y
-            double                          m_optical_magnification; // optical magnification
-            int                             m_fit_nb_iterations_max; // max number of iterations for the fit
-            double                          m_fit_tolerance; // tolerance for the fit
-            bool                            m_xproj_enabled;// XProj enabled or not
-            bool                            m_yproj_enabled;// YProj enabled or not
-            std::map<std::string, yat::Any>   m_map_shared_params;//map of parameters 
-            std::string                     m_time_ns_to_human;
+            std::map<std::string, yat::Any>     m_map_params;//map of parameters 
+            std::vector<double>                 m_x; // x data points
+            std::vector<double>                 m_fitted_x; // x fitted data points
+            std::vector<double>                 m_y; // y data points
+            std::vector<double>                 m_fitted_y; // y fitted data points              
+            cv::Mat                             m_mat_img_roi; // image of the ROI
+            std::vector<unsigned short>         m_mat_img_roi_data; // image of the ROI as vector of unsigned short
+            bool                                m_auto_roi_enabled; // AutoROI enabled or not
+            double                              m_auto_roi_factor_x; // AutoROI factor along X
+            double                              m_auto_roi_factor_y; // AutoROI factor along Y            
+            double                              m_pixel_size_x; // pixel size in microns along X
+            double                              m_pixel_size_y; // pixel size in microns along Y
+            double                              m_optical_magnification; // optical magnification
+            int                                 m_fit_nb_iterations_max; // max number of iterations for the fit
+            double                              m_fit_tolerance; // tolerance for the fit
+            bool                                m_xproj_enabled;// XProj enabled or not
+            bool                                m_yproj_enabled;// YProj enabled or not
+            std::map<std::string, yat::Any>     m_map_shared_params;//map of shared parameters , this map is updated in protected SECTION
+            std::string                         m_time_ns_to_human;
     };
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

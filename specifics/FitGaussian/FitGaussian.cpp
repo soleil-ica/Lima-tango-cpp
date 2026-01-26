@@ -1645,19 +1645,22 @@ void FitGaussian::read_YProjPushTime(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(!m_fit_task->is_param_exist("YProjPushTime"))
-		{
-			strcpy(*attr_YProjPushTime_read, "N/A");
-			attr.set_value(attr_YProjPushTime_read);
-			attr.set_quality(Tango::ATTR_ALARM);
-			return;
-		}
-		else
-		{
-			std::string push_time = yat::any_cast<std::string>(m_fit_task->get_param("YProjPushTime"));
-			strcpy(*attr_YProjPushTime_read, push_time.c_str());
-			attr.set_value(attr_YProjPushTime_read);
-			attr.set_quality(Tango::ATTR_VALID);
+		if(m_fit_task)
+		{		
+			if(!m_fit_task->is_param_exist("YProjPushTime"))
+			{
+				strcpy(*attr_YProjPushTime_read, "N/A");
+				attr.set_value(attr_YProjPushTime_read);
+				attr.set_quality(Tango::ATTR_ALARM);
+				return;
+			}
+			else
+			{
+				std::string push_time = yat::any_cast<std::string>(m_fit_task->get_param("YProjPushTime"));
+				strcpy(*attr_YProjPushTime_read, push_time.c_str());
+				attr.set_value(attr_YProjPushTime_read);
+				attr.set_quality(Tango::ATTR_VALID);
+			}
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -1744,11 +1747,20 @@ void FitGaussian::read_ROIImage(Tango::Attribute &attr)
 	try
 	{
 		if(m_fit_task)
-		{
-			const cv::Mat &img = m_fit_task->get_img_roi();
-			if (img.empty())
-				std::cout<<"[Error] FitGaussian::read_ROIImage() : get_img_roi() returned an empty image"<<std::endl;
-			attr.set_value(reinterpret_cast<Tango::DevUShort*>(img.data),img.cols, img.rows);
+		{		
+			if(!m_fit_task->is_param_exist("ROIImage"))
+			{
+				attr.set_value(static_cast<Tango::DevUShort*>(nullptr), 0, 0);
+				attr.set_quality(Tango::ATTR_ALARM);
+				return;
+			}
+			else
+			{
+				
+				const cv::Mat img = yat::any_cast<const cv::Mat>(m_fit_task->get_param("ROIImage"));
+				attr.set_value(reinterpret_cast<Tango::DevUShort*>(img.data),img.cols, img.rows);
+				attr.set_quality(Tango::ATTR_VALID);
+			}
 		}
 	}
 	catch(Tango::DevFailed& df)

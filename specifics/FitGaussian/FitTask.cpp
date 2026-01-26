@@ -173,34 +173,6 @@ namespace FitGaussian_ns
         }
     }
 
-    //-----------------------------------------------
-    // Get the image of the ROI as cv::Mat
-    //-----------------------------------------------
-    const cv::Mat& FitTask::get_img_roi()
-    {        
-        yat::MutexLock scoped_lock(m_data_lock);
-        return m_mat_img_roi;
-    }
-
-    //-----------------------------------------------
-    // Get the image of the ROI as vector of unsigned long
-    //-----------------------------------------------
-    const std::vector<unsigned short>& FitTask::get_img_roi_data()
-    {
-        yat::MutexLock scoped_lock(m_data_lock);
-        if(!m_mat_img_roi.empty())
-        {
-            size_t total_elements = m_mat_img_roi.total() * m_mat_img_roi.channels();      
-            m_mat_img_roi_data.resize(total_elements);
-            if(!m_mat_img_roi.isContinuous())
-            {
-                ERROR_STREAM<<"[Error] FitTask::get_img_roi_data() : m_mat_img_roi is not continuous in memory!"<<std::endl;
-                m_mat_img_roi = m_mat_img_roi.clone();
-            }            
-            m_mat_img_roi_data.assign(m_mat_img_roi.begin<unsigned short>(),m_mat_img_roi.end<unsigned short>());
-        }
-        return m_mat_img_roi_data;
-    }
 
     //-----------------------------------------------
     //get parameter value by name
@@ -274,13 +246,11 @@ namespace FitGaussian_ns
         if (!auto_roi.has_converged())
         {
             INFO_STREAM << "[Warning] AutoROI did not converge. Using full image as ROI." << std::endl;
-            roi = cv::Rect(0, 0, mat_origin_16u.cols, mat_origin_16u.rows);
-            m_map_params["AutoROIConverged"] = yat::Any(false);
+            roi = cv::Rect(0, 0, mat_origin_16u.cols, mat_origin_16u.rows);            
         }
         else
         {
             INFO_STREAM << "[Info] AutoROI converged." << std::endl;
-            m_map_params["AutoROIConverged"] = yat::Any(true);
 
             // Clip ROI within image bounds
             roi.x      = std::max(0, roi.x);
@@ -289,22 +259,23 @@ namespace FitGaussian_ns
             roi.height = std::min(roi.height, mat_origin_16u.rows - roi.y);
         }
 
-        // Store ROI parameters
-        m_map_params["AutoROIOriginX"] = yat::Any(roi.x);
-        m_map_params["AutoROIOriginY"] = yat::Any(roi.y);
-        m_map_params["AutoROIWidth"]   = yat::Any(roi.width);
-        m_map_params["AutoROIHeight"]  = yat::Any(roi.height);
-
         // Copy ROI region into m_mat_img_roi (deep copy for contiguous memory)
         {
-            yat::MutexLock scoped_lock(m_data_lock);
+            // Deep copy ROI image
             mat_origin_16u(roi).copyTo(m_mat_img_roi);
+
+            // Store ROI parameters
+            m_map_params["AutoROIConverged"]    = yat::Any(auto_roi.has_converged());
+            m_map_params["AutoROIOriginX"]      = yat::Any(roi.x);
+            m_map_params["AutoROIOriginY"]      = yat::Any(roi.y);
+            m_map_params["AutoROIWidth"]        = yat::Any(roi.width);
+            m_map_params["AutoROIHeight"]       = yat::Any(roi.height);            
+            m_map_params["ROIImage"]            = yat::Any(m_mat_img_roi.clone()); //store a copy of the ROI image in the shared parameters
         }
 
         INFO_STREAM << "[Elapsed time (AutoROI): " << t_roi.elapsed_msec() << " (ms)]" << std::endl;
         INFO_STREAM << "------------------------" << std::endl;
     }
-
 
     //-----------------------------------------------
     // Push event
@@ -314,7 +285,8 @@ namespace FitGaussian_ns
         try
         {
             Tango::AutoTangoMonitor mon(m_device);
-            Tango::DevString data = const_cast<char*>(value.c_str());            
+
+            Tango::DevString data = const_cast<char*>(value.c_str());                      
             std::vector<std::string> dummy1;
             std::vector<double> dummy2;
 
@@ -325,14 +297,14 @@ namespace FitGaussian_ns
                                     1,
                                     0,
                                     false
-                                );
+                                );                          
         }
         catch (Tango::DevFailed &e)
         {
            ERROR_STREAM << "push_event(" << name << ") failed: " << e.errors[0].desc << std::endl;
             //- throw exception
             Tango::Except::throw_exception("TANGO_ERROR", e.errors[0].desc, "FitTask::push_event");            
-        }
+        }        
     }
 
     //-----------------------------------------------
@@ -343,8 +315,8 @@ namespace FitGaussian_ns
         try
         {
             Tango::AutoTangoMonitor mon(m_device);
-            Tango::DevDouble data = value;
 
+            Tango::DevDouble data = value;
             std::vector<std::string> dummy1;
             std::vector<double> dummy2;
 
@@ -355,14 +327,14 @@ namespace FitGaussian_ns
                                     1,
                                     0,
                                     false
-                                );
+                                );                           
         }
         catch (Tango::DevFailed &e)
         {
             ERROR_STREAM << "push_event(" << name << ") failed: " << e.errors[0].desc << std::endl;
             //- throw exception
             Tango::Except::throw_exception("TANGO_ERROR", e.errors[0].desc, "FitTask::push_event");
-        }
+        }        
     }
 
 
@@ -389,7 +361,6 @@ namespace FitGaussian_ns
 
         // Store fit results
         {
-            yat::MutexLock scoped_lock(m_data_lock);
             m_time_ns_to_human                      = get_time_ns_to_human_time(get_time_ns());
             m_map_params[axis + "ProjFitConverged"] = yat::Any(fit.has_converged());
             m_map_params[axis + "ProjFitCenter"]    = yat::Any((fit.get_mu() + yat::any_cast<int>(m_map_params["AutoROIOrigin"+axis]))*pixel_size);
@@ -403,18 +374,22 @@ namespace FitGaussian_ns
             m_map_params[axis + "ProjFitR2"]        = yat::Any(fit.get_r2());
             m_map_params[axis + "ProjFitNbIter"]    = yat::Any(fit.get_nb_iter());            
             m_map_params[axis + "ProjPushTime"]     = yat::Any(m_time_ns_to_human);
-            if (is_along_x)
+
+            //store input and fitted spectra in protected SECTION
             {
-                m_x = fit.get_input_spectrum();
-                m_fitted_x = fit.get_fitted_spectrum();
-            }
-            else
-            {
-                m_y = fit.get_input_spectrum();
-                m_fitted_y = fit.get_fitted_spectrum();
+                yat::MutexLock scoped_lock(m_data_lock);
+                if (is_along_x)
+                {
+                    m_x = fit.get_input_spectrum();
+                    m_fitted_x = fit.get_fitted_spectrum();
+                }
+                else
+                {
+                    m_y = fit.get_input_spectrum();
+                    m_fitted_y = fit.get_fitted_spectrum();
+                }
             }
         }
-
         
         //push event only if fit converged
         if(fit.has_converged())
@@ -447,16 +422,8 @@ namespace FitGaussian_ns
         //----------------------------------------------------------------------
         // initialisation
         //----------------------------------------------------------------------
-        {
-            yat::MutexLock scoped_lock(m_data_lock);
-            m_map_params.clear();
-            m_x.clear();
-            m_y.clear();
-            m_fitted_x.clear();
-            m_fitted_y.clear();
-            m_mat_img_roi.release();
-            m_mat_img_roi_data.clear();
-        }
+        //clear previous parameters
+        m_map_params.clear();
 
         yat::Timer t_total;
         t_total.restart();
@@ -473,22 +440,20 @@ namespace FitGaussian_ns
             return aSrc;
         }
 
-        {
-            yat::MutexLock scoped_lock(m_data_lock);
-            m_mat_img_roi = mat_origin_16u;
-        }
-
+        m_mat_img_roi = mat_origin_16u.clone(); //default ROI is full image
         // Store initial ROI parameters, will be updated if AutoROI is enabled
-        m_map_params["AutoROIOriginX"] = yat::Any(roi.x);
-        m_map_params["AutoROIOriginY"] = yat::Any(roi.y);
-        m_map_params["AutoROIWidth"]   = yat::Any(roi.width);
-        m_map_params["AutoROIHeight"]  = yat::Any(roi.height);
+        m_map_params["AutoROIConverged"]    = yat::Any(false); //default value
+        m_map_params["AutoROIOriginX"]      = yat::Any(roi.x);
+        m_map_params["AutoROIOriginY"]      = yat::Any(roi.y);
+        m_map_params["AutoROIWidth"]        = yat::Any(roi.width);
+        m_map_params["AutoROIHeight"]       = yat::Any(roi.height);     
+        m_map_params["ROIImage"]            = yat::Any(m_mat_img_roi.clone()); //store a copy of the ROI image in the shared parameters        
 
         //----------------------------------------------------------------------
         // AUTO ROI
         //----------------------------------------------------------------------
         if (m_auto_roi_enabled)
-            process_auto_roi(mat_origin_16u);
+            process_auto_roi(m_mat_img_roi);
 
         //----------------------------------------------------------------------
         // PROJECTION & FIT on X
@@ -507,7 +472,8 @@ namespace FitGaussian_ns
         }
 
         //----------------------------------------------------------------------
-        // Update shared parameters
+        // Update shared parameters in protected SECTION
+        //----------------------------------------------------------------------
         {
             yat::MutexLock scoped_lock(m_data_lock);
             m_map_shared_params = m_map_params;

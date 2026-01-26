@@ -158,7 +158,9 @@ void FitGaussLM::compute_r_squared()
 {
     double mean_y = 0.0;
     for (double val : m_y)
-    mean_y += val;
+    {
+        mean_y += val;
+    }
     mean_y /= static_cast<double>(m_y.size());
 
     double ss_tot = 0.0;
