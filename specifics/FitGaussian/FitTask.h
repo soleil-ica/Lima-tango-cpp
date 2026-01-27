@@ -78,10 +78,10 @@ namespace FitGaussian_ns
             const std::vector<double>& get_spectrum(const std::string& name);      
 
             // Check if parameter exists
-            bool is_param_exist(const std::string param_name);
+            bool is_param_exist(const std::string& param_name);
 
             // Get parameter value by name
-            yat::Any get_param(const std::string param_name);
+            yat::Any get_param(const std::string& param_name);
 
             // Get current time in nanoseconds as string formatted to human-readable time
             std::string get_time_ns_to_human_time(long long ns);
@@ -100,7 +100,7 @@ namespace FitGaussian_ns
             void process_auto_roi(const cv::Mat& mat_origin_16u);
 
             // Process projection along X or Y
-            void process_projection(const cv::Mat& img, bool is_along_x);
+            void process_projection(const cv::Mat& img, const std::string& axis_name);
             
             // Push event std::string value
             void push_event(const std::string& name, std::string value);
@@ -124,7 +124,6 @@ namespace FitGaussian_ns
             std::vector<double>                 m_y; // y data points
             std::vector<double>                 m_fitted_y; // y fitted data points              
             cv::Mat                             m_mat_img_roi; // image of the ROI
-            std::vector<unsigned short>         m_mat_img_roi_data; // image of the ROI as vector of unsigned short
             bool                                m_auto_roi_enabled; // AutoROI enabled or not
             double                              m_auto_roi_factor_x; // AutoROI factor along X
             double                              m_auto_roi_factor_y; // AutoROI factor along Y            
@@ -136,7 +135,7 @@ namespace FitGaussian_ns
             bool                                m_xproj_enabled;// XProj enabled or not
             bool                                m_yproj_enabled;// YProj enabled or not
             std::map<std::string, yat::Any>     m_map_shared_params;//map of shared parameters , this map is updated in protected SECTION
-            std::string                         m_time_ns_to_human;
+            std::string                         m_time_ns_to_human;// current time in nanoseconds as string formatted to human-readable time
     };
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

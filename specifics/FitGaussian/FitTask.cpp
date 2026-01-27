@@ -177,7 +177,7 @@ namespace FitGaussian_ns
     //-----------------------------------------------
     //get parameter value by name
     //-----------------------------------------------
-    yat::Any FitTask::get_param(const std::string param_name)
+    yat::Any FitTask::get_param(const std::string& param_name)
     { 
         yat::MutexLock scoped_lock(m_data_lock);
         if(m_map_shared_params.find(param_name) == m_map_shared_params.end())
@@ -192,7 +192,7 @@ namespace FitGaussian_ns
     //-----------------------------------------------
     // Check if parameter exists
     //-----------------------------------------------   
-    bool FitTask::is_param_exist(const std::string param_name)
+    bool FitTask::is_param_exist(const std::string& param_name)
     {
         yat::MutexLock scoped_lock(m_data_lock);
         return (m_map_shared_params.find(param_name) != m_map_shared_params.end());
@@ -341,20 +341,32 @@ namespace FitGaussian_ns
     //-----------------------------------------------
     // Process projection along X or Y
     //-----------------------------------------------
-    void FitTask::process_projection(const cv::Mat& img, bool is_along_x)
+    void FitTask::process_projection(const cv::Mat& img, const std::string& axis_name)
     {
         yat::Timer timer_fit;
         timer_fit.restart();
 
-        const std::string axis = is_along_x ? "X" : "Y";
-        int reduce_dim = is_along_x ? 0 : 1;
+        // upper case the axis name
+        std::string axis = axis_name;
+        std::transform(axis.begin(), axis.end(), axis.begin(), ::toupper);
+
+        //is axis_name is X or Y ?
+        if(axis != "X" && axis != "Y")
+        {
+            ERROR_STREAM <<"[Error] FitTask::process_projection() : unknown axis name : "<<axis<<std::endl;
+            //- throw exception
+            std::string msg = "unknown axis name : " + axis;
+            Tango::Except::throw_exception("PARAM_ERROR", msg.c_str(), "FitTask::process_projection");
+        }
+
+        int reduce_dim = (axis == "X")? 0 : 1;
 
         cv::Mat proj_mat;
         cv::reduce(img, proj_mat, reduce_dim, CV_REDUCE_AVG, CV_64F);
 
         std::vector<double> proj_vec(proj_mat.begin<double>(), proj_mat.end<double>());
 
-        double pixel_size = (is_along_x ? m_pixel_size_x : m_pixel_size_y) / m_optical_magnification;
+        double pixel_size = ((axis == "X") ? m_pixel_size_x : m_pixel_size_y) / m_optical_magnification;
 
         FitGaussLM fit(axis + "Proj", proj_vec, pixel_size);
         fit.fit(m_fit_nb_iterations_max, m_fit_tolerance);
@@ -378,7 +390,7 @@ namespace FitGaussian_ns
             //store input and fitted spectra in protected SECTION
             {
                 yat::MutexLock scoped_lock(m_data_lock);
-                if (is_along_x)
+                if (axis == "X")
                 {
                     m_x = fit.get_input_spectrum();
                     m_fitted_x = fit.get_fitted_spectrum();
@@ -402,9 +414,8 @@ namespace FitGaussian_ns
             #ifdef PUSH_EVENT_MYPUSHTIME_ENABLED
             DEBUG_STREAM << "Pushing " << axis <<"ProjPushTime event..." << std::endl;            
             push_event(axis +"ProjPushTime", m_time_ns_to_human);
-            #endif            
+            #endif
         }
-        
         
         print_results(fit);
         INFO_STREAM << "[Elapsed time (fit_" << axis << "): " << timer_fit.elapsed_msec() << " (ms)]" << std::endl;        
@@ -460,7 +471,7 @@ namespace FitGaussian_ns
         //----------------------------------------------------------------------
         if (m_xproj_enabled)
         {
-            process_projection(m_mat_img_roi, true);
+            process_projection(m_mat_img_roi, "X");
         }
 
         //----------------------------------------------------------------------
@@ -468,7 +479,7 @@ namespace FitGaussian_ns
         //----------------------------------------------------------------------            
         if (m_yproj_enabled)
         {
-            process_projection(m_mat_img_roi, false);
+            process_projection(m_mat_img_roi, "Y");
         }
 
         //----------------------------------------------------------------------
@@ -476,7 +487,7 @@ namespace FitGaussian_ns
         //----------------------------------------------------------------------
         {
             yat::MutexLock scoped_lock(m_data_lock);
-            m_map_shared_params = m_map_params;
+            m_map_shared_params.swap(m_map_params);
         }
 
         INFO_STREAM << "************************" << std::endl;
