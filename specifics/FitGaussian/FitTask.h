@@ -74,9 +74,6 @@ namespace FitGaussian_ns
             // Set tolerance for the fit
             void set_fit_tolerance(double fit_tolerance);
 
-            // Get spectrum values
-            const std::vector<double>& get_spectrum(const std::string& name);      
-
             // Check if parameter exists
             bool is_param_exist(const std::string& param_name);
 
@@ -108,17 +105,11 @@ namespace FitGaussian_ns
             // Push event double value
             void push_event(const std::string& name, double value);
             
-            // Pointer to the Tango device
-            FitGaussian* m_device;
-
-            //Lock to protect the state of the operation
-            yat::Mutex m_data_lock;
-
-            //Operation type (FIT/NONE)
-            std::string m_operation_type;
-
-            //map of parameters
-            std::map<std::string, yat::Any>     m_map_params;//map of parameters 
+            //Data members
+        private:
+            FitGaussian*                        m_device; // pointer to the FitGaussian device
+            yat::Mutex                          m_data_lock; // mutex to protect access to shared parameters map
+            std::string                         m_operation_type; // operation type (FIT/NONE)          
             std::vector<double>                 m_x; // x data points
             std::vector<double>                 m_fitted_x; // x fitted data points
             std::vector<double>                 m_y; // y data points
@@ -132,10 +123,18 @@ namespace FitGaussian_ns
             double                              m_optical_magnification; // optical magnification
             int                                 m_fit_nb_iterations_max; // max number of iterations for the fit
             double                              m_fit_tolerance; // tolerance for the fit
-            bool                                m_xproj_enabled;// XProj enabled or not
-            bool                                m_yproj_enabled;// YProj enabled or not
-            std::map<std::string, yat::Any>     m_map_shared_params;//map of shared parameters , this map is updated in protected SECTION
-            std::string                         m_time_ns_to_human;// current time in nanoseconds as string formatted to human-readable time
+            bool                                m_xproj_enabled; // XProj enabled or not
+            bool                                m_yproj_enabled; // YProj enabled or not
+            std::string                         m_time_ns_to_human; // current time in nanoseconds as string formatted to human-readable time            
+            std::map<std::string, yat::Any>     m_map_params; //map of parameters , this map is filled during the processing of each frame
+
+            //map of shared parameters , this map is the swap of m_map_params done in protected SECTION
+            //each tango attribute (READ Only) can access this map to get the latest value of the parameter
+            //the key is the tango attribute name and the value is of type yat::Any
+            //client can use yat::any_cast to extract the real type of the parameter
+            //client shall check first if the parameter exists using is_param_exist() method
+            //client can get the parameter value using get_param() method
+            std::map<std::string, yat::Any>     m_map_shared_params;            
     };
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////

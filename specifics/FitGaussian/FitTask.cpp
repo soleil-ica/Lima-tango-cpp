@@ -143,38 +143,6 @@ namespace FitGaussian_ns
     }
 
     //-----------------------------------------------
-    // Get input spectrum values
-    //-----------------------------------------------
-    const std::vector<double>& FitTask::get_spectrum(const std::string& name)
-    {
-        yat::MutexLock scoped_lock(m_data_lock);
-        if(name == "XProj")
-        {
-            return m_x;
-        }
-        else if(name == "XProjFitted")
-        {
-            return m_fitted_x;
-        }
-        else if(name == "YProj")
-        {
-            return m_y;
-        }
-        else if(name == "YProjFitted")
-        {
-            return m_fitted_y;         
-        } 
-        else
-        {   
-            ERROR_STREAM<<"[Error] FitTask::get_spectrum() : unknown spectrum name : "<<name<<std::endl;
-            //- throw exception
-            std::string msg = "unknown spectrum name : " + name;
-            Tango::Except::throw_exception("PARAM_ERROR", msg.c_str(), "FitTask::get_spectrum");
-        }
-    }
-
-
-    //-----------------------------------------------
     //get parameter value by name
     //-----------------------------------------------
     yat::Any FitTask::get_param(const std::string& param_name)
@@ -386,21 +354,8 @@ namespace FitGaussian_ns
             m_map_params[axis + "ProjFitR2"]        = yat::Any(fit.get_r2());
             m_map_params[axis + "ProjFitNbIter"]    = yat::Any(fit.get_nb_iter());            
             m_map_params[axis + "ProjPushTime"]     = yat::Any(m_time_ns_to_human);
-
-            //store input and fitted spectra in protected SECTION
-            {
-                yat::MutexLock scoped_lock(m_data_lock);
-                if (axis == "X")
-                {
-                    m_x = fit.get_input_spectrum();
-                    m_fitted_x = fit.get_fitted_spectrum();
-                }
-                else
-                {
-                    m_y = fit.get_input_spectrum();
-                    m_fitted_y = fit.get_fitted_spectrum();
-                }
-            }
+            m_map_params[axis + "Proj"]             = yat::Any(fit.get_input_spectrum());
+            m_map_params[axis + "ProjFitted"]       = yat::Any(fit.get_fitted_spectrum());
         }
         
         //push event only if fit converged

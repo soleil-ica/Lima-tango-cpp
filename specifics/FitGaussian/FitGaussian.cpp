@@ -1222,8 +1222,20 @@ void FitGaussian::read_XProj(Tango::Attribute &attr)
 	try
 	{
 		if(m_fit_task)
-		{
-			attr.set_value(const_cast<Tango::DevDouble*>(&m_fit_task->get_spectrum("XProj").at(0)), m_fit_task->get_spectrum("XProj").size());
+		{		
+			if(!m_fit_task->is_param_exist("XProj"))
+			{
+				attr.set_value(static_cast<Tango::DevDouble*>(nullptr), 0);
+				attr.set_quality(Tango::ATTR_ALARM);
+				return;
+			}
+			else
+			{
+				
+				std::vector<double> x_proj = yat::any_cast<std::vector<double> >(m_fit_task->get_param("XProj"));
+				attr.set_value(static_cast<Tango::DevDouble*>(&x_proj.at(0)),x_proj.size());
+				attr.set_quality(Tango::ATTR_VALID);
+			}
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -1251,8 +1263,20 @@ void FitGaussian::read_XProjFitted(Tango::Attribute &attr)
 	try
 	{
 		if(m_fit_task)
-		{
-			attr.set_value(const_cast<Tango::DevDouble*>(&m_fit_task->get_spectrum("XProjFitted").at(0)), m_fit_task->get_spectrum("XProjFitted").size());
+		{		
+			if(!m_fit_task->is_param_exist("XProjFitted"))
+			{
+				attr.set_value(static_cast<Tango::DevDouble*>(nullptr), 0);
+				attr.set_quality(Tango::ATTR_ALARM);
+				return;
+			}
+			else
+			{
+				
+				std::vector<double> x_proj_fitted = yat::any_cast<std::vector<double> >(m_fit_task->get_param("XProjFitted"));
+				attr.set_value(static_cast<Tango::DevDouble*>(&x_proj_fitted.at(0)),x_proj_fitted.size());
+				attr.set_quality(Tango::ATTR_VALID);
+			}
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -1688,9 +1712,21 @@ void FitGaussian::read_YProj(Tango::Attribute &attr)
 	try
 	{
 		if(m_fit_task)
-		{
-			attr.set_value(const_cast<Tango::DevDouble*>(&m_fit_task->get_spectrum("YProj").at(0)), m_fit_task->get_spectrum("YProj").size());
-		}
+		{		
+			if(!m_fit_task->is_param_exist("YProj"))
+			{
+				attr.set_value(static_cast<Tango::DevDouble*>(nullptr), 0);
+				attr.set_quality(Tango::ATTR_ALARM);
+				return;
+			}
+			else
+			{
+				
+				std::vector<double> y_proj = yat::any_cast<std::vector<double> >(m_fit_task->get_param("YProj"));
+				attr.set_value(static_cast<Tango::DevDouble*>(&y_proj.at(0)),y_proj.size());
+				attr.set_quality(Tango::ATTR_VALID);
+			}
+		}	
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -1717,9 +1753,21 @@ void FitGaussian::read_YProjFitted(Tango::Attribute &attr)
 	try
 	{
 		if(m_fit_task)
-		{
-			attr.set_value(const_cast<Tango::DevDouble*>(&m_fit_task->get_spectrum("YProjFitted").at(0)), m_fit_task->get_spectrum("YProjFitted").size());
-		}
+		{		
+			if(!m_fit_task->is_param_exist("YProjFitted"))
+			{
+				attr.set_value(static_cast<Tango::DevDouble*>(nullptr), 0);
+				attr.set_quality(Tango::ATTR_ALARM);
+				return;
+			}
+			else
+			{
+				
+				std::vector<double> y_proj_fitted = yat::any_cast<std::vector<double> >(m_fit_task->get_param("YProjFitted"));
+				attr.set_value(static_cast<Tango::DevDouble*>(&y_proj_fitted.at(0)),y_proj_fitted.size());
+				attr.set_quality(Tango::ATTR_VALID);
+			}
+		}		
 	}
 	catch(Tango::DevFailed& df)
 	{
