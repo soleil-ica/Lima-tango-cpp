@@ -26,6 +26,7 @@
 //- LIMA
 #include "Factory.h"
 #include "lima/CtControl.h"
+#include "lima/CtAcquisition.h"
 #include "lima/CtVideo.h"
 
 #ifndef WIN32
@@ -78,8 +79,9 @@ namespace LimaDetector_ns
         struct AcqConfig
         {
             lima::CtControl*    ct;                          // lima control objet used in owner device (singleton)
-            bool            	use_prepare_cmd;        // status when abort is call
+            bool            	use_prepare_cmd;             // if enabled, call prepare command before starting acquisition
             string            	abort_status_message;        // status when abort is call
+            bool            	enable_hardware_sync;        // if enabled, read hardware values after each prepare command
         };
 
     protected://- [yat4tango::DeviceTask implementation]

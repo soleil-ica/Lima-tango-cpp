@@ -104,6 +104,11 @@ void AcquisitionTask::process_message(yat::Message& msg) throw(Tango::DevFailed)
                     set_status(string("Acquisition is Running in prepare mode..."));
                     m_acq_conf = msg.get_data<AcqConfig>();
                     m_acq_conf.ct->prepareAcq();
+
+                    if (m_acq_conf.enable_hardware_sync)
+                    {
+                        m_acq_conf.ct->acquisition()->sync();
+                    }
                 }
                 catch(Tango::DevFailed &df)
                 {
@@ -127,7 +132,14 @@ void AcquisitionTask::process_message(yat::Message& msg) throw(Tango::DevFailed)
                     set_status(string("Acquisition is Running in snap mode..."));
                     m_acq_conf = msg.get_data<AcqConfig>();
                     if(!m_acq_conf.use_prepare_cmd)
+                    {
                         m_acq_conf.ct->prepareAcq();
+                        if (m_acq_conf.enable_hardware_sync)
+                        {
+                            m_acq_conf.ct->acquisition()->sync();
+                        }
+                    }
+
                     m_acq_conf.ct->startAcq();
                 }
                 catch(Tango::DevFailed &df)
