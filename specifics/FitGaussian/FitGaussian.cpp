@@ -1221,22 +1221,18 @@ void FitGaussian::read_XProj(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
-		{		
-			if(!m_fit_task->is_param_exist("XProj"))
-			{
-				attr.set_value(static_cast<Tango::DevDouble*>(nullptr), 0);
-				attr.set_quality(Tango::ATTR_ALARM);
-				return;
-			}
-			else
-			{
-				
-				std::vector<double> x_proj = yat::any_cast<std::vector<double> >(m_fit_task->get_param("XProj"));
-				attr.set_value(static_cast<Tango::DevDouble*>(&x_proj.at(0)),x_proj.size());
-				attr.set_quality(Tango::ATTR_VALID);
-			}
+		if(!m_fit_task || !m_fit_task->is_param_exist("XProj"))
+		{
+			attr.set_value(static_cast<Tango::DevDouble*>(nullptr), 0);
+			attr.set_quality(Tango::ATTR_ALARM);
+			return;
 		}
+
+		//- get the vector from the fit task and copy it in a persistent buffer before setting attribute value
+		const auto v = yat::any_cast<std::vector<double>>(m_fit_task->get_param("XProj"));
+		m_xproj_cache.assign(v.begin(), v.end());   // copie dans un buffer persistant
+		attr.set_value(m_xproj_cache.data(), m_xproj_cache.size());
+		attr.set_quality(Tango::ATTR_VALID);
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -1262,22 +1258,18 @@ void FitGaussian::read_XProjFitted(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("XProjFitted"))
 		{		
-			if(!m_fit_task->is_param_exist("XProjFitted"))
-			{
-				attr.set_value(static_cast<Tango::DevDouble*>(nullptr), 0);
-				attr.set_quality(Tango::ATTR_ALARM);
-				return;
-			}
-			else
-			{
-				
-				std::vector<double> x_proj_fitted = yat::any_cast<std::vector<double> >(m_fit_task->get_param("XProjFitted"));
-				attr.set_value(static_cast<Tango::DevDouble*>(&x_proj_fitted.at(0)),x_proj_fitted.size());
-				attr.set_quality(Tango::ATTR_VALID);
-			}
+			attr.set_value(static_cast<Tango::DevDouble*>(nullptr), 0);
+			attr.set_quality(Tango::ATTR_ALARM);
+			return;
 		}
+
+		//- get the vector from the fit task and copy it in a persistent buffer before setting attribute value
+		const auto v = yat::any_cast<std::vector<double> >(m_fit_task->get_param("XProjFitted"));
+		m_xproj_fitted_cache.assign(v.begin(), v.end());
+		attr.set_value(m_xproj_fitted_cache.data(), m_xproj_fitted_cache.size());
+		attr.set_quality(Tango::ATTR_VALID);
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -1711,22 +1703,18 @@ void FitGaussian::read_YProj(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
-		{		
-			if(!m_fit_task->is_param_exist("YProj"))
-			{
-				attr.set_value(static_cast<Tango::DevDouble*>(nullptr), 0);
-				attr.set_quality(Tango::ATTR_ALARM);
-				return;
-			}
-			else
-			{
-				
-				std::vector<double> y_proj = yat::any_cast<std::vector<double> >(m_fit_task->get_param("YProj"));
-				attr.set_value(static_cast<Tango::DevDouble*>(&y_proj.at(0)),y_proj.size());
-				attr.set_quality(Tango::ATTR_VALID);
-			}
-		}	
+		if(!m_fit_task || !m_fit_task->is_param_exist("YProj"))
+		{
+			attr.set_value(static_cast<Tango::DevDouble*>(nullptr), 0);
+			attr.set_quality(Tango::ATTR_ALARM);
+			return;
+		}
+
+		//- get the vector from the fit task and copy it in a persistent buffer before setting attribute value
+		const auto v = yat::any_cast<std::vector<double> >(m_fit_task->get_param("YProj"));
+		m_yproj_cache.assign(v.begin(), v.end());
+		attr.set_value(m_yproj_cache.data(), m_yproj_cache.size());
+		attr.set_quality(Tango::ATTR_VALID);
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -1752,22 +1740,18 @@ void FitGaussian::read_YProjFitted(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("YProjFitted"))
 		{		
-			if(!m_fit_task->is_param_exist("YProjFitted"))
-			{
-				attr.set_value(static_cast<Tango::DevDouble*>(nullptr), 0);
-				attr.set_quality(Tango::ATTR_ALARM);
-				return;
-			}
-			else
-			{
+			attr.set_value(static_cast<Tango::DevDouble*>(nullptr), 0);
+			attr.set_quality(Tango::ATTR_ALARM);
+			return;
+		}
 				
-				std::vector<double> y_proj_fitted = yat::any_cast<std::vector<double> >(m_fit_task->get_param("YProjFitted"));
-				attr.set_value(static_cast<Tango::DevDouble*>(&y_proj_fitted.at(0)),y_proj_fitted.size());
-				attr.set_quality(Tango::ATTR_VALID);
-			}
-		}		
+		//- get the vector from the fit task and copy it in a persistent buffer before setting attribute value
+		const auto v = yat::any_cast<std::vector<double> >(m_fit_task->get_param("YProjFitted"));
+		m_yproj_fitted_cache.assign(v.begin(), v.end());
+		attr.set_value(m_yproj_fitted_cache.data(), m_yproj_fitted_cache.size());
+		attr.set_quality(Tango::ATTR_VALID);
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -1791,36 +1775,46 @@ void FitGaussian::read_YProjFitted(Tango::Attribute &attr)
 void FitGaussian::read_ROIImage(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "FitGaussian::read_ROIImage(Tango::Attribute &attr) entering... "<< endl;
-	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
-	try
-	{
-		if(m_fit_task)
-		{		
-			if(!m_fit_task->is_param_exist("ROIImage"))
-			{
-				attr.set_value(static_cast<Tango::DevUShort*>(nullptr), 0, 0);
-				attr.set_quality(Tango::ATTR_ALARM);
-				return;
-			}
-			else
-			{
-				
-				const cv::Mat img = yat::any_cast<const cv::Mat>(m_fit_task->get_param("ROIImage"));
-				attr.set_value(reinterpret_cast<Tango::DevUShort*>(img.data),img.cols, img.rows);
-				attr.set_quality(Tango::ATTR_VALID);
-			}
-		}
-	}
-	catch(Tango::DevFailed& df)
-	{
-		ERROR_STREAM << df << endl;
-		//- rethrow exception
-		Tango::Except::re_throw_exception(df,
-										"TANGO_DEVICE_ERROR",
-										string(df.errors[0].desc).c_str(),
-										"FitGaussian::read_ROIImage()");
-	}
+	
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    try
+    {
+        if (!m_fit_task || !m_fit_task->is_param_exist("ROIImage"))
+        {
+            attr.set_value(static_cast<Tango::DevUShort*>(nullptr), 0, 0);
+            attr.set_quality(Tango::ATTR_ALARM);
+            return;
+        }
 
+        const cv::Mat img = yat::any_cast<cv::Mat>(m_fit_task->get_param("ROIImage"));
+
+        if (img.empty())
+        {
+            attr.set_value(static_cast<Tango::DevUShort*>(nullptr), 0, 0);
+            attr.set_quality(Tango::ATTR_ALARM);
+            return;
+        }
+
+        // cache persistant + deep copy (continu)
+        m_roi_img_cache = img.clone();
+
+        if (m_roi_img_cache.type() != CV_16UC1)
+        {
+            attr.set_value(static_cast<Tango::DevUShort*>(nullptr), 0, 0);
+            attr.set_quality(Tango::ATTR_ALARM);
+            return;
+        }
+
+        attr.set_value(reinterpret_cast<Tango::DevUShort*>(m_roi_img_cache.data), m_roi_img_cache.cols, m_roi_img_cache.rows);
+        attr.set_quality(Tango::ATTR_VALID);
+    }
+    catch (Tango::DevFailed& df)
+    {
+        Tango::Except::re_throw_exception(df, 
+										"TANGO_DEVICE_ERROR",
+                                         string(df.errors[0].desc).c_str(),
+                                         "FitGaussian::read_ROIImage()");
+    }
 }
 
 //+------------------------------------------------------------------
@@ -1887,7 +1881,6 @@ void FitGaussian::add_external_operation(long level)
 
 				//prepare FitTask
 				FitTask* task = new FitTask("NONE", this);
-				std::cout<<"m_operation_type : "<<m_operation_type<<std::endl;
 				
 				//set FitTask parameters from device properties
 				task->set_operation_type(m_operation_type);

@@ -592,6 +592,11 @@ protected :
 	std::string                     	m_operation_type;
 	std::map<long, operationParams >    m_map_operations; 
 	FitTask*        					m_fit_task;
+	std::vector<Tango::DevDouble> 		m_xproj_cache;
+	std::vector<Tango::DevDouble> 		m_xproj_fitted_cache;
+	std::vector<Tango::DevDouble> 		m_yproj_cache;
+	std::vector<Tango::DevDouble> 		m_yproj_fitted_cache;
+	cv::Mat								m_roi_img_cache; 
         
 	//LIMA objects
 	lima::CtControl*               		m_ct;

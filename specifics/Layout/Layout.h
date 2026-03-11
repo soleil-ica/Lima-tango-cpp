@@ -68,15 +68,15 @@
 namespace Layout_ns
 {
 
-    class LayoutTask : public LinkTask
+    class LayoutTask : public LinkTask, public Tango::LogAdapter
     {
     public:
 
         //-----------------------------------------------
 		//ctor
 		//-----------------------------------------------
-        LayoutTask(const std::string& opType, long opValue) :
-        LinkTask(true),
+        LayoutTask(const std::string& opType, long opValue, Tango::DeviceImpl* dev) :
+        LinkTask(true),Tango::LogAdapter(dev),
         m_operation_type(opType),
         m_operation_value(opValue) { }
 
@@ -141,11 +141,11 @@ namespace Layout_ns
                 case Data::INT32: _compute<int>(aData, aNewData);
                     break;   				
 				default:
-					YAT_INFO<<"Layout: Undefined image Type : "<< aData.type << std::endl;
+					INFO_STREAM<<"Layout: Undefined image Type : "<< aData.type << std::endl;
 					break;
             }
-			YAT_INFO<<"[Elapsed time : "<<t1.elapsed_msec()<< " (ms)]"<<std::endl;
-			YAT_INFO<<" "<< std::endl;				
+			INFO_STREAM<<"[Elapsed time : "<<t1.elapsed_msec()<< " (ms)]"<<std::endl;
+			INFO_STREAM<<" "<< std::endl;				
             return aNewData;
         }
 
@@ -157,7 +157,7 @@ namespace Layout_ns
 		template<class INPUT>
 		Data cirpad_2x10(Data &aSrc)
 		{
-			YAT_INFO<<"LayoutTask: Apply operation : "<< m_operation_type << " ()"<<std::endl;
+			INFO_STREAM<<"LayoutTask: Apply operation : "<< m_operation_type << " ()"<<std::endl;
 			#define MODULE_NB			20
 			#define MODULE_WIDTH 		560
 			#define MODULE_HEIGHT 		120
@@ -189,7 +189,7 @@ namespace Layout_ns
 		template<class INPUT>
 		Data cirpad_4x5(Data &aSrc)
 		{
-			YAT_INFO<<"LayoutTask: Apply operation : "<< m_operation_type << " ()"<<std::endl;
+			INFO_STREAM<<"LayoutTask: Apply operation : "<< m_operation_type << " ()"<<std::endl;
 			#define MODULE_NB			20
 			#define MODULE_WIDTH 		560
 			#define MODULE_HEIGHT 		120
@@ -225,7 +225,7 @@ namespace Layout_ns
 		template<class INPUT>
 		Data operation_arithmetic(Data &aSrc)
 		{			
-			YAT_INFO<<"LayoutTask: Apply operation arithmetic : "<< m_operation_type << " ("<<m_operation_value<<")"<<std::endl;
+			INFO_STREAM<<"LayoutTask: Apply operation arithmetic : "<< m_operation_type << " ("<<m_operation_value<<")"<<std::endl;
 			Data aDst = aSrc.copy();
 			int aNbPixel = aSrc.dimensions[0] * aSrc.dimensions[1];
 			for(int i = 0; i < aNbPixel; i++)

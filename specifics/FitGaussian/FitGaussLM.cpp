@@ -7,6 +7,8 @@
 #include <stdexcept>
 #include <numeric>
 
+const double SIGMA2FWHM_SCALE_FACTOR = ::sqrt( 8.0f * ::log(2.0f) );
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -234,8 +236,8 @@ void FitGaussLM::initialize_params()
     double fwhm = (right > left) ? (m_x[right] - m_x[left]) 
                                  : (m_x.back() - m_x.front()) / 2.0;
 
-    // Convert FWHM to sigma (σ = FWHM / 2.355 for Gaussian).
-    double sigma_init = fwhm / 2.355;
+    // Convert FWHM to sigma (σ = FWHM / SIGMA2FWHM_SCALE_FACTOR for Gaussian).
+    double sigma_init = fwhm / SIGMA2FWHM_SCALE_FACTOR;
 
     // Store all estimated parameters in the order: [A, mu, sigma, bg, slope].
     m_params = { A_init, mu_init, sigma_init, bg_init, slope_init };
@@ -365,7 +367,7 @@ double FitGaussLM::get_sigma() const
 ///////////////////////////////////////////////////////////////////////////////////////////////
 double FitGaussLM::get_fwhm() const
 {
-    return 2.355 * m_params[2]*m_pixel_size;//2*sqrt(ln2)*sigma
+    return SIGMA2FWHM_SCALE_FACTOR * m_params[2]*m_pixel_size;//2*sqrt(ln2)*sigma
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -482,7 +484,7 @@ void FitGaussLM::save_to_bmp(const std::vector<double>& y_in, const std::string&
 
     // Display fit parameters as text
     int y0 = 20;
-    double fwhm = 2.355 * sigma*m_pixel_size;
+    double fwhm = SIGMA2FWHM_SCALE_FACTOR * sigma*m_pixel_size;
 		
     // get metrics
     double chi2 = get_chi2();

@@ -1,91 +1,124 @@
-
 #include "FitTask.h"
 #include <FitGaussian.h>
 
+#include <chrono>
+#include <cstdio>
+#include <stdexcept>
+#include <thread>
+
 namespace FitGaussian_ns
-{ 
-    //-----------------------------------------------
-    //ctor
-    //-----------------------------------------------
-    FitTask::FitTask(const std::string& opType, Tango::DeviceImpl* dev): 
-    LinkTask(true), Tango::LogAdapter(dev),
-    m_device(static_cast<FitGaussian*>(dev)),
-    m_operation_type(opType)
-    {         
-        INFO_STREAM<<"FitTask::FitTask("<<opType<<")"<<std::endl;
-        transform(m_operation_type.begin(), m_operation_type.end(), m_operation_type.begin(), ::toupper);
-        m_x.clear();
-        m_y.clear();
-        m_fitted_x.clear();
-        m_fitted_y.clear();
-        m_auto_roi_enabled = false; //default value
-        m_auto_roi_factor_x = 5.0; //default value
-        m_auto_roi_factor_y = 1.5; //default value    
-        m_pixel_size_x = 1.0; //default value
-        m_pixel_size_y = 1.0; //default value
-        m_optical_magnification = 1.0; //default value
-        m_fit_nb_iterations_max = 100; //default value 
-        m_fit_tolerance = 1e-6; //default value            
-        m_xproj_enabled = true; //default value
-        m_yproj_enabled = true; //default value
-        m_map_params.clear();
-        m_map_shared_params.clear();
+{
+    namespace
+    {
+        static std::string to_upper_copy(std::string s)
+        {
+            std::transform(s.begin(), s.end(), s.begin(), ::toupper);
+            return s;
+        }
     }
 
     //-----------------------------------------------
-    //dtor
+    // ctor
+    //-----------------------------------------------
+    FitTask::FitTask(const std::string& opType, Tango::DeviceImpl* dev)
+        : LinkTask(true),
+          Tango::LogAdapter(dev),
+          m_device(static_cast<FitGaussian*>(dev)),
+          m_operation_type(to_upper_copy(opType)),
+          m_auto_roi_enabled(false),
+          m_auto_roi_factor_x(5.0),
+          m_auto_roi_factor_y(1.5),
+          m_pixel_size_x(1.0),
+          m_pixel_size_y(1.0),
+          m_optical_magnification(1.0),
+          m_fit_nb_iterations_max(100),
+          m_fit_tolerance(1e-6),
+          m_xproj_enabled(true),
+          m_yproj_enabled(true)
+    {
+        INFO_STREAM << "FitTask::FitTask(" << opType << ")" << std::endl;
+    }
+
+    //-----------------------------------------------
+    // dtor
     //-----------------------------------------------
     FitTask::~FitTask()
     {
-        INFO_STREAM<<"FitTask::~FitTask("")"<<std::endl;
+        INFO_STREAM << "FitTask::~FitTask()" << std::endl;
     }
 
     //-----------------------------------------------
-    //define the operation type (FIT)
-    //-----------------------------------------------    
-    void FitTask::set_operation_type(const std::string& op_type)
-    {            
-        INFO_STREAM<< "FitTask::set_operation_type("<<op_type<<")"<<std::endl;
-        m_operation_type = op_type;
-        transform(m_operation_type.begin(), m_operation_type.end(), m_operation_type.begin(), ::toupper);
-    }
-
+    // snapshot config
     //-----------------------------------------------
-    //get the operation type (FIT)
-    //-----------------------------------------------
-    const std::string& FitTask::get_operation_type()
+    FitTask::ConfigSnapshot FitTask::get_config_snapshot()
     {
+        yat::MutexLock scoped_lock(m_data_lock);
+
+        ConfigSnapshot cfg;
+        cfg.operation_type            = m_operation_type;
+        cfg.auto_roi_enabled          = m_auto_roi_enabled;
+        cfg.auto_roi_factor_x         = m_auto_roi_factor_x;
+        cfg.auto_roi_factor_y         = m_auto_roi_factor_y;
+        cfg.pixel_size_x              = m_pixel_size_x;
+        cfg.pixel_size_y              = m_pixel_size_y;
+        cfg.optical_magnification     = m_optical_magnification;
+        cfg.fit_nb_iterations_max     = m_fit_nb_iterations_max;
+        cfg.fit_tolerance             = m_fit_tolerance;
+        cfg.xproj_enabled             = m_xproj_enabled;
+        cfg.yproj_enabled             = m_yproj_enabled;
+        return cfg;
+    }
+
+    //-----------------------------------------------
+    // define the operation type (FIT)
+    //-----------------------------------------------
+    void FitTask::set_operation_type(const std::string& op_type)
+    {
+        INFO_STREAM << "FitTask::set_operation_type(" << op_type << ")" << std::endl;
+        yat::MutexLock scoped_lock(m_data_lock);
+        m_operation_type = to_upper_copy(op_type);
+    }
+
+    //-----------------------------------------------
+    // get the operation type (FIT)
+    //-----------------------------------------------
+    std::string FitTask::get_operation_type()
+    {
+        yat::MutexLock scoped_lock(m_data_lock);
         return m_operation_type;
     }
 
     //-----------------------------------------------
-    //define if AutoROI is enabled or not         
+    // define if AutoROI is enabled or not
     //-----------------------------------------------
     void FitTask::set_auto_roi_enabled(bool is_auto_roi)
-    {            
-        INFO_STREAM<< "FitTask::set_auto_roi_enabled("<<is_auto_roi<<")"<<std::endl;
-        m_auto_roi_enabled = is_auto_roi;        
+    {
+        INFO_STREAM << "FitTask::set_auto_roi_enabled(" << is_auto_roi << ")" << std::endl;
+        yat::MutexLock scoped_lock(m_data_lock);
+        m_auto_roi_enabled = is_auto_roi;
     }
 
     //-----------------------------------------------
-    //define if X/Y Proj is enabled or not 
+    // define if X/Y Proj is enabled or not
     //-----------------------------------------------
     void FitTask::set_proj_enabled(bool is_proj_enabled, bool is_along_x)
     {
-        INFO_STREAM<< "FitTask::set_proj_enabled("<<is_proj_enabled<<" , "<<is_along_x<<")"<<std::endl;
-        if(is_along_x)
+        INFO_STREAM << "FitTask::set_proj_enabled(" << is_proj_enabled << " , " << is_along_x << ")" << std::endl;
+        yat::MutexLock scoped_lock(m_data_lock);
+        if (is_along_x)
             m_xproj_enabled = is_proj_enabled;
-        else        
+        else
             m_yproj_enabled = is_proj_enabled;
     }
 
     //-----------------------------------------------
-    // Define the AutoROI factor along X      
+    // Define the AutoROI factor along X
     //-----------------------------------------------
     void FitTask::set_auto_roi_factor_x(double factor_x)
     {
-        INFO_STREAM<< "FitTask::set_auto_roi_factorx("<<factor_x<<")"<<std::endl;
-        m_auto_roi_factor_x = factor_x;        
+        INFO_STREAM << "FitTask::set_auto_roi_factor_x(" << factor_x << ")" << std::endl;
+        yat::MutexLock scoped_lock(m_data_lock);
+        m_auto_roi_factor_x = factor_x;
     }
 
     //-----------------------------------------------
@@ -93,8 +126,9 @@ namespace FitGaussian_ns
     //-----------------------------------------------
     void FitTask::set_auto_roi_factor_y(double factor_y)
     {
-        INFO_STREAM<< "FitTask::set_auto_roi_factory("<<factor_y<<")"<<std::endl;
-        m_auto_roi_factor_y = factor_y;        
+        INFO_STREAM << "FitTask::set_auto_roi_factor_y(" << factor_y << ")" << std::endl;
+        yat::MutexLock scoped_lock(m_data_lock);
+        m_auto_roi_factor_y = factor_y;
     }
 
     //-----------------------------------------------
@@ -102,8 +136,9 @@ namespace FitGaussian_ns
     //-----------------------------------------------
     void FitTask::set_pixel_size_x(double pixel_size_x)
     {
-        INFO_STREAM<< "FitTask::set_pixel_size_x("<<pixel_size_x<<")"<<std::endl;
-        m_pixel_size_x = pixel_size_x;        
+        INFO_STREAM << "FitTask::set_pixel_size_x(" << pixel_size_x << ")" << std::endl;
+        yat::MutexLock scoped_lock(m_data_lock);
+        m_pixel_size_x = pixel_size_x;
     }
 
     //-----------------------------------------------
@@ -111,8 +146,9 @@ namespace FitGaussian_ns
     //-----------------------------------------------
     void FitTask::set_pixel_size_y(double pixel_size_y)
     {
-        INFO_STREAM<< "FitTask::set_pixel_size_y("<<pixel_size_y<<")"<<std::endl;
-        m_pixel_size_y = pixel_size_y;   
+        INFO_STREAM << "FitTask::set_pixel_size_y(" << pixel_size_y << ")" << std::endl;
+        yat::MutexLock scoped_lock(m_data_lock);
+        m_pixel_size_y = pixel_size_y;
     }
 
     //-----------------------------------------------
@@ -120,8 +156,9 @@ namespace FitGaussian_ns
     //-----------------------------------------------
     void FitTask::set_optical_magnification(double optical_magnification)
     {
-        INFO_STREAM<< "FitTask::set_optical_magnification("<<optical_magnification<<")"<<std::endl;
-        m_optical_magnification = optical_magnification;   
+        INFO_STREAM << "FitTask::set_optical_magnification(" << optical_magnification << ")" << std::endl;
+        yat::MutexLock scoped_lock(m_data_lock);
+        m_optical_magnification = optical_magnification;
     }
 
     //-----------------------------------------------
@@ -129,8 +166,9 @@ namespace FitGaussian_ns
     //-----------------------------------------------
     void FitTask::set_fit_nb_iterations_max(int fit_nb_iterations_max)
     {
-        INFO_STREAM<< "FitTask::set_fit_nb_iterations_max("<<fit_nb_iterations_max<<")"<<std::endl;
-        m_fit_nb_iterations_max = fit_nb_iterations_max;   
+        INFO_STREAM << "FitTask::set_fit_nb_iterations_max(" << fit_nb_iterations_max << ")" << std::endl;
+        yat::MutexLock scoped_lock(m_data_lock);
+        m_fit_nb_iterations_max = fit_nb_iterations_max;
     }
 
     //-----------------------------------------------
@@ -138,48 +176,55 @@ namespace FitGaussian_ns
     //-----------------------------------------------
     void FitTask::set_fit_tolerance(double fit_tolerance)
     {
-        INFO_STREAM<< "FitTask::set_fit_tolerance("<<fit_tolerance<<")"<<std::endl;
-        m_fit_tolerance = fit_tolerance;   
+        INFO_STREAM << "FitTask::set_fit_tolerance(" << fit_tolerance << ")" << std::endl;
+        yat::MutexLock scoped_lock(m_data_lock);
+        m_fit_tolerance = fit_tolerance;
     }
 
     //-----------------------------------------------
-    //get parameter value by name
+    // get parameter value by name
     //-----------------------------------------------
     yat::Any FitTask::get_param(const std::string& param_name)
-    { 
+    {
         yat::MutexLock scoped_lock(m_data_lock);
-        if(m_map_shared_params.find(param_name) == m_map_shared_params.end())
-        { 
-            //- throw exception
-            Tango::Except::throw_exception("PARAM_ERROR", "Unknow parameter ", "FitTask::get_param");   
+
+        std::map<std::string, yat::Any>::const_iterator it = m_map_shared_params.find(param_name);
+        if (it == m_map_shared_params.end())
+        {
+            Tango::Except::throw_exception("PARAM_ERROR",
+                                           "Unknown parameter",
+                                           "FitTask::get_param");
         }
 
-        return m_map_shared_params[param_name]; 
-    }    
+        return it->second;
+    }
 
     //-----------------------------------------------
     // Check if parameter exists
-    //-----------------------------------------------   
+    //-----------------------------------------------
     bool FitTask::is_param_exist(const std::string& param_name)
     {
         yat::MutexLock scoped_lock(m_data_lock);
         return (m_map_shared_params.find(param_name) != m_map_shared_params.end());
     }
 
-    //-----------------------------------------------
-    // Get current time in nanoseconds as string formatted to human-readable time
-    //-----------------------------------------------    
-    std::string FitTask::get_time_ns_to_human_time(long long ns)
+    //---------------------------------------------------------------
+    // now in human readable format
+    //---------------------------------------------------------------
+    std::string FitTask::now_human_time()
     {
-        // Convertir en secondes et nanosecondes
-        time_t sec = ns / 1000000000LL;
-        long nsec = ns % 1000000000LL;
+        using clock = std::chrono::system_clock;
 
-        struct tm tm_time;
-        localtime_r(&sec, &tm_time);  // version thread-safe de localtime()
+        const auto now = clock::now();
+        const auto sec = clock::to_time_t(now);
 
-        char buffer[64];
-        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &tm_time);
+        std::tm tm_time;
+        localtime_r(&sec, &tm_time);
+
+        const auto nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()).count() % 1000000000LL;
+
+        char buffer[32];
+        std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &tm_time);
 
         std::ostringstream oss;
         oss << buffer << "." << std::setfill('0') << std::setw(9) << nsec;
@@ -188,95 +233,146 @@ namespace FitGaussian_ns
     }
 
     //-----------------------------------------------
-    // Get current time in nanoseconds
+    // Check if ROI is valid and adjust it if necessary to fit within image bounds
     //-----------------------------------------------
-    long long FitTask::get_time_ns()
+    bool FitTask::sanitize_roi(cv::Rect& roi, const cv::Mat& img)
     {
-        struct timespec ts;
-        clock_gettime(CLOCK_REALTIME, &ts);
+        if (img.empty())
+            return false;
 
-        long long ns = static_cast<long long>(ts.tv_sec) * 1000000000LL + ts.tv_nsec;
-        return ns;
+        const cv::Rect bounds(0, 0, img.cols, img.rows);
+        roi &= bounds;
+        return (roi.width > 0 && roi.height > 0);
     }
-    
+
+    //-----------------------------------------------
+    // validate input image and extract width, height and raw pointer
+    //-----------------------------------------------
+    bool FitTask::validate_image(const Data& src, int& width, int& height, const void*& raw_ptr)
+    {
+        if (src.dimensions.size() < 2)
+        {
+            ERROR_STREAM << "[Error] Invalid image dimensions count: " << src.dimensions.size() << std::endl;
+            return false;
+        }
+
+        width  = static_cast<int>(src.dimensions[0]);
+        height = static_cast<int>(src.dimensions[1]);
+
+        if (width <= 0 || height <= 0)
+        {
+            ERROR_STREAM << "[Error] Invalid image size: " << width << "x" << height << std::endl;
+            return false;
+        }
+
+        raw_ptr = src.data();
+        if (!raw_ptr)
+        {
+            ERROR_STREAM << "[Error] Null image buffer!" << std::endl;
+            return false;
+        }
+
+        return true;
+    }
+
     //-----------------------------------------------
     // Process AutoROI
     //-----------------------------------------------
-    void FitTask::process_auto_roi(const cv::Mat& mat_origin_16u)
+    void FitTask::process_auto_roi(const cv::Mat& mat_origin,
+                                   const ConfigSnapshot& cfg,
+                                   cv::Mat& mat_img_roi,
+                                   std::map<std::string, yat::Any>& params)
     {
-        yat::Timer t_roi;
-        t_roi.restart();
+        ////auto begin_auto_roi = std::chrono::steady_clock::now();
 
-        AutoROI auto_roi(m_auto_roi_factor_x, m_auto_roi_factor_y);
-        cv::Rect roi = auto_roi.compute(mat_origin_16u);
+        if (mat_origin.empty())
+        {
+            INFO_STREAM << "[Error] Input image is empty. Aborting AutoROI." << std::endl;
+            return;
+        }
 
-        // Check convergence and adjust ROI bounds
-        if (!auto_roi.has_converged())
+        AutoROI auto_roi(cfg.auto_roi_factor_x, cfg.auto_roi_factor_y);
+        cv::Rect roi = auto_roi.compute(mat_origin);
+
+        const bool converged = auto_roi.has_converged();
+        if (!converged)
         {
             INFO_STREAM << "[Warning] AutoROI did not converge. Using full image as ROI." << std::endl;
-            roi = cv::Rect(0, 0, mat_origin_16u.cols, mat_origin_16u.rows);            
+            roi = cv::Rect(0, 0, mat_origin.cols, mat_origin.rows);
         }
         else
         {
-            INFO_STREAM << "[Info] AutoROI converged." << std::endl;
+            ////INFO_STREAM << "[Info] AutoROI converged." << std::endl;
 
-            // Clip ROI within image bounds
-            roi.x      = std::max(0, roi.x);
-            roi.y      = std::max(0, roi.y);
-            roi.width  = std::min(roi.width,  mat_origin_16u.cols - roi.x);
-            roi.height = std::min(roi.height, mat_origin_16u.rows - roi.y);
+            if (!sanitize_roi(roi, mat_origin))
+            {
+                INFO_STREAM << "[Warning] Invalid ROI after sanitization. Using full image." << std::endl;
+                roi = cv::Rect(0, 0, mat_origin.cols, mat_origin.rows);
+            }
         }
 
-        // Copy ROI region into m_mat_img_roi (deep copy for contiguous memory)
-        {
-            // Deep copy ROI image
-            mat_origin_16u(roi).copyTo(m_mat_img_roi);
+        mat_origin(roi).copyTo(mat_img_roi);
 
-            // Store ROI parameters
-            m_map_params["AutoROIConverged"]    = yat::Any(auto_roi.has_converged());
-            m_map_params["AutoROIOriginX"]      = yat::Any(roi.x);
-            m_map_params["AutoROIOriginY"]      = yat::Any(roi.y);
-            m_map_params["AutoROIWidth"]        = yat::Any(roi.width);
-            m_map_params["AutoROIHeight"]       = yat::Any(roi.height);            
-            m_map_params["ROIImage"]            = yat::Any(m_mat_img_roi.clone()); //store a copy of the ROI image in the shared parameters
-        }
+        params["AutoROIConverged"] = yat::Any(converged);
+        params["AutoROIOriginX"]   = yat::Any(roi.x);
+        params["AutoROIOriginY"]   = yat::Any(roi.y);
+        params["AutoROIWidth"]     = yat::Any(roi.width);
+        params["AutoROIHeight"]    = yat::Any(roi.height);
+        params["ROIImage"]         = yat::Any(mat_img_roi.clone());
 
-        INFO_STREAM << "[Elapsed time (AutoROI): " << t_roi.elapsed_msec() << " (ms)]" << std::endl;
-        INFO_STREAM << "------------------------" << std::endl;
+        ////auto end_auto_roi = std::chrono::steady_clock::now();
+        ////auto ms = std::chrono::duration<double, std::milli>(end_auto_roi - begin_auto_roi).count();
+        ////std::cerr   << "AutoROI"
+        ////            << " frame=" << yat::any_cast<long long>(params["FrameNumber"])
+        ////            << " tid=" << std::this_thread::get_id()
+        ////            << " total_ms=" << ms
+        ////            << std::endl;
     }
 
     //-----------------------------------------------
-    // Push event
+    // Push event std::string
     //-----------------------------------------------
-    void FitTask::push_event(const std::string& name, std::string value)
+    void FitTask::push_event(const std::string& name, const std::string& value)
     {
+        Tango::DevString data = 0;
+
         try
         {
             Tango::AutoTangoMonitor mon(m_device);
 
-            Tango::DevString data = const_cast<char*>(value.c_str());                      
             std::vector<std::string> dummy1;
             std::vector<double> dummy2;
+            data = Tango::string_dup(value.c_str());
 
-            m_device->push_event(   name,
-                                    dummy1,
-                                    dummy2,
-                                    &data,
-                                    1,
-                                    0,
-                                    false
-                                );                          
+            m_device->push_event(name,
+                                 dummy1,
+                                 dummy2,
+                                 &data,
+                                 1,
+                                 0,
+                                 false);
+
+            Tango::string_free(data);
+            data = 0;
         }
-        catch (Tango::DevFailed &e)
+        catch (Tango::DevFailed& e)
         {
-           ERROR_STREAM << "push_event(" << name << ") failed: " << e.errors[0].desc << std::endl;
-            //- throw exception
-            Tango::Except::throw_exception("TANGO_ERROR", e.errors[0].desc, "FitTask::push_event");            
-        }        
+            ERROR_STREAM << "push_event(" << name << ") failed: " << e.errors[0].desc << std::endl;
+            if (data)
+                Tango::string_free(data);
+            return;
+        }
+        catch (...)
+        {
+            ERROR_STREAM << "push_event(" << name << ") failed: unknown exception" << std::endl;
+            if (data)
+                Tango::string_free(data);
+            return;
+        }
     }
 
     //-----------------------------------------------
-    // Push event
+    // Push event double
     //-----------------------------------------------
     void FitTask::push_event(const std::string& name, double value)
     {
@@ -288,186 +384,250 @@ namespace FitGaussian_ns
             std::vector<std::string> dummy1;
             std::vector<double> dummy2;
 
-            m_device->push_event(   name,
-                                    dummy1,
-                                    dummy2,
-                                    &data,
-                                    1,
-                                    0,
-                                    false
-                                );                           
+            m_device->push_event(name,
+                                 dummy1,
+                                 dummy2,
+                                 &data,
+                                 1,
+                                 0,
+                                 false);
         }
-        catch (Tango::DevFailed &e)
+        catch (Tango::DevFailed& e)
         {
             ERROR_STREAM << "push_event(" << name << ") failed: " << e.errors[0].desc << std::endl;
-            //- throw exception
-            Tango::Except::throw_exception("TANGO_ERROR", e.errors[0].desc, "FitTask::push_event");
-        }        
+            return;
+        }
+        catch (...)
+        {
+            ERROR_STREAM << "push_event(" << name << ") failed: unknown exception" << std::endl;
+            return;
+        }
     }
-
 
     //-----------------------------------------------
     // Process projection along X or Y
     //-----------------------------------------------
-    void FitTask::process_projection(const cv::Mat& img, const std::string& axis_name)
+    void FitTask::process_projection(const cv::Mat& img,
+                                     const std::string& axis_name,
+                                     const ConfigSnapshot& cfg,
+                                     std::map<std::string, yat::Any>& params)
     {
-        yat::Timer timer_fit;
-        timer_fit.restart();
+        ////auto begin_projection = std::chrono::steady_clock::now();
 
-        // upper case the axis name
-        std::string axis = axis_name;
-        std::transform(axis.begin(), axis.end(), axis.begin(), ::toupper);
+        std::string axis = to_upper_copy(axis_name);
 
-        //is axis_name is X or Y ?
-        if(axis != "X" && axis != "Y")
+        if (axis != "X" && axis != "Y")
         {
-            ERROR_STREAM <<"[Error] FitTask::process_projection() : unknown axis name : "<<axis<<std::endl;
-            //- throw exception
+            ERROR_STREAM << "[Error] FitTask::process_projection() : unknown axis name : " << axis << std::endl;
             std::string msg = "unknown axis name : " + axis;
             Tango::Except::throw_exception("PARAM_ERROR", msg.c_str(), "FitTask::process_projection");
         }
 
-        int reduce_dim = (axis == "X")? 0 : 1;
+        if (img.empty())
+        {
+            Tango::Except::throw_exception("DATA_ERROR", "Empty ROI image", "FitTask::process_projection");
+        }
+
+        const int reduce_dim = (axis == "X") ? 0 : 1;
 
         cv::Mat proj_mat;
         cv::reduce(img, proj_mat, reduce_dim, CV_REDUCE_AVG, CV_64F);
 
-        std::vector<double> proj_vec(proj_mat.begin<double>(), proj_mat.end<double>());
+        std::vector<double> proj_vec;
+        proj_vec.assign((double*)proj_mat.datastart, (double*)proj_mat.dataend);
 
-        double pixel_size = ((axis == "X") ? m_pixel_size_x : m_pixel_size_y) / m_optical_magnification;
+        const double magnification = (cfg.optical_magnification != 0.0) ? cfg.optical_magnification : 1.0;
+        const double pixel_size = ((axis == "X") ? cfg.pixel_size_x : cfg.pixel_size_y) / magnification;
 
         FitGaussLM fit(axis + "Proj", proj_vec, pixel_size);
-        fit.fit(m_fit_nb_iterations_max, m_fit_tolerance);
+        fit.fit(cfg.fit_nb_iterations_max, cfg.fit_tolerance);
 
-        // Store fit results
+        int roi_origin = 0;
+        auto it = params.find("AutoROIOrigin" + axis);
+        if (it != params.end())
+            roi_origin = yat::any_cast<int>(it->second);
+
+        const std::string push_time = now_human_time();
+
+        params[axis + "ProjFitConverged"] = yat::Any(fit.has_converged());
+        params[axis + "ProjFitCenter"]    = yat::Any((fit.get_mu() + roi_origin) * pixel_size);
+        params[axis + "ProjFitMag"]       = yat::Any(fit.get_amplitude());
+        params[axis + "ProjFitMu"]        = yat::Any(fit.get_mu());
+        params[axis + "ProjFitSigma"]     = yat::Any(fit.get_sigma());
+        params[axis + "ProjFitFWHM"]      = yat::Any(fit.get_fwhm());
+        params[axis + "ProjFitBG"]        = yat::Any(fit.get_bg());
+        params[axis + "ProjFitChi2"]      = yat::Any(fit.get_chi2());
+        params[axis + "ProjFitRMS"]       = yat::Any(fit.get_rms());
+        params[axis + "ProjFitR2"]        = yat::Any(fit.get_r2());
+        params[axis + "ProjFitNbIter"]    = yat::Any(fit.get_nb_iter());
+        params[axis + "ProjPushTime"]     = yat::Any(push_time);
+        params[axis + "Proj"]             = yat::Any(fit.get_input_spectrum());
+        params[axis + "ProjFitted"]       = yat::Any(fit.get_fitted_spectrum());
+
+        if (fit.has_converged())
         {
-            m_time_ns_to_human                      = get_time_ns_to_human_time(get_time_ns());
-            m_map_params[axis + "ProjFitConverged"] = yat::Any(fit.has_converged());
-            m_map_params[axis + "ProjFitCenter"]    = yat::Any((fit.get_mu() + yat::any_cast<int>(m_map_params["AutoROIOrigin"+axis]))*pixel_size);
-            m_map_params[axis + "ProjFitMag"]       = yat::Any(fit.get_amplitude());
-            m_map_params[axis + "ProjFitMu"]        = yat::Any(fit.get_mu());
-            m_map_params[axis + "ProjFitSigma"]     = yat::Any(fit.get_sigma());
-            m_map_params[axis + "ProjFitFWHM"]      = yat::Any(fit.get_fwhm());
-            m_map_params[axis + "ProjFitBG"]        = yat::Any(fit.get_bg());
-            m_map_params[axis + "ProjFitChi2"]      = yat::Any(fit.get_chi2());
-            m_map_params[axis + "ProjFitRMS"]       = yat::Any(fit.get_rms());
-            m_map_params[axis + "ProjFitR2"]        = yat::Any(fit.get_r2());
-            m_map_params[axis + "ProjFitNbIter"]    = yat::Any(fit.get_nb_iter());            
-            m_map_params[axis + "ProjPushTime"]     = yat::Any(m_time_ns_to_human);
-            m_map_params[axis + "Proj"]             = yat::Any(fit.get_input_spectrum());
-            m_map_params[axis + "ProjFitted"]       = yat::Any(fit.get_fitted_spectrum());
-        }
-        
-        //push event only if fit converged
-        if(fit.has_converged())
-        {
-            #ifdef PUSH_EVENT_PROJ_ENABLED
+#ifdef PUSH_EVENT_PROJ_ENABLED
             DEBUG_STREAM << "Pushing " << axis << "ProjFitSigma event..." << std::endl;
             push_event(axis + "ProjFitSigma", fit.get_sigma());
-            #endif
+#endif
 
-            #ifdef PUSH_EVENT_MYPUSHTIME_ENABLED
-            DEBUG_STREAM << "Pushing " << axis <<"ProjPushTime event..." << std::endl;            
-            push_event(axis +"ProjPushTime", m_time_ns_to_human);
-            #endif
+#ifdef PUSH_EVENT_MYPUSHTIME_ENABLED
+            DEBUG_STREAM << "Pushing " << axis << "ProjPushTime event..." << std::endl;
+            push_event(axis + "ProjPushTime", push_time);
+#endif
         }
-        
-        print_results(fit);
-        INFO_STREAM << "[Elapsed time (fit_" << axis << "): " << timer_fit.elapsed_msec() << " (ms)]" << std::endl;        
+
+        ////print_results(fit);
+
+        ////auto end_projection = std::chrono::steady_clock::now();
+        ////auto ms = std::chrono::duration<double, std::milli>(end_projection - begin_projection).count();
+        ////std::cerr   << "FIT axis=" << axis
+        ////            << " frame=" << yat::any_cast<long long>(params["FrameNumber"])
+        ////            << " tid=" << std::this_thread::get_id()
+        ////            << " total_ms=" << ms
+        ////            << std::endl;        
     }
 
+    //-----------------------------------------------
+    // Publish parameters to be read by the main device class
+    //-----------------------------------------------
+    void FitTask::publish_params(std::map<std::string, yat::Any>& params)
+    {
+        yat::MutexLock scoped_lock(m_data_lock);
+        m_map_shared_params.swap(params);
+    }
 
     //-----------------------------------------------
-    //process every new frame arrived
+    // process every new frame arrived
     //-----------------------------------------------
     Data FitTask::process(Data& aSrc)
-    {
-        INFO_STREAM << "FitTask::process() ..." << std::endl;
-        INFO_STREAM << "************************" << std::endl;
+    {        
+        ////std::cerr << "BEGIN Process frame=" << aSrc.frameNumber << " tid=" << std::this_thread::get_id() << std::endl;          
+        const auto begin_process = std::chrono::steady_clock::now();
 
-        //----------------------------------------------------------------------
-        // initialisation
-        //----------------------------------------------------------------------
-        //clear previous parameters
-        m_map_params.clear();
+        std::map<std::string, yat::Any> local_params;
+        local_params["FrameNumber"]      = yat::Any(aSrc.frameNumber);        
+        local_params["AutoROIConverged"] = yat::Any(false);
+        local_params["AutoROIOriginX"]   = yat::Any(0);
+        local_params["AutoROIOriginY"]   = yat::Any(0);
+        local_params["AutoROIWidth"]     = yat::Any(0);
+        local_params["AutoROIHeight"]    = yat::Any(0);
 
-        yat::Timer t_total;
-        t_total.restart();
-
-        //----------------------------------------------------------------------
-        // Convert Data to cv::Mat
-        //----------------------------------------------------------------------
-        Data my_image = aSrc;
-        cv::Mat mat_origin_16u(my_image.dimensions[1], my_image.dimensions[0], CV_16UC1, (unsigned short*) my_image.data() );
-        cv::Rect roi = cv::Rect(0, 0, mat_origin_16u.cols, mat_origin_16u.rows); //default ROI is full image
-        if (mat_origin_16u.empty())
+        try
         {
-            ERROR_STREAM << "[Error]: empty image!" << std::endl;
-            return aSrc;
+            // Get a snapshot of the current configuration, this ensures consistency in case the configuration is changed while processing
+            const ConfigSnapshot cfg = get_config_snapshot();
+
+            // If AutoROI is not enabled, we skip directly
+            if (!cfg.auto_roi_enabled)
+            {                
+                std::cerr << "[Info] AutoROI disabled, skip processing frame=" << aSrc.frameNumber << " tid=" << std::this_thread::get_id()<< std::endl;
+                publish_params(local_params);
+                return aSrc;
+            }
+
+            int width = 0;
+            int height = 0;
+            const void* raw_ptr = 0;
+
+            if (!validate_image(aSrc, width, height, raw_ptr))
+            {
+                ERROR_STREAM << "[Error] Failed to validate image!" << std::endl;
+                publish_params(local_params);
+                return aSrc;
+            }
+
+            cv::Mat mat_view(height, width, CV_16UC1, const_cast<void*>(raw_ptr));
+            if (mat_view.empty())
+            {
+                ERROR_STREAM << "[Error] Empty image view!" << std::endl;
+                publish_params(local_params);
+                return aSrc;
+            }
+
+            cv::Mat mat_origin = mat_view.clone();
+            if (mat_origin.empty())
+            {
+                ERROR_STREAM << "[Error] Failed to clone image!" << std::endl;
+                publish_params(local_params);
+                return aSrc;
+            }
+
+            cv::Mat mat_origin_rotated;
+            cv::rotate(mat_origin, mat_origin_rotated, cv::ROTATE_90_CLOCKWISE);
+
+            // This will hold the ROI image after AutoROI processing, to be used for projections if enabled
+            cv::Mat mat_img_roi;
+
+            // Store the original image parameters in case we need to use them for projections if AutoROI fails, this ensures that projections will always have an image to work with, even if it's not cropped
+            local_params["AutoROIWidth"]  = yat::Any(mat_origin_rotated.cols);
+            local_params["AutoROIHeight"] = yat::Any(mat_origin_rotated.rows);
+            local_params["ROIImage"]      = yat::Any(mat_origin_rotated.clone());
+
+            // Process AutoROI, this will also update the local_params with the ROI results to be used for projections if enabled
+            process_auto_roi(mat_origin_rotated, cfg, mat_img_roi, local_params);
+
+            //check if AutoROI converged before processing projections, as they depend on the ROI being valid
+            bool auto_roi_converged = false;
+
+            std::map<std::string, yat::Any>::const_iterator it = local_params.find("AutoROIConverged");            
+            if (it != local_params.end())
+                auto_roi_converged = yat::any_cast<bool>(it->second);
+
+            // Process projections X if enabled and if AutoROI converged, as they depend on the ROI being valid
+            if (cfg.xproj_enabled && auto_roi_converged)
+                process_projection(mat_img_roi, "X", cfg, local_params);
+
+            // Process projections Y if enabled and if AutoROI converged, as they depend on the ROI being valid
+            if (cfg.yproj_enabled && auto_roi_converged)
+                process_projection(mat_img_roi, "Y", cfg, local_params);         
+        }
+        catch (const Tango::DevFailed& e)
+        {
+            ERROR_STREAM << "FitTask::process(" << aSrc.frameNumber << ") Tango exception: " << e.errors[0].desc << std::endl;
+        }
+        catch (const cv::Exception& e)
+        {
+            ERROR_STREAM << "FitTask::process(" << aSrc.frameNumber << ") OpenCV exception: " << e.what() << std::endl;
+        }
+        catch (const std::exception& e)
+        {
+            ERROR_STREAM << "FitTask::process(" << aSrc.frameNumber << ") std::exception: " << e.what() << std::endl;
+        }
+        catch (const lima::Exception& e)
+        {
+            ERROR_STREAM << "FitTask::process(" << aSrc.frameNumber << ") lima exception: " << e.getErrMsg() << std::endl;
+        }        
+        catch (...)
+        {
+            ERROR_STREAM << "FitTask::process(" << aSrc.frameNumber << ") unknown exception" << std::endl;
         }
 
-        m_mat_img_roi = mat_origin_16u.clone(); //default ROI is full image
-        // Store initial ROI parameters, will be updated if AutoROI is enabled
-        m_map_params["AutoROIConverged"]    = yat::Any(false); //default value
-        m_map_params["AutoROIOriginX"]      = yat::Any(roi.x);
-        m_map_params["AutoROIOriginY"]      = yat::Any(roi.y);
-        m_map_params["AutoROIWidth"]        = yat::Any(roi.width);
-        m_map_params["AutoROIHeight"]       = yat::Any(roi.height);     
-        m_map_params["ROIImage"]            = yat::Any(m_mat_img_roi.clone()); //store a copy of the ROI image in the shared parameters        
+        // Publish the parameters to be read by the main device class and possibly pushed as events
+        // Note: we publish all parameters at the end of processing to ensure consistency, as some parameters depend on the results of previous steps (e.g. projections depend on AutoROI results)        
+        publish_params(local_params);
 
-        //----------------------------------------------------------------------
-        // AUTO ROI
-        //----------------------------------------------------------------------
-        if (m_auto_roi_enabled)
-            process_auto_roi(m_mat_img_roi);
-
-        //----------------------------------------------------------------------
-        // PROJECTION & FIT on X
-        //----------------------------------------------------------------------
-        if (m_xproj_enabled)
-        {
-            process_projection(m_mat_img_roi, "X");
-        }
-
-        //----------------------------------------------------------------------
-        // PROJECTION & FIT on Y
-        //----------------------------------------------------------------------            
-        if (m_yproj_enabled)
-        {
-            process_projection(m_mat_img_roi, "Y");
-        }
-
-        //----------------------------------------------------------------------
-        // Update shared parameters in protected SECTION
-        //----------------------------------------------------------------------
-        {
-            yat::MutexLock scoped_lock(m_data_lock);
-            m_map_shared_params.swap(m_map_params);
-        }
-
-        INFO_STREAM << "************************" << std::endl;
-        INFO_STREAM << "[Elapsed time (Process): " << t_total.elapsed_msec() << " (ms)]" << std::endl;
-        INFO_STREAM << "************************\n" << std::endl;
-
+        // Log processing time
+        ////const auto ms = std::chrono::duration<double, std::milli>( std::chrono::steady_clock::now() - begin_process).count();        
+        ////std::cerr << "END Process frame=" << aSrc.frameNumber << " tid=" << std::this_thread::get_id() << " total_ms=" << ms << std::endl;                       
         return aSrc;
     }
-
 
     //-----------------------------------------------
     // Print all fitted parameters
     //-----------------------------------------------
     void FitTask::print_results(const FitGaussLM& fit)
     {
-        DEBUG_STREAM << "Fitted parameters for :"   << fit.get_label()      << std::endl;
-        DEBUG_STREAM << "Amplitude: "               << fit.get_amplitude()  << std::endl;
-        DEBUG_STREAM << "Mu: "                      << fit.get_mu()         << std::endl;
-        DEBUG_STREAM << "Sigma: "                   << fit.get_sigma()      << std::endl;
-        DEBUG_STREAM << "FWHM: "                    << fit.get_fwhm()       << std::endl;
-        DEBUG_STREAM << "Background: "              << fit.get_bg()         << std::endl;
-        DEBUG_STREAM << "Slope: "                   << fit.get_slope()      << std::endl;
-        DEBUG_STREAM << "Chi2: "                    << fit.get_chi2()       << std::endl;
-        DEBUG_STREAM << "RMS: "                     << fit.get_rms()        << std::endl;
-        DEBUG_STREAM << "R²: "                      << fit.get_r2()         << std::endl;
-        DEBUG_STREAM << "Nb. iter: "                << fit.get_nb_iter()    << std::endl;
-    }    
+        DEBUG_STREAM << "Fitted parameters for :" << fit.get_label()     << std::endl;
+        DEBUG_STREAM << "Amplitude: "             << fit.get_amplitude() << std::endl;
+        DEBUG_STREAM << "Mu: "                    << fit.get_mu()        << std::endl;
+        DEBUG_STREAM << "Sigma: "                 << fit.get_sigma()     << std::endl;
+        DEBUG_STREAM << "FWHM: "                  << fit.get_fwhm()      << std::endl;
+        DEBUG_STREAM << "Background: "            << fit.get_bg()        << std::endl;
+        DEBUG_STREAM << "Slope: "                 << fit.get_slope()     << std::endl;
+        DEBUG_STREAM << "Chi2: "                  << fit.get_chi2()      << std::endl;
+        DEBUG_STREAM << "RMS: "                   << fit.get_rms()       << std::endl;
+        DEBUG_STREAM << "R²: "                    << fit.get_r2()        << std::endl;
+        DEBUG_STREAM << "Nb. iter: "              << fit.get_nb_iter()   << std::endl;
+    }
 }
