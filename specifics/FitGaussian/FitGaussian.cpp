@@ -266,6 +266,7 @@ void FitGaussian::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedOperationLevel"));
 	dev_prop.push_back(Tango::DbDatum("XProjEnabled"));
 	dev_prop.push_back(Tango::DbDatum("YProjEnabled"));
+	dev_prop.push_back(Tango::DbDatum("ProfileFitFixedBg"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -408,13 +409,24 @@ void FitGaussian::get_device_property()
 	//	And try to extract YProjEnabled value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  yProjEnabled;
 
+	//	Try to initialize ProfileFitFixedBg from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  profileFitFixedBg;
+	else {
+		//	Try to initialize ProfileFitFixedBg from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  profileFitFixedBg;
+	}
+	//	And try to extract ProfileFitFixedBg value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  profileFitFixedBg;
+
 
 
 	//	End of Automatic code generation
 	//------------------------------------------------------------------
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", 	"AutoROIEnabled");	
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "5.0", 		"AutoROIMagnificationFactorX");	
-	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1.5", 		"AutoROIMagnificationFactorY");	
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1.5", 		"AutoROIMagnificationFactorY");		
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "5.86", 	"PixelSizeX");	
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "5.86", 	"PixelSizeY");	
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "2.55", 	"OpticalMagnification");	
@@ -424,6 +436,7 @@ void FitGaussian::get_device_property()
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", 		"MemorizedOperationLevel");	
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	"XProjEnabled");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	"YProjEnabled");	
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", 	"ProfileFitFixedBg");	
 
 }
 //+----------------------------------------------------------------------------
@@ -1883,7 +1896,7 @@ void FitGaussian::add_external_operation(long level)
 				FitTask* task = new FitTask("NONE", this);
 				
 				//set FitTask parameters from device properties
-				task->set_operation_type(m_operation_type);
+				task->set_operation_type(m_operation_type);				
 				task->set_pixel_size_x(pixelSizeX);
 				task->set_pixel_size_y(pixelSizeY);
 				task->set_optical_magnification(opticalMagnification);
@@ -1894,6 +1907,7 @@ void FitGaussian::add_external_operation(long level)
 				task->set_auto_roi_factor_y(autoROIMagnificationFactorY);
 				task->set_proj_enabled(xProjEnabled, true);
 				task->set_proj_enabled(yProjEnabled, false);				
+				task->set_profilefit_fixedbg(profileFitFixedBg);
 				
 				m_fit_task = task;
                 (reinterpret_cast<SoftUserLinkTask*> (op.m_opt))->setLinkTask(task);
@@ -1990,6 +2004,7 @@ void* FitGaussian::get_data_ptr(const cv::Mat& img)
         default: throw std::runtime_error("Unsupported image type");
     }
 }
+
 
 
 

@@ -5,6 +5,9 @@
 #include <cstdio>
 #include <stdexcept>
 #include <thread>
+#include <algorithm>
+#include <sstream>
+#include <iomanip>
 
 namespace FitGaussian_ns
 {
@@ -14,6 +17,46 @@ namespace FitGaussian_ns
         {
             std::transform(s.begin(), s.end(), s.begin(), ::toupper);
             return s;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////
+        // Estimate image background like ISL::Image::estimate_background(5)
+        ///////////////////////////////////////////////////////////////////////////////
+        static double estimate_background_isl_like(const cv::Mat& img, int border_size = 5)
+        {
+            if (img.empty())
+                return 0.0;
+
+            cv::Mat img64;
+            if (img.type() != CV_64F)
+                img.convertTo(img64, CV_64F);
+            else
+                img64 = img;
+
+            const int width  = img64.cols;
+            const int height = img64.rows;
+
+            if (height > 2 * border_size && width > 2 * border_size)
+            {
+                const cv::Rect upper_rect(0, 0, width, border_size);
+                const cv::Rect lower_rect(0, height - border_size, width, border_size);
+                const cv::Rect left_rect (0, 0, border_size, height);
+                const cv::Rect right_rect(width - border_size, 0, border_size, height);
+
+                const double mean_upper = cv::mean(img64(upper_rect))[0];
+                const double mean_lower = cv::mean(img64(lower_rect))[0];
+                const double mean_left  = cv::mean(img64(left_rect))[0];
+                const double mean_right = cv::mean(img64(right_rect))[0];
+
+                return std::min(std::min(mean_upper, mean_lower),
+                                std::min(mean_left,  mean_right));
+            }
+            else
+            {
+                double min_val = 0.0;
+                cv::minMaxLoc(img64, &min_val, 0);
+                return min_val;
+            }
         }
     }
 
@@ -34,7 +77,8 @@ namespace FitGaussian_ns
           m_fit_nb_iterations_max(100),
           m_fit_tolerance(1e-6),
           m_xproj_enabled(true),
-          m_yproj_enabled(true)
+          m_yproj_enabled(true),
+          m_profilefit_fixedbg(false)
     {
         INFO_STREAM << "FitTask::FitTask(" << opType << ")" << std::endl;
     }
@@ -66,6 +110,7 @@ namespace FitGaussian_ns
         cfg.fit_tolerance             = m_fit_tolerance;
         cfg.xproj_enabled             = m_xproj_enabled;
         cfg.yproj_enabled             = m_yproj_enabled;
+        cfg.profilefit_fixedbg        = m_profilefit_fixedbg;
         return cfg;
     }
 
@@ -179,6 +224,16 @@ namespace FitGaussian_ns
         INFO_STREAM << "FitTask::set_fit_tolerance(" << fit_tolerance << ")" << std::endl;
         yat::MutexLock scoped_lock(m_data_lock);
         m_fit_tolerance = fit_tolerance;
+    }
+
+    //-----------------------------------------------
+    // Enable/disable fixed background mode for profile fit
+    //-----------------------------------------------
+    void FitTask::set_profilefit_fixedbg(bool enabled)
+    {
+        INFO_STREAM << "FitTask::set_profilefit_fixedbg(" << enabled << ")" << std::endl;
+        yat::MutexLock scoped_lock(m_data_lock);
+        m_profilefit_fixedbg = enabled;
     }
 
     //-----------------------------------------------
@@ -412,8 +467,6 @@ namespace FitGaussian_ns
                                      const ConfigSnapshot& cfg,
                                      std::map<std::string, yat::Any>& params)
     {
-        ////auto begin_projection = std::chrono::steady_clock::now();
-
         std::string axis = to_upper_copy(axis_name);
 
         if (axis != "X" && axis != "Y")
@@ -428,6 +481,7 @@ namespace FitGaussian_ns
             Tango::Except::throw_exception("DATA_ERROR", "Empty ROI image", "FitTask::process_projection");
         }
 
+        // Same spirit as ISL projections: sum along the orthogonal axis
         const int reduce_dim = (axis == "X") ? 0 : 1;
 
         cv::Mat proj_mat;
@@ -439,7 +493,20 @@ namespace FitGaussian_ns
         const double magnification = (cfg.optical_magnification != 0.0) ? cfg.optical_magnification : 1.0;
         const double pixel_size = ((axis == "X") ? cfg.pixel_size_x : cfg.pixel_size_y) / magnification;
 
-        FitGaussLM fit(axis + "Proj", proj_vec, pixel_size);
+        double fixed_bg_value = 0.0;        
+        if (cfg.profilefit_fixedbg)
+        {
+            // Minimal adaptation to mirror ISL behavior:
+            // estimate image background on ROI, then convert to projection background.
+            const double bg_pixel = estimate_background_isl_like(img, 5);            
+        }
+
+        FitGaussLM fit(axis + "Proj",
+                       proj_vec,
+                       pixel_size,
+                       cfg.profilefit_fixedbg,
+                       fixed_bg_value);
+
         fit.fit(cfg.fit_nb_iterations_max, cfg.fit_tolerance);
 
         int roi_origin = 0;
@@ -476,16 +543,6 @@ namespace FitGaussian_ns
             push_event(axis + "ProjPushTime", push_time);
 #endif
         }
-
-        ////print_results(fit);
-
-        ////auto end_projection = std::chrono::steady_clock::now();
-        ////auto ms = std::chrono::duration<double, std::milli>(end_projection - begin_projection).count();
-        ////std::cerr   << "FIT axis=" << axis
-        ////            << " frame=" << yat::any_cast<long long>(params["FrameNumber"])
-        ////            << " tid=" << std::this_thread::get_id()
-        ////            << " total_ms=" << ms
-        ////            << std::endl;        
     }
 
     //-----------------------------------------------
@@ -501,12 +558,10 @@ namespace FitGaussian_ns
     // process every new frame arrived
     //-----------------------------------------------
     Data FitTask::process(Data& aSrc)
-    {        
-        ////std::cerr << "BEGIN Process frame=" << aSrc.frameNumber << " tid=" << std::this_thread::get_id() << std::endl;          
-        const auto begin_process = std::chrono::steady_clock::now();
-
+    {
+        const auto begin_process = std::chrono::steady_clock::now();        
         std::map<std::string, yat::Any> local_params;
-        local_params["FrameNumber"]      = yat::Any(aSrc.frameNumber);        
+        local_params["FrameNumber"]      = yat::Any(aSrc.frameNumber);
         local_params["AutoROIConverged"] = yat::Any(false);
         local_params["AutoROIOriginX"]   = yat::Any(0);
         local_params["AutoROIOriginY"]   = yat::Any(0);
@@ -521,10 +576,13 @@ namespace FitGaussian_ns
             // If AutoROI is not enabled, we skip directly
             if (!cfg.auto_roi_enabled)
             {                
-                std::cerr << "[Info] AutoROI disabled, skip processing frame=" << aSrc.frameNumber << " tid=" << std::this_thread::get_id()<< std::endl;
+                ////std::cerr << "[Info] AutoROI disabled, skip processing frame=" << aSrc.frameNumber << " tid=" << std::this_thread::get_id()<< std::endl;
                 publish_params(local_params);
                 return aSrc;
             }
+
+            std::cerr << "BEGIN Process frame=" << aSrc.frameNumber << " tid=" << std::this_thread::get_id() << std::endl;          
+
 
             int width = 0;
             int height = 0;
@@ -567,10 +625,8 @@ namespace FitGaussian_ns
             // Process AutoROI, this will also update the local_params with the ROI results to be used for projections if enabled
             process_auto_roi(mat_origin_rotated, cfg, mat_img_roi, local_params);
 
-            //check if AutoROI converged before processing projections, as they depend on the ROI being valid
             bool auto_roi_converged = false;
-
-            std::map<std::string, yat::Any>::const_iterator it = local_params.find("AutoROIConverged");            
+            std::map<std::string, yat::Any>::const_iterator it = local_params.find("AutoROIConverged");
             if (it != local_params.end())
                 auto_roi_converged = yat::any_cast<bool>(it->second);
 
@@ -580,7 +636,7 @@ namespace FitGaussian_ns
 
             // Process projections Y if enabled and if AutoROI converged, as they depend on the ROI being valid
             if (cfg.yproj_enabled && auto_roi_converged)
-                process_projection(mat_img_roi, "Y", cfg, local_params);         
+                process_projection(mat_img_roi, "Y", cfg, local_params);
         }
         catch (const Tango::DevFailed& e)
         {
@@ -597,7 +653,7 @@ namespace FitGaussian_ns
         catch (const lima::Exception& e)
         {
             ERROR_STREAM << "FitTask::process(" << aSrc.frameNumber << ") lima exception: " << e.getErrMsg() << std::endl;
-        }        
+        }
         catch (...)
         {
             ERROR_STREAM << "FitTask::process(" << aSrc.frameNumber << ") unknown exception" << std::endl;
@@ -606,7 +662,6 @@ namespace FitGaussian_ns
         // Publish the parameters to be read by the main device class and possibly pushed as events
         // Note: we publish all parameters at the end of processing to ensure consistency, as some parameters depend on the results of previous steps (e.g. projections depend on AutoROI results)        
         publish_params(local_params);
-
         // Log processing time
         ////const auto ms = std::chrono::duration<double, std::milli>( std::chrono::steady_clock::now() - begin_process).count();        
         ////std::cerr << "END Process frame=" << aSrc.frameNumber << " tid=" << std::this_thread::get_id() << " total_ms=" << ms << std::endl;                       
@@ -624,7 +679,6 @@ namespace FitGaussian_ns
         DEBUG_STREAM << "Sigma: "                 << fit.get_sigma()     << std::endl;
         DEBUG_STREAM << "FWHM: "                  << fit.get_fwhm()      << std::endl;
         DEBUG_STREAM << "Background: "            << fit.get_bg()        << std::endl;
-        DEBUG_STREAM << "Slope: "                 << fit.get_slope()     << std::endl;
         DEBUG_STREAM << "Chi2: "                  << fit.get_chi2()      << std::endl;
         DEBUG_STREAM << "RMS: "                   << fit.get_rms()       << std::endl;
         DEBUG_STREAM << "R²: "                    << fit.get_r2()        << std::endl;

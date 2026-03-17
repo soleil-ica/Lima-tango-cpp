@@ -83,6 +83,9 @@ namespace FitGaussian_ns
         // Set tolerance for the fit
         void set_fit_tolerance(double fit_tolerance);
 
+        // Enable/disable fixed background mode for profile fit
+        void set_profilefit_fixedbg(bool enabled);
+
         // Check if parameter exists
         bool is_param_exist(const std::string& param_name);
 
@@ -112,6 +115,7 @@ namespace FitGaussian_ns
             double fit_tolerance;
             bool xproj_enabled;
             bool yproj_enabled;
+            bool profilefit_fixedbg;
         };
 
     private:
@@ -161,6 +165,7 @@ namespace FitGaussian_ns
         double                          m_fit_tolerance;
         bool                            m_xproj_enabled;
         bool                            m_yproj_enabled;
+        bool                            m_profilefit_fixedbg;
 
         // published results only
         std::map<std::string, yat::Any> m_map_shared_params;

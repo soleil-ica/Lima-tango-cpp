@@ -194,6 +194,10 @@ public :
  *	
  */
 	Tango::DevBoolean	yProjEnabled;
+/**
+ *	
+ */
+	Tango::DevBoolean	profileFitFixedBg;
 //@}
 
 /**
