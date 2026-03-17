@@ -15,14 +15,14 @@ const double SIGMA2FWHM_SCALE_FACTOR = ::sqrt(8.0 * ::log(2.0));
 FitGaussLM::FitGaussLM(const std::string& label,
                        const std::vector<double>& y,
                        double pixel_size,
-                       bool fixed_bg,
+                       bool is_fixed_bg,
                        double fixed_bg_value)
 : m_label(label),
   m_pixel_size(pixel_size),
   m_x(),
   m_y(y),
   m_params(),
-  m_fixed_bg(fixed_bg),
+  m_is_fixed_bg(is_fixed_bg),
   m_fixed_bg_value(fixed_bg_value),
   m_nb_iter(0),
   m_chi2(0.0),
@@ -79,6 +79,11 @@ double FitGaussLM::estimate_bg_edges() const
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Compute Gaussian function:
 // f(x) = bg + A * exp(-((x - mu)^2) / (2 * sigma^2))
+// Parameters:
+//   A: amplitude
+//   mu: mean
+//   sigma: standard deviation
+//   bg: constant background
 ///////////////////////////////////////////////////////////////////////////////////////////////
 double FitGaussLM::compute_gaussian(double x, double A, double mu, double sigma, double bg) const
 {
@@ -87,11 +92,14 @@ double FitGaussLM::compute_gaussian(double x, double A, double mu, double sigma,
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Compute Jacobian and residuals
-//
-// Parameters:
-//   [A, mu, sigma, bg]
-//
-// If fixed_bg == true, bg is frozen and taken from m_fixed_bg_value
+// For each data point i:
+//   residual[i] = y[i] - f(x[i], params)
+//   J[i, 0] = df/dA
+//   J[i, 1] = df/dmu
+//   J[i, 2] = df/dsigma
+//   J[i, 3] = df/dbg (if bg is not fixed)
+// parameters vector layout: [A, mu, sigma, bg]
+// Note: if m_is_fixed_bg == true, bg is not optimized and its value is taken from m_fixed_bg_value, and df/dbg = 0
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void FitGaussLM::compute_jacobian(const std::vector<double>& params,
                                   cv::Mat& J,
@@ -100,32 +108,36 @@ void FitGaussLM::compute_jacobian(const std::vector<double>& params,
     const double A     = params[0];
     const double mu    = params[1];
     const double sigma = params[2];
-    const double bg    = m_fixed_bg ? m_fixed_bg_value : params[3];
+    const double bg    = m_is_fixed_bg ? m_fixed_bg_value : params[3];
 
     const int N = static_cast<int>(m_x.size());
 
     for (int i = 0; i < N; ++i)
     {
-        const double xi = m_x[i];
-        const double yi = m_y[i];
+        const double xi = m_x[i];   // current x data point
+        const double yi = m_y[i];   // measured y value
 
         const double dx = xi - mu;
         const double sigma2 = sigma * sigma;
         const double exp_term = std::exp(-(dx * dx) / (2.0 * sigma2));
 
+        // Model value at xi
         const double fi = bg + A * exp_term;
 
+        // Residual: difference between observed and model
         residuals.at<double>(i, 0) = yi - fi;
 
+        // Fill Jacobian row (∂f/∂params)
         J.at<double>(i, 0) = exp_term;                                 // df/dA
         J.at<double>(i, 1) = A * exp_term * dx / sigma2;              // df/dmu
         J.at<double>(i, 2) = A * exp_term * (dx * dx) / (sigma2 * sigma); // df/dsigma
-        J.at<double>(i, 3) = m_fixed_bg ? 0.0 : 1.0;                  // df/dbg
+        J.at<double>(i, 3) = m_is_fixed_bg ? 0.0 : 1.0;                  // df/dbg
     }
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Compute L2 norm of a vector
+// Note: this is not the same as cv::norm() since we want to compute the norm of a single-column matrix as if it were a vector
 ///////////////////////////////////////////////////////////////////////////////////////////////
 double FitGaussLM::compute_norm(const cv::Mat& mat) const
 {
@@ -140,14 +152,16 @@ double FitGaussLM::compute_norm(const cv::Mat& mat) const
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Compute reduced chi-squared statistic
+// chi² = (1 / dof) * Σ((y[i] - f(x[i]))^2)
+// where dof = N - p (number of data points minus number of fitted parameters)
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void FitGaussLM::compute_reduced_chi_squared()
 {
     const int N = static_cast<int>(m_x.size());
-    int p = m_fixed_bg ? 3 : 4;
+    int p = m_is_fixed_bg ? 3 : 4;
 
     double ssr = 0.0;
-    const double bg = m_fixed_bg ? m_fixed_bg_value : m_params[3];
+    const double bg = m_is_fixed_bg ? m_fixed_bg_value : m_params[3];
 
     for (int i = 0; i < N; ++i)
     {
@@ -162,11 +176,12 @@ void FitGaussLM::compute_reduced_chi_squared()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Compute root-mean-square (RMS) error
+// RMS = sqrt((1/N) * Σ((y[i] - f(x[i]))^2))
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void FitGaussLM::compute_rms_error()
 {
     double sum_sq = 0.0;
-    const double bg = m_fixed_bg ? m_fixed_bg_value : m_params[3];
+    const double bg = m_is_fixed_bg ? m_fixed_bg_value : m_params[3];
 
     for (size_t i = 0; i < m_x.size(); ++i)
     {
@@ -180,6 +195,8 @@ void FitGaussLM::compute_rms_error()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Compute R-squared
+// R² = 1 - (SS_res / SS_tot)
+// where SS_res = Σ((y[i] - f(x[i]))^2) and SS_tot = Σ((y[i] - mean_y)^2)
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void FitGaussLM::compute_r_squared()
 {
@@ -191,7 +208,7 @@ void FitGaussLM::compute_r_squared()
     double ss_tot = 0.0;
     double ss_res = 0.0;
 
-    const double bg = m_fixed_bg ? m_fixed_bg_value : m_params[3];
+    const double bg = m_is_fixed_bg ? m_fixed_bg_value : m_params[3];
 
     for (size_t i = 0; i < m_x.size(); ++i)
     {
@@ -208,6 +225,7 @@ void FitGaussLM::compute_r_squared()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Automatic initial parameter estimation, mimicking ISL::GaussianFit1D::initial_guess()
+// This is important to ensure good convergence of the LM algorithm, especially for noisy data.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void FitGaussLM::initialize_params()
 {
@@ -215,7 +233,7 @@ void FitGaussLM::initialize_params()
 
     if (n < 3)
     {
-        const double bg = m_fixed_bg ? m_fixed_bg_value : 0.0;
+        const double bg = m_is_fixed_bg ? m_fixed_bg_value : 0.0;
         m_params = { m_y[0], 0.0, 1.0, bg };
         return;
     }
@@ -223,7 +241,7 @@ void FitGaussLM::initialize_params()
     //-----------------------
     // BACKGROUND
     //-----------------------
-    double background = m_fixed_bg ? m_fixed_bg_value : estimate_bg_edges();
+    double background = m_is_fixed_bg ? m_fixed_bg_value : estimate_bg_edges();
 
     //-----------------------
     // CENTER
@@ -280,38 +298,50 @@ void FitGaussLM::initialize_params()
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Levenberg-Marquardt fitting
+// Iteratively optimizes Gaussian parameters (A, mu, sigma, bg, slope)
+// to minimize residuals between model and data using the LM algorithm.
+// The implementation includes adaptive damping (lambda) to ensure convergence, and supports optional fixing of the background parameter.
+// - max_iterations: maximum allowed iterations
+// - tol: stopping criterion based on error improvement
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void FitGaussLM::fit(int max_iterations, double tol)
 {
-    const int N = static_cast<int>(m_x.size());
-    const int M = 4; // [A, mu, sigma, bg]
+    const int N = static_cast<int>(m_x.size()); // number of data points
+    const int M = 4;                            // number of parameters [A, mu, sigma, bg]      
 
     double lambda = 1e-3;
     m_nb_iter = 0;
 
+    // LM main loop
     for (m_nb_iter = 0; m_nb_iter < static_cast<unsigned int>(max_iterations); ++m_nb_iter)
     {
+        // Jacobian (N×M) and residuals (N×1) for current parameters
         cv::Mat J(N, M, CV_64F, cv::Scalar(0));
         cv::Mat residuals(N, 1, CV_64F, cv::Scalar(0));
         compute_jacobian(m_params, J, residuals);
 
+        // Normal equations: (JᵀJ) δ = Jᵀr
         cv::Mat JTJ = J.t() * J;
         cv::Mat JTRes = J.t() * residuals;
 
+        // LM modification: add λ to diagonal to stabilize inversion
         for (int i = 0; i < M; ++i)
             JTJ.at<double>(i, i) += lambda;
 
-        if (m_fixed_bg)
+        // If background is fixed, add a large value to the corresponding diagonal element to effectively remove it from optimization
+        if (m_is_fixed_bg)
             JTJ.at<double>(3, 3) += 1e12;
 
+        // Solve for parameter update δ
         cv::Mat delta;
         cv::solve(JTJ, JTRes, delta, cv::DECOMP_SVD);
 
+        // Compute candidate new parameters
         std::vector<double> new_params = m_params;
 
         for (int i = 0; i < M; ++i)
         {
-            if (m_fixed_bg && i == 3)
+            if (m_is_fixed_bg && i == 3)
                 continue;
 
             new_params[i] += delta.at<double>(i, 0);
@@ -323,32 +353,38 @@ void FitGaussLM::fit(int max_iterations, double tol)
             continue;
         }
 
+        // Current error
         const double error = compute_norm(residuals);
 
+        // Error with candidate parameters
         cv::Mat dummyJ(N, M, CV_64F, cv::Scalar(0));
         cv::Mat new_residuals(N, 1, CV_64F, cv::Scalar(0));
         compute_jacobian(new_params, dummyJ, new_residuals);
         const double new_error = compute_norm(new_residuals);
 
+        // Accept step if error decreases
         if (new_error < error)
         {
-            lambda *= 0.1;
-            m_params = new_params;
+            lambda *= 0.1;  // decrease damping (closer to Gauss-Newton)
+            m_params = new_params;  // accept new parameters
 
-            if (std::fabs(error - new_error) < tol)
+            if (std::fabs(error - new_error) < tol) // convergence check
                 break;
         }
         else
         {
-            lambda *= 10.0;
+            lambda *= 10.0; // increase damping (closer to gradient descent)
         }
     }
 
+    // Set convergence flag    
     m_has_converged = (m_nb_iter < static_cast<unsigned int>(max_iterations));
 
-    if (m_fixed_bg)
+    // If background is fixed, ensure parameter vector reflects that
+    if (m_is_fixed_bg)
         m_params[3] = m_fixed_bg_value;
 
+    // Compute metrics
     compute_reduced_chi_squared();
     compute_rms_error();
     compute_r_squared();
@@ -368,7 +404,7 @@ std::vector<double> FitGaussLM::get_input_spectrum() const
 std::vector<double> FitGaussLM::get_fitted_spectrum() const
 {
     std::vector<double> y_fit(m_y.size());
-    const double bg = m_fixed_bg ? m_fixed_bg_value : m_params[3];
+    const double bg = m_is_fixed_bg ? m_fixed_bg_value : m_params[3];
 
     for (size_t i = 0; i < m_x.size(); ++i)
     {
@@ -414,7 +450,7 @@ double FitGaussLM::get_fwhm() const
 ///////////////////////////////////////////////////////////////////////////////////////////////
 double FitGaussLM::get_bg() const
 {
-    return m_fixed_bg ? m_fixed_bg_value : m_params[3];
+    return m_is_fixed_bg ? m_fixed_bg_value : m_params[3];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -459,24 +495,29 @@ bool FitGaussLM::has_converged() const
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Generate a BMP plot of the Gaussian fit and experimental points
+// The plot includes the original data points (in blue), the fitted Gaussian curve (in red), and a text box with the fit parameters and metrics.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void FitGaussLM::save_to_bmp(const std::vector<double>& y_in,
                              const std::string& filename,
                              int w,
                              int h) const
 {
+    // Ensure input vectors are column vectors of type double
     std::vector<double> x_in(y_in.size());
-    std::iota(x_in.begin(), x_in.end(), 0.0);
+    std::iota(x_in.begin(), x_in.end(), 0.0);// fill x_in with 0, 1, 2, ..., n-1
 
     cv::Mat x = vector_to_mat(x_in);
     cv::Mat y = vector_to_mat(y_in);
 
+    // Determine min/max values for scaling
     double min_x, max_x, min_y, max_y;
     cv::minMaxLoc(x, &min_x, &max_x);
     cv::minMaxLoc(y, &min_y, &max_y);
 
+    // Create white canvas
     cv::Mat canvas(h, w, CV_8UC3, cv::Scalar(255, 255, 255));
 
+    // Lambda function to convert data points to canvas coordinates
     auto to_canvas = [&](double xv, double yv)
     {
         int X = static_cast<int>((xv - min_x) / (max_x - min_x) * (w - 1));
@@ -484,6 +525,7 @@ void FitGaussLM::save_to_bmp(const std::vector<double>& y_in,
         return cv::Point(X, Y);
     };
 
+    // Draw experimental points in black
     for (int i = 0; i < x.rows; ++i)
     {
         cv::circle(canvas,
@@ -493,6 +535,7 @@ void FitGaussLM::save_to_bmp(const std::vector<double>& y_in,
                    -1);
     }
 
+    // Draw Gaussian fit curve in red
     std::vector<cv::Point> fit_curve;
     const int n_samples = 200;
     const double A = m_params[0];
@@ -513,13 +556,15 @@ void FitGaussLM::save_to_bmp(const std::vector<double>& y_in,
         cv::line(canvas, fit_curve[i - 1], fit_curve[i], cv::Scalar(0, 0, 255), 2);
     }
 
+    // Display fit parameters as text
     int y0 = 20;
     const double fwhm = SIGMA2FWHM_SCALE_FACTOR * sigma * m_pixel_size;
 
+    // get metrics
     const double chi2 = get_chi2();
     const double rms  = get_rms();
     const double r2   = get_r2();
-
+    
     std::vector<std::string> texts =
     {
         "A = " + std::to_string(A),
@@ -544,12 +589,17 @@ void FitGaussLM::save_to_bmp(const std::vector<double>& y_in,
                     CV_AA);
     }
 
+    // Save BMP image
     cv::imwrite(filename, canvas);
     std::cout << "FitGaussianLM Results saved to : " << filename << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
-// Ensure that input vector is a column vector of type CV_64F
+// Ensure that input vector is a column vector of type CV_64F (double precision).
+// - If input is already CV_64F column → return as is.
+// - If input is CV_64F row → transpose to column.
+// - Otherwise → convert to CV_64F column.
+// This standardization avoids issues when using vectors in OpenCV matrix operations.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 cv::Mat FitGaussLM::sanitize_vector(const cv::Mat& v) const
 {
@@ -568,6 +618,7 @@ cv::Mat FitGaussLM::sanitize_vector(const cv::Mat& v) const
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // from std::vector to cv::Mat
+// This is a utility function to convert a std::vector<double> to a cv::Mat of type CV_64F with one column.
 ///////////////////////////////////////////////////////////////////////////////////////////////
 cv::Mat FitGaussLM::vector_to_mat(const std::vector<double>& vec) const
 {
@@ -592,3 +643,4 @@ void FitGaussLM::print_results() const
     std::cout << "Nb iterations : " << get_nb_iter()                  << std::endl;
     std::cout << ""                                                    << std::endl;
 }
+////////////////////////////////////////////////////////////////////////////////////////////////

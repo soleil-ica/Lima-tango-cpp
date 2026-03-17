@@ -127,7 +127,7 @@ private:
     std::vector<double> m_params;
 
     // Fixed background mode
-    bool m_fixed_bg;
+    bool m_is_fixed_bg;
     double m_fixed_bg_value;
 
     // Fitting metrics

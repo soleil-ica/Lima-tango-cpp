@@ -6,10 +6,10 @@
 class AutoROI
 {
 public:
-    // Constructor with magnification factors for X and Y
+    // Constructor to initialize AutoROI with magnification factors along X and Y
     AutoROI(double factor_x, double factor_y);
 
-    // Method to compute the ROI from a grayscale image
+    // Method to compute the ROI from the input image
     cv::Rect compute(const cv::Mat& image);
 
     // Method to check if the AutoROI computation has converged

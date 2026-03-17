@@ -13,6 +13,9 @@ namespace FitGaussian_ns
 {
     namespace
     {
+        ///////////////////////////////////////////////////////////////////////////////
+        // Helper function to convert string to uppercase
+        ///////////////////////////////////////////////////////////////////////////////
         static std::string to_upper_copy(std::string s)
         {
             std::transform(s.begin(), s.end(), s.begin(), ::toupper);
@@ -264,7 +267,7 @@ namespace FitGaussian_ns
     }
 
     //---------------------------------------------------------------
-    // now in human readable format
+    // get time now in human readable format
     //---------------------------------------------------------------
     std::string FitTask::now_human_time()
     {
@@ -558,7 +561,7 @@ namespace FitGaussian_ns
     // process every new frame arrived
     //-----------------------------------------------
     Data FitTask::process(Data& aSrc)
-    {
+    {        
         const auto begin_process = std::chrono::steady_clock::now();        
         std::map<std::string, yat::Any> local_params;
         local_params["FrameNumber"]      = yat::Any(aSrc.frameNumber);
@@ -663,8 +666,8 @@ namespace FitGaussian_ns
         // Note: we publish all parameters at the end of processing to ensure consistency, as some parameters depend on the results of previous steps (e.g. projections depend on AutoROI results)        
         publish_params(local_params);
         // Log processing time
-        ////const auto ms = std::chrono::duration<double, std::milli>( std::chrono::steady_clock::now() - begin_process).count();        
-        ////std::cerr << "END Process frame=" << aSrc.frameNumber << " tid=" << std::this_thread::get_id() << " total_ms=" << ms << std::endl;                       
+        const auto ms = std::chrono::duration<double, std::milli>( std::chrono::steady_clock::now() - begin_process).count();        
+        std::cerr << "END Process frame=" << aSrc.frameNumber << " tid=" << std::this_thread::get_id() << " total_ms=" << ms << std::endl;                       
         return aSrc;
     }
 

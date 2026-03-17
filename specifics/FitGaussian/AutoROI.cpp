@@ -19,6 +19,7 @@ AutoROI::AutoROI(double factor_x, double factor_y)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 cv::Rect AutoROI::compute(const cv::Mat& image)
 {
+    // Validate input image
     CV_Assert(!image.empty());
     CV_Assert(image.channels() == 1);
     CV_Assert(image.type() == CV_8UC1 || image.type() == CV_16UC1);
@@ -87,3 +88,4 @@ bool AutoROI::has_converged() const
 {
     return m_has_converged;
 }
+///////////////////////////////////////////////////////////////////////////////////////////

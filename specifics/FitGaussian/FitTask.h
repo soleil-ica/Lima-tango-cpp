@@ -153,7 +153,7 @@ namespace FitGaussian_ns
         FitGaussian*                    m_device;
         yat::Mutex                      m_data_lock;
 
-        // configuration shared between threads -> always read/written under m_data_lock
+        // configuration shared between threads -> setter/getter always under lock
         std::string                     m_operation_type;
         bool                            m_auto_roi_enabled;
         double                          m_auto_roi_factor_x;
@@ -167,7 +167,7 @@ namespace FitGaussian_ns
         bool                            m_yproj_enabled;
         bool                            m_profilefit_fixedbg;
 
-        // published results only
+        // FitTask results to be read by the main device class, protected by m_data_lock
         std::map<std::string, yat::Any> m_map_shared_params;
     };
 }
