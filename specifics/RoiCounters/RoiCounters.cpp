@@ -1943,7 +1943,7 @@ void RoiCounters::process_coordinates(Tango::DevString* attr_str, int attrIndex)
     if(i<NB_COORDINATES)
 	{
 		Tango::Except::throw_exception(	"INVALID_COORDINATE_ENTRY",
-										"Invalid format: Enter at least "YAT_XSTR(NB_COORDINATES)" numbers", 
+										"Invalid format: Enter at least " YAT_XSTR(NB_COORDINATES) " numbers", 
 										"RoiCounter::process_coordinates");
 	}
 	// Else fill the variable

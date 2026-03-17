@@ -83,7 +83,7 @@ namespace LimaDetector_ns
         };
 
     protected://- [yat4tango::DeviceTask implementation]
-        virtual void process_message( yat::Message& msg ) throw (Tango::DevFailed);
+        virtual void process_message( yat::Message& msg );
         
     private:
         //fix the state in a scoped_lock

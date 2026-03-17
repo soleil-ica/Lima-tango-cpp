@@ -706,7 +706,9 @@ void Rixs::read_clusterCounter(Tango::Attribute &attr)
 	DEBUG_STREAM << "Rixs::read_clusterCounter(Tango::Attribute &attr) entering... "<< endl;
 	if(!m_rixs_tasks.empty())
 	{
-		attr.set_value(const_cast<Tango::DevLong*> (&(m_rixs_tasks[0]->get_cluster_counter().at(0))), m_rixs_tasks[0]->get_cluster_counter().size());		
+		auto const &src = m_rixs_tasks[0]->get_cluster_counter();
+        std::vector<Tango::DevLong64> tmp(src.begin(), src.end());
+        attr.set_value(tmp.data(), tmp.size());
 	}
 }
 
@@ -723,7 +725,9 @@ void Rixs::read_clusterArea(Tango::Attribute &attr)
 	DEBUG_STREAM << "Rixs::read_clusterArea(Tango::Attribute &attr) entering... "<< endl;
 	if(!m_rixs_tasks.empty())	
 	{
-		attr.set_value(const_cast<Tango::DevLong*> (&(m_rixs_tasks[0]->get_cluster_area().at(0))), m_rixs_tasks[0]->get_cluster_area().size());		
+        auto const &src = m_rixs_tasks[0]->get_cluster_area();
+        std::vector<Tango::DevLong64> tmp(src.begin(), src.end());
+        attr.set_value(tmp.data(), tmp.size());		
 	}
 }
 
@@ -740,7 +744,9 @@ void Rixs::read_clusterSum(Tango::Attribute &attr)
 	DEBUG_STREAM << "Rixs::read_clusterSum(Tango::Attribute &attr) entering... "<< endl;
 	if(!m_rixs_tasks.empty())	
 	{
-		attr.set_value(const_cast<Tango::DevLong*> (&(m_rixs_tasks[0]->get_cluster_sum().at(0))), m_rixs_tasks[0]->get_cluster_sum().size());		
+		auto const &src = m_rixs_tasks[0]->get_cluster_sum();
+        std::vector<Tango::DevLong64> tmp(src.begin(), src.end());
+        attr.set_value(tmp.data(), tmp.size());	
 	}
 }
 

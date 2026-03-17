@@ -268,6 +268,10 @@ private:
     std::string                     m_device_name_rixs;
 #endif 
 
+#ifdef FITGAUSSIAN_ENABLED  
+    std::string                     m_device_name_fitgaussian;
+#endif 
+
     Tango::DevState                 m_state;
     stringstream                    m_status;
     stringstream                    m_event_status;	

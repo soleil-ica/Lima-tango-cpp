@@ -718,7 +718,7 @@ void Layout::add_external_operation(long level)
                 m_ct->externalOperation()->addOp(USER_LINK_TASK, opId.str(), level, op);
 
 				//prepare l'externalOperation Task
-				LayoutTask* task = new LayoutTask("NONE", 0);
+				LayoutTask* task = new LayoutTask("NONE", 0, this);
                 task->setOperationType(attr_operationType_write);
                 task->setOperationValue(yat::XString<double>::to_num(m_operationValue));				 
 				m_layout_tasks.push_back(task);

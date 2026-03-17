@@ -1,0 +1,11 @@
+/**
+ * Device Class Identification:
+ * 
+ * Class Name   :	FitGaussian
+ * Contact      :	arafat.noureddine@synchrotron-soleil.fr
+ * Class Family :	Calculation
+ * Platform     :	Unix Like
+ * Bus          :	Not Applicable
+ * Manufacturer :	SOLEIL
+ * Reference    :	
+ */

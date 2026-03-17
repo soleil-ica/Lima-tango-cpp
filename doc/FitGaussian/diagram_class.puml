@@ -1,0 +1,86 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+skinparam shadowing false
+skinparam classBorderColor black
+skinparam arrowColor black
+skinparam defaultFontName Courier
+
+'=== Classes principales ===
+
+class AutoROI
+{
+  +AutoROI(double factor_x, double factor_y)
+  +compute(cv::Mat& image) : cv::Rect
+  +has_converged(): bool
+  ---
+}
+
+class FitGaussLM
+{
+  +FitGaussLM()
+  +fit(string& label, vector<double>& data, double pixel_size) : bool
+  +get_amplitude(): double
+  +get_mu(): double
+  +get_sigma(): double   
+  +get_fwhm(): double
+  +get_bg(): double
+  +get_chi2(): double
+  +get_fitted_spectrum(): vector<double>&
+  +has_converged(): bool
+  ---
+}
+
+class FitTask
+{
+  +FitTask()
+  +is_param_exists(name : string) : bool
+  +get_param(name : string) : yat::Any
+  +get_spectrum(name : string) : vector<double>&
+  +get_img_roi() : cv::Mat&
+  +process(Data& image): Data
+  ---------
+  -process_auto_roi(const cv::Mat& mat_origin_16u): void
+  -process_projection(const cv::Mat& img, bool is_along_x): void
+  -push_event(const string& name, double value): void
+  ---
+  -std::map<std::string, yat::Any> m_map_params
+
+}
+
+class FitGaussian <Tango Device> 
+{  
+  +init_device() : void
+  +delete_device() : void
+
+  +read_AutoROIEnabled(attr)
+  +read_AutoROIOriginX(attr)
+  +read_AutoROIOriginY(attr)
+  +read_AutoROIOriginWidth(attr)
+  +read_AutoROIOriginHeight(attr)  
+
+  +read_X/YProjFitEnabled(attr)
+  +read_X/YProjFitConverged(attr)  
+  +read_X/YProFitCenter(attr)
+  +read_X/YProjFitMag(attr)
+  +read_X/YPRojFitSigma(attr)
+  +read_X/YProjFitFWHM(attr)
+  +read_X/YProjFitBG(attr)
+  +read_X/YProjFitChi2(attr)
+  +read_X/YProjFitNbIter(attr)
+  +read_X/YProjPushTime(attr)    
+  +read_X/YProj(attr spectrum)
+  +read_X/YProjFitted(attr spectrum)
+  +read_ROIImage(attr image)
+  ---
+  -m_fit_task : FitTask*
+}
+
+'=== relations ===
+
+FitGaussian "1" *-- "1" FitTask : use >
+FitTask "1" *-- "1" FitGaussLM : fit horizontal/vertical >
+FitTask "1" *-- "1" AutoROI : compute ROI >
+
+
+@enduml

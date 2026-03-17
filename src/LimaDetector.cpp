@@ -300,7 +300,7 @@ void LimaDetector::init_device()
         configure_image_type();
 
         //- set percent of memory to allocate for the lima buffer
-        INFO_STREAM << "Set amount percent of memory for the lima ring buffer following the ExpertBufferMaxMemoryPercent property (" << expertBufferMaxMemoryPercent << ")." << endl;
+        INFO_STREAM << "Set amount percent of memory for the lima ring buffer following the ExpertBufferMaxMemoryPercent property (" << expertBufferMaxMemoryPercent << "%)." << endl;
         m_ct->buffer()->setMaxMemory((short) expertBufferMaxMemoryPercent);
 		
         //- reset image, allow to redefine type image according to  CurrentImageType of the HwDetInfoCtrlObj		

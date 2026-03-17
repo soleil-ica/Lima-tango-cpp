@@ -58,6 +58,7 @@
 #include "lima/CtImage.h"
 #include "lima/SoftOpId.h"
 #include "lima/SoftOpExternalMgr.h"
+#include "lima/CtBuffer.h"
 #include "processlib/Data.h"
 #include "processlib/TaskMgr.h"
 #include <map>
