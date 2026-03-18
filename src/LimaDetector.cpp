@@ -474,6 +474,8 @@ void LimaDetector::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("ExpertBufferMaxMemoryPercent"));
 	dev_prop.push_back(Tango::DbDatum("ExpertNbPoolThread"));
 	dev_prop.push_back(Tango::DbDatum("ExpertTimeoutCmd"));
+    dev_prop.push_back(Tango::DbDatum("ExpertAllowMixedRoiBinning"));
+	dev_prop.push_back(Tango::DbDatum("ExpertEnableHardwareSync"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedRoi"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedBinningH"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedBinningV"));
@@ -489,7 +491,6 @@ void LimaDetector::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("MemorizedFileGeneration"));
 	dev_prop.push_back(Tango::DbDatum("MemorizedFileNbFrames"));
 	dev_prop.push_back(Tango::DbDatum("SpoolID"));
-	dev_prop.push_back(Tango::DbDatum("ExpertAllowMixedRoiBinning"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -775,6 +776,17 @@ void LimaDetector::get_device_property()
 	//	And try to extract ExpertAllowMixedRoiBinning value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertAllowMixedRoiBinning;
 
+    //	Try to initialize ExpertEnableHardwareSync from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  expertEnableHardwareSync;
+	else {
+		//	Try to initialize ExpertEnableHardwareSync from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  expertEnableHardwareSync;
+	}
+	//	And try to extract ExpertEnableHardwareSync value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  expertEnableHardwareSync;
+
 	//	Try to initialize MemorizedRoi from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
 	if (cl_prop.is_empty()==false)	cl_prop  >>  memorizedRoi;
@@ -983,6 +995,7 @@ void LimaDetector::get_device_property()
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "4", "ExpertNbPoolThread");	
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "5000", "ExpertTimeoutCmd");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", "ExpertAllowMixedRoiBinning");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", "ExpertEnableHardwareSync");
     vec_init.clear();
     vec_init.push_back("-1");
     vec_init.push_back("-1");
@@ -3356,6 +3369,7 @@ void LimaDetector::prepare()
             {
                 m_acq_conf.ct = m_ct;
                 m_acq_conf.use_prepare_cmd = m_use_prepare_command; 
+                m_acq_conf.enable_hardware_sync = expertEnableHardwareSync;
                 yat::Message* msg = yat::Message::allocate(DEVICE_PREPARE_MSG, DEFAULT_MSG_PRIORITY, true);
                 msg->attach_data(m_acq_conf);
                 m_acquisition_task->wait_msg_handled(msg, expertTimeoutCmd);
@@ -3448,6 +3462,7 @@ void LimaDetector::snap()
         {
             m_acq_conf.ct = m_ct;
             m_acq_conf.use_prepare_cmd = m_use_prepare_command; 
+            m_acq_conf.enable_hardware_sync = expertEnableHardwareSync;
             yat::Message* msg = yat::Message::allocate(DEVICE_SNAP_MSG, DEFAULT_MSG_PRIORITY, true);
             msg->attach_data(m_acq_conf);
             m_acquisition_task->wait_msg_handled(msg, expertTimeoutCmd);
@@ -4251,6 +4266,7 @@ bool LimaDetector::create_acquisition_task(void)
         //- prepare the conf to be passed to the task
         m_acq_conf.ct = m_ct;
         m_acq_conf.use_prepare_cmd = m_use_prepare_command;
+        m_acq_conf.enable_hardware_sync = expertEnableHardwareSync;
 
         //- create an INIT msg to pass it some data (Conf)
         yat::Message* msg = yat::Message::allocate(yat::TASK_INIT, INIT_MSG_PRIORITY, true);

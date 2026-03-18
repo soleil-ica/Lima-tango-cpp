@@ -418,6 +418,11 @@ public:
  *	Define whether the simultaneous use of binning and ROI is allowed
  */
 	Tango::DevBoolean	expertAllowMixedRoiBinning;
+
+/**
+ *	Define if the device should read hardware values
+ */
+	Tango::DevBoolean	expertEnableHardwareSync;
 /**
  *	Memorize/Define the Region of Interest of the Acquisition: <br>
  *	origin X<br>
@@ -1119,6 +1124,7 @@ protected:
     yat4tango::DynamicInterfaceManager	m_dim;
 	
 	bool 								m_use_prepare_command;
+	bool 								m_enable_hardware_sync;
 
 } ;
 
