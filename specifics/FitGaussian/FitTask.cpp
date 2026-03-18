@@ -114,6 +114,10 @@ namespace FitGaussian_ns
         cfg.xproj_enabled             = m_xproj_enabled;
         cfg.yproj_enabled             = m_yproj_enabled;
         cfg.profilefit_fixedbg        = m_profilefit_fixedbg;
+        // Rotation parameters
+        cfg.use_rotation              = m_use_rotation;
+        cfg.rotation_angle_cv_code    = m_rotation_angle_cv_code;
+        cfg.rotation_angle            = m_rotation_angle;
         return cfg;
     }
 
@@ -239,6 +243,49 @@ namespace FitGaussian_ns
         m_profilefit_fixedbg = enabled;
     }
 
+    //-----------------------------------------------
+    // Enable/disable rotation for profile fit
+    //-----------------------------------------------
+    void FitTask::set_rotation_angle(int angle)
+    {
+        INFO_STREAM << "FitTask::set_rotation_angle(" << angle << ")" << std::endl;
+        yat::MutexLock scoped_lock(m_data_lock);
+
+        int a = angle % 360;
+        if (a < 0)
+            a += 360;
+
+        m_rotation_angle = a;
+
+        // Set rotation parameters based on angle
+        switch (a)
+        {
+            case 0:
+                m_use_rotation = false;
+                m_rotation_angle_cv_code = cv::ROTATE_90_CLOCKWISE; // dummy, never used
+                break;
+
+            case 90:
+                m_use_rotation = true;
+                m_rotation_angle_cv_code = cv::ROTATE_90_CLOCKWISE;
+                break;
+
+            case 180:
+                m_use_rotation = true;
+                m_rotation_angle_cv_code = cv::ROTATE_180;
+                break;
+
+            case 270:
+                m_use_rotation = true;
+                m_rotation_angle_cv_code = cv::ROTATE_90_COUNTERCLOCKWISE;
+                break;
+
+            default:
+                Tango::Except::throw_exception( "PARAM_ERROR",
+                                                "Rotation angle must be one of: 0, 90, -90, 180, -180, 270, -270",
+                                                "FitTask::set_rotation_angle");
+        }
+    }    
     //-----------------------------------------------
     // get parameter value by name
     //-----------------------------------------------
@@ -564,6 +611,7 @@ namespace FitGaussian_ns
     {        
         const auto begin_process = std::chrono::steady_clock::now();        
         std::map<std::string, yat::Any> local_params;
+        cv::Mat mat_origin_rotated;// in order to be in the same scope as out
         local_params["FrameNumber"]      = yat::Any(aSrc.frameNumber);
         local_params["AutoROIConverged"] = yat::Any(false);
         local_params["AutoROIOriginX"]   = yat::Any(0);
@@ -584,7 +632,7 @@ namespace FitGaussian_ns
                 return aSrc;
             }
 
-            std::cerr << "BEGIN Process frame=" << aSrc.frameNumber << " tid=" << std::this_thread::get_id() << std::endl;          
+            std::cerr << "BEGIN Process "<< " tid=" << std::this_thread::get_id()<<" | frame=" << aSrc.frameNumber  << std::endl;          
 
 
             int width = 0;
@@ -614,8 +662,11 @@ namespace FitGaussian_ns
                 return aSrc;
             }
 
-            cv::Mat mat_origin_rotated;
-            cv::rotate(mat_origin, mat_origin_rotated, cv::ROTATE_90_CLOCKWISE);
+            // Rotate the image if rotation is enabled
+            if (cfg.use_rotation)
+                cv::rotate(mat_origin, mat_origin_rotated, cfg.rotation_angle_cv_code);
+            else
+                mat_origin_rotated = mat_origin.clone();// clone to ensure continuous memory, but this is a no-op if mat_origin is already continuous
 
             // This will hold the ROI image after AutoROI processing, to be used for projections if enabled
             cv::Mat mat_img_roi;
@@ -665,10 +716,28 @@ namespace FitGaussian_ns
         // Publish the parameters to be read by the main device class and possibly pushed as events
         // Note: we publish all parameters at the end of processing to ensure consistency, as some parameters depend on the results of previous steps (e.g. projections depend on AutoROI results)        
         publish_params(local_params);
+
+        // Prepare output data, we return the original input image as output, 
+        // but with the correct orientation if rotation is enabled. 
+        // This ensures that the main device class will always have an image to work with, even if AutoROI fails.
+        //We clone the image to ensure that we have a continuous Mat to work with, as some OpenCV operations require continuous memory.
+        Data out;
+        out.type = aSrc.type;
+        out.frameNumber = aSrc.frameNumber;
+        out.timestamp = aSrc.timestamp;
+        out.header = aSrc.header;
+
+        out.dimensions.resize(2);
+        out.dimensions[0] = mat_origin_rotated.cols;
+        out.dimensions[1] = mat_origin_rotated.rows;
+
+        out.buffer = new Buffer(out.size());
+        std::memcpy(out.data(), mat_origin_rotated.data, out.size());
+
         // Log processing time
         const auto ms = std::chrono::duration<double, std::milli>( std::chrono::steady_clock::now() - begin_process).count();        
-        std::cerr << "END Process frame=" << aSrc.frameNumber << " tid=" << std::this_thread::get_id() << " total_ms=" << ms << std::endl;                       
-        return aSrc;
+        std::cerr << "END   Process "<< " tid=" << std::this_thread::get_id()<<" | frame=" << aSrc.frameNumber<< " | total_ms=" << (int)ms  <<std::endl <<std::endl;                       
+        return out;
     }
 
     //-----------------------------------------------

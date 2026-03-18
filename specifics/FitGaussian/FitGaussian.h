@@ -198,6 +198,14 @@ public :
  *	
  */
 	Tango::DevBoolean	profileFitFixedBg;
+/**
+ *	Available values :<CR>
+ *	- 0 [default]<CR>
+ *	- 90   or -90<CR>
+ *	- 180 or -180<CR>
+ *	- 270 or -270<CR>
+ */
+	Tango::DevLong	rotation;
 //@}
 
 /**

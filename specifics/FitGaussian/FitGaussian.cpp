@@ -267,6 +267,7 @@ void FitGaussian::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("XProjEnabled"));
 	dev_prop.push_back(Tango::DbDatum("YProjEnabled"));
 	dev_prop.push_back(Tango::DbDatum("ProfileFitFixedBg"));
+	dev_prop.push_back(Tango::DbDatum("Rotation"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -420,6 +421,17 @@ void FitGaussian::get_device_property()
 	//	And try to extract ProfileFitFixedBg value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  profileFitFixedBg;
 
+	//	Try to initialize Rotation from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  rotation;
+	else {
+		//	Try to initialize Rotation from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  rotation;
+	}
+	//	And try to extract Rotation value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  rotation;
+
 
 
 	//	End of Automatic code generation
@@ -437,6 +449,7 @@ void FitGaussian::get_device_property()
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	"XProjEnabled");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	"YProjEnabled");	
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", 	"ProfileFitFixedBg");	
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", 		"Rotation");	
 
 }
 //+----------------------------------------------------------------------------
@@ -1908,6 +1921,7 @@ void FitGaussian::add_external_operation(long level)
 				task->set_proj_enabled(xProjEnabled, true);
 				task->set_proj_enabled(yProjEnabled, false);				
 				task->set_profilefit_fixedbg(profileFitFixedBg);
+				task->set_rotation_angle(rotation);
 				
 				m_fit_task = task;
                 (reinterpret_cast<SoftUserLinkTask*> (op.m_opt))->setLinkTask(task);
@@ -2004,6 +2018,7 @@ void* FitGaussian::get_data_ptr(const cv::Mat& img)
         default: throw std::runtime_error("Unsupported image type");
     }
 }
+
 
 
 

@@ -86,6 +86,9 @@ namespace FitGaussian_ns
         // Enable/disable fixed background mode for profile fit
         void set_profilefit_fixedbg(bool enabled);
 
+        // Enable/disable rotation for profile fit
+        void set_rotation_angle(int angle);
+
         // Check if parameter exists
         bool is_param_exist(const std::string& param_name);
 
@@ -116,6 +119,10 @@ namespace FitGaussian_ns
             bool xproj_enabled;
             bool yproj_enabled;
             bool profilefit_fixedbg;
+            // Rotation parameters
+            bool use_rotation;
+            int  rotation_angle_cv_code;
+            int  rotation_angle;
         };
 
     private:
@@ -166,8 +173,13 @@ namespace FitGaussian_ns
         bool                            m_xproj_enabled;
         bool                            m_yproj_enabled;
         bool                            m_profilefit_fixedbg;
-
         // FitTask results to be read by the main device class, protected by m_data_lock
         std::map<std::string, yat::Any> m_map_shared_params;
+        
+        // Rotation parameters 
+        bool                            m_use_rotation;
+        int                             m_rotation_angle_cv_code;
+        int                             m_rotation_angle;
+
     };
 }
