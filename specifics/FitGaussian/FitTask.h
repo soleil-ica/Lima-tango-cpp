@@ -89,6 +89,9 @@ namespace FitGaussian_ns
         // Enable/disable rotation for profile fit
         void set_rotation_angle(int angle);
 
+        // Enable/disable display rotated image 
+        void set_display_rotated_image(bool enabled);
+
         // Check if parameter exists
         bool is_param_exist(const std::string& param_name);
 
@@ -123,6 +126,7 @@ namespace FitGaussian_ns
             bool use_rotation;
             int  rotation_angle_cv_code;
             int  rotation_angle;
+            bool display_rotated_image;
         };
 
     private:
@@ -180,6 +184,7 @@ namespace FitGaussian_ns
         bool                            m_use_rotation;
         int                             m_rotation_angle_cv_code;
         int                             m_rotation_angle;
+        bool                            m_display_rotated_image;
 
     };
 }

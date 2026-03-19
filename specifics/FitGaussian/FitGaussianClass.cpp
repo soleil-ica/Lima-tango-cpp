@@ -246,16 +246,23 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 {
 	//	Attribute : version
 	versionAttrib	*version = new versionAttrib();
+	Tango::UserDefaultAttrProp	version_prop;
+	version_prop.set_description("FitGaussian device Version");
+	version->set_default_properties(version_prop);
 	att_list.push_back(version);
 
 	//	Attribute : operationType
 	operationTypeAttrib	*operation_type = new operationTypeAttrib();
+	Tango::UserDefaultAttrProp	operation_type_prop;
+	operation_type_prop.set_description("Indicates which operation type is applied (NONE or FIT).");
+	operation_type->set_default_properties(operation_type_prop);
 	att_list.push_back(operation_type);
 
 	//	Attribute : AutoROIEnabled
 	AutoROIEnabledAttrib	*auto_roienabled = new AutoROIEnabledAttrib();
 	Tango::UserDefaultAttrProp	auto_roienabled_prop;
 	auto_roienabled_prop.set_unit(" ");
+	auto_roienabled_prop.set_description("Enable/Disable Auto ROI.");
 	auto_roienabled->set_default_properties(auto_roienabled_prop);
 	att_list.push_back(auto_roienabled);
 
@@ -263,6 +270,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	AutoROIFoundAttrib	*auto_roifound = new AutoROIFoundAttrib();
 	Tango::UserDefaultAttrProp	auto_roifound_prop;
 	auto_roifound_prop.set_unit(" ");
+	auto_roifound_prop.set_description("Indicates whether the automatic ROI detection was successful.");
 	auto_roifound->set_default_properties(auto_roifound_prop);
 	att_list.push_back(auto_roifound);
 
@@ -270,6 +278,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	AutoROIOriginXAttrib	*auto_roiorigin_x = new AutoROIOriginXAttrib();
 	Tango::UserDefaultAttrProp	auto_roiorigin_x_prop;
 	auto_roiorigin_x_prop.set_unit(" ");
+	auto_roiorigin_x_prop.set_description("The coordinate of the ROI: OriginX.");
 	auto_roiorigin_x->set_default_properties(auto_roiorigin_x_prop);
 	att_list.push_back(auto_roiorigin_x);
 
@@ -277,6 +286,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	AutoROIOriginYAttrib	*auto_roiorigin_y = new AutoROIOriginYAttrib();
 	Tango::UserDefaultAttrProp	auto_roiorigin_y_prop;
 	auto_roiorigin_y_prop.set_unit(" ");
+	auto_roiorigin_y_prop.set_description("The coordinate of the ROI: OriginY.");
 	auto_roiorigin_y->set_default_properties(auto_roiorigin_y_prop);
 	att_list.push_back(auto_roiorigin_y);
 
@@ -284,6 +294,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	AutoROIWidthAttrib	*auto_roiwidth = new AutoROIWidthAttrib();
 	Tango::UserDefaultAttrProp	auto_roiwidth_prop;
 	auto_roiwidth_prop.set_unit(" ");
+	auto_roiwidth_prop.set_description("The coordinate of the ROI: Width.");
 	auto_roiwidth->set_default_properties(auto_roiwidth_prop);
 	att_list.push_back(auto_roiwidth);
 
@@ -291,6 +302,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	AutoROIHeightAttrib	*auto_roiheight = new AutoROIHeightAttrib();
 	Tango::UserDefaultAttrProp	auto_roiheight_prop;
 	auto_roiheight_prop.set_unit(" ");
+	auto_roiheight_prop.set_description("The coordinate of the ROI: Height.");
 	auto_roiheight->set_default_properties(auto_roiheight_prop);
 	att_list.push_back(auto_roiheight);
 
@@ -298,6 +310,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	XProjEnabledAttrib	*xproj_enabled = new XProjEnabledAttrib();
 	Tango::UserDefaultAttrProp	xproj_enabled_prop;
 	xproj_enabled_prop.set_unit(" ");
+	xproj_enabled_prop.set_description("Enable/Disable fitting along this axis.");
 	xproj_enabled->set_default_properties(xproj_enabled_prop);
 	att_list.push_back(xproj_enabled);
 
@@ -305,6 +318,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	XProjFitConvergedAttrib	*xproj_fit_converged = new XProjFitConvergedAttrib();
 	Tango::UserDefaultAttrProp	xproj_fit_converged_prop;
 	xproj_fit_converged_prop.set_unit(" ");
+	xproj_fit_converged_prop.set_description("Indicates whether the projection fitting algorithm has converged along this axis.");
 	xproj_fit_converged->set_default_properties(xproj_fit_converged_prop);
 	att_list.push_back(xproj_fit_converged);
 
@@ -312,6 +326,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	XProjFitCenterAttrib	*xproj_fit_center = new XProjFitCenterAttrib();
 	Tango::UserDefaultAttrProp	xproj_fit_center_prop;
 	xproj_fit_center_prop.set_unit(" ");
+	xproj_fit_center_prop.set_description("The coordinate of the center of the fitted Gaussian along this axis.");
 	xproj_fit_center->set_default_properties(xproj_fit_center_prop);
 	att_list.push_back(xproj_fit_center);
 
@@ -319,6 +334,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	XProjFitMagAttrib	*xproj_fit_mag = new XProjFitMagAttrib();
 	Tango::UserDefaultAttrProp	xproj_fit_mag_prop;
 	xproj_fit_mag_prop.set_unit(" ");
+	xproj_fit_mag_prop.set_description("The magnitude of  fitted gaussian along this axis.");
 	xproj_fit_mag->set_default_properties(xproj_fit_mag_prop);
 	att_list.push_back(xproj_fit_mag);
 
@@ -326,6 +342,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	XProjFitSigmaAttrib	*xproj_fit_sigma = new XProjFitSigmaAttrib();
 	Tango::UserDefaultAttrProp	xproj_fit_sigma_prop;
 	xproj_fit_sigma_prop.set_unit(" ");
+	xproj_fit_sigma_prop.set_description("The standard deviation of the fitted Gaussian along this axis.");
 	xproj_fit_sigma->set_default_properties(xproj_fit_sigma_prop);
 	att_list.push_back(xproj_fit_sigma);
 
@@ -333,6 +350,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	XProjFitFWHMAttrib	*xproj_fit_fwhm = new XProjFitFWHMAttrib();
 	Tango::UserDefaultAttrProp	xproj_fit_fwhm_prop;
 	xproj_fit_fwhm_prop.set_unit(" ");
+	xproj_fit_fwhm_prop.set_description("The full width at half maximum of the fitted Gaussian along this axis, calculated as approximately 2.35 × the fitted Gaussian standard deviation.");
 	xproj_fit_fwhm->set_default_properties(xproj_fit_fwhm_prop);
 	att_list.push_back(xproj_fit_fwhm);
 
@@ -340,6 +358,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	XProjFitBGAttrib	*xproj_fit_bg = new XProjFitBGAttrib();
 	Tango::UserDefaultAttrProp	xproj_fit_bg_prop;
 	xproj_fit_bg_prop.set_unit(" ");
+	xproj_fit_bg_prop.set_description("The background of  fitted gaussian along this axis.");
 	xproj_fit_bg->set_default_properties(xproj_fit_bg_prop);
 	att_list.push_back(xproj_fit_bg);
 
@@ -347,6 +366,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	XProjFitChi2Attrib	*xproj_fit_chi2 = new XProjFitChi2Attrib();
 	Tango::UserDefaultAttrProp	xproj_fit_chi2_prop;
 	xproj_fit_chi2_prop.set_unit(" ");
+	xproj_fit_chi2_prop.set_description("The chi2 of the fitted Gaussian along this axis.");
 	xproj_fit_chi2->set_default_properties(xproj_fit_chi2_prop);
 	att_list.push_back(xproj_fit_chi2);
 
@@ -354,6 +374,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	XProjFitNbIterAttrib	*xproj_fit_nb_iter = new XProjFitNbIterAttrib();
 	Tango::UserDefaultAttrProp	xproj_fit_nb_iter_prop;
 	xproj_fit_nb_iter_prop.set_unit(" ");
+	xproj_fit_nb_iter_prop.set_description("The number of iterations used for fitting along this axis.");
 	xproj_fit_nb_iter->set_default_properties(xproj_fit_nb_iter_prop);
 	att_list.push_back(xproj_fit_nb_iter);
 
@@ -361,6 +382,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	XProjPushTimeAttrib	*xproj_push_time = new XProjPushTimeAttrib();
 	Tango::UserDefaultAttrProp	xproj_push_time_prop;
 	xproj_push_time_prop.set_unit(" ");
+	xproj_push_time_prop.set_description("The Timestamp at which the sigma value was pushed for this axis.");
 	xproj_push_time->set_default_properties(xproj_push_time_prop);
 	att_list.push_back(xproj_push_time);
 
@@ -368,6 +390,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	YProjEnabledAttrib	*yproj_enabled = new YProjEnabledAttrib();
 	Tango::UserDefaultAttrProp	yproj_enabled_prop;
 	yproj_enabled_prop.set_unit(" ");
+	yproj_enabled_prop.set_description("Enable/Disable fitting along this axis.");
 	yproj_enabled->set_default_properties(yproj_enabled_prop);
 	att_list.push_back(yproj_enabled);
 
@@ -375,6 +398,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	YProjFitConvergedAttrib	*yproj_fit_converged = new YProjFitConvergedAttrib();
 	Tango::UserDefaultAttrProp	yproj_fit_converged_prop;
 	yproj_fit_converged_prop.set_unit(" ");
+	yproj_fit_converged_prop.set_description("Indicates whether the projection fitting algorithm has converged along this axis.");
 	yproj_fit_converged->set_default_properties(yproj_fit_converged_prop);
 	att_list.push_back(yproj_fit_converged);
 
@@ -382,6 +406,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	YProjFitCenterAttrib	*yproj_fit_center = new YProjFitCenterAttrib();
 	Tango::UserDefaultAttrProp	yproj_fit_center_prop;
 	yproj_fit_center_prop.set_unit(" ");
+	yproj_fit_center_prop.set_description("The coordinate of the center of the fitted Gaussian along this axis.");
 	yproj_fit_center->set_default_properties(yproj_fit_center_prop);
 	att_list.push_back(yproj_fit_center);
 
@@ -389,6 +414,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	YProjFitMagAttrib	*yproj_fit_mag = new YProjFitMagAttrib();
 	Tango::UserDefaultAttrProp	yproj_fit_mag_prop;
 	yproj_fit_mag_prop.set_unit(" ");
+	yproj_fit_mag_prop.set_description("The magnitude of  fitted gaussian along this axis.");
 	yproj_fit_mag->set_default_properties(yproj_fit_mag_prop);
 	att_list.push_back(yproj_fit_mag);
 
@@ -396,6 +422,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	YProjFitSigmaAttrib	*yproj_fit_sigma = new YProjFitSigmaAttrib();
 	Tango::UserDefaultAttrProp	yproj_fit_sigma_prop;
 	yproj_fit_sigma_prop.set_unit(" ");
+	yproj_fit_sigma_prop.set_description("The standard deviation of the fitted Gaussian corresponding along this axis.");
 	yproj_fit_sigma->set_default_properties(yproj_fit_sigma_prop);
 	att_list.push_back(yproj_fit_sigma);
 
@@ -403,6 +430,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	YProjFitFWHMAttrib	*yproj_fit_fwhm = new YProjFitFWHMAttrib();
 	Tango::UserDefaultAttrProp	yproj_fit_fwhm_prop;
 	yproj_fit_fwhm_prop.set_unit(" ");
+	yproj_fit_fwhm_prop.set_description("The full width at half maximum of the fitted Gaussian along this axis, calculated as approximately 2.35 × the fitted Gaussian standard deviation.");
 	yproj_fit_fwhm->set_default_properties(yproj_fit_fwhm_prop);
 	att_list.push_back(yproj_fit_fwhm);
 
@@ -410,6 +438,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	YProjFitBGAttrib	*yproj_fit_bg = new YProjFitBGAttrib();
 	Tango::UserDefaultAttrProp	yproj_fit_bg_prop;
 	yproj_fit_bg_prop.set_unit(" ");
+	yproj_fit_bg_prop.set_description("The background of  fitted gaussian along this axis.");
 	yproj_fit_bg->set_default_properties(yproj_fit_bg_prop);
 	att_list.push_back(yproj_fit_bg);
 
@@ -417,6 +446,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	YProjFitChi2Attrib	*yproj_fit_chi2 = new YProjFitChi2Attrib();
 	Tango::UserDefaultAttrProp	yproj_fit_chi2_prop;
 	yproj_fit_chi2_prop.set_unit(" ");
+	yproj_fit_chi2_prop.set_description("The chi-square of the fitted Gaussian along this axis.");
 	yproj_fit_chi2->set_default_properties(yproj_fit_chi2_prop);
 	att_list.push_back(yproj_fit_chi2);
 
@@ -424,6 +454,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	YProjFitNbIterAttrib	*yproj_fit_nb_iter = new YProjFitNbIterAttrib();
 	Tango::UserDefaultAttrProp	yproj_fit_nb_iter_prop;
 	yproj_fit_nb_iter_prop.set_unit(" ");
+	yproj_fit_nb_iter_prop.set_description("The number of iterations used for fitting along this axis.");
 	yproj_fit_nb_iter->set_default_properties(yproj_fit_nb_iter_prop);
 	att_list.push_back(yproj_fit_nb_iter);
 
@@ -431,6 +462,7 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	YProjPushTimeAttrib	*yproj_push_time = new YProjPushTimeAttrib();
 	Tango::UserDefaultAttrProp	yproj_push_time_prop;
 	yproj_push_time_prop.set_unit(" ");
+	yproj_push_time_prop.set_description("The Timestamp at which the sigma value was pushed for this axis.");
 	yproj_push_time->set_default_properties(yproj_push_time_prop);
 	att_list.push_back(yproj_push_time);
 
@@ -443,22 +475,37 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 
 	//	Attribute : XProj
 	XProjAttrib	*xproj = new XProjAttrib();
+	Tango::UserDefaultAttrProp	xproj_prop;
+	xproj_prop.set_description("The mean projection spectrum along this axis, with each point representing the average of all values projected onto this axis.");
+	xproj->set_default_properties(xproj_prop);
 	att_list.push_back(xproj);
 
 	//	Attribute : XProjFitted
 	XProjFittedAttrib	*xproj_fitted = new XProjFittedAttrib();
+	Tango::UserDefaultAttrProp	xproj_fitted_prop;
+	xproj_fitted_prop.set_description("The Gaussian fit result along this axis.");
+	xproj_fitted->set_default_properties(xproj_fitted_prop);
 	att_list.push_back(xproj_fitted);
 
 	//	Attribute : YProj
 	YProjAttrib	*yproj = new YProjAttrib();
+	Tango::UserDefaultAttrProp	yproj_prop;
+	yproj_prop.set_description("The mean projection spectrum along this axis, with each point representing the average of all values projected onto this axis.");
+	yproj->set_default_properties(yproj_prop);
 	att_list.push_back(yproj);
 
 	//	Attribute : YProjFitted
 	YProjFittedAttrib	*yproj_fitted = new YProjFittedAttrib();
+	Tango::UserDefaultAttrProp	yproj_fitted_prop;
+	yproj_fitted_prop.set_description("The Gaussian fit result along this axis.");
+	yproj_fitted->set_default_properties(yproj_fitted_prop);
 	att_list.push_back(yproj_fitted);
 
 	//	Attribute : ROIImage
 	ROIImageAttrib	*roiimage = new ROIImageAttrib();
+	Tango::UserDefaultAttrProp	roiimage_prop;
+	roiimage_prop.set_description("The image with the ROI detected by AutoRoi.");
+	roiimage->set_default_properties(roiimage_prop);
 	att_list.push_back(roiimage);
 
 	//	End of Automatic code generation
@@ -513,10 +560,10 @@ void FitGaussianClass::set_default_property()
 	//	Set Default Class Properties
 	//	Set Default Device Properties
 	prop_name = "AutoROIEnabled";
-	prop_desc = "";
-	prop_def  = "false";
+	prop_desc = "Enable/Disable automatic ROI detection: if enabled, the ROI is automatically set to encompass the largest particle in the image.";
+	prop_def  = "true";
 	vect_data.clear();
-	vect_data.push_back("false");
+	vect_data.push_back("true");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -634,9 +681,9 @@ void FitGaussianClass::set_default_property()
 
 	prop_name = "MemorizedOperationType";
 	prop_desc = "Memorize all operationType declared in the order to process the image.";
-	prop_def  = "NONE";
+	prop_def  = "FIT";
 	vect_data.clear();
-	vect_data.push_back("NONE");
+	vect_data.push_back("FIT");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -649,9 +696,9 @@ void FitGaussianClass::set_default_property()
 
 	prop_name = "MemorizedOperationLevel";
 	prop_desc = "Memorize all levels associated to the operationType declared in the order to process the image.";
-	prop_def  = "0";
+	prop_def  = "1";
 	vect_data.clear();
-	vect_data.push_back("0");
+	vect_data.push_back("1");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -707,11 +754,26 @@ void FitGaussianClass::set_default_property()
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
 
-	prop_name = "Rotation";
-	prop_desc = "Available values :<CR>\n- 0 [default]<CR>\n- 90   or -90<CR>\n- 180 or -180<CR>\n- 270 or -270<CR>";
+	prop_name = "RotationAngle";
+	prop_desc = "Rotate image before Apply Fit <CR>\nAvailable values :<CR>\n- 0 [default]<CR>\n- 90   or -90<CR>\n- 180 or -180<CR>\n- 270 or -270<CR>";
 	prop_def  = "0";
 	vect_data.clear();
 	vect_data.push_back("0");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
+	prop_name = "DisplayRotatedImage";
+	prop_desc = "Enable/Disable dipslaying rotated image into image attribute";
+	prop_def  = "true";
+	vect_data.clear();
+	vect_data.push_back("true");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

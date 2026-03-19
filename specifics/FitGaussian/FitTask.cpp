@@ -118,6 +118,7 @@ namespace FitGaussian_ns
         cfg.use_rotation              = m_use_rotation;
         cfg.rotation_angle_cv_code    = m_rotation_angle_cv_code;
         cfg.rotation_angle            = m_rotation_angle;
+        cfg.display_rotated_image     = m_display_rotated_image;
         return cfg;
     }
 
@@ -285,6 +286,16 @@ namespace FitGaussian_ns
                                                 "Rotation angle must be one of: 0, 90, -90, 180, -180, 270, -270",
                                                 "FitTask::set_rotation_angle");
         }
+    }    
+
+    //-----------------------------------------------
+    // Enable/disable display rotated image 
+    //-----------------------------------------------
+    void FitTask::set_display_rotated_image(bool enabled)
+    {
+        INFO_STREAM << "FitTask::set_display_rotated_image(" << enabled << ")" << std::endl;
+        yat::MutexLock scoped_lock(m_data_lock);
+        m_display_rotated_image = enabled;
     }    
     //-----------------------------------------------
     // get parameter value by name
@@ -618,12 +629,10 @@ namespace FitGaussian_ns
         local_params["AutoROIOriginY"]   = yat::Any(0);
         local_params["AutoROIWidth"]     = yat::Any(0);
         local_params["AutoROIHeight"]    = yat::Any(0);
-
+        // Get a snapshot of the current configuration, this ensures consistency in case the configuration is changed while processing
+        const ConfigSnapshot cfg = get_config_snapshot();
         try
         {
-            // Get a snapshot of the current configuration, this ensures consistency in case the configuration is changed while processing
-            const ConfigSnapshot cfg = get_config_snapshot();
-
             // If AutoROI is not enabled, we skip directly
             if (!cfg.auto_roi_enabled)
             {                
@@ -666,7 +675,7 @@ namespace FitGaussian_ns
             if (cfg.use_rotation)
                 cv::rotate(mat_origin, mat_origin_rotated, cfg.rotation_angle_cv_code);
             else
-                mat_origin_rotated = mat_origin.clone();// clone to ensure continuous memory, but this is a no-op if mat_origin is already continuous
+                mat_origin_rotated = mat_origin.clone();// deep copy, independent buffer
 
             // This will hold the ROI image after AutoROI processing, to be used for projections if enabled
             cv::Mat mat_img_roi;
@@ -717,22 +726,24 @@ namespace FitGaussian_ns
         // Note: we publish all parameters at the end of processing to ensure consistency, as some parameters depend on the results of previous steps (e.g. projections depend on AutoROI results)        
         publish_params(local_params);
 
-        // Prepare output data, we return the original input image as output, 
-        // but with the correct orientation if rotation is enabled. 
-        // This ensures that the main device class will always have an image to work with, even if AutoROI fails.
-        //We clone the image to ensure that we have a continuous Mat to work with, as some OpenCV operations require continuous memory.
-        Data out;
-        out.type = aSrc.type;
-        out.frameNumber = aSrc.frameNumber;
-        out.timestamp = aSrc.timestamp;
-        out.header = aSrc.header;
+        // Prepare out Data
+        Data out = aSrc;
 
-        out.dimensions.resize(2);
-        out.dimensions[0] = mat_origin_rotated.cols;
-        out.dimensions[1] = mat_origin_rotated.rows;
+        // If display rotation is enabled and the rotated image is not empty, we replace the output buffer with the rotated image data
+        if (cfg.display_rotated_image && !mat_origin_rotated.empty())
+        {
+            out.type = aSrc.type;
+            out.frameNumber = aSrc.frameNumber;
+            out.timestamp = aSrc.timestamp;
+            out.header = aSrc.header;
 
-        out.buffer = new Buffer(out.size());
-        std::memcpy(out.data(), mat_origin_rotated.data, out.size());
+            out.dimensions.resize(2);
+            out.dimensions[0] = mat_origin_rotated.cols;
+            out.dimensions[1] = mat_origin_rotated.rows;
+
+            out.buffer = new Buffer(out.size());
+            std::memcpy(out.data(), mat_origin_rotated.data, out.size());
+        }
 
         // Log processing time
         const auto ms = std::chrono::duration<double, std::milli>( std::chrono::steady_clock::now() - begin_process).count();        

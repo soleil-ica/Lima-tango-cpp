@@ -267,7 +267,8 @@ void FitGaussian::get_device_property()
 	dev_prop.push_back(Tango::DbDatum("XProjEnabled"));
 	dev_prop.push_back(Tango::DbDatum("YProjEnabled"));
 	dev_prop.push_back(Tango::DbDatum("ProfileFitFixedBg"));
-	dev_prop.push_back(Tango::DbDatum("Rotation"));
+	dev_prop.push_back(Tango::DbDatum("RotationAngle"));
+	dev_prop.push_back(Tango::DbDatum("DisplayRotatedImage"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -421,16 +422,27 @@ void FitGaussian::get_device_property()
 	//	And try to extract ProfileFitFixedBg value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  profileFitFixedBg;
 
-	//	Try to initialize Rotation from class property
+	//	Try to initialize RotationAngle from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
-	if (cl_prop.is_empty()==false)	cl_prop  >>  rotation;
+	if (cl_prop.is_empty()==false)	cl_prop  >>  rotationAngle;
 	else {
-		//	Try to initialize Rotation from default device value
+		//	Try to initialize RotationAngle from default device value
 		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
-		if (def_prop.is_empty()==false)	def_prop  >>  rotation;
+		if (def_prop.is_empty()==false)	def_prop  >>  rotationAngle;
 	}
-	//	And try to extract Rotation value from database
-	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  rotation;
+	//	And try to extract RotationAngle value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  rotationAngle;
+
+	//	Try to initialize DisplayRotatedImage from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  displayRotatedImage;
+	else {
+		//	Try to initialize DisplayRotatedImage from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  displayRotatedImage;
+	}
+	//	And try to extract DisplayRotatedImage value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  displayRotatedImage;
 
 
 
@@ -449,7 +461,8 @@ void FitGaussian::get_device_property()
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	"XProjEnabled");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true", 	"YProjEnabled");	
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", 	"ProfileFitFixedBg");	
-	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", 		"Rotation");	
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", 		"RotationAngle");	
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "true",		"DisplayRotatedImage");	
 
 }
 //+----------------------------------------------------------------------------
@@ -1921,7 +1934,8 @@ void FitGaussian::add_external_operation(long level)
 				task->set_proj_enabled(xProjEnabled, true);
 				task->set_proj_enabled(yProjEnabled, false);				
 				task->set_profilefit_fixedbg(profileFitFixedBg);
-				task->set_rotation_angle(rotation);
+				task->set_rotation_angle(rotationAngle);
+				task->set_display_rotated_image(displayRotatedImage);
 				
 				m_fit_task = task;
                 (reinterpret_cast<SoftUserLinkTask*> (op.m_opt))->setLinkTask(task);
@@ -2018,6 +2032,9 @@ void* FitGaussian::get_data_ptr(const cv::Mat& img)
         default: throw std::runtime_error("Unsupported image type");
     }
 }
+
+
+
 
 
 

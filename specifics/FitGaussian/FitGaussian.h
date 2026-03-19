@@ -147,7 +147,7 @@ public :
  */
 //@{
 /**
- *	
+ *	Enable/Disable automatic ROI detection: if enabled, the ROI is automatically set to encompass the largest particle in the image.
  */
 	Tango::DevBoolean	autoROIEnabled;
 /**
@@ -199,13 +199,18 @@ public :
  */
 	Tango::DevBoolean	profileFitFixedBg;
 /**
+ *	Rotate image before Apply Fit <CR>
  *	Available values :<CR>
  *	- 0 [default]<CR>
  *	- 90   or -90<CR>
  *	- 180 or -180<CR>
  *	- 270 or -270<CR>
  */
-	Tango::DevLong	rotation;
+	Tango::DevLong	rotationAngle;
+/**
+ *	Enable/Disable dipslaying rotated image into image attribute
+ */
+	Tango::DevBoolean	displayRotatedImage;
 //@}
 
 /**
