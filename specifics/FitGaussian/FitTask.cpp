@@ -71,6 +71,7 @@ namespace FitGaussian_ns
           Tango::LogAdapter(dev),
           m_device(static_cast<FitGaussian*>(dev)),
           m_operation_type(to_upper_copy(opType)),
+          m_fit_enabled(false),
           m_auto_roi_enabled(false),
           m_auto_roi_factor_x(5.0),
           m_auto_roi_factor_y(1.5),
@@ -103,6 +104,7 @@ namespace FitGaussian_ns
 
         ConfigSnapshot cfg;
         cfg.operation_type            = m_operation_type;
+        cfg.fit_enabled               = m_fit_enabled;
         cfg.auto_roi_enabled          = m_auto_roi_enabled;
         cfg.auto_roi_factor_x         = m_auto_roi_factor_x;
         cfg.auto_roi_factor_y         = m_auto_roi_factor_y;
@@ -139,6 +141,16 @@ namespace FitGaussian_ns
     {
         yat::MutexLock scoped_lock(m_data_lock);
         return m_operation_type;
+    }
+
+    //-----------------------------------------------
+    // define if Fit is enabled or not
+    //-----------------------------------------------
+    void FitTask::set_fit_enabled(bool is_fit_enabled)
+    {
+        INFO_STREAM << "FitTask::set_fit_enabled(" << is_fit_enabled << ")" << std::endl;
+        yat::MutexLock scoped_lock(m_data_lock);
+        m_fit_enabled = is_fit_enabled;
     }
 
     //-----------------------------------------------
@@ -624,19 +636,15 @@ namespace FitGaussian_ns
         std::map<std::string, yat::Any> local_params;
         cv::Mat mat_origin_rotated;// in order to be in the same scope as out
         local_params["FrameNumber"]      = yat::Any(aSrc.frameNumber);
-        local_params["AutoROIConverged"] = yat::Any(false);
-        local_params["AutoROIOriginX"]   = yat::Any(0);
-        local_params["AutoROIOriginY"]   = yat::Any(0);
-        local_params["AutoROIWidth"]     = yat::Any(0);
-        local_params["AutoROIHeight"]    = yat::Any(0);
+
         // Get a snapshot of the current configuration, this ensures consistency in case the configuration is changed while processing
         const ConfigSnapshot cfg = get_config_snapshot();
         try
         {
-            // If AutoROI is not enabled, we skip directly
-            if (!cfg.auto_roi_enabled)
+            // If Fit is not enabled, we skip directly
+            if (!cfg.fit_enabled)
             {                
-                ////std::cerr << "[Info] AutoROI disabled, skip processing frame=" << aSrc.frameNumber << " tid=" << std::this_thread::get_id()<< std::endl;
+                std::cerr << "[Info] FIT disabled, skip processing frame=" << aSrc.frameNumber << " tid=" << std::this_thread::get_id()<< std::endl;
                 publish_params(local_params);
                 return aSrc;
             }
@@ -680,14 +688,30 @@ namespace FitGaussian_ns
             // This will hold the ROI image after AutoROI processing, to be used for projections if enabled
             cv::Mat mat_img_roi;
 
-            // Store the original image parameters in case we need to use them for projections if AutoROI fails, this ensures that projections will always have an image to work with, even if it's not cropped
-            local_params["AutoROIWidth"]  = yat::Any(mat_origin_rotated.cols);
-            local_params["AutoROIHeight"] = yat::Any(mat_origin_rotated.rows);
-            local_params["ROIImage"]      = yat::Any(mat_origin_rotated.clone());
+            // Store the original image parameters in case we need to use them for projections if AutoROI fails, this ensures that projections will always have an image to work with, even if it's not cropped            
+            local_params["AutoROIOriginX"]      = yat::Any(0);
+            local_params["AutoROIOriginY"]      = yat::Any(0);
+            local_params["AutoROIWidth"]        = yat::Any(mat_origin_rotated.cols);
+            local_params["AutoROIHeight"]       = yat::Any(mat_origin_rotated.rows);
+            local_params["ROIImage"]            = yat::Any(mat_origin_rotated.clone());
 
-            // Process AutoROI, this will also update the local_params with the ROI results to be used for projections if enabled
-            process_auto_roi(mat_origin_rotated, cfg, mat_img_roi, local_params);
+            // Process AutoROI: if enabled, we compute the ROI and update local_params with the results, if not enabled we just use the full image as ROI and set the corresponding parameters
+            if(!cfg.auto_roi_enabled)
+            {
+                // If AutoROI is not enabled, we consider it as converged with the full image as ROI
+                local_params["AutoROIConverged"]    = yat::Any(true);
+                // If AutoROI is not enabled, we just use the full image as ROI
+                mat_origin_rotated.copyTo(mat_img_roi);
+            }
+            else
+            {
+                // If AutoROI is enabled, we initialize the convergence status to false in case the processing fails
+                local_params["AutoROIConverged"]    = yat::Any(false);
+                // If AutoROI is enabled, we process it and update the local_params with the results (convergence status, ROI coordinates and size, ROI image)
+                process_auto_roi(mat_origin_rotated, cfg, mat_img_roi, local_params);
+            }
 
+            // We check if AutoROI converged by looking at the local_params
             bool auto_roi_converged = false;
             std::map<std::string, yat::Any>::const_iterator it = local_params.find("AutoROIConverged");
             if (it != local_params.end())

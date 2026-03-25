@@ -56,6 +56,9 @@ namespace FitGaussian_ns
         // Get the operation type (FIT)
         std::string get_operation_type();
 
+        // Define if Fit is enabled or not
+        void set_fit_enabled(bool is_fit_enabled);
+        
         // Define if AutoROI is enabled or not
         void set_auto_roi_enabled(bool is_auto_roi);
 
@@ -111,6 +114,7 @@ namespace FitGaussian_ns
         struct ConfigSnapshot
         {
             std::string operation_type;
+            bool fit_enabled;
             bool auto_roi_enabled;
             double auto_roi_factor_x;
             double auto_roi_factor_y;
@@ -166,6 +170,7 @@ namespace FitGaussian_ns
 
         // configuration shared between threads -> setter/getter always under lock
         std::string                     m_operation_type;
+        bool                            m_fit_enabled;
         bool                            m_auto_roi_enabled;
         double                          m_auto_roi_factor_x;
         double                          m_auto_roi_factor_y;

@@ -258,6 +258,14 @@ void FitGaussianClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	operation_type->set_default_properties(operation_type_prop);
 	att_list.push_back(operation_type);
 
+	//	Attribute : FitEnabled
+	FitEnabledAttrib	*fit_enabled = new FitEnabledAttrib();
+	Tango::UserDefaultAttrProp	fit_enabled_prop;
+	fit_enabled_prop.set_unit(" ");
+	fit_enabled_prop.set_description("Enable/Disable Fit Gaussian.");
+	fit_enabled->set_default_properties(fit_enabled_prop);
+	att_list.push_back(fit_enabled);
+
 	//	Attribute : AutoROIEnabled
 	AutoROIEnabledAttrib	*auto_roienabled = new AutoROIEnabledAttrib();
 	Tango::UserDefaultAttrProp	auto_roienabled_prop;
@@ -559,6 +567,21 @@ void FitGaussianClass::set_default_property()
 	vector<string>	vect_data;
 	//	Set Default Class Properties
 	//	Set Default Device Properties
+	prop_name = "FitEnabled";
+	prop_desc = "Enable/Disable Fit Gaussian.";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+
 	prop_name = "AutoROIEnabled";
 	prop_desc = "Enable/Disable automatic ROI detection: if enabled, the ROI is automatically set to encompass the largest particle in the image.";
 	prop_def  = "true";
