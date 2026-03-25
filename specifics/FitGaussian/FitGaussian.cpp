@@ -217,6 +217,12 @@ void FitGaussian::init_device()
 		m_map_operations.clear();
 		add_external_operation(memorizedOperationLevel);  
 
+		INFO_STREAM << "Write tango hardware at Init - FitEnabled."  << endl;
+		Tango::WAttribute &fit_enabled = dev_attr->get_w_attr_by_name("FitEnabled");
+		attr_FitEnabled_write = fitEnabled;
+		fit_enabled.set_write_value(fitEnabled);
+		write_FitEnabled(fit_enabled);
+
 		INFO_STREAM << "Write tango hardware at Init - autoROIEnabled." << endl;
 		Tango::WAttribute &auto_roi = dev_attr->get_w_attr_by_name("AutoROIEnabled");
 		attr_AutoROIEnabled_write = autoROIEnabled;
@@ -254,6 +260,7 @@ void FitGaussian::get_device_property()
 	//	Read device properties from database.(Automatic code generation)
 	//------------------------------------------------------------------
 	Tango::DbData	dev_prop;
+	dev_prop.push_back(Tango::DbDatum("FitEnabled"));
 	dev_prop.push_back(Tango::DbDatum("AutoROIEnabled"));
 	dev_prop.push_back(Tango::DbDatum("AutoROIMagnificationFactorX"));
 	dev_prop.push_back(Tango::DbDatum("AutoROIMagnificationFactorY"));
@@ -278,6 +285,17 @@ void FitGaussian::get_device_property()
 	FitGaussianClass	*ds_class =
 		(static_cast<FitGaussianClass *>(get_device_class()));
 	int	i = -1;
+
+	//	Try to initialize FitEnabled from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  fitEnabled;
+	else {
+		//	Try to initialize FitEnabled from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  fitEnabled;
+	}
+	//	And try to extract FitEnabled value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  fitEnabled;
 
 	//	Try to initialize AutoROIEnabled from class property
 	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
@@ -448,7 +466,8 @@ void FitGaussian::get_device_property()
 
 	//	End of Automatic code generation
 	//------------------------------------------------------------------
-	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", 	"AutoROIEnabled");	
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", 	"FitEnabled");
+	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "false", 	"AutoROIEnabled");
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "5.0", 		"AutoROIMagnificationFactorX");	
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "1.5", 		"AutoROIMagnificationFactorY");		
 	yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "5.86", 	"PixelSizeX");	
@@ -516,6 +535,50 @@ void FitGaussian::read_attr_hardware(vector<long> &attr_list)
 	DEBUG_STREAM << "FitGaussian::read_attr_hardware(vector<long> &attr_list) entering... "<< endl;
 	//	Add your own code here
 }
+//+----------------------------------------------------------------------------
+//
+// method : 		FitGaussian::read_FitEnabled
+// 
+// description : 	Extract real attribute values for FitEnabled acquisition result.
+//
+//-----------------------------------------------------------------------------
+void FitGaussian::read_FitEnabled(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "FitGaussian::read_FitEnabled(Tango::Attribute &attr) entering... "<< endl;
+}
+
+//+----------------------------------------------------------------------------
+//
+// method : 		FitGaussian::write_FitEnabled
+// 
+// description : 	Write FitEnabled attribute values to hardware.
+//
+//-----------------------------------------------------------------------------
+void FitGaussian::write_FitEnabled(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "FitGaussian::write_FitEnabled(Tango::WAttribute &attr) entering... "<< endl;
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+	try
+	{	
+		attr.get_write_value(attr_FitEnabled_write);
+		if(m_fit_task)
+		{
+			m_fit_task->set_fit_enabled(attr_FitEnabled_write);
+			yat4tango::PropertyHelper::set_property(this, "FitEnabled", attr_FitEnabled_write);
+		}	
+	}
+	catch (Tango::DevFailed& df)
+	{
+		ERROR_STREAM << df << endl;
+		//- rethrow exception
+		Tango::Except::re_throw_exception(df,
+										  "TANGO_DEVICE_ERROR",
+										  std::string(df.errors[0].desc).c_str(),
+										  "FitGaussian::write_FitEnabled");
+	}
+
+}
+
 
 
 //+----------------------------------------------------------------------------
@@ -574,20 +637,17 @@ void FitGaussian::read_AutoROIFound(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("AutoROIConverged"))
 		{
-			if(!m_fit_task->is_param_exist("AutoROIConverged"))
-			{
-				*attr_AutoROIFound_read = false;
-				attr.set_value(attr_AutoROIFound_read);
-				attr.set_quality(Tango::ATTR_ALARM);				
-			}
-			else
-			{
-				*attr_AutoROIFound_read = yat::any_cast<Tango::DevBoolean>(m_fit_task->get_param("AutoROIConverged"));
-				attr.set_value(attr_AutoROIFound_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}
+			*attr_AutoROIFound_read = false;
+			attr.set_value(attr_AutoROIFound_read);
+			attr.set_quality(Tango::ATTR_ALARM);				
+		}
+		else
+		{
+			*attr_AutoROIFound_read = yat::any_cast<Tango::DevBoolean>(m_fit_task->get_param("AutoROIConverged"));
+			attr.set_value(attr_AutoROIFound_read);
+			attr.set_quality(Tango::ATTR_VALID);
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -613,20 +673,17 @@ void FitGaussian::read_AutoROIOriginX(Tango::Attribute &attr)
 	DEBUG_STREAM << "FitGaussian::read_AutoROIOriginX(Tango::Attribute &attr) entering... "<< endl;
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("AutoROIOriginX"))
 		{
-			if(!m_fit_task->is_param_exist("AutoROIOriginX"))
-			{
-				*attr_AutoROIOriginX_read = 0;
-				attr.set_value(attr_AutoROIOriginX_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_AutoROIOriginX_read = yat::any_cast<Tango::DevLong>(m_fit_task->get_param("AutoROIOriginX"));
-				attr.set_value(attr_AutoROIOriginX_read);
-				attr.set_quality(Tango::ATTR_VALID);				
-			}
+			*attr_AutoROIOriginX_read = 0;
+			attr.set_value(attr_AutoROIOriginX_read);
+			attr.set_quality(Tango::ATTR_ALARM);
+		}
+		else
+		{
+			*attr_AutoROIOriginX_read = yat::any_cast<Tango::DevLong>(m_fit_task->get_param("AutoROIOriginX"));
+			attr.set_value(attr_AutoROIOriginX_read);
+			attr.set_quality(Tango::ATTR_VALID);				
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -652,20 +709,17 @@ void FitGaussian::read_AutoROIOriginY(Tango::Attribute &attr)
 	DEBUG_STREAM << "FitGaussian::read_AutoROIOriginY(Tango::Attribute &attr) entering... "<< endl;
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("AutoROIOriginY"))
 		{
-			if(!m_fit_task->is_param_exist("AutoROIOriginY"))
-			{
-				*attr_AutoROIOriginY_read = 0;
-				attr.set_value(attr_AutoROIOriginY_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{				
-				*attr_AutoROIOriginY_read = yat::any_cast<Tango::DevLong>(m_fit_task->get_param("AutoROIOriginY"));
-				attr.set_value(attr_AutoROIOriginY_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}			
+			*attr_AutoROIOriginY_read = 0;
+			attr.set_value(attr_AutoROIOriginY_read);
+			attr.set_quality(Tango::ATTR_ALARM);
+		}
+		else
+		{				
+			*attr_AutoROIOriginY_read = yat::any_cast<Tango::DevLong>(m_fit_task->get_param("AutoROIOriginY"));
+			attr.set_value(attr_AutoROIOriginY_read);
+			attr.set_quality(Tango::ATTR_VALID);
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -691,20 +745,17 @@ void FitGaussian::read_AutoROIWidth(Tango::Attribute &attr)
 	DEBUG_STREAM << "FitGaussian::read_AutoROIWidth(Tango::Attribute &attr) entering... "<< endl;
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("AutoROIWidth"))
 		{
-			if(!m_fit_task->is_param_exist("AutoROIWidth"))
-			{
-				*attr_AutoROIWidth_read = 0;
-				attr.set_value(attr_AutoROIWidth_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_AutoROIWidth_read = yat::any_cast<Tango::DevLong>(m_fit_task->get_param("AutoROIWidth"));
-				attr.set_value(attr_AutoROIWidth_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}			
+			*attr_AutoROIWidth_read = 0;
+			attr.set_value(attr_AutoROIWidth_read);
+			attr.set_quality(Tango::ATTR_ALARM);
+		}
+		else
+		{
+			*attr_AutoROIWidth_read = yat::any_cast<Tango::DevLong>(m_fit_task->get_param("AutoROIWidth"));
+			attr.set_value(attr_AutoROIWidth_read);
+			attr.set_quality(Tango::ATTR_VALID);
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -730,20 +781,17 @@ void FitGaussian::read_AutoROIHeight(Tango::Attribute &attr)
 	DEBUG_STREAM << "FitGaussian::read_AutoROIHeight(Tango::Attribute &attr) entering... "<< endl;
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("AutoROIHeight"))
 		{
-			if(!m_fit_task->is_param_exist("AutoROIHeight"))
-			{
-				*attr_AutoROIHeight_read = 0;
-				attr.set_value(attr_AutoROIHeight_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_AutoROIHeight_read = yat::any_cast<Tango::DevLong>(m_fit_task->get_param("AutoROIHeight"));
-				attr.set_value(attr_AutoROIHeight_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}			
+			*attr_AutoROIHeight_read = 0;
+			attr.set_value(attr_AutoROIHeight_read);
+			attr.set_quality(Tango::ATTR_ALARM);
+		}
+		else
+		{
+			*attr_AutoROIHeight_read = yat::any_cast<Tango::DevLong>(m_fit_task->get_param("AutoROIHeight"));
+			attr.set_value(attr_AutoROIHeight_read);
+			attr.set_quality(Tango::ATTR_VALID);
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -900,21 +948,18 @@ void FitGaussian::read_XProjFitConverged(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("XProjFitConverged"))
 		{
-			if(!m_fit_task->is_param_exist("XProjFitConverged"))
-			{
-				*attr_XProjFitConverged_read = false;
-				attr.set_value(attr_XProjFitConverged_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_XProjFitConverged_read = yat::any_cast<Tango::DevBoolean>(m_fit_task->get_param("XProjFitConverged"));
-				attr.set_value(attr_XProjFitConverged_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}			
+			*attr_XProjFitConverged_read = false;
+			attr.set_value(attr_XProjFitConverged_read);
+			attr.set_quality(Tango::ATTR_ALARM);
 		}
+		else
+		{
+			*attr_XProjFitConverged_read = yat::any_cast<Tango::DevBoolean>(m_fit_task->get_param("XProjFitConverged"));
+			attr.set_value(attr_XProjFitConverged_read);
+			attr.set_quality(Tango::ATTR_VALID);
+		}			
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -940,20 +985,17 @@ void FitGaussian::read_XProjFitCenter(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("XProjFitCenter"))
 		{
-			if(!m_fit_task->is_param_exist("XProjFitCenter"))
-			{
-				*attr_XProjFitCenter_read = std::nan("");
-				attr.set_value(attr_XProjFitCenter_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_XProjFitCenter_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("XProjFitCenter"));
-				attr.set_value(attr_XProjFitCenter_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}
+			*attr_XProjFitCenter_read = std::nan("");
+			attr.set_value(attr_XProjFitCenter_read);
+			attr.set_quality(Tango::ATTR_ALARM);
+		}
+		else
+		{
+			*attr_XProjFitCenter_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("XProjFitCenter"));
+			attr.set_value(attr_XProjFitCenter_read);
+			attr.set_quality(Tango::ATTR_VALID);
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -980,20 +1022,17 @@ void FitGaussian::read_XProjFitMag(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("XProjFitMag"))
 		{
-			if(!m_fit_task->is_param_exist("XProjFitMag"))
-			{
-				*attr_XProjFitMag_read = std::nan("");
-				attr.set_value(attr_XProjFitMag_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_XProjFitMag_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("XProjFitMag"));
-				attr.set_value(attr_XProjFitMag_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}
+			*attr_XProjFitMag_read = std::nan("");
+			attr.set_value(attr_XProjFitMag_read);
+			attr.set_quality(Tango::ATTR_ALARM);
+		}
+		else
+		{
+			*attr_XProjFitMag_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("XProjFitMag"));
+			attr.set_value(attr_XProjFitMag_read);
+			attr.set_quality(Tango::ATTR_VALID);
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -1020,21 +1059,18 @@ void FitGaussian::read_XProjFitSigma(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("XProjFitSigma"))
 		{
-			if(!m_fit_task->is_param_exist("XProjFitSigma"))
-			{
-				*attr_XProjFitSigma_read = std::nan("");
-				attr.set_value(attr_XProjFitSigma_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_XProjFitSigma_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("XProjFitSigma"));
-				attr.set_value(attr_XProjFitSigma_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}			
+			*attr_XProjFitSigma_read = std::nan("");
+			attr.set_value(attr_XProjFitSigma_read);
+			attr.set_quality(Tango::ATTR_ALARM);
 		}
+		else
+		{
+			*attr_XProjFitSigma_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("XProjFitSigma"));
+			attr.set_value(attr_XProjFitSigma_read);
+			attr.set_quality(Tango::ATTR_VALID);
+		}			
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -1060,20 +1096,17 @@ void FitGaussian::read_XProjFitFWHM(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("XProjFitFWHM"))
 		{
-			if(!m_fit_task->is_param_exist("XProjFitFWHM"))
-			{
-				*attr_XProjFitFWHM_read = std::nan("");
-				attr.set_value(attr_XProjFitFWHM_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_XProjFitFWHM_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("XProjFitFWHM"));
-				attr.set_value(attr_XProjFitFWHM_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}			
+			*attr_XProjFitFWHM_read = std::nan("");
+			attr.set_value(attr_XProjFitFWHM_read);
+			attr.set_quality(Tango::ATTR_ALARM);
+		}
+		else
+		{
+			*attr_XProjFitFWHM_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("XProjFitFWHM"));
+			attr.set_value(attr_XProjFitFWHM_read);
+			attr.set_quality(Tango::ATTR_VALID);
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -1100,21 +1133,18 @@ void FitGaussian::read_XProjFitBG(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("XProjFitBG"))
 		{
-			if(!m_fit_task->is_param_exist("XProjFitBG"))
-			{
-				*attr_XProjFitBG_read = std::nan("");
-				attr.set_value(attr_XProjFitBG_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_XProjFitBG_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("XProjFitBG"));
-				attr.set_value(attr_XProjFitBG_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}			
+			*attr_XProjFitBG_read = std::nan("");
+			attr.set_value(attr_XProjFitBG_read);
+			attr.set_quality(Tango::ATTR_ALARM);
 		}
+		else
+		{
+			*attr_XProjFitBG_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("XProjFitBG"));
+			attr.set_value(attr_XProjFitBG_read);
+			attr.set_quality(Tango::ATTR_VALID);
+		}			
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -1141,20 +1171,17 @@ void FitGaussian::read_XProjFitChi2(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("XProjFitChi2"))
 		{
-			if(!m_fit_task->is_param_exist("XProjFitChi2"))
-			{
-				*attr_XProjFitChi2_read = std::nan("");
-				attr.set_value(attr_XProjFitChi2_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_XProjFitChi2_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("XProjFitChi2"));
-				attr.set_value(attr_XProjFitChi2_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}			
+			*attr_XProjFitChi2_read = std::nan("");
+			attr.set_value(attr_XProjFitChi2_read);
+			attr.set_quality(Tango::ATTR_ALARM);
+		}
+		else
+		{
+			*attr_XProjFitChi2_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("XProjFitChi2"));
+			attr.set_value(attr_XProjFitChi2_read);
+			attr.set_quality(Tango::ATTR_VALID);
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -1181,20 +1208,17 @@ void FitGaussian::read_XProjFitNbIter(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("XProjFitNbIter"))
 		{
-			if(!m_fit_task->is_param_exist("XProjFitNbIter"))
-			{
-				*attr_XProjFitNbIter_read = 0;
-				attr.set_value(attr_XProjFitNbIter_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_XProjFitNbIter_read = yat::any_cast<Tango::DevULong>(m_fit_task->get_param("XProjFitNbIter"));
-				attr.set_value(attr_XProjFitNbIter_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}			
+			*attr_XProjFitNbIter_read = 0;
+			attr.set_value(attr_XProjFitNbIter_read);
+			attr.set_quality(Tango::ATTR_ALARM);
+		}
+		else
+		{
+			*attr_XProjFitNbIter_read = yat::any_cast<Tango::DevULong>(m_fit_task->get_param("XProjFitNbIter"));
+			attr.set_value(attr_XProjFitNbIter_read);
+			attr.set_quality(Tango::ATTR_VALID);
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -1221,7 +1245,7 @@ void FitGaussian::read_XProjPushTime(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(!m_fit_task->is_param_exist("XProjPushTime"))
+		if(!m_fit_task || !m_fit_task->is_param_exist("XProjPushTime"))
 		{
 			strcpy(*attr_XProjPushTime_read, "N/A");
 			attr.set_value(attr_XProjPushTime_read);
@@ -1379,20 +1403,17 @@ void FitGaussian::read_YProjFitConverged(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("YProjFitConverged"))
 		{
-			if(!m_fit_task->is_param_exist("YProjFitConverged"))
-			{
-				*attr_YProjFitConverged_read = false;
-				attr.set_value(attr_YProjFitConverged_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_YProjFitConverged_read = yat::any_cast<Tango::DevBoolean>(m_fit_task->get_param("YProjFitConverged"));
-				attr.set_value(attr_YProjFitConverged_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}
+			*attr_YProjFitConverged_read = false;
+			attr.set_value(attr_YProjFitConverged_read);
+			attr.set_quality(Tango::ATTR_ALARM);
+		}
+		else
+		{
+			*attr_YProjFitConverged_read = yat::any_cast<Tango::DevBoolean>(m_fit_task->get_param("YProjFitConverged"));
+			attr.set_value(attr_YProjFitConverged_read);
+			attr.set_quality(Tango::ATTR_VALID);
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -1420,20 +1441,17 @@ void FitGaussian::read_YProjFitCenter(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("YProjFitCenter"))
 		{
-			if(!m_fit_task->is_param_exist("YProjFitCenter"))
-			{
-				*attr_YProjFitCenter_read = std::nan("");
-				attr.set_value(attr_YProjFitCenter_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_YProjFitCenter_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("YProjFitCenter"));
-				attr.set_value(attr_YProjFitCenter_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}
+			*attr_YProjFitCenter_read = std::nan("");
+			attr.set_value(attr_YProjFitCenter_read);
+			attr.set_quality(Tango::ATTR_ALARM);
+		}
+		else
+		{
+			*attr_YProjFitCenter_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("YProjFitCenter"));
+			attr.set_value(attr_YProjFitCenter_read);
+			attr.set_quality(Tango::ATTR_VALID);
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -1460,20 +1478,17 @@ void FitGaussian::read_YProjFitMag(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("YProjFitMag"))
 		{
-			if(!m_fit_task->is_param_exist("YProjFitMag"))
-			{
-				*attr_YProjFitMag_read = std::nan("");
-				attr.set_value(attr_YProjFitMag_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_YProjFitMag_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("YProjFitMag"));
-				attr.set_value(attr_YProjFitMag_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}
+			*attr_YProjFitMag_read = std::nan("");
+			attr.set_value(attr_YProjFitMag_read);
+			attr.set_quality(Tango::ATTR_ALARM);
+		}
+		else
+		{
+			*attr_YProjFitMag_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("YProjFitMag"));
+			attr.set_value(attr_YProjFitMag_read);
+			attr.set_quality(Tango::ATTR_VALID);
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -1500,20 +1515,17 @@ void FitGaussian::read_YProjFitSigma(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("YProjFitSigma"))
 		{
-			if(!m_fit_task->is_param_exist("YProjFitSigma"))
-			{
-				*attr_YProjFitSigma_read = std::nan("");
-				attr.set_value(attr_YProjFitSigma_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_YProjFitSigma_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("YProjFitSigma"));
-				attr.set_value(attr_YProjFitSigma_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}
+			*attr_YProjFitSigma_read = std::nan("");
+			attr.set_value(attr_YProjFitSigma_read);
+			attr.set_quality(Tango::ATTR_ALARM);
+		}
+		else
+		{
+			*attr_YProjFitSigma_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("YProjFitSigma"));
+			attr.set_value(attr_YProjFitSigma_read);
+			attr.set_quality(Tango::ATTR_VALID);
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -1540,21 +1552,18 @@ void FitGaussian::read_YProjFitFWHM(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("YProjFitFWHM"))
 		{
-			if(!m_fit_task->is_param_exist("YProjFitFWHM"))
-			{
-				*attr_YProjFitFWHM_read = std::nan("");
-				attr.set_value(attr_YProjFitFWHM_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_YProjFitFWHM_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("YProjFitFWHM"));
-				attr.set_value(attr_YProjFitFWHM_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}			
+			*attr_YProjFitFWHM_read = std::nan("");
+			attr.set_value(attr_YProjFitFWHM_read);
+			attr.set_quality(Tango::ATTR_ALARM);
 		}
+		else
+		{
+			*attr_YProjFitFWHM_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("YProjFitFWHM"));
+			attr.set_value(attr_YProjFitFWHM_read);
+			attr.set_quality(Tango::ATTR_VALID);
+		}			
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -1580,21 +1589,18 @@ void FitGaussian::read_YProjFitBG(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("YProjFitBG"))
 		{
-			if(!m_fit_task->is_param_exist("YProjFitBG"))
-			{
-				*attr_YProjFitBG_read = std::nan("");
-				attr.set_value(attr_YProjFitBG_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_YProjFitBG_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("YProjFitBG"));
-				attr.set_value(attr_YProjFitBG_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}			
+			*attr_YProjFitBG_read = std::nan("");
+			attr.set_value(attr_YProjFitBG_read);
+			attr.set_quality(Tango::ATTR_ALARM);
 		}
+		else
+		{
+			*attr_YProjFitBG_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("YProjFitBG"));
+			attr.set_value(attr_YProjFitBG_read);
+			attr.set_quality(Tango::ATTR_VALID);
+		}			
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -1620,21 +1626,18 @@ void FitGaussian::read_YProjFitChi2(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+		if(!m_fit_task || !m_fit_task->is_param_exist("YProjFitChi2"))
 		{
-			if(!m_fit_task->is_param_exist("YProjFitChi2"))
-			{
-				*attr_YProjFitChi2_read = std::nan("");
-				attr.set_value(attr_YProjFitChi2_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_YProjFitChi2_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("YProjFitChi2"));
-				attr.set_value(attr_YProjFitChi2_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}			
+			*attr_YProjFitChi2_read = std::nan("");
+			attr.set_value(attr_YProjFitChi2_read);
+			attr.set_quality(Tango::ATTR_ALARM);
 		}
+		else
+		{
+			*attr_YProjFitChi2_read = yat::any_cast<Tango::DevDouble>(m_fit_task->get_param("YProjFitChi2"));
+			attr.set_value(attr_YProjFitChi2_read);
+			attr.set_quality(Tango::ATTR_VALID);
+		}			
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -1660,21 +1663,19 @@ void FitGaussian::read_YProjFitNbIter(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
+
+		if(!m_fit_task || !m_fit_task->is_param_exist("YProjFitNbIter"))
 		{
-			if(!m_fit_task->is_param_exist("YProjFitNbIter"))
-			{
-				*attr_YProjFitNbIter_read = 0;
-				attr.set_value(attr_YProjFitNbIter_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-			}
-			else
-			{
-				*attr_YProjFitNbIter_read = yat::any_cast<Tango::DevULong>(m_fit_task->get_param("YProjFitNbIter"));
-				attr.set_value(attr_YProjFitNbIter_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}			
+			*attr_YProjFitNbIter_read = 0;
+			attr.set_value(attr_YProjFitNbIter_read);
+			attr.set_quality(Tango::ATTR_ALARM);
 		}
+		else
+		{
+			*attr_YProjFitNbIter_read = yat::any_cast<Tango::DevULong>(m_fit_task->get_param("YProjFitNbIter"));
+			attr.set_value(attr_YProjFitNbIter_read);
+			attr.set_quality(Tango::ATTR_VALID);
+		}			
 	}
 	catch(Tango::DevFailed& df)
 	{
@@ -1700,22 +1701,19 @@ void FitGaussian::read_YProjPushTime(Tango::Attribute &attr)
 	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());	
 	try
 	{
-		if(m_fit_task)
-		{		
-			if(!m_fit_task->is_param_exist("YProjPushTime"))
-			{
-				strcpy(*attr_YProjPushTime_read, "N/A");
-				attr.set_value(attr_YProjPushTime_read);
-				attr.set_quality(Tango::ATTR_ALARM);
-				return;
-			}
-			else
-			{
-				std::string push_time = yat::any_cast<std::string>(m_fit_task->get_param("YProjPushTime"));
-				strcpy(*attr_YProjPushTime_read, push_time.c_str());
-				attr.set_value(attr_YProjPushTime_read);
-				attr.set_quality(Tango::ATTR_VALID);
-			}
+		if(!m_fit_task || !m_fit_task->is_param_exist("YProjPushTime"))
+		{
+			strcpy(*attr_YProjPushTime_read, "N/A");
+			attr.set_value(attr_YProjPushTime_read);
+			attr.set_quality(Tango::ATTR_ALARM);
+			return;
+		}
+		else
+		{
+			std::string push_time = yat::any_cast<std::string>(m_fit_task->get_param("YProjPushTime"));
+			strcpy(*attr_YProjPushTime_read, push_time.c_str());
+			attr.set_value(attr_YProjPushTime_read);
+			attr.set_quality(Tango::ATTR_VALID);
 		}
 	}
 	catch(Tango::DevFailed& df)
@@ -1922,7 +1920,8 @@ void FitGaussian::add_external_operation(long level)
 				FitTask* task = new FitTask("NONE", this);
 				
 				//set FitTask parameters from device properties
-				task->set_operation_type(m_operation_type);				
+				task->set_operation_type(m_operation_type);			
+				task->set_fit_enabled(fitEnabled);	
 				task->set_pixel_size_x(pixelSizeX);
 				task->set_pixel_size_y(pixelSizeY);
 				task->set_optical_magnification(opticalMagnification);
@@ -2032,6 +2031,8 @@ void* FitGaussian::get_data_ptr(const cv::Mat& img)
         default: throw std::runtime_error("Unsupported image type");
     }
 }
+
+
 
 
 
