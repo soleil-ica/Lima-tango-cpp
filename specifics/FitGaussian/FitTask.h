@@ -56,6 +56,9 @@ namespace FitGaussian_ns
         // Get the operation type (FIT)
         std::string get_operation_type();
 
+        // Define if Fit is enabled or not
+        void set_fit_enabled(bool is_fit_enabled);
+        
         // Define if AutoROI is enabled or not
         void set_auto_roi_enabled(bool is_auto_roi);
 
@@ -86,6 +89,12 @@ namespace FitGaussian_ns
         // Enable/disable fixed background mode for profile fit
         void set_profilefit_fixedbg(bool enabled);
 
+        // Enable/disable rotation for profile fit
+        void set_rotation_angle(int angle);
+
+        // Enable/disable display rotated image 
+        void set_display_rotated_image(bool enabled);
+
         // Check if parameter exists
         bool is_param_exist(const std::string& param_name);
 
@@ -105,6 +114,7 @@ namespace FitGaussian_ns
         struct ConfigSnapshot
         {
             std::string operation_type;
+            bool fit_enabled;
             bool auto_roi_enabled;
             double auto_roi_factor_x;
             double auto_roi_factor_y;
@@ -116,6 +126,11 @@ namespace FitGaussian_ns
             bool xproj_enabled;
             bool yproj_enabled;
             bool profilefit_fixedbg;
+            // Rotation parameters
+            bool use_rotation;
+            int  rotation_angle_cv_code;
+            int  rotation_angle;
+            bool display_rotated_image;
         };
 
     private:
@@ -155,6 +170,7 @@ namespace FitGaussian_ns
 
         // configuration shared between threads -> setter/getter always under lock
         std::string                     m_operation_type;
+        bool                            m_fit_enabled;
         bool                            m_auto_roi_enabled;
         double                          m_auto_roi_factor_x;
         double                          m_auto_roi_factor_y;
@@ -166,8 +182,14 @@ namespace FitGaussian_ns
         bool                            m_xproj_enabled;
         bool                            m_yproj_enabled;
         bool                            m_profilefit_fixedbg;
-
         // FitTask results to be read by the main device class, protected by m_data_lock
         std::map<std::string, yat::Any> m_map_shared_params;
+        
+        // Rotation parameters 
+        bool                            m_use_rotation;
+        int                             m_rotation_angle_cv_code;
+        int                             m_rotation_angle;
+        bool                            m_display_rotated_image;
+
     };
 }

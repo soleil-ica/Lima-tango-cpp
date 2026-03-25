@@ -64,7 +64,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 
 #define MAX_ATTRIBUTE_STRING_LENGTH 	256
-#define CURRENT_VERSION                 "1.0.0"
+#define CURRENT_VERSION                 "1.1.0"
 
 /**
  * @author	$Author:  $
@@ -107,6 +107,7 @@ public :
 //@{
 		Tango::DevString	*attr_version_read;
 		Tango::DevString	*attr_operationType_read;
+		Tango::DevBoolean	attr_FitEnabled_write;
 		Tango::DevBoolean	attr_AutoROIEnabled_write;
 		Tango::DevBoolean	*attr_AutoROIFound_read;
 		Tango::DevLong	*attr_AutoROIOriginX_read;
@@ -147,7 +148,11 @@ public :
  */
 //@{
 /**
- *	
+ *	Enable/Disable Fit Gaussian.
+ */
+	Tango::DevBoolean	fitEnabled;
+/**
+ *	Enable/Disable automatic ROI detection: if enabled, the ROI is automatically set to encompass the largest particle in the image.
  */
 	Tango::DevBoolean	autoROIEnabled;
 /**
@@ -198,6 +203,19 @@ public :
  *	
  */
 	Tango::DevBoolean	profileFitFixedBg;
+/**
+ *	Rotate image before Apply Fit <CR>
+ *	Available values :<CR>
+ *	- 0 [default]<CR>
+ *	- 90   or -90<CR>
+ *	- 180 or -180<CR>
+ *	- 270 or -270<CR>
+ */
+	Tango::DevLong	rotationAngle;
+/**
+ *	Enable/Disable dipslaying rotated image into image attribute
+ */
+	Tango::DevBoolean	displayRotatedImage;
 //@}
 
 /**
@@ -278,6 +296,14 @@ public :
  *	Extract real attribute values for operationType acquisition result.
  */
 	virtual void read_operationType(Tango::Attribute &attr);
+/**
+ *	Extract real attribute values for FitEnabled acquisition result.
+ */
+	virtual void read_FitEnabled(Tango::Attribute &attr);
+/**
+ *	Write FitEnabled attribute values to hardware.
+ */
+	virtual void write_FitEnabled(Tango::WAttribute &attr);
 /**
  *	Extract real attribute values for AutoROIEnabled acquisition result.
  */
@@ -426,6 +452,10 @@ public :
  *	Read/Write allowed for operationType attribute.
  */
 	virtual bool is_operationType_allowed(Tango::AttReqType type);
+/**
+ *	Read/Write allowed for FitEnabled attribute.
+ */
+	virtual bool is_FitEnabled_allowed(Tango::AttReqType type);
 /**
  *	Read/Write allowed for AutoROIEnabled attribute.
  */

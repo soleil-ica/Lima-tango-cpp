@@ -435,6 +435,20 @@ public:
 	{return (static_cast<FitGaussian *>(dev))->is_AutoROIEnabled_allowed(ty);}
 };
 
+class FitEnabledAttrib: public Tango::Attr
+{
+public:
+	FitEnabledAttrib():Attr("FitEnabled", Tango::DEV_BOOLEAN, Tango::WRITE) {};
+	~FitEnabledAttrib() {};
+	
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+	{(static_cast<FitGaussian *>(dev))->read_FitEnabled(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+	{(static_cast<FitGaussian *>(dev))->write_FitEnabled(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+	{return (static_cast<FitGaussian *>(dev))->is_FitEnabled_allowed(ty);}
+};
+
 class operationTypeAttrib: public Tango::Attr
 {
 public:
