@@ -233,14 +233,17 @@ void FitGaussLM::initialize_params()
 
     if (n < 3)
     {
+        // Small profile: use a simple fallback initialization
         const double bg = m_is_fixed_bg ? m_fixed_bg_value : 0.0;
-        m_params = { m_y[0], 0.0, 1.0, bg };
+        const double A  = std::max(1.0, m_y[0] - bg);
+        m_params = { A, 0.0, 1.0, bg };
         return;
     }
 
     //-----------------------
     // BACKGROUND
     //-----------------------
+    // Use fixed background if requested, otherwise estimate it from profile edges
     double background = m_is_fixed_bg ? m_fixed_bg_value : estimate_bg_edges();
 
     //-----------------------
@@ -266,8 +269,10 @@ void FitGaussLM::initialize_params()
         double val = m_y[maxima_pos];
         int pos = maxima_pos;
 
-        const double half_top_mag = 0.5 * (background + val);
+        // Half-height between background and peak
+        const double half_top_mag = background + 0.5 * (maxima_val - background);
 
+        // Keep the original one-sided search strategy
         if (maxima_pos < n / 2)
         {
             while (pos < n - 1 && val > half_top_mag)
@@ -280,18 +285,26 @@ void FitGaussLM::initialize_params()
         }
 
         if (pos != maxima_pos)
-            sigma = std::fabs(static_cast<double>(pos - maxima_pos));
+        {
+            // Convert half-width estimate to sigma assuming a Gaussian shape
+            const double half_width = std::fabs(static_cast<double>(pos - maxima_pos));
+            sigma = (2.0 * half_width) / SIGMA2FWHM_SCALE_FACTOR;
+        }
         else
+        {
+            // Fallback if no half-height crossing is found
             sigma = static_cast<double>(n) / 6.0;
+        }
     }
 
-    if (sigma <= 0.0)
+    if (sigma <= 0.0 || !std::isfinite(sigma))
         sigma = 1.0;
 
     //-----------------------
     // MAGNITUDE
     //-----------------------
-    const double magnitude = maxima_val; // ISL behavior
+    // Use peak above background as Gaussian amplitude
+    const double magnitude = std::max(1.0, maxima_val - background);
 
     m_params = { magnitude, mean, sigma, background };
 }
@@ -306,29 +319,28 @@ void FitGaussLM::initialize_params()
 ///////////////////////////////////////////////////////////////////////////////////////////////
 void FitGaussLM::fit(int max_iterations, double tol)
 {
-    const int N = static_cast<int>(m_x.size()); // number of data points
-    const int M = 4;                            // number of parameters [A, mu, sigma, bg]      
+    const int N = static_cast<int>(m_x.size());
+    const int M = 4;
 
     double lambda = 1e-3;
     m_nb_iter = 0;
+    m_has_converged = false;
 
-    // LM main loop
     for (m_nb_iter = 0; m_nb_iter < static_cast<unsigned int>(max_iterations); ++m_nb_iter)
     {
-        // Jacobian (N×M) and residuals (N×1) for current parameters
+        // Compute Jacobian and residuals for current parameters
         cv::Mat J(N, M, CV_64F, cv::Scalar(0));
         cv::Mat residuals(N, 1, CV_64F, cv::Scalar(0));
         compute_jacobian(m_params, J, residuals);
 
-        // Normal equations: (JᵀJ) δ = Jᵀr
+        // Build normal equations: (JᵀJ + λI) δ = Jᵀr
         cv::Mat JTJ = J.t() * J;
         cv::Mat JTRes = J.t() * residuals;
 
-        // LM modification: add λ to diagonal to stabilize inversion
         for (int i = 0; i < M; ++i)
             JTJ.at<double>(i, i) += lambda;
 
-        // If background is fixed, add a large value to the corresponding diagonal element to effectively remove it from optimization
+        // Freeze background parameter if requested
         if (m_is_fixed_bg)
             JTJ.at<double>(3, 3) += 1e12;
 
@@ -336,9 +348,8 @@ void FitGaussLM::fit(int max_iterations, double tol)
         cv::Mat delta;
         cv::solve(JTJ, JTRes, delta, cv::DECOMP_SVD);
 
-        // Compute candidate new parameters
+        // Apply update to get candidate parameters
         std::vector<double> new_params = m_params;
-
         for (int i = 0; i < M; ++i)
         {
             if (m_is_fixed_bg && i == 3)
@@ -347,7 +358,8 @@ void FitGaussLM::fit(int max_iterations, double tol)
             new_params[i] += delta.at<double>(i, 0);
         }
 
-        if (new_params[2] <= 0.0)
+        // Reject invalid candidate (e.g. negative sigma)
+        if (new_params[2] <= 0.0 || !std::isfinite(new_params[2]))
         {
             lambda *= 10.0;
             continue;
@@ -356,7 +368,7 @@ void FitGaussLM::fit(int max_iterations, double tol)
         // Current error
         const double error = compute_norm(residuals);
 
-        // Error with candidate parameters
+        // Evaluate error with candidate parameters
         cv::Mat dummyJ(N, M, CV_64F, cv::Scalar(0));
         cv::Mat new_residuals(N, 1, CV_64F, cv::Scalar(0));
         compute_jacobian(new_params, dummyJ, new_residuals);
@@ -365,31 +377,35 @@ void FitGaussLM::fit(int max_iterations, double tol)
         // Accept step if error decreases
         if (new_error < error)
         {
-            lambda *= 0.1;  // decrease damping (closer to Gauss-Newton)
-            m_params = new_params;  // accept new parameters
+            lambda *= 0.1;           // decrease damping
+            m_params = new_params;   // accept update
 
-            if (std::fabs(error - new_error) < tol) // convergence check
+            const double delta_norm = cv::norm(delta);
+            const double error_improvement = std::fabs(error - new_error);
+
+            // Convergence: small parameter update or negligible error improvement
+            if (delta_norm < tol || error_improvement < tol)
+            {
+                m_has_converged = true;
                 break;
+            }
         }
         else
         {
-            lambda *= 10.0; // increase damping (closer to gradient descent)
+            // Reject step → increase damping
+            lambda *= 10.0;
         }
     }
 
-    // Set convergence flag    
-    m_has_converged = (m_nb_iter < static_cast<unsigned int>(max_iterations));
-
-    // If background is fixed, ensure parameter vector reflects that
+    // Ensure background consistency if fixed
     if (m_is_fixed_bg)
         m_params[3] = m_fixed_bg_value;
 
-    // Compute metrics
+    // Compute fit quality metrics
     compute_reduced_chi_squared();
     compute_rms_error();
     compute_r_squared();
 }
-
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Get input spectrum values
 ///////////////////////////////////////////////////////////////////////////////////////////////
