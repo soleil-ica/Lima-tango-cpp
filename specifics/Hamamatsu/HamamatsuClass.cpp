@@ -501,7 +501,7 @@ void HamamatsuClass::set_default_property()
 		add_wiz_dev_prop(prop_name, prop_desc);
 
 	prop_name = "MemorizedReadoutSpeed";
-	prop_desc = "Memorize/Define the readoutSpeed attribute at Init device<br>\nAvailables values :<br>\nSTANDARD<br>\nULTRA QUIET<br>";
+	prop_desc = "Memorize/Define the readoutSpeed attribute at Init device<br>\nAvailables values :<br>\nSTANDARD<br>\nULTRA QUIET<br>\nFAST (Orca Quest only)<br>";
 	prop_def  = "STANDARD";
 	vect_data.clear();
 	vect_data.push_back("STANDARD");
