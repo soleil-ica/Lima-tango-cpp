@@ -415,7 +415,7 @@ namespace FitGaussian_ns
 
         if (mat_origin.empty())
         {
-            INFO_STREAM << "[Error] Input image is empty. Aborting AutoROI." << std::endl;
+            ERROR_STREAM << "[Error] Input image is empty. Aborting AutoROI." << std::endl;
             return;
         }
 
@@ -425,7 +425,7 @@ namespace FitGaussian_ns
         const bool converged = auto_roi.has_converged();
         if (!converged)
         {
-            INFO_STREAM << "[Warning] AutoROI did not converge. Using full image as ROI." << std::endl;
+            std::cerr << "[Warning] AutoROI did not converge. Using full image as ROI." << std::endl;
             roi = cv::Rect(0, 0, mat_origin.cols, mat_origin.rows);
         }
         else
@@ -434,7 +434,7 @@ namespace FitGaussian_ns
 
             if (!sanitize_roi(roi, mat_origin))
             {
-                INFO_STREAM << "[Warning] Invalid ROI after sanitization. Using full image." << std::endl;
+                std::cerr << "[Warning] Invalid ROI after sanitization. Using full image." << std::endl;
                 roi = cv::Rect(0, 0, mat_origin.cols, mat_origin.rows);
             }
         }
@@ -570,8 +570,9 @@ namespace FitGaussian_ns
         if (cfg.profilefit_fixedbg)
         {
             // Minimal adaptation to mirror ISL behavior:
-            // estimate image background on ROI, then convert to projection background.
-            const double bg_pixel = estimate_background_isl_like(img, 5);            
+            // estimate image background using the same method as ISL::Image::estimate_background(5)
+            const double bg_pixel = estimate_background_isl_like(img, 5);    
+            fixed_bg_value = bg_pixel;
         }
 
         FitGaussLM fit(axis + "Proj",
