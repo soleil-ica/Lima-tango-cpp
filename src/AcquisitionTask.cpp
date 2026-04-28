@@ -197,7 +197,6 @@ void AcquisitionTask::process_message(yat::Message& msg)
                     while (lima::AcqRunning == ctStatus.AcquisitionStatus);
                     INFO_STREAM << "Acquition ended.";
 
-                    m_acq_conf.ct->resetStatus(false);
                     set_state(Tango::STANDBY);
                     set_status(string("Waiting for request ..."));
                     INFO_STREAM << "Acquisition is Stopped." << endl;
