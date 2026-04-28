@@ -374,6 +374,9 @@ void LimaDetector::init_device()
 			return;
 		}
 	
+		// everything seems ok
+		m_is_device_initialized = true;
+
         //- Ensure to call this, only when LimaDetector & specifcs devices are created by ClassFactory
         //- That means, we need to call tis only at the command Init() and not at the start of the device
         if(LimaDetector::m_init_count > 1)
@@ -383,9 +386,6 @@ void LimaDetector::init_device()
             ControlFactory::instance().init_specific_device(detectorType);
         }	
 	
-		// everything seems ok
-		m_is_device_initialized = true;
-		
         //write at init, only if device is correctly initialized
         if(m_is_device_initialized)
         {
