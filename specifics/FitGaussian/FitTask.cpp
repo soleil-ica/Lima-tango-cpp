@@ -82,7 +82,11 @@ namespace FitGaussian_ns
           m_fit_tolerance(1e-6),
           m_xproj_enabled(true),
           m_yproj_enabled(true),
-          m_profilefit_fixedbg(false)
+          m_profilefit_fixedbg(false),
+          m_use_rotation(false),
+          m_rotation_angle_cv_code(cv::ROTATE_90_CLOCKWISE),
+          m_rotation_angle(0),
+          m_display_rotated_image(false)
     {
         INFO_STREAM << "FitTask::FitTask(" << opType << ")" << std::endl;
     }
@@ -384,6 +388,12 @@ namespace FitGaussian_ns
             return false;
         }
 
+        if (src.type != Data::UINT16)
+        {
+            ERROR_STREAM << "[Error] Unsupported image type: expected UINT16, got type=" << src.type << std::endl;
+            return false;
+        }
+
         width  = static_cast<int>(src.dimensions[0]);
         height = static_cast<int>(src.dimensions[1]);
 
@@ -425,7 +435,7 @@ namespace FitGaussian_ns
         const bool converged = auto_roi.has_converged();
         if (!converged)
         {
-            std::cerr << "[Warning] AutoROI did not converge. Using full image as ROI." << std::endl;
+            std::cerr << "[Warning] AutoROI did not converge. Using full image as ROI. Skip projections" << std::endl;
             roi = cv::Rect(0, 0, mat_origin.cols, mat_origin.rows);
         }
         else
@@ -434,7 +444,7 @@ namespace FitGaussian_ns
 
             if (!sanitize_roi(roi, mat_origin))
             {
-                std::cerr << "[Warning] Invalid ROI after sanitization. Using full image." << std::endl;
+                std::cerr << "[Warning] Invalid ROI after sanitization. Using full image as ROI" << std::endl;
                 roi = cv::Rect(0, 0, mat_origin.cols, mat_origin.rows);
             }
         }
