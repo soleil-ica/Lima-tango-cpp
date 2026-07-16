@@ -482,20 +482,6 @@ void LimaDetectorClass::set_default_property()
 	//	Set Default Class Properties
 
 	//	Set Default device Properties
-	prop_name = "AutoStartVideo";
-	prop_desc = "Allows calling automatically the ``Start`` command when:<br>\n- The device starts.<br>\n- After calling the ``Init`` command.";
-	prop_def  = "false";
-	vect_data.clear();
-	vect_data.push_back("false");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
 	prop_name = "AutoSaveResetRoi";
 	prop_desc = "Memorize the ``full frame`` automatically at the call of ``ResetRoi`` :<br>\n[default = false]";
 	prop_def  = "false";
@@ -510,254 +496,11 @@ void LimaDetectorClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "DetectorDescription";
-	prop_desc = "Detector user-defined text to identify the engine.";
-	prop_def  = "This is my Simulator";
+	prop_name = "AutoStartVideo";
+	prop_desc = "Allows calling automatically the ``Start`` command when:<br>\n- The device starts.<br>\n- After calling the ``Init`` command.";
+	prop_def  = "false";
 	vect_data.clear();
-	vect_data.push_back("This is my Simulator");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "DetectorType";
-	prop_desc = "Define the type of the connected Detector .<BR>\nAvailables types :<BR>\n- AndorCCD<BR>\n- BaslerCCD<BR>\n- Dhyana<br>\n- Eiger<br>\n- Hamamatsu<br>\n- ImXpad<br>\n- Lambda<br>\n- MarCCD<BR>\n- Maxipix<BR>\n- Merlin<BR>\n- Pco<BR>\n- PerkinElmer<BR>\n- PilatusPixelDetector<BR>\n- PrincetonCCD<BR>\n- TeledynePI<BR>\n- SimulatorCCD<BR>\n- SlsEiger<BR>\n- SlsJungfrau<BR>\n- SpectralInstrument<BR>\n- SpectrumOneCCD<BR>\n- Ufxc<BR>\n- UviewCCD<BR>\n- XpadPixelDetector<BR>";
-	prop_def  = "SimulatorCCD";
-	vect_data.clear();
-	vect_data.push_back("SimulatorCCD");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "DetectorPixelDepth";
-	prop_desc = "Define the pixel depth of the detector : <br>\nAvailables values : <br>\n- 8 <br>\n- 12<br>\n- 16<br>\n- 16S<br>\n- 24<br>\n- 24S<br>\n- 32<br>\n- 32S<br>";
-	prop_def  = "16";
-	vect_data.clear();
-	vect_data.push_back("16");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "SpecialDisplayType";
-	prop_desc = "Special type of the image attribute for display and saving (NOT_USED, FLOAT, ...)";
-	prop_def  = "NOT_USED";
-	vect_data.clear();
-	vect_data.push_back("NOT_USED");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "DetectorVideoMode";
-	prop_desc = "Define the format of video stream: <br>\nAvailables values :<br>\n- NONE<BR>\n- Y8 <BR>\n- Y16<BR>\n- Y32<BR>\n- Y64<BR>\n- RGB555<BR>\n- RGB565<BR>\n- RGB24<BR>\n- RGB32<BR>\n- BGR24<BR>\n- BGR32<BR>\n- BAYER_RG8<BR>\n- BAYER_RG16<BR>\n- I420<BR>\n- YUV411<BR>\n- YUV422<BR>\n- YUV444<BR>\n<br>\nNota:<br>\nThis property is usefull only for detectors having video capabilities.<BR>\nOtherwise, use only NONE.";
-	prop_def  = "NONE";
-	vect_data.clear();
-	vect_data.push_back("NONE");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ImageSource";
-	prop_desc = "Choose the source of Data given to the image attribute :<br>\n- VIDEO : use ctVideo->LastImage()<br>\n- ACQUISITION : use ctControl->ReadImage()";
-	prop_def  = "VIDEO";
-	vect_data.clear();
-	vect_data.push_back("VIDEO");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ImageOpMode";
-	prop_desc = "Define ImageOpMode for Roi/Binning/etc...  :<br>\nAvailables values :<br>\n- HardOnly<br>\n- SoftOnly<br>\n- HardAndSoft<br>";
-	prop_def  = "HardAndSoft";
-	vect_data.clear();
-	vect_data.push_back("HardAndSoft");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "FileFormat";
-	prop_desc = "Define the format of image files :<BR>\nAvailables values :<br>\n- EDF<BR>\n- NXS<BR>\n- RAW<BR>";
-	prop_def  = "NXS";
-	vect_data.clear();
-	vect_data.push_back("NXS");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "FilePrefix";
-	prop_desc = "Define the prefix used for the image files name.";
-	prop_def  = "Image";
-	vect_data.clear();
-	vect_data.push_back("Image");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "FileIndexPattern";
-	prop_desc = "Define the pattern of the index used for image files names.<br>\n<br>\nNota :<br>\n%04d mean that file name index will be end with exactly  4 digits filled by `0` if necessary .<br>";
-	prop_def  = "%06d";
-	vect_data.clear();
-	vect_data.push_back("%06d");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "FileTargetPath";
-	prop_desc = "Define the Path where Files will be generated, only when savingFile is checked.";
-	prop_def  = "./data";
-	vect_data.clear();
-	vect_data.push_back("./data");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "FileNbFrames";
-	prop_desc = "Define the nombre of frames to push in each saving file.";
-	prop_def  = "1";
-	vect_data.clear();
-	vect_data.push_back("1");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "FileManagedMode";
-	prop_desc = "Define the File managed Mode :<br>\n- HARDWARE : <br>\n- SOFTWARE  : <br>";
-	prop_def  = "SOFTWARE";
-	vect_data.clear();
-	vect_data.push_back("SOFTWARE");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "FileWriteMode";
-	prop_desc = "Available only for Nexus format : set the SetWriteMode(). <br>\nAvailable values :<br>\n- ASYNCHRONOUS<br>\n- SYNCHRONOUS<br>\n- DELAYED";
-	prop_def  = "ASYNCHRONOUS";
-	vect_data.clear();
-	vect_data.push_back("ASYNCHRONOUS");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "FileMemoryMode";
-	prop_desc = "Available only for Nexus format : set the SetDataItemMemoryMode().<br>\nAvailable values :<br>\n- COPY<br>\n- NO_COPY";
-	prop_def  = "COPY";
-	vect_data.clear();
-	vect_data.push_back("COPY");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "FileTimestampEnabled";
-	prop_desc = "Define wether the timestamp is requested in the Nexus file or not<br>";
-	prop_def  = "true";
-	vect_data.clear();
-	vect_data.push_back("true");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "DebugModules";
-	prop_desc = "Define modules that we need to have some debug traces.<BR>\nAvailables values :<BR>\n- None<BR>\n- Hardware<BR>\n- Control<BR>\n- Common<BR>\n- Camera<BR>";
-	prop_def  = "Hardware\nControl\nCommon\nCamera";
-	vect_data.clear();
-	vect_data.push_back("Hardware");
-	vect_data.push_back("Control");
-	vect_data.push_back("Common");
-	vect_data.push_back("Camera");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "DebugLevels";
-	prop_desc = "Define Lima verbose level of traces.<BR>\nAvailables values :<BR>\n- Fatal<BR>\n- Error<BR>\n- Warning<BR>\n- Trace<BR>\n- Funct<BR>\n- Param<BR>\n- Return<BR>\n- Always<BR>";
-	prop_def  = "Fatal\nError\nWarning";
-	vect_data.clear();
-	vect_data.push_back("Fatal");
-	vect_data.push_back("Error");
-	vect_data.push_back("Warning");
+	vect_data.push_back("false");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -784,11 +527,142 @@ void LimaDetectorClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "DebugLevels";
+	prop_desc = "Define Lima verbose level of traces.<BR>\nAvailables values :<BR>\n- Fatal<BR>\n- Error<BR>\n- Warning<BR>\n- Trace<BR>\n- Funct<BR>\n- Param<BR>\n- Return<BR>\n- Always<BR>";
+	prop_def  = "Fatal\nError\nWarning";
+	vect_data.clear();
+	vect_data.push_back("Fatal");
+	vect_data.push_back("Error");
+	vect_data.push_back("Warning");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "DebugModules";
+	prop_desc = "Define modules that we need to have some debug traces.<BR>\nAvailables values :<BR>\n- None<BR>\n- Hardware<BR>\n- Control<BR>\n- Common<BR>\n- Camera<BR>";
+	prop_def  = "Hardware\nControl\nCommon\nCamera";
+	vect_data.clear();
+	vect_data.push_back("Hardware");
+	vect_data.push_back("Control");
+	vect_data.push_back("Common");
+	vect_data.push_back("Camera");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "DetectorDescription";
+	prop_desc = "Detector user-defined text to identify the engine.";
+	prop_def  = "This is my Simulator";
+	vect_data.clear();
+	vect_data.push_back("This is my Simulator");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "DetectorPixelDepth";
+	prop_desc = "Define the pixel depth of the detector : <br>\nAvailables values : <br>\n- 8 <br>\n- 12<br>\n- 16<br>\n- 16S<br>\n- 24<br>\n- 24S<br>\n- 32<br>\n- 32S<br>";
+	prop_def  = "16";
+	vect_data.clear();
+	vect_data.push_back("16");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "DetectorType";
+	prop_desc = "Define the type of the connected Detector .<BR>\nAvailables types :<BR>\n- AndorCCD<BR>\n- BaslerCCD<BR>\n- Dhyana<br>\n- Eiger<br>\n- Hamamatsu<br>\n- ImXpad<br>\n- Lambda<br>\n- MarCCD<BR>\n- Maxipix<BR>\n- Merlin<BR>\n- Pco<BR>\n- PerkinElmer<BR>\n- PilatusPixelDetector<BR>\n- PrincetonCCD<BR>\n- TeledynePI<BR>\n- SimulatorCCD<BR>\n- SlsEiger<BR>\n- SlsJungfrau<BR>\n- SpectralInstrument<BR>\n- SpectrumOneCCD<BR>\n- Ufxc<BR>\n- UviewCCD<BR>\n- XpadPixelDetector<BR>";
+	prop_def  = "SimulatorCCD";
+	vect_data.clear();
+	vect_data.push_back("SimulatorCCD");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "DetectorVideoMode";
+	prop_desc = "Define the format of video stream: <br>\nAvailables values :<br>\n- NONE<BR>\n- Y8 <BR>\n- Y16<BR>\n- Y32<BR>\n- Y64<BR>\n- RGB555<BR>\n- RGB565<BR>\n- RGB24<BR>\n- RGB32<BR>\n- BGR24<BR>\n- BGR32<BR>\n- BAYER_RG8<BR>\n- BAYER_RG16<BR>\n- I420<BR>\n- YUV411<BR>\n- YUV422<BR>\n- YUV444<BR>\n<br>\nNota:<br>\nThis property is usefull only for detectors having video capabilities.<BR>\nOtherwise, use only NONE.";
+	prop_def  = "NONE";
+	vect_data.clear();
+	vect_data.push_back("NONE");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertAllowHwVideoExposureTime";
+	prop_desc = "Enables the direct writing of exposureTime to the hardware when operating in Video mode.";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertAllowMixedRoiBinning";
+	prop_desc = "Define whether the simultaneous use of binning and ROI is allowed";
+	prop_def  = "true";
+	vect_data.clear();
+	vect_data.push_back("true");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
 	prop_name = "ExpertBufferMaxMemoryPercent";
 	prop_desc = "Define the Percent of Memory reserved to Lima buffer control.<br>\nBufferMaxMemoryPercent = 70, allow a Memory of 1.4 Go. (Default)<br>\nBufferMaxMemoryPercent = 100, allow a Memory of 2 Go. (Maximum)";
 	prop_def  = "70";
 	vect_data.clear();
 	vect_data.push_back("70");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ExpertEnableHardwareSync";
+	prop_desc = "Define if the device should read hardware values";
+	prop_def  = "false";
+	vect_data.clear();
+	vect_data.push_back("false");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -826,8 +700,106 @@ void LimaDetectorClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ExpertAllowMixedRoiBinning";
-	prop_desc = "Define whether the simultaneous use of binning and ROI is allowed";
+	prop_name = "FileFormat";
+	prop_desc = "Define the format of image files :<BR>\nAvailables values :<br>\n- EDF<BR>\n- NXS<BR>\n- RAW<BR>";
+	prop_def  = "NXS";
+	vect_data.clear();
+	vect_data.push_back("NXS");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "FileIndexPattern";
+	prop_desc = "Define the pattern of the index used for image files names.<br>\n<br>\nNota :<br>\n%04d mean that file name index will be end with exactly  4 digits filled by `0` if necessary .<br>";
+	prop_def  = "%06d";
+	vect_data.clear();
+	vect_data.push_back("%06d");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "FileManagedMode";
+	prop_desc = "Define the File managed Mode :<br>\n- HARDWARE : <br>\n- SOFTWARE  : <br>";
+	prop_def  = "SOFTWARE";
+	vect_data.clear();
+	vect_data.push_back("SOFTWARE");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "FileMemoryMode";
+	prop_desc = "Available only for Nexus format : set the SetDataItemMemoryMode().<br>\nAvailable values :<br>\n- COPY<br>\n- NO_COPY";
+	prop_def  = "COPY";
+	vect_data.clear();
+	vect_data.push_back("COPY");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "FileNbFrames";
+	prop_desc = "Define the nombre of frames to push in each saving file.";
+	prop_def  = "1";
+	vect_data.clear();
+	vect_data.push_back("1");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "FilePrefix";
+	prop_desc = "Define the prefix used for the image files name.";
+	prop_def  = "Image";
+	vect_data.clear();
+	vect_data.push_back("Image");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "FileTargetPath";
+	prop_desc = "Define the Path where Files will be generated, only when savingFile is checked.";
+	prop_def  = "./data";
+	vect_data.clear();
+	vect_data.push_back("./data");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "FileTimestampEnabled";
+	prop_desc = "Define wether the timestamp is requested in the Nexus file or not<br>";
 	prop_def  = "true";
 	vect_data.clear();
 	vect_data.push_back("true");
@@ -840,11 +812,11 @@ void LimaDetectorClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "ExpertEnableHardwareSync";
-	prop_desc = "Define if the device should read hardware values";
-	prop_def  = "false";
+	prop_name = "FileWriteMode";
+	prop_desc = "Available only for Nexus format : set the SetWriteMode(). <br>\nAvailable values :<br>\n- ASYNCHRONOUS<br>\n- SYNCHRONOUS<br>\n- DELAYED";
+	prop_def  = "ASYNCHRONOUS";
 	vect_data.clear();
-	vect_data.push_back("false");
+	vect_data.push_back("ASYNCHRONOUS");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -854,14 +826,39 @@ void LimaDetectorClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "MemorizedRoi";
-	prop_desc = "Memorize/Define the Region of Interest of the Acquisition: <br>\norigin X<br>\norigin Y<br>\nWidth<br>\nHeight<br>\n<br>\nNota:<br>\nif any roi value is <0, then we consider all detector area as Roi.";
-	prop_def  = "-1\n-1\n-1\n-1";
+	prop_name = "ImageOpMode";
+	prop_desc = "Define ImageOpMode for Roi/Binning/etc...  :<br>\nAvailables values :<br>\n- HardOnly<br>\n- SoftOnly<br>\n- HardAndSoft<br>";
+	prop_def  = "HardAndSoft";
 	vect_data.clear();
-	vect_data.push_back("-1");
-	vect_data.push_back("-1");
-	vect_data.push_back("-1");
-	vect_data.push_back("-1");
+	vect_data.push_back("HardAndSoft");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "ImageSource";
+	prop_desc = "Choose the source of Data given to the image attribute :<br>\n- VIDEO : use ctVideo->LastImage()<br>\n- ACQUISITION : use ctControl->ReadImage()";
+	prop_def  = "VIDEO";
+	vect_data.clear();
+	vect_data.push_back("VIDEO");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "MemorizedAcquisitionMode";
+	prop_desc = "Memorize/Define the acquisitionMode attribute at Init device<br>\nAvailables values :<br>\n- SINGLE<br>\n- ACCUMULATION<br>";
+	prop_def  = "SINGLE";
+	vect_data.clear();
+	vect_data.push_back("SINGLE");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -899,67 +896,11 @@ void LimaDetectorClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "MemorizedAcquisitionMode";
-	prop_desc = "Memorize/Define the acquisitionMode attribute at Init device<br>\nAvailables values :<br>\n- SINGLE<br>\n- ACCUMULATION<br>";
-	prop_def  = "SINGLE";
+	prop_name = "MemorizedExposureAccTime";
+	prop_desc = "Memorize/Define the exposureAccTime attribute at Init device<br>";
+	prop_def  = "100";
 	vect_data.clear();
-	vect_data.push_back("SINGLE");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "MemorizedTriggerMode";
-	prop_desc = "Memorize/Define the triggerMode attribute at Init device<br>\nAvailables values :<br>\n- INTERNAL_SINGLE<br>\n- EXTERNAL_SINGLE<br>\n- EXTERNAL_MULTI<br>\n- EXTERNAL_GATE<br>\n- INTERNAL_MULTI<br>\n- EXTERNAL_START_STOP<br>\n- EXTERNAL_READOUT<br>";
-	prop_def  = "INTERNAL_SINGLE";
-	vect_data.clear();
-	vect_data.push_back("INTERNAL_SINGLE");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "MemorizedShutterMode";
-	prop_desc = "Memorize/Define the shutterMode attribute at Init device<br>\nAvailables values :<br>\n- MANUAL<br>\n- AUTO_FRAME<br>\n- AUTO_SEQUENCE";
-	prop_def  = "MANUAL";
-	vect_data.clear();
-	vect_data.push_back("MANUAL");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "MemorizedShutterOpenTime";
-	prop_desc = "Memorize/Define the shutterOpenTime attribute at Init device<br>";
-	prop_def  = "1000";
-	vect_data.clear();
-	vect_data.push_back("1000");
-	if (prop_def.length()>0)
-	{
-		Tango::DbDatum	data(prop_name);
-		data << vect_data ;
-		dev_def_prop.push_back(data);
-		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
-	}
-	else
-		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "MemorizedShutterCloseTime";
-	prop_desc = "Memorize/Define the shutterCloseTime attribute at Init device<br>";
-	prop_def  = "1000";
-	vect_data.clear();
-	vect_data.push_back("1000");
+	vect_data.push_back("100");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -983,11 +924,24 @@ void LimaDetectorClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "MemorizedExposureAccTime";
-	prop_desc = "Memorize/Define the exposureAccTime attribute at Init device<br>";
-	prop_def  = "100";
+	prop_name = "MemorizedFileGeneration";
+	prop_desc = "Memorize/Define the fileGeneration attribute at Init device<br>";
+	prop_def  = "false";
 	vect_data.clear();
-	vect_data.push_back("100");
+	vect_data.push_back("false");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "MemorizedFileNbFrames";
+	prop_desc = "";
+	prop_def  = "";
+	vect_data.clear();
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -1025,11 +979,14 @@ void LimaDetectorClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "MemorizedFileGeneration";
-	prop_desc = "Memorize/Define the fileGeneration attribute at Init device<br>";
-	prop_def  = "false";
+	prop_name = "MemorizedRoi";
+	prop_desc = "Memorize/Define the Region of Interest of the Acquisition: <br>\norigin X<br>\norigin Y<br>\nWidth<br>\nHeight<br>\n<br>\nNota:<br>\nif any roi value is <0, then we consider all detector area as Roi.";
+	prop_def  = "-1\n-1\n-1\n-1";
 	vect_data.clear();
-	vect_data.push_back("false");
+	vect_data.push_back("-1");
+	vect_data.push_back("-1");
+	vect_data.push_back("-1");
+	vect_data.push_back("-1");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);
@@ -1039,10 +996,67 @@ void LimaDetectorClass::set_default_property()
 	}
 	else
 		add_wiz_dev_prop(prop_name, prop_desc);
-	prop_name = "MemorizedFileNbFrames";
-	prop_desc = "";
-	prop_def  = "";
+	prop_name = "MemorizedShutterCloseTime";
+	prop_desc = "Memorize/Define the shutterCloseTime attribute at Init device<br>";
+	prop_def  = "1000";
 	vect_data.clear();
+	vect_data.push_back("1000");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "MemorizedShutterMode";
+	prop_desc = "Memorize/Define the shutterMode attribute at Init device<br>\nAvailables values :<br>\n- MANUAL<br>\n- AUTO_FRAME<br>\n- AUTO_SEQUENCE";
+	prop_def  = "MANUAL";
+	vect_data.clear();
+	vect_data.push_back("MANUAL");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "MemorizedShutterOpenTime";
+	prop_desc = "Memorize/Define the shutterOpenTime attribute at Init device<br>";
+	prop_def  = "1000";
+	vect_data.clear();
+	vect_data.push_back("1000");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "MemorizedTriggerMode";
+	prop_desc = "Memorize/Define the triggerMode attribute at Init device<br>\nAvailables values :<br>\n- INTERNAL_SINGLE<br>\n- EXTERNAL_SINGLE<br>\n- EXTERNAL_MULTI<br>\n- EXTERNAL_GATE<br>\n- INTERNAL_MULTI<br>\n- EXTERNAL_START_STOP<br>\n- EXTERNAL_READOUT<br>";
+	prop_def  = "INTERNAL_SINGLE";
+	vect_data.clear();
+	vect_data.push_back("INTERNAL_SINGLE");
+	if (prop_def.length()>0)
+	{
+		Tango::DbDatum	data(prop_name);
+		data << vect_data ;
+		dev_def_prop.push_back(data);
+		add_wiz_dev_prop(prop_name, prop_desc,  prop_def);
+	}
+	else
+		add_wiz_dev_prop(prop_name, prop_desc);
+	prop_name = "SpecialDisplayType";
+	prop_desc = "Special type of the image attribute for display and saving (NOT_USED, FLOAT, ...)";
+	prop_def  = "NOT_USED";
+	vect_data.clear();
+	vect_data.push_back("NOT_USED");
 	if (prop_def.length()>0)
 	{
 		Tango::DbDatum	data(prop_name);

@@ -1,114 +1,19 @@
 <?xml version="1.0" encoding="ASCII"?>
 <pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
   <classes name="LimaDetector" pogoRevision="9.6">
-    <description description="Generic device intented to manage Detector via Lima Framework" title="Lima Device Generic" sourcePath="/home/informatique/ica/iperty/dev/Lima/applications/tango/cpp/src" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
+    <description description="Generic device intented to manage Detector via Lima Framework" title="Lima Device Generic" sourcePath="/home/informatique/ica/iperty/dev/Lima3/Lima/applications/tango/cpp/src" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
       <inheritances classname="Device_4Impl" sourcePath=""/>
       <identification contact="at synchrotron-soleil.fr - arafat.noureddine" author="arafat.noureddine" emailDomain="synchrotron-soleil.fr" classFamily="Acquisition" siteSpecific="" platform="All Platforms" bus="Not Applicable" manufacturer="SOLEIL" reference=""/>
     </description>
-    <deviceProperties name="AutoStartVideo" description="Allows calling automatically the ``Start`` command when:&lt;br>&#xA;- The device starts.&lt;br>&#xA;- After calling the ``Init`` command.">
-      <type xsi:type="pogoDsl:BooleanType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>false</DefaultPropValue>
-    </deviceProperties>
     <deviceProperties name="AutoSaveResetRoi" description="Memorize the ``full frame`` automatically at the call of ``ResetRoi`` :&lt;br>&#xA;[default = false]">
       <type xsi:type="pogoDsl:BooleanType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>false</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="DetectorDescription" description="Detector user-defined text to identify the engine.">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>This is my Simulator</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="DetectorType" description="Define the type of the connected Detector .&lt;BR>&#xA;Availables types :&lt;BR>&#xA;- AndorCCD&lt;BR>&#xA;- BaslerCCD&lt;BR>&#xA;- Dhyana&lt;br>&#xA;- Eiger&lt;br>&#xA;- Hamamatsu&lt;br>&#xA;- ImXpad&lt;br>&#xA;- Lambda&lt;br>&#xA;- MarCCD&lt;BR>&#xA;- Maxipix&lt;BR>&#xA;- Merlin&lt;BR>&#xA;- Pco&lt;BR>&#xA;- PerkinElmer&lt;BR>&#xA;- PilatusPixelDetector&lt;BR>&#xA;- PrincetonCCD&lt;BR>&#xA;- TeledynePI&lt;BR>&#xA;- SimulatorCCD&lt;BR>&#xA;- SlsEiger&lt;BR>&#xA;- SlsJungfrau&lt;BR>&#xA;- SpectralInstrument&lt;BR>&#xA;- SpectrumOneCCD&lt;BR>&#xA;- Ufxc&lt;BR>&#xA;- UviewCCD&lt;BR>&#xA;- XpadPixelDetector&lt;BR>">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>SimulatorCCD</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="DetectorPixelDepth" description="Define the pixel depth of the detector : &lt;br>&#xA;Availables values : &lt;br>&#xA;- 8 &lt;br>&#xA;- 12&lt;br>&#xA;- 16&lt;br>&#xA;- 16S&lt;br>&#xA;- 24&lt;br>&#xA;- 24S&lt;br>&#xA;- 32&lt;br>&#xA;- 32S&lt;br>">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>16</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="SpecialDisplayType" description="Special type of the image attribute for display and saving (NOT_USED, FLOAT, ...)">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>NOT_USED</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="DetectorVideoMode" description="Define the format of video stream: &lt;br>&#xA;Availables values :&lt;br>&#xA;- NONE&lt;BR>&#xA;- Y8 &lt;BR>&#xA;- Y16&lt;BR>&#xA;- Y32&lt;BR>&#xA;- Y64&lt;BR>&#xA;- RGB555&lt;BR>&#xA;- RGB565&lt;BR>&#xA;- RGB24&lt;BR>&#xA;- RGB32&lt;BR>&#xA;- BGR24&lt;BR>&#xA;- BGR32&lt;BR>&#xA;- BAYER_RG8&lt;BR>&#xA;- BAYER_RG16&lt;BR>&#xA;- I420&lt;BR>&#xA;- YUV411&lt;BR>&#xA;- YUV422&lt;BR>&#xA;- YUV444&lt;BR>&#xA;&lt;br>&#xA;Nota:&lt;br>&#xA;This property is usefull only for detectors having video capabilities.&lt;BR>&#xA;Otherwise, use only NONE.">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>NONE</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="ImageSource" description="Choose the source of Data given to the image attribute :&lt;br>&#xA;- VIDEO : use ctVideo->LastImage()&lt;br>&#xA;- ACQUISITION : use ctControl->ReadImage()">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>VIDEO</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="ImageOpMode" description="Define ImageOpMode for Roi/Binning/etc...  :&lt;br>&#xA;Availables values :&lt;br>&#xA;- HardOnly&lt;br>&#xA;- SoftOnly&lt;br>&#xA;- HardAndSoft&lt;br>">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>HardAndSoft</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="FileFormat" description="Define the format of image files :&lt;BR>&#xA;Availables values :&lt;br>&#xA;- EDF&lt;BR>&#xA;- NXS&lt;BR>&#xA;- RAW&lt;BR>">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>NXS</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="FilePrefix" description="Define the prefix used for the image files name.">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>Image</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="FileIndexPattern" description="Define the pattern of the index used for image files names.&lt;br>&#xA;&lt;br>&#xA;Nota :&lt;br>&#xA;%04d mean that file name index will be end with exactly  4 digits filled by `0` if necessary .&lt;br>">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>%06d</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="FileTargetPath" description="Define the Path where Files will be generated, only when savingFile is checked.">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>./data</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="FileNbFrames" description="Define the nombre of frames to push in each saving file.">
-      <type xsi:type="pogoDsl:IntType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>1</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="FileManagedMode" description="Define the File managed Mode :&lt;br>&#xA;- HARDWARE : &lt;br>&#xA;- SOFTWARE  : &lt;br>">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>SOFTWARE</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="FileWriteMode" description="Available only for Nexus format : set the SetWriteMode(). &lt;br>&#xA;Available values :&lt;br>&#xA;- ASYNCHRONOUS&lt;br>&#xA;- SYNCHRONOUS&lt;br>&#xA;- DELAYED">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>ASYNCHRONOUS</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="FileMemoryMode" description="Available only for Nexus format : set the SetDataItemMemoryMode().&lt;br>&#xA;Available values :&lt;br>&#xA;- COPY&lt;br>&#xA;- NO_COPY">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>COPY</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="FileTimestampEnabled" description="Define wether the timestamp is requested in the Nexus file or not&lt;br>">
+    <deviceProperties name="AutoStartVideo" description="Allows calling automatically the ``Start`` command when:&lt;br>&#xA;- The device starts.&lt;br>&#xA;- After calling the ``Init`` command.">
       <type xsi:type="pogoDsl:BooleanType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>true</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="DebugModules" description="Define modules that we need to have some debug traces.&lt;BR>&#xA;Availables values :&lt;BR>&#xA;- None&lt;BR>&#xA;- Hardware&lt;BR>&#xA;- Control&lt;BR>&#xA;- Common&lt;BR>&#xA;- Camera&lt;BR>">
-      <type xsi:type="pogoDsl:StringVectorType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>Hardware</DefaultPropValue>
-      <DefaultPropValue>Control</DefaultPropValue>
-      <DefaultPropValue>Common</DefaultPropValue>
-      <DefaultPropValue>Camera</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="DebugLevels" description="Define Lima verbose level of traces.&lt;BR>&#xA;Availables values :&lt;BR>&#xA;- Fatal&lt;BR>&#xA;- Error&lt;BR>&#xA;- Warning&lt;BR>&#xA;- Trace&lt;BR>&#xA;- Funct&lt;BR>&#xA;- Param&lt;BR>&#xA;- Return&lt;BR>&#xA;- Always&lt;BR>">
-      <type xsi:type="pogoDsl:StringVectorType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>Fatal</DefaultPropValue>
-      <DefaultPropValue>Error</DefaultPropValue>
-      <DefaultPropValue>Warning</DefaultPropValue>
+      <DefaultPropValue>false</DefaultPropValue>
     </deviceProperties>
     <deviceProperties name="DebugFormats" description="Define Lima traces format.&lt;BR>&#xA;Availables values :&lt;BR>&#xA;- DateTime&lt;BR>&#xA;- Thread&lt;BR>&#xA;- Module&lt;BR>&#xA;- Obj&lt;BR>&#xA;- Funct&lt;BR>&#xA;- FileLine&lt;BR>">
       <type xsi:type="pogoDsl:StringVectorType"/>
@@ -118,10 +23,60 @@
       <DefaultPropValue>Type</DefaultPropValue>
       <DefaultPropValue>Funct</DefaultPropValue>
     </deviceProperties>
+    <deviceProperties name="DebugLevels" description="Define Lima verbose level of traces.&lt;BR>&#xA;Availables values :&lt;BR>&#xA;- Fatal&lt;BR>&#xA;- Error&lt;BR>&#xA;- Warning&lt;BR>&#xA;- Trace&lt;BR>&#xA;- Funct&lt;BR>&#xA;- Param&lt;BR>&#xA;- Return&lt;BR>&#xA;- Always&lt;BR>">
+      <type xsi:type="pogoDsl:StringVectorType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>Fatal</DefaultPropValue>
+      <DefaultPropValue>Error</DefaultPropValue>
+      <DefaultPropValue>Warning</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="DebugModules" description="Define modules that we need to have some debug traces.&lt;BR>&#xA;Availables values :&lt;BR>&#xA;- None&lt;BR>&#xA;- Hardware&lt;BR>&#xA;- Control&lt;BR>&#xA;- Common&lt;BR>&#xA;- Camera&lt;BR>">
+      <type xsi:type="pogoDsl:StringVectorType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>Hardware</DefaultPropValue>
+      <DefaultPropValue>Control</DefaultPropValue>
+      <DefaultPropValue>Common</DefaultPropValue>
+      <DefaultPropValue>Camera</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="DetectorDescription" description="Detector user-defined text to identify the engine.">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>This is my Simulator</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="DetectorPixelDepth" description="Define the pixel depth of the detector : &lt;br>&#xA;Availables values : &lt;br>&#xA;- 8 &lt;br>&#xA;- 12&lt;br>&#xA;- 16&lt;br>&#xA;- 16S&lt;br>&#xA;- 24&lt;br>&#xA;- 24S&lt;br>&#xA;- 32&lt;br>&#xA;- 32S&lt;br>">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>16</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="DetectorType" description="Define the type of the connected Detector .&lt;BR>&#xA;Availables types :&lt;BR>&#xA;- AndorCCD&lt;BR>&#xA;- BaslerCCD&lt;BR>&#xA;- Dhyana&lt;br>&#xA;- Eiger&lt;br>&#xA;- Hamamatsu&lt;br>&#xA;- ImXpad&lt;br>&#xA;- Lambda&lt;br>&#xA;- MarCCD&lt;BR>&#xA;- Maxipix&lt;BR>&#xA;- Merlin&lt;BR>&#xA;- Pco&lt;BR>&#xA;- PerkinElmer&lt;BR>&#xA;- PilatusPixelDetector&lt;BR>&#xA;- PrincetonCCD&lt;BR>&#xA;- TeledynePI&lt;BR>&#xA;- SimulatorCCD&lt;BR>&#xA;- SlsEiger&lt;BR>&#xA;- SlsJungfrau&lt;BR>&#xA;- SpectralInstrument&lt;BR>&#xA;- SpectrumOneCCD&lt;BR>&#xA;- Ufxc&lt;BR>&#xA;- UviewCCD&lt;BR>&#xA;- XpadPixelDetector&lt;BR>">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>SimulatorCCD</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="DetectorVideoMode" description="Define the format of video stream: &lt;br>&#xA;Availables values :&lt;br>&#xA;- NONE&lt;BR>&#xA;- Y8 &lt;BR>&#xA;- Y16&lt;BR>&#xA;- Y32&lt;BR>&#xA;- Y64&lt;BR>&#xA;- RGB555&lt;BR>&#xA;- RGB565&lt;BR>&#xA;- RGB24&lt;BR>&#xA;- RGB32&lt;BR>&#xA;- BGR24&lt;BR>&#xA;- BGR32&lt;BR>&#xA;- BAYER_RG8&lt;BR>&#xA;- BAYER_RG16&lt;BR>&#xA;- I420&lt;BR>&#xA;- YUV411&lt;BR>&#xA;- YUV422&lt;BR>&#xA;- YUV444&lt;BR>&#xA;&lt;br>&#xA;Nota:&lt;br>&#xA;This property is usefull only for detectors having video capabilities.&lt;BR>&#xA;Otherwise, use only NONE.">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>NONE</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="ExpertAllowHwVideoExposureTime" description="Enables the direct writing of exposureTime to the hardware when operating in Video mode.">
+      <type xsi:type="pogoDsl:BooleanType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>false</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="ExpertAllowMixedRoiBinning" description="Define whether the simultaneous use of binning and ROI is allowed">
+      <type xsi:type="pogoDsl:BooleanType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>true</DefaultPropValue>
+    </deviceProperties>
     <deviceProperties name="ExpertBufferMaxMemoryPercent" description="Define the Percent of Memory reserved to Lima buffer control.&lt;br>&#xA;BufferMaxMemoryPercent = 70, allow a Memory of 1.4 Go. (Default)&lt;br>&#xA;BufferMaxMemoryPercent = 100, allow a Memory of 2 Go. (Maximum)">
       <type xsi:type="pogoDsl:UShortType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>70</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="ExpertEnableHardwareSync" description="Define if the device should read hardware values">
+      <type xsi:type="pogoDsl:BooleanType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>false</DefaultPropValue>
     </deviceProperties>
     <deviceProperties name="ExpertNbPoolThread" description="Defines the number of threads dedicated to process images in the ProcessLib">
       <type xsi:type="pogoDsl:UShortType"/>
@@ -133,23 +88,65 @@
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>5000</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="ExpertAllowMixedRoiBinning" description="Define whether the simultaneous use of binning and ROI is allowed">
+    <deviceProperties name="FileFormat" description="Define the format of image files :&lt;BR>&#xA;Availables values :&lt;br>&#xA;- EDF&lt;BR>&#xA;- NXS&lt;BR>&#xA;- RAW&lt;BR>">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>NXS</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="FileIndexPattern" description="Define the pattern of the index used for image files names.&lt;br>&#xA;&lt;br>&#xA;Nota :&lt;br>&#xA;%04d mean that file name index will be end with exactly  4 digits filled by `0` if necessary .&lt;br>">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>%06d</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="FileManagedMode" description="Define the File managed Mode :&lt;br>&#xA;- HARDWARE : &lt;br>&#xA;- SOFTWARE  : &lt;br>">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>SOFTWARE</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="FileMemoryMode" description="Available only for Nexus format : set the SetDataItemMemoryMode().&lt;br>&#xA;Available values :&lt;br>&#xA;- COPY&lt;br>&#xA;- NO_COPY">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>COPY</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="FileNbFrames" description="Define the nombre of frames to push in each saving file.">
+      <type xsi:type="pogoDsl:IntType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>1</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="FilePrefix" description="Define the prefix used for the image files name.">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>Image</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="FileTargetPath" description="Define the Path where Files will be generated, only when savingFile is checked.">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>./data</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="FileTimestampEnabled" description="Define wether the timestamp is requested in the Nexus file or not&lt;br>">
       <type xsi:type="pogoDsl:BooleanType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>true</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="ExpertEnableHardwareSync" description="Define if the device should read hardware values">
-      <type xsi:type="pogoDsl:BooleanType"/>
+    <deviceProperties name="FileWriteMode" description="Available only for Nexus format : set the SetWriteMode(). &lt;br>&#xA;Available values :&lt;br>&#xA;- ASYNCHRONOUS&lt;br>&#xA;- SYNCHRONOUS&lt;br>&#xA;- DELAYED">
+      <type xsi:type="pogoDsl:StringType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>false</DefaultPropValue>
+      <DefaultPropValue>ASYNCHRONOUS</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="MemorizedRoi" description="Memorize/Define the Region of Interest of the Acquisition: &lt;br>&#xA;origin X&lt;br>&#xA;origin Y&lt;br>&#xA;Width&lt;br>&#xA;Height&lt;br>&#xA;&lt;br>&#xA;Nota:&lt;br>&#xA;if any roi value is &lt;0, then we consider all detector area as Roi.">
-      <type xsi:type="pogoDsl:ShortVectorType"/>
+    <deviceProperties name="ImageOpMode" description="Define ImageOpMode for Roi/Binning/etc...  :&lt;br>&#xA;Availables values :&lt;br>&#xA;- HardOnly&lt;br>&#xA;- SoftOnly&lt;br>&#xA;- HardAndSoft&lt;br>">
+      <type xsi:type="pogoDsl:StringType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>-1</DefaultPropValue>
-      <DefaultPropValue>-1</DefaultPropValue>
-      <DefaultPropValue>-1</DefaultPropValue>
-      <DefaultPropValue>-1</DefaultPropValue>
+      <DefaultPropValue>HardAndSoft</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="ImageSource" description="Choose the source of Data given to the image attribute :&lt;br>&#xA;- VIDEO : use ctVideo->LastImage()&lt;br>&#xA;- ACQUISITION : use ctControl->ReadImage()">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>VIDEO</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="MemorizedAcquisitionMode" description="Memorize/Define the acquisitionMode attribute at Init device&lt;br>&#xA;Availables values :&lt;br>&#xA;- SINGLE&lt;br>&#xA;- ACCUMULATION&lt;br>">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>SINGLE</DefaultPropValue>
     </deviceProperties>
     <deviceProperties name="MemorizedBinningH" description="Memorize/Define the Binning Horizontal value of the Acquisition&lt;br>">
       <type xsi:type="pogoDsl:UShortType"/>
@@ -161,40 +158,24 @@
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>1</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="MemorizedAcquisitionMode" description="Memorize/Define the acquisitionMode attribute at Init device&lt;br>&#xA;Availables values :&lt;br>&#xA;- SINGLE&lt;br>&#xA;- ACCUMULATION&lt;br>">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>SINGLE</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="MemorizedTriggerMode" description="Memorize/Define the triggerMode attribute at Init device&lt;br>&#xA;Availables values :&lt;br>&#xA;- INTERNAL_SINGLE&lt;br>&#xA;- EXTERNAL_SINGLE&lt;br>&#xA;- EXTERNAL_MULTI&lt;br>&#xA;- EXTERNAL_GATE&lt;br>&#xA;- INTERNAL_MULTI&lt;br>&#xA;- EXTERNAL_START_STOP&lt;br>&#xA;- EXTERNAL_READOUT&lt;br>">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>INTERNAL_SINGLE</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="MemorizedShutterMode" description="Memorize/Define the shutterMode attribute at Init device&lt;br>&#xA;Availables values :&lt;br>&#xA;- MANUAL&lt;br>&#xA;- AUTO_FRAME&lt;br>&#xA;- AUTO_SEQUENCE">
-      <type xsi:type="pogoDsl:StringType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>MANUAL</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="MemorizedShutterOpenTime" description="Memorize/Define the shutterOpenTime attribute at Init device&lt;br>">
+    <deviceProperties name="MemorizedExposureAccTime" description="Memorize/Define the exposureAccTime attribute at Init device&lt;br>">
       <type xsi:type="pogoDsl:DoubleType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>1000</DefaultPropValue>
-    </deviceProperties>
-    <deviceProperties name="MemorizedShutterCloseTime" description="Memorize/Define the shutterCloseTime attribute at Init device&lt;br>">
-      <type xsi:type="pogoDsl:DoubleType"/>
-      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>1000</DefaultPropValue>
+      <DefaultPropValue>100</DefaultPropValue>
     </deviceProperties>
     <deviceProperties name="MemorizedExposureTime" description="Memorize/Define the exposureTime attribute  at Init device&lt;br>">
       <type xsi:type="pogoDsl:DoubleType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>1000</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="MemorizedExposureAccTime" description="Memorize/Define the exposureAccTime attribute at Init device&lt;br>">
-      <type xsi:type="pogoDsl:DoubleType"/>
+    <deviceProperties name="MemorizedFileGeneration" description="Memorize/Define the fileGeneration attribute at Init device&lt;br>">
+      <type xsi:type="pogoDsl:BooleanType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>100</DefaultPropValue>
+      <DefaultPropValue>false</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="MemorizedFileNbFrames" description="">
+      <type xsi:type="pogoDsl:IntType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
     </deviceProperties>
     <deviceProperties name="MemorizedLatencyTime" description="Memorize/Define the latencyTime attribute  at Init device&lt;br>">
       <type xsi:type="pogoDsl:DoubleType"/>
@@ -206,14 +187,38 @@
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
       <DefaultPropValue>1</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="MemorizedFileGeneration" description="Memorize/Define the fileGeneration attribute at Init device&lt;br>">
-      <type xsi:type="pogoDsl:BooleanType"/>
+    <deviceProperties name="MemorizedRoi" description="Memorize/Define the Region of Interest of the Acquisition: &lt;br>&#xA;origin X&lt;br>&#xA;origin Y&lt;br>&#xA;Width&lt;br>&#xA;Height&lt;br>&#xA;&lt;br>&#xA;Nota:&lt;br>&#xA;if any roi value is &lt;0, then we consider all detector area as Roi.">
+      <type xsi:type="pogoDsl:ShortVectorType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
-      <DefaultPropValue>false</DefaultPropValue>
+      <DefaultPropValue>-1</DefaultPropValue>
+      <DefaultPropValue>-1</DefaultPropValue>
+      <DefaultPropValue>-1</DefaultPropValue>
+      <DefaultPropValue>-1</DefaultPropValue>
     </deviceProperties>
-    <deviceProperties name="MemorizedFileNbFrames" description="">
-      <type xsi:type="pogoDsl:IntType"/>
+    <deviceProperties name="MemorizedShutterCloseTime" description="Memorize/Define the shutterCloseTime attribute at Init device&lt;br>">
+      <type xsi:type="pogoDsl:DoubleType"/>
       <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>1000</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="MemorizedShutterMode" description="Memorize/Define the shutterMode attribute at Init device&lt;br>&#xA;Availables values :&lt;br>&#xA;- MANUAL&lt;br>&#xA;- AUTO_FRAME&lt;br>&#xA;- AUTO_SEQUENCE">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>MANUAL</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="MemorizedShutterOpenTime" description="Memorize/Define the shutterOpenTime attribute at Init device&lt;br>">
+      <type xsi:type="pogoDsl:DoubleType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>1000</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="MemorizedTriggerMode" description="Memorize/Define the triggerMode attribute at Init device&lt;br>&#xA;Availables values :&lt;br>&#xA;- INTERNAL_SINGLE&lt;br>&#xA;- EXTERNAL_SINGLE&lt;br>&#xA;- EXTERNAL_MULTI&lt;br>&#xA;- EXTERNAL_GATE&lt;br>&#xA;- INTERNAL_MULTI&lt;br>&#xA;- EXTERNAL_START_STOP&lt;br>&#xA;- EXTERNAL_READOUT&lt;br>">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>INTERNAL_SINGLE</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="SpecialDisplayType" description="Special type of the image attribute for display and saving (NOT_USED, FLOAT, ...)">
+      <type xsi:type="pogoDsl:StringType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>NOT_USED</DefaultPropValue>
     </deviceProperties>
     <deviceProperties name="SpoolID" description="">
       <type xsi:type="pogoDsl:StringType"/>
