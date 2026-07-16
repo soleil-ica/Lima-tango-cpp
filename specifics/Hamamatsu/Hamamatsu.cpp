@@ -395,6 +395,9 @@ void Hamamatsu::create_dynamics_attributes(void)
 
     if(m_camera->isReadoutSpeedSupported())
     {
+        std::string description;
+        m_camera->getReadoutSpeedDescription(description);
+
         create_dynamic_attribute("readoutSpeed",
                                  Tango::DEV_STRING,
                                  Tango::SCALAR,
@@ -403,7 +406,7 @@ void Hamamatsu::create_dynamics_attributes(void)
                                  0, // no polling
                                  "",
                                  "",
-                                 "Current readout speed mode (STANDARD, ULTRA QUIET, FAST).",
+                                 description,
                                  &Hamamatsu::read_readoutSpeed_callback,
                                  &Hamamatsu::write_readoutSpeed_callback,
                                  attr_dyn_readoutSpeed_read);
