@@ -146,15 +146,54 @@ class LimaDetector : public TANGO_BASE_CLASS
 
 //	Device property data members
 public:
+	//	AutoSaveResetRoi:	Memorize the ``full frame`` automatically at the call of ``ResetRoi`` :<br>
+	//  [default = false]
+	Tango::DevBoolean	autoSaveResetRoi;
 	//	AutoStartVideo:	Allows calling automatically the ``Start`` command when:<br>
 	//  - The device starts.<br>
 	//  - After calling the ``Init`` command.
 	Tango::DevBoolean	autoStartVideo;
-	//	AutoSaveResetRoi:	Memorize the ``full frame`` automatically at the call of ``ResetRoi`` :<br>
-	//  [default = false]
-	Tango::DevBoolean	autoSaveResetRoi;
+	//	DebugFormats:	Define Lima traces format.<BR>
+	//  Availables values :<BR>
+	//  - DateTime<BR>
+	//  - Thread<BR>
+	//  - Module<BR>
+	//  - Obj<BR>
+	//  - Funct<BR>
+	//  - FileLine<BR>
+	vector<string>	debugFormats;
+	//	DebugLevels:	Define Lima verbose level of traces.<BR>
+	//  Availables values :<BR>
+	//  - Fatal<BR>
+	//  - Error<BR>
+	//  - Warning<BR>
+	//  - Trace<BR>
+	//  - Funct<BR>
+	//  - Param<BR>
+	//  - Return<BR>
+	//  - Always<BR>
+	vector<string>	debugLevels;
+	//	DebugModules:	Define modules that we need to have some debug traces.<BR>
+	//  Availables values :<BR>
+	//  - None<BR>
+	//  - Hardware<BR>
+	//  - Control<BR>
+	//  - Common<BR>
+	//  - Camera<BR>
+	vector<string>	debugModules;
 	//	DetectorDescription:	Detector user-defined text to identify the engine.
 	string	detectorDescription;
+	//	DetectorPixelDepth:	Define the pixel depth of the detector : <br>
+	//  Availables values : <br>
+	//  - 8 <br>
+	//  - 12<br>
+	//  - 16<br>
+	//  - 16S<br>
+	//  - 24<br>
+	//  - 24S<br>
+	//  - 32<br>
+	//  - 32S<br>
+	string	detectorPixelDepth;
 	//	DetectorType:	Define the type of the connected Detector .<BR>
 	//  Availables types :<BR>
 	//  - AndorCCD<BR>
@@ -181,19 +220,6 @@ public:
 	//  - UviewCCD<BR>
 	//  - XpadPixelDetector<BR>
 	string	detectorType;
-	//	DetectorPixelDepth:	Define the pixel depth of the detector : <br>
-	//  Availables values : <br>
-	//  - 8 <br>
-	//  - 12<br>
-	//  - 16<br>
-	//  - 16S<br>
-	//  - 24<br>
-	//  - 24S<br>
-	//  - 32<br>
-	//  - 32S<br>
-	string	detectorPixelDepth;
-	//	SpecialDisplayType:	Special type of the image attribute for display and saving (NOT_USED, FLOAT, ...)
-	string	specialDisplayType;
 	//	DetectorVideoMode:	Define the format of video stream: <br>
 	//  Availables values :<br>
 	//  - NONE<BR>
@@ -218,90 +244,85 @@ public:
 	//  This property is usefull only for detectors having video capabilities.<BR>
 	//  Otherwise, use only NONE.
 	string	detectorVideoMode;
-	//	ImageSource:	Choose the source of Data given to the image attribute :<br>
-	//  - VIDEO : use ctVideo->LastImage()<br>
-	//  - ACQUISITION : use ctControl->ReadImage()
-	string	imageSource;
-	//	ImageOpMode:	Define ImageOpMode for Roi/Binning/etc...  :<br>
-	//  Availables values :<br>
-	//  - HardOnly<br>
-	//  - SoftOnly<br>
-	//  - HardAndSoft<br>
-	string	imageOpMode;
+	//	ExpertAllowHwVideoExposureTime:	Enables the direct writing of exposureTime to the hardware when operating in Video mode.
+	Tango::DevBoolean	expertAllowHwVideoExposureTime;
+	//	ExpertAllowMixedRoiBinning:	Define whether the simultaneous use of binning and ROI is allowed
+	Tango::DevBoolean	expertAllowMixedRoiBinning;
+	//	ExpertBufferMaxMemoryPercent:	Define the Percent of Memory reserved to Lima buffer control.<br>
+	//  BufferMaxMemoryPercent = 70, allow a Memory of 1.4 Go. (Default)<br>
+	//  BufferMaxMemoryPercent = 100, allow a Memory of 2 Go. (Maximum)
+	Tango::DevUShort	expertBufferMaxMemoryPercent;
+	//	ExpertEnableHardwareSync:	Define if the device should read hardware values
+	Tango::DevBoolean	expertEnableHardwareSync;
+	//	ExpertNbPoolThread:	Defines the number of threads dedicated to process images in the ProcessLib
+	Tango::DevUShort	expertNbPoolThread;
+	//	ExpertTimeoutCmd:	Define the Timeout (in ms) for some commands (snap/start/stop/prepare).<br>
+	Tango::DevULong	expertTimeoutCmd;
 	//	FileFormat:	Define the format of image files :<BR>
 	//  Availables values :<br>
 	//  - EDF<BR>
 	//  - NXS<BR>
 	//  - RAW<BR>
 	string	fileFormat;
-	//	FilePrefix:	Define the prefix used for the image files name.
-	string	filePrefix;
 	//	FileIndexPattern:	Define the pattern of the index used for image files names.<br>
 	//  <br>
 	//  Nota :<br>
 	//  %04d mean that file name index will be end with exactly  4 digits filled by `0` if necessary .<br>
 	string	fileIndexPattern;
-	//	FileTargetPath:	Define the Path where Files will be generated, only when savingFile is checked.
-	string	fileTargetPath;
-	//	FileNbFrames:	Define the nombre of frames to push in each saving file.
-	Tango::DevLong	fileNbFrames;
 	//	FileManagedMode:	Define the File managed Mode :<br>
 	//  - HARDWARE : <br>
 	//  - SOFTWARE  : <br>
 	string	fileManagedMode;
+	//	FileMemoryMode:	Available only for Nexus format : set the SetDataItemMemoryMode().<br>
+	//  Available values :<br>
+	//  - COPY<br>
+	//  - NO_COPY
+	string	fileMemoryMode;
+	//	FileNbFrames:	Define the nombre of frames to push in each saving file.
+	Tango::DevLong	fileNbFrames;
+	//	FilePrefix:	Define the prefix used for the image files name.
+	string	filePrefix;
+	//	FileTargetPath:	Define the Path where Files will be generated, only when savingFile is checked.
+	string	fileTargetPath;
+	//	FileTimestampEnabled:	Define wether the timestamp is requested in the Nexus file or not<br>
+	Tango::DevBoolean	fileTimestampEnabled;
 	//	FileWriteMode:	Available only for Nexus format : set the SetWriteMode(). <br>
 	//  Available values :<br>
 	//  - ASYNCHRONOUS<br>
 	//  - SYNCHRONOUS<br>
 	//  - DELAYED
 	string	fileWriteMode;
-	//	FileMemoryMode:	Available only for Nexus format : set the SetDataItemMemoryMode().<br>
-	//  Available values :<br>
-	//  - COPY<br>
-	//  - NO_COPY
-	string	fileMemoryMode;
-	//	FileTimestampEnabled:	Define wether the timestamp is requested in the Nexus file or not<br>
-	Tango::DevBoolean	fileTimestampEnabled;
-	//	DebugModules:	Define modules that we need to have some debug traces.<BR>
-	//  Availables values :<BR>
-	//  - None<BR>
-	//  - Hardware<BR>
-	//  - Control<BR>
-	//  - Common<BR>
-	//  - Camera<BR>
-	vector<string>	debugModules;
-	//	DebugLevels:	Define Lima verbose level of traces.<BR>
-	//  Availables values :<BR>
-	//  - Fatal<BR>
-	//  - Error<BR>
-	//  - Warning<BR>
-	//  - Trace<BR>
-	//  - Funct<BR>
-	//  - Param<BR>
-	//  - Return<BR>
-	//  - Always<BR>
-	vector<string>	debugLevels;
-	//	DebugFormats:	Define Lima traces format.<BR>
-	//  Availables values :<BR>
-	//  - DateTime<BR>
-	//  - Thread<BR>
-	//  - Module<BR>
-	//  - Obj<BR>
-	//  - Funct<BR>
-	//  - FileLine<BR>
-	vector<string>	debugFormats;
-	//	ExpertBufferMaxMemoryPercent:	Define the Percent of Memory reserved to Lima buffer control.<br>
-	//  BufferMaxMemoryPercent = 70, allow a Memory of 1.4 Go. (Default)<br>
-	//  BufferMaxMemoryPercent = 100, allow a Memory of 2 Go. (Maximum)
-	Tango::DevUShort	expertBufferMaxMemoryPercent;
-	//	ExpertNbPoolThread:	Defines the number of threads dedicated to process images in the ProcessLib
-	Tango::DevUShort	expertNbPoolThread;
-	//	ExpertTimeoutCmd:	Define the Timeout (in ms) for some commands (snap/start/stop/prepare).<br>
-	Tango::DevULong	expertTimeoutCmd;
-	//	ExpertAllowMixedRoiBinning:	Define whether the simultaneous use of binning and ROI is allowed
-	Tango::DevBoolean	expertAllowMixedRoiBinning;
-	//	ExpertEnableHardwareSync:	Define if the device should read hardware values
-	Tango::DevBoolean	expertEnableHardwareSync;
+	//	ImageOpMode:	Define ImageOpMode for Roi/Binning/etc...  :<br>
+	//  Availables values :<br>
+	//  - HardOnly<br>
+	//  - SoftOnly<br>
+	//  - HardAndSoft<br>
+	string	imageOpMode;
+	//	ImageSource:	Choose the source of Data given to the image attribute :<br>
+	//  - VIDEO : use ctVideo->LastImage()<br>
+	//  - ACQUISITION : use ctControl->ReadImage()
+	string	imageSource;
+	//	MemorizedAcquisitionMode:	Memorize/Define the acquisitionMode attribute at Init device<br>
+	//  Availables values :<br>
+	//  - SINGLE<br>
+	//  - ACCUMULATION<br>
+	string	memorizedAcquisitionMode;
+	//	MemorizedBinningH:	Memorize/Define the Binning Horizontal value of the Acquisition<br>
+	Tango::DevUShort	memorizedBinningH;
+	//	MemorizedBinningV:	Memorize/Define the Binning Vertical value of the Acquisition<br>
+	Tango::DevUShort	memorizedBinningV;
+	//	MemorizedExposureAccTime:	Memorize/Define the exposureAccTime attribute at Init device<br>
+	Tango::DevDouble	memorizedExposureAccTime;
+	//	MemorizedExposureTime:	Memorize/Define the exposureTime attribute  at Init device<br>
+	Tango::DevDouble	memorizedExposureTime;
+	//	MemorizedFileGeneration:	Memorize/Define the fileGeneration attribute at Init device<br>
+	Tango::DevBoolean	memorizedFileGeneration;
+	//	MemorizedFileNbFrames:	
+	Tango::DevLong	memorizedFileNbFrames;
+	//	MemorizedLatencyTime:	Memorize/Define the latencyTime attribute  at Init device<br>
+	Tango::DevDouble	memorizedLatencyTime;
+	//	MemorizedNbFrames:	Memorize/Define the nbFrames attribute  at Init device<br>
+	Tango::DevLong	memorizedNbFrames;
 	//	MemorizedRoi:	Memorize/Define the Region of Interest of the Acquisition: <br>
 	//  origin X<br>
 	//  origin Y<br>
@@ -311,15 +332,16 @@ public:
 	//  Nota:<br>
 	//  if any roi value is <0, then we consider all detector area as Roi.
 	vector<Tango::DevShort>	memorizedRoi;
-	//	MemorizedBinningH:	Memorize/Define the Binning Horizontal value of the Acquisition<br>
-	Tango::DevUShort	memorizedBinningH;
-	//	MemorizedBinningV:	Memorize/Define the Binning Vertical value of the Acquisition<br>
-	Tango::DevUShort	memorizedBinningV;
-	//	MemorizedAcquisitionMode:	Memorize/Define the acquisitionMode attribute at Init device<br>
+	//	MemorizedShutterCloseTime:	Memorize/Define the shutterCloseTime attribute at Init device<br>
+	Tango::DevDouble	memorizedShutterCloseTime;
+	//	MemorizedShutterMode:	Memorize/Define the shutterMode attribute at Init device<br>
 	//  Availables values :<br>
-	//  - SINGLE<br>
-	//  - ACCUMULATION<br>
-	string	memorizedAcquisitionMode;
+	//  - MANUAL<br>
+	//  - AUTO_FRAME<br>
+	//  - AUTO_SEQUENCE
+	string	memorizedShutterMode;
+	//	MemorizedShutterOpenTime:	Memorize/Define the shutterOpenTime attribute at Init device<br>
+	Tango::DevDouble	memorizedShutterOpenTime;
 	//	MemorizedTriggerMode:	Memorize/Define the triggerMode attribute at Init device<br>
 	//  Availables values :<br>
 	//  - INTERNAL_SINGLE<br>
@@ -330,28 +352,8 @@ public:
 	//  - EXTERNAL_START_STOP<br>
 	//  - EXTERNAL_READOUT<br>
 	string	memorizedTriggerMode;
-	//	MemorizedShutterMode:	Memorize/Define the shutterMode attribute at Init device<br>
-	//  Availables values :<br>
-	//  - MANUAL<br>
-	//  - AUTO_FRAME<br>
-	//  - AUTO_SEQUENCE
-	string	memorizedShutterMode;
-	//	MemorizedShutterOpenTime:	Memorize/Define the shutterOpenTime attribute at Init device<br>
-	Tango::DevDouble	memorizedShutterOpenTime;
-	//	MemorizedShutterCloseTime:	Memorize/Define the shutterCloseTime attribute at Init device<br>
-	Tango::DevDouble	memorizedShutterCloseTime;
-	//	MemorizedExposureTime:	Memorize/Define the exposureTime attribute  at Init device<br>
-	Tango::DevDouble	memorizedExposureTime;
-	//	MemorizedExposureAccTime:	Memorize/Define the exposureAccTime attribute at Init device<br>
-	Tango::DevDouble	memorizedExposureAccTime;
-	//	MemorizedLatencyTime:	Memorize/Define the latencyTime attribute  at Init device<br>
-	Tango::DevDouble	memorizedLatencyTime;
-	//	MemorizedNbFrames:	Memorize/Define the nbFrames attribute  at Init device<br>
-	Tango::DevLong	memorizedNbFrames;
-	//	MemorizedFileGeneration:	Memorize/Define the fileGeneration attribute at Init device<br>
-	Tango::DevBoolean	memorizedFileGeneration;
-	//	MemorizedFileNbFrames:	
-	Tango::DevLong	memorizedFileNbFrames;
+	//	SpecialDisplayType:	Special type of the image attribute for display and saving (NOT_USED, FLOAT, ...)
+	string	specialDisplayType;
 	//	SpoolID:	
 	string	spoolID;
 
