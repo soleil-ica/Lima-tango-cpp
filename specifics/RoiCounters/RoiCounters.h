@@ -135,6 +135,7 @@ public:
 //	Attribute data members
 public:
 	Tango::DevString	*attr_version_read;
+	Tango::DevBoolean	*attr_enabled_read;
 	Tango::DevString	*attr_operationsList_read;
 
 //	Constructors and destructors
@@ -222,6 +223,16 @@ public:
  */
 	virtual void write_runLevel(Tango::WAttribute &attr);
 	virtual bool is_runLevel_allowed(Tango::AttReqType type);
+/**
+ *	Attribute enabled related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void read_enabled(Tango::Attribute &attr);
+	virtual void write_enabled(Tango::WAttribute &attr);
+	virtual bool is_enabled_allowed(Tango::AttReqType type);
 /**
  *	Attribute operationsList related methods
  *	Description: Enumerate all RoiCounters 'post processing' operations on the image.

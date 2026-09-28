@@ -319,6 +319,7 @@ public:
 	Tango::DevString	*attr_version_read;
 	Tango::DevString	*attr_operationType_read;
 	Tango::DevString	*attr_operationValue_read;
+	Tango::DevBoolean	*attr_enabled_read;
 	Tango::DevString	*attr_operationsList_read;
 
 //	Constructors and destructors
@@ -417,6 +418,16 @@ public:
 	virtual void read_operationValue(Tango::Attribute &attr);
 	virtual void write_operationValue(Tango::WAttribute &attr);
 	virtual bool is_operationValue_allowed(Tango::AttReqType type);
+/**
+ *	Attribute enabled related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void read_enabled(Tango::Attribute &attr);
+	virtual void write_enabled(Tango::WAttribute &attr);
+	virtual bool is_enabled_allowed(Tango::AttReqType type);
 /**
  *	Attribute operationsList related methods
  *	Description: Enumerate all Layout active 'post processing' operations on the image.

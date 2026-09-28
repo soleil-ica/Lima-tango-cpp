@@ -94,6 +94,26 @@ bool RoiCounters::is_runLevel_allowed(TANGO_UNUSED(Tango::AttReqType type))
 
 //--------------------------------------------------------
 /**
+ *	Method      : RoiCounters::is_enabled_allowed()
+ *	Description : Execution allowed for enabled attribute
+ */
+//--------------------------------------------------------
+bool RoiCounters::is_enabled_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Not any excluded states for enabled attribute in Write access.
+	/*----- PROTECTED REGION ID(RoiCounters::enabledStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	RoiCounters::enabledStateAllowed_WRITE
+
+	//	Not any excluded states for enabled attribute in read access.
+	/*----- PROTECTED REGION ID(RoiCounters::enabledStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	RoiCounters::enabledStateAllowed_READ
+	return true;
+}
+
+//--------------------------------------------------------
+/**
  *	Method      : RoiCounters::is_operationsList_allowed()
  *	Description : Execution allowed for operationsList attribute
  */

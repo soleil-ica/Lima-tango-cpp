@@ -711,6 +711,31 @@ void RixsClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Not Memorized
 	att_list.push_back(pngfilespath);
 
+	//	Attribute : enabled
+	enabledAttrib	*enabled = new enabledAttrib();
+	Tango::UserDefaultAttrProp	enabled_prop;
+	//	description	not set for enabled
+	//	label	not set for enabled
+	//	unit	not set for enabled
+	//	standard_unit	not set for enabled
+	//	display_unit	not set for enabled
+	//	format	not set for enabled
+	//	max_value	not set for enabled
+	//	min_value	not set for enabled
+	//	max_alarm	not set for enabled
+	//	min_alarm	not set for enabled
+	//	max_warning	not set for enabled
+	//	min_warning	not set for enabled
+	//	delta_t	not set for enabled
+	//	delta_val	not set for enabled
+	
+	enabled->set_default_properties(enabled_prop);
+	//	Not Polled
+	enabled->set_disp_level(Tango::OPERATOR);
+	enabled->set_memorized();
+	enabled->set_memorized_init(false);
+	att_list.push_back(enabled);
+
 	//	Attribute : operationsList
 	operationsListAttrib	*operationslist = new operationsListAttrib();
 	Tango::UserDefaultAttrProp	operationslist_prop;

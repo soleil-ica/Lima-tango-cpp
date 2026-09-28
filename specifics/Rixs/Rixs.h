@@ -693,6 +693,7 @@ public:
 	Tango::DevString	*attr_operationType_read;
 	Tango::DevString	*attr_operationValue_read;
 	Tango::DevLong	*attr_nbClusterValid_read;
+	Tango::DevBoolean	*attr_enabled_read;
 	Tango::DevString	*attr_operationsList_read;
 	Tango::DevLong	*attr_clusterCounter_read;
 	Tango::DevLong	*attr_clusterArea_read;
@@ -859,6 +860,16 @@ public:
  */
 	virtual void write_pngFilesPath(Tango::WAttribute &attr);
 	virtual bool is_pngFilesPath_allowed(Tango::AttReqType type);
+/**
+ *	Attribute enabled related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+	virtual void read_enabled(Tango::Attribute &attr);
+	virtual void write_enabled(Tango::WAttribute &attr);
+	virtual bool is_enabled_allowed(Tango::AttReqType type);
 /**
  *	Attribute operationsList related methods
  *	Description: Enumerate all Rixs active 'post processing' operations on the image.

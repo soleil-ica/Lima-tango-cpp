@@ -152,6 +152,26 @@ bool Layout::is_operationValue_allowed(TANGO_UNUSED(Tango::AttReqType type))
 
 //--------------------------------------------------------
 /**
+ *	Method      : Layout::is_enabled_allowed()
+ *	Description : Execution allowed for enabled attribute
+ */
+//--------------------------------------------------------
+bool Layout::is_enabled_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Not any excluded states for enabled attribute in Write access.
+	/*----- PROTECTED REGION ID(Layout::enabledStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Layout::enabledStateAllowed_WRITE
+
+	//	Not any excluded states for enabled attribute in read access.
+	/*----- PROTECTED REGION ID(Layout::enabledStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Layout::enabledStateAllowed_READ
+	return true;
+}
+
+//--------------------------------------------------------
+/**
  *	Method      : Layout::is_operationsList_allowed()
  *	Description : Execution allowed for operationsList attribute
  */

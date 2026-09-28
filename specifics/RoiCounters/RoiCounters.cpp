@@ -67,6 +67,7 @@ static const char *RcsId = "$Id:  $";
 //================================================================
 //  version         |  Tango::DevString	Scalar
 //  runLevel        |  Tango::DevULong	Scalar
+//  enabled         |  Tango::DevBoolean	Scalar
 //  operationsList  |  Tango::DevString	Spectrum  ( max = 1024)
 //================================================================
 
@@ -136,6 +137,7 @@ void RoiCounters::delete_device()
 	yat4tango::InnerAppender::release(this);
 
 /*----- PROTECTED REGION END -----*/	//	RoiCounters::delete_device
+	delete[] attr_enabled_read;
 }
 
 //--------------------------------------------------------
@@ -160,6 +162,7 @@ void RoiCounters::init_device()
 	//	Get the device properties from database
 	get_device_property();
 	
+	attr_enabled_read = new Tango::DevBoolean[1];
 	/*----- PROTECTED REGION ID(RoiCounters::init_device) ENABLED START -----*/
 
 
@@ -735,6 +738,44 @@ void RoiCounters::write_runLevel(Tango::WAttribute &attr)
 	}
 
 /*----- PROTECTED REGION END -----*/	//	RoiCounters::write_runLevel
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute enabled related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void RoiCounters::read_enabled(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "RoiCounters::read_enabled(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(RoiCounters::read_enabled) ENABLED START -----*/
+	//	Set the attribute value
+	attr.set_value(attr_enabled_read);
+	
+	/*----- PROTECTED REGION END -----*/	//	RoiCounters::read_enabled
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute enabled related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void RoiCounters::write_enabled(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "RoiCounters::write_enabled(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevBoolean	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(RoiCounters::write_enabled) ENABLED START -----*/
+	
+	
+	/*----- PROTECTED REGION END -----*/	//	RoiCounters::write_enabled
 }
 //--------------------------------------------------------
 /**

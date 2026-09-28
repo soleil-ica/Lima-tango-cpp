@@ -102,6 +102,21 @@ public:
 		{return (static_cast<Layout *>(dev))->is_operationValue_allowed(ty);}
 };
 
+//	Attribute enabled class definition
+class enabledAttrib: public Tango::Attr
+{
+public:
+	enabledAttrib():Attr("enabled",
+			Tango::DEV_BOOLEAN, Tango::READ_WRITE) {};
+	~enabledAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<Layout *>(dev))->read_enabled(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<Layout *>(dev))->write_enabled(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<Layout *>(dev))->is_enabled_allowed(ty);}
+};
+
 //	Attribute operationsList class definition
 class operationsListAttrib: public Tango::SpectrumAttr
 {

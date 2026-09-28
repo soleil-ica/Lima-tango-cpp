@@ -324,6 +324,26 @@ bool Rixs::is_pngFilesPath_allowed(TANGO_UNUSED(Tango::AttReqType type))
 
 //--------------------------------------------------------
 /**
+ *	Method      : Rixs::is_enabled_allowed()
+ *	Description : Execution allowed for enabled attribute
+ */
+//--------------------------------------------------------
+bool Rixs::is_enabled_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Not any excluded states for enabled attribute in Write access.
+	/*----- PROTECTED REGION ID(Rixs::enabledStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Rixs::enabledStateAllowed_WRITE
+
+	//	Not any excluded states for enabled attribute in read access.
+	/*----- PROTECTED REGION ID(Rixs::enabledStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	Rixs::enabledStateAllowed_READ
+	return true;
+}
+
+//--------------------------------------------------------
+/**
  *	Method      : Rixs::is_operationsList_allowed()
  *	Description : Execution allowed for operationsList attribute
  */

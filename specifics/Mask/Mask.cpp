@@ -67,6 +67,7 @@ static const char *RcsId = "$Id:  $";
 //================================================================
 //  version         |  Tango::DevString	Scalar
 //  runLevel        |  Tango::DevULong	Scalar
+//  enabled         |  Tango::DevBoolean	Scalar
 //  operationsList  |  Tango::DevString	Spectrum  ( max = 1024)
 //  maskImage       |  Tango::DevShort	Image  ( max = 10000 x 10000)
 //================================================================
@@ -139,6 +140,7 @@ void Mask::delete_device()
 	yat4tango::InnerAppender::release(this);
 
 /*----- PROTECTED REGION END -----*/	//	Mask::delete_device
+	delete[] attr_enabled_read;
 }
 
 //--------------------------------------------------------
@@ -163,6 +165,7 @@ void Mask::init_device()
 	//	Get the device properties from database
 	get_device_property();
 	
+	attr_enabled_read = new Tango::DevBoolean[1];
 	/*----- PROTECTED REGION ID(Mask::init_device) ENABLED START -----*/
 
 	CREATE_DEVSTRING_ATTRIBUTE(attr_version_read, 256);
@@ -464,6 +467,44 @@ void Mask::write_runLevel(Tango::WAttribute &attr)
 	}
 
 /*----- PROTECTED REGION END -----*/	//	Mask::write_runLevel
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute enabled related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Mask::read_enabled(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Mask::read_enabled(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Mask::read_enabled) ENABLED START -----*/
+	//	Set the attribute value
+	attr.set_value(attr_enabled_read);
+	
+	/*----- PROTECTED REGION END -----*/	//	Mask::read_enabled
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute enabled related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Mask::write_enabled(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Mask::write_enabled(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevBoolean	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Mask::write_enabled) ENABLED START -----*/
+	
+	
+	/*----- PROTECTED REGION END -----*/	//	Mask::write_enabled
 }
 //--------------------------------------------------------
 /**

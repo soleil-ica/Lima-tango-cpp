@@ -72,6 +72,7 @@ using namespace std;
 //  version         |  Tango::DevString	Scalar
 //  operationType   |  Tango::DevString	Scalar
 //  operationValue  |  Tango::DevString	Scalar
+//  enabled         |  Tango::DevBoolean	Scalar
 //  operationsList  |  Tango::DevString	Spectrum  ( max = 1024)
 //================================================================
 
@@ -136,6 +137,7 @@ void Layout::delete_device()
     DELETE_DEVSTRING_ATTRIBUTE(attr_operationValue_read);
 
 /*----- PROTECTED REGION END -----*/	//	Layout::delete_device
+	delete[] attr_enabled_read;
 }
 
 //--------------------------------------------------------
@@ -160,6 +162,7 @@ void Layout::init_device()
 	//	Get the device properties from database
 	get_device_property();
 	
+	attr_enabled_read = new Tango::DevBoolean[1];
 	/*----- PROTECTED REGION ID(Layout::init_device) ENABLED START -----*/
 
 	
@@ -632,6 +635,44 @@ void Layout::write_operationValue(Tango::WAttribute &attr)
     }
 
 /*----- PROTECTED REGION END -----*/	//	Layout::write_operationValue
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute enabled related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Layout::read_enabled(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "Layout::read_enabled(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(Layout::read_enabled) ENABLED START -----*/
+	//	Set the attribute value
+	attr.set_value(attr_enabled_read);
+	
+	/*----- PROTECTED REGION END -----*/	//	Layout::read_enabled
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute enabled related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevBoolean
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void Layout::write_enabled(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "Layout::write_enabled(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevBoolean	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(Layout::write_enabled) ENABLED START -----*/
+	
+	
+	/*----- PROTECTED REGION END -----*/	//	Layout::write_enabled
 }
 //--------------------------------------------------------
 /**
