@@ -167,10 +167,7 @@ void Mask::init_device()
 	
 	attr_enabled_read = new Tango::DevBoolean[1];
 	/*----- PROTECTED REGION ID(Mask::init_device) ENABLED START -----*/
-	*attr_enabled_read = true;
-	std::string saved_enabled = yat4tango::PropertyHelper::get_memorized_attribute<std::string>(this, "enabled");
-	if (!saved_enabled.empty())
-		*attr_enabled_read = yat::StringUtil::to_num<Tango::DevBoolean>(saved_enabled);
+	*attr_enabled_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "enabled", true);
 
 	CREATE_DEVSTRING_ATTRIBUTE(attr_version_read, 256);
 	m_dim_x = 0;
