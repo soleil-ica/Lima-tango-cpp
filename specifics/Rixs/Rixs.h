@@ -87,10 +87,11 @@ namespace Rixs_ns
         //-----------------------------------------------
 		//ctor
 		//-----------------------------------------------
-        RixsTask(const std::string& opType, long opValue) :
+		RixsTask(const std::string& opType, long opValue, Tango::DevBoolean* enabled) :
         LinkTask(true),
         m_operation_type(opType),
-        m_operation_value(opValue) { }
+		m_operation_value(opValue),
+		m_enabled(enabled) { }
 
         //-----------------------------------------------
 		//dtor
@@ -289,6 +290,8 @@ namespace Rixs_ns
         Data process(Data &aData)
         {
 			yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+			if (!*m_enabled)
+				return aData;
 			yat::Timer t1;
             Data aNewData;
             switch(aData.type)
@@ -316,6 +319,7 @@ namespace Rixs_ns
         }
 
     private:
+		Tango::DevBoolean* m_enabled;
 		//OpenCV Helper
 		std::string type_2_str(int type)
 		{

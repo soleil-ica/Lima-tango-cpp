@@ -182,6 +182,10 @@ void Rixs::init_device()
 	
 	attr_enabled_read = new Tango::DevBoolean[1];
 	/*----- PROTECTED REGION ID(Rixs::init_device) ENABLED START -----*/
+	*attr_enabled_read = true;
+	std::string saved_enabled = yat4tango::PropertyHelper::get_memorized_attribute<std::string>(this, "enabled");
+	if (!saved_enabled.empty())
+		*attr_enabled_read = yat::StringUtil::to_num<Tango::DevBoolean>(saved_enabled);
 
 	
 	CREATE_DEVSTRING_ATTRIBUTE(attr_version_read, MAX_ATTRIBUTE_STRING_LENGTH);
@@ -995,7 +999,8 @@ void Rixs::write_enabled(Tango::WAttribute &attr)
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Rixs::write_enabled) ENABLED START -----*/
-	
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+	*attr_enabled_read = w_val;
 	
 	/*----- PROTECTED REGION END -----*/	//	Rixs::write_enabled
 }
@@ -1340,7 +1345,7 @@ void Rixs::add_external_operation(long level)
                 m_ct->externalOperation()->addOp(USER_LINK_TASK, opId.str(), level, op);
 
 				//prepare l'externalOperation Task
-				RixsTask* task = new RixsTask("NONE", 0);
+				RixsTask* task = new RixsTask("NONE", 0, attr_enabled_read);
                 task->setOperationType(attr_operationType_write);
                 task->setOperationValue(yat::XString<double>::to_num(m_operation_value));
 				task->setResetSpectrumsAtEachFrameEnabled(resetSpectrumsAtEachFrame);

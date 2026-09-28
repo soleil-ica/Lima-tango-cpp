@@ -164,6 +164,11 @@ void RoiCounters::init_device()
 	
 	attr_enabled_read = new Tango::DevBoolean[1];
 	/*----- PROTECTED REGION ID(RoiCounters::init_device) ENABLED START -----*/
+	*attr_enabled_read = true;
+	std::string saved_enabled = yat4tango::PropertyHelper::get_memorized_attribute<std::string>(this, "enabled");
+	if (!saved_enabled.empty())
+		*attr_enabled_read = yat::StringUtil::to_num<Tango::DevBoolean>(saved_enabled);
+	m_soft_operation.m_opt = 0;
 
 
 	CREATE_DEVSTRING_ATTRIBUTE(attr_version_read, 256);
@@ -693,9 +698,15 @@ void RoiCounters::write_runLevel(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(RoiCounters::write_runLevel) ENABLED START -----*/
 
 	DEBUG_STREAM << "RoiCounters::write_runLevel(Tango::WAttribute &attr) entering... "<< endl;
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
 	try
 	{
 		attr.get_write_value(attr_runLevel_write);
+		if (!*attr_enabled_read)
+		{
+			yat4tango::PropertyHelper::set_property(this, "MemorizedRunLevel", attr_runLevel_write);
+			return;
+		}
 				//first delete the operation	"RoiCounters"
 		std::stringstream opId("");
 		opId << ":RoiCounters";
@@ -773,7 +784,22 @@ void RoiCounters::write_enabled(Tango::WAttribute &attr)
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(RoiCounters::write_enabled) ENABLED START -----*/
-	
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+	if (*attr_enabled_read == w_val)
+		return;
+	if (!w_val)
+	{
+		m_ct->externalOperation()->delOp(":RoiCounters");
+		m_soft_operation.m_opt = 0;
+		*attr_enabled_read = false;
+	}
+	else
+	{
+		*attr_enabled_read = true;
+		Tango::WAttribute &runlevel = dev_attr->get_w_attr_by_name("runLevel");
+		runlevel.set_write_value(attr_runLevel_write);
+		write_runLevel(runlevel);
+	}
 	
 	/*----- PROTECTED REGION END -----*/	//	RoiCounters::write_enabled
 }

@@ -164,6 +164,10 @@ void Layout::init_device()
 	
 	attr_enabled_read = new Tango::DevBoolean[1];
 	/*----- PROTECTED REGION ID(Layout::init_device) ENABLED START -----*/
+    *attr_enabled_read = true;
+    std::string saved_enabled = yat4tango::PropertyHelper::get_memorized_attribute<std::string>(this, "enabled");
+    if (!saved_enabled.empty())
+        *attr_enabled_read = yat::StringUtil::to_num<Tango::DevBoolean>(saved_enabled);
 
 	
 	CREATE_DEVSTRING_ATTRIBUTE(attr_version_read, MAX_ATTRIBUTE_STRING_LENGTH);
@@ -670,7 +674,30 @@ void Layout::write_enabled(Tango::WAttribute &attr)
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Layout::write_enabled) ENABLED START -----*/
-	
+    yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+    if (*attr_enabled_read == w_val)
+        return;
+    if (!w_val)
+    {
+        for (std::map<long, operationParams>::const_iterator it = m_mapOperations.begin(); it != m_mapOperations.end(); ++it)
+            m_ct->externalOperation()->delOp(it->second.opId);
+        *attr_enabled_read = false;
+    }
+    else
+    {
+        *attr_enabled_read = true;
+        std::string operationType = m_operationType;
+        std::string operationValue = m_operationValue;
+        std::map<long, operationParams> operations = m_mapOperations;
+        for (std::map<long, operationParams>::const_iterator it = operations.begin(); it != operations.end(); ++it)
+        {
+            m_operationType = it->second.operationType;
+            m_operationValue = it->second.operationValue;
+            add_external_operation(it->first);
+        }
+        m_operationType = operationType;
+        m_operationValue = operationValue;
+    }
 	
 	/*----- PROTECTED REGION END -----*/	//	Layout::write_enabled
 }
@@ -832,7 +859,8 @@ void Layout::delete_external_operation(long level)
 			std::stringstream opId("");
 			opId << m_mapOperations[level].opId;
 			INFO_STREAM << "\t- delOp [" << opId.str() << "]"<<endl;
-			m_ct->externalOperation()->delOp(opId.str());
+            if (*attr_enabled_read)
+                m_ct->externalOperation()->delOp(opId.str());
 			m_mapOperations.erase(level);
         }
         catch (Exception& e)
@@ -889,10 +917,13 @@ void Layout::add_external_operation(long level)
                 SoftOpInstance op;
                 opId << level<<":FLIP ("<<m_operationValue<<")";
 				INFO_STREAM << "\t- addOp [" << opId.str() << "]"<<endl;
-				operationParams params = {opId.str(), attr_operationType_write, attr_operationValue_write};
+                operationParams params = {opId.str(), m_operationType, m_operationValue};
 				m_mapOperations[level] = params;
-                m_ct->externalOperation()->addOp(FLIP, opId.str(), level, op);
-                (reinterpret_cast<SoftOpFlip*> (op.m_opt))->setFlip(flipX, flipY);
+                if (*attr_enabled_read)
+                {
+                    m_ct->externalOperation()->addOp(FLIP, opId.str(), level, op);
+                    (reinterpret_cast<SoftOpFlip*> (op.m_opt))->setFlip(flipX, flipY);
+                }
                 return;
             }
 
@@ -925,10 +956,13 @@ void Layout::add_external_operation(long level)
                 SoftOpInstance op;
                 opId << level<<":ROTATION ("<<m_operationValue<<")";
 				INFO_STREAM << "\t- addOp [" << opId.str() << "]"<<endl;
-				operationParams params = {opId.str(), attr_operationType_write, attr_operationValue_write};
+                operationParams params = {opId.str(), m_operationType, m_operationValue};
 				m_mapOperations[level] = params;
-                m_ct->externalOperation()->addOp(ROTATION, opId.str(), level, op);
-                (reinterpret_cast<SoftOpRotation*> (op.m_opt))->setType(type);
+                if (*attr_enabled_read)
+                {
+                    m_ct->externalOperation()->addOp(ROTATION, opId.str(), level, op);
+                    (reinterpret_cast<SoftOpRotation*> (op.m_opt))->setType(type);
+                }
                 return;
             }
 
@@ -947,16 +981,17 @@ void Layout::add_external_operation(long level)
                 SoftOpInstance op;
 				opId << level<<":"<<m_operationType<<" ("<<m_operationValue<<")";
 				INFO_STREAM << "\t- addOp [" << opId.str() << "]"<<endl;
-				operationParams params = {opId.str(), attr_operationType_write, attr_operationValue_write};
+                operationParams params = {opId.str(), m_operationType, m_operationValue};
 				m_mapOperations[level] = params;
-                m_ct->externalOperation()->addOp(USER_LINK_TASK, opId.str(), level, op);
-
-				//prepare l'externalOperation Task
-				LayoutTask* task = new LayoutTask("NONE", 0, this);
-                task->setOperationType(attr_operationType_write);
-                task->setOperationValue(yat::XString<double>::to_num(m_operationValue));
-				m_layout_tasks.push_back(task);
-                (reinterpret_cast<SoftUserLinkTask*> (op.m_opt))->setLinkTask(task);
+                if (*attr_enabled_read)
+                {
+                    m_ct->externalOperation()->addOp(USER_LINK_TASK, opId.str(), level, op);
+                    LayoutTask* task = new LayoutTask("NONE", 0, this);
+                    task->setOperationType(m_operationType);
+                    task->setOperationValue(yat::XString<double>::to_num(m_operationValue));
+                    m_layout_tasks.push_back(task);
+                    (reinterpret_cast<SoftUserLinkTask*> (op.m_opt))->setLinkTask(task);
+                }
                 return;
             }
 

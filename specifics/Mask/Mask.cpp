@@ -167,6 +167,10 @@ void Mask::init_device()
 	
 	attr_enabled_read = new Tango::DevBoolean[1];
 	/*----- PROTECTED REGION ID(Mask::init_device) ENABLED START -----*/
+	*attr_enabled_read = true;
+	std::string saved_enabled = yat4tango::PropertyHelper::get_memorized_attribute<std::string>(this, "enabled");
+	if (!saved_enabled.empty())
+		*attr_enabled_read = yat::StringUtil::to_num<Tango::DevBoolean>(saved_enabled);
 
 	CREATE_DEVSTRING_ATTRIBUTE(attr_version_read, 256);
 	m_dim_x = 0;
@@ -444,6 +448,11 @@ void Mask::write_runLevel(Tango::WAttribute &attr)
 	try
 	{
 		attr.get_write_value(attr_runLevel_write);
+		if (!*attr_enabled_read)
+		{
+			yat4tango::PropertyHelper::set_property(this, "MemorizedRunLevel", attr_runLevel_write);
+			return;
+		}
 
 		//prepare Data for the Mask ProcessLib Task
 		set_mask_image();
@@ -502,7 +511,17 @@ void Mask::write_enabled(Tango::WAttribute &attr)
 	Tango::DevBoolean	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(Mask::write_enabled) ENABLED START -----*/
-	
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+	if (*attr_enabled_read == w_val)
+		return;
+	if (!w_val && m_dim_x != 0 && m_dim_y != 0 && m_is_device_initialized)
+	{
+		m_ct->externalOperation()->delOp(":Mask");
+		m_soft_operation.m_opt = 0;
+	}
+	*attr_enabled_read = w_val;
+	if (w_val && m_dim_x != 0 && m_dim_y != 0)
+		set_mask_image();
 	
 	/*----- PROTECTED REGION END -----*/	//	Mask::write_enabled
 }
@@ -737,6 +756,9 @@ void Mask::read_runLevel(Tango::Attribute &attr)
 
 void Mask::set_mask_image(void)
 {
+	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
+	if (!*attr_enabled_read)
+		return;
 
 	//only if a write_maskImage was called previously & device is already initialized !
 	if(!is_device_initialized())
