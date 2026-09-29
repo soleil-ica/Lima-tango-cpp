@@ -170,6 +170,26 @@ bool SimulatorCCD::is_yOffset_allowed(TANGO_UNUSED(Tango::AttReqType type))
 	return true;
 }
 
+//--------------------------------------------------------
+/**
+ *	Method      : SimulatorCCD::is_nexusFileName_allowed()
+ *	Description : Execution allowed for nexusFileName attribute
+ */
+//--------------------------------------------------------
+bool SimulatorCCD::is_nexusFileName_allowed(TANGO_UNUSED(Tango::AttReqType type))
+{
+	//	Not any excluded states for nexusFileName attribute in Write access.
+	/*----- PROTECTED REGION ID(SimulatorCCD::nexusFileNameStateAllowed_WRITE) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SimulatorCCD::nexusFileNameStateAllowed_WRITE
+
+	//	Not any excluded states for nexusFileName attribute in read access.
+	/*----- PROTECTED REGION ID(SimulatorCCD::nexusFileNameStateAllowed_READ) ENABLED START -----*/
+	
+	/*----- PROTECTED REGION END -----*/	//	SimulatorCCD::nexusFileNameStateAllowed_READ
+	return true;
+}
+
 
 //=================================================
 //		Commands Allowed Methods

@@ -101,6 +101,7 @@ public:
 	Tango::DevString	*attr_fillType_read;
 	Tango::DevDouble	*attr_xOffset_read;
 	Tango::DevDouble	*attr_yOffset_read;
+	Tango::DevString	*attr_nexusFileName_read;
 
 //	Constructors and destructors
 public:
@@ -209,6 +210,16 @@ public:
 	virtual void read_yOffset(Tango::Attribute &attr);
 	virtual void write_yOffset(Tango::WAttribute &attr);
 	virtual bool is_yOffset_allowed(Tango::AttReqType type);
+/**
+ *	Attribute nexusFileName related methods
+ *	Description: 
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+	virtual void read_nexusFileName(Tango::Attribute &attr);
+	virtual void write_nexusFileName(Tango::WAttribute &attr);
+	virtual bool is_nexusFileName_allowed(Tango::AttReqType type);
 
 
 	//--------------------------------------------------------

@@ -119,6 +119,21 @@ public:
 		{return (static_cast<SimulatorCCD *>(dev))->is_yOffset_allowed(ty);}
 };
 
+//	Attribute nexusFileName class definition
+class nexusFileNameAttrib: public Tango::Attr
+{
+public:
+	nexusFileNameAttrib():Attr("nexusFileName",
+			Tango::DEV_STRING, Tango::READ_WRITE) {};
+	~nexusFileNameAttrib() {};
+	virtual void read(Tango::DeviceImpl *dev,Tango::Attribute &att)
+		{(static_cast<SimulatorCCD *>(dev))->read_nexusFileName(att);}
+	virtual void write(Tango::DeviceImpl *dev,Tango::WAttribute &att)
+		{(static_cast<SimulatorCCD *>(dev))->write_nexusFileName(att);}
+	virtual bool is_allowed(Tango::DeviceImpl *dev,Tango::AttReqType ty)
+		{return (static_cast<SimulatorCCD *>(dev))->is_nexusFileName_allowed(ty);}
+};
+
 
 /**
  *	The SimulatorCCDClass singleton definition

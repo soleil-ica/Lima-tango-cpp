@@ -459,6 +459,31 @@ void SimulatorCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	yoffset->set_memorized_init(true);
 	att_list.push_back(yoffset);
 
+	//	Attribute : nexusFileName
+	nexusFileNameAttrib	*nexusfilename = new nexusFileNameAttrib();
+	Tango::UserDefaultAttrProp	nexusfilename_prop;
+	//	description	not set for nexusFileName
+	//	label	not set for nexusFileName
+	//	unit	not set for nexusFileName
+	//	standard_unit	not set for nexusFileName
+	//	display_unit	not set for nexusFileName
+	//	format	not set for nexusFileName
+	//	max_value	not set for nexusFileName
+	//	min_value	not set for nexusFileName
+	//	max_alarm	not set for nexusFileName
+	//	min_alarm	not set for nexusFileName
+	//	max_warning	not set for nexusFileName
+	//	min_warning	not set for nexusFileName
+	//	delta_t	not set for nexusFileName
+	//	delta_val	not set for nexusFileName
+	
+	nexusfilename->set_default_properties(nexusfilename_prop);
+	//	Not Polled
+	nexusfilename->set_disp_level(Tango::OPERATOR);
+	nexusfilename->set_memorized();
+	nexusfilename->set_memorized_init(true);
+	att_list.push_back(nexusfilename);
+
 
 	//	Create a list of static attributes
 	create_static_attribute_list(get_class_attr()->get_attr_list());

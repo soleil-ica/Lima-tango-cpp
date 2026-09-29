@@ -65,10 +65,11 @@ static const char *RcsId = "$Id:  $";
 //================================================================
 //  Attributes managed are:
 //================================================================
-//  growFactor  |  Tango::DevDouble	Scalar
-//  fillType    |  Tango::DevString	Scalar
-//  xOffset     |  Tango::DevDouble	Scalar
-//  yOffset     |  Tango::DevDouble	Scalar
+//  growFactor     |  Tango::DevDouble	Scalar
+//  fillType       |  Tango::DevString	Scalar
+//  xOffset        |  Tango::DevDouble	Scalar
+//  yOffset        |  Tango::DevDouble	Scalar
+//  nexusFileName  |  Tango::DevString	Scalar
 //================================================================
 
 namespace SimulatorCCD_ns
@@ -131,6 +132,7 @@ void SimulatorCCD::delete_device()
 	INFO_STREAM << "Remove the inner-appender." << endl;
 	yat4tango::InnerAppender::release(this);
 	/*----- PROTECTED REGION END -----*/	//	SimulatorCCD::delete_device
+	delete[] attr_nexusFileName_read;
 }
 
 //--------------------------------------------------------
@@ -154,6 +156,7 @@ void SimulatorCCD::init_device()
 	//	Get the device properties from database
 	get_device_property();
 	
+	attr_nexusFileName_read = new Tango::DevString[1];
 	/*----- PROTECTED REGION ID(SimulatorCCD::init_device) ENABLED START -----*/
     CREATE_SCALAR_ATTRIBUTE(attr_growFactor_read);
     CREATE_DEVSTRING_ATTRIBUTE(attr_fillType_read,  MAX_ATTRIBUTE_STRING_LENGTH);
@@ -732,6 +735,44 @@ void SimulatorCCD::write_yOffset(Tango::WAttribute &attr)
                                        "SimulatorCCD::write_yOffset");
     }
 	/*----- PROTECTED REGION END -----*/	//	SimulatorCCD::write_yOffset
+}
+//--------------------------------------------------------
+/**
+ *	Read attribute nexusFileName related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SimulatorCCD::read_nexusFileName(Tango::Attribute &attr)
+{
+	DEBUG_STREAM << "SimulatorCCD::read_nexusFileName(Tango::Attribute &attr) entering... " << endl;
+	/*----- PROTECTED REGION ID(SimulatorCCD::read_nexusFileName) ENABLED START -----*/
+	//	Set the attribute value
+	attr.set_value(attr_nexusFileName_read);
+	
+	/*----- PROTECTED REGION END -----*/	//	SimulatorCCD::read_nexusFileName
+}
+//--------------------------------------------------------
+/**
+ *	Write attribute nexusFileName related method
+ *	Description: 
+ *
+ *	Data type:	Tango::DevString
+ *	Attr type:	Scalar
+ */
+//--------------------------------------------------------
+void SimulatorCCD::write_nexusFileName(Tango::WAttribute &attr)
+{
+	DEBUG_STREAM << "SimulatorCCD::write_nexusFileName(Tango::WAttribute &attr) entering... " << endl;
+	//	Retrieve write value
+	Tango::DevString	w_val;
+	attr.get_write_value(w_val);
+	/*----- PROTECTED REGION ID(SimulatorCCD::write_nexusFileName) ENABLED START -----*/
+	
+	
+	/*----- PROTECTED REGION END -----*/	//	SimulatorCCD::write_nexusFileName
 }
 
 //--------------------------------------------------------
