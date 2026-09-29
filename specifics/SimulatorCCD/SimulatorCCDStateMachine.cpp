@@ -180,7 +180,10 @@ bool SimulatorCCD::is_nexusFileName_allowed(TANGO_UNUSED(Tango::AttReqType type)
 {
 	//	Not any excluded states for nexusFileName attribute in Write access.
 	/*----- PROTECTED REGION ID(SimulatorCCD::nexusFileNameStateAllowed_WRITE) ENABLED START -----*/
-	
+	if (type == Tango::WRITE_REQ &&
+		(get_state() == Tango::INIT || get_state() == Tango::RUNNING ||
+		(get_state() == Tango::FAULT && !is_device_initialized())))
+		return false;
 	/*----- PROTECTED REGION END -----*/	//	SimulatorCCD::nexusFileNameStateAllowed_WRITE
 
 	//	Not any excluded states for nexusFileName attribute in read access.

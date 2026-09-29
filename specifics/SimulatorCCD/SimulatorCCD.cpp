@@ -128,6 +128,8 @@ void SimulatorCCD::delete_device()
     //    Delete device allocated objects
     DELETE_SCALAR_ATTRIBUTE(attr_growFactor_read);
     DELETE_DEVSTRING_ATTRIBUTE(attr_fillType_read);
+	// Free our character buffer; POGO frees the pointer array below.
+	delete[] *attr_nexusFileName_read;
 
 	INFO_STREAM << "Remove the inner-appender." << endl;
 	yat4tango::InnerAppender::release(this);
@@ -160,6 +162,9 @@ void SimulatorCCD::init_device()
 	/*----- PROTECTED REGION ID(SimulatorCCD::init_device) ENABLED START -----*/
     CREATE_SCALAR_ATTRIBUTE(attr_growFactor_read);
     CREATE_DEVSTRING_ATTRIBUTE(attr_fillType_read,  MAX_ATTRIBUTE_STRING_LENGTH);
+    // POGO allocates the DevString pointer array, but not its character buffer; we own the buffer.
+    *attr_nexusFileName_read = new char[MAX_ATTRIBUTE_STRING_LENGTH];
+    (*attr_nexusFileName_read)[0] = '\0';
 
     //By default INIT, need to ensure that all objets are OK before set the device to STANDBY
     set_state(Tango::INIT);
@@ -183,6 +188,14 @@ void SimulatorCCD::init_device()
 
         //- get camera to specific detector
         m_camera = &(m_hw->getCamera());
+
+        std::string nexus_file_name = yat4tango::PropertyHelper::get_memorized_attribute<std::string>(
+            this, "nexusFileName", std::string());
+        if (nexus_file_name.size() >= MAX_ATTRIBUTE_STRING_LENGTH)
+            throw LIMA_HW_EXC(InvalidValue, "Memorized Nexus file name too long");
+        if (!nexus_file_name.empty())
+            m_camera->getFrameBuilder()->setNexusFileName(nexus_file_name);
+        strcpy(*attr_nexusFileName_read, nexus_file_name.c_str());
 
 		// write fillType At Init
 		INFO_STREAM << "Write tango hardware at Init - fillType." << endl;
@@ -483,6 +496,9 @@ void SimulatorCCD::read_fillType(Tango::Attribute &attr)
             case Simulator::FrameBuilder::Diffraction:
                 strFillType = STR_DIFFRACTION;
                 break;
+            case Simulator::FrameBuilder::Nexus:
+                strFillType = STR_NEXUS;
+                break;
             default:
             {
                 Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
@@ -538,24 +554,27 @@ void SimulatorCCD::write_fillType(Tango::WAttribute &attr)
         string current = attr_fillType_write;
         transform(current.begin(), current.end(), current.begin(), ::toupper);
         if ((current != STR_GAUSS) &&
-            (current != STR_DIFFRACTION)
+            (current != STR_DIFFRACTION) &&
+            (current != STR_NEXUS)
             )
         {
             attr_fillType_write = const_cast<Tango::DevString>(m_fillType.c_str());
             Tango::Except::throw_exception("CONFIGURATION_ERROR",
                                            "Possible fillType values are:"
                                            "\n- GAUSS"
-                                           "\n- DIFFRACTION",
+                                           "\n- DIFFRACTION"
+                                           "\n- NEXUS",
                                            "SimulatorCCD::write_fillType");
         }
 
         //- THIS IS AN AVAILABLE FILLTYPE
-        m_fillType = current;
-
-        if (STR_GAUSS == m_fillType)
+        if (STR_GAUSS == current)
             m_camera->getFrameBuilder()->setFillType(Simulator::FrameBuilder::Gauss);
-        else if (STR_DIFFRACTION == m_fillType)
+        else if (STR_DIFFRACTION == current)
             m_camera->getFrameBuilder()->setFillType(Simulator::FrameBuilder::Diffraction);
+        else
+            m_camera->getFrameBuilder()->setFillType(Simulator::FrameBuilder::Nexus);
+        m_fillType = current;
         yat4tango::PropertyHelper::set_property(this, "MemorizedFillType", m_fillType);
     }
     catch (Tango::DevFailed& df)
@@ -749,8 +768,21 @@ void SimulatorCCD::read_nexusFileName(Tango::Attribute &attr)
 {
 	DEBUG_STREAM << "SimulatorCCD::read_nexusFileName(Tango::Attribute &attr) entering... " << endl;
 	/*----- PROTECTED REGION ID(SimulatorCCD::read_nexusFileName) ENABLED START -----*/
-	//	Set the attribute value
-	attr.set_value(attr_nexusFileName_read);
+    try
+    {
+        std::string file_name;
+        m_camera->getFrameBuilder()->getNexusFileName(file_name);
+        if (file_name.size() >= MAX_ATTRIBUTE_STRING_LENGTH)
+            Tango::Except::throw_exception("TANGO_DEVICE_ERROR", "Nexus file name too long",
+                                           "SimulatorCCD::read_nexusFileName");
+        strcpy(*attr_nexusFileName_read, file_name.c_str());
+        attr.set_value(attr_nexusFileName_read);
+    }
+    catch (lima::Exception& e)
+    {
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR", e.getErrMsg().c_str(),
+                                       "SimulatorCCD::read_nexusFileName");
+    }
 	
 	/*----- PROTECTED REGION END -----*/	//	SimulatorCCD::read_nexusFileName
 }
@@ -770,7 +802,20 @@ void SimulatorCCD::write_nexusFileName(Tango::WAttribute &attr)
 	Tango::DevString	w_val;
 	attr.get_write_value(w_val);
 	/*----- PROTECTED REGION ID(SimulatorCCD::write_nexusFileName) ENABLED START -----*/
-	
+    try
+    {
+        std::string file_name = w_val;
+        if (file_name.size() >= MAX_ATTRIBUTE_STRING_LENGTH)
+            Tango::Except::throw_exception("CONFIGURATION_ERROR", "Nexus file name too long",
+                                           "SimulatorCCD::write_nexusFileName");
+        m_camera->getFrameBuilder()->setNexusFileName(file_name);
+        strcpy(*attr_nexusFileName_read, file_name.c_str());
+    }
+    catch (lima::Exception& e)
+    {
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR", e.getErrMsg().c_str(),
+                                       "SimulatorCCD::write_nexusFileName");
+    }
 	
 	/*----- PROTECTED REGION END -----*/	//	SimulatorCCD::write_nexusFileName
 }

@@ -52,6 +52,7 @@
 #define MAX_ATTRIBUTE_STRING_LENGTH 256
 #define STR_GAUSS "GAUSS"
 #define STR_DIFFRACTION "DIFFRACTION"
+#define STR_NEXUS "NEXUS"
 
 
 /*----- PROTECTED REGION END -----*/	//	SimulatorCCD.h
