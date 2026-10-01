@@ -985,6 +985,9 @@ protected:
 	bool 								m_use_prepare_command;
 	bool 								m_enable_hardware_sync;
 
+	// use to transfert a color image to a TANGO client
+	Tango::EncodedAttribute	           m_encoded_buffer;
+
 /*----- PROTECTED REGION END -----*/	//	LimaDetector::Additional Method prototypes
 };
 
