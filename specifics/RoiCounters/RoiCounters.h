@@ -334,7 +334,7 @@ protected:
     lima::SoftOpInstance  m_soft_operation;
 
     //dynamic attributes objects
-    yat4tango::DynamicInterfaceManager m_dim;
+    yat4tango::DynamicInterfaceManager* m_dim;
     Tango::DevULong     attr_frameNumber_value;
     Data                m_image_data_roi;
     //MAX_NB_ROICOUNTERS rois counters can be managed

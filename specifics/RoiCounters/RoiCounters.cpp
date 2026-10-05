@@ -130,7 +130,7 @@ void RoiCounters::delete_device()
 
 	//- remove any dynamic attr or command
 	INFO_STREAM << "remove any dynamic attributes or commands" << endl;
-	m_dim.remove();
+	m_dim->remove();
 	
 	INFO_STREAM << "Remove the inner-appender." << endl;
 	yat4tango::InnerAppender::release(this);
@@ -169,6 +169,8 @@ void RoiCounters::init_device()
 	m_is_device_initialized = false;
 	m_status_message.str("");
 	m_operations_list.clear();
+
+	m_dim = new yat4tango::DynamicInterfaceManager(this);
 
 	//- instanciate the appender in order to manage logs
 	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;
@@ -1548,7 +1550,7 @@ bool RoiCounters::create_image_dynamic_attributes(void)
 			dai.rcb = yat4tango::DynamicAttributeReadCallback::instanciate(*this, &RoiCounters::read_image_callback);
 
 			//- add the dyn. attr. to the device
-			m_dim.dynamic_attributes_manager().add_attribute(dai);
+			m_dim->dynamic_attributes_manager().add_attribute(dai);
 		}
 	}
 	catch(Tango::DevFailed& df)

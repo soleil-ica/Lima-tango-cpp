@@ -70,7 +70,7 @@ void RoiCounters::create_attribute(std::string name,
 
     //- add the dyn. attr. to the device
     DEBUG_STREAM << "\t- add the dyn. attr. to the device [" << this << "]" << endl;
-    m_dim.dynamic_attributes_manager().add_attribute(dai);
+    m_dim->dynamic_attributes_manager().add_attribute(dai);
     DEBUG_STREAM << "RoiCounters::create_attribute() - [END]" << endl;
 }
 
