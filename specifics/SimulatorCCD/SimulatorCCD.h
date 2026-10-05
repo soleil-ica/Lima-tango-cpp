@@ -82,6 +82,7 @@ protected:
 	Tango::DevDouble attr_yOffset_write;
 	bool m_is_device_initialized;
 	std::stringstream m_status_message;
+	std::string m_nexus_status_message;
 	std::string m_fillType;
 	lima::Simulator::Interface* m_hw;
 	lima::CtControl* m_ct;

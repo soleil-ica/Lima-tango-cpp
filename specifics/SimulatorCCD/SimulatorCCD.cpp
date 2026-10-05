@@ -44,6 +44,11 @@ static const char *RcsId = "$Id:  $";
 #include <PogoHelper.h>
 #include <SimulatorCCD.h>
 #include <SimulatorCCDClass.h>
+#include <cerrno>
+#include <climits>
+#include <cstdlib>
+#include <cstring>
+#include <exception>
 
 /*----- PROTECTED REGION END -----*/	//	SimulatorCCD.cpp
 
@@ -77,6 +82,22 @@ namespace SimulatorCCD_ns
 /*----- PROTECTED REGION ID(SimulatorCCD::namespace_starting) ENABLED START -----*/
 
 //	static initializations
+
+static std::string absoluteNexusFileName(const std::string& file_name)
+{
+    if (file_name.empty())
+        return file_name;
+#ifdef WIN32
+    char absolute_path[_MAX_PATH];
+    char* resolved = _fullpath(absolute_path, file_name.c_str(), sizeof(absolute_path));
+#else
+    char absolute_path[PATH_MAX];
+    char* resolved = realpath(file_name.c_str(), absolute_path);
+#endif
+    if (!resolved)
+        throw LIMA_HW_EXC(InvalidValue, std::string("Cannot resolve Nexus file '") + file_name + "': " + std::strerror(errno));
+    return std::string(absolute_path);
+}
 
 /*----- PROTECTED REGION END -----*/	//	SimulatorCCD::namespace_starting
 
@@ -170,6 +191,7 @@ void SimulatorCCD::init_device()
     set_state(Tango::INIT);
     m_is_device_initialized = false;
     m_status_message.str("");
+    m_nexus_status_message.clear();
 
 	//- instanciate the appender in order to manage logs
 	INFO_STREAM << "Create the inner-appender in order to manage logs." << endl;
@@ -189,21 +211,67 @@ void SimulatorCCD::init_device()
         //- get camera to specific detector
         m_camera = &(m_hw->getCamera());
 
-        std::string nexus_file_name = yat4tango::PropertyHelper::get_memorized_attribute<std::string>(
-            this, "nexusFileName", std::string());
-        if (nexus_file_name.size() >= MAX_ATTRIBUTE_STRING_LENGTH)
-            throw LIMA_HW_EXC(InvalidValue, "Memorized Nexus file name too long");
-        if (!nexus_file_name.empty())
-            m_camera->getFrameBuilder()->setNexusFileName(nexus_file_name);
-        strcpy(*attr_nexusFileName_read, nexus_file_name.c_str());
+        m_camera->getFrameBuilder()->setFillType(Simulator::FrameBuilder::Gauss);
+        m_camera->getFrameBuilder()->setNexusFileName(std::string());
+        std::string nexus_file_name;
+        bool nexus_loaded = false;
+        try
+        {
+            nexus_file_name = yat4tango::PropertyHelper::get_memorized_attribute<std::string>(
+                this, "nexusFileName", std::string());
+            nexus_file_name = absoluteNexusFileName(nexus_file_name);
+            if (nexus_file_name.size() >= MAX_ATTRIBUTE_STRING_LENGTH)
+                throw LIMA_HW_EXC(InvalidValue, "Memorized Nexus file name too long");
+            if (!nexus_file_name.empty())
+            {
+                m_camera->getFrameBuilder()->setNexusFileName(nexus_file_name);
+                nexus_loaded = true;
+            }
+            strcpy(*attr_nexusFileName_read, nexus_file_name.c_str());
+        }
+        catch (Exception& e)
+        {
+            m_nexus_status_message = std::string("Cannot restore Nexus input: ") + e.getErrMsg();
+        }
+        catch (Tango::DevFailed& df)
+        {
+            m_nexus_status_message = "Cannot restore Nexus input: ";
+            if (df.errors.length())
+                m_nexus_status_message += df.errors[0].desc.in();
+            else
+                m_nexus_status_message += "Tango error";
+        }
+        catch (std::exception& e)
+        {
+            m_nexus_status_message = std::string("Cannot restore Nexus input: ") + e.what();
+        }
+        catch (...)
+        {
+            m_nexus_status_message = "Cannot restore Nexus input: unknown error";
+        }
+        if (!m_nexus_status_message.empty())
+            WARN_STREAM << m_nexus_status_message << endl;
+
+        std::string initial_fill_type = memorizedFillType;
+        transform(initial_fill_type.begin(), initial_fill_type.end(), initial_fill_type.begin(), ::toupper);
+        bool nexus_fallback = initial_fill_type == STR_NEXUS && !nexus_loaded;
+        if (nexus_fallback)
+        {
+            initial_fill_type = STR_GAUSS;
+            WARN_STREAM << "No valid Nexus input loaded; starting in GAUSS mode." << endl;
+            if (!m_nexus_status_message.empty())
+                m_nexus_status_message += "\n";
+            m_nexus_status_message += "No valid Nexus input loaded; starting in GAUSS mode.";
+        }
 
 		// write fillType At Init
 		INFO_STREAM << "Write tango hardware at Init - fillType." << endl;
         Tango::WAttribute &fillType = dev_attr->get_w_attr_by_name("fillType");
-        m_fillType = memorizedFillType;
-        strcpy(*attr_fillType_read, memorizedFillType.c_str());
-        fillType.set_write_value(memorizedFillType);
-        write_fillType(fillType);
+        m_fillType = initial_fill_type;
+        strcpy(*attr_fillType_read, initial_fill_type.c_str());
+        fillType.set_write_value(initial_fill_type);
+        if (!nexus_fallback)
+            write_fillType(fillType);
 
 		// write growFactor At Init
 		INFO_STREAM << "Write tango hardware at Init - growFactor." << endl;
@@ -804,12 +872,14 @@ void SimulatorCCD::write_nexusFileName(Tango::WAttribute &attr)
 	/*----- PROTECTED REGION ID(SimulatorCCD::write_nexusFileName) ENABLED START -----*/
     try
     {
-        std::string file_name = w_val;
+        std::string file_name = absoluteNexusFileName(w_val);
         if (file_name.size() >= MAX_ATTRIBUTE_STRING_LENGTH)
             Tango::Except::throw_exception("CONFIGURATION_ERROR", "Nexus file name too long",
                                            "SimulatorCCD::write_nexusFileName");
         m_camera->getFrameBuilder()->setNexusFileName(file_name);
         strcpy(*attr_nexusFileName_read, file_name.c_str());
+        attr.set_write_value(file_name);
+        m_nexus_status_message.clear();
     }
     catch (lima::Exception& e)
     {
@@ -871,7 +941,11 @@ Tango::DevState SimulatorCCD::dev_state()
         // state & status are retrieved from Factory, Factory is updated by Generic device
         DeviceState = ControlFactory::instance().get_state();
         DeviceStatus << ControlFactory::instance().get_status();
+        if (!m_status_message.str().empty())
+            DeviceStatus << endl << m_status_message.str();
     }
+    if (!m_nexus_status_message.empty())
+        DeviceStatus << endl << m_nexus_status_message;
 
     set_state(DeviceState);
     set_status(DeviceStatus.str());

@@ -481,7 +481,7 @@ void SimulatorCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	//	Not Polled
 	nexusfilename->set_disp_level(Tango::OPERATOR);
 	nexusfilename->set_memorized();
-	nexusfilename->set_memorized_init(true);
+	nexusfilename->set_memorized_init(false);
 	att_list.push_back(nexusfilename);
 
 
@@ -490,6 +490,7 @@ void SimulatorCCDClass::attribute_factory(vector<Tango::Attr *> &att_list)
 	/*----- PROTECTED REGION ID(SimulatorCCDClass::attribute_factory_after) ENABLED START -----*/
 	
 	//	Add your own code
+	nexusfilename->set_memorized_init(false);
 	
 	/*----- PROTECTED REGION END -----*/	//	SimulatorCCDClass::attribute_factory_after
 }
