@@ -79,7 +79,6 @@ using namespace std;
 //  drawCentroidEnabled  |  Tango::DevBoolean	Scalar
 //  pngFilesEnabled      |  Tango::DevBoolean	Scalar
 //  pngFilesPath         |  Tango::DevString	Scalar
-//  enabled              |  Tango::DevBoolean	Scalar
 //  operationsList       |  Tango::DevString	Spectrum  ( max = 1024)
 //  clusterCounter       |  Tango::DevLong	Spectrum  ( max = 100000)
 //  clusterArea          |  Tango::DevLong	Spectrum  ( max = 1000000)
@@ -155,7 +154,6 @@ void Rixs::delete_device()
 	DELETE_SCALAR_ATTRIBUTE(attr_nbClusterValid_read);
 
 /*----- PROTECTED REGION END -----*/	//	Rixs::delete_device
-	delete[] attr_enabled_read;
 }
 
 //--------------------------------------------------------
@@ -180,9 +178,7 @@ void Rixs::init_device()
 	//	Get the device properties from database
 	get_device_property();
 	
-	attr_enabled_read = new Tango::DevBoolean[1];
 	/*----- PROTECTED REGION ID(Rixs::init_device) ENABLED START -----*/
-	*attr_enabled_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "enabled", true);
 
 	
 	CREATE_DEVSTRING_ATTRIBUTE(attr_version_read, MAX_ATTRIBUTE_STRING_LENGTH);
@@ -964,45 +960,6 @@ void Rixs::write_pngFilesPath(Tango::WAttribute &attr)
 }
 //--------------------------------------------------------
 /**
- *	Read attribute enabled related method
- *	Description: 
- *
- *	Data type:	Tango::DevBoolean
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void Rixs::read_enabled(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "Rixs::read_enabled(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Rixs::read_enabled) ENABLED START -----*/
-	//	Set the attribute value
-	attr.set_value(attr_enabled_read);
-	
-	/*----- PROTECTED REGION END -----*/	//	Rixs::read_enabled
-}
-//--------------------------------------------------------
-/**
- *	Write attribute enabled related method
- *	Description: 
- *
- *	Data type:	Tango::DevBoolean
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void Rixs::write_enabled(Tango::WAttribute &attr)
-{
-	DEBUG_STREAM << "Rixs::write_enabled(Tango::WAttribute &attr) entering... " << endl;
-	//	Retrieve write value
-	Tango::DevBoolean	w_val;
-	attr.get_write_value(w_val);
-	/*----- PROTECTED REGION ID(Rixs::write_enabled) ENABLED START -----*/
-	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-	*attr_enabled_read = w_val;
-	
-	/*----- PROTECTED REGION END -----*/	//	Rixs::write_enabled
-}
-//--------------------------------------------------------
-/**
  *	Read attribute operationsList related method
  *	Description: Enumerate all Rixs active 'post processing' operations on the image.
  *
@@ -1342,7 +1299,7 @@ void Rixs::add_external_operation(long level)
                 m_ct->externalOperation()->addOp(USER_LINK_TASK, opId.str(), level, op);
 
 				//prepare l'externalOperation Task
-				RixsTask* task = new RixsTask("NONE", 0, attr_enabled_read);
+				RixsTask* task = new RixsTask("NONE", 0);
                 task->setOperationType(attr_operationType_write);
                 task->setOperationValue(yat::XString<double>::to_num(m_operation_value));
 				task->setResetSpectrumsAtEachFrameEnabled(resetSpectrumsAtEachFrame);

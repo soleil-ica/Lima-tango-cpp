@@ -93,26 +93,6 @@ bool Mask::is_runLevel_allowed(TANGO_UNUSED(Tango::AttReqType type))
 
 //--------------------------------------------------------
 /**
- *	Method      : Mask::is_enabled_allowed()
- *	Description : Execution allowed for enabled attribute
- */
-//--------------------------------------------------------
-bool Mask::is_enabled_allowed(TANGO_UNUSED(Tango::AttReqType type))
-{
-	//	Not any excluded states for enabled attribute in Write access.
-	/*----- PROTECTED REGION ID(Mask::enabledStateAllowed_WRITE) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	Mask::enabledStateAllowed_WRITE
-
-	//	Not any excluded states for enabled attribute in read access.
-	/*----- PROTECTED REGION ID(Mask::enabledStateAllowed_READ) ENABLED START -----*/
-	
-	/*----- PROTECTED REGION END -----*/	//	Mask::enabledStateAllowed_READ
-	return true;
-}
-
-//--------------------------------------------------------
-/**
  *	Method      : Mask::is_operationsList_allowed()
  *	Description : Execution allowed for operationsList attribute
  */

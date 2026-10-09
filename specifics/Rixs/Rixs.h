@@ -87,11 +87,10 @@ namespace Rixs_ns
         //-----------------------------------------------
 		//ctor
 		//-----------------------------------------------
-		RixsTask(const std::string& opType, long opValue, Tango::DevBoolean* enabled) :
+        RixsTask(const std::string& opType, long opValue) :
         LinkTask(true),
         m_operation_type(opType),
-		m_operation_value(opValue),
-		m_enabled(enabled) { }
+        m_operation_value(opValue) { }
 
         //-----------------------------------------------
 		//dtor
@@ -290,8 +289,6 @@ namespace Rixs_ns
         Data process(Data &aData)
         {
 			yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-			if (!*m_enabled)
-				return aData;
 			yat::Timer t1;
             Data aNewData;
             switch(aData.type)
@@ -319,7 +316,6 @@ namespace Rixs_ns
         }
 
     private:
-		Tango::DevBoolean* m_enabled;
 		//OpenCV Helper
 		std::string type_2_str(int type)
 		{
@@ -697,7 +693,6 @@ public:
 	Tango::DevString	*attr_operationType_read;
 	Tango::DevString	*attr_operationValue_read;
 	Tango::DevLong	*attr_nbClusterValid_read;
-	Tango::DevBoolean	*attr_enabled_read;
 	Tango::DevString	*attr_operationsList_read;
 	Tango::DevLong	*attr_clusterCounter_read;
 	Tango::DevLong	*attr_clusterArea_read;
@@ -864,16 +859,6 @@ public:
  */
 	virtual void write_pngFilesPath(Tango::WAttribute &attr);
 	virtual bool is_pngFilesPath_allowed(Tango::AttReqType type);
-/**
- *	Attribute enabled related methods
- *	Description: 
- *
- *	Data type:	Tango::DevBoolean
- *	Attr type:	Scalar
- */
-	virtual void read_enabled(Tango::Attribute &attr);
-	virtual void write_enabled(Tango::WAttribute &attr);
-	virtual bool is_enabled_allowed(Tango::AttReqType type);
 /**
  *	Attribute operationsList related methods
  *	Description: Enumerate all Rixs active 'post processing' operations on the image.

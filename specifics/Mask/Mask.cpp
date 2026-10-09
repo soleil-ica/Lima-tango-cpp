@@ -67,7 +67,6 @@ static const char *RcsId = "$Id:  $";
 //================================================================
 //  version         |  Tango::DevString	Scalar
 //  runLevel        |  Tango::DevULong	Scalar
-//  enabled         |  Tango::DevBoolean	Scalar
 //  operationsList  |  Tango::DevString	Spectrum  ( max = 1024)
 //  maskImage       |  Tango::DevShort	Image  ( max = 10000 x 10000)
 //================================================================
@@ -140,7 +139,6 @@ void Mask::delete_device()
 	yat4tango::InnerAppender::release(this);
 
 /*----- PROTECTED REGION END -----*/	//	Mask::delete_device
-	delete[] attr_enabled_read;
 }
 
 //--------------------------------------------------------
@@ -165,9 +163,7 @@ void Mask::init_device()
 	//	Get the device properties from database
 	get_device_property();
 	
-	attr_enabled_read = new Tango::DevBoolean[1];
 	/*----- PROTECTED REGION ID(Mask::init_device) ENABLED START -----*/
-	*attr_enabled_read = yat4tango::PropertyHelper::get_memorized_attribute<Tango::DevBoolean>(this, "enabled", true);
 
 	CREATE_DEVSTRING_ATTRIBUTE(attr_version_read, 256);
 	m_dim_x = 0;
@@ -445,11 +441,6 @@ void Mask::write_runLevel(Tango::WAttribute &attr)
 	try
 	{
 		attr.get_write_value(attr_runLevel_write);
-		if (!*attr_enabled_read)
-		{
-			yat4tango::PropertyHelper::set_property(this, "MemorizedRunLevel", attr_runLevel_write);
-			return;
-		}
 
 		//prepare Data for the Mask ProcessLib Task
 		set_mask_image();
@@ -473,54 +464,6 @@ void Mask::write_runLevel(Tango::WAttribute &attr)
 	}
 
 /*----- PROTECTED REGION END -----*/	//	Mask::write_runLevel
-}
-//--------------------------------------------------------
-/**
- *	Read attribute enabled related method
- *	Description: 
- *
- *	Data type:	Tango::DevBoolean
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void Mask::read_enabled(Tango::Attribute &attr)
-{
-	DEBUG_STREAM << "Mask::read_enabled(Tango::Attribute &attr) entering... " << endl;
-	/*----- PROTECTED REGION ID(Mask::read_enabled) ENABLED START -----*/
-	//	Set the attribute value
-	attr.set_value(attr_enabled_read);
-	
-	/*----- PROTECTED REGION END -----*/	//	Mask::read_enabled
-}
-//--------------------------------------------------------
-/**
- *	Write attribute enabled related method
- *	Description: 
- *
- *	Data type:	Tango::DevBoolean
- *	Attr type:	Scalar
- */
-//--------------------------------------------------------
-void Mask::write_enabled(Tango::WAttribute &attr)
-{
-	DEBUG_STREAM << "Mask::write_enabled(Tango::WAttribute &attr) entering... " << endl;
-	//	Retrieve write value
-	Tango::DevBoolean	w_val;
-	attr.get_write_value(w_val);
-	/*----- PROTECTED REGION ID(Mask::write_enabled) ENABLED START -----*/
-	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-	if (*attr_enabled_read == w_val)
-		return;
-	if (!w_val && m_dim_x != 0 && m_dim_y != 0 && m_is_device_initialized)
-	{
-		m_ct->externalOperation()->delOp(":Mask");
-		m_soft_operation.m_opt = 0;
-	}
-	*attr_enabled_read = w_val;
-	if (w_val && m_dim_x != 0 && m_dim_y != 0)
-		set_mask_image();
-	
-	/*----- PROTECTED REGION END -----*/	//	Mask::write_enabled
 }
 //--------------------------------------------------------
 /**
@@ -753,9 +696,6 @@ void Mask::read_runLevel(Tango::Attribute &attr)
 
 void Mask::set_mask_image(void)
 {
-	yat::AutoMutex<> _lock(ControlFactory::instance().get_global_mutex());
-	if (!*attr_enabled_read)
-		return;
 
 	//only if a write_maskImage was called previously & device is already initialized !
 	if(!is_device_initialized())
