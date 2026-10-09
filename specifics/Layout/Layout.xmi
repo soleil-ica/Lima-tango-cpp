@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="ASCII"?>
+<pogoDsl:PogoSystem xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pogoDsl="http://www.esrf.fr/tango/pogo/PogoDsl">
+  <classes name="Layout" pogoRevision="9.6">
+    <description description="Lima Device Specific for post process image" title="Lima Layout Device Specific" sourcePath="/home/informatique/ica/iperty/dev/lima_migration_devices_specifiques/Lima/applications/tango/cpp/specifics/Layout" language="Cpp" filestogenerate="XMI   file,Code files,Protected Regions" hasMandatoryProperty="false" hasConcreteProperty="true" hasAbstractCommand="false" hasAbstractAttribute="false">
+      <inheritances classname="Device_4Impl" sourcePath=""/>
+      <identification contact="at synchrotro-soleil.fr - arafat.noureddine" author="arafat.noureddine" emailDomain="synchrotro-soleil.fr" classFamily="Acquisition" siteSpecific="" platform="All Platforms" bus="Not Applicable" manufacturer="SOLEIL" reference=""/>
+    </description>
+    <deviceProperties name="MemorizedOperationTypes" description="Memorize all operationType declared in the order to process the image.">
+      <type xsi:type="pogoDsl:StringVectorType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>NONE</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="MemorizedOperationValues" description="Memorize all operationValue associated to the operationType declared in the order to process the image.">
+      <type xsi:type="pogoDsl:StringVectorType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>0</DefaultPropValue>
+    </deviceProperties>
+    <deviceProperties name="MemorizedOperationLevels" description="Memorize all levels associated to the operationType declared in the order to process the image.">
+      <type xsi:type="pogoDsl:IntVectorType"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <DefaultPropValue>0</DefaultPropValue>
+    </deviceProperties>
+    <commands name="State" description="This command gets the device state (stored in its &lt;i>device_state&lt;/i> data member) and returns it to the caller." execMethod="dev_state" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="none.">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="State Code">
+        <type xsi:type="pogoDsl:StateType"/>
+      </argout>
+      <status abstract="true" inherited="true" concrete="true" concreteHere="false"/>
+    </commands>
+    <commands name="Status" description="This command gets the device status (stored in its &lt;i>device_status&lt;/i> data member) and returns it to the caller." execMethod="dev_status" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="none.">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argin>
+      <argout description="Status description">
+        <type xsi:type="pogoDsl:ConstStringType"/>
+      </argout>
+      <status abstract="true" inherited="true" concrete="true" concreteHere="false"/>
+    </commands>
+    <commands name="AddOperation" description="Add Lima external operation in order to transform the image acquired from the detector.&lt;br>&#xA;User must first define the operationType, operationValue attributes&lt;br>&#xA;argin will define the level of operation." execMethod="add_operation" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="">
+        <type xsi:type="pogoDsl:IntType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>INIT</excludedStates>
+      <excludedStates>FAULT</excludedStates>
+      <excludedStates>RUNNING</excludedStates>
+    </commands>
+    <commands name="RemoveOperation" description="Remove a Lima external operation previously defined at the the level = argin.&lt;br>" execMethod="remove_operation" displayLevel="OPERATOR" polledPeriod="0">
+      <argin description="">
+        <type xsi:type="pogoDsl:IntType"/>
+      </argin>
+      <argout description="">
+        <type xsi:type="pogoDsl:VoidType"/>
+      </argout>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <excludedStates>INIT</excludedStates>
+      <excludedStates>FAULT</excludedStates>
+      <excludedStates>RUNNING</excludedStates>
+    </commands>
+    <attributes name="version" attType="Scalar" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="0" maxY="0">
+      <dataType xsi:type="pogoDsl:StringType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Display the Version of the Layout Device" label="" unit=" " standardUnit=" " displayUnit=" " format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+    </attributes>
+    <attributes name="operationType" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="0" maxY="0">
+      <dataType xsi:type="pogoDsl:StringType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Arithmetic available types :&lt;br>\n+ &lt;br>\n- &lt;br>\n* &lt;br>\n/ &lt;br>\n>> &lt;br>\n&lt;&lt; &lt;br>\nFLIP&lt;br>\nROTATION&lt;br>\nCIRPAD_2X10&lt;br>\nCIRPAD_4X5&lt;br>\nNONE &lt;br>" label="" unit=" " standardUnit=" " displayUnit=" " format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <readExcludedStates>INIT</readExcludedStates>
+      <readExcludedStates>FAULT</readExcludedStates>
+      <readExcludedStates>RUNNING</readExcludedStates>
+    </attributes>
+    <attributes name="operationValue" attType="Scalar" rwType="READ_WRITE" displayLevel="OPERATOR" polledPeriod="0" maxX="0" maxY="0">
+      <dataType xsi:type="pogoDsl:StringType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Arithmetic available values :&lt;br>\nany numeric value\n\nFlip available values :&lt;br>\nX&lt;br>\nY&lt;br>\nXY&lt;br>\n\nRotation available values :&lt;br>\n90&lt;br>\n180&lt;br>\n270&lt;br>\n" label="" unit=" " standardUnit="" displayUnit=" " format="%s" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <readExcludedStates>INIT</readExcludedStates>
+      <readExcludedStates>FAULT</readExcludedStates>
+      <readExcludedStates>RUNNING</readExcludedStates>
+    </attributes>
+    <attributes name="operationsList" attType="Spectrum" rwType="READ" displayLevel="OPERATOR" polledPeriod="0" maxX="1024" maxY="0">
+      <dataType xsi:type="pogoDsl:StringType"/>
+      <changeEvent fire="false" libCheckCriteria="false"/>
+      <archiveEvent fire="false" libCheckCriteria="false"/>
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+      <properties description="Enumerate all Layout active 'post processing' operations on the image." label="" unit=" " standardUnit=" " displayUnit=" " format="" maxValue="" minValue="" maxAlarm="" minAlarm="" maxWarning="" minWarning="" deltaTime="" deltaValue=""/>
+      <readExcludedStates>INIT</readExcludedStates>
+      <readExcludedStates>FAULT</readExcludedStates>
+      <readExcludedStates>RUNNING</readExcludedStates>
+    </attributes>
+    <states name="INIT" description="">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <states name="STANDBY" description="">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <states name="FAULT" description="">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <states name="RUNNING" description="">
+      <status abstract="false" inherited="false" concrete="true" concreteHere="true"/>
+    </states>
+    <preferences docHome="../doc/doc_html" makefileHome="$(TANGO_HOME)"/>
+  </classes>
+</pogoDsl:PogoSystem>
