@@ -69,6 +69,7 @@ const bool  WRITE_MEMORIZED_AT_INIT     = true;
 
 namespace Pco_ns
 {
+    class PcoRingBufferControl;
 
     /**
      * Class Description:
@@ -129,6 +130,10 @@ namespace Pco_ns
  *	Serial Number of the camera: used to select camera if several connected to the same host
  */
 	string	serialNumber;
+/**
+ *	Existing server-side directory for private Dimax ring buffer NeXus files. Required when ringBufferEnabled=true; independent of LImA saving.
+ */
+	string	ringBufferNexusTargetPath;
 //@}
 
         /**
@@ -342,6 +347,11 @@ namespace Pco_ns
         //- forcedFIFOMode
         void read_forcedFIFOMode_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
         void write_forcedFIFOMode_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
+        void read_ringBufferEnabled_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
+        void write_ringBufferEnabled_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
+        void read_ringBufferNexusFileName_callback(yat4tango::DynamicAttributeReadCallbackData& cbd);
+        void write_ringBufferNexusFileName_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd);
+        void check_ring_buffer_configuration_allowed();
         
         //state & status stuff
         // return true if the device is correctly initialized in init_device
@@ -359,6 +369,10 @@ namespace Pco_ns
         map<string, long>       m_map_scan_rate_frequencies;
 
         //- yat4tango Dynamic Interface Manager
+        PcoRingBufferControl* m_ringControl;
+        Tango::DevBoolean m_ringEnabledRead;
+        std::string m_ringFileNameRead;
+        Tango::DevString m_ringFileNameValue;
         yat4tango::DynamicInterfaceManager m_dim;
     };
 

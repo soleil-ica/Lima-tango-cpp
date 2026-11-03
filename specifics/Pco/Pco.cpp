@@ -58,6 +58,7 @@ static const char *RcsId = "$Id:  $";
 
 #include "Pco.h"
 #include <PcoClass.h>
+#include "PcoRingBufferControl.h"
 
 
 namespace Pco_ns
@@ -74,17 +75,17 @@ namespace Pco_ns
 //
 //-----------------------------------------------------------------------------
 Pco::Pco(Tango::DeviceClass *cl, string &s)
-    :Tango::Device_4Impl(cl, s.c_str()), m_dim(this)
+    :Tango::Device_4Impl(cl, s.c_str()), m_ringControl(0), m_dim(this)
 {
     init_device();
 }
 Pco::Pco(Tango::DeviceClass *cl, const char *s)
-    : Tango::Device_4Impl(cl, s), m_dim(this)
+    : Tango::Device_4Impl(cl, s), m_ringControl(0), m_dim(this)
 {
     init_device();
 }
 Pco::Pco(Tango::DeviceClass *cl, const char *s, const char *d)
-    : Tango::Device_4Impl(cl, s, d), m_dim(this)
+    : Tango::Device_4Impl(cl, s, d), m_ringControl(0), m_dim(this)
 {
     init_device();
 }
@@ -99,6 +100,23 @@ void Pco::delete_device()
 {
     INFO_STREAM << "Pco::Pco() delete device " << device_name << endl;
     //	Delete device allocated objects
+    if (m_ringControl)
+    {
+        try
+        {
+            m_ringControl->detach();
+        }
+        catch (const lima::Exception& error)
+        {
+            ERROR_STREAM << "Ring buffer detach failed: " << error.getErrMsg() << endl;
+        }
+        catch (const std::exception& error)
+        {
+            ERROR_STREAM << "Ring buffer detach failed: " << error.what() << endl;
+        }
+        delete m_ringControl;
+        m_ringControl = 0;
+    }
 
     DELETE_DEVSTRING_ATTRIBUTE(attr_pixelRate_read);
     DELETE_SCALAR_ATTRIBUTE(attr_currentRecordedFrame_read);
@@ -183,6 +201,8 @@ void Pco::init_device()
 
         //- get camera to specific detector
         m_camera = (m_hw->getCamera());
+        if (m_camera->_isCameraType(Dimax))
+            m_ringControl = new PcoRingBufferControl(*m_camera, *m_ct, ringBufferNexusTargetPath);
 
         //- 
         m_camera->getCameraNameBase(m_camera_model);
@@ -207,7 +227,21 @@ void Pco::init_device()
         {
             ERROR_STREAM << "Failed to write memorized attribute - pixelRate." << endl;
         }
-        
+
+        if (m_ringControl)
+        {
+            INFO_STREAM << "Write tango hardware at Init - ringBufferEnabled." << endl;
+            Tango::DbData dev_prop;
+            dev_prop.push_back(Tango::DbDatum("__MemorizedRingBufferEnabled"));
+            get_db_device()->get_property(dev_prop);
+            Tango::DevBoolean enabled = false;
+            if (!dev_prop[0].is_empty())
+                enabled = yat4tango::PropertyHelper::get_property<Tango::DevBoolean>(
+                    this, "__MemorizedRingBufferEnabled");
+            m_camera->setRingBufferEnabled(enabled);
+            dev_attr->get_w_attr_by_name("ringBufferEnabled").set_write_value(enabled);
+        }
+
     }
     catch(lima::Exception& e)
     {
@@ -249,11 +283,13 @@ void Pco::get_device_property()
 {
     //	Initialize your default values here (if not done with  POGO).
     //------------------------------------------------------------------
+    ringBufferNexusTargetPath.clear();
 
     //	Read device properties from database.(Automatic code generation)
     //------------------------------------------------------------------
 	Tango::DbData	dev_prop;
 	dev_prop.push_back(Tango::DbDatum("SerialNumber"));
+	dev_prop.push_back(Tango::DbDatum("RingBufferNexusTargetPath"));
 
 	//	Call database and extract values
 	//--------------------------------------------
@@ -275,12 +311,23 @@ void Pco::get_device_property()
 	//	And try to extract SerialNumber value from database
 	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  serialNumber;
 
+	//	Try to initialize RingBufferNexusTargetPath from class property
+	cl_prop = ds_class->get_class_property(dev_prop[++i].name);
+	if (cl_prop.is_empty()==false)	cl_prop  >>  ringBufferNexusTargetPath;
+	else {
+		//	Try to initialize RingBufferNexusTargetPath from default device value
+		def_prop = ds_class->get_default_device_property(dev_prop[i].name);
+		if (def_prop.is_empty()==false)	def_prop  >>  ringBufferNexusTargetPath;
+	}
+	//	And try to extract RingBufferNexusTargetPath value from database
+	if (dev_prop[i].is_empty()==false)	dev_prop[i]  >>  ringBufferNexusTargetPath;
 
 
     //	End of Automatic code generation
     //------------------------------------------------------------------
 
     yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "0", "SerialNumber");
+    yat4tango::PropertyHelper::create_property_if_empty(this, dev_prop, "", "RingBufferNexusTargetPath");
 
 }
 
@@ -301,7 +348,7 @@ void Pco::create_dynamic_interface()
             // ie: either dimax or XX00
             create_pco_with_ram_dynamic_interface();
 
-            if (m_camera_model.find("pco.dimax") != string::npos)
+            if (m_camera->_isCameraType(Dimax))
             {
                 create_pco_dimax_dynamic_interface();
             }
@@ -499,6 +546,24 @@ void Pco::create_pco_with_ram_dynamic_interface()
 void Pco::create_pco_dimax_dynamic_interface()
 {
     Tango::DbData dev_prop;
+    if (m_camera->_isCameraType(Dimax))
+    {
+        create_attribute("ringBufferEnabled", Tango::DEV_BOOLEAN, Tango::SCALAR,
+            Tango::READ_WRITE, Tango::OPERATOR, " ", "%1d",
+            "Enable Dimax circular history. Use Snap, EXTERNAL_SINGLE and fileGeneration=false.",
+            "Ring Buffer Enabled", &Pco::read_ringBufferEnabled_callback,
+            &Pco::write_ringBufferEnabled_callback);
+        create_attribute("ringBufferNexusFileName", Tango::DEV_STRING, Tango::SCALAR,
+            Tango::READ_WRITE, Tango::OPERATOR, " ", "%s",
+            "Requested .nxs basename; readback is the actual unique filename once export starts.",
+            "Ring Buffer NeXus File Name", &Pco::read_ringBufferNexusFileName_callback,
+            &Pco::write_ringBufferNexusFileName_callback);
+        Tango::DevBoolean enabled = false;
+        dev_attr->get_w_attr_by_name("ringBufferEnabled").set_write_value(enabled);
+        std::string filename = m_ringControl->getFileName();
+        Tango::DevString initialName = const_cast<char*>(filename.c_str());
+        dev_attr->get_w_attr_by_name("ringBufferNexusFileName").set_write_value(initialName);
+    }
     
     //create maxNbImage dyn attribute
     create_attribute("maxNbImage",
@@ -765,6 +830,8 @@ void Pco::read_cdiMode_callback(yat4tango::DynamicAttributeReadCallbackData& cbd
 //-----------------------------------------------------------------------------
 void Pco::write_cdiMode_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
 {
+    if (m_camera->getRingBufferEnabled())
+        check_ring_buffer_configuration_allowed();
     INFO_STREAM << "Pco::write_cdiMode_callback()" << endl; //  << cbd.dya->get_name() << endl;
 
     try
@@ -858,6 +925,8 @@ void Pco::read_coolingSetPoint_callback(yat4tango::DynamicAttributeReadCallbackD
 //-----------------------------------------------------------------------------
 void Pco::write_coolingSetPoint_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
 {
+    if (m_camera->getRingBufferEnabled())
+        check_ring_buffer_configuration_allowed();
     INFO_STREAM << "Pco::write_coolingSetPoint_callback()" << endl; //  << cbd.dya->get_name() << endl;
 
         if (get_state() == Tango::FAULT ||
@@ -939,6 +1008,8 @@ void Pco::read_adcOperation_callback(yat4tango::DynamicAttributeReadCallbackData
 //-----------------------------------------------------------------------------
 void Pco::write_adcOperation_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
 {
+    if (m_camera->getRingBufferEnabled())
+        check_ring_buffer_configuration_allowed();
     INFO_STREAM << "Pco::write_adcOperation_callback()" << endl; //  << cbd.dya->get_name() << endl;
 
     if (get_state() == Tango::FAULT || get_state() == Tango::RUNNING)
@@ -1038,6 +1109,8 @@ void Pco::read_shutterMode_callback(yat4tango::DynamicAttributeReadCallbackData&
 //-----------------------------------------------------------------------------
 void Pco::write_shutterMode_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
 {
+    if (m_camera->getRingBufferEnabled())
+        check_ring_buffer_configuration_allowed();
     INFO_STREAM << "Pco::write_shutterMode_callback(Tango::WAttribute &attr) entering... "<< endl;
 
         if (get_state() == Tango::FAULT   ||
@@ -1126,6 +1199,8 @@ void Pco::read_pixelRate(Tango::Attribute &attr)
 //-----------------------------------------------------------------------------
 void Pco::write_pixelRate(Tango::WAttribute &attr)
 {
+    if (m_camera->getRingBufferEnabled())
+        check_ring_buffer_configuration_allowed();
 	INFO_STREAM << "Pco::write_pixelRate(Tango::WAttribute &attr) entering... "<< endl;
 
     try
@@ -1260,6 +1335,8 @@ void Pco::read_doubleImage_callback(yat4tango::DynamicAttributeReadCallbackData&
 //-----------------------------------------------------------------------------
 void Pco::write_doubleImage_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
 {
+    if (m_camera->getRingBufferEnabled())
+        check_ring_buffer_configuration_allowed();
     INFO_STREAM << "Pco::write_doubleImage_callback()" << endl;
 
         if (get_state() == Tango::FAULT   ||
@@ -1327,6 +1404,8 @@ void Pco::read_forcedFIFOMode_callback(yat4tango::DynamicAttributeReadCallbackDa
 //-----------------------------------------------------------------------------
 void Pco::write_forcedFIFOMode_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
 {
+    if (m_camera->getRingBufferEnabled())
+        check_ring_buffer_configuration_allowed();
     INFO_STREAM << "Pco::write_forcedFIFOMode_callback()" << endl;
 
         if (get_state() == Tango::FAULT   ||
@@ -1410,6 +1489,8 @@ void Pco::read_currentRecordedFrame_callback(yat4tango::DynamicAttributeReadCall
 //+------------------------------------------------------------------
 Tango::DevString Pco::talk(Tango::DevString argin)
 {
+    if (m_camera->getRingBufferEnabled())
+        check_ring_buffer_configuration_allowed();
     //	POGO has generated a method core with argout allocation.
     //	If you would like to use a static reference without copying,
     //	See "TANGO Device Server Programmer's Manual"
@@ -1521,6 +1602,14 @@ Tango::DevState Pco::dev_state()
         // let's take a look at the status of control & the status of the plugin        
         DeviceState = ControlFactory::instance().get_state();
         DeviceStatus << ControlFactory::instance().get_status();
+        if (m_ringControl)
+        {
+            if (m_camera->hasRingBufferFault())
+                DeviceState = Tango::FAULT;
+            else if (m_camera->isRingBufferBusy())
+                DeviceState = Tango::RUNNING;
+            DeviceStatus << "\n" << m_camera->getRingBufferStatus();
+        }
     }
 
     set_state(DeviceState);
@@ -1538,5 +1627,72 @@ Tango::DevState Pco::dev_state()
 
 
 
+
+/** @brief Reject ring reconfiguration while uninitialized, acquiring, preparing or exporting. */
+void Pco::check_ring_buffer_configuration_allowed()
+{
+    if (!m_is_device_initialized)
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR", "PCO device is not initialized",
+                                      "Pco::check_ring_buffer_configuration_allowed");
+    lima::CtControl::Status status;
+    m_ct->getStatus(status);
+    if (status.AcquisitionStatus == lima::AcqRunning ||
+        status.AcquisitionStatus == lima::AcqConfig || m_camera->isRingBufferBusy())
+        Tango::Except::throw_exception("TANGO_DEVICE_ERROR",
+            "Ring buffer configuration cannot change during acquisition or export",
+            "Pco::check_ring_buffer_configuration_allowed");
+}
+
+/** @brief Expose the camera's ring-mode flag through the Dimax dynamic attribute. */
+void Pco::read_ringBufferEnabled_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
+{
+    m_ringEnabledRead = m_camera->getRingBufferEnabled();
+    cbd.tga->set_value(&m_ringEnabledRead);
+}
+
+/** @brief Apply and memorize the ring-mode flag while idle, translating LImA errors to Tango. */
+void Pco::write_ringBufferEnabled_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
+{
+    check_ring_buffer_configuration_allowed();
+    Tango::DevBoolean enabled;
+    cbd.tga->get_write_value(enabled);
+    try
+    {
+        m_camera->setRingBufferEnabled(enabled);
+        yat4tango::PropertyHelper::set_property(this, "__MemorizedRingBufferEnabled", enabled);
+    }
+    catch (lima::Exception& error)
+    {
+        ERROR_STREAM << error.getErrMsg() << endl;
+        Tango::Except::throw_exception("LIMA_ERROR", error.getErrMsg().c_str(),
+                                      "Pco::write_ringBufferEnabled_callback");
+    }
+}
+
+/** @brief Expose the requested or actual export basename using device-owned string storage. */
+void Pco::read_ringBufferNexusFileName_callback(yat4tango::DynamicAttributeReadCallbackData& cbd)
+{
+    m_ringFileNameRead = m_ringControl->getFileName();
+    m_ringFileNameValue = const_cast<char*>(m_ringFileNameRead.c_str());
+    cbd.tga->set_value(&m_ringFileNameValue);
+}
+
+/** @brief Validate and set the export basename while idle, translating writer errors to Tango. */
+void Pco::write_ringBufferNexusFileName_callback(yat4tango::DynamicAttributeWriteCallbackData& cbd)
+{
+    check_ring_buffer_configuration_allowed();
+    Tango::DevString name;
+    cbd.tga->get_write_value(name);
+    try
+    {
+        m_ringControl->setFileName(name);
+    }
+    catch (const std::exception& error)
+    {
+        ERROR_STREAM << error.what() << endl;
+        Tango::Except::throw_exception("PCO_NEXUS_ERROR", error.what(),
+                                      "Pco::write_ringBufferNexusFileName_callback");
+    }
+}
 
 }	//	namespace
